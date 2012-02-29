@@ -1,0 +1,77 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>
+      {$fsc->articulo->descripcion}
+      <span><a href="#">eliminar</a></span>
+   </h1>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="referencia" value=""/>
+      <div class="bloque">
+         Descripción:
+         <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60"/>
+      </div>
+      <div class="bloque">
+         <a href="{$fsc->familia->url()}">Familia</a>:
+         <select name="codfamilia">
+         {loop="$fsc->familias"}
+            {if condition="$value->codfamilia==$fsc->articulo->codfamilia"}
+               <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+            {else}
+               <option value="{$value->codfamilia}">{$value->descripcion}</option>
+            {/if}
+         {/loop}
+         </select>
+      </div>
+      <div class="bloque">Código de barras: <input type="text" name="codbarras" value="{$fsc->articulo->codbarras}"/></div>
+      <div class="bloque">Código de equivalencia: <input type="text" name="codbarras" value="{$fsc->articulo->equivalencia}"/></div>
+      <div class="bloque">
+         {if condition="$fsc->articulo->destacado"}
+            <input type="checkbox" name="destacado" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="destacado" value="TRUE"/>
+         {/if}
+         Destacado
+      </div>
+      <div class="bloque">
+         {if condition="$fsc->articulo->bloqueado"}
+            <input type="checkbox" name="bloqueado" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="bloqueado" value="TRUE"/>
+         {/if}
+         Bloqueado
+      </div>
+      <div class="bloque">
+         {if condition="$fsc->articulo->controlstock"}
+            <input type="checkbox" name="controlstock" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="controlstock" value="TRUE"/>
+         {/if}
+         Control de stock
+      </div>
+      <div class="bloque">
+         {if condition="$fsc->articulo->secompra"}
+            <input type="checkbox" name="secompra" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="secompra" value="TRUE"/>
+         {/if}
+         Se compra
+      </div>
+      <div class="bloque">
+         {if condition="$fsc->articulo->sevende"}
+            <input type="checkbox" name="sevende" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="sevende" value="TRUE"/>
+         {/if}
+         Se vende
+      </div>
+      <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5"/></div>
+      <div class="bloque">Actualizado: {$fsc->articulo->factualizado}</div>
+      <div class="bloque">Stock mínimo: <input type="text" name="stockmin" value="{$fsc->articulo->stockmin}" size="5"/></div>
+      <div class="bloque">Stock máximo: <input type="text" name="stockmax" value="{$fsc->articulo->stockmax}" size="5"/></div>
+      <div class="right"><br/><br/><br/><input type="submit" value="modificar"/></div>
+      <div>Observaciones:<br/><textarea name="observaciones" cols="60">{$fsc->articulo->observaciones}</textarea></div>
+   </form>
+</div>
+
+{include="footer"}

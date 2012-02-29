@@ -1,0 +1,43 @@
+{include="header"}
+
+<div class="rounded">
+   <form>
+      <h1>Nuevo:</h1>
+      <div class="bloque">
+         Código:
+         <input type="text" name="codserie"/>
+      </div>
+      <div class="bloque">
+         Descripción:
+         <input type="text" name="descripcion"/>
+      </div>
+      <div class="bloque">
+         Sin IVA:
+         <input type="checkbox" name="siniva" value="TRUE"/>
+      </div>
+      <div class="right"><input type="submit" value="nueva serie"/></div>
+   </form>
+</div>
+
+{loop="$fsc->all()"}
+<div class="rounded">
+   <form>
+      <h1>{$value->codserie}</h1>
+      <div class="bloque">
+         Descripción:
+         <input type="text" name="descripcion" value="{$value->descripcion}"/>
+      </div>
+      <div class="bloque">
+         Sin IVA:
+         {if condition="$value->siniva"}
+            <input type="checkbox" name="siniva" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="siniva" value="TRUE"/>
+         {/if}
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+{/loop}
+
+{include="footer"}

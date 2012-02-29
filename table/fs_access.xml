@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : fs_access.xml
+    Created on : 2 de febrero de 2012, 18:41
+    Author     : Carlos García Gómez
+    Description:
+        Estructura de la tabla fs_access.
+-->
+
+<tabla>
+   <columna>
+      <nombre>fs_user</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fs_page</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>fs_access_pkey</nombre>
+      <consulta>fs_access_pkey PRIMARY KEY (fs_user,fs_page)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>fs_access_user</nombre>
+      <consulta>FOREIGN KEY (fs_user) REFERENCES fs_users (nick) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>fs_access_page</nombre>
+      <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+</tabla>

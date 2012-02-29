@@ -1,0 +1,108 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_articulos.text.focus();
+   });
+</script>
+
+<table class="title">
+   <tr>
+      <td>
+      {if condition="$fsc->default_page"}
+         <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
+      {else}
+         <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
+      {/if}
+         <b>{$fsc->page->folder}</b> »
+      {if condition="$fsc->ppage"}
+         <b><a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a></b> »
+      {/if}
+         <b>{$fsc->page->title}</b>
+      {if condition="$fsc->is_admin_page()"}
+         *
+      {/if}
+         <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
+      </td>
+      <td align="right">
+         <form name="f_articulos" action="index.php" method="get">
+            <input type="hidden" name="page" value="{$fsc->page->name}"/>
+            <input type="text" name="text" value="{$fsc->query}"/>
+            <input type="submit" value="buscar"/>
+         </form>
+      </td>
+   </tr>
+</table>
+
+{if condition="$fsc->error_msg"}
+   <div class="error">{$fsc->error_msg}</div>
+{/if}
+{if condition="$fsc->message"}
+   <div class="message">{$fsc->message}</div>
+{/if}
+
+{if condition="$fsc->query==''"}
+<div class="rounded">
+   <form>
+      <h1>Nuevo:</h1>
+      <div class="bloque">
+         Referencia: <input type="text" name="referencia"/>
+      </div>
+      <div class="bloque">
+         Familia:
+         <select name="codfamilia">
+            {loop="$fsc->get_familias()"}
+            <option value="{$value->codfamilia}">{$value->descripcion}</option>
+            {/loop}
+         </select>
+      </div>
+      <div class="right"><input type="submit" value="nuevo artículo"/></div>
+   </form>
+</div>
+{/if}
+
+<div class="rounded">
+   {if condition="$fsc->query!=''"}
+   <h1>Resultados de la búsqueda "{$fsc->query}"</h1>
+   {/if}
+   <table class="list">
+      <tr>
+         <th>referencia</th>
+         <th>familia</th>
+         <th>descripción</th>
+         <th align="right">PVP</th>
+         <th align="right">stock</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->referencia}</a></td>
+         <td>{$value->codfamilia}</td>
+         <td>{$value->descripcion}</td>
+         <td align="right">{$value->show_pvp()} &euro;</td>
+         <td align="right">{$value->stockfis}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div class="rounded">
+   <h1>Historial:</h1>
+   {loop="$fsc->query_searches()"}
+      <div class="bloque">{$value.0} ({$value.1})</div>
+   {/loop}
+</div>
+
+{include="footer"}

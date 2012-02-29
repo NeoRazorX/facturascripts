@@ -1,0 +1,37 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>código</th>
+         <th>num. proveedor</th>
+         <th>proveedor</th>
+         <th align="right">total</th>
+         <th align="right">fecha</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td>{$value->numproveedor}</td>
+         <td>{$value->nombre}</td>
+         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->show_fecha()}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}

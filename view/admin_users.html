@@ -1,0 +1,46 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Nuevo usuario:</h1>
+   <form action="{$fsc->page->url()}" method="POST">
+      <div class="bloque">Nick: <input type="text" name="nnick" maxlenght="12"/></div>
+      <div class="bloque">Contraseña: <input type="password" name="npassword" maxlenght="12"/></div>
+      <div class="bloque">
+         Agentes:
+         <select name="ncodagente">
+         {loop="$fsc->agentes"}
+            <option value="{$value->codagente}">{$value->nombre} {$value->apellidos}</option>
+         {/loop}
+         </select>
+      </div>
+      <div class="bloque">Administrador: <input type="checkbox" name="nadmin" value="TRUE"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
+   </form>
+</div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>nick</th>
+         <th>contraseña</th>
+         <th>agente</th>
+         <th>administrador</th>
+         <th width="80"></th>
+      </tr>
+      {loop="$fsc->all()"}
+      <tr>
+         <td><a href="index.php?page=admin_user&amp;snick={$value->nick}">{$value->nick}</a></td>
+         <td>-</td>
+         <td>{$fsc->get_agente_name($value->codagente)}</td>
+         {if condition="$value->admin"}
+         <td>Si</td>
+         {else}
+         <td>-</td>
+         {/if}
+         <td align="center"><a href="{$fsc->page->url()}&amp;delete={$value->nick}">eliminar</a></td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

@@ -1,0 +1,33 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Nuevo país:</h1>
+   <form action="{$fsc->url()}" method="POST">
+      <div class="bloque">
+         Código:
+         <input type="text" name="scodpais"/>
+      </div>
+      <div class="bloque">
+         Nombre del país:
+         <input type="text" name="snombre"/>
+      </div>
+      <div class="right"><input type="submit" value="nuevo país"/></div>
+   </form>
+</div>
+
+{loop="$fsc->all()"}
+<div class="rounded">
+   <h1>
+      Código: {$value->codpais}
+      <span><a href="{$fsc->url()}&amp;delete={$value->codpais}">eliminar</a></span>
+   </h1>
+   <form action="{$fsc->url()}" method="POST">
+      Nombre del país:
+      <input type="hidden" name="scodpais" value="{$value->codpais}"/>
+      <input type="text" name="snombre" value="{$value->nombre}"/>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+{/loop}
+
+{include="footer"}

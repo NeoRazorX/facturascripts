@@ -1,0 +1,270 @@
+body {
+   background-color: #e1e1e1;
+   border-top: 40px solid white;
+   border-left: 1px solid #333333;
+   border-right: 1px solid #333333;
+   padding: 0;
+   padding-bottom: 30px;
+   margin: 0;
+   font-family: Verdana, sans-serif;
+   font-size: 12px;
+   font-style: normal;
+   font-weight: normal;
+}
+
+body.log_in {
+   border: 0px solid black;
+   background-image: url('../img/bg2.png');
+   font-size: 15px;
+}
+
+input[type='submit'] {
+   text-transform: uppercase;
+}
+
+div.message {
+   text-align: center;
+   font-size: 16px;
+   background-color: #D8DFEA;
+   border: 1px solid #B8BDC1;
+   box-shadow: 2px 2px 2px #333;
+   padding: 10px;
+   margin: 10px;
+}
+
+div.error {
+   text-align: center;
+   font-size: 18px;
+   background-color: #E47575;
+   border: 1px solid #B14E4E;
+   box-shadow: 3px 3px 3px #333;
+   padding: 10px;
+   margin: 10px;
+}
+
+div#login_window {
+   display: table;
+   position: fixed;
+   top: 50px;
+   left: 50px;
+   background-color: #c1c1c1;
+   border: 1px solid #b1b1b1;
+   box-shadow: 5px 5px 5px #111;
+}
+
+div#login_window h1 {
+   text-align: center;
+   margin-top: 0px;
+   background-color: #4A8BF5;
+   padding-left: 5px;
+   padding-right: 5px;
+}
+
+div#login_window table {
+   width: 100%;
+}
+
+div.copyright {
+   position: fixed;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   text-align: center;
+   background-color: #3768B8;
+   border-top: 1px solid black;
+   color: white;
+}
+
+div.copyright a {
+   color: white;
+}
+
+table.main_menu {
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   width: 100%;
+   z-index: 2;
+   border-collapse: collapse;
+   font-size: 14px;
+}
+
+table.main_menu th {
+   text-transform: capitalize;
+   text-align: left;
+   background-color: #3768B8;
+   border: 1px solid #333333;
+   color: white;
+   padding: 8px;
+}
+
+table.main_menu th.menu_s {
+   background-color: #333333;
+}
+
+table.main_menu th.menu:hover,
+table.main_menu th.menu_s:hover,
+table.main_menu th.user:hover {
+   background-color: #4F87E2;
+   cursor: pointer;
+}
+
+table.main_menu th.empresa, table.main_menu th#exit {
+   text-align: center;
+}
+
+table.main_menu th.user {
+   text-align: right;
+}
+
+table.main_menu th#exit {
+   width: 40px;
+}
+
+table.main_menu th#exit:hover {
+   background-color: #c62d2d;
+   cursor: pointer;
+}
+
+table.main_menu td {
+   vertical-align: top;
+   padding: 0px;
+}
+
+table.main_menu td ul {
+   display: none;
+   background-color: #333333;
+   color: white;
+   border: 2px solid #4F87E2;
+   margin: 0px;
+   padding: 1px;
+   list-style-type: none;
+}
+
+table.main_menu td ul li {
+   padding: 0px;
+}
+
+table.main_menu td ul li.selected {
+   border-top: 1px dotted white;
+   border-bottom: 1px dotted white;
+}
+
+table.main_menu td ul#user_list li {
+   text-align: right;
+}
+
+table.main_menu td ul a {
+   display: block;
+   padding: 5px;
+   color: white;
+   text-transform: capitalize;
+   text-decoration: none;
+}
+
+table.main_menu td ul a:hover {
+   background-color: #4F87E2;
+}
+
+div.main_div {
+   margin-bottom: 10px;
+   min-height: 400px;
+}
+
+div.main_div table.title {
+   background-color: white;
+   border-bottom: 1px solid #999999;
+   width: 100%;
+   padding: 5px;
+   text-transform: capitalize;
+   font-size: 13px;
+}
+
+div.main_div table.title td img {
+   vertical-align: text-bottom;
+}
+
+div.main_div div.rounded {
+   background-color: white;
+   border: 1px solid #999999;
+   padding: 5px;
+   margin: 10px;
+}
+
+div.main_div div.rounded h1 {
+   margin: 5px;
+   padding: 5px;
+   border-bottom: 1px dashed #999999;
+   font-size: 18px;
+}
+
+div.main_div div.rounded h1 span {
+   float: right;
+   font-size: 12px;
+}
+
+div.main_div table.list {
+   width: 100%;
+   margin: 5px;
+   margin-left: 0px;
+   margin-right: 0px;
+}
+
+div.main_div table.list th {
+   text-transform: capitalize;
+   border-bottom: 1px solid #666666;
+}
+
+div.main_div table.list tr:hover {
+   background-color: #D6DBE9;
+}
+
+div.main_div table.list td {
+   vertical-align: top;
+}
+
+div.main_div ul.horizontal {
+   margin: 5px;
+   padding: 5px;
+   list-style-type: none;
+}
+
+div.main_div ul.horizontal li {
+   display: inline-block;
+   min-width: 225px;
+}
+
+div.main_div div.bloque {
+   display: inline-block;
+   padding-right: 10px;
+   text-transform: capitalize;
+}
+
+div.main_div div.right {
+   float: right;
+}
+
+div.main_div a.next {
+   font-size: 15px;
+   text-transform: uppercase;
+   color: black;
+}
+
+div.footer {
+   position: fixed;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+   padding: 5px;
+   background-color: #3768B8;
+   border: 1px solid #333333;
+   color: white;
+   text-align: center;
+   font-size: 13px;
+}
+
+div.footer a {
+   color: white;
+}

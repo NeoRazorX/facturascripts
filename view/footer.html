@@ -1,0 +1,20 @@
+   {if condition="$fsc->db_history_enabled()"}
+      <div class="rounded">
+         <h1>Consultas SQL:</h1>
+         <ol>
+         {loop="$fsc->get_db_history()"}
+            <li>{$value}</li>
+         {/loop}
+         </ol>
+      </div>
+   {/if}
+   </div>
+   <div class="footer">
+      Tiempo de ejecución: {$fsc->duration()} |
+      Consultas: {$fsc->selects()} |
+      Transacciones: {$fsc->transactions()} |
+      <a target="_Blank" href='http://code.google.com/p/facturascripts/' target="_Blank">Web oficial</a> |
+      <a target="_Blank" href="http://www.kelinux.net/community/facturascripts">Foro</a>
+   </div>
+</body>
+</html>

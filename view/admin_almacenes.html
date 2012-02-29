@@ -1,0 +1,52 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Nuevo almacén:</h1>
+   <form action="{$fsc->url()}" method="POST">
+      <div class="bloque">Código: <input type="text" name="scodalmacen"/></div>
+      <div class="bloque">Nombre: <input type="text" name="snombre"/></div>
+      <div class="bloque">Dirección: <input type="text" name="sdireccion"/></div>
+      <div class="bloque">Código postal: <input type="text" name="scodpostal"/></div>
+      <div class="bloque">Población: <input type="text" name="spoblacion"/></div>
+      <div class="bloque">Teléfono: <input type="text" name="stelefono"/></div>
+      <div class="bloque">Fax: <input type="text" name="sfax"/></div>
+      <div class="bloque">Contacto: <input type="text" name="scontacto"/></div>
+      <div class="right"><input type="submit" value="nuevo almacén"/></div>
+   </form>
+</div>
+
+{loop="$fsc->all()"}
+<div class="rounded">
+   <h1>
+      Código: {$value->codalmacen}
+      <span><a href="{$fsc->url()}&amp;delete={$value->codalmacen}">eliminar</a></span>
+   </h1>
+   <form action="{$fsc->url()}" method="POST">
+      <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
+      <div class="bloque">
+         Nombre: <input type="text" name="snombre" value="{$value->nombre}"/>
+      </div>
+      <div class="bloque">
+         Dirección: <input type="text" name="sdireccion" value="{$value->direccion}"/>
+      </div>
+      <div class="bloque">
+         Código postal: <input type="text" name="scodpostal" value="{$value->codpostal}"/>
+      </div>
+      <div class="bloque">
+         Población: <input type="text" name="spoblacion" value="{$value->poblacion}"/>
+      </div>
+      <div class="bloque">
+         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}"/>
+      </div>
+      <div class="bloque">
+         Fax: <input type="text" name="sfax" value="{$value->fax}"/>
+      </div>
+      <div class="bloque">
+         Contacto: <input type="text" name="scontacto" value="{$value->contacto}"/>
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+{/loop}
+
+{include="footer"}

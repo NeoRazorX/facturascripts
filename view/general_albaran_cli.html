@@ -1,0 +1,64 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>{$fsc->albaran->nombrecliente}</h1>
+   <form>
+      <div class="bloque">
+         Número: {$fsc->albaran->numero}
+      </div>
+      <div class="bloque">
+         Número2: <input type="text" name="numero2" value="{$fsc->albaran->numero2}"/>
+      </div>
+      <div class="bloque">
+         Serie: {$fsc->albaran->codserie}
+      </div>
+      <div class="bloque">
+         Ejercicio: {$fsc->albaran->codejercicio}
+      </div>
+      <div class="bloque">
+         Fecha: <input type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
+      </div>
+      <div class="bloque">
+         Cliente: <a href="index.php?page=general_cliente&cod={$fsc->albaran->codcliente}">{$fsc->albaran->nombrecliente}</a>
+         cif/nif: {$fsc->albaran->cifnif}
+      </div>
+      <div class="bloque">
+         Agente: {$fsc->albaran->codagente}
+      </div>
+      <div class="bloque">
+         Neto: {$fsc->albaran->neto}
+         IVA: {$fsc->albaran->totaliva}
+         Total: {$fsc->albaran->total}
+         Total Euros: {$fsc->albaran->totaleuros}
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+      <div>
+         Observaciones:<br/>
+         <textarea name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
+      </div>
+   </form>
+</div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>Artículo</th>
+         <th align="right">Cantidad</th>
+         <th align="right">dto</th>
+         <th align="right">Total</th>
+      </tr>
+      {loop="$fsc->albaran->get_lineas()"}
+      <tr>
+         <td>
+            <a href="index.php?page=general_articulo&ref={$value->referencia}">{$value->referencia}</a>
+            {$value->descripcion}
+         </td>
+         <td align="right">{$value->cantidad}</td>
+         <td align="right">{$value->dtopor} %</td>
+         <td align="right">{$value->show_total()} €</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

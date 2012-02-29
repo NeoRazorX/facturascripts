@@ -1,0 +1,34 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>{$fsc->cliente->nombre}</h1>
+   <form>
+      <div class="bloque">
+         Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}"/>
+      </div>
+      <div class="bloque">
+         Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->cliente->nombrecomercial}"/>
+      </div>
+      <div class="bloque">
+         cif/nif: <input type="text" name="cifnif" value="{$fsc->cliente->cifnif}"/>
+      </div>
+      <div class="bloque">
+         Telefono1: <input type="text" name="telefono1" value="{$fsc->cliente->telefono1}"/>
+      </div>
+      <div class="bloque">
+         Telefono2: <input type="text" name="telefono2" value="{$fsc->cliente->telefono2}"/>
+      </div>
+      <div class="bloque">
+         Fax: <input type="text" name="fax" value="{$fsc->cliente->fax}"/>
+      </div>
+      <div class="bloque">
+         email: <input type="text" name="email" value="{$fsc->cliente->email}"/>
+      </div>
+      <div class="bloque">
+         web: <input type="text" name="web" value="{$fsc->cliente->web}"/>
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+
+{include="footer"}

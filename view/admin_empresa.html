@@ -1,0 +1,60 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Datos de la empresa:</h1>
+   <form action="{$fsc->page->url()}" method="POST">
+      <div class="bloque">Nombre: <input type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}"/></div>
+      <div class="bloque">cif/nif: <input type="text" name="cifnif" size="12" value="{$fsc->empresa->cifnif}"/></div>
+      <div class="bloque">administrador: <input type="text" name="administrador" size="60" value="{$fsc->empresa->administrador}"/></div>
+      <br/>
+      <div class="bloque">Dirección: <input type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}"/></div>
+      <div class="bloque">ciudad: <input type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}"/></div>
+      <div class="bloque">código postal: <input type="text" name="codpostal" size="10" value="{$fsc->empresa->codpostal}"/></div>
+      <div class="bloque">
+         país:
+         <select>
+         {loop="$fsc->paises()"}
+            {if condition="$fsc->empresa->codpais == $value->codpais"}
+               <option value="{$value->codpais}" selected>{$value->nombre}</option>
+            {else}
+               <option value="{$value->codpais}">{$value->nombre}</option>
+            {/if}
+         {/loop}
+         </select>
+      </div>
+      <br/>
+      <div class="bloque">Teléfono: <input type="text" name="telefono" size="12" value="{$fsc->empresa->telefono}"/></div>
+      <div class="bloque">fax: <input type="text" name="fax" size="12" value="{$fsc->empresa->fax}"/></div>
+      <br/>
+      <div class="bloque">Web: <input type="text" name="web" size="50" value="{$fsc->empresa->web}"/></div>
+      <div class="bloque">email: <input type="text" name="email" size="30" value="{$fsc->empresa->email}"/></div>
+      <br/>
+      <div class="bloque">
+         Ejercicio:
+         <select>
+         {loop="$fsc->ejercicios()"}
+            {if condition="$fsc->empresa->codejercicio == $value->codejercicio"}
+               <option value="{$value->codejercicio}" selected>{$value->nombre}</option>
+            {else}
+               <option value="{$value->codejercicio}">{$value->nombre}</option>
+            {/if}
+         {/loop}
+         </select>
+      </div>
+      <div class="bloque">
+         almacén:
+         <select>
+         {loop="$fsc->almacenes()"}
+            {if condition="$fsc->empresa->codalmacen == $value->codalmacen"}
+               <option value="{$value->codalmacen}" selected>{$value->nombre}</option>
+            {else}
+               <option value="{$value->codalmacen}">{$value->nombre}</option>
+            {/if}
+         {/loop}
+         </select>
+      </div>
+      <div class="right"><input type="submit" value="guardar"/></div>
+   </form>
+</div>
+
+{include="footer"}

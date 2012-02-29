@@ -1,0 +1,59 @@
+{include="header"}
+
+<div class="rounded">
+   <form>
+      <h1>Nuevo</h1>
+      <div class="bloque">
+         Código: <input type="text" name="codigo"/>
+      </div>
+      <div class="bloque">
+         Nombre: <input type="text" name="nombre"/>
+      </div>
+      <div class="bloque">
+         Fecha de inicio: <input type="text" name="fechaini"/>
+      </div>
+      <div class="bloque">
+         Fecha fin: <input type="text" name="fechafin"/>
+      </div>
+      <div class="bloque">
+         Estado:
+         <select name="estado">
+            <option value="ABIERTO">ABIERTO</option>
+            <option value="CERRADO">CERRADO</option>
+         </select>
+      </div>
+      <div class="right"><input type="submit" value="nuevo ejercicio"/></div>
+   </form>
+</div>
+
+{loop="$fsc->all()"}
+<div class="rounded">
+   <form>
+      <h1>{$value->codejercicio}</h1>
+      <div class="bloque">
+         Nombre: <input type="text" name="nombre" value="{$value->nombre}"/>
+      </div>
+      <div class="bloque">
+         Fecha de inicio: <input type="text" name="fechaini" value="{$value->fechainicio}"/>
+      </div>
+      <div class="bloque">
+         Fecha fin: <input type="text" name="fechafin" value="{$value->fechafin}"/>
+      </div>
+      <div class="bloque">
+         Estado:
+         <select name="estado">
+            {if condition="$value->estado == 'ABIERTO'"}
+               <option value="ABIERTO" selected="selected">ABIERTO</option>
+               <option value="CERRADO">CERRADO</option>
+            {else}
+               <option value="ABIERTO">ABIERTO</option>
+               <option value="CERRADO" selected="selected">CERRADO</option>
+            {/if}
+         </select>
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+{/loop}
+
+{include="footer"}

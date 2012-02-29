@@ -1,0 +1,60 @@
+{include="header"}
+
+{if condition="$fsc->suser"}
+<div class="rounded">
+   <h1>Datos de usuario:</h1>
+   <form action="{$fsc->url()}" method="POST">
+   <div class="bloque">Nick: <input type="text" value="{$fsc->suser->nick}" disabled/></div>
+   <div class="bloque">Contraseña: <input type="password" name="spassword"/></div>
+   <div class="bloque">
+      Agente:
+      <select name="scodagente">
+      {loop="$fsc->agentes"}
+         {if condition="$fsc->suser->codagente == $value->codagente"}
+         <option value="{$value->codagente}" selected>{$value->nombre} {$value->apellidos}</option>
+         {else}
+         <option value="{$value->codagente}">{$value->nombre} {$value->apellidos}</option>
+         {/if}
+      {/loop}
+      </select>
+   </div>
+   <div class="bloque">
+      Administrador:
+      {if condition="$fsc->suser->admin"}
+         <input type="checkbox" name="sadmin" value="TRUE" checked/>
+      {else}
+         <input type="checkbox" name="sadmin" value="TRUE"/>
+      {/if}
+   </div>
+   <div class="right"><input type="submit" value="guardar"/></div>
+   </form>
+</div>
+{if condition="!$fsc->suser->admin"}
+<div class="rounded">
+   <h1>Acceso:</h1>
+   <table class="list">
+      <tr>
+         <th>Página</th>
+         <th>Denegado</th>
+         <th>Permitido</th>
+      </tr>
+      {loop="$fsc->all()"}
+      <tr>
+         <td>{$value->name}</td>
+         {if condition="$value->enabled"}
+            <td>-</td>
+            <td><a href="{$fsc->url()}&amp;disable={$value->name}">denegar</a></td>
+         {else}
+            <td><a href="{$fsc->url()}&amp;enable={$value->name}">permitir</a></td>
+            <td>-</td>
+         {/if}
+      </tr>
+      {/loop}
+   </table>
+</div>
+{else}
+   <div class="message">Los administradores tienen acceso a cualquier página.</div>
+{/if}
+{/if}
+
+{include="footer"}

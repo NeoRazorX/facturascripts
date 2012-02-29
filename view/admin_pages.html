@@ -1,0 +1,41 @@
+{include="header"}
+
+<div class="rounded">
+<table class="list">
+   <tr>
+      <th>página</th>
+      <th>carpeta</th>
+      <th>titulo</th>
+      <th>en menú</th>
+      <th>existe</th>
+      <th>inactiva</th>
+      <th>activa</th>
+   </tr>
+   {loop="$fsc->all()"}
+   <tr>
+      <td><a href="{$value->url()}">{$value->name}</a></td>
+      <td>{$value->folder}</td>
+      <td>{$value->title}</td>
+      {if condition="$value->show_on_menu"}
+      <td>Si</td>
+      {else}
+      <td>-</td>
+      {/if}
+      {if condition="$value->exists"}
+      <td>Si</td>
+      {else}
+      <td>-</td>
+      {/if}
+      {if condition="$value->enabled"}
+      <td>-</td>
+      <td><a href="{$fsc->page->url()}&AMP;disable={$value->name}">desactivar</a></td>
+      {else}
+      <td><a href="{$fsc->page->url()}&AMP;enable={$value->name}">activar</a></td>
+      <td>-</td>
+      {/if}
+   </tr>
+   {/loop}
+</table>
+</div>
+
+{include="footer"}

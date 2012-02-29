@@ -1,0 +1,37 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>código</th>
+         <th>nombre</th>
+         <th>nomre comercial</th>
+         <th>cifnif</th>
+         <th>teléfono</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codproveedor}</a></td>
+         <td>{$value->nombre}</td>
+         <td>{$value->nombrecomercial}</td>
+         <td>{$value->cifnif}</td>
+         <td>{$value->telefono1}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}

@@ -1,0 +1,56 @@
+{include="header"}
+
+<script type="text/javascript">
+   function delete_familia(fam)
+   {
+      if( confirm("¿Estas seguro de que deseas eliminar la familia "+fam+"?") )
+         window.location.href = "{$fsc->ppage->url()}&delete="+fam;
+   }
+</script>
+
+<div class="rounded">
+   <h1>
+      {$fsc->familia->descripcion}
+      <span><a href="#" onclick="delete_familia('{$fsc->familia->codfamilia}')">eliminar</a></span>
+   </h1>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
+      Descripción:
+      <input type="text" name="descripcion" value="{$fsc->familia->descripcion}" size="60"/>
+      <div class="right"><input type="submit" value="modificar"/></div>
+   </form>
+</div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>referencia</th>
+         <th>descripción</th>
+         <th align="right">PVP</th>
+         <th align="right">stock</th>
+      </tr>
+      {loop="$fsc->articulos"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->referencia}</a></td>
+         <td>{$value->descripcion}</td>
+         <td align="right">{$value->show_pvp()} &euro;</td>
+         <td align="right">{$value->stockfis}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="2"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}
