@@ -1,7 +1,12 @@
 {include="header"}
 
 <div class="rounded">
-   <h1>{$fsc->albaran->nombre}</h1>
+   <h1>
+      {$fsc->albaran->nombre}
+      {if condition="$fsc->albaran->idfactura"}
+         <span><a href="index.php?page=contabilidad_factura_prov&id={$fsc->albaran->idfactura}">ver factura</a></span>
+      {/if}
+   </h1>
    <form>
       <div class="bloque">
          Número: {$fsc->albaran->numero}

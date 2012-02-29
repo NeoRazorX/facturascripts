@@ -113,6 +113,7 @@ class linea_albaran_cliente extends fs_model
 class albaran_cliente extends fs_model
 {
    public $idalbaran;
+   public $idfactura;
    public $codigo;
    public $numero;
    public $numero2;
@@ -135,6 +136,7 @@ class albaran_cliente extends fs_model
       if($a)
       {
          $this->idalbaran = intval($a['idalbaran']);
+         $this->idfactura = intval($a['idfactura']);
          $this->codigo = $a['codigo'];
          $this->numero = $a['numero'];
          $this->numero2 = $a['numero2'];
@@ -154,6 +156,7 @@ class albaran_cliente extends fs_model
       else
       {
          $this->idalbaran = NULL;
+         $this->idfactura = NULL;
          $this->codigo = '';
          $this->numero = '';
          $this->numero2 = '';

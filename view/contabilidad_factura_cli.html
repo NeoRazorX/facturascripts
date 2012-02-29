@@ -1,0 +1,39 @@
+{include="header"}
+
+<div class="rounded">
+   <form>
+      <h1>
+         {$fsc->factura->nombrecliente}
+      </h1>
+      <div class="bloque">
+         Número: <input type="text" name="numero" value="{$fsc->factura->numero}"/>
+      </div>
+      <div class="bloque">
+         Ejercicio: {$fsc->factura->codejercicio}
+      </div>
+      <div class="bloque">
+         Serie: {$fsc->factura->codserie}
+      </div>
+      <div class="bloque">
+         Fecha: <input type="text" name="fecha" value="{$fsc->factura->fecha}"/>
+      </div>
+      <div class="bloque">
+         Cliente: <a href="index.php?page=general_cliente&cod={$fsc->factura->codcliente}">{$fsc->factura->nombrecliente}</a>
+         cif/nif: {$fsc->factura->cifnif}
+      </div>
+      <div class="bloque">
+         Agente: {$fsc->factura->codagente}
+      </div>
+      <div class="bloque">
+         Neto: {$fsc->factura->neto}
+         IVA: {$fsc->factura->totaliva}
+         Total: {$fsc->factura->totaleuros}
+      </div>
+      <div class="right"><input type="submit" value="modificar"/></div>
+      <div class="bloque">
+         <textarea name="observaciones" cols="60">{$fsc->factura->observaciones}</textarea>
+      </div>
+   </form>
+</div>
+
+{include="footer"}

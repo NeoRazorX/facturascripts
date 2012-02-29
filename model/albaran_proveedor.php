@@ -113,6 +113,7 @@ class linea_albaran_proveedor extends fs_model
 class albaran_proveedor extends fs_model
 {
    public $idalbaran;
+   public $idfactura;
    public $codigo;
    public $numero;
    public $numproveedor;
@@ -134,6 +135,7 @@ class albaran_proveedor extends fs_model
       if($a)
       {
          $this->idalbaran = intval($a['idalbaran']);
+         $this->idfactura = intval($a['idfactura']);
          $this->codigo = $a['codigo'];
          $this->numero = $a['numero'];
          $this->numproveedor = $a['numproveedor'];
@@ -152,6 +154,7 @@ class albaran_proveedor extends fs_model
       else
       {
          $this->idalbaran = NULL;
+         $this->idfactura = NULL;
          $this->codigo = '';
          $this->numero = '';
          $this->numproveedor = '';

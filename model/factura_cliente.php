@@ -43,8 +43,8 @@ class factura_cliente extends fs_model
       parent::__construct('facturascli');
       if($f)
       {
-         $this->idfactura = $f['idfactura'];
-         $this->idasiento = $f['idasiento'];
+         $this->idfactura = intval($f['idfactura']);
+         $this->idasiento = intval($f['idasiento']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
          $this->codejercicio = $f['codejercicio'];
@@ -103,7 +103,7 @@ class factura_cliente extends fs_model
    
    public function url()
    {
-      return '';
+      return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
    }
 
    protected function install()
@@ -126,6 +126,15 @@ class factura_cliente extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
    
+   public function get($id)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      if($fact)
+         return new factura_cliente($fact[0]);
+      else
+         return FALSE;
+   }
+
    public function all($offset=0)
    {
       $faclist = array();

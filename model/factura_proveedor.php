@@ -43,8 +43,8 @@ class factura_proveedor extends fs_model
       parent::__construct('facturasprov');
       if($f)
       {
-         $this->idfactura = $f['idfactura'];
-         $this->idasiento = $f['idasiento'];
+         $this->idfactura = intval($f['idfactura']);
+         $this->idasiento = intval($f['idasiento']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
          $this->numproveedor = $f['numproveedor'];
@@ -83,7 +83,7 @@ class factura_proveedor extends fs_model
    
    public function url()
    {
-      return '';
+      return 'index.php?page=contabilidad_factura_prov&id='.$this->idfactura;
    }
    
    public function show_total()
@@ -126,6 +126,15 @@ class factura_proveedor extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
    
+   public function get($id)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      if($fact)
+         return new factura_proveedor($fact[0]);
+      else
+         return FALSE;
+   }
+
    public function all($offset=0)
    {
       $faclist = array();
