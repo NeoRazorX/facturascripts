@@ -19,7 +19,7 @@
 
 require_once 'model/agente.php';
 
-class new_fs_controller extends fs_controller
+class admin_agentes extends fs_controller
 {
    public function __construct()
    {

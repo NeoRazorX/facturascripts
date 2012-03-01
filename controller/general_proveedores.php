@@ -19,7 +19,7 @@
 
 require_once 'model/proveedor.php';
 
-class new_fs_controller extends fs_controller
+class general_proveedores extends fs_controller
 {
    public $offset;
    public $resultados;

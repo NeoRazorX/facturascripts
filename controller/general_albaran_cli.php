@@ -19,7 +19,7 @@
 
 require_once 'model/albaran_cliente.php';
 
-class new_fs_controller extends fs_controller
+class general_albaran_cli extends fs_controller
 {
    public $albaran;
    

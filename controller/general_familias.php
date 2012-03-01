@@ -19,7 +19,7 @@
 
 require_once 'model/familia.php';
 
-class new_fs_controller extends fs_controller
+class general_familias extends fs_controller
 {
    public function __construct()
    {

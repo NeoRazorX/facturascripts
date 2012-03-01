@@ -22,7 +22,7 @@ require_once 'model/almacen.php';
 require_once 'model/ejercicio.php';
 require_once 'model/pais.php';
 
-class new_fs_controller extends fs_controller
+class admin_empresa extends fs_controller
 {
    public $empresa;
    

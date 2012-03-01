@@ -20,7 +20,7 @@
 require_once 'model/agente.php';
 require_once 'model/fs_access.php';
 
-class new_fs_controller extends fs_controller
+class admin_user extends fs_controller
 {
    public $suser;
    public $agentes;

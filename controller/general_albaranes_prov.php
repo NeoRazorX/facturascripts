@@ -19,7 +19,7 @@
 
 require_once 'model/albaran_proveedor.php';
 
-class new_fs_controller extends fs_controller
+class general_albaranes_prov extends fs_controller
 {
    public $resultados;
    public $offset;

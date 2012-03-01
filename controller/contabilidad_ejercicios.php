@@ -19,7 +19,7 @@
 
 require_once 'model/ejercicio.php';
 
-class new_fs_controller extends fs_controller
+class contabilidad_ejercicios extends fs_controller
 {
    public function __construct()
    {

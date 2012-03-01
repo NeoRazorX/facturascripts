@@ -17,8 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class new_fs_controller extends fs_controller
+class admin_pages extends fs_controller
 {
+   public $new_fsc;
+   
    public function __construct()
    {
       parent::__construct('admin_pages', 'Páginas', 'admin', TRUE, TRUE);
@@ -28,14 +30,14 @@ class new_fs_controller extends fs_controller
    {
       if( isset($_GET['enable']) )
       {
-         $folder = explode('_', $_GET['enable']);
-         $p = new fs_page( array('name'=>$_GET['enable'],
-                                 'title'=>$_GET['enable'],
-                                 'folder'=>$folder[0],
-                                 'show_on_menu'=>TRUE) );
-         $p->save();
-         $this->new_error_msg($p->error_msg);
-         $this->load_menu();
+         if( file_exists('controller/'.$_GET['enable'].'.php') )
+         {
+            require_once 'controller/'.$_GET['enable'].'.php';
+            $this->new_fsc = new $_GET['enable']();
+            $this->new_fsc->page->save();
+         }
+         else
+            $this->new_error_msg("La página no existe");
       }
       else if( isset($_GET['disable']) )
       {
@@ -45,8 +47,8 @@ class new_fs_controller extends fs_controller
                                  'show_on_menu'=>TRUE) );
          $p->delete();
          $this->new_error_msg($p->error_msg);
-         $this->load_menu();
       }
+      $this->load_menu();
    }
 
    public function all()

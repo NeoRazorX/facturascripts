@@ -19,7 +19,7 @@
 
 require_once 'model/cliente.php';
 
-class new_fs_controller extends fs_controller
+class general_cliente extends fs_controller
 {
    public $cliente;
    

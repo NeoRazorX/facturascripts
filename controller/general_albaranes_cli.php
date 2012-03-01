@@ -19,7 +19,7 @@
 
 require_once 'model/albaran_cliente.php';
 
-class new_fs_controller extends fs_controller
+class general_albaranes_cli extends fs_controller
 {
    public $resultados;
    public $offset;

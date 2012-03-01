@@ -69,10 +69,13 @@ class fs_db
    /// desconecta de la base de datos
    public function close()
    {
+      $retorno = FALSE;
       if(self::$link)
-         return pg_close(self::$link);
-      else
-         return FALSE;
+      {
+         $retorno = pg_close(self::$link);
+         self::$link = NULL;
+      }
+      return $retorno;
    }
    
    /// devuelve un array con los nombres de las tablas de la base de datos

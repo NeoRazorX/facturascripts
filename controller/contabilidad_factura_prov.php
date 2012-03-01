@@ -19,7 +19,7 @@
 
 require_once 'model/factura_proveedor.php';
 
-class new_fs_controller extends fs_controller
+class contabilidad_factura_prov extends fs_controller
 {
    public $factura;
    

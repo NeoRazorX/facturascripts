@@ -19,7 +19,7 @@
 
 require_once 'model/impuesto.php';
 
-class new_fs_controller extends fs_controller
+class contabilidad_impuestos extends fs_controller
 {
    public function __construct()
    {

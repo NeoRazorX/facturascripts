@@ -19,7 +19,7 @@
 
 require_once 'model/pais.php';
 
-class new_fs_controller extends fs_controller
+class admin_paises extends fs_controller
 {
    public function __construct()
    {

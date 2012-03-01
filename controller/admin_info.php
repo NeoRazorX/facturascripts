@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class new_fs_controller extends fs_controller
+class admin_info extends fs_controller
 {
    public function __construct()
    {

@@ -19,7 +19,7 @@
 
 require_once 'model/almacen.php';
 
-class new_fs_controller extends fs_controller
+class admin_almacenes extends fs_controller
 {
    public function __construct()
    {

@@ -19,7 +19,7 @@
 
 require_once 'model/factura_cliente.php';
 
-class new_fs_controller extends fs_controller
+class contabilidad_factura_cli extends fs_controller
 {
    public $factura;
    

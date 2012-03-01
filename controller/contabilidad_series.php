@@ -19,7 +19,7 @@
 
 require_once 'model/serie.php';
 
-class new_fs_controller extends fs_controller
+class contabilidad_series extends fs_controller
 {
    public function __construct()
    {

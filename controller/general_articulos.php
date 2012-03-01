@@ -21,7 +21,7 @@ require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
 
-class new_fs_controller extends fs_controller
+class general_articulos extends fs_controller
 {
    public $resultados;
    public $query;

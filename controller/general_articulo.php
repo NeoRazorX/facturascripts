@@ -20,7 +20,7 @@
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
 
-class new_fs_controller extends fs_controller
+class general_articulo extends fs_controller
 {
    public $articulo;
    public $familia;

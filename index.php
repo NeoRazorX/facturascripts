@@ -26,7 +26,7 @@ if( isset($_GET['page']) )
    if( file_exists('controller/'.$_GET['page'].'.php') )
    {
       require_once 'controller/'.$_GET['page'].'.php';
-      $fsc = new new_fs_controller();
+      $fsc = new $_GET['page']();
    }
    else
    {
