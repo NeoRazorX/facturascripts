@@ -120,7 +120,7 @@ class admin_user extends fs_controller
    public function url()
    {
       if( $this->suser )
-         return $this->page->url().'&amp;snick='.$this->suser->nick;
+         return $this->suser->url();
       else
          return $this->page->url();
    }

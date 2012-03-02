@@ -34,18 +34,24 @@ class general_articulo extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_articulos');
-      $this->page->title = $_GET['ref'];
       
-      $this->articulo = new articulo();
-      $this->articulo = $this->articulo->get($_GET['ref']);
-      
-      $this->familia = $this->articulo->get_familia();
-      $this->familias = $this->familia->all();
+      if(isset($_GET['ref']))
+      {
+         $this->page->title = $_GET['ref'];
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_GET['ref']);
+         
+         $this->familia = $this->articulo->get_familia();
+         $this->familias = $this->familia->all();
+      }
    }
    
    public function url()
    {
-      return $this->articulo->url();
+      if($this->articulo)
+         return $this->articulo->url();
+      else
+         return $this->page->url();
    }
 }
 

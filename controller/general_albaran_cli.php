@@ -32,12 +32,23 @@ class general_albaran_cli extends fs_controller
    {
       $this->ppage = $this->page->get('general_albaranes_cli');
       
-      $this->albaran = new albaran_cliente();
-      $this->albaran = $this->albaran->get($_GET['id']);
-      if($this->albaran)
+      if(isset($_GET['id']))
       {
-         $this->page->title = $this->albaran->codigo;
+         $this->albaran = new albaran_cliente();
+         $this->albaran = $this->albaran->get($_GET['id']);
+         if($this->albaran)
+         {
+            $this->page->title = $this->albaran->codigo;
+         }
       }
+   }
+   
+   public function url()
+   {
+      if($this->albaran)
+         return $this->albaran->url();
+      else
+         return $this->page->url();
    }
 }
 

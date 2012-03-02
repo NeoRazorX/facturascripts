@@ -72,6 +72,11 @@ class almacen extends fs_model
       }
    }
    
+   public function url()
+   {
+      return 'index.php?page=admin_almacenes#'.$this->codalmacen;
+   }
+
    protected function install()
    {
       return '';

@@ -42,6 +42,12 @@ class impuesto extends fs_model
       }
    }
    
+   public function url()
+   {
+      return 'index.php?page=contabilidad_impuestos#'.$this->codimpuesto;
+   }
+
+
    protected function install()
    {
       return '';

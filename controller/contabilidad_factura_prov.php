@@ -32,12 +32,23 @@ class contabilidad_factura_prov extends fs_controller
    {
       $this->ppage = $this->page->get('contabilidad_facturas_prov');
       
-      $this->factura = new factura_proveedor();
-      $this->factura = $this->factura->get($_GET['id']);
-      if($this->factura)
+      if( isset($_GET['id']) )
       {
-         $this->page->title = $this->factura->codigo;
+         $this->factura = new factura_proveedor();
+         $this->factura = $this->factura->get($_GET['id']);
+         if($this->factura)
+         {
+            $this->page->title = $this->factura->codigo;
+         }
       }
+   }
+   
+   public function url()
+   {
+      if($this->factura)
+         return $this->factura->url();
+      else
+         return $this->page->url();
    }
 }
 

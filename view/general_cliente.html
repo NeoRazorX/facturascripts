@@ -1,5 +1,6 @@
 {include="header"}
 
+{if condition="$fsc->cliente"}
 <div class="rounded">
    <h1>{$fsc->cliente->nombre}</h1>
    <form>
@@ -30,5 +31,6 @@
       <div class="right"><input type="submit" value="modificar"/></div>
    </form>
 </div>
+{/if}
 
 {include="footer"}

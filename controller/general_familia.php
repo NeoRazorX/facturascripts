@@ -35,9 +35,9 @@ class general_familia extends fs_controller
    {
       $this->ppage = $this->page->get('general_familias');
       
-      $this->familia = new familia();
       if( isset($_POST['cod']) )
       {
+         $this->familia = new familia();
          $this->familia = $this->familia->get($_POST['cod']);
          $this->familia->descripcion = $_POST['descripcion'];
          if( $this->familia->save() )
@@ -45,21 +45,27 @@ class general_familia extends fs_controller
       }
       else if( isset($_GET['cod']) )
       {
+         $this->familia = new familia();
          $this->familia = $this->familia->get($_GET['cod']);
       }
       
-      $this->page->title = $this->familia->codfamilia;
-      
-      if( isset($_GET['offset']) )
-         $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
-      $this->articulos = $this->familia->get_articulos($this->offset);
+      if($this->familia)
+      {
+         $this->page->title = $this->familia->codfamilia;
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
+         else
+            $this->offset = 0;
+         $this->articulos = $this->familia->get_articulos($this->offset);
+      }
    }
    
    public function url()
    {
-      return $this->familia->url();
+      if($this->familia)
+         return $this->familia->url();
+      else
+         return $this->page->url();
    }
 
    public function anterior_url()

@@ -32,9 +32,20 @@ class general_cliente extends fs_controller
    {
       $this->ppage = $this->page->get('general_clientes');
       
-      $this->cliente = new cliente();
-      $this->cliente = $this->cliente->get($_GET['cod']);
-      $this->page->title = $_GET['cod'];
+      if(isset($_GET['cod']))
+      {
+         $this->cliente = new cliente();
+         $this->cliente = $this->cliente->get($_GET['cod']);
+         $this->page->title = $_GET['cod'];
+      }
+   }
+   
+   public function url()
+   {
+      if($this->cliente)
+         return $this->cliente->url();
+      else
+         return $this->page->url();
    }
 }
 

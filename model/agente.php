@@ -81,6 +81,12 @@ class agente extends fs_model
       }
    }
    
+   public function url()
+   {
+      return "index.php?page=admin_agentes#".$this->codagente;
+   }
+
+
    protected function install()
    {
       return "";

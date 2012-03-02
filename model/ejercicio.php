@@ -63,6 +63,11 @@ class ejercicio extends fs_model
       }
    }
    
+   public function url()
+   {
+      return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;
+   }
+
    protected function install()
    {
       return '';

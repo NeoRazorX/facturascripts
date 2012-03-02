@@ -19,6 +19,99 @@
 
 require_once 'base/fs_model.php';
 
+
+class linea_factura_proveedor extends fs_model
+{
+   public $idlinea;
+   public $idfactura;
+   public $idalbaran;
+   public $referencia;
+   public $descripcion;
+   public $cantidad;
+   public $pvpunitario;
+   public $pvpsindto;
+   public $dtopor;
+   public $dtolineal;
+   public $pvptotal;
+   
+   public function __construct($l=FALSE)
+   {
+      parent::__construct('lineasfacturasprov');
+      if($l)
+      {
+         $this->idlinea = intval($l['idlinea']);
+         $this->idfactura = intval($l['idfactura']);
+         $this->idalbaran = intval($l['idalbaran']);
+         $this->referencia = $l['referencia'];
+         $this->descripcion = $l['descripcion'];
+         $this->cantidad = floatval($l['cantidad']);
+         $this->pvpunitario = floatval($l['pvpunitario']);
+         $this->pvpsindto = floatval($l['pvpsindto']);
+         $this->dtopor = floatval($l['dtopor']);
+         $this->dtolineal = floatval($l['dtolineal']);
+         $this->pvptotal = floatval($l['pvptotal']);
+      }
+      else
+      {
+         $this->idlinea = NULL;
+         $this->idfactura = NULL;
+         $this->idalbaran = NULL;
+         $this->referencia = '';
+         $this->descripcion = '';
+         $this->cantidad = 0;
+         $this->pvpunitario = 0;
+         $this->pvpsindto = 0;
+         $this->dtopor = 0;
+         $this->dtolineal = 0;
+         $this->pvptotal = 0;
+      }
+   }
+   
+   public function show_pvp()
+   {
+      return number_format($this->pvpunitario, 2, ',', '.');
+   }
+   
+   public function show_total()
+   {
+      return number_format($this->pvptotal, 2, ',', '.');
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function exists()
+   {
+      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+   }
+   
+   public function save() {
+      ;
+   }
+   
+   public function delete() {
+      return $this->db->exit("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+   }
+   
+   public function all_from_factura($id)
+   {
+      $linlist = array();
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      if($lineas)
+      {
+         foreach($lineas as $l)
+         {
+            $lo = new linea_factura_proveedor($l);
+            $linlist[] = $lo;
+         }
+      }
+      return $linlist;
+   }
+}
+
+
 class factura_proveedor extends fs_model
 {
    public $idfactura;
@@ -133,6 +226,12 @@ class factura_proveedor extends fs_model
          return new factura_proveedor($fact[0]);
       else
          return FALSE;
+   }
+   
+   public function get_lineas()
+   {
+      $linea = new linea_factura_proveedor();
+      return $linea->all_from_factura($this->idfactura);
    }
 
    public function all($offset=0)

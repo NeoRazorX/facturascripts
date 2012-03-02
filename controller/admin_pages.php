@@ -32,21 +32,35 @@ class admin_pages extends fs_controller
       {
          if( file_exists('controller/'.$_GET['enable'].'.php') )
          {
-            require_once 'controller/'.$_GET['enable'].'.php';
-            $this->new_fsc = new $_GET['enable']();
-            $this->new_fsc->page->save();
+            if($_GET['enable'] == $this->page->name)
+            {
+               $this->page->save();
+            }
+            else
+            {
+               require_once 'controller/'.$_GET['enable'].'.php';
+               $this->new_fsc = new $_GET['enable']();
+               $this->new_fsc->page->save();
+            }
          }
          else
             $this->new_error_msg("La página no existe");
       }
       else if( isset($_GET['disable']) )
       {
-         $p = new fs_page( array('name'=>$_GET['disable'],
-                                 'title'=>'',
-                                 'folder'=>'',
-                                 'show_on_menu'=>TRUE) );
-         $p->delete();
-         $this->new_error_msg($p->error_msg);
+         if($_GET['disable'] == $this->page->name)
+         {
+            $this->new_error_msg("No puedes desactivar esta página");
+         }
+         else
+         {
+            $p = new fs_page( array('name'=>$_GET['disable'],
+                                    'title'=>'',
+                                    'folder'=>'',
+                                    'show_on_menu'=>TRUE) );
+            $p->delete();
+            $this->new_error_msg($p->error_msg);
+         }
       }
       $this->load_menu();
    }

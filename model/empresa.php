@@ -112,6 +112,11 @@ class empresa extends fs_model
          $this->nombre = '';
       }
    }
+   
+   public function url()
+   {
+      return 'index.php?page=admin_empresa';
+   }
 
    protected function install()
    {

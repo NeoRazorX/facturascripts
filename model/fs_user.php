@@ -55,6 +55,11 @@ class fs_user extends fs_model
       $this->logged_on = FALSE;
    }
    
+   public function url()
+   {
+      return 'index.php?page=admin_user&snick='.$this->nick;
+   }
+
    protected function install()
    {
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."','',NULL,TRUE);";

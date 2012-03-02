@@ -45,6 +45,12 @@ class pais extends fs_model
       }
    }
    
+   public function url()
+   {
+      return 'index.php?page=admin_paises#'.$this->codpais;
+   }
+
+
    protected function install()
    {
       return '';

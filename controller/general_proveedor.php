@@ -32,9 +32,20 @@ class general_proveedor extends fs_controller
    {
       $this->ppage = $this->page->get('general_proveedores');
       
-      $this->proveedor = new proveedor();
-      $this->proveedor = $this->proveedor->get($_GET['cod']);
-      $this->page->title = $_GET['cod'];
+      if(isset($_GET['cod']))
+      {
+         $this->proveedor = new proveedor();
+         $this->proveedor = $this->proveedor->get($_GET['cod']);
+         $this->page->title = $_GET['cod'];
+      }
+   }
+   
+   public function url()
+   {
+      if($this->proveedor)
+         return $this->proveedor->url();
+      else
+         return $this->page->url();
    }
 }
 

@@ -69,6 +69,11 @@ class linea_albaran_proveedor extends fs_model
       }
    }
    
+   public function show_pvp()
+   {
+      return number_format($this->pvpunitario, 2, ',', '.');
+   }
+   
    public function show_total()
    {
       return number_format($this->pvptotal, 2, ',', '.');
