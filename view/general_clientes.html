@@ -1,6 +1,30 @@
 {include="header"}
 
 <div class="rounded">
+   <h1>Nuevo cliente:</h1>
+   <form action="{$fsc->url()}" method="post">
+      <div class="bloque">
+         Código: <input type="text" name="codcliente" value="000000" size="6" maxlegth="6"/>
+      </div>
+      <div class="bloque">
+         Nombre: <input type="text" name="nombre" value="" size="30"/>
+      </div>
+      <div class="bloque">
+         cifnif: <input type="text" name="cifnif" value=""/>
+      </div>
+      <div class="bloque">
+         Serie:
+         <select name="codserie">
+         {loop="$fsc->serie->all()"}
+            <option value="{$value->codserie}">{$value->descripcion}</option>
+         {/loop}
+         </select>
+      </div>
+      <div class="right"><input type="submit" value="nuevo cliente"/></div>
+   </form>
+</div>
+
+<div class="rounded">
    <table class="list">
       <tr>
          <th>código</th>

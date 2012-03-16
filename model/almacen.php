@@ -117,8 +117,7 @@ class almacen extends fs_model
       {
          foreach($almacenes as $a)
          {
-            $ao = new almacen($a);
-            $listaa[] = $ao;
+            $listaa[] = new almacen($a);
          }
       }
       return $listaa;

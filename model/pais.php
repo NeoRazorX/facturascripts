@@ -53,7 +53,7 @@ class pais extends fs_model
 
    protected function install()
    {
-      return '';
+      return "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES ('ESP','España');";
    }
    
    public function exists()
@@ -87,8 +87,7 @@ class pais extends fs_model
       {
          foreach($paises as $p)
          {
-            $po = new pais($p);
-            $listap[] = $po;
+            $listap[] = new pais($p);
          }
       }
       return $listap;

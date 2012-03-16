@@ -10,11 +10,29 @@
    {/if}
    </div>
    <div class="footer">
-      Tiempo de ejecución: {$fsc->duration()} |
-      Consultas: {$fsc->selects()} |
-      Transacciones: {$fsc->transactions()} |
-      <a target="_Blank" href='http://code.google.com/p/facturascripts/' target="_Blank">Web oficial</a> |
-      <a target="_Blank" href="http://www.kelinux.net/community/facturascripts">Foro</a>
+      <table>
+         <tr>
+            <td class="left">
+               CSS:
+               {if condition="$fsc->css_file=='base.css'"}
+                  <a class="selected" href="{$fsc->url()}&css_file=base.css">normal</a> |
+                  <a href="{$fsc->url()}&css_file=touch.css">touch</a>
+               {else}
+                  <a href="{$fsc->url()}&css_file=base.css">normal</a> |
+                  <a class="selected" href="{$fsc->url()}&css_file=touch.css">touch</a>
+               {/if}
+            </td>
+            <td>
+               Tiempo de ejecución: {$fsc->duration()} |
+               Consultas: {$fsc->selects()} |
+               Transacciones: {$fsc->transactions()}
+            </td>
+            <td class="right">
+               <a target="_Blank" href='http://code.google.com/p/facturascripts/'>Web oficial</a> |
+               <a target="_Blank" href="http://www.kelinux.net/community/facturascripts">Foro</a>
+            </td>
+         </tr>
+      </table>
    </div>
 </body>
 </html>

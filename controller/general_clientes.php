@@ -18,11 +18,13 @@
  */
 
 require_once 'model/cliente.php';
+require_once 'model/serie.php';
 
 class general_clientes extends fs_controller
 {
    public $offset;
    public $resultados;
+   public $serie;
    
    public function __construct()
    {
@@ -31,6 +33,8 @@ class general_clientes extends fs_controller
    
    protected function process()
    {
+      $this->serie = new serie();
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
@@ -38,6 +42,19 @@ class general_clientes extends fs_controller
       
       $cliente = new cliente();
       $this->resultados = $cliente->all($this->offset);
+      
+      if( isset($_POST['codcliente']) )
+      {
+         $cliente->codcliente = $_POST['codcliente'];
+         $cliente->nombre = $_POST['nombre'];
+         $cliente->nombrecomercial = $_POST['nombre'];
+         $cliente->cifnif = $_POST['cifnif'];
+         $cliente->codserie = $_POST['codserie'];
+         if( $cliente->save() )
+            header('location: '.$cliente->url());
+         else
+            $this->new_error_msg("¡Imposible guardar los datos del cliente!");
+      }
    }
    
    public function anterior_url()

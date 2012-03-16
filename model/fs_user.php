@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/agente.php';
 
 class fs_user extends fs_model
 {
@@ -62,6 +63,7 @@ class fs_user extends fs_model
 
    protected function install()
    {
+      $agente = new agente();
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."','',NULL,TRUE);";
    }
 
@@ -112,8 +114,7 @@ class fs_user extends fs_model
       {
          foreach($users as $u)
          {
-            $fu = new fs_user($u);
-            $userlist[] = $fu;
+            $userlist[] = new fs_user($u);
          }
       }
       return $userlist;
@@ -135,14 +136,14 @@ class fs_user extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET password = '".$this->password."',
-                 log_key = '".$this->log_key."', codagente = ".$this->null2str($this->codagente).",
-                 admin = ".$this->bool2str($this->admin)." WHERE nick = '".$this->nick."';";
+                 log_key = '".$this->log_key."', codagente = ".$this->var2str($this->codagente).",
+                 admin = ".$this->var2str($this->admin)." WHERE nick = '".$this->nick."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES
-                 ('".$this->nick."','".$this->password."','".$this->log_key."',".$this->null2str($this->codagente).
-                 ",".$this->bool2str($this->admin).");";
+                 ('".$this->nick."','".$this->password."','".$this->log_key."',".$this->var2str($this->codagente).
+                 ",".$this->var2str($this->admin).");";
       }
       return $this->db->exec($sql);
    }
@@ -150,6 +151,12 @@ class fs_user extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
+   }
+   
+   public function get_agente()
+   {
+      $agente = new agente();
+      return $agente->get($this->codagente);
    }
 }
 

@@ -30,6 +30,9 @@ class cliente extends fs_model
    public $fax;
    public $email;
    public $web;
+   public $codserie;
+   public $debaja;
+   public $fechabaja;
 
    public function __construct($c=FALSE)
    {
@@ -45,10 +48,13 @@ class cliente extends fs_model
          $this->fax = $c['fax'];
          $this->email = $c['email'];
          $this->web = $c['web'];
+         $this->codserie = $c['codserie'];
+         $this->debaja = ($c['debaja'] == 't');
+         $this->fechabaja = $c['fechabaja'];
       }
       else
       {
-         $this->codcliente = '';
+         $this->codcliente = NULL;
          $this->nombre = '';
          $this->nombrecomercial = '';
          $this->cifnif = '';
@@ -57,6 +63,9 @@ class cliente extends fs_model
          $this->fax = '';
          $this->email = '';
          $this->web = '';
+         $this->codserie = NULL;
+         $this->debaja = FALSE;
+         $this->fechabaja = NULL;
       }
    }
    
@@ -78,7 +87,20 @@ class cliente extends fs_model
    
    public function save()
    {
-      
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+            nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
+            codserie = ".$this->var2str($this->codserie).", debaja = ".$this->var2str($this->debaja).",
+            fechabaja = ".$this->var2str($this->fechabaja)." WHERE codcliente = '".$this->codcliente."';";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,codserie,debaja)
+            VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",
+            ".$this->var2str($this->cifnif).",".$this->var2str($this->codserie).",".$this->var2str($this->debaja).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -104,8 +126,7 @@ class cliente extends fs_model
       {
          foreach($clientes as $c)
          {
-            $co = new cliente($c);
-            $clientlist[] = $co;
+            $clientlist[] = new cliente($c);
          }
       }
       return $clientlist;

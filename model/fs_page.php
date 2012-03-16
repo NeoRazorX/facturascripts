@@ -76,12 +76,12 @@ class fs_page extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET title = '".$this->title."', folder = '".$this->folder.
-                "', show_on_menu = ".$this->bool2str($this->show_on_menu)." WHERE name = '".$this->name."';";
+                "', show_on_menu = ".$this->var2str($this->show_on_menu)." WHERE name = '".$this->name."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (name,title,folder,show_on_menu) VALUES
-            ('".$this->name."','".$this->title."','".$this->folder."',".$this->bool2str($this->show_on_menu).");";
+            ('".$this->name."','".$this->title."','".$this->folder."',".$this->var2str($this->show_on_menu).");";
       }
       return $this->db->exec($sql);
    }
@@ -99,8 +99,7 @@ class fs_page extends fs_model
       {
          foreach($pages as $p)
          {
-            $fp = new fs_page($p);
-            $pagelist[] = $fp;
+            $pagelist[] = new fs_page($p);
          }
       }
       return $pagelist;

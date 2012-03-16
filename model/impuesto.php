@@ -24,6 +24,8 @@ class impuesto extends fs_model
    public $codimpuesto;
    public $descripcion = '';
    public $iva;
+   public $recargo;
+   public $default;
    
    public function __construct($i=FALSE)
    {
@@ -33,12 +35,21 @@ class impuesto extends fs_model
          $this->codimpuesto = $i['codimpuesto'];
          $this->descripcion = $i['descripcion'];
          $this->iva = floatval($i['iva']);
+         $this->recargo = floatval($i['recargo']);
+         if( !isset($_COOKIE['default_impuesto']) )
+            $this->default = FALSE;
+         elseif($_COOKIE['default_impuesto'] == $this->codimpuesto)
+            $this->default = TRUE;
+         else
+            $this->default = FALSE;
       }
       else
       {
-         $this->codimpuesto = '';
+         $this->codimpuesto = NULL;
          $this->descripcion = '';
          $this->iva = 0;
+         $this->recargo = 0;
+         $this->default = FALSE;
       }
    }
    
@@ -46,7 +57,12 @@ class impuesto extends fs_model
    {
       return 'index.php?page=contabilidad_impuestos#'.$this->codimpuesto;
    }
-
+   
+   public function set_default()
+   {
+      setcookie('default_impuesto', $this->codimpuesto, time()+FS_COOKIES_EXPIRE);
+      $this->default = TRUE;
+   }
 
    protected function install()
    {
@@ -60,12 +76,32 @@ class impuesto extends fs_model
    
    public function save()
    {
-      
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+            iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
+            WHERE codimpuesto = '".$this->codimpuesto."';";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES (".$this->var2str($this->codimpuesto).",
+            ".$this->var2str($this->descripcion).",".$this->var2str($this->iva).",".$this->var2str($this->recargo).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
+   }
+   
+   public function get($cod)
+   {
+      $impuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$cod."';");
+      if($impuesto)
+         return new impuesto($impuesto[0]);
+      else
+         return FALSE;
    }
    
    public function all()
@@ -76,8 +112,7 @@ class impuesto extends fs_model
       {
          foreach($impuestos as $i)
          {
-            $io = new impuesto($i);
-            $impuestolist[] = $io;
+            $impuestolist[] = new impuesto($i);
          }
       }
       return $impuestolist;

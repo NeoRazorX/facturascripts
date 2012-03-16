@@ -1,22 +1,22 @@
 {include="header"}
 
 <div class="rounded">
-   <form>
-      <h1>Nuevo:</h1>
+   <form action="{$fsc->url()}" method="post">
+      <h1>Nuevo impuesto:</h1>
       <div class="bloque">
-         Código: <input type="text" name="codimpueto" value=""/>
+         Código: <input type="text" name="codimpuesto" value=""/>
       </div>
       <div class="bloque">
          Descripción: <input type="text" name="descripcion" value=""/>
       </div>
       <div class="bloque">
-         %IVA: <input type="text" name="iva" value=""/>
+         %IVA: <input type="text" name="iva" value="0"/>
       </div>
       <div class="right"><input type="submit" value="nuevo impuesto"/></div>
    </form>
 </div>
 
-{loop="$fsc->all()"}
+{loop="$fsc->impuesto->all()"}
 <div class="rounded">
    <form>
       <h1>{$value->codimpuesto}</h1>

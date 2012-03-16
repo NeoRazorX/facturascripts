@@ -105,8 +105,7 @@ class linea_factura_cliente extends fs_model
       {
          foreach($lineas as $l)
          {
-            $lo = new linea_factura_cliente($l);
-            $linlist[] = $lo;
+            $linlist[] = new linea_factura_cliente($l);
          }
       }
       return $linlist;
@@ -245,8 +244,7 @@ class factura_cliente extends fs_model
       {
          foreach($facturas as $f)
          {
-            $fo = new factura_cliente($f);
-            $faclist[] = $fo;
+            $faclist[] = new factura_cliente($f);
          }
       }
       return $faclist;

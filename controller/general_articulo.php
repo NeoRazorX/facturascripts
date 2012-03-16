@@ -19,12 +19,13 @@
 
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 
 class general_articulo extends fs_controller
 {
    public $articulo;
    public $familia;
-   public $familias;
+   public $impuesto;
    
    public function __construct()
    {
@@ -35,14 +36,41 @@ class general_articulo extends fs_controller
    {
       $this->ppage = $this->page->get('general_articulos');
       
-      if(isset($_GET['ref']))
+      if( isset($_POST['referencia']) )
+      {
+         $this->page->title = $_POST['referencia'];
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_POST['referencia']);
+         $this->articulo->set_descripcion($_POST['descripcion']);
+         $this->articulo->codfamilia = $_POST['codfamilia'];
+         $this->articulo->codbarras = $_POST['codbarras'];
+         $this->articulo->equivalencia = $_POST['equivalencia'];
+         $this->articulo->destacado = isset($_POST['destacado']);
+         $this->articulo->bloqueado = isset($_POST['bloqueado']);
+         $this->articulo->controlstock = isset($_POST['controlstock']);
+         $this->articulo->secompra = isset($_POST['secompra']);
+         $this->articulo->sevende = isset($_POST['sevende']);
+         $this->articulo->set_pvp($_POST['pvp']);
+         $this->articulo->codimpuesto = $_POST['codimpuesto'];
+         $this->articulo->observaciones = $_POST['observaciones'];
+         $this->articulo->stockmin = $_POST['stockmin'];
+         $this->articulo->stockmax = $_POST['stockmax'];
+         if( $this->articulo->save() )
+            $this->new_message("Datos del articulo modificados correctamente");
+         else
+            $this->new_error_msg("¡Error al guardar el articulo!".$this->articulo->error_msg);
+      }
+      else if( isset($_GET['ref']) )
       {
          $this->page->title = $_GET['ref'];
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_GET['ref']);
-         
+      }
+      
+      if($this->articulo)
+      {
          $this->familia = $this->articulo->get_familia();
-         $this->familias = $this->familia->all();
+         $this->impuesto = new impuesto();
       }
    }
    

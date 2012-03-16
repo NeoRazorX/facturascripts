@@ -21,7 +21,7 @@
    </columna>
    <restriccion>
       <nombre>fs_access_pkey</nombre>
-      <consulta>fs_access_pkey PRIMARY KEY (fs_user,fs_page)</consulta>
+      <consulta>PRIMARY KEY (fs_user,fs_page)</consulta>
    </restriccion>
    <restriccion>
       <nombre>fs_access_user</nombre>

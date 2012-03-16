@@ -81,7 +81,6 @@ class fs_db
    /// devuelve un array con los nombres de las tablas de la base de datos
    public function list_tables()
    {
-      $resultado = array();
       if(self::$link)
       {
          $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
@@ -96,7 +95,10 @@ class fs_db
          }
          self::$t_selects++;
       }
-      return($resultado);
+      if($resultado)
+         return $resultado;
+      else
+         return array();
    }
    
    /// devuelve TRUE si la tabla existe

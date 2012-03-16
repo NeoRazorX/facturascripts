@@ -43,17 +43,29 @@
 
 {if condition="$fsc->query==''"}
 <div class="rounded">
-   <form>
-      <h1>Nuevo:</h1>
+   <form action="{$fsc->url()}" method="post">
+      <h1>Nuevo artículo:</h1>
       <div class="bloque">
          Referencia: <input type="text" name="referencia"/>
       </div>
       <div class="bloque">
          Familia:
          <select name="codfamilia">
-            {loop="$fsc->get_familias()"}
+            {loop="$fsc->familia->all()"}
             <option value="{$value->codfamilia}">{$value->descripcion}</option>
             {/loop}
+         </select>
+      </div>
+      <div class="bloque">
+         IVA:
+         <select name="codimpuesto">
+         {loop="$fsc->impuesto->all()"}
+            {if condition="$value->default"}
+            <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+            {else}
+            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+            {/if}
+         {/loop}
          </select>
       </div>
       <div class="right"><input type="submit" value="nuevo artículo"/></div>

@@ -21,15 +21,27 @@ require_once 'model/impuesto.php';
 
 class contabilidad_impuestos extends fs_controller
 {
+   public $impuesto;
+   
    public function __construct()
    {
       parent::__construct('contabilidad_impuestos', 'Impuestos', 'contabilidad', FALSE, TRUE);
    }
    
-   public function all()
+   protected function process()
    {
-      $impuesto = new impuesto();
-      return $impuesto->all();
+      $this->impuesto = new impuesto();
+      
+      if( isset($_POST['codimpuesto']) )
+      {
+         $this->impuesto->codimpuesto = $_POST['codimpuesto'];
+         $this->impuesto->descripcion = $_POST['descripcion'];
+         $this->impuesto->iva = $_POST['iva'];
+         if( $this->impuesto->save() )
+            $this->new_message("Impuesto guardado correctamente");
+         else
+            $this->new_error_msg("¡Error al guardar el impuesto!");
+      }
    }
 }
 

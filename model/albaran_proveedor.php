@@ -39,8 +39,8 @@ class linea_albaran_proveedor extends fs_model
       parent::__construct('lineasalbaranesprov');
       if($l)
       {
-         $this->idlinea = $l['idlinea'];
-         $this->idalbaran = $l['idalbaran'];
+         $this->idlinea = intval($l['idlinea']);
+         $this->idalbaran = intval($l['idalbaran']);
          $this->referencia = $l['referencia'];
          $this->descripcion = $l['descripcion'];
          $this->cantidad = floatval($l['cantidad']);
@@ -107,8 +107,7 @@ class linea_albaran_proveedor extends fs_model
       {
          foreach($lineas as $l)
          {
-            $lo = new linea_albaran_proveedor($l);
-            $linealist[] = $lo;
+            $linealist[] = new linea_albaran_proveedor($l);
          }
       }
       return $linealist;
@@ -236,8 +235,7 @@ class albaran_proveedor extends fs_model
       {
          foreach($albaranes as $a)
          {
-            $ao = new albaran_proveedor($a);
-            $albalist[] = $ao;
+            $albalist[] = new albaran_proveedor($a);
          }
       }
       return $albalist;

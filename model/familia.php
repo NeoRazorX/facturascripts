@@ -35,7 +35,7 @@ class familia extends fs_model
       }
       else
       {
-         $this->codfamilia = '';
+         $this->codfamilia = NULL;
          $this->descripcion = '';
       }
    }
@@ -91,13 +91,12 @@ class familia extends fs_model
    public function all()
    {
       $famlist = array();
-      $familias = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codfamilia ASC;");
+      $familias = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
       if($familias)
       {
          foreach($familias as $f)
          {
-            $fo = new familia($f);
-            $famlist[] = $fo;
+            $famlist[] = new familia($f);
          }
       }
       return $famlist;

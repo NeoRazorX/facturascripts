@@ -21,15 +21,27 @@ require_once 'model/serie.php';
 
 class contabilidad_series extends fs_controller
 {
+   public $serie;
+   
    public function __construct()
    {
       parent::__construct('contabilidad_series', 'Series', 'contabilidad', FALSE, TRUE);
    }
    
-   public function all()
+   protected function process()
    {
-      $serie = new serie();
-      return $serie->all();
+      $this->serie = new serie();
+      
+      if( isset($_POST['codserie']) )
+      {
+         $this->serie->codserie = $_POST['codserie'];
+         $this->serie->descripcion = $_POST['descripcion'];
+         $this->serie->siniva = ($_POST['siniva'] == 'TRUE');
+         if( $this->serie->save() )
+            $this->new_message("Serie guardada correctamente");
+         else
+            $this->new_error_msg("¡Imposible guardar serie!");
+      }
    }
 }
 

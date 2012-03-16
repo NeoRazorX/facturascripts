@@ -55,10 +55,10 @@ class empresa extends fs_model
       $e = $this->db->select("SELECT * FROM ".$this->table_name.";");
       if($e)
       {
-         $this->id = $e[0]['id'];
-         $this->stockpedidos = $e[0]['stockpedidos'];
-         $this->contintegrada = $e[0]['contintegrada'];
-         $this->recequivalencia = $e[0]['recequivalencia'];
+         $this->id = intval($e[0]['id']);
+         $this->stockpedidos = ($e[0]['stockpedidos'] == 't');
+         $this->contintegrada = ($e[0]['contintegrada'] == 't');
+         $this->recequivalencia = ($e[0]['recequivalencia'] == 't');
          $this->codserie = $e[0]['codserie'];
          $this->codcuentarem = $e[0]['codcuentarem'];
          $this->codalmacen = $e[0]['codalmacen'];
@@ -72,7 +72,7 @@ class empresa extends fs_model
          $this->codpais = $e[0]['codpais'];
          $this->apartado = $e[0]['apartado'];
          $this->provincia = $e[0]['provincia'];
-         $this->idprovincia = $e[0]['idprovincia'];
+         $this->idprovincia = intval($e[0]['idprovincia']);
          $this->ciudad = $e[0]['ciudad'];
          $this->codpostal = $e[0]['codpostal'];
          $this->logo = $e[0]['logo'];
@@ -84,9 +84,9 @@ class empresa extends fs_model
       }
       else
       {
-         $this->id = '';
+         $this->id = NULL;
          $this->stockpedidos = NULL;
-         $this->contintegrada = NULL;
+         $this->contintegrada = TRUE;
          $this->recequivalencia = NULL;
          $this->codserie = NULL;
          $this->codcuentarem = NULL;
@@ -94,7 +94,7 @@ class empresa extends fs_model
          $this->codpago = NULL;
          $this->coddivisa = NULL;
          $this->codejercicio = NULL;
-         $this->web = "http://";
+         $this->web = "http://code.google.com/p/facturascripts/";
          $this->email = '';
          $this->fax = '';
          $this->telefono = '';
@@ -120,7 +120,10 @@ class empresa extends fs_model
 
    protected function install()
    {
-      return '';
+      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codcuentarem,codalmacen,
+         codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,idprovincia,ciudad,codpostal,
+         logo,direccion,administrador,codedi,cifnif,nombre) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','');";
    }
    
    public function exists()

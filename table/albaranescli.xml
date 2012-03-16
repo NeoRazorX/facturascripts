@@ -22,9 +22,9 @@
    <columna><nombre>codpago</nombre><tipo>character varying(10)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>codpais</nombre><tipo>character varying(20)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>coddir</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>idfactura</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
+   <columna><nombre>idfactura</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codserie</nombre><tipo>character varying(2)</tipo><nulo>NO</nulo></columna>
-   <columna><nombre>idalbaran</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>nextval('albaranescli_idalbaran_seq'::regclass)</defecto></columna>
+   <columna><nombre>idalbaran</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
    <columna><nombre>direccion</nombre><tipo>character varying(100)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>totalirpf</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
    <columna><nombre>idprovincia</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>

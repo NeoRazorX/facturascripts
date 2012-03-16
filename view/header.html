@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <title>{$fsc->get_empresa_name()}/{$fsc->page->title}</title>
-   <link rel="stylesheet" type="text/css" media="screen" href="css/base.css"/>
+   <link rel="stylesheet" type="text/css" media="screen" href="css/{$fsc->css_file}"/>
    <script type="text/javascript" src="js/jquery.js"></script>
    <script type="text/javascript">
       function fs_select_folder(folder)
@@ -59,7 +59,7 @@
             </ul>
          </td>
       {/loop}
-         <td>&nbsp;</td>
+         <td></td>
          <td>
             <ul id="user_list" onclick="fs_hide_user_list()">
             {loop name="$fsc->user->all()"}

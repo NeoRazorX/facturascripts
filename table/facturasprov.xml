@@ -21,7 +21,7 @@
    <columna><nombre>codproveedor</nombre><tipo>character varying(6)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>idfacturarect</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
    <columna><nombre>numproveedor</nombre><tipo>character varying(20)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>idfactura</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>nextval('facturasprov_idfactura_seq'::regclass)</defecto></columna>
+   <columna><nombre>idfactura</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
    <columna><nombre>codigorect</nombre><tipo>character varying(12)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codserie</nombre><tipo>character varying(2)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>idasiento</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>

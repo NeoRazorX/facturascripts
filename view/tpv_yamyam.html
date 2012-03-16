@@ -1,0 +1,174 @@
+{include="header"}
+
+{if condition="$fsc->agente"}
+<script type="text/javascript">
+   var numlineas = 0;
+   function close_articulos(fam)
+   {
+      $("#sombra").hide();
+      $("#articulos_"+fam).hide();
+   }
+   function recalcular()
+   {
+      var tpv_total = 0;
+      var uds = 0;
+      var pvp = 0;
+      var iva = 0;
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            pvp = parseFloat( $("#pvp_"+i).val() );
+            iva = parseFloat( $("#iva_"+i).val() );
+            $("#total_"+i).html( Math.round( ((uds*pvp)+(uds*pvp*iva/100))*100 )/100 );
+            tpv_total += Math.round( ((uds*pvp)+(uds*pvp*iva/100))*100 )/100;
+         }
+      }
+      $("#tpv_total").html( (Math.round(tpv_total*100)/100) +" €");
+   }
+   function linea_sum_ud(num,value)
+   {
+      var udl = parseFloat( $("#cantidad_"+num).val() );
+      udl += value;
+      if(udl < 1)
+      {
+         $("#linea_"+num).remove();
+      }
+      else
+      {
+         $("#cantidad_"+num).val(udl);
+      }
+      recalcular();
+   }
+   function add_articulo(ref,pvp,iva,fam)
+   {
+      numlineas += 1;
+      $("#numlineas").val(numlineas);
+      $("#tpv_albaran").append("<tr id='linea_"+numlineas+"'><td>"+ref+"</td>\n\
+         <td align='center'>\n\
+         <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
+         <input type='hidden' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"'/>\n\
+         <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
+         <input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
+         <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
+         <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
+         </td><td align='right'>"+pvp+" €</td>\n\
+         <td align='right'><span id='total_"+numlineas+"'>"+pvp+"</span> €</td></tr>");
+      recalcular();
+      close_articulos(fam);
+   }
+   $(document).ready(function() {
+      {loop="$fsc->familia->all()"}
+      $("#fam_{$value->codfamilia}").click(function(event) {
+         $("#sombra").show();
+         $("#articulos_{$value->codfamilia}").css({
+            top: 50,
+            left: event.pageX
+         });
+         $("#articulos_{$value->codfamilia}").show();
+      });
+      {/loop}
+   });
+</script>
+
+<table width="100%">
+   <tr>
+      <td valign="top">
+         <ul class="tpv_familias">
+         {loop="$fsc->familia->all()"}
+            <li id="fam_{$value->codfamilia}">{$value->descripcion}</li>
+         {/loop}
+         </ul>
+      </td>
+      <td valign="top">
+         <div class="rounded">
+            <form name="form_tpv_albaran" action="{$fsc->url()}" method="post">
+               <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+               <div>
+                  <div class="tpv_total" id="tpv_total">0,00 €</div>
+                  <div class="bloque">
+                     Cliente:
+                     <select name="cliente">
+                     {loop="$fsc->cliente->all()"}
+                        <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="bloque">
+                     Ejercicio:
+                     <select name="ejercicio">
+                     {loop="$fsc->ejercicio->all()"}
+                        <option value="{$value->codejercicio}">{$value->nombre}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="bloque">
+                     Serie:
+                     <select name="serie">
+                     {loop="$fsc->serie->all()"}
+                        <option value="{$value->codserie}">{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="bloque">
+                     Forma de pago:
+                     <select name="forma_pago">
+                     {loop="$fsc->forma_pago->all()"}
+                        <option value="{$value->codpago}">{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="bloque">
+                     Divisa:
+                     <select name="divisa">
+                     {loop="$fsc->divisa->all()"}
+                        <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="bloque">
+                     Impresora: <input type="text" name="impresora" value="{$fsc->impresora}" size="4"/>
+                  </div>
+                  <div class="bloque">
+                     Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                  </div>
+               </div>
+               <table class="list" id="tpv_albaran">
+                  <tr>
+                     <th>Articulo</th>
+                     <th>Ud.</th>
+                     <th align="right">PVP</th>
+                     <th width="150" align="right">Total</th>
+                  </tr>
+               </table>
+               <div>
+                  <div class="right"><input type="submit" value="guardar"/></div>
+                  <textarea name="observaciones" cols="50"></textarea>
+                  <br/>
+               </div>
+            </form>
+         </div>
+      </td>
+   </tr>
+</table>
+
+<div class="sombra" id="sombra"></div>
+
+{loop="$fsc->familia->all()"}
+<div class="popup_articulos" id="articulos_{$value->codfamilia}">
+   <ul>
+      {loop="$value->get_articulos()"}
+      <li onclick="add_articulo('{$value->referencia}',{$value->pvp},{$value->get_iva()},'{$value->codfamilia}')">
+         {$value->referencia}<span>{$value->show_pvp()} €</span>
+      </li>
+      {/loop}
+      <li class="cancel" onclick="close_articulos('{$value->codfamilia}')">cancelar</li>
+   </ul>
+</div>
+{/loop}
+{else}
+   <div class="error">¡No tienes un agente asociado a tu <a href="{$fsc->user->url()}">usuario</a>!</div>
+{/if}
+
+{include="footer"}

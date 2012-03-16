@@ -103,8 +103,7 @@ class linea_factura_proveedor extends fs_model
       {
          foreach($lineas as $l)
          {
-            $lo = new linea_factura_proveedor($l);
-            $linlist[] = $lo;
+            $linlist[] = new linea_factura_proveedor($l);
          }
       }
       return $linlist;
@@ -243,8 +242,7 @@ class factura_proveedor extends fs_model
       {
          foreach($facturas as $f)
          {
-            $fo = new factura_proveedor($f);
-            $faclist[] = $fo;
+            $faclist[] = new factura_proveedor($f);
          }
       }
       return $faclist;

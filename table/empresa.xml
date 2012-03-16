@@ -13,7 +13,7 @@
    <columna><nombre>codalmacen</nombre><tipo>character varying(4)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codpago</nombre><tipo>character varying(10)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>coddivisa</nombre><tipo>character varying(3)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>codejercicio</nombre><tipo>character varying(4)</tipo><nulo>NO</nulo></columna>
+   <columna><nombre>codejercicio</nombre><tipo>character varying(4)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>web</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>email</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>fax</nombre><tipo>character varying(20)</tipo><nulo>YES</nulo></columna>
@@ -30,6 +30,6 @@
    <columna><nombre>codedi</nombre><tipo>character varying(17)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>cifnif</nombre><tipo>character varying(12)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>nombre</nombre><tipo>character varying(100)</tipo><nulo>NO</nulo></columna>
-   <columna><nombre>id</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>nextval('empresa_id_seq'::regclass)</defecto></columna>
+   <columna><nombre>id</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
    <restriccion><nombre>empresa_pkey</nombre><consulta>PRIMARY KEY (id)</consulta></restriccion>
 </tabla>

@@ -50,11 +50,11 @@ class agente extends fs_model
          $this->codpostal = $a['codpostal'];
          $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
-         $this->idprovincia = $a['idprovincia'];
+         $this->idprovincia = intval($a['idprovincia']);
          $this->ciudad = $a['ciudad'];
          $this->direccion = $a['direccion'];
          $this->porcomision = $a['porcomision'];
-         $this->irpf = $a['irpf'];
+         $this->irpf = floatval($a['irpf']);
          $this->dnicif = $a['dnicif'];
          $this->nombre = $a['nombre'];
          $this->apellidos = $a['apellidos'];
@@ -77,15 +77,19 @@ class agente extends fs_model
          $this->dnicif = '';
          $this->nombre = '';
          $this->apellidos = '';
-         $this->codagente = '';
+         $this->codagente = NULL;
       }
+   }
+   
+   public function get_fullname()
+   {
+      return $this->nombre." ".$this->apellidos;
    }
    
    public function url()
    {
       return "index.php?page=admin_agentes#".$this->codagente;
    }
-
 
    protected function install()
    {
@@ -135,8 +139,7 @@ class agente extends fs_model
       {
          foreach($agentes as $a)
          {
-            $aa = new agente($a);
-            $listagentes[] = $aa;
+            $listagentes[] = new agente($a);
          }
       }
       return $listagentes;

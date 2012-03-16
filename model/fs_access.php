@@ -74,8 +74,7 @@ class fs_access extends fs_model
       {
          foreach($access as $a)
          {
-            $ao = new fs_access($a);
-            $accesslist[] = $ao;
+            $accesslist[] = new fs_access($a);
          }
       }
       return $accesslist;

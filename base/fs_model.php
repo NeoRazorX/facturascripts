@@ -75,20 +75,19 @@ abstract class fs_model
    /// Esta función sirve para eliminar los datos del objeto de la base de datos
    abstract public function delete();
    
-   protected function bool2str($b)
+   protected function var2str($v)
    {
-      if($b)
-         return 'TRUE';
-      else
-         return 'FALSE';
-   }
-   
-   protected function null2str($b)
-   {
-      if($b == NULL)
+      if( is_null($v) )
          return 'NULL';
+      else if( is_bool($v) )
+      {
+         if($v)
+            return 'TRUE';
+         else
+            return 'FALSE';
+      }
       else
-         return $b;
+         return "'".$v."'";
    }
 
    /// obtiene las columnas y restricciones del fichero xml para una tabla

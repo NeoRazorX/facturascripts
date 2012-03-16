@@ -37,6 +37,7 @@ class fs_controller
    public $default_page;
    protected $menu;
    public $template;
+   public $css_file;
    public $custom_divtitle;
    
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
@@ -73,6 +74,8 @@ class fs_controller
          $this->default_page = FALSE;
       else if($_COOKIE['default_page'] == $this->page->name)
          $this->default_page = TRUE;
+      
+      $this->set_css_file();
       
       if($this->connected)
       {
@@ -276,7 +279,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.1';
+      return '0.9.2';
    }
    
    public function select_default_page()
@@ -304,6 +307,24 @@ class fs_controller
       }
    }
    
+   public function set_css_file()
+   {
+      if( isset($_GET['css_file']) )
+      {
+         $this->css_file = $_GET['css_file'];
+         setcookie('css_file', $_GET['css_file'], time()+FS_COOKIES_EXPIRE);
+      }
+      else if( isset($_COOKIE['css_file']) )
+      {
+         $this->css_file = $_COOKIE['css_file'];
+      }
+      else
+      {
+         $this->css_file = 'base.css';
+      }
+   }
+
+
    public function is_admin_page()
    {
       return $this->admin_page;

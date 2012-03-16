@@ -31,10 +31,26 @@ class general_cliente extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_clientes');
+      $this->cliente = new cliente();
       
-      if(isset($_GET['cod']))
+      if( isset($_POST['codcliente']) )
       {
-         $this->cliente = new cliente();
+         $this->cliente = $this->cliente->get( $_POST['codcliente'] );
+         $this->cliente->nombre = $_POST['nombre'];
+         $this->cliente->nombrecomercial = $_POST['nombrecomercial'];
+         $this->cliente->cifnif = $_POST['cifnif'];
+         $this->cliente->telefono1 = $_POST['telefono1'];
+         $this->cliente->telefono2 = $_POST['telefono2'];
+         $this->cliente->fax = $_POST['fax'];
+         $this->cliente->web = $_POST['web'];
+         $this->cliente->email = $_POST['email'];
+         if( $this->cliente->save() )
+            $this->new_message("Datos del cliente modificados correctamente");
+         else
+            $this->new_error_msg("¡Imposible modificar los datos del cliente!".$this->cliente->error_msg);
+      }
+      else if( isset($_GET['cod']) )
+      {
          $this->cliente = $this->cliente->get($_GET['cod']);
          $this->page->title = $_GET['cod'];
       }

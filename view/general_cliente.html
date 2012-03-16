@@ -3,7 +3,8 @@
 {if condition="$fsc->cliente"}
 <div class="rounded">
    <h1>{$fsc->cliente->nombre}</h1>
-   <form>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}"/>
       </div>

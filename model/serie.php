@@ -25,6 +25,7 @@ class serie extends fs_model
    public $descripcion;
    public $siniva;
    public $irpf;
+   public $idcuenta;
    
    public function __construct($s=FALSE)
    {
@@ -33,8 +34,9 @@ class serie extends fs_model
       {
          $this->codserie = $s['codserie'];
          $this->descripcion = $s['descripcion'];
-         $this->siniva = $s['siniva'];
+         $this->siniva = ($s['siniva'] == 't');
          $this->irpf = floatval($s['irpf']);
+         $this->idcuenta = floatval($s['idcuenta']);
       }
       else
       {
@@ -42,6 +44,7 @@ class serie extends fs_model
          $this->descripcion = '';
          $this->siniva = FALSE;
          $this->irpf = 0;
+         $this->idcuenta = NULL;
       }
    }
    
@@ -50,10 +53,19 @@ class serie extends fs_model
       return 'index.php?page=contabilidad_series#'.$this->codserie;
    }
 
-
    protected function install()
    {
-      return '';
+      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
+            VALUES ('A','SERIE A',FALSE,'0',NULL);";
+   }
+   
+   public function get($cod)
+   {
+      $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = '".$cod."';");
+      if($serie)
+         return new serie($serie[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -63,7 +75,19 @@ class serie extends fs_model
    
    public function save()
    {
-      
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+            siniva = ".$this->var2str($this->siniva).", irpf = ".$this->var2str($this->irpf).",
+            idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = '".$this->codserie."';";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
+            VALUES (".$this->var2str($this->codserie).",".$this->var2str($this->descripcion).",".$this->var2str($this->siniva).",
+            ".$this->var2str($this->irpf).",".$this->var2str($this->idcuenta).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -79,8 +103,7 @@ class serie extends fs_model
       {
          foreach($series as $s)
          {
-            $so = new serie($s);
-            $serielist[] = $so;
+            $serielist[] = new serie($s);
          }
       }
       return $serielist;

@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <title>{$fsc->get_empresa_name()}</title>
-   <link rel="stylesheet" type="text/css" media="screen" href="css/base.css"/>
+   <link rel="stylesheet" type="text/css" media="screen" href="css/{$fsc->css_file}"/>
    <script type="text/javascript" src="js/jquery.js"></script>
    <script type="text/javascript">
       $(document).ready(function() {
@@ -53,12 +53,20 @@
       </form>
    </div>
    <div class='copyright'>
-      <i><a target="_Blank" href='http://code.google.com/p/facturascripts/' target="_Blank">FacturaScripts</a>
-      es un software libre bajo licencia <a href='COPYING' target="_Blank">GNU/AGPL</a></i> |
-      Tiempo de ejecución: {$fsc->duration()} |
-      Consultas: {$fsc->selects()} |
-      Transacciones: {$fsc->transactions()} |
-      <a target="_Blank" href="http://www.kelinux.net/community/facturascripts">Foro</a>
+      <table>
+         <tr>
+            <td class="left">
+               Tiempo de ejecución: {$fsc->duration()} |
+               Consultas: {$fsc->selects()} |
+               Transacciones: {$fsc->transactions()}
+            </td>
+            <td class="right">
+               <i><a target="_Blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
+               es un software libre bajo licencia <a href='COPYING' target="_Blank">GNU/AGPL</a></i> |
+               <a target="_Blank" href="http://www.kelinux.net/community/facturascripts">Foro</a>
+            </td>
+         </tr>
+      </table>
    </div>
 </body>
 </html>

@@ -103,8 +103,7 @@ class proveedor extends fs_model
       {
          foreach($proveedores as $p)
          {
-            $po = new proveedor($p);
-            $provelist[] = $po;
+            $provelist[] = new proveedor($p);
          }
       }
       return $provelist;

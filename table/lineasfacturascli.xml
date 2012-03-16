@@ -13,7 +13,7 @@
    <columna><nombre>cantidad</nombre><tipo>double precision</tipo><nulo>NO</nulo></columna>
    <columna><nombre>codimpuesto</nombre><tipo>character varying(10)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>pvpunitario</nombre><tipo>double precision</tipo><nulo>NO</nulo></columna>
-   <columna><nombre>idlinea</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>nextval('lineasfacturascli_idlinea_seq'::regclass)</defecto></columna>
+   <columna><nombre>idlinea</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
    <columna><nombre>idfactura</nombre><tipo>integer</tipo><nulo>NO</nulo></columna>
    <columna><nombre>idalbaran</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
    <columna><nombre>descripcion</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>

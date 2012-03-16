@@ -21,15 +21,29 @@ require_once 'model/ejercicio.php';
 
 class contabilidad_ejercicios extends fs_controller
 {
+   public $ejercicio;
+   
    public function __construct()
    {
       parent::__construct('contabilidad_ejercicios', 'Ejercicios', 'contabilidad', FALSE, TRUE);
    }
    
-   public function all()
+   protected function process()
    {
-      $ee = new ejercicio();
-      return $ee->all();
+      $this->ejercicio = new ejercicio();
+      
+      if( isset($_POST['codejercicio']) )
+      {
+         $this->ejercicio->codejercicio = $_POST['codejercicio'];
+         $this->ejercicio->nombre = $_POST['nombre'];
+         $this->ejercicio->fechainicio = $_POST['fechainicio'];
+         $this->ejercicio->fechafin = $_POST['fechafin'];
+         $this->ejercicio->estado = $_POST['estado'];
+         if( $this->ejercicio->save() )
+            $this->new_message("Ejercicio guardado correctamente");
+         else
+            $this->new_error_msg("¡Imposible guardar el ejercicio!");
+      }
    }
 }
 

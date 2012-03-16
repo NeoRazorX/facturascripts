@@ -20,6 +20,7 @@
 require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 
 class general_articulos extends fs_controller
 {
@@ -27,6 +28,8 @@ class general_articulos extends fs_controller
    public $query;
    public $offset;
    private $cache;
+   public $impuesto;
+   public $familia;
 
    public function __construct()
    {
@@ -38,7 +41,9 @@ class general_articulos extends fs_controller
       $this->custom_divtitle = TRUE;
       
       $this->cache = new fs_cache();
-      $articulos = new articulo();
+      $articulo = new articulo();
+      $this->familia = new familia();
+      $this->impuesto = new impuesto();
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -47,13 +52,48 @@ class general_articulos extends fs_controller
       
       if( isset($_GET['text']) )
       {
-         $this->resultados = $articulos->search($_GET['text'], '', $this->offset);
+         $this->resultados = $articulo->search($_GET['text'], '', $this->offset);
          $this->query = $_GET['text'];
          $this->query2history();
       }
+      else if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
+      {
+         $this->resultados = $articulo->all($this->offset);
+         $this->query = '';
+         
+         $articulo->set_referencia($_POST['referencia']);
+         $articulo->descripcion = $_POST['referencia'];
+         $articulo->codfamilia = $_POST['codfamilia'];
+         $articulo->codimpuesto = $_POST['codimpuesto'];
+         if( $articulo->save() )
+         {
+            $imp = $this->impuesto->get($_POST['codimpuesto']);
+            if($imp)
+               $imp->set_default();
+            header('location: '.$articulo->url());
+         }
+         else
+         {
+            $this->new_error_msg("¡Error al crear el articulo!".$articulo->error_msg);
+         }
+      }
+      else if( isset($_GET['delete']) )
+      {
+         $this->resultados = $articulo->all($this->offset);
+         $this->query = '';
+         
+         $art = $articulo->get($_GET['delete']);
+         if($art)
+         {
+            if( $art->delete() )
+               $this->new_message("Articulo ".$art->referencia." eliminado correctamente.");
+            else
+               $this->new_error_msg("¡Error al eliminarl el articulo!".$art->error_msg);
+         }
+      }
       else
       {
-         $this->resultados = $articulos->all($this->offset);
+         $this->resultados = $articulo->all($this->offset);
          $this->query = '';
       }
    }
@@ -103,12 +143,6 @@ class general_articulos extends fs_controller
          return $aux;
       else
          return array();
-   }
-   
-   public function get_familias()
-   {
-      $fam = new familia();
-      return $fam->all();
    }
 }
 

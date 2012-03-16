@@ -37,11 +37,11 @@ class ejercicio extends fs_model
       parent::__construct('ejercicios');
       if($e)
       {
-         $this->idasientocierre = $e['idasientocierre'];
-         $this->idasientopyg = $e['idasientopyg'];
-         $this->idasientoapertura = $e['idasientoapertura'];
+         $this->idasientocierre = intval($e['idasientocierre']);
+         $this->idasientopyg = intval($e['idasientopyg']);
+         $this->idasientoapertura = intval($e['idasientoapertura']);
          $this->plancontable = $e['plancontable'];
-         $this->longsubcuenta = $e['longsubcuenta'];
+         $this->longsubcuenta = intval($e['longsubcuenta']);
          $this->estado = $e['estado'];
          $this->fechafin = $e['fechafin'];
          $this->fechainicio = $e['fechainicio'];
@@ -53,11 +53,11 @@ class ejercicio extends fs_model
          $this->idasientocierre = NULL;
          $this->idasientopyg = NULL;
          $this->idasientoapertura = NULL;
-         $this->plancontable = NULL;
+         $this->plancontable = '08';
          $this->longsubcuenta = NULL;
-         $this->estado = NULL;
-         $this->fechafin = NULL;
-         $this->fechainicio = NULL;
+         $this->estado = 'ABIERTO';
+         $this->fechafin = Date('31-11-Y');
+         $this->fechainicio = Date('1-1-Y');
          $this->nombre = '';
          $this->codejercicio = NULL;
       }
@@ -75,17 +75,35 @@ class ejercicio extends fs_model
    
    public function exists()
    {
-      
+      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
    }
    
    public function save()
    {
-      
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+            fechainicio = ".$this->var2str($this->fechafin).", fechafin = ".$this->var2str($this->fechafin).",
+            estado = ".$this->var2str($this->estado).", logsubcuenta = ".$this->var2str($this->longsubcuenta).",
+            plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
+            idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
+            WHERE codejercicio = '".$this->codejercicio."';";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
+            idasientoapertura,idasientopyg,idasientocierre) VALUES (".$this->var2str($this->codejercicio).",".$this->var2str($this->nombre).",
+            ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechainicio).",".$this->var2str($this->estado).",
+            ".$this->var2str($this->longsubcuenta).",".$this->var2str($this->plancontable).",
+            ".$this->var2str($this->idasientoapertura).",".$this->var2str($this->idasientopyg).",
+            ".$this->var2str($this->idasientocierre).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
    }
    
    public function all()
@@ -96,16 +114,15 @@ class ejercicio extends fs_model
       {
          foreach($ejercicios as $e)
          {
-            $eo = new ejercicio($e);
-            $listae[] = $eo;
+            $listae[] = new ejercicio($e);
          }
       }
       return $listae;
    }
    
-   public function get($cod='')
+   public function get($cod)
    {
-      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
+      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$cod."';");
       if($ejercicio)
          return new ejercicio($ejercicio[0]);
       else
