@@ -174,6 +174,7 @@ class fs_controller
    {
       setcookie('user', '', time()-FS_COOKIES_EXPIRE);
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
+      setcookie('empresa', '', time()-FS_COOKIES_EXPIRE);
    }
    
    public function duration()

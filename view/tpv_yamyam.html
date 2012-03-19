@@ -50,9 +50,9 @@
          <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
          <input type='hidden' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"'/>\n\
          <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
-         <input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
+         <input type='button' value='  -  ' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
          <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
-         <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
+         <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
          </td><td align='right'>"+pvp+" €</td>\n\
          <td align='right'><span id='total_"+numlineas+"'>"+pvp+"</span> €</td></tr>");
       recalcular();
@@ -160,7 +160,7 @@
    <ul>
       {loop="$value->get_articulos()"}
       <li onclick="add_articulo('{$value->referencia}',{$value->pvp},{$value->get_iva()},'{$value->codfamilia}')">
-         {$value->referencia}<span>{$value->show_pvp()} €</span>
+         {$value->referencia}<span>{$value->show_pvp_iva()} €</span>
       </li>
       {/loop}
       <li class="cancel" onclick="close_articulos('{$value->codfamilia}')">cancelar</li>

@@ -146,8 +146,6 @@ class tpv_yamyam extends fs_controller
          fwrite($file, $linea);
          $linea = $this->center_text($empresa->direccion . " - " . $empresa->ciudad) . "\n";
          fwrite($file, $linea);
-         $linea = $this->center_text("Tel: " . $empresa->telefono) . "\n";
-         fwrite($file, $linea);
          $linea = $this->center_text("CIF: " . $empresa->cifnif) . "\n\n";
          fwrite($file, $linea);
          fclose($file);
@@ -156,18 +154,16 @@ class tpv_yamyam extends fs_controller
       if( file_exists("/tmp/ticket.txt") )
       {
          if($this->impresora)
-         {
-            shell_exec("cat /tmp/ticket.txt | lp -d ".$this->impresora);
-            shell_exec("echo '\x1D\x56\x1' | lp -d ".$this->impresora);
-            shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp -d ".$this->impresora);
-         }
+            $imp = " -d ".$this->impresora;
          else
-         {
-            shell_exec("cat /tmp/ticket.txt | lp");
-            shell_exec("echo '\x1D\x56\x1' | lp");
-            shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp");
-         }
-         unlink("/tmp/ticket.txt");
+            $imp = "";
+         
+         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+         shell_exec("echo '\x1D\x56\x1' | lp".$imp); /// corta
+         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+         shell_exec("echo '\x1D\x56\x1' | lp".$imp); /// corta
+         shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
+         unlink("/tmp/ticket.txt"); /// borra el ticket
       }
    }
    

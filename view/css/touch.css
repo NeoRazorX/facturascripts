@@ -1,5 +1,10 @@
 @import url("base.css");
 
+input, select, textarea {
+   padding: 5px;
+   font-size: 16px;
+}
+
 table.main_menu {
    position: absolute;
    top: 0px;
@@ -76,7 +81,7 @@ div.popup_articulos {
    position: fixed;
    top: 50px;
    left: 50px;
-   max-height: 500px;
+   max-width: 75%;
    overflow: auto;
    background-color: white;
    border: 3px double #333333;
@@ -86,21 +91,20 @@ div.popup_articulos {
 div.popup_articulos ul {
    list-style: none;
    font-size: 20px;
-   padding: 5px;
-   margin: 5px;
+   padding: 0px;
+   margin: 0px;
 }
 
 div.popup_articulos ul li {
+   display: inline-block;
+   width: 280px;
    padding: 5px;
-   margin-top: 0px;
-   margin-bottom: 20px;
+   margin: 10px;
    border: 1px outset #333333;
    background-color: #FFFAA6;
 }
 
 div.popup_articulos ul li.cancel {
-   margin-top: 30px;
-   margin-bottom: 0px;
    background-color: #B14E4E;
    color: white;
    text-align: center;
@@ -111,9 +115,9 @@ div.popup_articulos ul li.cancel {
 div.popup_articulos ul li:hover {
    cursor: pointer;
    background-color: #F9F271;
+   color: black;
 }
 
 div.popup_articulos ul li span {
    float: right;
-   padding-left: 30px;
 }

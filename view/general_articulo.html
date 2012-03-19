@@ -88,6 +88,7 @@
             </select>
          </div>
          <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5"/></div>
+         <div class="bloque">PVP+IVA ({$fsc->articulo->show_pvp_iva()}): <input type="text" name="pvp_iva" value="" size="5"/></div>
          <div class="bloque">Actualizado: {$fsc->articulo->show_factualizado()}</div>
       </div>
       <div>Observaciones:<br/><textarea name="observaciones" cols="60">{$fsc->articulo->observaciones}</textarea></div>

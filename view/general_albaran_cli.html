@@ -22,7 +22,8 @@
          Ejercicio: {$fsc->albaran->codejercicio}
       </div>
       <div class="bloque">
-         Fecha: <input type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
+         Fecha: <input type="text" name="fecha" value="{$fsc->albaran->fecha}" size="8"/>
+         Hora: <input type="text" name="hora" value="{$fsc->albaran->hora}" size="6"/>
       </div>
       <div class="bloque">
          Cliente: <a href="index.php?page=general_cliente&cod={$fsc->albaran->codcliente}">{$fsc->albaran->nombrecliente}</a>

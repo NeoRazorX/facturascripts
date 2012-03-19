@@ -168,6 +168,7 @@ class albaran_cliente extends fs_model
    public $ciudad;
    public $apartado;
    public $fecha;
+   public $hora;
    public $neto;
    public $total;
    public $totaliva;
@@ -208,6 +209,7 @@ class albaran_cliente extends fs_model
          $this->ciudad = $a['ciudad'];
          $this->apartado = $a['apartado'];
          $this->fecha = $a['fecha'];
+         $this->hora = $a['hora'];
          $this->neto = floatval($a['neto']);
          $this->total = floatval($a['total']);
          $this->totaliva = floatval($a['totaliva']);
@@ -245,6 +247,7 @@ class albaran_cliente extends fs_model
          $this->ciudad = '';
          $this->apartado = '';
          $this->fecha = Date('j-n-Y');
+         $this->hora = Date('H:i:s');
          $this->neto = 0;
          $this->total = 0;
          $this->totaliva = 0;
@@ -269,6 +272,11 @@ class albaran_cliente extends fs_model
    public function show_fecha()
    {
       return Date('j-n-Y', strtotime($this->fecha));
+   }
+   
+   public function show_hora()
+   {
+      return Date('H:i:s', strtotime($this->hora));
    }
    
    public function url()
@@ -323,7 +331,7 @@ class albaran_cliente extends fs_model
             numero2 = ".$this->var2str($this->numero2).", nombrecliente = ".$this->var2str($this->nombrecliente).",
             cifnif = ".$this->var2str($this->cifnif).", direccion = ".$this->var2str($this->direccion).",
             ciudad = ".$this->var2str($this->ciudad).", apartado = ".$this->var2str($this->apartado).",
-            fecha = ".$this->var2str($this->fecha).", neto = ".$this->var2str($this->neto).",
+            fecha = ".$this->var2str($this->fecha).", hora = ".$this->var2str($this->hora).", neto = ".$this->var2str($this->neto).",
             total = ".$this->var2str($this->total).", totaliva = ".$this->var2str($this->totaliva).",
             totaleuros = ".$this->var2str($this->totaleuros).", irpf = ".$this->var2str($this->irpf).",
             totalirpf = ".$this->var2str($this->totalirpf).", porcomision = ".$this->var2str($this->porcomision).",
@@ -338,14 +346,14 @@ class albaran_cliente extends fs_model
          $this->new_codigo();
          $sql = "INSERT INTO ".$this->table_name." (idalbaran,idfactura,codigo,codagente,codserie,codejercicio,codcliente,
             codpago,coddivisa,codalmacen,codpais,coddir,codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,apartado,
-            fecha,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,
+            fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,
             revisado,ptefactura) VALUES (".$this->idalbaran.",".$this->var2str($this->idfactura).",".$this->var2str($this->codigo).",
             ".$this->var2str($this->codagente).",".$this->var2str($this->codserie).",".$this->var2str($this->codejercicio).",
             ".$this->var2str($this->codcliente).",".$this->var2str($this->codpago).",".$this->var2str($this->coddivisa).",
             ".$this->var2str($this->codalmacen).",".$this->var2str($this->codpais).",".$this->var2str($this->coddir).",
             ".$this->var2str($this->codpostal).",".$this->var2str($this->numero).",".$this->var2str($this->numero2).",
             ".$this->var2str($this->nombrecliente).",".$this->var2str($this->cifnif).",".$this->var2str($this->direccion).",
-            ".$this->var2str($this->ciudad).",".$this->var2str($this->apartado).",".$this->var2str($this->fecha).",
+            ".$this->var2str($this->ciudad).",".$this->var2str($this->apartado).",".$this->var2str($this->fecha).",".$this->var2str($this->hora).",
             ".$this->var2str($this->neto).",".$this->var2str($this->total).",".$this->var2str($this->totaliva).",
             ".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",".$this->var2str($this->totalirpf).",
             ".$this->var2str($this->porcomision).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",

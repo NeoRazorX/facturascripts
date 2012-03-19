@@ -188,6 +188,14 @@ class articulo extends fs_model
       return number_format($this->pvp, 2, ',', '.');
    }
    
+   public function show_pvp_iva($coma=TRUE)
+   {
+      if($coma)
+         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, ',', '.');
+      else
+         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', '');
+   }
+   
    public function show_factualizado()
    {
       return Date('j-n-Y', strtotime($this->factualizado));
@@ -255,7 +263,16 @@ class articulo extends fs_model
    public function set_pvp($p)
    {
       $this->pvp_ant = $this->pvp;
-      $this->pvp = floatval($p);
+      $this->pvp = round(floatval($p) * 100) / 100;
+      $this->factualizado = Date('j-n-Y');
+   }
+   
+   public function set_pvp_iva($p)
+   {
+      $this->pvp_ant = $this->pvp;
+      $pvpi = floatval($p);
+      $iva = $this->get_iva();
+      $this->pvp = round((100*$pvpi)/(100+$iva) * 100) / 100;
       $this->factualizado = Date('j-n-Y');
    }
 

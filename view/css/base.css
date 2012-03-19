@@ -113,6 +113,12 @@ table.main_menu th {
    padding: 8px;
 }
 
+table.main_menu th.menu,
+table.main_menu th.menu_s,
+table.main_menu th.user {
+   width: 180px;
+}
+
 table.main_menu th.menu_s {
    background-color: #333333;
 }

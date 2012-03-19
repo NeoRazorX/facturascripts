@@ -50,7 +50,10 @@ class general_articulo extends fs_controller
          $this->articulo->controlstock = isset($_POST['controlstock']);
          $this->articulo->secompra = isset($_POST['secompra']);
          $this->articulo->sevende = isset($_POST['sevende']);
-         $this->articulo->set_pvp($_POST['pvp']);
+         if( $_POST['pvp_iva'] != '' )
+            $this->articulo->set_pvp_iva($_POST['pvp_iva']);
+         else
+            $this->articulo->set_pvp($_POST['pvp']);
          $this->articulo->codimpuesto = $_POST['codimpuesto'];
          $this->articulo->observaciones = $_POST['observaciones'];
          $this->articulo->stockmin = $_POST['stockmin'];
