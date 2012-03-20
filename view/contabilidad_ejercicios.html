@@ -4,7 +4,8 @@
    <form action="{$fsc->url()}" method="post">
       <h1>Nuevo ejercicio:</h1>
       <div class="bloque">
-         Código: <input type="text" name="codejercicio"/>
+         Código:
+         <input type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" size="4" maxlength="4"/>
       </div>
       <div class="bloque">
          Nombre: <input type="text" name="nombre"/>

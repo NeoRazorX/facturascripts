@@ -21,6 +21,8 @@ require_once 'model/agente.php';
 
 class admin_agentes extends fs_controller
 {
+   public $agente;
+   
    public function __construct()
    {
       parent::__construct('admin_agentes', 'Agentes', 'admin', TRUE, TRUE);
@@ -28,30 +30,25 @@ class admin_agentes extends fs_controller
    
    protected function process()
    {
+      $this->agente = new agente();
+      
       if( isset($_POST['scodagente']) )
       {
-         $agente = new agente();
-         $agente->codagente = $_POST['scodagente'];
-         $agente->nombre = $_POST['snombre'];
-         $agente->apellidos = $_POST['sapellidos'];
-         $agente->dnicif = $_POST['sdnicif'];
-         $agente->telefono = $_POST['stelefono'];
-         $agente->email = $_POST['semail'];
-         if( $agente->save() )
+         $this->agente->codagente = $_POST['scodagente'];
+         $this->agente->nombre = $_POST['snombre'];
+         $this->agente->apellidos = $_POST['sapellidos'];
+         $this->agente->dnicif = $_POST['sdnicif'];
+         $this->agente->telefono = $_POST['stelefono'];
+         $this->agente->email = $_POST['semail'];
+         if( $this->agente->save() )
             $this->new_message("Datos del agente actualizados");
       }
       else if( isset($_GET['delete']) )
       {
-         $agente = new agente();
-         $agente = $agente->get($_GET['delete']);
-         $agente->delete();
+         $this->agente = new agente();
+         $this->agente = $this->agente->get($_GET['delete']);
+         $this->agente->delete();
       }
-   }
-
-   public function all()
-   {
-      $a = new agente();
-      return $a->all();
    }
 }
 

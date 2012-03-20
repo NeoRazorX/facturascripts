@@ -63,6 +63,15 @@ class ejercicio extends fs_model
       }
    }
    
+   public function get_new_codigo()
+   {
+      $cod = $this->db->select("SELECT MAX(codejercicio) as cod FROM ".$this->table_name.";");
+      if($cod)
+         return sprintf('%04s', (1 + intval($cod[0]['cod'])));
+      else
+         return '0001';
+   }
+   
    public function url()
    {
       return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;

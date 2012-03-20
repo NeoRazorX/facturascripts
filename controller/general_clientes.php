@@ -22,6 +22,7 @@ require_once 'model/serie.php';
 
 class general_clientes extends fs_controller
 {
+   public $cliente;
    public $offset;
    public $resultados;
    public $serie;
@@ -33,6 +34,7 @@ class general_clientes extends fs_controller
    
    protected function process()
    {
+      $this->cliente = new cliente();
       $this->serie = new serie();
       
       if( isset($_GET['offset']) )
@@ -40,18 +42,17 @@ class general_clientes extends fs_controller
       else
          $this->offset = 0;
       
-      $cliente = new cliente();
-      $this->resultados = $cliente->all($this->offset);
+      $this->resultados = $this->cliente->all($this->offset);
       
       if( isset($_POST['codcliente']) )
       {
-         $cliente->codcliente = $_POST['codcliente'];
-         $cliente->nombre = $_POST['nombre'];
-         $cliente->nombrecomercial = $_POST['nombre'];
-         $cliente->cifnif = $_POST['cifnif'];
-         $cliente->codserie = $_POST['codserie'];
-         if( $cliente->save() )
-            header('location: '.$cliente->url());
+         $this->cliente->codcliente = $_POST['codcliente'];
+         $this->cliente->nombre = $_POST['nombre'];
+         $this->cliente->nombrecomercial = $_POST['nombre'];
+         $this->cliente->cifnif = $_POST['cifnif'];
+         $this->cliente->codserie = $_POST['codserie'];
+         if( $this->cliente->save() )
+            header('location: '.$this->cliente->url());
          else
             $this->new_error_msg("¡Imposible guardar los datos del cliente!");
       }

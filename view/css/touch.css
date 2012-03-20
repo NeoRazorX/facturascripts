@@ -15,6 +15,10 @@ table.main_menu {
    font-size: 17px;
 }
 
+table.main_menu td div ul {
+   font-size: 17px;
+}
+
 div.main_div {
    font-size: 15px;
 }
@@ -28,7 +32,7 @@ ul.tpv_familias {
 }
 
 ul.tpv_familias li {
-   padding: 5px;
+   padding: 8px;
    margin-top: 15px;
    margin-bottom: 15px;
    background-color: #FFFAA6;
@@ -81,7 +85,7 @@ div.popup_articulos {
    position: fixed;
    top: 50px;
    left: 50px;
-   max-width: 75%;
+   max-width: 80%;
    overflow: auto;
    background-color: white;
    border: 3px double #333333;
@@ -97,8 +101,8 @@ div.popup_articulos ul {
 
 div.popup_articulos ul li {
    display: inline-block;
-   width: 280px;
-   padding: 5px;
+   width: 310px;
+   padding: 8px;
    margin: 10px;
    border: 1px outset #333333;
    background-color: #FFFAA6;

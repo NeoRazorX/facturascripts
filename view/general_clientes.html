@@ -4,7 +4,8 @@
    <h1>Nuevo cliente:</h1>
    <form action="{$fsc->url()}" method="post">
       <div class="bloque">
-         Código: <input type="text" name="codcliente" value="000000" size="6" maxlegth="6"/>
+         Código:
+         <input type="text" name="codcliente" value="{$fsc->cliente->get_new_codigo()}" size="6" maxlegth="6"/>
       </div>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="" size="30"/>

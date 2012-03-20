@@ -9,7 +9,7 @@
       function fs_select_folder(folder)
       {
          $('#user_list').hide();
-         $('#main_menu ul').each(function() {
+         $('#main_menu div').each(function() {
             $(this).hide();
          });
          if(folder != '')
@@ -27,6 +27,9 @@
       $(document).ready(function() {
          $('#exit').click(function() {
             window.location.href = "index.php?logout=TRUE&nlogin={$fsc->user->nick}";
+         });
+         $('div.message').click(function() {
+            $(this).hide();
          });
       });
    </script>
@@ -48,26 +51,32 @@
       <tr onclick="fs_select_folder('')">
       {loop="$fsc->folders()"}
          <td>
-            <ul id="folder_{$value}">
-            {loop="$fsc->pages($value)"}
-               {if condition="$value->name == $fsc->page->name"}
-               <li class="selected"><a href="{$value->url()}">{$value->title}</a></li>
-               {else}
-               <li><a href="{$value->url()}">{$value->title}</a></li>
-               {/if}
-            {/loop}
+            <div id="folder_{$value}">
+               <img src="img/flecha_submenu.png" alt="*"/>
+               <ul>
+               {loop="$fsc->pages($value)"}
+                  {if condition="$value->name == $fsc->page->name"}
+                  <li class="selected"><a href="{$value->url()}">{$value->title}</a></li>
+                  {else}
+                  <li><a href="{$value->url()}">{$value->title}</a></li>
+                  {/if}
+               {/loop}
             </ul>
+            </div>
          </td>
       {/loop}
          <td></td>
          <td>
-            <ul id="user_list" onclick="fs_hide_user_list()">
-            {loop name="$fsc->user->all()"}
-               {if condition="$value->nick != $fsc->user->nick"}
-               <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
-               {/if}
-            {/loop}
-            </ul>
+            <div id="user_list" onclick="fs_hide_user_list()">
+               <img src="img/flecha_submenu.png" alt="*"/>
+               <ul>
+               {loop name="$fsc->user->all()"}
+                  {if condition="$value->nick != $fsc->user->nick"}
+                  <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+                  {/if}
+               {/loop}
+               </ul>
+            </div>
          </td>
       </tr>
    </table>

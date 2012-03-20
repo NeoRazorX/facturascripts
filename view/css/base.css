@@ -152,14 +152,24 @@ table.main_menu td {
    padding: 0px;
 }
 
-table.main_menu td ul {
+table.main_menu td div {
    display: none;
+   text-align: center;
+   font-size: 12px;
+}
+
+table.main_menu td div img {
+   vertical-align: bottom;
+}
+
+table.main_menu td div ul {
+   font-size: 13px;
    background-color: #333333;
    color: white;
-   border: 2px solid #4F87E2;
    margin: 0px;
-   padding: 1px;
+   padding: 2px;
    list-style-type: none;
+   text-align: left;
 }
 
 table.main_menu td ul li {
@@ -171,7 +181,7 @@ table.main_menu td ul li.selected {
    border-bottom: 1px dotted white;
 }
 
-table.main_menu td ul#user_list li {
+table.main_menu td div#user_list ul li {
    text-align: right;
 }
 

@@ -86,6 +86,15 @@ class agente extends fs_model
       return $this->nombre." ".$this->apellidos;
    }
    
+   public function get_new_codigo()
+   {
+      $cod = $this->db->select("SELECT MAX(codagente) as cod FROM ".$this->table_name.";");
+      if($cod)
+         return 1 + intval($cod[0]['cod']);
+      else
+         return 1;
+   }
+   
    public function url()
    {
       return "index.php?page=admin_agentes#".$this->codagente;

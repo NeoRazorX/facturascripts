@@ -21,6 +21,8 @@ require_once 'model/almacen.php';
 
 class admin_almacenes extends fs_controller
 {
+   public $almacen;
+   
    public function __construct()
    {
       parent::__construct('admin_almacenes', 'Almacenes', 'admin', TRUE, TRUE);
@@ -28,31 +30,28 @@ class admin_almacenes extends fs_controller
    
    protected function process()
    {
+      $this->almacen = new almacen();
+      
       if( isset($_POST['scodalmacen']) )
       {
-         $a = new almacen();
-         $a->codalmacen = $_POST['scodalmacen'];
-         $a->nombre = $_POST['snombre'];
-         $a->direccion = $_POST['sdireccion'];
-         $a->codpostal = $_POST['scodpostal'];
-         $a->poblacion = $_POST['spoblacion'];
-         $a->telefono = $_POST['stelefono'];
-         $a->fax = $_POST['sfax'];
-         $a->contacto = $_POST['scontacto'];
-         $a->save();
+         $this->almacen->codalmacen = $_POST['scodalmacen'];
+         $this->almacen->nombre = $_POST['snombre'];
+         $this->almacen->direccion = $_POST['sdireccion'];
+         $this->almacen->codpostal = $_POST['scodpostal'];
+         $this->almacen->poblacion = $_POST['spoblacion'];
+         $this->almacen->telefono = $_POST['stelefono'];
+         $this->almacen->fax = $_POST['sfax'];
+         $this->almacen->contacto = $_POST['scontacto'];
+         $this->almacen->save();
       }
       else if( isset($_GET['delete']) )
       {
-         $a = new almacen();
-         $a->codalmacen = $_GET['delete'];
-         $a->delete();
+         $this->almacen->codalmacen = $_GET['delete'];
+         if( $this->almacen->delete() )
+            $this->new_message("Almacén eliminado correctamente");
+         else
+            $this->new_error_msg("¡Imposible eliminar el almacén!".$this->almacen->error_msg);
       }
-   }
-
-   public function all()
-   {
-      $a = new almacen();
-      return $a->all();
    }
 }
 

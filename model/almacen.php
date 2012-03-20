@@ -72,6 +72,15 @@ class almacen extends fs_model
       }
    }
    
+   public function get_new_codigo()
+   {
+      $cod = $this->db->select("SELECT MAX(codalmacen) as cod FROM ".$this->table_name.";");
+      if($cod)
+         return 1 + intval($cod[0]['cod']);
+      else
+         return 1;
+   }
+   
    public function url()
    {
       return 'index.php?page=admin_almacenes#'.$this->codalmacen;

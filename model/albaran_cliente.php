@@ -74,6 +74,11 @@ class linea_albaran_cliente extends fs_model
       return number_format($this->pvpunitario, 2, ',', '.');
    }
    
+   public function show_pvp_iva()
+   {
+      return number_format($this->pvpunitario + ($this->pvpunitario * $this->iva / 100), 2, ',', '.');
+   }
+   
    public function show_total()
    {
       return number_format($this->pvptotal, 2, ',', '.');
@@ -274,9 +279,12 @@ class albaran_cliente extends fs_model
       return Date('j-n-Y', strtotime($this->fecha));
    }
    
-   public function show_hora()
+   public function show_hora($s=TRUE)
    {
-      return Date('H:i:s', strtotime($this->hora));
+      if($s)
+         return Date('H:i:s', strtotime($this->hora));
+      else
+         return Date('H:i', strtotime($this->hora));
    }
    
    public function url()

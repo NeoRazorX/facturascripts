@@ -356,7 +356,7 @@ class articulo extends fs_model
       {
          foreach($articulos as $a)
          {
-            $artilist[] = articulo($a);
+            $artilist[] = new articulo($a);
          }
       }
       return $artilist;

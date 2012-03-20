@@ -118,7 +118,8 @@ class tpv_yamyam extends fs_controller
       {
          $empresa = new empresa();
          $linea = "\nTicket: " . $this->albaran->codigo;
-         $linea .= " | " . $this->albaran->show_fecha() . "\n";
+         $linea .= " " . $this->albaran->show_fecha() . "\n";
+         $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
          fwrite($file, $linea);
          $linea = "Cliente: " . $this->albaran->nombrecliente . "\n";
          fwrite($file, $linea);
@@ -134,13 +135,13 @@ class tpv_yamyam extends fs_controller
          foreach($this->albaran->get_lineas() as $col)
          {
             $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-               sprintf("%10s", number_format($col->pvptotal, 2)) . "\n";
+               sprintf("%10s", $col->show_pvp_iva()) . "\n";
             fwrite($file, $linea);
          }
          
          $linea = "----------------------------------------\n".
             $this->center_text("IVA: " . number_format($this->albaran->totaliva, 2) . " Eur.  ".
-            "Total: " . number_format($this->albaran->totaleuros, 2) . " Eur.") . "\n\n\n\n";
+            "Total: " . $this->albaran->show_total() . " Eur.") . "\n\n\n\n";
          fwrite($file, $linea);
          $linea = $this->center_text($empresa->nombre) . "\n";
          fwrite($file, $linea);
