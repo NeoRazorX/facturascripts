@@ -1,8 +1,30 @@
 @import url("base.css");
 
-input, select, textarea {
+input, textarea {
    padding: 5px;
    font-size: 16px;
+}
+
+select {
+   font-size: 20px;
+}
+
+input.cancel {
+   background-color: #B14E4E;
+   border: 1px outset #333333;
+   color: white;
+   text-align: center;
+   text-transform: uppercase;
+   font-weight: bold;
+}
+
+input.comfirm {
+   background-color: green;
+   border: 1px outset #333333;
+   color: white;
+   text-align: center;
+   text-transform: uppercase;
+   font-weight: bold;
 }
 
 table.main_menu {
@@ -37,6 +59,10 @@ ul.tpv_familias li {
    margin-bottom: 15px;
    background-color: #FFFAA6;
    border: 1px outset #333333;
+}
+
+ul.tpv_familias li#paquetes {
+   border: 3px double #333333;
 }
 
 ul.tpv_familias li:hover {
@@ -86,10 +112,48 @@ div.popup_articulos {
    top: 50px;
    left: 50px;
    max-width: 80%;
+   max-height: 80%;
    overflow: auto;
    background-color: white;
    border: 3px double #333333;
    padding: 5px;
+}
+
+div.popup_articulos h1 {
+   margin: 0px;
+   text-align: center;
+}
+
+div.popup_articulos h2 {
+   margin: 0px;
+   font-size: 22px;
+}
+
+div.popup_articulos div.grupo {
+   margin: 5px;
+   margin-bottom: 10px;
+   padding: 5px;
+   background-color: #FFFAA6;
+   border: 1px dashed #333333;
+}
+
+div.popup_articulos div.grupo div.radio {
+   display: inline-block;
+   padding: 0px;
+   margin: 5px;
+   background-color: #f1f1f1;
+   border: 1px outset #333333;
+   font-size: 25px;
+}
+
+div.popup_articulos div.grupo div.radio label {
+   display: inline-block;
+   padding: 5px;
+}
+
+input:checked + label {
+    color: green;
+    font-weight: bold;
 }
 
 div.popup_articulos ul {

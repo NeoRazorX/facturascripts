@@ -23,7 +23,7 @@ require_once 'model/fs_access.php';
 class admin_user extends fs_controller
 {
    public $suser;
-   public $agentes;
+   public $agente;
 
    public function __construct()
    {
@@ -35,9 +35,7 @@ class admin_user extends fs_controller
       /// la página previa o padre
       $this->ppage = $this->page->get('admin_users');
       
-      /// cargamos los agentes
-      $agente = new agente();
-      $this->agentes = $agente->all();
+      $this->agente = new agente();
       
       if( isset($_GET['snick']) )
       {
@@ -84,37 +82,17 @@ class admin_user extends fs_controller
    public function all()
    {
       $returnlist = array();
-      $access = new fs_access();
-      $access = $access->all_from_nick($this->suser->nick);
+      $access = $this->suser->get_accesses();
       foreach($this->menu as $m)
       {
          foreach($access as $a)
          {
             if($m->name == $a->fs_page)
-            {
                $m->enabled = TRUE;
-            }
          }
          $returnlist[] = $m;
       }
       return $returnlist;
-   }
-   
-   public function get_agente_name($cod='')
-   {
-      $name = '-';
-      if($cod != '' AND $this->agentes)
-      {
-         foreach($this->agentes as $a)
-         {
-            if($a->codagente == $cod)
-            {
-               $name = "<a href='index.php?page=admin_agentes#".$a->codagente."'>".$a->nombre.' '.$a->apellidos."</a>";
-               break;
-            }
-         }
-      }
-      return $name;
    }
    
    public function url()

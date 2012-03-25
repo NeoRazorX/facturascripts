@@ -1,0 +1,39 @@
+{include="header"}
+
+{if condition="$fsc->paquete"}
+<form action="{$fsc->url()}" method="post">
+   <input type="hidden" name="referenciapaq" value="{$fsc->paquete->referencia}"/>
+   <div class="rounded">
+   <h1>
+      Paquete: {$fsc->paquete->referencia}
+      <span><a href="{$fsc->url()}&delete={$fsc->paquete->referencia}">eliminar</a></span>
+   </h1>
+      ¿Cuantos grupos de artículos quieres que tenga esta paquete?
+      <input type="text" name="grupos" value="{$fsc->paquete->grupos}" size="2" maxlength="2"/>
+      Si intentas crear un menú de un restaurante lo normal sería tener 4 grupos,
+      el grupo 1 es para el plato principal, el grupo 2 para el segundo plato,
+      el grupo 3 para la bebida y el grupo 4 para el postre.
+      <div class="right"><input type="submit" value="guardar"/></div>
+      <br/><br/>
+   </div>
+   {loop="$fsc->paquete->get_grupos()"}
+   <div class="rounded">
+      <h1>Grupo {$value}:</h1>
+      {loop="$fsc->paquete->get_subgrupos_for($value)"}
+         {if condition="$value2->existe"}
+         <input type="checkbox" name="grupo_{$value1}[]" value="{$value2->referencia}" checked="checked" id="g_{$value1}_{$value2->referencia}"/>
+         {else}
+         <input type="checkbox" name="grupo_{$value1}[]" value="{$value2->referencia}" id="g_{$value1}_{$value2->referencia}"/>
+         {/if}
+         <label for="g_{$value1}_{$value2->referencia}">{$value2->referencia}</label>
+      {/loop}
+      <div>
+         Marca solamente los artículos que quieras poner en este grupo.
+         Nota: un artículo no puede aparecer en dos grupos del mismo paquete.
+      </div>
+   </div>
+   {/loop}
+</form>
+{/if}
+
+{include="footer"}

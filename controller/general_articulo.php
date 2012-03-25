@@ -20,13 +20,15 @@
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
+require_once 'model/paquete.php';
 
 class general_articulo extends fs_controller
 {
    public $articulo;
    public $familia;
    public $impuesto;
-   
+   public $cache_paquete;
+
    public function __construct()
    {
       parent::__construct('general_articulo', 'Articulo', 'general', FALSE, FALSE);
@@ -74,6 +76,7 @@ class general_articulo extends fs_controller
       {
          $this->familia = $this->articulo->get_familia();
          $this->impuesto = new impuesto();
+         $this->cache_paquete = new cache_paquete();
       }
    }
    

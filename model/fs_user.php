@@ -19,6 +19,8 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/agente.php';
+require_once 'model/fs_access.php';
+require_once 'model/fs_page.php';
 
 class fs_user extends fs_model
 {
@@ -27,6 +29,7 @@ class fs_user extends fs_model
    public $log_key;
    public $logged_on;
    public $codagente;
+   public $agente;
    public $admin;
 
    public function __construct($a = FALSE)
@@ -54,6 +57,7 @@ class fs_user extends fs_model
          $this->admin = FALSE;
       }
       $this->logged_on = FALSE;
+      $this->agente = NULL;
    }
    
    public function url()
@@ -74,6 +78,48 @@ class fs_user extends fs_model
          return new fs_user($u[0]);
       else
          return FALSE;
+   }
+   
+   public function get_agente()
+   {
+      if( isset($this->agente) )
+         return $this->agente;
+      else
+      {
+         $agente = new agente();
+         $agente = $agente->get($this->codagente);
+         if($agente)
+         {
+            $this->agente = $agente;
+            return $this->agente;
+         }
+         else
+            return FALSE;
+      }
+   }
+   
+   public function get_agente_fullname()
+   {
+      $agente = $this->get_agente();
+      if($agente)
+         return $agente->get_fullname();
+      else
+         return '-';
+   }
+   
+   public function get_agente_url()
+   {
+      $agente = $this->get_agente();
+      if($agente)
+         return $agente->url();
+      else
+         return $this->url();
+   }
+   
+   public function get_accesses()
+   {
+      $access = new fs_access();
+      return $access->all_from_nick($this->nick);
    }
    
    public function set_nick($n='')
@@ -151,12 +197,6 @@ class fs_user extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
-   }
-   
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
    }
 }
 

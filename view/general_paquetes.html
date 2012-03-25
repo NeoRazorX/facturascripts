@@ -1,0 +1,54 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Nuevo paquete:</h1>
+   <form action="index.php?page=general_paquete" method="post">
+      <div class="bloque">
+         Este paquete equivale al artículo:
+         <select name="referenciapaq">
+         {loop="$fsc->cache_paquete->articulos"}
+            {if condition="$fsc->paquete->referencia==$value->referencia"}
+            <option value="{$value->referencia}" selected="selected">{$value->referencia}</option>
+            {else}
+            <option value="{$value->referencia}">{$value->referencia}</option>
+            {/if}
+         {/loop}
+         </select>
+         Es el artículo que le da el precio al paquete.
+      </div>
+      <div class="right"><input type="submit" value="nuevo paquete"/></div>
+      <div>
+         ¿Cuantos grupos de artículos quieres que tenga esta paquete?
+         <input type="text" name="grupos" value="{$fsc->paquete->grupos}" size="2" maxlength="2"/>
+         Si intentas crear un menú de un restaurante lo normal sería tener 4 grupos,
+         el grupo 1 es para el plato principal, el grupo 2 para el segundo plato,
+         el grupo 3 para la bebida y el grupo 4 para el postre.
+      </div>
+   </form>
+</div>
+
+<div class="rounded">
+   <h1>Paquetes:</h1>
+   <ul class="horizontal">
+      {loop="$fsc->paquete->all()"}
+      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      {/loop}
+   </ul>
+</div>
+
+<div class="rounded">
+   <h1>
+      Cesta:
+      <span>
+         <a href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a> |
+         <a href="{$fsc->url()}&cleancache=TRUE">vaciar</a>
+      </span>
+   </h1>
+   <ul class="horizontal">
+      {loop="$fsc->cache_paquete->articulos"}
+      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      {/loop}
+   </ul>
+</div>
+
+{include="footer"}

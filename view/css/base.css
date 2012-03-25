@@ -17,30 +17,6 @@ body.log_in {
    font-size: 15px;
 }
 
-input[type='submit'] {
-   text-transform: uppercase;
-}
-
-div.message {
-   text-align: center;
-   font-size: 16px;
-   background-color: #D8DFEA;
-   border: 1px solid #B8BDC1;
-   box-shadow: 2px 2px 2px #333;
-   padding: 10px;
-   margin: 10px;
-}
-
-div.error {
-   text-align: center;
-   font-size: 18px;
-   background-color: #E47575;
-   border: 1px solid #B14E4E;
-   box-shadow: 3px 3px 3px #333;
-   padding: 10px;
-   margin: 10px;
-}
-
 div#login_window {
    display: table;
    position: fixed;
@@ -92,6 +68,30 @@ div.copyright table td.left {
 div.copyright table td.right {
    text-align: right;
    padding-right: 5px;
+}
+
+input[type='submit'], input[type='button'] {
+   text-transform: uppercase;
+}
+
+div.message {
+   text-align: center;
+   font-size: 16px;
+   background-color: #D8DFEA;
+   border: 1px solid #B8BDC1;
+   box-shadow: 2px 2px 2px #333;
+   padding: 10px;
+   margin: 10px;
+}
+
+div.error {
+   text-align: center;
+   font-size: 18px;
+   background-color: #E47575;
+   border: 1px solid #B14E4E;
+   box-shadow: 3px 3px 3px #333;
+   padding: 10px;
+   margin: 10px;
 }
 
 table.main_menu {
@@ -177,8 +177,7 @@ table.main_menu td ul li {
 }
 
 table.main_menu td ul li.selected {
-   border-top: 1px dotted white;
-   border-bottom: 1px dotted white;
+   border: 1px dotted white;
 }
 
 table.main_menu td div#user_list ul li {
@@ -269,7 +268,6 @@ div.main_div ul.horizontal li {
 div.main_div div.bloque {
    display: inline-block;
    padding-right: 10px;
-   text-transform: capitalize;
 }
 
 div.main_div div.right {

@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/agente.php';
 
 class linea_albaran_cliente extends fs_model
 {
@@ -260,7 +261,7 @@ class albaran_cliente extends fs_model
          $this->irpf = 0;
          $this->totalirpf = 0;
          $this->porcomision = 0;
-         $this->tasaconv = 0;
+         $this->tasaconv = 1;
          $this->recfinanciero = 0;
          $this->totalrecargo = 0;
          $this->observaciones = '';
@@ -314,7 +315,7 @@ class albaran_cliente extends fs_model
    
    public function new_codigo()
    {
-      $numero = $this->db->select("SELECT MAX(numero) as num FROM ".$this->table_name."
+      $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
       if($numero)
       {
@@ -401,6 +402,28 @@ class albaran_cliente extends fs_model
          foreach($albaranes as $a)
          {
             $albalist[] = new albaran_cliente($a);
+         }
+      }
+      return $albalist;
+   }
+   
+   public function all_from_day($offset=0)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select_limit("SELECT fecha,codagente,COUNT(idalbaran) as num,AVG(totaleuros) as media,SUM(totaleuros) as total
+         FROM ".$this->table_name." GROUP BY fecha,codagente ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         $agente = new agente();
+         foreach($albaranes as $a)
+         {
+            $albalist[] = array(
+                           'fecha' => Date('j-n-Y', strtotime($a['fecha'])),
+                           'agente' => $agente->get($a['codagente']),
+                           'albaranes' => number_format($a['num'], 0, ',', '.'),
+                           'media' => number_format($a['media'], 2, ',', '.'),
+                           'total' => number_format($a['total'], 2, ',', '.')
+                        );
          }
       }
       return $albalist;

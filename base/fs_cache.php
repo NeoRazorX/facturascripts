@@ -27,11 +27,13 @@ class fs_cache
    public function __construct()
    {
       $this->cache = new Memcache();
-      try {
+      try
+      {
          $this->cache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
          $this->connected = TRUE;
       }
-      catch (Exception $e) {
+      catch (Exception $e)
+      {
          $this->connected = FALSE;
       }
    }

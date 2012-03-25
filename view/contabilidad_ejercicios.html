@@ -11,10 +11,10 @@
          Nombre: <input type="text" name="nombre"/>
       </div>
       <div class="bloque">
-         Fecha de inicio: <input type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}"/>
+         Fecha de inicio: <input type="text" name="fechainicio" value="{$fsc->ejercicio->show_fechainicio()}"/>
       </div>
       <div class="bloque">
-         Fecha fin: <input type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}"/>
+         Fecha fin: <input type="text" name="fechafin" value="{$fsc->ejercicio->show_fechafin()}"/>
       </div>
       <div class="bloque">
          Estado:
@@ -35,10 +35,10 @@
          Nombre: <input type="text" name="nombre" value="{$value->nombre}"/>
       </div>
       <div class="bloque">
-         Fecha de inicio: <input type="text" name="fechaini" value="{$value->fechainicio}"/>
+         Fecha de inicio: <input type="text" name="fechaini" value="{$value->show_fechainicio()}"/>
       </div>
       <div class="bloque">
-         Fecha fin: <input type="text" name="fechafin" value="{$value->fechafin}"/>
+         Fecha fin: <input type="text" name="fechafin" value="{$value->show_fechafin()}"/>
       </div>
       <div class="bloque">
          Estado:

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : subpaquetes.xml
+    Description:
+        Estructura de la tabla subpaquetes.
+-->
+<tabla>
+   <columna><nombre>referencia</nombre><tipo>character varying(18)</tipo><nulo>NO</nulo></columna>
+   <columna><nombre>grupo</nombre><tipo>integer</tipo><nulo>NO</nulo><default>1</default></columna>
+   <columna><nombre>referenciapaq</nombre><tipo>character varying(18)</tipo><nulo>NO</nulo></columna>
+   <columna><nombre>id</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
+   <restriccion><nombre>subpaquetes_pkey</nombre><consulta>PRIMARY KEY (id)</consulta></restriccion>
+   <restriccion><nombre>uniq_subpaquetes</nombre><consulta>UNIQUE (referenciapaq,referencia)</consulta></restriccion>
+   <restriccion><nombre>ca_subpaquetes_paquetes</nombre><consulta>FOREIGN KEY (referenciapaq)
+      REFERENCES paquetes (referencia) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta></restriccion>
+   <restriccion><nombre>ca_subpaquetes_articulos</nombre><consulta>FOREIGN KEY (referencia)
+      REFERENCES articulos (referencia) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
+</tabla>

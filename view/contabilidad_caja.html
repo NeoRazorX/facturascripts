@@ -1,0 +1,28 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>Fecha</th>
+         <th>Agente</th>
+         <th align="right">Número de albaranes</th>
+         <th align="right">Media</th>
+         <th align="right">Total</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td>{$value.fecha}</td>
+         {if condition="$value.agente"}
+         <td><a href="{$value.agente->url()}">{$value.agente->get_fullname()}</a></td>
+         {else}
+         <td>-</td>
+         {/if}
+         <td align="right">{$value.albaranes}</td>
+         <td align="right">{$value.media} €</td>
+         <td align="right">{$value.total} €</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

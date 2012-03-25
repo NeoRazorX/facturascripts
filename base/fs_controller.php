@@ -197,9 +197,7 @@ class fs_controller
    public function get_empresa_name()
    {
       if( isset($_COOKIE['empresa']) )
-      {
          return $_COOKIE['empresa'];
-      }
       else
       {
          $e = new empresa();
@@ -214,31 +212,24 @@ class fs_controller
       $menu = $this->page->all();
       if(count($menu) > 0)
       {
-         if( $this->user->admin )
+         /// actualizamos los datos de la página
+         foreach($menu as $m)
          {
-            /// actualizamos los datos de la página
-            foreach($menu as $m)
+            if($m->name == $this->page->name AND $m != $this->page)
             {
-               if($m->name == $this->page->name)
-               {
-                  if($m != $this->page)
-                     $this->page->save();
-                  break;
-               }
+               $this->page->save();
+               break;
             }
-            $this->menu = $menu;
          }
+         
+         if( $this->user->admin )
+            $this->menu = $menu;
          else
          {
-            $access = new fs_access();
-            $access = $access->all_from_nick( $this->user->nick );
             foreach($menu as $m)
             {
-               /// actualizamos los datos de la página
-               if($m->name == $this->page->name AND $m != $this->page)
-                  $this->page->save();
                /// decidimos si se lo mostramos al usuario o no
-               foreach($access as $a)
+               foreach($this->user->get_accesses() as $a)
                {
                   if($m->name == $a->fs_page)
                   {
@@ -280,7 +271,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.2';
+      return '0.9.3';
    }
    
    public function select_default_page()

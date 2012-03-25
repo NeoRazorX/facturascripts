@@ -46,7 +46,7 @@ class almacen extends fs_model
          $this->telefono = $a['telefono'];
          $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
-         $this->idprovincia = $a['idprovincia'];
+         $this->idprovincia = intval($a['idprovincia']);
          $this->poblacion = $a['poblacion'];
          $this->apartado = $a['apartado'];
          $this->codpostal = $a['codpostal'];
@@ -72,15 +72,6 @@ class almacen extends fs_model
       }
    }
    
-   public function get_new_codigo()
-   {
-      $cod = $this->db->select("SELECT MAX(codalmacen) as cod FROM ".$this->table_name.";");
-      if($cod)
-         return 1 + intval($cod[0]['cod']);
-      else
-         return 1;
-   }
-   
    public function url()
    {
       return 'index.php?page=admin_almacenes#'.$this->codalmacen;
@@ -88,7 +79,8 @@ class almacen extends fs_model
 
    protected function install()
    {
-      return '';
+      return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
+               VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
    
    public function exists()

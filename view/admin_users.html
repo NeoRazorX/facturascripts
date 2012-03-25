@@ -3,17 +3,20 @@
 <div class="rounded">
    <h1>Nuevo usuario:</h1>
    <form action="{$fsc->page->url()}" method="POST">
-      <div class="bloque">Nick: <input type="text" name="nnick" maxlenght="12"/></div>
-      <div class="bloque">Contraseña: <input type="password" name="npassword" maxlenght="12"/></div>
+      <div class="bloque">Nick: <input type="text" name="nnick"  size="12" maxlength="12"/></div>
+      <div class="bloque">Contraseña: <input type="password" name="npassword"  size="12" maxlength="12"/></div>
       <div class="bloque">
-         Agentes:
+         <a href="{$fsc->agente->url()}">Agentes</a>:
          <select name="ncodagente">
-         {loop="$fsc->agentes"}
-            <option value="{$value->codagente}">{$value->nombre} {$value->apellidos}</option>
+         {loop="$fsc->agente->all()"}
+            <option value="{$value->codagente}">{$value->get_fullname()}</option>
          {/loop}
          </select>
       </div>
-      <div class="bloque">Administrador: <input type="checkbox" name="nadmin" value="TRUE"/></div>
+      <div class="bloque">
+         <input type="checkbox" name="nadmin" value="TRUE" id="usuario_admin"/>
+         <label for="usuario_admin">Administrador</label>
+      </div>
       <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
@@ -27,11 +30,11 @@
          <th>administrador</th>
          <th width="80"></th>
       </tr>
-      {loop="$fsc->all()"}
+      {loop="$fsc->user->all()"}
       <tr>
-         <td><a href="index.php?page=admin_user&amp;snick={$value->nick}">{$value->nick}</a></td>
+         <td><a href="{$value->url()}">{$value->nick}</a></td>
          <td>-</td>
-         <td>{$fsc->get_agente_name($value->codagente)}</td>
+         <td><a href="{$value->get_agente_url()}">{$value->get_agente_fullname()}</a></td>
          {if condition="$value->admin"}
          <td>Si</td>
          {else}

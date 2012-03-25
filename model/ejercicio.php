@@ -56,16 +56,26 @@ class ejercicio extends fs_model
          $this->plancontable = '08';
          $this->longsubcuenta = NULL;
          $this->estado = 'ABIERTO';
-         $this->fechafin = Date('31-11-Y');
+         $this->fechafin = Date('31-12-Y');
          $this->fechainicio = Date('1-1-Y');
          $this->nombre = '';
          $this->codejercicio = NULL;
       }
    }
    
+   public function show_fechainicio()
+   {
+      return Date('j-n-Y', strtotime($this->fechainicio));
+   }
+   
+   public function show_fechafin()
+   {
+      return Date('j-n-Y', strtotime($this->fechafin));
+   }
+   
    public function get_new_codigo()
    {
-      $cod = $this->db->select("SELECT MAX(codejercicio) as cod FROM ".$this->table_name.";");
+      $cod = $this->db->select("SELECT MAX(codejercicio::integer) as cod FROM ".$this->table_name.";");
       if($cod)
          return sprintf('%04s', (1 + intval($cod[0]['cod'])));
       else
@@ -79,7 +89,9 @@ class ejercicio extends fs_model
 
    protected function install()
    {
-      return '';
+      return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
+            idasientoapertura,idasientopyg,idasientocierre) VALUES ('".$this->get_new_codigo()."','".Date('Y')."',
+            '".Date('1-1-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";
    }
    
    public function exists()
@@ -92,7 +104,7 @@ class ejercicio extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            fechainicio = ".$this->var2str($this->fechafin).", fechafin = ".$this->var2str($this->fechafin).",
+            fechainicio = ".$this->var2str($this->fechainicio).", fechafin = ".$this->var2str($this->fechafin).",
             estado = ".$this->var2str($this->estado).", logsubcuenta = ".$this->var2str($this->longsubcuenta).",
             plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
             idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
@@ -102,7 +114,7 @@ class ejercicio extends fs_model
       {
          $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
             idasientoapertura,idasientopyg,idasientocierre) VALUES (".$this->var2str($this->codejercicio).",".$this->var2str($this->nombre).",
-            ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechainicio).",".$this->var2str($this->estado).",
+            ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechafin).",".$this->var2str($this->estado).",
             ".$this->var2str($this->longsubcuenta).",".$this->var2str($this->plancontable).",
             ".$this->var2str($this->idasientoapertura).",".$this->var2str($this->idasientopyg).",
             ".$this->var2str($this->idasientocierre).");";

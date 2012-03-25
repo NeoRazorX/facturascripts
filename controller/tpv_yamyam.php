@@ -8,10 +8,12 @@ require_once 'model/serie.php';
 require_once 'model/forma_pago.php';
 require_once 'model/divisa.php';
 require_once 'model/albaran_cliente.php';
+require_once 'model/paquete.php';
 
 class tpv_yamyam extends fs_controller
 {
    public $familia;
+   public $familias;
    public $cliente;
    public $ejercicio;
    public $serie;
@@ -21,6 +23,10 @@ class tpv_yamyam extends fs_controller
    public $divisa;
    public $albaran;
    public $impresora;
+   public $paquete;
+   public $paquetes;
+   public $articulo;
+   public $articulos;
    
    public function __construct()
    {
@@ -37,7 +43,10 @@ class tpv_yamyam extends fs_controller
       $this->agente = $this->user->get_agente();
       $this->forma_pago = new forma_pago();
       $this->divisa = new divisa();
+      $this->paquete = new paquete();
+      $this->articulo = new articulo();
       
+      /// seleccionamos impresora de tickets
       if( isset($_POST['impresora']) )
       {
          $this->impresora = $_POST['impresora'];
@@ -46,6 +55,7 @@ class tpv_yamyam extends fs_controller
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
       
+      /// guardamos el albarán
       if( isset($_POST['numlineas']) )
       {
          $this->cliente = $this->cliente->get($_POST['cliente']);
@@ -70,8 +80,7 @@ class tpv_yamyam extends fs_controller
             {
                if( isset($_POST['referencia_'.$i]) )
                {
-                  $articulo = new articulo();
-                  $articulo = $articulo->get($_POST['referencia_'.$i]);
+                  $articulo = $this->articulo->get($_POST['referencia_'.$i]);
                   if($articulo)
                   {
                      $linea = new linea_albaran_cliente();
@@ -107,6 +116,45 @@ class tpv_yamyam extends fs_controller
          }
          else
             $this->new_error_msg("¡Imposible guardar el albaran!");
+      }
+      
+      /// cargamos todos los paquetes
+      $this->paquetes = $this->paquete->all();
+      /// cargamos los articulos que no sean paquetes
+      $this->articulos = array();
+      foreach($this->articulo->all(0, 100) as $a)
+      {
+         $encontrado = FALSE;
+         foreach($this->paquetes as $p)
+         {
+            if($a->referencia == $p->referencia)
+            {
+               $encontrado = TRUE;
+               break;
+            }
+         }
+         if( !$encontrado )
+         {
+            $this->articulos[] = $a;
+         }
+      }
+      /// cargamos las familias de los articulos cargados
+      $this->familias = array();
+      foreach($this->familia->all() as $f)
+      {
+         $encontrado = FALSE;
+         foreach($this->articulos as $a)
+         {
+            if($a->codfamilia == $f->codfamilia)
+            {
+               $encontrado = TRUE;
+               break;
+            }
+         }
+         if( $encontrado )
+         {
+            $this->familias[] = $f;
+         }
       }
    }
    

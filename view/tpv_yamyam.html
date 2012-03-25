@@ -3,10 +3,19 @@
 {if condition="$fsc->agente"}
 <script type="text/javascript">
    var numlineas = 0;
-   function close_articulos(fam)
+   function close_articulos()
    {
       $("#sombra").hide();
-      $("#articulos_"+fam).hide();
+      $("div.popup_articulos").hide();
+   }
+   function mostrar_paquete(paq)
+   {
+      $("#sombra").show();
+      $("#paquete_"+paq).css({
+            left: ($(window).width() - $("#paquete_"+paq).outerWidth())/2,
+            top: ($(window).height() - $("#paquete_"+paq).outerHeight())/2
+      });
+      $("#paquete_"+paq).show();
    }
    function recalcular()
    {
@@ -29,42 +38,93 @@
    }
    function linea_sum_ud(num,value)
    {
+      var paqid = $("#paquete_"+num).val();
       var udl = parseFloat( $("#cantidad_"+num).val() );
       udl += value;
       if(udl < 1)
       {
-         $("#linea_"+num).remove();
+         if(paqid != '')
+         {
+            for(var i=1; i<=numlineas; i++)
+            {
+               if( $("#paquete_"+i).val() == paqid )
+                  $("#linea_"+i).remove();
+            }
+         }
+         else
+            $("#linea_"+num).remove();
       }
       else
       {
-         $("#cantidad_"+num).val(udl);
+         if(paqid != '')
+         {
+            for(var i=1; i<=numlineas; i++)
+            {
+               if( $("#paquete_"+i).val() == paqid )
+                  $("#cantidad_"+i).val(udl);
+            }
+         }
+         else
+            $("#cantidad_"+num).val(udl);
       }
       recalcular();
    }
-   function add_articulo(ref,pvp,iva,fam)
+   function add_articulo(ref,pvp,iva,paquete)
    {
       numlineas += 1;
       $("#numlineas").val(numlineas);
       $("#tpv_albaran").append("<tr id='linea_"+numlineas+"'><td>"+ref+"</td>\n\
-         <td align='center'>\n\
-         <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
-         <input type='hidden' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"'/>\n\
-         <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
-         <input type='button' value='  -  ' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
-         <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
-         <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
-         </td><td align='right'>"+pvp+" €</td>\n\
-         <td align='right'><span id='total_"+numlineas+"'>"+pvp+"</span> €</td></tr>");
+            <td align='center'>\n\
+            <input type='hidden' id='paquete_"+numlineas+"' name='paquete_"+numlineas+"' value='"+paquete+"'/>\n\
+            <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
+            <input type='hidden' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"'/>\n\
+            <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
+            <input type='button' value='  -  ' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
+            <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
+            <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
+            </td><td align='right'>"+(Math.round(pvp*100)/100)+" €</td>\n\
+            <td align='right'><span id='total_"+numlineas+"'>"+pvp+"</span> €</td></tr>");
       recalcular();
-      close_articulos(fam);
+      close_articulos();
+   }
+   function add_paquete(ref)
+   {
+      var paqid = Math.random()*11;
+      var fpaq = document.getElementById('f_p_'+ref);
+      var pvp = fpaq.pvp.value;
+      var iva = fpaq.iva.value;
+      add_articulo(ref,pvp,iva,paqid);
+      var grupos = fpaq.grupos.value;
+      var radiob;
+      var ref2;
+      for(var i=1; i<=grupos; i++)
+      {
+         radiob = fpaq.elements["grupo_"+i];
+         for(var j=0; j<radiob.length; j++)
+         {
+            ref2 = radiob[j].value;
+            if( radiob[j].checked )
+               break;
+         }
+         add_articulo(ref2,0,0,paqid);
+      }
+      close_articulos();
    }
    $(document).ready(function() {
-      {loop="$fsc->familia->all()"}
+      $("#paquetes").click(function(event) {
+         $("#sombra").show();
+         $("#all_paquetes").css({
+            left: ($(window).width() - $('#all_paquetes').outerWidth())/2,
+            top: ($(window).height() - $('#all_paquetes').outerHeight())/2
+         });
+         $("#all_paquetes").show();
+      });
+      {loop="$fsc->familias"}
       $("#fam_{$value->codfamilia}").click(function(event) {
          $("#sombra").show();
          $("#articulos_{$value->codfamilia}").css({
-            top: 50,
-            left: event.pageX
+            left: ($(window).width() - $('#articulos_{$value->codfamilia}').outerWidth())/2,
+            top: ($(window).height() - $('#articulos_{$value->codfamilia}').outerHeight())/2
          });
          $("#articulos_{$value->codfamilia}").show();
       });
@@ -76,9 +136,10 @@
    <tr>
       <td valign="top">
          <ul class="tpv_familias">
-         {loop="$fsc->familia->all()"}
+            <li id="paquetes">PAQUETES</li>
+            {loop="$fsc->familias"}
             <li id="fam_{$value->codfamilia}">{$value->descripcion}</li>
-         {/loop}
+            {/loop}
          </ul>
       </td>
       <td valign="top">
@@ -88,7 +149,7 @@
                <div>
                   <div class="tpv_total" id="tpv_total">0,00 €</div>
                   <div class="bloque">
-                     Cliente:
+                     <a href="{$fsc->cliente->url()}">Cliente</a>:
                      <select name="cliente">
                      {loop="$fsc->cliente->all()"}
                         <option value="{$value->codcliente}">{$value->nombre}</option>
@@ -96,7 +157,7 @@
                      </select>
                   </div>
                   <div class="bloque">
-                     Ejercicio:
+                     <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="ejercicio">
                      {loop="$fsc->ejercicio->all()"}
                         <option value="{$value->codejercicio}">{$value->nombre}</option>
@@ -104,7 +165,7 @@
                      </select>
                   </div>
                   <div class="bloque">
-                     Serie:
+                     <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="serie">
                      {loop="$fsc->serie->all()"}
                         <option value="{$value->codserie}">{$value->descripcion}</option>
@@ -155,18 +216,61 @@
 
 <div class="sombra" id="sombra"></div>
 
-{loop="$fsc->familia->all()"}
-<div class="popup_articulos" id="articulos_{$value->codfamilia}">
+<div class="popup_articulos" id="all_paquetes">
    <ul>
-      {loop="$value->get_articulos()"}
-      <li onclick="add_articulo('{$value->referencia}',{$value->pvp},{$value->get_iva()},'{$value->codfamilia}')">
-         {$value->referencia}<span>{$value->show_pvp_iva()} €</span>
+   {loop="$fsc->paquetes"}
+      <li onclick="mostrar_paquete('{$value->referencia}')">
+         {$value->referencia}<span>{$value->articulo->show_pvp_iva()} €</span>
       </li>
+   {/loop}
+      <li class="cancel" onclick="close_articulos()">cancelar</li>
+   </ul>
+</div>
+
+{loop="$fsc->paquetes"}
+<div class="popup_articulos" id="paquete_{$value1->referencia}">
+   <h1>PAQUETE: {$value1->referencia}</h1>
+   <form id="f_p_{$value1->referencia}">
+      <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
+      <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
+      <input type="hidden" name="grupos" value="{$value->grupos}"/>
+      {loop="$value1->get_grupos()"}
+      <div class="grupo">
+         <h2>Grupo {$value2}:</h2>
+         {loop="$value1->subpaquetes"}
+            {if condition="$value3->grupo==$value2"}
+            <div class="radio">
+               <input type="radio" name="grupo_{$value2}" value="{$value3->referencia}" id="g_{$value1->referencia}_{$value3->referencia}" style="display:none;"/>
+               <label for="g_{$value1->referencia}_{$value3->referencia}">{$value3->referencia}</label>
+            </div>
+            {/if}
+         {/loop}
+         <input type="radio" name="grupo_{$value2}" value="" style="display:none;"/>
+      </div>
       {/loop}
-      <li class="cancel" onclick="close_articulos('{$value->codfamilia}')">cancelar</li>
+      <input type="button" class="cancel" value="cancelar" onclick="close_articulos()"/>
+      <div class="right">
+         <input type="button" class="comfirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/>
+      </div>
+   </form>
+</div>
+{/loop}
+
+{loop="$fsc->familias"}
+<div class="popup_articulos" id="articulos_{$value1->codfamilia}">
+   <ul>
+   {loop="$fsc->articulos"}
+      {if condition="$value2->codfamilia==$value1->codfamilia"}
+      <li onclick="add_articulo('{$value2->referencia}',{$value2->pvp},{$value2->get_iva()},'')">
+         {$value2->referencia}<span>{$value2->show_pvp_iva()} €</span>
+      </li>
+      {/if}
+   {/loop}
+      <li class="cancel" onclick="close_articulos()">cancelar</li>
    </ul>
 </div>
 {/loop}
+
 {else}
    <div class="error">¡No tienes un agente asociado a tu <a href="{$fsc->user->url()}">usuario</a>!</div>
 {/if}

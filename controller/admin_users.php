@@ -22,7 +22,7 @@ require_once 'model/agente.php';
 
 class admin_users extends fs_controller
 {
-   public $agentes;
+   public $agente;
    
    public function __construct()
    {
@@ -31,9 +31,7 @@ class admin_users extends fs_controller
    
    protected function process()
    {
-      /// cargamos los agentes
-      $agente = new agente();
-      $this->agentes = $agente->all();
+      $this->agente = new agente();
       
       if( isset($_POST['nnick']) )
       {
@@ -59,28 +57,6 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_GET['delete']);
          $nu->delete();
       }
-   }
-
-   public function all()
-   {
-      return $this->user->all();
-   }
-   
-   public function get_agente_name($cod='')
-   {
-      $name = '-';
-      if($cod != '' AND $this->agentes)
-      {
-         foreach($this->agentes as $a)
-         {
-            if($a->codagente == $cod)
-            {
-               $name = "<a href='index.php?page=admin_agentes#".$a->codagente."'>".$a->nombre.' '.$a->apellidos."</a>";
-               break;
-            }
-         }
-      }
-      return $name;
    }
 }
 

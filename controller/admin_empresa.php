@@ -19,12 +19,21 @@
 
 require_once 'model/empresa.php';
 require_once 'model/almacen.php';
+require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
+require_once 'model/forma_pago.php';
+require_once 'model/serie.php';
 require_once 'model/pais.php';
 
 class admin_empresa extends fs_controller
 {
    public $empresa;
+   public $almacen;
+   public $divisa;
+   public $ejercicio;
+   public $forma_pago;
+   public $serie;
+   public $pais;
    
    public function __construct()
    {
@@ -34,29 +43,31 @@ class admin_empresa extends fs_controller
    protected function process()
    {
       $this->empresa = new empresa();
+      $this->almacen = new almacen();
+      $this->divisa = new divisa();
+      $this->ejercicio = new ejercicio();
+      $this->forma_pago = new forma_pago();
+      $this->serie = new serie();
+      $this->pais = new pais();
       
       if( isset($_POST['nombre']) )
       {
          $this->empresa->nombre = $_POST['nombre'];
-         
-         if( isset($_POST['cifnif']) )
-            $this->empresa->cifnif = $_POST['cifnif'];
-         if( isset($_POST['administrador']) )
-            $this->empresa->administrador = $_POST['administrador'];
-         if( isset($_POST['direccion']) )
-            $this->empresa->direccion = $_POST['direccion'];
-         if( isset($_POST['ciudad']) )
-            $this->empresa->ciudad = $_POST['ciudad'];
-         if( isset($_POST['codpostal']) )
-            $this->empresa->codpostal = $_POST['codpostal'];
-         if( isset($_POST['telefono']) )
-            $this->empresa->telefono = $_POST['telefono'];
-         if( isset($_POST['fax']) )
-            $this->empresa->fax = $_POST['fax'];
-         if( isset($_POST['web']) )
-            $this->empresa->web = $_POST['web'];
-         if( isset($_POST['email']) )
-            $this->empresa->email = $_POST['email'];
+         $this->empresa->cifnif = $_POST['cifnif'];
+         $this->empresa->administrador = $_POST['administrador'];
+         $this->empresa->direccion = $_POST['direccion'];
+         $this->empresa->ciudad = $_POST['ciudad'];
+         $this->empresa->codpostal = $_POST['codpostal'];
+         $this->empresa->codpais = $_POST['codpais'];
+         $this->empresa->telefono = $_POST['telefono'];
+         $this->empresa->fax = $_POST['fax'];
+         $this->empresa->web = $_POST['web'];
+         $this->empresa->email = $_POST['email'];
+         $this->empresa->codejercicio = $_POST['codejercicio'];
+         $this->empresa->codserie = $_POST['codserie'];
+         $this->empresa->coddivisa = $_POST['coddivisa'];
+         $this->empresa->codpago = $_POST['codpago'];
+         $this->empresa->codalmacen = $_POST['codalmacen'];
          
          if( $this->empresa->save() )
          {
@@ -66,24 +77,6 @@ class admin_empresa extends fs_controller
          else
             $this->new_error_msg ('Error al actualizar la base de datos.');
       }
-   }
-   
-   public function almacenes()
-   {
-      $almacen = new almacen();
-      return $almacen->all();
-   }
-   
-   public function ejercicios()
-   {
-      $ejercicio = new ejercicio();
-      return $ejercicio->all();
-   }
-   
-   public function paises()
-   {
-      $pais = new pais();
-      return $pais->all();
    }
 }
 

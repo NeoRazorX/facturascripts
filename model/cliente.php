@@ -71,7 +71,7 @@ class cliente extends fs_model
    
    public function get_new_codigo()
    {
-      $cod = $this->db->select("SELECT MAX(codcliente) as cod FROM ".$this->table_name.";");
+      $cod = $this->db->select("SELECT MAX(codcliente::integer) as cod FROM ".$this->table_name.";");
       if($cod)
          return sprintf('%06s', (1 + intval($cod[0]['cod'])));
       else
@@ -80,9 +80,11 @@ class cliente extends fs_model
    
    public function url()
    {
-      return "index.php?page=general_cliente&cod=".$this->codcliente;
+      if( isset($this->codcliente) )
+         return "index.php?page=general_cliente&cod=".$this->codcliente;
+      else
+         return "index.php?page=general_clientes";
    }
-
 
    protected function install()
    {

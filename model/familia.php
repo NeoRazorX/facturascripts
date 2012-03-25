@@ -42,13 +42,16 @@ class familia extends fs_model
    
    public function url()
    {
-      return "index.php?page=general_familia&cod=".$this->codfamilia;
+      if( isset($this->codfamilia) )
+         return "index.php?page=general_familia&cod=".$this->codfamilia;
+      else
+         return "index.php?page=general_familias";
    }
    
-   public function get_articulos($offset=0)
+   public function get_articulos($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $articulo = new articulo();
-      return $articulo->all_from_familia($this->codfamilia, $offset);
+      return $articulo->all_from_familia($this->codfamilia, $offset, $limit);
    }
 
    protected function install()

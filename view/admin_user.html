@@ -4,27 +4,27 @@
 <div class="rounded">
    <h1>Datos de usuario:</h1>
    <form action="{$fsc->url()}" method="POST">
-   <div class="bloque">Nick: <input type="text" value="{$fsc->suser->nick}" disabled/></div>
-   <div class="bloque">Contraseña: <input type="password" name="spassword"/></div>
+   <div class="bloque">Nick: <input type="text" value="{$fsc->suser->nick}" size="12" maxlength="12" disabled="disabled"/></div>
+   <div class="bloque">Contraseña: <input type="password" name="spassword" size="12" maxlength="12"/></div>
    <div class="bloque">
-      Agente:
+      <a href="{$fsc->agente->url()}">Agente</a>:
       <select name="scodagente">
-      {loop="$fsc->agentes"}
+      {loop="$fsc->agente->all()"}
          {if condition="$fsc->suser->codagente == $value->codagente"}
-         <option value="{$value->codagente}" selected>{$value->nombre} {$value->apellidos}</option>
+         <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
          {else}
-         <option value="{$value->codagente}">{$value->nombre} {$value->apellidos}</option>
+         <option value="{$value->codagente}">{$value->get_fullname()}</option>
          {/if}
       {/loop}
       </select>
    </div>
    <div class="bloque">
-      Administrador:
       {if condition="$fsc->suser->admin"}
-         <input type="checkbox" name="sadmin" value="TRUE" checked/>
+         <input type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
       {else}
-         <input type="checkbox" name="sadmin" value="TRUE"/>
+         <input type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
       {/if}
+      <label for="usuario_admin">Administrador</label>
    </div>
    <div class="right"><input type="submit" value="guardar"/></div>
    </form>

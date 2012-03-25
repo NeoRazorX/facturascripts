@@ -50,10 +50,9 @@ class pais extends fs_model
       return 'index.php?page=admin_paises#'.$this->codpais;
    }
 
-
    protected function install()
    {
-      return "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES ('ESP','España');";
+      return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');";
    }
    
    public function exists()

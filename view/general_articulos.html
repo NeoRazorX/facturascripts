@@ -49,7 +49,7 @@
          Referencia: <input type="text" name="referencia" size="20" maxlength="18"/>
       </div>
       <div class="bloque">
-         Familia:
+         <a href="{$fsc->familia->url()}">Familia</a>:
          <select name="codfamilia">
             {loop="$fsc->familia->all()"}
             <option value="{$value->codfamilia}">{$value->descripcion}</option>
@@ -57,7 +57,7 @@
          </select>
       </div>
       <div class="bloque">
-         IVA:
+         <a href="{$fsc->impuesto->url()}">IVA</a>:
          <select name="codimpuesto">
          {loop="$fsc->impuesto->all()"}
             {if condition="$value->default"}

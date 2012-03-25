@@ -125,6 +125,7 @@ class articulo extends fs_model
    public $pvp_ant;
    public $factualizado;
    public $codimpuesto;
+   public $iva;
    public $destacado;
    public $bloqueado;
    public $secompra;
@@ -181,6 +182,7 @@ class articulo extends fs_model
          $this->observaciones = '';
       }
       $this->pvp_ant = 0;
+      $this->iva = NULL;
    }
    
    public function show_pvp()
@@ -226,12 +228,18 @@ class articulo extends fs_model
    
    public function get_iva()
    {
-      $imp = new impuesto();
-      $imp = $imp->get($this->codimpuesto);
-      if($imp)
-         return $imp->iva;
+      if( isset($this->iva) )
+         return $this->iva;
       else
-         return 0;
+      {
+         $imp = new impuesto();
+         $imp = $imp->get($this->codimpuesto);
+         if($imp)
+            $this->iva = floatval($imp->iva);
+         else
+            $this->iva = 0;
+         return $this->iva;
+      }
    }
    
    public function set_referencia($ref)
@@ -263,7 +271,7 @@ class articulo extends fs_model
    public function set_pvp($p)
    {
       $this->pvp_ant = $this->pvp;
-      $this->pvp = round(floatval($p) * 100) / 100;
+      $this->pvp = floatval($p);
       $this->factualizado = Date('j-n-Y');
    }
    
@@ -272,7 +280,7 @@ class articulo extends fs_model
       $this->pvp_ant = $this->pvp;
       $pvpi = floatval($p);
       $iva = $this->get_iva();
-      $this->pvp = round((100*$pvpi)/(100+$iva) * 100) / 100;
+      $this->pvp = (100*$pvpi)/(100+$iva);
       $this->factualizado = Date('j-n-Y');
    }
 
@@ -362,10 +370,10 @@ class articulo extends fs_model
       return $artilist;
    }
    
-   public function all($offset=0)
+   public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();
-      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC", FS_ITEM_LIMIT, $offset);
+      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC", $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)
@@ -376,11 +384,11 @@ class articulo extends fs_model
       return $artilist;
    }
    
-   public function all_from_familia($codfamilia, $offset=0)
+   public function all_from_familia($codfamilia, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();
       $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$codfamilia."' ORDER BY referencia ASC",
-                                           FS_ITEM_LIMIT, $offset);
+                                           $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)

@@ -85,9 +85,9 @@ class empresa extends fs_model
       else
       {
          $this->id = NULL;
-         $this->stockpedidos = NULL;
+         $this->stockpedidos = FALSE;
          $this->contintegrada = TRUE;
-         $this->recequivalencia = NULL;
+         $this->recequivalencia = FALSE;
          $this->codserie = NULL;
          $this->codcuentarem = NULL;
          $this->codalmacen = NULL;
@@ -123,7 +123,7 @@ class empresa extends fs_model
       return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codcuentarem,codalmacen,
          codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,idprovincia,ciudad,codpostal,
          logo,direccion,administrador,codedi,cifnif,nombre) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
-         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','');";
+         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa');";
    }
    
    public function exists()
@@ -133,11 +133,20 @@ class empresa extends fs_model
    
    public function save()
    {
-      $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."', cifnif = '".$this->cifnif."',
-              administrador = '".$this->administrador."', direccion = '".$this->direccion."',
-              ciudad = '".$this->ciudad."', codpostal = '".$this->codpostal."', telefono = '".$this->telefono."',
-              fax = '".$this->fax."', web = '".$this->web."', email = '".$this->email."'
-              WHERE id = '".$this->id."';";
+      $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).", cifnif = ".$this->var2str($this->cifnif).",
+         codedi = ".$this->var2str($this->codedi).", administrador = ".$this->var2str($this->administrador).",
+         direccion = ".$this->var2str($this->direccion).",
+         logo = ".$this->var2str($this->logo).", codpostal = ".$this->var2str($this->codpostal).", ciudad = ".$this->var2str($this->ciudad).",
+         idprovincia = ".$this->var2str($this->idprovincia).", provincia = ".$this->var2str($this->provincia).",
+         apartado = ".$this->var2str($this->apartado).",
+         codpais = ".$this->var2str($this->codpais).", telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
+         email = ".$this->var2str($this->email).", web = ".$this->var2str($this->web).", codejercicio = ".$this->var2str($this->codejercicio).",
+         coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
+         codalmacen = ".$this->var2str($this->codalmacen).",
+         codcuentarem = ".$this->var2str($this->codcuentarem).", codserie = ".$this->var2str($this->codserie).",
+         recequivalencia = ".$this->var2str($this->recequivalencia).",
+         contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos)."
+         WHERE id = '".$this->id."';";
       return $this->db->exec($sql);
    }
    
