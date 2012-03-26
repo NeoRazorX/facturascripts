@@ -289,7 +289,7 @@ class fs_controller
    {
       if($_GET['default_page'] == 'TRUE')
       {
-         setcookie('default_page', $this->page->name, time()+FS_COOKIES_EXPIRE);
+         setcookie('default_page', $this->page->name, time()+315360000);
          $this->default_page = TRUE;
       }
       else
@@ -304,7 +304,7 @@ class fs_controller
       if( isset($_GET['css_file']) )
       {
          $this->css_file = $_GET['css_file'];
-         setcookie('css_file', $_GET['css_file'], time()+FS_COOKIES_EXPIRE);
+         setcookie('css_file', $_GET['css_file'], time()+315360000);
       }
       else if( isset($_COOKIE['css_file']) )
       {

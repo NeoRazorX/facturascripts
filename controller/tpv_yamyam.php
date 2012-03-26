@@ -50,7 +50,7 @@ class tpv_yamyam extends fs_controller
       if( isset($_POST['impresora']) )
       {
          $this->impresora = $_POST['impresora'];
-         setcookie('impresora', $this->impresora, time()+FS_COOKIES_EXPIRE);
+         setcookie('impresora', $this->impresora, time()+315360000);
       }
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
@@ -117,6 +117,20 @@ class tpv_yamyam extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar el albaran!");
       }
+      else if( isset($_GET['delete']) )
+      {
+         $this->albaran = new albaran_cliente();
+         $alb = $this->albaran->get_by_codigo($_GET['delete']);
+         if($alb)
+         {
+            if( $alb->delete() )
+               $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
+         }
+         else
+            $this->new_error_msg("Ticket no encontrado.");
+      }
       
       /// cargamos todos los paquetes
       $this->paquetes = $this->paquete->all();
@@ -133,7 +147,7 @@ class tpv_yamyam extends fs_controller
                break;
             }
          }
-         if( !$encontrado )
+         if(!$encontrado AND $a->pvp > 0)
          {
             $this->articulos[] = $a;
          }
@@ -166,7 +180,7 @@ class tpv_yamyam extends fs_controller
       {
          $empresa = new empresa();
          $linea = "\nTicket: " . $this->albaran->codigo;
-         $linea .= " " . $this->albaran->show_fecha() . "\n";
+         $linea .= " " . $this->albaran->show_fecha();
          $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
          fwrite($file, $linea);
          $linea = "Cliente: " . $this->albaran->nombrecliente . "\n";
@@ -188,14 +202,22 @@ class tpv_yamyam extends fs_controller
          }
          
          $linea = "----------------------------------------\n".
-            $this->center_text("IVA: " . number_format($this->albaran->totaliva, 2) . " Eur.  ".
-            "Total: " . $this->albaran->show_total() . " Eur.") . "\n\n\n\n";
+            $this->center_text("IVA: " . number_format($this->albaran->totaliva,2,',','.') . " Eur.  ".
+            "Total: " . $this->albaran->show_total() . " Eur.") . "\n\n";
+         if( isset($_POST['efectivo']) )
+            $linea .= $this->center_text("Efectivo..........: ".
+                    sprintf("%12s",number_format($_POST['efectivo'],2,',','.')." Eur."))."\n";
+         if( isset($_POST['cambio']) )
+            $linea .= $this->center_text("Cambio............: ".
+                    sprintf("%12s",number_format($_POST['cambio'],2,',','.')." Eur."))."\n";
+         $linea .= "\n\n\n";
          fwrite($file, $linea);
-         $linea = $this->center_text($empresa->nombre) . "\n";
+         
+         $linea = chr(27).chr(33).chr(56).$this->center_text($empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
          fwrite($file, $linea);
          $linea = $this->center_text($empresa->direccion . " - " . $empresa->ciudad) . "\n";
          fwrite($file, $linea);
-         $linea = $this->center_text("CIF: " . $empresa->cifnif) . "\n\n";
+         $linea = $this->center_text("CIF: " . $empresa->cifnif) . "\n".chr(27).chr(105); /// corta el papel
          fwrite($file, $linea);
          fclose($file);
       }
@@ -208,17 +230,14 @@ class tpv_yamyam extends fs_controller
             $imp = "";
          
          shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-         shell_exec("echo '\x1D\x56\x1' | lp".$imp); /// corta
          shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-         shell_exec("echo '\x1D\x56\x1' | lp".$imp); /// corta
          shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
          unlink("/tmp/ticket.txt"); /// borra el ticket
       }
    }
    
-   private function center_text($word)
+   private function center_text($word='', $tot_width=40)
    {
-      $tot_width = 40;
       $symbol = " ";
       $middle = round($tot_width / 2);
       $length_word = strlen($word);

@@ -107,7 +107,7 @@ class subpaquete extends fs_model
    public function all_from_paquete($ref)
    {
       $subpaqlist = array();
-      $subpaquetes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referenciapaq = '".$ref."';");
+      $subpaquetes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referenciapaq = '".$ref."' ORDER BY referencia ASC;");
       if($subpaquetes)
       {
          foreach($subpaquetes as $s)

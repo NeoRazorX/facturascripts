@@ -386,6 +386,15 @@ class albaran_cliente extends fs_model
          return FALSE;
    }
    
+   public function get_by_codigo($cod)
+   {
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".strtoupper($cod)."';");
+      if($albaran)
+         return new albaran_cliente($albaran[0]);
+      else
+         return FALSE;
+   }
+   
    public function get_lineas()
    {
       $linea = new linea_albaran_cliente();

@@ -9,8 +9,9 @@ select {
    font-size: 20px;
 }
 
-input.cancel {
-   background-color: #B14E4E;
+input.cancel,
+input.comfirm {
+   padding: 10px;
    border: 1px outset #333333;
    color: white;
    text-align: center;
@@ -18,13 +19,12 @@ input.cancel {
    font-weight: bold;
 }
 
+input.cancel {
+   background-color: #B14E4E;
+}
+
 input.comfirm {
    background-color: green;
-   border: 1px outset #333333;
-   color: white;
-   text-align: center;
-   text-transform: uppercase;
-   font-weight: bold;
 }
 
 table.main_menu {
@@ -137,18 +137,13 @@ div.popup_articulos div.grupo {
    border: 1px dashed #333333;
 }
 
-div.popup_articulos div.grupo div.radio {
+div.popup_articulos div.grupo label {
    display: inline-block;
-   padding: 0px;
+   padding: 10px;
    margin: 5px;
    background-color: #f1f1f1;
    border: 1px outset #333333;
    font-size: 25px;
-}
-
-div.popup_articulos div.grupo div.radio label {
-   display: inline-block;
-   padding: 5px;
 }
 
 input:checked + label {
@@ -166,7 +161,7 @@ div.popup_articulos ul {
 div.popup_articulos ul li {
    display: inline-block;
    width: 310px;
-   padding: 8px;
+   padding: 10px;
    margin: 10px;
    border: 1px outset #333333;
    background-color: #FFFAA6;
@@ -188,4 +183,14 @@ div.popup_articulos ul li:hover {
 
 div.popup_articulos ul li span {
    float: right;
+}
+
+input#tpv_total2,
+input#tpv_efectivo,
+input#tpv_cambio {
+   background-color: #333333;
+   color: white;
+   text-align: right;
+   font-size: 28px;
+   font-weight: bold;
 }

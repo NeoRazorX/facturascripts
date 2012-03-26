@@ -29,7 +29,7 @@ class general_paquetes extends fs_controller
       else if( isset($_GET['fillcache']) )
       {
          $art = new articulo();
-         foreach($art->all() as $a)
+         foreach($art->all(0, 100) as $a)
          {
             $this->cache_paquete->add($a->referencia);
          }
