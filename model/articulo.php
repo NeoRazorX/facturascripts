@@ -370,6 +370,14 @@ class articulo extends fs_model
       return $artilist;
    }
    
+   public function multiplicar_precios($codfam,$m=1)
+   {
+      if(isset($codfam) AND $m != 1)
+         return $this->db->exec("UPDATE ".$this->table_name." SET pvp = (pvp*".$m.") WHERE codfamilia = ".$this->var2str($codfam).";");
+      else
+         return TRUE;
+   }
+   
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();

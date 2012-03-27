@@ -28,6 +28,11 @@
       <br/>
       <div class="bloque">Web: <input type="text" name="web" size="50" value="{$fsc->empresa->web}"/></div>
       <div class="bloque">email: <input type="text" name="email" size="30" value="{$fsc->empresa->email}"/></div>
+      <div>
+         <div class="bloque">Lema: <input type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}"/></div>
+         <div class="bloque">Horario: <input type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}"/></div>
+         Lema y horario aparecen en el ticket.
+      </div>
       <br/>
       <div class="bloque">
          <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:

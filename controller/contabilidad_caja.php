@@ -1,10 +1,11 @@
 <?php
 
-require_once 'model/albaran_cliente.php';
+require_once 'model/caja.php';
 
 class contabilidad_caja extends fs_controller
 {
-   public $albaran;
+   public $caja;
+   public $offset;
    public $resultados;
    
    public function __construct()
@@ -14,8 +15,30 @@ class contabilidad_caja extends fs_controller
    
    protected function process()
    {
-      $this->albaran = new albaran_cliente();
-      $this->resultados = $this->albaran->all_from_day();
+      $this->caja = new caja();
+      
+      if( isset($_GET['offset']) )
+         $this->offset = intval($_GET['offset']);
+      else
+         $this->offset = 0;
+      
+      $this->resultados = $this->caja->all();
+   }
+   
+   public function anterior_url()
+   {
+      $url = '';
+      if($this->offset > '0')
+         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+      return $url;
+   }
+   
+   public function siguiente_url()
+   {
+      $url = '';
+      if(count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      return $url;
    }
 }
 

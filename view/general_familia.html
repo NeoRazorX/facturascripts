@@ -53,6 +53,15 @@
       </tr>
    </table>
 </div>
+
+<div class="rounded">
+   <h1>Herramientas:</h1>
+   <form action="{$fsc->url()}" method="post">
+      Multiplicar precios por:
+      <input type="text" name="multiplicar" value="1" size="3"/>
+      <div class="right"><input type="submit" value="aplicar"/></div>
+   </form>
+</div>
 {/if}
 
 {include="footer"}

@@ -47,6 +47,8 @@ class empresa extends fs_model
    public $codedi;
    public $cifnif;
    public $nombre;
+   public $lema;
+   public $horario;
    
    public function __construct()
    {
@@ -81,6 +83,8 @@ class empresa extends fs_model
          $this->codedi = $e[0]['codedi'];
          $this->cifnif = $e[0]['cifnif'];
          $this->nombre = $e[0]['nombre'];
+         $this->lema = $e[0]['lema'];
+         $this->horario = $e[0]['horario'];
       }
       else
       {
@@ -110,6 +114,8 @@ class empresa extends fs_model
          $this->codedi = NULL;
          $this->cifnif = '';
          $this->nombre = '';
+         $this->lema = '';
+         $this->horario = '';
       }
    }
    
@@ -122,8 +128,8 @@ class empresa extends fs_model
    {
       return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codcuentarem,codalmacen,
          codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,idprovincia,ciudad,codpostal,
-         logo,direccion,administrador,codedi,cifnif,nombre) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
-         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa');";
+         logo,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa','','');";
    }
    
    public function exists()
@@ -145,7 +151,8 @@ class empresa extends fs_model
          codalmacen = ".$this->var2str($this->codalmacen).",
          codcuentarem = ".$this->var2str($this->codcuentarem).", codserie = ".$this->var2str($this->codserie).",
          recequivalencia = ".$this->var2str($this->recequivalencia).",
-         contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos)."
+         contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos).",
+         lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario)."
          WHERE id = '".$this->id."';";
       return $this->db->exec($sql);
    }

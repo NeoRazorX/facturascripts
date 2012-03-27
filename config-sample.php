@@ -35,4 +35,10 @@ define('FS_COOKIES_EXPIRE', 172800);
 /// el número de elementos a mostrar en pantalla
 define('FS_ITEM_LIMIT', 50);
 
+/*
+ * Un número identificador para esta instancia de FacturaScripts.
+ * Necesario para identificar cada caja en el TPV_yamyam.
+ */
+define('FS_ID', 1);
+
 ?>

@@ -30,6 +30,8 @@
    <columna><nombre>codedi</nombre><tipo>character varying(17)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>cifnif</nombre><tipo>character varying(12)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>nombre</nombre><tipo>character varying(100)</tipo><nulo>NO</nulo></columna>
+   <columna><nombre>lema</nombre><tipo>character varying(50)</tipo><nulo>YES</nulo></columna>
+   <columna><nombre>horario</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>id</nombre><tipo>serial</tipo><nulo>NO</nulo></columna>
    <restriccion><nombre>empresa_pkey</nombre><consulta>PRIMARY KEY (id)</consulta></restriccion>
 </tabla>

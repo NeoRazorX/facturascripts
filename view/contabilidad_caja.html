@@ -3,23 +3,27 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th>Fecha</th>
+         <th>Caja</th>
          <th>Agente</th>
-         <th align="right">Número de albaranes</th>
-         <th align="right">Media</th>
-         <th align="right">Total</th>
+         <th>Fecha inicial</th>
+         <th align="right">Dinero inicial</th>
+         <th>Fecha fin</th>
+         <th align="right">Dinero fin</th>
+         <th align="right">Diferencia</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td>{$value.fecha}</td>
-         {if condition="$value.agente"}
-         <td><a href="{$value.agente->url()}">{$value.agente->get_fullname()}</a></td>
+         <td align="center">{$value->fs_id}</td>
+         {if condition="$value->agente"}
+         <td align="center"><a href="{$value->agente->url()}">{$value->agente->get_fullname()}</a></td>
          {else}
-         <td>-</td>
+         <td align="center">-</td>
          {/if}
-         <td align="right">{$value.albaranes}</td>
-         <td align="right">{$value.media} €</td>
-         <td align="right">{$value.total} €</td>
+         <td align="center">{$value->show_fecha_inicial()}</td>
+         <td align="right">{$value->show_dinero_inicial()} €</td>
+         <td align="center">{$value->show_fecha_fin()}</td>
+         <td align="right">{$value->show_dinero_fin()} €</td>
+         <td align="right">{$value->show_diferencia()} €</td>
       </tr>
       {/loop}
    </table>

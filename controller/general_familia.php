@@ -52,6 +52,13 @@ class general_familia extends fs_controller
       if($this->familia)
       {
          $this->page->title = $this->familia->codfamilia;
+         
+         if( isset($_POST['multiplicar']) )
+         {
+            $art = new articulo();
+            $art->multiplicar_precios($this->familia->codfamilia, floatval($_POST['multiplicar']));
+         }
+         
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else
