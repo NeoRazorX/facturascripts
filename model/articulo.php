@@ -134,7 +134,7 @@ class articulo extends fs_model
    public $stockfis;
    public $stockmin;
    public $stockmax;
-   public $controlstock;
+   public $controlstock; /// permitir ventas sin stock
    public $codbarras;
    public $observaciones;
 
@@ -245,7 +245,7 @@ class articulo extends fs_model
    public function set_referencia($ref)
    {
       $ref = str_replace(' ', '_', $ref);
-      if(eregi("^[A-Z0-9_\+\.\*\/\-]{1,18}$", $ref) != TRUE)
+      if(eregi("^[A-Z0-9_\+\.\*\/\-]{1,18}$", $ref) != TRUE) /// sustituir por preg_match
       {
          $this->new_error_msg("¡Referencia no valida!");
       }

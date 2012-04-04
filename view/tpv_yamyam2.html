@@ -117,6 +117,13 @@
       close_articulos();
    }
    $(document).ready(function() {
+      $("#sombra").click(function(event) {
+         $("div.popup_articulos").hide();
+         $(this).hide();
+      });
+      $("div.popup_articulos label").hover(function(event) {
+         $('#' + $(this).attr('for')).attr('checked', 'checked');
+      });
       $("#paquetes").click(function(event) {
          $("#sombra").show();
          $("#all_paquetes").css({
@@ -282,7 +289,7 @@
 
 {loop="$fsc->paquetes"}
 <div class="popup_articulos" id="paquete_{$value1->referencia}">
-   <h1>PAQUETE: {$value1->referencia}</h1>
+   <h1>PAQUETE: {$value1->referencia} {$value1->articulo->show_pvp_iva()}</h1>
    <form id="f_p_{$value1->referencia}">
       <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
       <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>

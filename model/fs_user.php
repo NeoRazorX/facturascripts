@@ -125,7 +125,7 @@ class fs_user extends fs_model
    public function set_nick($n='')
    {
       $n = trim($n);
-      if( eregi("^[A-Z0-9_]{3,12}$", $n) )
+      if( eregi("^[A-Z0-9_]{3,12}$", $n) ) /// sustituir por preg_match
       {
          $this->nick = $n;
          return TRUE;
@@ -140,7 +140,7 @@ class fs_user extends fs_model
    public function set_password($p='')
    {
       $p = trim($p);
-      if( eregi("^[A-Z0-9_]{1,12}$", $p) )
+      if( eregi("^[A-Z0-9_]{1,12}$", $p) ) /// sustituir por preg_match
       {
          $this->password = sha1($p);
          return TRUE;
