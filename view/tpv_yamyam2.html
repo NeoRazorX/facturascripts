@@ -17,8 +17,8 @@
    {
       $("#sombra").show();
       $("#paquete_"+paq).css({
-            left: ($(window).width() - $("#paquete_"+paq).outerWidth())/2,
-            top: ($(window).height() - $("#paquete_"+paq).outerHeight())/2
+         left: ($(window).width() - $("#paquete_"+paq).outerWidth())/2,
+         top: ($(window).height() - $("#paquete_"+paq).outerHeight())/2
       });
       $("#paquete_"+paq).show();
    }
@@ -256,11 +256,11 @@
       </tr>
       <tr>
          <td align="right">Efectivo:</td>
-         <td><input type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo"/> EUROS</td>
+         <td><input type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> EUROS</td>
       </tr>
       <tr>
          <td align="right">Cambio:</td>
-         <td><input type="text" name="cambio" value="0.00" size="5" id="tpv_cambio"/> EUROS</td>
+         <td><input type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> EUROS</td>
       </tr>
       <tr>
          <td align="right">Observaciones:</td>
