@@ -72,7 +72,10 @@ class impuesto extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
+      if( is_null($this->codimpuesto) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
    }
    
    public function save()
@@ -112,9 +115,7 @@ class impuesto extends fs_model
       if($impuestos)
       {
          foreach($impuestos as $i)
-         {
             $impuestolist[] = new impuesto($i);
-         }
       }
       return $impuestolist;
    }

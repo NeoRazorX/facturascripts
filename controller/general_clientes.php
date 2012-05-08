@@ -34,6 +34,8 @@ class general_clientes extends fs_controller
    
    protected function process()
    {
+      $this->custom_search = TRUE;
+      $this->buttons[] = new fs_button('b_nuevo_cliente', 'nuevo cliente');
       $this->cliente = new cliente();
       $this->serie = new serie();
       
@@ -42,7 +44,10 @@ class general_clientes extends fs_controller
       else
          $this->offset = 0;
       
-      $this->resultados = $this->cliente->all($this->offset);
+      if($this->query != '')
+         $this->resultados = $this->cliente->search($this->query, $this->offset);
+      else
+         $this->resultados = $this->cliente->all($this->offset);
       
       if( isset($_POST['codcliente']) )
       {
@@ -61,7 +66,9 @@ class general_clientes extends fs_controller
    public function anterior_url()
    {
       $url = '';
-      if($this->offset>'0')
+      if($this->query!='' AND $this->offset>'0')
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      else if($this->query=='' AND $this->offset>'0')
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
       return $url;
    }
@@ -69,7 +76,9 @@ class general_clientes extends fs_controller
    public function siguiente_url()
    {
       $url = '';
-      if(count($this->resultados)==FS_ITEM_LIMIT)
+      if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
    }

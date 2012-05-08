@@ -31,6 +31,7 @@ class contabilidad_ejercicios extends fs_controller
    protected function process()
    {
       $this->ejercicio = new ejercicio();
+      $this->buttons[] = new fs_button('b_nuevo_ejercicio', 'nuevo ejercicio');
       
       if( isset($_POST['codejercicio']) )
       {

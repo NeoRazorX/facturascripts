@@ -1,20 +1,37 @@
 {include="header"}
 
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nueva_serie").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nueva_serie").css({
+            left: ($(window).width() - $("#popup_nueva_serie").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nueva_serie").outerHeight())/2
+         });
+         $("#popup_nueva_serie").show();
+         document.f_nueva_serie.codserie.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nueva_serie">
+   <form name="f_nueva_serie" action="{$fsc->url()}" method="post">
       <h1>Nueva serie:</h1>
-      <div class="bloque">
-         Código:
-         <input type="text" name="codserie" size="2" maxlength="2"/>
-      </div>
-      <div class="bloque">
-         Descripción:
-         <input type="text" name="descripcion"/>
-      </div>
-      <div class="bloque">
-         <input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/>
-         <label for="serie_sin_iva">sin IVA</label>
-      </div>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codserie" size="2" maxlength="2"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion"/></td>
+         </tr>
+         <tr>
+            <td align="right"><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
+            <td><label for="serie_sin_iva">sin IVA</label></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nueva serie"/></div>
    </form>
 </div>

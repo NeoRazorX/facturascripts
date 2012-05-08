@@ -32,6 +32,7 @@ class admin_users extends fs_controller
    protected function process()
    {
       $this->agente = new agente();
+      $this->buttons[] = new fs_button('b_nuevo_usuario', 'nuevo usuario');
       
       if( isset($_POST['nnick']) )
       {

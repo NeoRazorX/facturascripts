@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_db.php';
+require_once 'base/fs_button.php';
 require_once 'model/fs_user.php';
 require_once 'model/fs_page.php';
 require_once 'model/fs_access.php';
@@ -38,8 +39,10 @@ class fs_controller
    protected $menu;
    public $template;
    public $css_file;
-   public $custom_divtitle;
-   
+   public $custom_search;
+   public $query;
+   public $buttons;
+
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
       $tiempo = explode(' ', microtime());
@@ -68,12 +71,6 @@ class fs_controller
       /// recuperamos el mensaje de error de fs_page()
       $this->new_error_msg( $this->page->error_msg );
       $this->ppage = FALSE;
-      $this->custom_divtitle = FALSE;
-      
-      if( !isset($_COOKIE['default_page']) )
-         $this->default_page = FALSE;
-      else if($_COOKIE['default_page'] == $this->page->name)
-         $this->default_page = TRUE;
       
       $this->set_css_file();
       
@@ -87,6 +84,20 @@ class fs_controller
             {
                if( isset($_GET['default_page']) )
                   $this->set_default_page();
+               else if( !isset($_COOKIE['default_page']) )
+                  $this->default_page = FALSE;
+               else if($_COOKIE['default_page'] == $this->page->name)
+                  $this->default_page = TRUE;
+               
+               $this->buttons = array();
+               
+               $this->custom_search = FALSE;
+               if( isset($_POST['query']) )
+                  $this->query = $_POST['query'];
+               else if( isset($_GET['query']) )
+                  $this->query = $_GET['query'];
+               else
+                  $this->query = '';
                
                $this->template = $name;
                $this->process();
@@ -271,7 +282,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.3';
+      return '0.9.4';
    }
    
    public function select_default_page()
@@ -279,9 +290,19 @@ class fs_controller
       if( $this->user->logged_on )
       {
          if( isset($_COOKIE['default_page']) )
-            Header('location: index.php?page=' . $_COOKIE['default_page']);
+         {
+            $page = $this->page->get($_COOKIE['default_page']);
+            if($page)
+               Header('location: index.php?page=' . $_COOKIE['default_page']);
+            else if(count($this->menu) > 0)
+               Header('location: index.php?page=' . $this->menu[0]->name);
+            else
+               Header('location: index.php?page=admin_pages');
+         }
          else if(count($this->menu) > 0)
             Header('location: index.php?page=' . $this->menu[0]->name);
+         else
+            Header('location: index.php?page=admin_pages');
       }
    }
    

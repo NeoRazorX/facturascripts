@@ -21,6 +21,7 @@ require_once 'model/proveedor.php';
 
 class general_proveedores extends fs_controller
 {
+   public $proveedor;
    public $offset;
    public $resultados;
    
@@ -31,19 +32,38 @@ class general_proveedores extends fs_controller
    
    protected function process()
    {
+      $this->custom_search = TRUE;
+      $this->buttons[] = new fs_button('b_nuevo_proveedor', 'nuevo proveedor');
+      $this->proveedor = new proveedor();
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
       
-      $proveedor = new proveedor();
-      $this->resultados = $proveedor->all($this->offset);
+      if($this->query != '')
+         $this->resultados = $this->proveedor->search($this->query, $this->offset);
+      else
+         $this->resultados = $this->proveedor->all($this->offset);
+      
+      if( isset($_POST['codproveedor']) )
+      {
+         $this->proveedor->codproveedor = $_POST['codproveedor'];
+         $this->proveedor->nombre = $_POST['nombre'];
+         $this->proveedor->cifnif = $_POST['cifnif'];
+         if( $this->proveedor->save() )
+            header('location: '.$this->proveedor->url());
+         else
+            $this->new_error_msg("¡Imposible crear el proveedor!");
+      }
    }
    
    public function anterior_url()
    {
       $url = '';
-      if($this->offset>'0')
+      if($this->query!='' AND $this->offset>'0')
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      else if($this->query=='' AND $this->offset>'0')
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
       return $url;
    }
@@ -51,7 +71,9 @@ class general_proveedores extends fs_controller
    public function siguiente_url()
    {
       $url = '';
-      if(count($this->resultados)==FS_ITEM_LIMIT)
+      if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
    }

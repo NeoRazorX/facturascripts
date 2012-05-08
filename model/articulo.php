@@ -66,7 +66,10 @@ class stock extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$this->idstock."';");
+      if( is_null($this->idstock) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$this->idstock."';");
    }
    
    public function get_new_idstock()
@@ -107,9 +110,7 @@ class stock extends fs_model
       if($stocks)
       {
          foreach($stocks as $s)
-         {
             $stocklist[] = new stock($s);
-         }
       }
       return $stocklist;
    }
@@ -137,7 +138,8 @@ class articulo extends fs_model
    public $controlstock; /// permitir ventas sin stock
    public $codbarras;
    public $observaciones;
-
+   public $imagen;
+   
    public function __construct($a=FALSE)
    {
       parent::__construct('articulos');
@@ -160,6 +162,7 @@ class articulo extends fs_model
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $a['observaciones'];
+         $this->imagen = $this->str2bin($a['imagen']);
       }
       else
       {
@@ -167,7 +170,7 @@ class articulo extends fs_model
          $this->codfamilia = NULL;
          $this->descripcion = '';
          $this->pvp = 0;
-         $this->factualizado = Date('j-n-Y');
+         $this->factualizado = Date('d-m-Y');
          $this->codimpuesto = NULL;
          $this->stockfis = 0;
          $this->stockmin = 0;
@@ -180,6 +183,7 @@ class articulo extends fs_model
          $this->equivalencia = NULL;
          $this->codbarras = '';
          $this->observaciones = '';
+         $this->imagen = NULL;
       }
       $this->pvp_ant = 0;
       $this->iva = NULL;
@@ -200,7 +204,7 @@ class articulo extends fs_model
    
    public function show_factualizado()
    {
-      return Date('j-n-Y', strtotime($this->factualizado));
+      return Date('d-m-Y', strtotime($this->factualizado));
    }
    
    public function url()
@@ -242,30 +246,38 @@ class articulo extends fs_model
       }
    }
    
+   public function imagen_url()
+   {
+      if( is_null($this->imagen) )
+         return FALSE;
+      else
+      {
+         if( !file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         {
+            $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
+            fwrite($f, $this->imagen);
+            fclose($f);
+         }
+         return '../tmp/articulos/'.$this->referencia.'.png';
+      }
+   }
+   
    public function set_referencia($ref)
    {
       $ref = str_replace(' ', '_', $ref);
-      if(eregi("^[A-Z0-9_\+\.\*\/\-]{1,18}$", $ref) != TRUE) /// sustituir por preg_match
-      {
-         $this->new_error_msg("¡Referencia no valida!");
-      }
-      else
-      {
+      if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $ref) )
          $this->referencia = $ref;
-      }
+      else
+         $this->new_error_msg("¡Referencia no valida!");
    }
    
    public function set_descripcion($desc)
    {
       $desc = trim($desc);
       if(strlen($desc) > 100)
-      {
          $this->descripcion = substr($desc, 0, 99);
-      }
       else
-      {
          $this->descripcion = $desc;
-      }
    }
    
    public function set_pvp($p)
@@ -293,38 +305,47 @@ class articulo extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+      if( is_null($this->referencia) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
    }
    
    public function save()
    {
+      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         unlink('tmp/articulos/'.$this->referencia.'.png');
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = '".$this->descripcion."', codfamilia = '".$this->codfamilia."',
-            pvp = '".$this->pvp."', factualizado = '".$this->factualizado."', codimpuesto = '".$this->codimpuesto."',
-            stockfis = '".$this->stockfis."', stockmin = '".$this->stockmin."', stockmax = '".$this->stockmax."',
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+            codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
+            factualizado = ".$this->var2str($this->factualizado).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+            stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
+            stockmax = ".$this->var2str($this->stockmax).",
             controlstock = ".$this->var2str($this->controlstock).", destacado = ".$this->var2str($this->destacado).",
             bloqueado = ".$this->var2str($this->bloqueado).", sevende = ".$this->var2str($this->sevende).",
-            secompra = ".$this->var2str($this->secompra).", equivalencia = '".$this->equivalencia."',
-            codbarras = '".$this->codbarras."', observaciones = '".$this->observaciones."'
-            WHERE referencia = '".$this->referencia."';";
+            secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
+            codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
+            imagen = ".$this->bin2str($this->imagen)." WHERE referencia = '".$this->referencia."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,factualizado,codimpuesto,stockfis,
-            stockmin,stockmax,controlstock,destacado,bloqueado,secompra,sevende,equivalencia,codbarras,observaciones)
+            stockmin,stockmax,controlstock,destacado,bloqueado,secompra,sevende,equivalencia,codbarras,observaciones,imagen)
             VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).",
             ".$this->var2str($this->pvp).",".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
             ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",".$this->var2str($this->stockmax).",
             ".$this->var2str($this->controlstock).",".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
             ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",".$this->var2str($this->equivalencia).",
-            ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).");";
+            ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
+      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         unlink('tmp/articulos/'.$this->referencia.'.png');
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
    }
    
@@ -337,34 +358,45 @@ class articulo extends fs_model
          return FALSE;
    }
    
-   public function search($text='', $familia='', $offset=0)
+   public function search($text, $offset=0)
    {
       $artilist = array();
-      $buscando = FALSE;
-      $sql = "SELECT * FROM ".$this->table_name." ";
-      if($familia != '')
+      if( isset($text) )
       {
-         $sql .= "WHERE codfamilia = '".$familia."'";
-         $buscando = TRUE;
-      }
-      if($text != '')
-      {
-         if($buscando)
-            $sql .= " AND ";
-         else
-            $sql .= "WHERE ";
+         /// búsqueda por referencia y código de barras
+         $sql = "SELECT * FROM ".$this->table_name;
+         $text = strtolower($text);
          if( is_numeric($text) )
-            $sql .= "(referencia ~~ '%".$text."%' OR codbarras = '".$text."' OR descripcion ~~ '%".$text."%')";
+            $sql .= " WHERE (referencia ~~ '%".$text."%' OR codbarras = '".$text."')";
          else
-            $sql .= "(upper(referencia) ~~ '%".strtoupper($text)."%' OR upper(descripcion) ~~ '%".strtoupper($text)."%')";
-      }
-      $sql .= " ORDER BY referencia ASC";
-      $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-      if($articulos)
-      {
-         foreach($articulos as $a)
+            $sql .= " WHERE lower(referencia) ~~ '%".$text."%'";
+         $sql .= " AND bloqueado = FALSE ORDER BY referencia ASC";
+         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+         if($articulos)
          {
-            $artilist[] = new articulo($a);
+            foreach($articulos as $a)
+               $artilist[] = new articulo($a);
+         }
+         /// añadimos las búsquedas por descripción
+         $sql = "SELECT * FROM ".$this->table_name." WHERE descripcion ~~ '%".$text."%' AND bloqueado = FALSE ORDER BY descripcion ASC";
+         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+         if($articulos)
+         {
+            foreach($articulos as $a)
+            {
+               if( !in_array($a, $artilist) )
+                  $artilist[] = new articulo($a);
+            }
+         }
+      }
+      else
+      {
+         $sql = "SELECT * FROM ".$this->table_name." ORDER BY referencia ASC";
+         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+         if($articulos)
+         {
+            foreach($articulos as $a)
+               $artilist[] = new articulo($a);
          }
       }
       return $artilist;
@@ -385,9 +417,7 @@ class articulo extends fs_model
       if($articulos)
       {
          foreach($articulos as $a)
-         {
             $artilist[] = new articulo($a);
-         }
       }
       return $artilist;
    }

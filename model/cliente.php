@@ -93,7 +93,10 @@ class cliente extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$this->codcliente."';");
+      if( is_null($this->codcliente) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$this->codcliente."';");
    }
    
    public function save()
@@ -131,16 +134,28 @@ class cliente extends fs_model
    public function all($offset=0)
    {
       $clientlist = array();
-      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY codcliente ASC",
+      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC",
                                           FS_ITEM_LIMIT, $offset);
       if($clientes)
       {
          foreach($clientes as $c)
-         {
             $clientlist[] = new cliente($c);
-         }
       }
       return $clientlist;
+   }
+   
+   public function search($query, $offset=0)
+   {
+      $clilist = array();
+      $query = strtolower($query);
+      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente ~~ '%".$query."%'
+         OR lower(nombre) ~~ '%".$query."%' OR lower(nombrecomercial) ~~ '%".$query."%' ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
+      if($clientes)
+      {
+         foreach($clientes as $c)
+            $clilist[] = new cliente($c);
+      }
+      return $clilist;
    }
 }
 

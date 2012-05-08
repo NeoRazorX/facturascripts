@@ -9,24 +9,40 @@
       function fs_select_folder(folder)
       {
          $('#user_list').hide();
-         $('#main_menu div').each(function() {
+         $('div.pages div').each(function() {
             $(this).hide();
          });
          if(folder != '')
+         {
+            $('#folder_'+folder).css({
+               display: 'inline-block',
+               position: 'fixed',
+               left: $("#b_folder_"+folder).position().left+5,
+               top: $("#b_folder_"+folder).position().top+35
+            });
             $('#folder_'+folder).show();
-      }
-      function fs_show_user_list()
-      {
-         fs_select_folder('');
-         $('#user_list').show();
-      }
-      function fs_hide_user_list()
-      {
-         $('#user_list').hide();
+         }
       }
       $(document).ready(function() {
-         $('#exit').click(function() {
-            window.location.href = "index.php?logout=TRUE&nlogin={$fsc->user->nick}";
+         $("#b_user_list").click(function(event) {
+            event.preventDefault();
+            fs_select_folder('');
+            $('#user_list').css({
+               display: 'inline-block',
+               position: 'fixed',
+               left: $("#b_user_list").position().left,
+               top: $("#b_user_list").position().top+35
+            });
+            $('#user_list').show();
+         });
+         $("#header_logo, #header_location, #header_buttons, #header_search, div.main_div").click(function() {
+            fs_select_folder('');
+         });
+         $("#shadow").click(function() {
+            $('div.popup').each(function() {
+               $(this).hide();
+            });
+            $("#shadow").hide();
          });
          $('div.message').click(function() {
             $(this).hide();
@@ -35,80 +51,91 @@
    </script>
 </head>
 <body>
-   <table class="main_menu" id="main_menu">
-      <tr>
-      {loop="$fsc->folders()"}
-         {if condition="$value==$fsc->page->folder"}
-         <th class="menu_s" onclick="fs_select_folder('{$value}')">{$value}</th>
-         {else}
-         <th class="menu" onclick="fs_select_folder('{$value}')">{$value}</th>
+   <div class="header">
+   <div class="header_box">
+      <div id="header_folders">
+         {loop="$fsc->folders()"}
+            {if condition="$value==$fsc->page->folder"}
+               <a href="#" id="b_folder_{$value}" class="selected" onclick="fs_select_folder('{$value}')">{$value}</a>
+            {else}
+               <a href="#" id="b_folder_{$value}" onclick="fs_select_folder('{$value}')">{$value}</a>
+            {/if}
+         {/loop}
+      </div>
+      <div id="header_logo">{$fsc->get_empresa_name()}</div>
+      <div id="header_user">
+         <a href="#" id="b_user_list">{$fsc->user->nick}</a>
+         <a href="{$fsc->url()}&logout=TRUE"><img src="img/logout.png" alt="salir"/></a>
+      </div>
+   </div>
+   <div class="header_box">
+      <div id="header_buttons">
+         <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
+         {if condition="$fsc->page->show_on_menu"}
+            {if condition="$fsc->default_page"}
+               <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
+            {else}
+               <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
+            {/if}
          {/if}
-      {/loop}
-         <th class="empresa" onclick="fs_select_folder('')">{$fsc->get_empresa_name()}</th>
-         <th class="user" onclick="fs_show_user_list()">{$fsc->user->nick}</th>
-         <th id="exit">Salir</th>
-      </tr>
-      <tr onclick="fs_select_folder('')">
+         {loop="$fsc->buttons"}
+            {if condition="$value->class==''"}
+               <a id="{$value->id}" href="{$value->href}"><img src="{$value->img}" alt="{$value->alt}"/> {$value->value}</a>
+            {else}
+               <a id="{$value->id}" class="{$value->class}" href="{$value->href}"><img src="{$value->img}" alt="{$value->alt}"/>
+                  {$value->value}</a>
+            {/if}
+         {/loop}
+      </div>
+      <div id="header_location">
+         {$fsc->page->folder} »
+         {if condition="$fsc->ppage"}
+            <a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »
+         {/if}
+         {$fsc->page->title}
+         {if condition="$fsc->is_admin_page()"}*{/if}
+      </div>
+      <div id="header_search">
+         {if condition="$fsc->custom_search"}
+            <form name="f_custom_search" action="{$fsc->url()}" method="post">
+               <input type="text" name="query" value="{$fsc->query}"/>
+               <input type="submit" value="buscar"/>
+            </form>
+         {/if}
+      </div>
+   </div>
+   </div>
+   <div class="pages">
       {loop="$fsc->folders()"}
-         <td>
-            <div id="folder_{$value}">
-               <img src="img/flecha_submenu.png" alt="*"/>
-               <ul>
-               {loop="$fsc->pages($value)"}
-                  {if condition="$value->name == $fsc->page->name"}
+         <div id="folder_{$value}">
+            <img src="img/flecha_submenu.png" alt="*"/>
+            <ul>
+            {loop="$fsc->pages($value)"}
+               {if condition="$value->name == $fsc->page->name"}
                   <li class="selected"><a href="{$value->url()}">{$value->title}</a></li>
-                  {else}
-                  <li><a href="{$value->url()}">{$value->title}</a></li>
-                  {/if}
-               {/loop}
-            </ul>
-            </div>
-         </td>
-      {/loop}
-         <td></td>
-         <td>
-            <div id="user_list" onclick="fs_hide_user_list()">
-               <img src="img/flecha_submenu.png" alt="*"/>
-               <ul>
-               {loop name="$fsc->user->all()"}
-                  {if condition="$value->nick != $fsc->user->nick"}
-                  <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
-                  {/if}
-               {/loop}
-               </ul>
-            </div>
-         </td>
-      </tr>
-   </table>
-   <div class="main_div" onclick="fs_select_folder('')">
-   {if condition="!$fsc->custom_divtitle"}
-      <table class="title">
-         <tr>
-            <td>
-            {if condition="$fsc->page->show_on_menu"}
-               {if condition="$fsc->default_page"}
-                  <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
                {else}
-                  <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
+                  <li><a href="{$value->url()}">{$value->title}</a></li>
                {/if}
+            {/loop}
+            </ul>
+         </div>
+      {/loop}
+      <div id="user_list" onclick="fs_hide_user_list()">
+         <img src="img/flecha_submenu.png" alt="*"/>
+         <ul>
+         {loop name="$fsc->user->all()"}
+            {if condition="$value->nick != $fsc->user->nick"}
+               <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
             {/if}
-               <b>{$fsc->page->folder}</b> »
-            {if condition="$fsc->ppage"}
-               <b><a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a></b> »
-            {/if}
-               <b>{$fsc->page->title}</b>
-            {if condition="$fsc->is_admin_page()"}
-               *
-            {/if}
-               <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
-            </td>
-         </tr>
-      </table>
-      {if condition="$fsc->error_msg"}
-         <div class="error">{$fsc->error_msg}</div>
-      {/if}
-      {if condition="$fsc->message"}
-         <div class="message">{$fsc->message}</div>
-      {/if}
-   {/if}
-      
+         {/loop}
+         </ul>
+      </div>
+   </div>
+   <div id="shadow"></div>
+   <div class="main_div">
+{if condition="$fsc->error_msg"}
+   <div class="error">{$fsc->error_msg}</div>
+{/if}
+{if condition="$fsc->message"}
+   <div class="message">{$fsc->message}</div>
+{/if}

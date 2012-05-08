@@ -1,17 +1,49 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_agente").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_agente").css({
+            left: ($(window).width() - $("#popup_nuevo_agente").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_agente").outerHeight())/2
+         });
+         $("#popup_nuevo_agente").show();
+         document.f_nuevo_agente.snombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_agente">
    <h1>Nuevo agente:</h1>
-   <form action ="{$fsc->url()}" method="POST">
-      <div class="bloque">
-         Código:
-         <input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10"/>
-      </div>
-      <div class="bloque">Nombre: <input type="text" name="snombre" maxlength="50"/></div>
-      <div class="bloque">Apellidos: <input type="text" name="sapellidos" maxlength="100"/></div>
-      <div class="bloque">DNI/CIF: <input type="text" name="sdnicif"/></div>
-      <div class="bloque">Teléfono: <input type="text" name="stelefono"/></div>
-      <div class="bloque">Email: <input type="text" name="semail"/></div>
+   <form name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre" maxlength="50"/></td>
+         </tr>
+         <tr>
+            <td align="right">Apellidos:</td>
+            <td><input type="text" name="sapellidos" maxlength="100"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="sdnicif"/></td>
+         </tr>
+         <tr>
+            <td align="right">Teléfono:</td>
+            <td><input type="text" name="stelefono"/></td>
+         </tr>
+         <tr>
+            <td align="right">Email:</td>
+            <td><input type="text" name="semail"/></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo agente"/></div>
    </form>
 </div>

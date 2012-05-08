@@ -8,8 +8,8 @@
          <th>Fecha inicial</th>
          <th align="right">Dinero inicial</th>
          <th>Fecha fin</th>
-         <th align="right">Dinero fin</th>
          <th align="right">Diferencia</th>
+         <th align="right">Tickets</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
@@ -22,8 +22,8 @@
          <td align="center">{$value->show_fecha_inicial()}</td>
          <td align="right">{$value->show_dinero_inicial()} €</td>
          <td align="center">{$value->show_fecha_fin()}</td>
-         <td align="right">{$value->show_dinero_fin()} €</td>
          <td align="right">{$value->show_diferencia()} €</td>
+         <td align="right">{$value->tickets}</td>
       </tr>
       {/loop}
    </table>

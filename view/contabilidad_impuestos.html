@@ -1,17 +1,37 @@
 {include="header"}
 
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_impuesto").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_impuesto").css({
+            left: ($(window).width() - $("#popup_nuevo_impuesto").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_impuesto").outerHeight())/2
+         });
+         $("#popup_nuevo_impuesto").show();
+         document.f_nuevo_impuesto.codimpuesto.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_impuesto">
+   <form name="f_nuevo_impuesto" action="{$fsc->url()}" method="post">
       <h1>Nuevo impuesto:</h1>
-      <div class="bloque">
-         Código: <input type="text" name="codimpuesto" size="10" maxlength="10"/>
-      </div>
-      <div class="bloque">
-         Descripción: <input type="text" name="descripcion"/>
-      </div>
-      <div class="bloque">
-         %IVA: <input type="text" name="iva" value="0"/>
-      </div>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codimpuesto" size="10" maxlength="10"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion"/></td>
+         </tr>
+         <tr>
+            <td align="right">%IVA:</td>
+            <td><input type="text" name="iva" value="0"/></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo impuesto"/></div>
    </form>
 </div>

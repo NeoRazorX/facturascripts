@@ -10,12 +10,12 @@
    }
    function close_articulos()
    {
-      $("#sombra").hide();
-      $("div.popup_articulos").hide();
+      $("#shadow").hide();
+      $("div.popup").hide();
    }
    function mostrar_paquete(paq)
    {
-      $("#sombra").show();
+      $("#shadow").show();
       $("#paquete_"+paq).css({
          left: ($(window).width() - $("#paquete_"+paq).outerWidth())/2,
          top: ($(window).height() - $("#paquete_"+paq).outerHeight())/2
@@ -117,15 +117,11 @@
       close_articulos();
    }
    $(document).ready(function() {
-      $("#sombra").click(function(event) {
-         $("div.popup_articulos").hide();
-         $(this).hide();
-      });
-      $("div.popup_articulos label").hover(function(event) {
+      $("div.popup label").hover(function(event) {
          $('#' + $(this).attr('for')).attr('checked', 'checked');
       });
       $("#paquetes").click(function(event) {
-         $("#sombra").show();
+         $("#shadow").show();
          $("#all_paquetes").css({
             left: ($(window).width() - $('#all_paquetes').outerWidth())/2,
             top: ($(window).height() - $('#all_paquetes').outerHeight())/2
@@ -134,7 +130,7 @@
       });
       {loop="$fsc->familias"}
       $("#fam_{$value->codfamilia}").click(function(event) {
-         $("#sombra").show();
+         $("#shadow").show();
          $("#articulos_{$value->codfamilia}").css({
             left: ($(window).width() - $('#articulos_{$value->codfamilia}').outerWidth())/2,
             top: ($(window).height() - $('#articulos_{$value->codfamilia}').outerHeight())/2
@@ -143,7 +139,7 @@
       });
       {/loop}
       $("#b_guardar_ticket").click(function() {
-         $("#sombra").show();
+         $("#shadow").show();
          $("#fin_ticket").css({
             left: ($(window).width() - $('#fin_ticket').outerWidth())/2,
             top: ($(window).height() - $('#fin_ticket').outerHeight())/2
@@ -248,7 +244,7 @@
       </td>
    </tr>
 </table>
-<div class="popup_articulos" id="fin_ticket">
+<div class="popup" id="fin_ticket">
    <table>
       <tr>
          <td align="right">Total:</td>
@@ -274,22 +270,28 @@
 </div>
 </form>
 
-<div class="sombra" id="sombra"></div>
-
-<div class="popup_articulos" id="all_paquetes">
+<div class="popup" id="all_paquetes">
+   <h1>Paquetes:</h1>
    <ul>
    {loop="$fsc->paquetes"}
       <li onclick="mostrar_paquete('{$value->referencia}')">
-         {$value->referencia}<span>{$value->articulo->show_pvp_iva()} €</span>
+         {if condition="$value->articulo->imagen_url()"}
+            {$value->articulo->referencia}
+            <br/>
+            <img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/>
+            <br/>
+            {$value->articulo->show_pvp_iva()} €
+         {else}
+            {$value->articulo->referencia}<br/>{$value->articulo->show_pvp_iva()} €
+         {/if}
       </li>
    {/loop}
-      <li class="cancel" onclick="close_articulos()">cancelar</li>
    </ul>
 </div>
 
 {loop="$fsc->paquetes"}
-<div class="popup_articulos" id="paquete_{$value1->referencia}">
-   <h1>PAQUETE: {$value1->referencia} {$value1->articulo->show_pvp_iva()}</h1>
+<div class="popup" id="paquete_{$value1->referencia}">
+   <h1>PAQUETE: {$value1->referencia} &nbsp; &nbsp; {$value1->articulo->show_pvp_iva()} €</h1>
    <form id="f_p_{$value1->referencia}">
       <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
       <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
@@ -315,16 +317,22 @@
 {/loop}
 
 {loop="$fsc->familias"}
-<div class="popup_articulos" id="articulos_{$value1->codfamilia}">
+<div class="popup" id="articulos_{$value1->codfamilia}">
+   <h1>{$value1->descripcion}</h1>
    <ul>
    {loop="$fsc->articulos"}
       {if condition="$value2->codfamilia==$value1->codfamilia"}
       <li onclick="add_articulo('{$value2->referencia}',{$value2->pvp},{$value2->get_iva()},'')">
-         {$value2->referencia}<span>{$value2->show_pvp_iva()} €</span>
+         {$value2->referencia}<br/>
+         {if condition="$value2->imagen_url()"}
+            <img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/>
+         {else}
+            <img src="img/unknown.png" alt="{$value2->referencia}"/>
+         {/if}
+         <br/>{$value2->show_pvp_iva()} €
       </li>
       {/if}
    {/loop}
-      <li class="cancel" onclick="close_articulos()">cancelar</li>
    </ul>
 </div>
 {/loop}

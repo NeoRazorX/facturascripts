@@ -2,11 +2,31 @@
 
 {if condition="$fsc->articulo"}
 <script type="text/javascript">
-   function delete_articulo(ref)
-   {
-      if( confirm("¿Estas seguro de que deseas eliminar el articulo "+ref+"?") )
-         window.location.href = "{$fsc->ppage->url()}&delete="+ref;
-   }
+   $(document).ready(function() {
+      $("#b_eliminar_articulo").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar este articulo?") )
+         window.location.href = "{$fsc->ppage->url()}&delete={$fsc->articulo->referencia}";
+      });
+      $("#b_imagen").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_articulo_imagen").css({
+            left: ($(window).width() - $("#popup_articulo_imagen").outerWidth())/2,
+            top: ($(window).height() - $("#popup_articulo_imagen").outerHeight())/2
+         });
+         $("#popup_articulo_imagen").show();
+      });
+      $("#b_paquete").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_paquete").css({
+            left: ($(window).width() - $("#popup_paquete").outerWidth())/2,
+            top: ($(window).height() - $("#popup_paquete").outerHeight())/2
+         });
+         $("#popup_paquete").show();
+      });
+   });
 </script>
 
 <div class="rounded">
@@ -19,8 +39,7 @@
             {else}
             <input type="checkbox" name="bloqueado" value="TRUE" id="articulo_bloqueado"/>
             {/if}
-            <label for="articulo_bloqueado">bloqueado</label> |
-            <a href="#" onclick="delete_articulo('{$fsc->articulo->referencia}')">eliminar</a>
+            <label for="articulo_bloqueado">bloqueado</label>
          </span>
       </h1>
       <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
@@ -128,10 +147,24 @@
    </table>
 </div>
 
-<div class="rounded">
+<div class="popup" id="popup_paquete">
    <h1>Paquetes</h1>
    Si lo desdeas puedes convertir este artículo en un paquete o subpaquete:
    <a href="{$fsc->cache_paquete->add_url($fsc->articulo->referencia)}">añadir a la cesta de paquetes/subpaquetes</a>.
+</div>
+
+<div class="popup" id="popup_articulo_imagen">
+   <h1>Imagen:</h1>
+   Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
+   {if condition="$fsc->articulo->imagen_url()"}
+      <center><img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/></center>
+   {/if}
+   <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
+      <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+      <input type="hidden" name="imagen" value="TRUE"/>
+      <input type="file" name="fimagen" accept="image/png"/>
+      <input type="submit" value="guardar"/>
+   </form>
 </div>
 {/if}
 

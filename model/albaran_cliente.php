@@ -92,10 +92,10 @@ class linea_albaran_cliente extends fs_model
    
    public function exists()
    {
-      if( isset($this->idlinea) )
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
-      else
+      if( is_null($this->idlinea) )
          return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
    public function new_idlinea()
@@ -142,9 +142,7 @@ class linea_albaran_cliente extends fs_model
       if($lineas)
       {
          foreach($lineas as $l)
-         {
             $linealist[] = new linea_albaran_cliente($l);
-         }
       }
       return $linealist;
    }
@@ -252,7 +250,7 @@ class albaran_cliente extends fs_model
          $this->direccion = '';
          $this->ciudad = '';
          $this->apartado = '';
-         $this->fecha = Date('j-n-Y');
+         $this->fecha = Date('d-m-Y');
          $this->hora = Date('H:i:s');
          $this->neto = 0;
          $this->total = 0;
@@ -277,7 +275,7 @@ class albaran_cliente extends fs_model
    
    public function show_fecha()
    {
-      return Date('j-n-Y', strtotime($this->fecha));
+      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function show_hora($s=TRUE)
@@ -300,10 +298,10 @@ class albaran_cliente extends fs_model
    
    public function exists()
    {
-      if( isset($this->idalbaran) )
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
-      else
+      if( is_null($this->idalbaran) )
          return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
    }
    
    public function new_idalbaran()
@@ -409,9 +407,7 @@ class albaran_cliente extends fs_model
       if($albaranes)
       {
          foreach($albaranes as $a)
-         {
             $albalist[] = new albaran_cliente($a);
-         }
       }
       return $albalist;
    }
@@ -436,6 +432,20 @@ class albaran_cliente extends fs_model
          }
       }
       return $albalist;
+   }
+   
+   public function search($query, $offset=0)
+   {
+      $alblist = array();
+      $query = strtolower($query);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codigo ~~ '%".$query."%'
+         OR lower(observaciones) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $alblist[] = new albaran_cliente($a);
+      }
+      return $alblist;
    }
 }
 

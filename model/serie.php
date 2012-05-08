@@ -102,9 +102,7 @@ class serie extends fs_model
       if($series)
       {
          foreach($series as $s)
-         {
             $serielist[] = new serie($s);
-         }
       }
       return $serielist;
    }

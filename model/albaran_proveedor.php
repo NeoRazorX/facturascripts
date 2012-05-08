@@ -86,7 +86,10 @@ class linea_albaran_proveedor extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+      if( is_null($this->idlinea) )
+         return false;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
    public function save()
@@ -106,9 +109,7 @@ class linea_albaran_proveedor extends fs_model
       if($lineas)
       {
          foreach($lineas as $l)
-         {
             $linealist[] = new linea_albaran_proveedor($l);
-         }
       }
       return $linealist;
    }
@@ -164,7 +165,7 @@ class albaran_proveedor extends fs_model
          $this->numproveedor = '';
          $this->codejercicio = NULL;
          $this->codserie = NULL;
-         $this->fecha = Date('j-n-Y');
+         $this->fecha = Date('d-m-Y');
          $this->codproveedor = NULL;
          $this->nombre = '';
          $this->cifnif = '';
@@ -183,7 +184,7 @@ class albaran_proveedor extends fs_model
    
    public function show_fecha()
    {
-      return Date('j-n-Y', strtotime($this->fecha));
+      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function url()
@@ -198,7 +199,10 @@ class albaran_proveedor extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
+      if( is_null($this->idalbaran) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
    }
    
    public function save()
@@ -229,16 +233,28 @@ class albaran_proveedor extends fs_model
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY idalbaran DESC",
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC",
                                            FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
-         {
             $albalist[] = new albaran_proveedor($a);
-         }
       }
       return $albalist;
+   }
+   
+   public function search($query, $offset=0)
+   {
+      $alblist = array();
+      $query = strtolower($query);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."  WHERE codigo ~~ '%".$query."%'
+         OR lower(observaciones) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $alblist[] = new albaran_proveedor($a);
+      }
+      return $alblist;
    }
 }
 

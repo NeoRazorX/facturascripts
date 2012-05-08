@@ -134,7 +134,10 @@ class empresa extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id='".$this->id."';");
+      if(is_null($this->id) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id='".$this->id."';");
    }
    
    public function save()

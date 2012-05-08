@@ -87,9 +87,71 @@ abstract class fs_model
             return 'FALSE';
       }
       else
-         return "'".$v."'";
+         return "'".addslashes($v)."'";
    }
-
+   
+   protected function bin2str($v)
+   {
+      if( is_null($v) )
+         return 'NULL';
+      else
+         return "'".bin2hex($v)."'";
+   }
+   
+   public function hex2bin($data)
+   {
+      $bin = "";
+      $i = 0;
+      do {
+         $bin .= chr(hexdec($data{$i}.$data{($i + 1)}));
+         $i += 2;
+      } while($i < strlen($data));
+      return $bin;
+    }
+   
+   protected function str2bin($v)
+   {
+      if( is_null($v) )
+         return NULL;
+      else
+         return $this->hex2bin($v);
+   }
+   
+   public function intval($s)
+   {
+      if( is_null($s) )
+         return NULL;
+      else
+         return intval($s);
+   }
+   
+   /// functión auxiliar para facilitar el uso de fechas
+   public function var2timesince($v)
+   {
+      if( isset($v) )
+      {
+         $v = strtotime($v);
+         $time = time() - $v;
+         
+         if($time <= 60)
+            return 'hace '.round($time/60,0).' segundos';
+         else if(60 < $time && $time <= 3600)
+            return 'hace '.round($time/60,0).' minutos';
+         else if(3600 < $time && $time <= 86400)
+            return 'hace '.round($time/3600,0).' horas';
+         else if(86400 < $time && $time <= 604800)
+            return 'hace '.round($time/86400,0).' dias';
+         else if(604800 < $time && $time <= 2592000)
+            return 'hace '.round($time/604800,0).' semanas';
+         else if(2592000 < $time && $time <= 29030400)
+            return 'hace '.round($time/2592000,0).' meses';
+         else if($time > 29030400)
+            return 'hace más de un año';
+      }
+      else
+         return 'fecha desconocida';
+   }
+   
    /// obtiene las columnas y restricciones del fichero xml para una tabla
    private function get_xml_table(&$columnas, &$restricciones)
    {

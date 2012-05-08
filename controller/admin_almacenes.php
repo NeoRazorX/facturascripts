@@ -31,6 +31,7 @@ class admin_almacenes extends fs_controller
    protected function process()
    {
       $this->almacen = new almacen();
+      $this->buttons[] = new fs_button('b_nuevo_almacen', 'nuevo almacen');
       
       if( isset($_POST['scodalmacen']) )
       {

@@ -1,6 +1,16 @@
 {include="header"}
 
 {if condition="$fsc->suser"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_eliminar_usuario").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar el usuario?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->suser->nick}';
+      });
+   });
+</script>
+
 <div class="rounded">
    <h1>Datos de usuario:</h1>
    <form action="{$fsc->url()}" method="POST">

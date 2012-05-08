@@ -1,22 +1,47 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_usuario").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_usuario").css({
+            left: ($(window).width() - $("#popup_nuevo_usuario").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_usuario").outerHeight())/2
+         });
+         $("#popup_nuevo_usuario").show();
+         document.f_nuevo_usuario.nnick.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_usuario">
    <h1>Nuevo usuario:</h1>
-   <form action="{$fsc->page->url()}" method="POST">
-      <div class="bloque">Nick: <input type="text" name="nnick"  size="12" maxlength="12"/></div>
-      <div class="bloque">Contraseña: <input type="password" name="npassword"  size="12" maxlength="12"/></div>
-      <div class="bloque">
-         <a href="{$fsc->agente->url()}">Agentes</a>:
-         <select name="ncodagente">
-         {loop="$fsc->agente->all()"}
-            <option value="{$value->codagente}">{$value->get_fullname()}</option>
-         {/loop}
-         </select>
-      </div>
-      <div class="bloque">
-         <input type="checkbox" name="nadmin" value="TRUE" id="usuario_admin"/>
-         <label for="usuario_admin">Administrador</label>
-      </div>
+   <form name="f_nuevo_usuario" action="{$fsc->page->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Nick:</td>
+            <td><input type="text" name="nnick"  size="12" maxlength="12"/></td>
+         </tr>
+         <tr>
+            <td align="right">Contraseña:</td>
+            <td><input type="password" name="npassword"  size="12" maxlength="12"/></td>
+         </tr>
+         <tr>
+            <td align="right"><a href="{$fsc->agente->url()}">Agentes</a>:</td>
+            <td>
+               <select name="ncodagente">
+               {loop="$fsc->agente->all()"}
+                  <option value="{$value->codagente}">{$value->get_fullname()}</option>
+               {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><input type="checkbox" name="nadmin" value="TRUE" id="usuario_admin"/></td>
+            <td><label for="usuario_admin">Administrador</label></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
@@ -28,7 +53,7 @@
          <th>contraseña</th>
          <th>agente</th>
          <th>administrador</th>
-         <th width="80"></th>
+         <th align="right">último login</th>
       </tr>
       {loop="$fsc->user->all()"}
       <tr>
@@ -36,11 +61,11 @@
          <td>-</td>
          <td><a href="{$value->get_agente_url()}">{$value->get_agente_fullname()}</a></td>
          {if condition="$value->admin"}
-         <td>Si</td>
+         <td align="center">Si</td>
          {else}
-         <td>-</td>
+         <td align="center">-</td>
          {/if}
-         <td align="center"><a href="{$fsc->page->url()}&amp;delete={$value->nick}">eliminar</a></td>
+         <td align="right">{$value->show_last_login()}</td>
       </tr>
       {/loop}
    </table>

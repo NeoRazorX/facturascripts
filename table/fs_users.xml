@@ -32,6 +32,11 @@
       <tipo>character varying(10)</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>last_login</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>fs_users_pkey</nombre>
       <consulta>PRIMARY KEY (nick)</consulta>

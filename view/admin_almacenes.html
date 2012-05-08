@@ -1,19 +1,57 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_almacen").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_almacen").css({
+            left: ($(window).width() - $("#popup_nuevo_almacen").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_almacen").outerHeight())/2
+         });
+         $("#popup_nuevo_almacen").show();
+         document.f_nuevo_almacen.scodalmacen.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_almacen">
    <h1>Nuevo almacén:</h1>
-   <form action="{$fsc->url()}" method="POST">
-      <div class="bloque">
-         Código:
-         <input type="text" name="scodalmacen" size="4" maxlength="4"/>
-      </div>
-      <div class="bloque">Nombre: <input type="text" name="snombre"/></div>
-      <div class="bloque">Dirección: <input type="text" name="sdireccion"/></div>
-      <div class="bloque">Código postal: <input type="text" name="scodpostal"/></div>
-      <div class="bloque">Población: <input type="text" name="spoblacion"/></div>
-      <div class="bloque">Teléfono: <input type="text" name="stelefono"/></div>
-      <div class="bloque">Fax: <input type="text" name="sfax"/></div>
-      <div class="bloque">Contacto: <input type="text" name="scontacto"/></div>
+   <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="scodalmacen" size="4" maxlength="4"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre"/></td>
+         </tr>
+         <tr>
+            <td align="right">Dirección:</td>
+            <td><input type="text" name="sdireccion"/></td>
+         </tr>
+         <tr>
+            <td align="right">Código postal:</td>
+            <td><input type="text" name="scodpostal"/></td>
+         </tr>
+         <tr>
+            <td align="right">Localidad:</td>
+            <td><input type="text" name="spoblacion"/></td>
+         </tr>
+         <tr>
+            <td align="right">Teléfono:</td>
+            <td><input type="text" name="stelefono"/></td>
+         </tr>
+         <tr>
+            <td align="right">Fax:</td>
+            <td><input type="text" name="sfax"/></td>
+         </tr>
+         <tr>
+            <td align="right">Contacto:</td>
+            <td><input type="text" name="scontacto"/></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo almacén"/></div>
    </form>
 </div>

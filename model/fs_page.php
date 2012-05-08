@@ -59,7 +59,10 @@ class fs_page extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name='".$this->name."';");
+      if( is_null($this->name) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name='".$this->name."';");
    }
    
    public function get($name='')
@@ -98,9 +101,7 @@ class fs_page extends fs_model
       if($pages)
       {
          foreach($pages as $p)
-         {
             $pagelist[] = new fs_page($p);
-         }
       }
       return $pagelist;
    }

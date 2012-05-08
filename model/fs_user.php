@@ -31,6 +31,7 @@ class fs_user extends fs_model
    public $codagente;
    public $agente;
    public $admin;
+   public $last_login;
 
    public function __construct($a = FALSE)
    {
@@ -47,6 +48,7 @@ class fs_user extends fs_model
             $this->admin = TRUE;
          else
             $this->admin = FALSE;
+         $this->last_login = $a['last_login'];
       }
       else
       {
@@ -55,6 +57,7 @@ class fs_user extends fs_model
          $this->log_key = '';
          $this->codagente = NULL;
          $this->admin = FALSE;
+         $this->last_login = Date('d-m-Y');
       }
       $this->logged_on = FALSE;
       $this->agente = NULL;
@@ -122,10 +125,15 @@ class fs_user extends fs_model
       return $access->all_from_nick($this->nick);
    }
    
+   public function show_last_login()
+   {
+      return Date('d-m-Y', strtotime($this->last_login));
+   }
+   
    public function set_nick($n='')
    {
       $n = trim($n);
-      if( eregi("^[A-Z0-9_]{3,12}$", $n) ) /// sustituir por preg_match
+      if( preg_match("/^[A-Z0-9_]{3,12}$/i", $n) )
       {
          $this->nick = $n;
          return TRUE;
@@ -140,7 +148,7 @@ class fs_user extends fs_model
    public function set_password($p='')
    {
       $p = trim($p);
-      if( eregi("^[A-Z0-9_]{1,12}$", $p) ) /// sustituir por preg_match
+      if( preg_match("/^[A-Z0-9_]{1,12}$/i", $p) )
       {
          $this->password = sha1($p);
          return TRUE;
@@ -159,9 +167,7 @@ class fs_user extends fs_model
       if($users)
       {
          foreach($users as $u)
-         {
             $userlist[] = new fs_user($u);
-         }
       }
       return $userlist;
    }
@@ -170,11 +176,15 @@ class fs_user extends fs_model
    {
       $this->log_key = sha1( strval(rand()) );
       $this->logged_on = TRUE;
+      $this->last_login = Date('d-m-Y');
    }
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
+      if( is_null($this->nick) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
    }
    
    public function save()
@@ -183,13 +193,14 @@ class fs_user extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET password = '".$this->password."',
                  log_key = '".$this->log_key."', codagente = ".$this->var2str($this->codagente).",
-                 admin = ".$this->var2str($this->admin)." WHERE nick = '".$this->nick."';";
+                 admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).
+                 " WHERE nick = '".$this->nick."';";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES
+         $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login) VALUES
                  ('".$this->nick."','".$this->password."','".$this->log_key."',".$this->var2str($this->codagente).
-                 ",".$this->var2str($this->admin).");";
+                 ",".$this->var2str($this->admin).",".$this->var2str($this->last_login).");";
       }
       return $this->db->exec($sql);
    }

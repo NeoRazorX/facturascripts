@@ -61,7 +61,10 @@ class familia extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$this->codfamilia."';");
+      if( is_null($this->codfamilia) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$this->codfamilia."';");
    }
    
    public function save()
@@ -98,9 +101,7 @@ class familia extends fs_model
       if($familias)
       {
          foreach($familias as $f)
-         {
             $famlist[] = new familia($f);
-         }
       }
       return $famlist;
    }

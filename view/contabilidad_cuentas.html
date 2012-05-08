@@ -1,0 +1,35 @@
+{include="header"}
+
+<div class="rounded">
+   {if condition="$fsc->query!=''"}
+      <h1>Resultados de la búsqueda '{$fsc->query}':</h1>
+   {else}
+      <h1>
+         <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
+            Cuentas del ejercicio:
+            <select name="ejercicio" onchange="document.f_filtro_cuentas.submit()">
+            {loop="$fsc->ejercicio->all()"}
+               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+            {/loop}
+            </select>
+         </form>
+      </h1>
+   {/if}
+   <br/>
+   <table class="list">
+      <tr>
+         <th>Ejercicio:</th>
+         <th>Código:</th>
+         <th>Descripción:</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td>{$value->codcuenta}</td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

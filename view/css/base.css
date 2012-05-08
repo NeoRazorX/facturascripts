@@ -1,18 +1,48 @@
+@import url(http://fonts.googleapis.com/css?family=Oleo+Script);
+
 body {
-   background-color: #3768B8;
-   border-top: 40px solid white;
-   border-left: 1px solid #333333;
-   border-right: 1px solid #333333;
-   padding: 0;
+   background-color: #4C769E;
    margin: 0;
+   padding: 0;
    font-family: Verdana, sans-serif;
-   font-size: 12px;
+   font-size: 13px;
    font-style: normal;
    font-weight: normal;
+   color: white;
+}
+
+a {
+   color: #2F33AB;
+}
+
+input[type='submit'], input[type='button'] {
+   display: inline-block;
+   background-color: #55BA42;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   text-transform: capitalize;
+   font-size: 16px;
+   font-variant: small-caps;
+   font-weight: bold;
+   color: white;
+}
+
+input[type='submit']:hover, input[type='button']:hover {
+   background-color: #333333;
+   cursor: pointer;
+}
+
+input[type='text'], input[type='password'] {
+   border: 1px solid #333333;
 }
 
 body.log_in {
    border: 0px solid black;
+   background-color: white;
+   color: black;
    background-image: url('../img/bg2.png');
    font-size: 15px;
 }
@@ -22,17 +52,25 @@ div#login_window {
    position: fixed;
    top: 50px;
    left: 50px;
-   background-color: #c1c1c1;
-   border: 1px solid #b1b1b1;
-   box-shadow: 5px 5px 5px #111;
+   padding: 5px;
+   background-color: white;
+   border: 5px solid #666666;
+   border-top-left-radius: 5px 5px;
+   border-top-right-radius: 5px 5px;
+   border-bottom-left-radius: 5px 5px;
+   border-bottom-right-radius: 5px 5px;
 }
 
 div#login_window h1 {
-   text-align: center;
-   margin-top: 0px;
+   margin: 0px;
+   margin-bottom: 10px;
+   padding: 5px;
    background-color: #3768B8;
-   padding-left: 5px;
-   padding-right: 5px;
+   color: white;
+   text-align: center;
+   text-transform: capitalize;
+   font-family: 'Oleo Script', cursive;
+   font-size: 30px;
 }
 
 div#login_window table {
@@ -70,16 +108,12 @@ div.copyright table td.right {
    padding-right: 5px;
 }
 
-input[type='submit'], input[type='button'] {
-   text-transform: uppercase;
-}
-
 div.message {
    text-align: center;
    font-size: 16px;
-   background-color: #D8DFEA;
-   border: 1px solid #B8BDC1;
-   box-shadow: 2px 2px 2px #333;
+   background-color: #FFFAA6;
+   color: black;
+   border: 1px solid #333333;
    padding: 10px;
    margin: 10px;
 }
@@ -88,157 +122,234 @@ div.error {
    text-align: center;
    font-size: 18px;
    background-color: #E47575;
-   border: 1px solid #B14E4E;
-   box-shadow: 3px 3px 3px #333;
+   color: black;
+   border: 1px solid #333333;
    padding: 10px;
    margin: 10px;
 }
 
-table.main_menu {
-   position: absolute;
-   top: 0px;
-   left: 0px;
+div.header {
+   display: table;
    width: 100%;
-   z-index: 2;
-   border-collapse: collapse;
-   font-size: 13px;
+   font-size: 16px;
 }
 
-table.main_menu th {
+div.header_box {
+   display: table-row;
+}
+
+div#header_logo, div#header_folders, div#header_user,
+div#header_buttons, div#header_location, div#header_search {
+   display: table-cell;
+   vertical-align: top;
+   padding: 5px;
+}
+
+div#header_logo {
+   font-family: 'Oleo Script', cursive;
+   font-size: 30px;
+   font-weight: bold;
    text-transform: capitalize;
-   text-align: left;
-   background-color: #3768B8;
-   border: 1px solid #333333;
-   color: white;
-   padding: 8px;
-}
-
-table.main_menu th.menu,
-table.main_menu th.menu_s,
-table.main_menu th.user {
-   width: 180px;
-}
-
-table.main_menu th.menu_s {
-   background-color: #333333;
-}
-
-table.main_menu th.menu:hover,
-table.main_menu th.menu_s:hover,
-table.main_menu th.user:hover {
-   background-color: #4F87E2;
-   cursor: pointer;
-}
-
-table.main_menu th.empresa, table.main_menu th#exit {
    text-align: center;
 }
 
-table.main_menu th.user {
+div#header_folders a.selected {
+   text-decoration: underline;
+}
+
+div#header_user {
    text-align: right;
 }
 
-table.main_menu th#exit {
-   width: 40px;
+div#header_folders a, div#header_user a {
+   display: inline-block;
+   margin-left: 5px;
+   margin-right: 5px;
+   padding: 5px;
+   background-color: #333333;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   text-transform: capitalize;
+   text-decoration: none;
+   font-variant: small-caps;
+   font-weight: bold;
+   color: white;
 }
 
-table.main_menu th#exit:hover {
-   background-color: #c62d2d;
-   cursor: pointer;
+div#header_user img {
+   vertical-align: middle;
 }
 
-table.main_menu td {
-   vertical-align: top;
-   padding: 0px;
+div#header_buttons a {
+   display: inline-block;
+   margin-left: 5px;
+   margin-right: 5px;
+   padding: 2px;
+   padding-left: 5px;
+   padding-right: 5px;
+   background-color: #3768B8;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   text-transform: capitalize;
+   text-decoration: none;
+   font-variant: small-caps;
+   font-weight: bold;
+   color: white;
 }
 
-table.main_menu td div {
-   display: none;
-   text-align: center;
-   font-size: 12px;
+div#header_buttons a.remove {
+   background-color: #D74937;
 }
 
-table.main_menu td div img {
+div#header_buttons img {
    vertical-align: bottom;
 }
 
-table.main_menu td div ul {
-   font-size: 13px;
+div#header_location {
+   text-align: center;
+   text-transform: capitalize;
+   font-variant: small-caps;
+}
+
+div#header_location a {
+   color: white;
+   font-weight: bold;
+}
+
+div#header_search {
+   text-align: right;
+}
+
+div.pages img {
+   vertical-align: bottom;
+   padding-left: 15px;
+}
+
+div.pages div {
+   display: none;
+}
+
+div.pages ul {
    background-color: #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
    color: white;
    margin: 0px;
    padding: 2px;
    list-style-type: none;
    text-align: left;
+   font-size: 15px;
 }
 
-table.main_menu td ul li {
-   padding: 0px;
+div.pages ul li {
+   
 }
 
-table.main_menu td ul li.selected {
+div.pages ul li.selected {
    border: 1px dotted white;
 }
 
-table.main_menu td div#user_list ul li {
-   text-align: right;
+div.pages ul li:hover {
+   background-color: #3768B8;
 }
 
-table.main_menu td ul a {
+div.pages ul li a {
    display: block;
    padding: 5px;
    color: white;
-   text-transform: capitalize;
    text-decoration: none;
+   font-variant: small-caps;
+   font-weight: bold;
 }
 
-table.main_menu td ul a:hover {
-   background-color: #4F87E2;
+div#shadow {
+   display: none;
+   z-index: 2;
+   position: fixed;
+   top: 0px;
+   left: 0px;
+   width: 100%;
+   height: 100%;
+   background: #000;
+   opacity: 0.7;
 }
 
 div.main_div {
-   background-color: #e1e1e1;
-   padding-bottom: 10px;
-   min-height: 400px;
+   
 }
 
-div.main_div table.title {
+div.main_div div.popup {
+   display: none;
+   z-index: 3;
+   position: fixed;
+   top: 50px;
+   left: 50px;
    background-color: white;
-   border-bottom: 1px solid #999999;
-   width: 100%;
+   color: black;
+   border: 5px solid #666666;
+   border-top-left-radius: 5px 5px;
+   border-top-right-radius: 5px 5px;
+   border-bottom-left-radius: 5px 5px;
+   border-bottom-right-radius: 5px 5px;
    padding: 5px;
-   text-transform: capitalize;
-   font-size: 13px;
 }
 
-div.main_div table.title td img {
-   vertical-align: text-bottom;
+div.main_div div.popup h1 {
+   margin: 0px;
+   margin-bottom: 10px;
+   padding: 5px;
+   background-color: #3768B8;
+   color: white;
+   text-align: center;
+   text-transform: capitalize;
+   font-family: 'Oleo Script', cursive;
+   font-size: 30px;
 }
 
 div.main_div div.rounded {
-   background-color: white;
-   border: 1px solid #999999;
+   margin: 5px;
    padding: 5px;
-   margin: 10px;
+   padding-bottom: 8px;
+   background-color: white;
+   color: black;
+   border: 1px solid #333333;
+   border-top-left-radius: 5px 5px;
+   border-top-right-radius: 5px 5px;
+   border-bottom-left-radius: 5px 5px;
+   border-bottom-right-radius: 5px 5px;
 }
 
 div.main_div div.rounded h1 {
-   margin: 5px;
+   margin: 0px;
    padding: 5px;
-   border-bottom: 1px dashed #999999;
+   border-bottom: 1px dashed #333333;
    font-size: 18px;
 }
 
 div.main_div div.rounded h1 span {
    float: right;
-   font-size: 12px;
+   font-size: 15px;
+}
+
+div.main_div div.bloque {
+   display: inline-block;
+   padding: 5px;
+}
+
+div.main_div div.right {
+   float: right;
 }
 
 div.main_div table.list {
    width: 100%;
-   margin: 5px;
-   margin-left: 0px;
-   margin-right: 0px;
 }
 
 div.main_div table.list th {
@@ -247,11 +358,7 @@ div.main_div table.list th {
 }
 
 div.main_div table.list tr:hover {
-   background-color: #D6DBE9;
-}
-
-div.main_div table.list td {
-   vertical-align: top;
+   background-color: #FFFAA6;
 }
 
 div.main_div ul.horizontal {
@@ -265,39 +372,25 @@ div.main_div ul.horizontal li {
    min-width: 225px;
 }
 
-div.main_div div.bloque {
-   display: inline-block;
-   padding-right: 10px;
-}
-
-div.main_div div.right {
-   float: right;
-}
-
 div.main_div a.next {
-   font-size: 15px;
-   text-transform: uppercase;
-   color: black;
+   display: inline-block;
+   margin-top: 10px;
+   padding: 2px;
+   padding-left: 5px;
+   padding-right: 5px;
+   background-color: #333333;
+   color: white;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   font-size: 18px;
+   text-transform: capitalize;
+   text-decoration: none;
 }
 
 div.footer {
    padding: 5px;
-   border-top: 1px solid #333333;
-   color: white;
-   text-align: center;
-   font-size: 13px;
-}
-
-div.footer table {
-   width: 100%;
-}
-
-div.footer table td.left {
-   text-align: left;
-}
-
-div.footer table td.right {
-   text-align: right;
 }
 
 div.footer a {
@@ -306,4 +399,20 @@ div.footer a {
 
 div.footer a.selected {
    text-decoration: line-through;
+}
+
+div.footer table {
+   width: 100%;
+}
+
+div.footer table td {
+   text-align: center;
+}
+
+div.footer table td.right {
+   text-align: right;
+}
+
+div.footer table td.left {
+   text-align: left;
 }

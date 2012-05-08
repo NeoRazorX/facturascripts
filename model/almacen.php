@@ -85,7 +85,10 @@ class almacen extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
+      if( is_null($this->codalmacen) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
    }
    
    public function save()
@@ -117,9 +120,7 @@ class almacen extends fs_model
       if($almacenes)
       {
          foreach($almacenes as $a)
-         {
             $listaa[] = new almacen($a);
-         }
       }
       return $listaa;
    }

@@ -38,9 +38,21 @@ class general_articulo extends fs_controller
    {
       $this->ppage = $this->page->get('general_articulos');
       
-      if( isset($_POST['referencia']) )
+      if( isset($_POST['imagen']) )
       {
-         $this->page->title = $_POST['referencia'];
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_POST['referencia']);
+         if(is_uploaded_file($_FILES['fimagen']['tmp_name']) AND $_FILES['fimagen']['size'] <= 1024000)
+         {
+            $this->articulo->imagen = file_get_contents($_FILES['fimagen']['tmp_name']);
+            if( $this->articulo->save() )
+               $this->new_message("Imagen del articulo modificada correctamente");
+            else
+               $this->new_error_msg("¡Error al guardar la imagen del articulo!".$this->articulo->error_msg);
+         }
+      }
+      else if( isset($_POST['referencia']) )
+      {
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_POST['referencia']);
          $this->articulo->set_descripcion($_POST['descripcion']);
@@ -67,13 +79,16 @@ class general_articulo extends fs_controller
       }
       else if( isset($_GET['ref']) )
       {
-         $this->page->title = $_GET['ref'];
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_GET['ref']);
       }
       
       if($this->articulo)
       {
+         $this->page->title = $this->articulo->referencia;
+         $this->buttons[] = new fs_button('b_imagen', 'imagen');
+         $this->buttons[] = new fs_button('b_paquete', 'paquete');
+         $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar', '#', 'remove', 'img/remove.png', '-');
          $this->familia = $this->articulo->get_familia();
          $this->impuesto = new impuesto();
          $this->cache_paquete = new cache_paquete();

@@ -57,7 +57,10 @@ class pais extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = '".$this->codpais."';");
+      if( is_null($this->codpais) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = '".$this->codpais."';");
    }
    
    public function save()
@@ -85,9 +88,7 @@ class pais extends fs_model
       if($paises)
       {
          foreach($paises as $p)
-         {
             $listap[] = new pais($p);
-         }
       }
       return $listap;
    }

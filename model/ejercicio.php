@@ -57,7 +57,7 @@ class ejercicio extends fs_model
          $this->longsubcuenta = NULL;
          $this->estado = 'ABIERTO';
          $this->fechafin = Date('31-12-Y');
-         $this->fechainicio = Date('1-1-Y');
+         $this->fechainicio = Date('01-01-Y');
          $this->nombre = '';
          $this->codejercicio = NULL;
       }
@@ -65,12 +65,12 @@ class ejercicio extends fs_model
    
    public function show_fechainicio()
    {
-      return Date('j-n-Y', strtotime($this->fechainicio));
+      return Date('d-m-Y', strtotime($this->fechainicio));
    }
    
    public function show_fechafin()
    {
-      return Date('j-n-Y', strtotime($this->fechafin));
+      return Date('d-m-Y', strtotime($this->fechafin));
    }
    
    public function get_new_codigo()
@@ -91,12 +91,15 @@ class ejercicio extends fs_model
    {
       return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
             idasientoapertura,idasientopyg,idasientocierre) VALUES ('".$this->get_new_codigo()."','".Date('Y')."',
-            '".Date('1-1-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";
+            '".Date('01-01-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";
    }
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
+      if( is_null($this->codejercicio) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
    }
    
    public function save()
@@ -134,9 +137,7 @@ class ejercicio extends fs_model
       if($ejercicios)
       {
          foreach($ejercicios as $e)
-         {
             $listae[] = new ejercicio($e);
-         }
       }
       return $listae;
    }

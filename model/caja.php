@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
 require_once 'model/agente.php';
@@ -12,6 +29,7 @@ class caja extends fs_model
    public $dinero_inicial;
    public $fecha_fin;
    public $dinero_fin;
+   public $tickets;
    public $agente;
 
    public function __construct($c=FALSE)
@@ -28,16 +46,18 @@ class caja extends fs_model
          $this->codagente = $c['codagente'];
          $this->agente = new agente();
          $this->agente = $this->agente->get($this->codagente);
+         $this->tickets = intval($c['tickets']);
       }
       else
       {
          $this->id = NULL;
          $this->fs_id = FS_ID;
          $this->codagente = NULL;
-         $this->fecha_inicial = Date('Y-n-j H:i:s');
+         $this->fecha_inicial = Date('Y-m-d H:i:s');
          $this->dinero_inicial = 0;
          $this->fecha_fin = NULL;
          $this->dinero_fin = 0;
+         $this->tickets = 0;
       }
    }
    
@@ -82,10 +102,10 @@ class caja extends fs_model
    
    public function exists()
    {
-      if( isset($this->id) )
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
-      else
+      if( is_null($this->id) )
          return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
    }
    
    public function get($id)
@@ -117,13 +137,15 @@ class caja extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET fs_id = ".$this->var2str($this->fs_id).", codagente = ".$this->var2str($this->codagente).",
             f_inicio = ".$this->var2str($this->fecha_inicial).", d_inicio = ".$this->var2str($this->dinero_inicial).",
-            f_fin = ".$this->var2str($this->fecha_fin).", d_fin = ".$this->var2str($this->dinero_fin)." WHERE id = '".$this->id."';";
+            f_fin = ".$this->var2str($this->fecha_fin).", d_fin = ".$this->var2str($this->dinero_fin).",
+            tickets = ".$this->var2str($this->tickets)." WHERE id = '".$this->id."';";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin) VALUES
+         $sql = "INSERT INTO ".$this->table_name." (fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets) VALUES
             (".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".$this->var2str($this->fecha_inicial).",
-            ".$this->var2str($this->dinero_inicial).",".$this->var2str($this->fecha_fin).",".$this->var2str($this->dinero_fin).");";
+            ".$this->var2str($this->dinero_inicial).",".$this->var2str($this->fecha_fin).",".$this->var2str($this->dinero_fin).",
+            ".$this->var2str($this->tickets).");";
       }
       return $this->db->exec($sql);
    }
@@ -140,9 +162,7 @@ class caja extends fs_model
       if($cajas)
       {
          foreach($cajas as $c)
-         {
             $cajalist[] = new caja($c);
-         }
       }
       return $cajalist;
    }

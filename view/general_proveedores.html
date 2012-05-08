@@ -1,6 +1,45 @@
 {include="header"}
 
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_proveedor").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_proveedor").css({
+            left: ($(window).width() - $("#popup_nuevo_proveedor").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_proveedor").outerHeight())/2
+         });
+         $("#popup_nuevo_proveedor").show();
+         document.f_nuevo_proveedor.nombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_proveedor">
+   <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
+      <h1>Nuevo proveedor:</h1>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codproveedor" value="{$fsc->proveedor->get_new_codigo()}" size="6" maxlegth="6"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="nombre" value="" size="30"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="cifnif" value=""/></td>
+         </tr>
+      </table>
+      <div class="right"><input type="submit" value="nuevo proveedor"/></div>
+   </form>
+</div>
+
 <div class="rounded">
+   {if condition="$fsc->query!=''"}
+   <h1>Resultados de la búsqueda "{$fsc->query}":</h1>
+   {/if}
    <table class="list">
       <tr>
          <th>código</th>

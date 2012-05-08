@@ -32,18 +32,17 @@ class admin_user extends fs_controller
    
    public function process()
    {
-      /// la página previa o padre
       $this->ppage = $this->page->get('admin_users');
-      
       $this->agente = new agente();
       
       if( isset($_GET['snick']) )
       {
-         $suser = $this->user->get($_GET['snick']);
-         if( $suser->exists() )
+         $this->suser = $this->user->get($_GET['snick']);
+         if( $this->suser->exists() )
          {
-            $this->page->title = $suser->nick;
-            $this->suser = $suser;
+            $this->page->title = $this->suser->nick;
+            if($this->user->nick != $this->suser->nick)
+               $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/remove.png', '-');
             
             if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
             {

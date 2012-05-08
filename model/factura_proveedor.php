@@ -84,14 +84,19 @@ class linea_factura_proveedor extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+      if( is_null($this->idlinea) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
-   public function save() {
+   public function save()
+   {
       ;
    }
    
-   public function delete() {
+   public function delete()
+   {
       return $this->db->exit("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
@@ -102,9 +107,7 @@ class linea_factura_proveedor extends fs_model
       if($lineas)
       {
          foreach($lineas as $l)
-         {
             $linlist[] = new linea_factura_proveedor($l);
-         }
       }
       return $linlist;
    }
@@ -161,7 +164,7 @@ class factura_proveedor extends fs_model
          $this->numproveedor = '';
          $this->codejercicio = NULL;
          $this->codserie = NULL;
-         $this->fecha = Date('j-n-Y');
+         $this->fecha = Date('d-m-Y');
          $this->codproveedor = NULL;
          $this->nombre = '';
          $this->cifnif = '';
@@ -185,7 +188,7 @@ class factura_proveedor extends fs_model
    
    public function show_fecha()
    {
-      return Date('j-n-Y', strtotime($this->fecha));
+      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function observaciones_resume()
@@ -205,7 +208,10 @@ class factura_proveedor extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
+      if( is_null($this->idfactura) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
       
    public function save()
@@ -236,14 +242,26 @@ class factura_proveedor extends fs_model
    public function all($offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY idfactura DESC",
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC",
                                           FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)
-         {
             $faclist[] = new factura_proveedor($f);
-         }
+      }
+      return $faclist;
+   }
+   
+   public function search($query, $offset=0)
+   {
+      $faclist = array();
+      $query = strtolower($query);
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codigo ~~ '%".$query."%'
+         OR lower(observaciones) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_proveedor($f);
       }
       return $faclist;
    }

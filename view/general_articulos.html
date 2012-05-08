@@ -2,87 +2,67 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      document.f_articulos.text.focus();
+      $("#b_nuevo_articulo").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_articulo").css({
+            left: ($(window).width() - $("#popup_nuevo_articulo").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_articulo").outerHeight())/2
+         });
+         $("#popup_nuevo_articulo").show();
+         document.f_nuevo_articulo.referencia.focus();
+      });
    });
 </script>
 
-<table class="title">
-   <tr>
-      <td>
-      {if condition="$fsc->default_page"}
-         <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
-      {else}
-         <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
-      {/if}
-         <b>{$fsc->page->folder}</b> »
-      {if condition="$fsc->ppage"}
-         <b><a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a></b> »
-      {/if}
-         <b>{$fsc->page->title}</b>
-      {if condition="$fsc->is_admin_page()"}
-         *
-      {/if}
-         <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
-      </td>
-      <td align="right">
-         <form name="f_articulos" action="index.php" method="get">
-            <input type="hidden" name="page" value="{$fsc->page->name}"/>
-            <input type="text" name="text" value="{$fsc->query}"/>
-            <input type="submit" value="buscar"/>
-         </form>
-      </td>
-   </tr>
-</table>
-
-{if condition="$fsc->error_msg"}
-   <div class="error">{$fsc->error_msg}</div>
-{/if}
-{if condition="$fsc->message"}
-   <div class="message">{$fsc->message}</div>
-{/if}
-
-{if condition="$fsc->query==''"}
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
+<div class="popup" id="popup_nuevo_articulo">
+   <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
       <h1>Nuevo artículo:</h1>
-      <div class="bloque">
-         Referencia: <input type="text" name="referencia" size="20" maxlength="18"/>
-      </div>
-      <div class="bloque">
-         <a href="{$fsc->familia->url()}">Familia</a>:
-         <select name="codfamilia">
-            {loop="$fsc->familia->all()"}
-            <option value="{$value->codfamilia}">{$value->descripcion}</option>
-            {/loop}
-         </select>
-      </div>
-      <div class="bloque">
-         <a href="{$fsc->impuesto->url()}">IVA</a>:
-         <select name="codimpuesto">
-         {loop="$fsc->impuesto->all()"}
-            {if condition="$value->default"}
-            <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
-            {else}
-            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
+      <table>
+         <tr>
+            <td align="right">Referencia:</td>
+            <td><input type="text" name="referencia" size="20" maxlength="18"/></td>
+         </tr>
+         <tr>
+            <td align="right"><a href="{$fsc->familia->url()}">Familia</a>:</td>
+            <td>
+               <select name="codfamilia">
+               {loop="$fsc->familia->all()"}
+                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
+               {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><a href="{$fsc->impuesto->url()}">IVA</a>:</td>
+            <td>
+               <select name="codimpuesto">
+               {loop="$fsc->impuesto->all()"}
+                  {if condition="$value->default"}
+                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </td>
+         </tr>
+      </table>
+      <br/>
       <div class="right"><input type="submit" value="nuevo artículo"/></div>
    </form>
 </div>
-{/if}
 
 <div class="rounded">
    {if condition="$fsc->query!=''"}
-   <h1>Resultados de la búsqueda "{$fsc->query}"</h1>
+   <h1>Resultados de la búsqueda "{$fsc->query}":</h1>
    {/if}
    <table class="list">
       <tr>
          <th>referencia</th>
          <th>familia</th>
          <th>descripción</th>
-         <th align="right">PVP</th>
+         <th align="right">PVP+IVA</th>
          <th align="right">stock</th>
       </tr>
       {loop="$fsc->resultados"}
@@ -90,7 +70,7 @@
          <td><a href="{$value->url()}">{$value->referencia}</a></td>
          <td>{$value->codfamilia}</td>
          <td>{$value->descripcion}</td>
-         <td align="right">{$value->show_pvp()} &euro;</td>
+         <td align="right">{$value->show_pvp_iva()} &euro;</td>
          <td align="right">{$value->stockfis}</td>
       </tr>
       {/loop}
@@ -108,13 +88,6 @@
          </td>
       </tr>
    </table>
-</div>
-
-<div class="rounded">
-   <h1>Historial:</h1>
-   {loop="$fsc->query_searches()"}
-      <div class="bloque">{$value.0} ({$value.1})</div>
-   {/loop}
 </div>
 
 {include="footer"}

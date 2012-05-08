@@ -2,17 +2,38 @@
 
 {if condition="$fsc->familia"}
 <script type="text/javascript">
-   function delete_familia(fam)
-   {
-      if( confirm("¿Estas seguro de que deseas eliminar la familia "+fam+"?") )
-         window.location.href = "{$fsc->ppage->url()}&delete="+fam;
-   }
+   $(document).ready(function() {
+      $("#b_herramientas_familia").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_herramientas_familia").css({
+            left: ($(window).width() - $("#popup_herramientas_familia").outerWidth())/2,
+            top: ($(window).height() - $("#popup_herramientas_familia").outerHeight())/2
+         });
+         $("#popup_herramientas_familia").show();
+      });
+   });
+   $(document).ready(function() {
+      $("#b_eliminar_familia").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar esta familia?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->familia->codfamilia}";
+      });
+   });
 </script>
+
+<div class="popup" id="popup_herramientas_familia">
+   <h1>Herramientas:</h1>
+   <form action="{$fsc->url()}" method="post">
+      Multiplicar precios por:
+      <input type="text" name="multiplicar" value="1" size="3"/>
+      <div class="right"><input type="submit" value="aplicar"/></div>
+   </form>
+</div>
 
 <div class="rounded">
    <h1>
       {$fsc->familia->descripcion}
-      <span><a href="#" onclick="delete_familia('{$fsc->familia->codfamilia}')">eliminar</a></span>
    </h1>
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
@@ -52,15 +73,6 @@
          </td>
       </tr>
    </table>
-</div>
-
-<div class="rounded">
-   <h1>Herramientas:</h1>
-   <form action="{$fsc->url()}" method="post">
-      Multiplicar precios por:
-      <input type="text" name="multiplicar" value="1" size="3"/>
-      <div class="right"><input type="submit" value="aplicar"/></div>
-   </form>
 </div>
 {/if}
 

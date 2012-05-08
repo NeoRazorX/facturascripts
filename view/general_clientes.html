@@ -1,31 +1,55 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_cliente").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_cliente").css({
+            left: ($(window).width() - $("#popup_nuevo_cliente").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_cliente").outerHeight())/2
+         });
+         $("#popup_nuevo_cliente").show();
+         document.f_nuevo_cliente.nombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_cliente">
    <h1>Nuevo cliente:</h1>
-   <form action="{$fsc->url()}" method="post">
-      <div class="bloque">
-         Código:
-         <input type="text" name="codcliente" value="{$fsc->cliente->get_new_codigo()}" size="6" maxlegth="6"/>
-      </div>
-      <div class="bloque">
-         Nombre: <input type="text" name="nombre" value="" size="30"/>
-      </div>
-      <div class="bloque">
-         cifnif: <input type="text" name="cifnif" value=""/>
-      </div>
-      <div class="bloque">
-         Serie:
-         <select name="codserie">
-         {loop="$fsc->serie->all()"}
-            <option value="{$value->codserie}">{$value->descripcion}</option>
-         {/loop}
-         </select>
-      </div>
+   <form name="f_nuevo_cliente" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codcliente" value="{$fsc->cliente->get_new_codigo()}" size="6" maxlegth="6"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="nombre" value="" size="30"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="cifnif" value=""/></td>
+         </tr>
+         <tr>
+            <td align="right">Serie:</td>
+            <td>
+               <select name="codserie">
+               {loop="$fsc->serie->all()"}
+                  <option value="{$value->codserie}">{$value->descripcion}</option>
+               {/loop}
+               </select>
+            </td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo cliente"/></div>
    </form>
 </div>
 
 <div class="rounded">
+   {if condition="$fsc->query!=''"}
+   <h1>Resultados de la búsqueda "{$fsc->query}":</h1>
+   {/if}
    <table class="list">
       <tr>
          <th>código</th>

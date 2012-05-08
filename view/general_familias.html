@@ -1,17 +1,40 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nueva_familia").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nueva_familia").css({
+            left: ($(window).width() - $("#popup_nueva_familia").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nueva_familia").outerHeight())/2
+         });
+         $("#popup_nueva_familia").show();
+         document.f_nueva_familia.ncodfamilia.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nueva_familia">
    <h1>Nueva familia:</h1>
-   <form action="{$fsc->url()}" method="post">
-      <div class="bloque">Código: <input type="text" name="ncodfamilia" size="4" maxlength="4"/></div>
-      <div class="bloque">Descripción: <input type="text" name="ndescripcion" size="60"/></div>
+   <form name="f_nueva_familia" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="ncodfamilia" size="4" maxlength="4"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="ndescripcion" size="60"/></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nueva familia"/></div>
    </form>
 </div>
 
 <div class="rounded">
    <ul class="horizontal">
-   {loop="$fsc->all()"}
+   {loop="$fsc->familia->all()"}
       <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
    {/loop}
    </ul>

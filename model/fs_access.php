@@ -46,7 +46,10 @@ class fs_access extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = '".$this->fs_user."' AND fs_page = '".$this->fs_page."';");
+      if( is_null($this->fs_page) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = '".$this->fs_user."' AND fs_page = '".$this->fs_page."';");
    }
    
    public function save()
@@ -73,9 +76,7 @@ class fs_access extends fs_model
       if($access)
       {
          foreach($access as $a)
-         {
             $accesslist[] = new fs_access($a);
-         }
       }
       return $accesslist;
    }

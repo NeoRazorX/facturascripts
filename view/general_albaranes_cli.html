@@ -1,6 +1,9 @@
 {include="header"}
 
 <div class="rounded">
+   {if condition="$fsc->query!=''"}
+      <h1>Resultados de "{$fsc->query}":</h1>
+   {/if}
    <table class="list">
       <tr>
          <th>código</th>

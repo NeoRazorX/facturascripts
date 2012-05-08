@@ -31,19 +31,26 @@ class general_albaranes_cli extends fs_controller
    
    protected function process()
    {
+      $albaran = new albaran_cliente();
+      $this->custom_search = TRUE;
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
       
-      $albaran = new albaran_cliente();
-      $this->resultados = $albaran->all($this->offset);
+      if($this->query)
+         $this->resultados = $albaran->search($this->query, $this->offset);
+      else
+         $this->resultados = $albaran->all($this->offset);
    }
    
    public function anterior_url()
    {
       $url = '';
-      if($this->offset>'0')
+      if($this->query!='' AND $this->offset>'0')
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      else if($this->query=='' AND $this->offset>'0')
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
       return $url;
    }
@@ -51,7 +58,9 @@ class general_albaranes_cli extends fs_controller
    public function siguiente_url()
    {
       $url = '';
-      if(count($this->resultados)==FS_ITEM_LIMIT)
+      if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
    }

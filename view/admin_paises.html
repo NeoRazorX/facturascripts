@@ -1,21 +1,38 @@
 {include="header"}
 
-<div class="rounded">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_pais").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_nuevo_pais").css({
+            left: ($(window).width() - $("#popup_nuevo_pais").outerWidth())/2,
+            top: ($(window).height() - $("#popup_nuevo_pais").outerHeight())/2
+         });
+         $("#popup_nuevo_pais").show();
+         document.f_nuevo_pais.scodpais.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_pais">
    <h1>Nuevo país:</h1>
-   <form action="{$fsc->url()}" method="POST">
-      <div class="bloque">
-         Código:
-         <input type="text" name="scodpais" size="18" maxlength="20"/>
-      </div>
-      <div class="bloque">
-         Nombre del país:
-         <input type="text" name="snombre"/>
-      </div>
+   <form name="f_nuevo_pais" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="scodpais" size="18" maxlength="20"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre"/></td>
+         </tr>
+      </table>
       <div class="right"><input type="submit" value="nuevo país"/></div>
    </form>
 </div>
 
-{loop="$fsc->all()"}
+{loop="$fsc->pais->all()"}
 <div class="rounded">
    <h1>
       Código: {$value->codpais}

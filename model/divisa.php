@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
 
@@ -29,7 +46,7 @@ class divisa extends fs_model
          $this->descripcion = '';
          $this->tasaconv = 1;
          $this->bandera = '';
-         $this->fecha = Date('j-n-Y');
+         $this->fecha = Date('d-m-Y');
          $this->codiso = NULL;
       }
    }
@@ -49,7 +66,10 @@ class divisa extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = '".$this->coddivisa."';");
+      if( is_null($this->coddivisa) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = '".$this->coddivisa."';");
    }
    
    public function save()
@@ -69,9 +89,7 @@ class divisa extends fs_model
       if($divisas)
       {
          foreach($divisas as $d)
-         {
             $listad[] = new divisa($d);
-         }
       }
       return $listad;
    }

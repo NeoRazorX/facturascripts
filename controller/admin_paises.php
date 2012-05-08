@@ -21,6 +21,8 @@ require_once 'model/pais.php';
 
 class admin_paises extends fs_controller
 {
+   public $pais;
+
    public function __construct()
    {
       parent::__construct('admin_paises', 'Paises', 'admin', TRUE, TRUE);
@@ -28,6 +30,9 @@ class admin_paises extends fs_controller
    
    protected function process()
    {
+      $this->pais = new pais();
+      $this->buttons[] = new fs_button('b_nuevo_pais', 'nuevo país');
+      
       if( isset($_POST['scodpais']) AND isset($_POST['snombre']))
       {
          $pais = new pais();
@@ -41,12 +46,6 @@ class admin_paises extends fs_controller
          $pais->codpais = $_GET['delete'];
          $pais->delete();
       }
-   }
-
-   public function all()
-   {
-      $pais = new pais();
-      return $pais->all();
    }
 }
 

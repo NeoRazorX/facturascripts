@@ -52,6 +52,8 @@ class general_familia extends fs_controller
       if($this->familia)
       {
          $this->page->title = $this->familia->codfamilia;
+         $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas', '#', '', 'img/tools.png', '*');
+         $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/remove.png', '-');
          
          if( isset($_POST['multiplicar']) )
          {

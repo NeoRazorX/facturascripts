@@ -107,7 +107,10 @@ class agente extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$this->codagente."';");
+      if( is_null($this->codagente) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$this->codagente."';");
    }
    
    public function save()
@@ -147,9 +150,7 @@ class agente extends fs_model
       if($agentes)
       {
          foreach($agentes as $a)
-         {
             $listagentes[] = new agente($a);
-         }
       }
       return $listagentes;
    }

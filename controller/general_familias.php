@@ -21,6 +21,8 @@ require_once 'model/familia.php';
 
 class general_familias extends fs_controller
 {
+   public $familia;
+   
    public function __construct()
    {
       parent::__construct('general_familias', 'Familias', 'general', FALSE, TRUE);
@@ -28,6 +30,9 @@ class general_familias extends fs_controller
    
    protected function process()
    {
+      $this->familia = new familia();
+      $this->buttons[] = new fs_button('b_nueva_familia', 'nueva familia');
+      
       if( isset($_POST['ncodfamilia']) )
       {
          $fam = new familia();
@@ -43,12 +48,6 @@ class general_familias extends fs_controller
          if( $fam->delete() )
             $this->new_message("Familia ".$_GET['delete']." eliminada correctamente");
       }
-   }
-
-   public function all()
-   {
-      $fam = new familia();
-      return $fam->all();
    }
 }
 
