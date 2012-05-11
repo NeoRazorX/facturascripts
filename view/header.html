@@ -18,7 +18,7 @@
                display: 'inline-block',
                position: 'fixed',
                left: $("#b_folder_"+folder).position().left+5,
-               top: $("#b_folder_"+folder).position().top+35
+               top: $("#b_folder_"+folder).position().top+32
             });
             $('#folder_'+folder).show();
          }
@@ -31,7 +31,7 @@
                display: 'inline-block',
                position: 'fixed',
                left: $("#b_user_list").position().left,
-               top: $("#b_user_list").position().top+35
+               top: $("#b_user_list").position().top+32
             });
             $('#user_list').show();
          });
@@ -69,6 +69,14 @@
       </div>
    </div>
    <div class="header_box">
+      <div id="header_location">
+         {$fsc->page->folder} »
+         {if condition="$fsc->ppage"}
+            <a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »
+         {/if}
+         {$fsc->page->title}
+         {if condition="$fsc->is_admin_page()"}*{/if}
+      </div>
       <div id="header_buttons">
          <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
          {if condition="$fsc->page->show_on_menu"}
@@ -86,14 +94,6 @@
                   {$value->value}</a>
             {/if}
          {/loop}
-      </div>
-      <div id="header_location">
-         {$fsc->page->folder} »
-         {if condition="$fsc->ppage"}
-            <a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »
-         {/if}
-         {$fsc->page->title}
-         {if condition="$fsc->is_admin_page()"}*{/if}
       </div>
       <div id="header_search">
          {if condition="$fsc->custom_search"}

@@ -183,6 +183,10 @@ div#header_user img {
    vertical-align: middle;
 }
 
+div#header_buttons {
+   text-align: center;
+}
+
 div#header_buttons a {
    display: inline-block;
    margin-left: 5px;
@@ -212,7 +216,7 @@ div#header_buttons img {
 }
 
 div#header_location {
-   text-align: center;
+   padding-left: 15px;
    text-transform: capitalize;
    font-variant: small-caps;
 }

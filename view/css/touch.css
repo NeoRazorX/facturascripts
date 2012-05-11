@@ -112,12 +112,11 @@ div.popup ul li {
    vertical-align: middle;
    padding: 5px;
    margin: 5px;
-   border: 1px outset #333333;
+   border: 1px dashed #333333;
    border-top-left-radius: 5px 5px;
    border-top-right-radius: 5px 5px;
    border-bottom-left-radius: 5px 5px;
    border-bottom-right-radius: 5px 5px;
-   background-color: #FFFAA6;
    text-align: center;
 }
 
@@ -136,7 +135,6 @@ div.popup ul li:hover {
 div.popup ul li img {
    margin-top: 4px;
    height: 100px;
-   border: 1px outset #E8E279;
 }
 
 input#tpv_total2,
