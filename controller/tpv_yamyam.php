@@ -136,7 +136,7 @@ class tpv_yamyam extends fs_controller
                break;
             }
          }
-         if(!$encontrado AND $a->pvp > 0)
+         if(!$encontrado AND $a->pvp > 0 AND !$a->bloqueado)
          {
             $this->articulos[] = $a;
          }
@@ -275,7 +275,9 @@ class tpv_yamyam extends fs_controller
             fwrite($file, $linea);
             $linea = "Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n";
             fwrite($file, $linea);
-            $linea = "Diferencia: ".$this->caja->show_diferencia()." Eur.\n\n";
+            $linea = "Diferencia: ".$this->caja->show_diferencia()." Eur.\n";
+            fwrite($file, $linea);
+            $linea = "Tickets: ".$this->caja->tickets."\n\n";
             fwrite($file, $linea);
             $linea = "Dinero pesado:\n\n\n";
             fwrite($file, $linea);

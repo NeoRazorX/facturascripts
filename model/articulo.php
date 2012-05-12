@@ -140,9 +140,15 @@ class articulo extends fs_model
    public $observaciones;
    public $imagen;
    
+   private static $impuestos;
+   
    public function __construct($a=FALSE)
    {
       parent::__construct('articulos');
+      
+      if( !isset(self::$impuestos) )
+         self::$impuestos = array();
+      
       if($a)
       {
          $this->referencia = $a['referencia'];
@@ -162,7 +168,8 @@ class articulo extends fs_model
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $a['observaciones'];
-         $this->imagen = $this->str2bin($a['imagen']);
+         /// no cargamos la imágen al principio por cuestiones de rendiemiento
+         ///$this->imagen = $this->str2bin($a['imagen']);
       }
       else
       {
@@ -236,30 +243,55 @@ class articulo extends fs_model
          return $this->iva;
       else
       {
-         $imp = new impuesto();
-         $imp = $imp->get($this->codimpuesto);
-         if($imp)
-            $this->iva = floatval($imp->iva);
-         else
-            $this->iva = 0;
+         $encontrado = FALSE;
+         foreach(self::$impuestos as $i)
+         {
+            if($i->codimpuesto == $this->codimpuesto)
+            {
+               $this->iva = floatval($i->iva);
+               $encontrado = TRUE;
+               break;
+            }
+         }
+         if( !$encontrado )
+         {
+            $imp = new impuesto();
+            $imp = $imp->get($this->codimpuesto);
+            if($imp)
+            {
+               $this->iva = floatval($imp->iva);
+               self::$impuestos[] = $imp;
+            }
+            else
+               $this->iva = 0;
+         }
          return $this->iva;
       }
    }
    
    public function imagen_url()
    {
-      if( is_null($this->imagen) )
-         return FALSE;
-      else
+      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         return '../tmp/articulos/'.$this->referencia.'.png';
+      else if( !is_null($this->imagen) )
       {
-         if( !file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+         if($imagen)
          {
+            $this->imagen = $this->str2bin($imagen[0]['imagen']);
             $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
             fwrite($f, $this->imagen);
             fclose($f);
+            return '../tmp/articulos/'.$this->referencia.'.png';
          }
-         return '../tmp/articulos/'.$this->referencia.'.png';
+         else
+         {
+            $this->imagen = NULL;
+            return FALSE;
+         }
       }
+      else
+         return FALSE;
    }
    
    public function set_referencia($ref)
@@ -313,8 +345,20 @@ class articulo extends fs_model
    
    public function save()
    {
+      /// cargamos la imágen si todavía no lo habíamos hecho
+      if( !isset($this->imagen) )
+      {
+         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+         if($imagen)
+            $this->imagen = $this->str2bin($imagen[0]['imagen']);
+         else
+            $this->imagen = NULL;
+      }
+      /// eliminamos la imágen del directorio para actualizarla
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
          unlink('tmp/articulos/'.$this->referencia.'.png');
+      
+      
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",

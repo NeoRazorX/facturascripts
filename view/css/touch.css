@@ -102,9 +102,10 @@ input:checked + label {
 
 div.popup ul {
    list-style: none;
-   font-size: 20px;
+   font-size: 16px;
    padding: 0px;
    margin: 0px;
+   text-align: center;
 }
 
 div.popup ul li {
@@ -134,7 +135,7 @@ div.popup ul li:hover {
 
 div.popup ul li img {
    margin-top: 4px;
-   height: 100px;
+   height: 80px;
 }
 
 input#tpv_total2,
