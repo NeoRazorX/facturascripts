@@ -428,8 +428,9 @@ class articulo extends fs_model
          {
             foreach($articulos as $a)
             {
-               if( !in_array($a, $artilist) )
-                  $artilist[] = new articulo($a);
+               $aux = new articulo($a);
+               if( !in_array($aux, $artilist) )
+                  $artilist[] = $aux;
             }
          }
       }

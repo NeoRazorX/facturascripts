@@ -22,6 +22,7 @@ require_once 'model/agente.php';
 class admin_agentes extends fs_controller
 {
    public $agente;
+   public $agentes;
    
    public function __construct()
    {
@@ -50,6 +51,10 @@ class admin_agentes extends fs_controller
          $this->agente = $this->agente->get($_GET['delete']);
          $this->agente->delete();
       }
+      
+      $this->agentes = $this->agente->all();
+      if( !$this->agentes )
+         $this->new_message("No hay agentes. Pulsa el botón <b>nuevo agente</b> para crear uno.");
    }
 }
 

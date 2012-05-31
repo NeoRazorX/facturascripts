@@ -126,6 +126,7 @@ class empresa extends fs_model
 
    protected function install()
    {
+      
       return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codcuentarem,codalmacen,
          codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,idprovincia,ciudad,codpostal,
          logo,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
