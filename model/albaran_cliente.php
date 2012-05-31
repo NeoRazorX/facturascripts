@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/agente.php';
+require_once 'model/articulo.php';
+require_once 'model/cliente.php';
+require_once 'model/factura_cliente.php';
 
 class linea_albaran_cliente extends fs_model
 {
@@ -84,7 +87,21 @@ class linea_albaran_cliente extends fs_model
    {
       return number_format($this->pvptotal, 2, ',', '.');
    }
-
+   
+   public function url()
+   {
+      $alb = new albaran_cliente();
+      $alb = $alb->get($this->idalbaran);
+      return $alb->url();
+   }
+   
+   public function articulo_url()
+   {
+      $art = new articulo();
+      $art = $art->get($this->referencia);
+      return $art->url();
+   }
+   
    protected function install()
    {
       return '';
@@ -140,6 +157,19 @@ class linea_albaran_cliente extends fs_model
       $linealist = array();
       $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
       if($lineas)
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_albaran_cliente($l);
+      }
+      return $linealist;
+   }
+   
+   public function all_from_articulo($ref, $offset=0)
+   {
+      $linealist = array();
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."' ORDER BY idalbaran DESC",
+              FS_ITEM_LIMIT, $offset);
+      if( $lineas )
       {
          foreach($lineas as $l)
             $linealist[] = new linea_albaran_cliente($l);
@@ -268,9 +298,19 @@ class albaran_cliente extends fs_model
       }
    }
    
+   public function show_neto()
+   {
+      return number_format($this->neto, 2, ',', ' ');
+   }
+   
+   public function show_iva()
+   {
+      return number_format($this->totaliva, 2, ',', ' ');
+   }
+   
    public function show_total()
    {
-      return number_format($this->totaleuros, 2, ',', '.');
+      return number_format($this->totaleuros, 2, ',', ' ');
    }
    
    public function show_fecha()
@@ -286,9 +326,78 @@ class albaran_cliente extends fs_model
          return Date('H:i', strtotime($this->hora));
    }
    
+   public function observaciones_resume()
+   {
+      if($this->observaciones == '')
+         return '-';
+      else if( strlen($this->observaciones) < 60 )
+         return $this->observaciones;
+      else
+         return substr($this->observaciones, 0, 50).'...';
+   }
+   
    public function url()
    {
       return 'index.php?page=general_albaran_cli&id='.$this->idalbaran;
+   }
+   
+   public function factura_url()
+   {
+      if( !$this->ptefactura )
+      {
+         $fac = new factura_cliente();
+         $fac = $fac->get($this->idfactura);
+         if($fac)
+            return $fac->url();
+         else
+            return $this->url();
+      }
+      else
+         return $this->url();
+   }
+   
+   public function agente_url()
+   {
+      $agente = new agente();
+      $agente = $agente->get($this->codagente);
+      return $agente->url();
+   }
+   
+   public function cliente_url()
+   {
+      $cliente = new cliente();
+      $cliente = $cliente->get($this->codcliente);
+      return $cliente->url();
+   }
+   
+   public function get($id)
+   {
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
+      if($albaran)
+         return new albaran_cliente($albaran[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_by_codigo($cod)
+   {
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".strtoupper($cod)."';");
+      if($albaran)
+         return new albaran_cliente($albaran[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_lineas()
+   {
+      $linea = new linea_albaran_cliente();
+      return $linea->all_from_albaran($this->idalbaran);
+   }
+   
+   public function get_agente()
+   {
+      $agente = new agente();
+      return $agente->get($this->codagente);
    }
    
    protected function install()
@@ -316,9 +425,7 @@ class albaran_cliente extends fs_model
       $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
       if($numero)
-      {
          $this->numero = sprintf('%06s', (1 + intval($numero[0]['num'])));
-      }
       else
          $this->numero = '000001';
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
@@ -374,30 +481,6 @@ class albaran_cliente extends fs_model
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
    }
-   
-   public function get($id)
-   {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
-      if($albaran)
-         return new albaran_cliente($albaran[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_by_codigo($cod)
-   {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".strtoupper($cod)."';");
-      if($albaran)
-         return new albaran_cliente($albaran[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_lineas()
-   {
-      $linea = new linea_albaran_cliente();
-      return $linea->all_from_albaran($this->idalbaran);
-   }
 
    public function all($offset=0)
    {
@@ -430,6 +513,19 @@ class albaran_cliente extends fs_model
                            'total' => number_format($a['total'], 2, ',', '.')
                         );
          }
+      }
+      return $albalist;
+   }
+   
+   public function all_from_cliente($codcliente, $offset=0)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."' ORDER BY fecha DESC",
+              FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $albalist[] = new albaran_cliente($a);
       }
       return $albalist;
    }

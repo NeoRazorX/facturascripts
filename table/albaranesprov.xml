@@ -6,7 +6,6 @@
 -->
 <tabla>
    <columna><nombre>revisado</nombre><tipo>boolean</tipo><nulo>NO</nulo><defecto>true</defecto></columna>
-   <columna><nombre>tipo</nombre><tipo>smallint</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
    <columna><nombre>codagente</nombre><tipo>character varying(10)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codigo</nombre><tipo>character varying(12)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>total</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>

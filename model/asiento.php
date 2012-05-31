@@ -1,6 +1,9 @@
 <?php
 
-require_once 'core/fs_model.php';
+require_once 'base/fs_model.php';
+require_once 'model/partida.php';
+require_once 'model/factura_cliente.php';
+require_once 'model/factura_proveedor.php';
 
 class asiento extends fs_model
 {
@@ -49,6 +52,60 @@ class asiento extends fs_model
       }
    }
    
+   public function show_fecha()
+   {
+      return Date('d-m-Y', strtotime($this->fecha));
+   }
+   
+   public function show_importe()
+   {
+      return number_format($this->importe, 2, ',', '.');
+   }
+   
+   public function url()
+   {
+      return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
+   }
+   
+   public function factura_url()
+   {
+      if($this->tipodocumento == 'Factura de cliente')
+      {
+         $fac = new factura_cliente();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+            return $fac->url();
+         else
+            return '';
+      }
+      else if($this->tipodocumento == 'Factura de proveedor')
+      {
+         $fac = new factura_proveedor();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+            return $fac->url();
+         else
+            return '';
+      }
+      else
+         return '';
+   }
+
+   public function get($id)
+   {
+      $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$id."';");
+      if($asiento)
+         return new asiento($asiento[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_partidas()
+   {
+      $partida = new partida();
+      return $partida->all_from_asiento($this->idasiento);
+   }
+   
    protected function install()
    {
       return '';
@@ -84,6 +141,32 @@ class asiento extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+   }
+   
+   public function search($query, $offset=0)
+   {
+      $alist = array();
+      $query = strtolower($query);
+      $asientos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE lower(concepto) ~~ '%".$query."%'
+         OR lower(documento) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($asientos)
+      {
+         foreach($asientos as $a)
+            $alist[] = new asiento($a);
+      }
+      return $alist;
+   }
+   
+   public function all($offset=0)
+   {
+      $alist = array();
+      $asientos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      if($asientos)
+      {
+         foreach($asientos as $a)
+            $alist[] = new asiento($a);
+      }
+      return $alist;
    }
 }
 

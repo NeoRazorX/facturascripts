@@ -290,10 +290,6 @@
                </td>
             </tr>
             <tr>
-               <td align="right">Impresora:</td>
-               <td><input type="text" name="impresora" value="{$fsc->impresora}" size="4"/></td>
-            </tr>
-            <tr>
                <td align="right">Observaciones:</td>
                <td><textarea name="observaciones" cols="50"></textarea></td>
             </tr>
@@ -305,7 +301,7 @@
       <div class="rounded">
          <div class="tpv_total" id="tpv_total">0,00 €</div>
          <div class="bloque">
-            Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+            Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
          <br/><br/>
          <table class="list" id="tpv_albaran">

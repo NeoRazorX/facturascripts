@@ -1,6 +1,7 @@
 <?php
 
 require_once 'base/fs_model.php';
+require_once 'model/subcuenta.php';
 
 class cuenta extends fs_model
 {
@@ -40,9 +41,35 @@ class cuenta extends fs_model
       }
    }
    
+   public function url()
+   {
+      return 'index.php?page=contabilidad_cuenta&id='.$this->idcuenta;
+   }
+   
    protected function install()
    {
       return "";
+   }
+   
+   public function get($id)
+   {
+      $cuenta = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$id."';");
+      if($cuenta)
+         return new cuenta($cuenta[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_subcuentas()
+   {
+      $subcuenta = new subcuenta();
+      return $subcuenta->all_from_cuenta($this->idcuenta);
+   }
+   
+   public function get_ejercicio()
+   {
+      $eje = new ejercicio();
+      return $eje->get($this->codejercicio);
    }
    
    public function exists()

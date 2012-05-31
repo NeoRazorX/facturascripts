@@ -22,6 +22,7 @@ require_once 'model/albaran_cliente.php';
 class general_albaran_cli extends fs_controller
 {
    public $albaran;
+   public $agente;
    
    public function __construct()
    {
@@ -39,6 +40,9 @@ class general_albaran_cli extends fs_controller
          if($this->albaran)
          {
             $this->page->title = $this->albaran->codigo;
+            $this->agente = $this->albaran->get_agente();
+            if( !$this->albaran->ptefactura )
+               $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
          }
       }
    }

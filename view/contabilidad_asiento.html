@@ -1,0 +1,32 @@
+{include="header"}
+
+{if condition="$fsc->asiento"}
+<div class="rounded">
+   <div class="bloque">Concepto: {$fsc->asiento->concepto}</div>
+   <div class="bloque">Documento: {$fsc->asiento->documento}</div>
+   <div class="bloque">Tipo documento: {$fsc->asiento->tipodocumento}</div>
+   <div class="bloque">Fecha: {$fsc->asiento->show_fecha()}</div>
+   <div class="bloque">Importe: {$fsc->asiento->show_importe()} €</div>
+   <br/>
+   <table class="list">
+      <tr>
+         <th>Concepto</th>
+         <th>Subcuenta</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
+      </tr>
+      {loop="$fsc->asiento->get_partidas()"}
+      <tr>
+         <td>{$value->concepto}</td>
+         <td><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+         <td align="right">{$value->show_debe()} €</td>
+         <td align="right">{$value->show_haber()} €</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+{else}
+<div class="error">Asiento no encontrado.</div>
+{/if}
+
+{include="footer"}

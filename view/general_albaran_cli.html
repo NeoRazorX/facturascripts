@@ -3,10 +3,8 @@
 {if condition="$fsc->albaran"}
 <div class="rounded">
    <h1>
-      {$fsc->albaran->nombrecliente}
-      {if condition="$fsc->albaran->idfactura"}
-         <span><a href="index.php?page=contabilidad_factura_cli&id={$fsc->albaran->idfactura}">ver factura</a></span>
-      {/if}
+      <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
+      <span><input type="submit" value="modificar"/></span>
    </h1>
    <form>
       <div class="bloque">
@@ -25,24 +23,19 @@
          Fecha: <input type="text" name="fecha" value="{$fsc->albaran->fecha}" size="8"/>
          Hora: <input type="text" name="hora" value="{$fsc->albaran->hora}" size="6"/>
       </div>
+      {if condition="$fsc->agente"}
       <div class="bloque">
-         Cliente: <a href="index.php?page=general_cliente&cod={$fsc->albaran->codcliente}">{$fsc->albaran->nombrecliente}</a>
-         cif/nif: {$fsc->albaran->cifnif}
+         Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
       </div>
-      <div class="bloque">
-         Agente: {$fsc->albaran->codagente}
-      </div>
-      <div class="bloque">
-         Neto: {$fsc->albaran->neto}
-         IVA: {$fsc->albaran->totaliva}
-         Total: {$fsc->albaran->total}
-         Total Euros: {$fsc->albaran->totaleuros}
-      </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
-      <div>
-         Observaciones:<br/>
-         <textarea name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
-      </div>
+      {/if}
+      <table width="100%">
+         <tr>
+            <td>
+               Observaciones:<br/>
+               <textarea name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
+            </td>
+         </tr>
+      </table>
    </form>
 </div>
 
@@ -58,7 +51,7 @@
       {loop="$fsc->albaran->get_lineas()"}
       <tr>
          <td>
-            <a href="index.php?page=general_articulo&ref={$value->referencia}">{$value->referencia}</a>
+            <a href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}
          </td>
          <td align="right">{$value->cantidad}</td>
@@ -67,6 +60,23 @@
          <td align="right">{$value->show_total()} €</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="2"></td>
+         <td colspan="3">
+            <table class="list">
+               <tr>
+                  <th>Neto:</th>
+                  <th>IVA:</th>
+                  <th>Total:</th>
+               </tr>
+               <tr>
+                  <td align="center">{$fsc->albaran->show_neto()} €</td>
+                  <td align="center">{$fsc->albaran->show_iva()} €</td>
+                  <td align="center">{$fsc->albaran->show_total()} €</td>
+               </tr>
+            </table>
+         </td>
+      </tr>
    </table>
 </div>
 {/if}

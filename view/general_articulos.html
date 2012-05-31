@@ -38,7 +38,7 @@
             <td>
                <select name="codimpuesto">
                {loop="$fsc->impuesto->all()"}
-                  {if condition="$value->default"}
+                  {if condition="$value->is_default()"}
                   <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
                   {else}
                   <option value="{$value->codimpuesto}">{$value->descripcion}</option>

@@ -18,6 +18,11 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/agente.php';
+require_once 'model/albaran_cliente.php';
+require_once 'model/articulo.php';
+require_once 'model/asiento.php';
+require_once 'model/cliente.php';
 
 class linea_factura_cliente extends fs_model
 {
@@ -75,7 +80,28 @@ class linea_factura_cliente extends fs_model
    {
       return number_format($this->pvptotal, 2, ',', '.');
    }
-
+   
+   public function url()
+   {
+      $fac = new factura_cliente();
+      $fac = $fac->get($this->idfactura);
+      return $fac->url();
+   }
+   
+   public function albaran_url()
+   {
+      $alb = new albaran_cliente();
+      $alb = $alb->get($this->idalbaran);
+      return $alb->url();
+   }
+   
+   public function articulo_url()
+   {
+      $art = new articulo();
+      $art = $art->get($this->referencia);
+      return $art->url();
+   }
+   
    protected function install()
    {
       return '';
@@ -109,6 +135,19 @@ class linea_factura_cliente extends fs_model
             $linlist[] = new linea_factura_cliente($l);
       }
       return $linlist;
+   }
+   
+   public function all_from_articulo($ref, $offset=0)
+   {
+      $linealist = array();
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."' ORDER BY idalbaran DESC",
+              FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_cliente($l);
+      }
+      return $linealist;
    }
 }
 
@@ -175,6 +214,16 @@ class factura_cliente extends fs_model
       }
    }
    
+   public function show_neto()
+   {
+      return number_format($this->neto, 2, ',', ' ');
+   }
+   
+   public function show_iva()
+   {
+      return number_format($this->totaliva, 2, ',', ' ');
+   }
+   
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', '.');
@@ -199,7 +248,58 @@ class factura_cliente extends fs_model
    {
       return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
    }
-
+   
+   public function asiento_url()
+   {
+      $asiento = new asiento();
+      $asiento = $asiento->get($this->idasiento);
+      return $asiento->url();
+   }
+   
+   public function agente_url()
+   {
+      $agente = new agente();
+      $agente = $agente->get($this->codagente);
+      return $agente->url();
+   }
+   
+   public function cliente_url()
+   {
+      $cliente = new cliente();
+      $cliente = $cliente->get($this->codcliente);
+      return $cliente->url();
+   }
+   
+   public function get($id)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      if($fact)
+         return new factura_cliente($fact[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_by_codigo($cod)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".$cod."';");
+      if($fact)
+         return new factura_cliente($fact[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_lineas()
+   {
+      $linea = new linea_factura_cliente();
+      return $linea->all_from_factura($this->idfactura);
+   }
+   
+   public function get_agente()
+   {
+      $agente = new agente();
+      return $agente->get($this->codagente);
+   }
+   
    protected function install()
    {
       return '';
@@ -223,21 +323,6 @@ class factura_cliente extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
    
-   public function get($id)
-   {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
-      if($fact)
-         return new factura_cliente($fact[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_lineas()
-   {
-      $linea = new linea_factura_cliente();
-      return $linea->all_from_factura($this->idfactura);
-   }
-
    public function all($offset=0)
    {
       $faclist = array();

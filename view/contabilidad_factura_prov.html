@@ -4,7 +4,8 @@
 <div class="rounded">
    <form>
       <h1>
-         {$fsc->factura->nombre}
+         <a href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
+         <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
          Número: <input type="text" name="numero" value="{$fsc->factura->numero}"/>
@@ -21,17 +22,8 @@
       <div class="bloque">
          Fecha: <input type="text" name="fecha" value="{$fsc->factura->fecha}"/>
       </div>
-      <div class="bloque">
-         Proveedor: <a href="index.php?page=general_proveedor&cod={$fsc->factura->codproveedor}">{$fsc->factura->nombre}</a>
-         cif/nif: {$fsc->factura->cifnif}
-      </div>
-      <div class="bloque">
-         Neto: {$fsc->factura->neto}
-         IVA: {$fsc->factura->totaliva}
-         Total: {$fsc->factura->totaleuros}
-      </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
-      <div class="bloque">
+      <div>
+         Observaciones:<br/>
          <textarea name="observaciones" cols="60">{$fsc->factura->observaciones}</textarea>
       </div>
    </form>
@@ -49,9 +41,9 @@
       </tr>
       {loop="$fsc->factura->get_lineas()"}
       <tr>
-         <td><a href="index.php?page=general_albaran_cli&id={$value->idalbaran}">{$value->idalbaran}</a></td>
+         <td><a href="{$value->albaran_url()}">{$value->idalbaran}</a></td>
          <td>
-            <a href="index.php?page=general_articulo&ref={$value->referencia}">{$value->referencia}</a>
+            <a href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}
          </td>
          <td align="right">{$value->cantidad}</td>
@@ -60,6 +52,23 @@
          <td align="right">{$value->show_total()} €</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="3"></td>
+         <td colspan="3">
+            <table class="list">
+               <tr>
+                  <th>Neto:</th>
+                  <th>IVA:</th>
+                  <th>Total:</th>
+               </tr>
+               <tr>
+                  <td align="center">{$fsc->factura->show_neto()} €</td>
+                  <td align="center">{$fsc->factura->show_iva()} €</td>
+                  <td align="center">{$fsc->factura->show_total()} €</td>
+               </tr>
+            </table>
+         </td>
+      </tr>
    </table>
 </div>
 {/if}

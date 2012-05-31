@@ -191,48 +191,53 @@ abstract class fs_model
    }
    
    /*
-    * Compara las columnas de una tabla data, devuelve una sentencia sql
+    * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.
     */
-   private function compare_columns($col, $columnas)
+   private function compare_columns($xml_cols, $columnas)
    {
       $consulta = "";
-      $encontrada = FALSE;
-      if($columnas)
+      foreach($xml_cols as $col)
       {
-         foreach($columnas as $col2)
+         $encontrada = FALSE;
+         if($columnas)
          {
-            if($col2['column_name'] == $col['nombre'])
+            foreach($columnas as $col2)
             {
-               if($col['defecto'] == "")
-                  $col['defecto'] = NULL;
-               if($col2['column_default'] != $col['defecto'])
+               if($col2['column_name'] == $col['nombre'])
                {
-                  if($col['defecto'] != NULL)
-                     $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET DEFAULT ' . $col['defecto'] . ";";
+                  if($col['defecto'] == "")
+                     $col['defecto'] = NULL;
+                  if($col2['column_default'] != $col['defecto'])
+                  {
+                     if($col['defecto'] != NULL)
+                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET DEFAULT ' . $col['defecto'] . ";";
+                     else
+                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" DROP DEFAULT;';
+                  }
+                  if($col2['is_nullable'] != $col['nulo'])
+                  {
+                     if($col['nulo'] == "YES")
+                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" DROP NOT NULL;';
+                     else
+                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET NOT NULL;';
+                  }
+                  $encontrada = TRUE;
+                  break;
                }
-               if(($col2['is_nullable'] == "YES" AND $col['nulo'] == "NO") OR $col2['is_nullable'] == "NO" AND $col['nulo'] == "SI")
-               {
-                  if($col['nulo'] == "SI")
-                     $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" DROP NOT NULL;';
-                  else
-                     $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET NOT NULL;';
-               }
-               $encontrada = TRUE;
-               break;
             }
          }
+         if(!$encontrada)
+         {
+            $consulta .= "ALTER TABLE " . $this->table_name . ' ADD COLUMN "' . $col['nombre'] . '" ' . $col['tipo'];
+            if($col['defecto'] != "")
+               $consulta .= " DEFAULT " . $col['defecto'];
+            if($col['nulo'] == "NO")
+               $consulta .= " NOT NULL";
+            $consulta .= ";\n";
+         }
       }
-      if(!$encontrada)
-      {
-         $consulta .= "ALTER TABLE " . $this->table_name . ' ADD COLUMN "' . $col['nombre'] . '" ' . $col['tipo'];
-         if($col['defecto'] != "")
-            $consulta .= " DEFAULT " . $col['defecto'];
-         if($col['nulo'] == "NO")
-            $consulta .= " NOT NULL";
-         $consulta .= ";\n";
-      }
-      return($consulta);
+      return $consulta;
    }
 
    /*
@@ -334,12 +339,12 @@ abstract class fs_model
       {
          if( $this->db->table_exists($this->table_name) )
          {
-            $columnas = $this->db->get_columns($this->table_name);
-            $restricciones = $this->db->get_constraints($this->table_name);
             /// comparamos las columnas
-            foreach($xml_columnas as $col)
-               $consulta .= $this->compare_columns($col, $columnas);
+            $columnas = $this->db->get_columns($this->table_name);
+            $consulta .= $this->compare_columns($xml_columnas, $columnas);
+            
             /// comparamos las restricciones
+            $restricciones = $this->db->get_constraints($this->table_name);
             $consulta .= $this->compare_constraints($xml_restricciones, $restricciones);
          }
          else

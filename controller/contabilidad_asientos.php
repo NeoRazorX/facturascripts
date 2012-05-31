@@ -1,25 +1,21 @@
 <?php
 
-require_once 'model/cuenta.php';
-require_once 'model/ejercicio.php';
+require_once 'model/asiento.php';
 
-class contabilidad_cuentas extends fs_controller
+class contabilidad_asientos extends fs_controller
 {
-   public $cuenta;
-   public $ejercicio;
+   public $asiento;
    public $resultados;
-   public $resultados2;
    public $offset;
-
+   
    public function __construct()
    {
-      parent::__construct('contabilidad_cuentas', 'Cuentas', 'contabilidad', FALSE, TRUE);
+      parent::__construct('contabilidad_asientos', 'Asientos', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
    {
-      $this->cuenta = new cuenta();
-      $this->ejercicio = new ejercicio();
+      $this->asiento = new asiento();
       $this->custom_search = TRUE;
       
       if( isset($_GET['offset']) )
@@ -28,23 +24,9 @@ class contabilidad_cuentas extends fs_controller
          $this->offset = 0;
       
       if($this->query != '')
-      {
-         $this->resultados = $this->cuenta->search($this->query);
-         if( count($this->resultados) < 1)
-         {
-            $subc = new subcuenta();
-            $this->resultados2 = $subc->search($this->query);
-         }
-      }
-      else if( isset($_POST['ejercicio']) )
-      {
-         $eje = $this->ejercicio->get($_POST['ejercicio']);
-         if($eje)
-            $eje->set_default();
-         $this->resultados = $this->cuenta->all_from_ejercicio($_POST['ejercicio'], $this->offset);
-      }
+         $this->resultados = $this->asiento->search($this->query, $this->offset);
       else
-         $this->resultados = $this->cuenta->all($this->offset);
+         $this->resultados = $this->asiento->all($this->offset);
    }
    
    public function anterior_url()

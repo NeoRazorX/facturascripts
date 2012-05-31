@@ -83,6 +83,8 @@ class tpv_yamyam extends fs_controller
          {
             if($this->caja->codagente == $this->user->codagente)
             {
+               $this->buttons[] = new fs_button('b_opciones_tpv', 'opciones', '#', 'button', 'img/tools.png');
+               
                if( isset($_GET['cerrar_caja']) )
                   $this->cerrar_caja();
                else if( isset($_POST['numlineas']) )

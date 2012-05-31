@@ -40,6 +40,8 @@
             <input type="checkbox" name="bloqueado" value="TRUE" id="articulo_bloqueado"/>
             {/if}
             <label for="articulo_bloqueado">bloqueado</label>
+            &nbsp;
+            <input type="submit" value="modificar"/>
          </span>
       </h1>
       <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
@@ -119,7 +121,6 @@
             {/if}
             <label for="articulo_controlstock">Permitir ventas sin stock</label>
          </div>
-         <div class="right"><input type="submit" value="modificar"/></div>
       </div>
    </form>
 </div>

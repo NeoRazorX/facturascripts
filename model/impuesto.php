@@ -25,8 +25,9 @@ class impuesto extends fs_model
    public $descripcion = '';
    public $iva;
    public $recargo;
-   public $default;
    
+   private static $default_impuesto;
+
    public function __construct($i=FALSE)
    {
       parent::__construct('impuestos');
@@ -36,12 +37,6 @@ class impuesto extends fs_model
          $this->descripcion = $i['descripcion'];
          $this->iva = floatval($i['iva']);
          $this->recargo = floatval($i['recargo']);
-         if( !isset($_COOKIE['default_impuesto']) )
-            $this->default = FALSE;
-         elseif($_COOKIE['default_impuesto'] == $this->codimpuesto)
-            $this->default = TRUE;
-         else
-            $this->default = FALSE;
       }
       else
       {
@@ -49,7 +44,6 @@ class impuesto extends fs_model
          $this->descripcion = '';
          $this->iva = 0;
          $this->recargo = 0;
-         $this->default = FALSE;
       }
    }
    
@@ -58,10 +52,23 @@ class impuesto extends fs_model
       return 'index.php?page=contabilidad_impuestos#'.$this->codimpuesto;
    }
    
+   public function is_default()
+   {
+      if( isset(self::$default_impuesto) )
+         return (self::$default_impuesto == $this->codimpuesto);
+      else if( !isset($_COOKIE['default_impuesto']) )
+         return FALSE;
+      else if($_COOKIE['default_impuesto'] == $this->codimpuesto)
+         return TRUE;
+      else
+         return FALSE;
+   }
+
+
    public function set_default()
    {
       setcookie('default_impuesto', $this->codimpuesto, time()+FS_COOKIES_EXPIRE);
-      $this->default = TRUE;
+      self::$default_impuesto = $this->codimpuesto;
    }
 
    protected function install()

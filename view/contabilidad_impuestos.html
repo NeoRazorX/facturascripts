@@ -39,14 +39,16 @@
 {loop="$fsc->impuesto->all()"}
 <div class="rounded">
    <form>
-      <h1>{$value->codimpuesto}</h1>
+      <h1>
+         {$value->codimpuesto}
+         <span><input type="submit" value="modificar"/></span>
+      </h1>
       <div class="bloque">
          Descripción: <input type="text" name="descripcion" value="{$value->descripcion}"/>
       </div>
       <div class="bloque">
          %IVA: <input type="text" name="iva" value="{$value->iva}"/>
       </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
    </form>
 </div>
 {/loop}

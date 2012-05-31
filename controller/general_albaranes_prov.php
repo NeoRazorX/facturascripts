@@ -34,6 +34,12 @@ class general_albaranes_prov extends fs_controller
       $albaran = new albaran_proveedor();
       $this->custom_search = TRUE;
       
+      $npage = $this->page->get('general_nuevo_albaran');
+      if($npage)
+      {
+         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo albarán', $npage->url());
+      }
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else

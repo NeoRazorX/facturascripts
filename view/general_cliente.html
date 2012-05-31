@@ -2,8 +2,11 @@
 
 {if condition="$fsc->cliente"}
 <div class="rounded">
-   <h1>{$fsc->cliente->nombre}</h1>
    <form action="{$fsc->url()}" method="post">
+      <h1>
+         {$fsc->cliente->nombre}
+         <span><input type="submit" value="modificar"/></span>
+      </h1>
       <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}"/>
@@ -29,8 +32,44 @@
       <div class="bloque">
          web: <input type="text" name="web" value="{$fsc->cliente->web}"/>
       </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
    </form>
+</div>
+
+<div class="rounded">
+   <h1>Albaranes:</h1>
+   <table class="list">
+      <tr>
+         <th></th>
+         <th>código</th>
+         <th>número 2</th>
+         <th>observaciones</th>
+         <th align="right">total</th>
+         <th align="right">fecha</th>
+      </tr>
+      {loop="$fsc->albaranes"}
+      <tr>
+         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td>{$value->numero2}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->show_fecha()}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
 </div>
 {/if}
 

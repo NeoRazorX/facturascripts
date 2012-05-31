@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/albaran_proveedor.php';
 
 class proveedor extends fs_model
 {
@@ -34,6 +35,8 @@ class proveedor extends fs_model
    public $coddivisa;
    public $codpago;
    public $observaciones;
+   
+   private static $default_proveedor;
 
    public function __construct($p=FALSE)
    {
@@ -77,6 +80,24 @@ class proveedor extends fs_model
       return "index.php?page=general_proveedor&cod=".$this->codproveedor;
    }
    
+   public function is_default()
+   {
+      if( isset(self::$default_proveedor) )
+         return (self::$default_proveedor == $this->codproveedor);
+      else if( !isset($_COOKIE['default_proveedor']) )
+         return FALSE;
+      else if($_COOKIE['default_proveedor'] == $this->codproveedor)
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_proveedor', $this->codproveedor, time()+FS_COOKIES_EXPIRE);
+      self::$default_proveedor = $this->codproveedor;
+   }
+   
    public function get_new_codigo()
    {
       $cod = $this->db->select("SELECT MAX(codproveedor::integer) as cod FROM ".$this->table_name.";");
@@ -84,6 +105,12 @@ class proveedor extends fs_model
          return sprintf('%06s', (1 + intval($cod[0]['cod'])));
       else
          return '000001';
+   }
+   
+   public function get_albaranes($offset=0)
+   {
+      $alb = new albaran_proveedor();
+      return $alb->all_from_proveedor($this->codproveedor, $offset);
    }
    
    protected function install()
@@ -142,6 +169,18 @@ class proveedor extends fs_model
       $provelist = array();
       $proveedores = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC",
                                              FS_ITEM_LIMIT, $offset);
+      if($proveedores)
+      {
+         foreach($proveedores as $p)
+            $provelist[] = new proveedor($p);
+      }
+      return $provelist;
+   }
+   
+   public function all_full()
+   {
+      $provelist = array();
+      $proveedores = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
       if($proveedores)
       {
          foreach($proveedores as $p)

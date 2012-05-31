@@ -1,0 +1,27 @@
+{include="header"}
+
+{if condition="$fsc->cuenta"}
+<div class="rounded">
+   <div class="bloque">Descripción: {$fsc->cuenta->descripcion}</div>
+   <div class="bloque">Ejercicio: <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></div>
+   <br/>
+   <table class="list">
+      <tr>
+         <th>Código</th>
+         <th>Descripción</th>
+         <th align="right">Saldo</th>
+      </tr>
+      {loop="$fsc->cuenta->get_subcuentas()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td align="right">{$value->show_saldo()} €</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+{else}
+<div class="error">Cuenta no encontrada.</div>
+{/if}
+
+{include="footer"}

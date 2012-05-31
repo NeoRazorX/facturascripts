@@ -52,7 +52,10 @@
 {loop="$fsc->ejercicio->all()"}
 <div class="rounded">
    <form>
-      <h1>{$value->codejercicio}</h1>
+      <h1>
+         {$value->codejercicio}
+         <span><input type="submit" value="modificar"/></span>
+      </h1>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$value->nombre}"/>
       </div>
@@ -74,7 +77,6 @@
             {/if}
          </select>
       </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
    </form>
 </div>
 {/loop}

@@ -32,6 +32,8 @@ class ejercicio extends fs_model
    public $nombre;
    public $codejercicio;
    
+   private static $default_ejercicio;
+
    public function __construct($e = FALSE)
    {
       parent::__construct('ejercicios');
@@ -61,6 +63,7 @@ class ejercicio extends fs_model
          $this->nombre = '';
          $this->codejercicio = NULL;
       }
+      
    }
    
    public function show_fechainicio()
@@ -86,7 +89,25 @@ class ejercicio extends fs_model
    {
       return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;
    }
-
+   
+   public function is_default()
+   {
+      if( isset(self::$default_ejercicio) )
+         return (self::$default_ejercicio == $this->codejercicio);
+      else if( !isset($_COOKIE['default_ejercicio']) )
+         return FALSE;
+      else if($_COOKIE['default_ejercicio'] == $this->codejercicio)
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_ejercicio', $this->codejercicio, time()+FS_COOKIES_EXPIRE);
+      self::$default_ejercicio = $this->codejercicio;
+   }
+   
    protected function install()
    {
       return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,

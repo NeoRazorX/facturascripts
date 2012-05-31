@@ -22,6 +22,8 @@ require_once 'model/cliente.php';
 class general_cliente extends fs_controller
 {
    public $cliente;
+   public $albaranes;
+   public $offset;
    
    public function __construct()
    {
@@ -54,6 +56,16 @@ class general_cliente extends fs_controller
          $this->cliente = $this->cliente->get($_GET['cod']);
          $this->page->title = $_GET['cod'];
       }
+      
+      if( $this->cliente )
+      {
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
+         else
+            $this->offset = 0;
+         
+         $this->albaranes = $this->cliente->get_albaranes($this->offset);
+      }
    }
    
    public function url()
@@ -62,6 +74,18 @@ class general_cliente extends fs_controller
          return $this->cliente->url();
       else
          return $this->page->url();
+   }
+   
+   public function anterior_url()
+   {
+      if($this->offset > '0')
+         return $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+   }
+   
+   public function siguiente_url()
+   {
+      if(count($this->albaranes) == FS_ITEM_LIMIT)
+         return $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
    }
 }
 

@@ -44,7 +44,7 @@ class fs_cache
    public function set($key, $object)
    {
       if($this->connected)
-         $this->cache->set($key, $object, FALSE, FS_COOKIES_EXPIRE);
+         $this->cache->set($key, $object, FALSE, 28800);
    }
    
    public function get($key)

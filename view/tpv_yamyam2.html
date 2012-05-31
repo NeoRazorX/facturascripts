@@ -159,6 +159,15 @@
          if( confirm("¿Realmente deseas cerrar la caja?") )
             window.location.href = "{$fsc->url()}&cerrar_caja=TRUE";
       });
+      $("#b_opciones_tpv").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_opciones_tpv").css({
+            left: ($(window).width() - $('#popup_opciones_tpv').outerWidth())/2,
+            top: ($(window).height() - $('#popup_opciones_tpv').outerHeight())/2
+         });
+         $("#popup_opciones_tpv").show();
+      });
    });
 </script>
 
@@ -166,7 +175,7 @@
 <input type="hidden" id="numlineas" name="numlineas" value="0"/>
 <table width="100%">
    <tr>
-      <td valign="top">
+      <td valign="top" width="180">
          <ul class="tpv_familias">
             <li id="paquetes">PAQUETES</li>
             {loop="$fsc->familias"}
@@ -175,52 +184,55 @@
          </ul>
       </td>
       <td valign="top">
+         <div class="popup" id="popup_opciones_tpv">
+            <h1>Opciones:</h1>
+            <div class="bloque">
+               <a href="{$fsc->cliente->url()}">Cliente</a>:
+               <select name="cliente">
+                  {loop="$fsc->cliente->all_full()"}
+                  <option value="{$value->codcliente}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+               <select name="ejercicio">
+                  {loop="$fsc->ejercicio->all()"}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               <a href="{$fsc->serie->url()}">Serie</a>:
+               <select name="serie">
+                  {loop="$fsc->serie->all()"}
+                  <option value="{$value->codserie}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               Forma de pago:
+               <select name="forma_pago">
+                  {loop="$fsc->forma_pago->all()"}
+                  <option value="{$value->codpago}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               Divisa:
+               <select name="divisa">
+                  {loop="$fsc->divisa->all()"}
+                  <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               Impresora: <input type="text" name="impresora" value="{$fsc->impresora}" size="4"/>
+            </div>
+         </div>
          <div class="rounded">
             <div>
                <div class="tpv_total" id="tpv_total">0,00 €</div>
-               <div class="bloque">
-                  <a href="{$fsc->cliente->url()}">Cliente</a>:
-                  <select name="cliente">
-                     {loop="$fsc->cliente->all()"}
-                     <option value="{$value->codcliente}">{$value->nombre}</option>
-                     {/loop}
-                  </select>
-               </div>
-               <div class="bloque">
-                  <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
-                  <select name="ejercicio">
-                     {loop="$fsc->ejercicio->all()"}
-                     <option value="{$value->codejercicio}">{$value->nombre}</option>
-                     {/loop}
-                  </select>
-               </div>
-               <div class="bloque">
-                  <a href="{$fsc->serie->url()}">Serie</a>:
-                  <select name="serie">
-                     {loop="$fsc->serie->all()"}
-                     <option value="{$value->codserie}">{$value->descripcion}</option>
-                     {/loop}
-                  </select>
-               </div>
-               <div class="bloque">
-                  Forma de pago:
-                  <select name="forma_pago">
-                     {loop="$fsc->forma_pago->all()"}
-                     <option value="{$value->codpago}">{$value->descripcion}</option>
-                     {/loop}
-                  </select>
-               </div>
-               <div class="bloque">
-                  Divisa:
-                  <select name="divisa">
-                     {loop="$fsc->divisa->all()"}
-                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                     {/loop}
-                  </select>
-               </div>
-               <div class="bloque">
-                  Impresora: <input type="text" name="impresora" value="{$fsc->impresora}" size="4"/>
-               </div>
                <div class="bloque">
                   Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
                </div>

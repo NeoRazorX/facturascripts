@@ -1,0 +1,47 @@
+{include="header"}
+
+{if condition="$fsc->subcuenta"}
+<div class="rounded">
+   <div class="bloque">Descripción: {$fsc->subcuenta->descripcion}</div>
+   <div class="bloque">Ejercicio: <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></div>
+   <div class="bloque">
+      Pertenece a la cuenta: <a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a>
+   </div>
+   <br/>
+   <div class="bloque">Debe: {$fsc->subcuenta->show_debe()} €</div>
+   <div class="bloque">Haber: {$fsc->subcuenta->show_haber()} €</div>
+   <div class="bloque">Saldo: {$fsc->subcuenta->show_saldo()} €</div>
+   <br/>
+   <table class="list">
+      <tr>
+         <th>Concepto</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->concepto}</a></td>
+         <td align="right">{$value->show_debe()} €</td>
+         <td align="right">{$value->show_haber()} €</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+{else}
+<div class="error">Subcuenta no encontrada</div>
+{/if}
+
+{include="footer"}

@@ -28,7 +28,7 @@ require_once 'model/divisa.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/albaran_proveedor.php';
 
-class tpv_recambios extends fs_controller
+class general_nuevo_albaran extends fs_controller
 {
    public $agente;
    public $articulo;
@@ -36,14 +36,13 @@ class tpv_recambios extends fs_controller
    public $divisa;
    public $ejercicio;
    public $forma_pago;
-   public $impresora;
    public $proveedor;
    public $results;
    public $serie;
    
    public function __construct()
    {
-      parent::__construct('tpv_recambios', 'TPV Recambios', 'TPV', FALSE, TRUE);
+      parent::__construct('general_nuevo_albaran', 'nuevo albarán', 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -64,15 +63,6 @@ class tpv_recambios extends fs_controller
          $this->forma_pago = new forma_pago();
          $this->proveedor = new proveedor();
          $this->serie = new serie();
-         
-         /// seleccionamos impresora de tickets
-         if( isset($_POST['impresora']) )
-         {
-            $this->impresora = $_POST['impresora'];
-            setcookie('impresora', $this->impresora, time()+315360000);
-         }
-         else if( isset($_COOKIE['impresora']) )
-            $this->impresora = $_COOKIE['impresora'];
          
          if( isset($_POST['tipoalbaran']) )
          {

@@ -55,19 +55,6 @@ ul.tpv_familias li:hover {
    cursor: pointer;
 }
 
-div.tpv_total {
-   float: right;
-   min-width: 150px;
-   font-size: 25px;
-   font-weight: bold;
-   text-align: right;
-   background-color: #333333;
-   color: white;
-   padding: 3px;
-   padding-left: 6px;
-   padding-right: 6px;
-}
-
 table#tpv_albaran {
    margin-top: 20px;
    margin-bottom: 30px;

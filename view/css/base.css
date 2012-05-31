@@ -18,6 +18,7 @@ a {
 input[type='submit'], input[type='button'] {
    display: inline-block;
    background-color: #55BA42;
+   padding-bottom: 0px;
    border: 1px solid #333333;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
@@ -298,6 +299,7 @@ div.main_div div.popup {
    left: 50px;
    max-width: 90%;
    max-height: 90%;
+   overflow: auto;
    background-color: white;
    color: black;
    border: 5px solid #666666;
@@ -336,7 +338,6 @@ div.main_div div.rounded {
 div.main_div div.rounded h1 {
    margin: 0px;
    padding: 5px;
-   border-bottom: 1px dashed #333333;
    font-size: 18px;
 }
 
@@ -393,6 +394,19 @@ div.main_div a.next {
    font-size: 18px;
    text-transform: capitalize;
    text-decoration: none;
+}
+
+div.main_div div.tpv_total {
+   float: right;
+   min-width: 150px;
+   font-size: 25px;
+   font-weight: bold;
+   text-align: right;
+   background-color: #333333;
+   color: white;
+   padding: 3px;
+   padding-left: 6px;
+   padding-right: 6px;
 }
 
 div.footer {

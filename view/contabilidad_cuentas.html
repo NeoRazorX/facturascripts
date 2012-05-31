@@ -9,27 +9,64 @@
             Cuentas del ejercicio:
             <select name="ejercicio" onchange="document.f_filtro_cuentas.submit()">
             {loop="$fsc->ejercicio->all()"}
-               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+               {if condition="$value->is_default()"}
+                  <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+               {else}
+                  <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+               {/if}
             {/loop}
             </select>
          </form>
       </h1>
    {/if}
    <br/>
+   {if condition="count($fsc->resultados)>0"}
    <table class="list">
       <tr>
-         <th>Ejercicio:</th>
-         <th>Código:</th>
-         <th>Descripción:</th>
+         <th>Ejercicio</th>
+         <th>Código</th>
+         <th>Descripción</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td>{$value->codcuenta}</td>
-         <td>{$value->descripcion}</td>
+         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+   {/if}
+   {if condition="count($fsc->resultados2)>0"}
+   <table class="list">
+      <tr>
+         <th>Ejercicio</th>
+         <th>Código</th>
+         <th>Descripción</th>
+         <th align="right">Saldo</th>
+      </tr>
+      {loop="$fsc->resultados2"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td align="right">{$value->show_saldo()} €</td>
       </tr>
       {/loop}
    </table>
+   {/if}
 </div>
 
 {include="footer"}

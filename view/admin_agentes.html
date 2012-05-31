@@ -50,11 +50,15 @@
 
 {loop="$fsc->agente->all()"}
 <div class="rounded">
-   <h1>
-      Código: <a name="{$value->codagente}">{$value->codagente}</a>
-      <span><a href="{$fsc->url()}&amp;delete={$value->codagente}">eliminar</a></span>
-   </h1>
    <form action ="{$fsc->url()}" method="POST">
+      <h1>
+         Código: <a name="{$value->codagente}">{$value->codagente}</a>
+         <span>
+            <a href="{$fsc->url()}&amp;delete={$value->codagente}">eliminar</a>
+            &nbsp;
+            <input type="submit" value="modificar"/>
+         </span>
+      </h1>
       <input type="hidden" name="scodagente" value="{$value->codagente}"/>
       <div class="bloque">
          Nombre: <input type="text" name="snombre" value="{$value->nombre}" maxlength="50"/>
@@ -71,7 +75,7 @@
       <div class="bloque">
          Email: <input type="text" name="semail" value="{$value->email}"/>
       </div>
-      <div class="right"><input type="submit" value="modificar"/></div>
+      <div class="right"></div>
    </form>
 </div>
 {/loop}

@@ -3,6 +3,18 @@
 <div class="rounded">
    <table class="list">
       <tr>
+         <td align="right"><b>FacturaScripts:</b></td>
+         <td>{$fsc->version()}</td>
+      </tr>
+      <tr>
+         <td align="right"><b>PHP:</b></td>
+         <td>{$fsc->php_version()}</td>
+      </tr>
+      <tr>
+         <td align="right"><b>PostgreSQL:</b></td>
+         <td>{$fsc->pg_version()}</td>
+      </tr>
+      <tr>
          <td align="right"><b>Sistema Operativo:</b></td>
          <td>{$fsc->uname()}</td>
       </tr>
@@ -17,21 +29,6 @@
       <tr>
          <td align="right"><b>Disco duro:</b></td>
          <td><pre>{$fsc->sys_df()}</pre></td>
-      </tr>
-      <tr>
-         <td colspan="2">&nbsp;</td>
-      </tr>
-      <tr>
-         <td align="right"><b>PostgreSQL:</b></td>
-         <td>{$fsc->pg_version()}</td>
-      </tr>
-      <tr>
-         <td align="right"><b>PHP:</b></td>
-         <td>{$fsc->php_version()}</td>
-      </tr>
-      <tr>
-         <td align="right"><b>FacturaScripts:</b></td>
-         <td>{$fsc->version()}</td>
       </tr>
    </table>
 </div>

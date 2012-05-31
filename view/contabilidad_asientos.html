@@ -2,36 +2,32 @@
 
 <div class="rounded">
    {if condition="$fsc->query!=''"}
-      <h1>Resultados de "{$fsc->query}":</h1>
+      <h1>Resultados de la búsqueda '{$fsc->query}':</h1>
    {/if}
    <table class="list">
       <tr>
-         <th></th>
-         <th>código</th>
-         <th>num. proveedor</th>
-         <th>proveedor</th>
-         <th>observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
+         <th>Ejercicio</th>
+         <th>Número</th>
+         <th>Concepto</th>
+         <th>Importe</th>
+         <th>Fecha</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td>{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
-         <td>{$value->numproveedor}</td>
-         <td>{$value->nombre}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td>{$value->codejercicio}</td>
+         <td><a href="{$value->url()}">{$value->numero}</a></td>
+         <td><a href="{$value->url()}">{$value->concepto}</a></td>
+         <td align="right">{$value->show_importe()} €</td>
          <td align="right">{$value->show_fecha()}</td>
       </tr>
       {/loop}
       <tr>
-         <td colspan="2">
+         <td>
          {if condition="$fsc->anterior_url()!=''"}
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="4"></td>
+         <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

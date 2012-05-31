@@ -1,8 +1,11 @@
 {include="header"}
 
 <div class="rounded">
-   <h1>Datos de la empresa:</h1>
    <form action="{$fsc->page->url()}" method="POST">
+      <h1>
+         Datos de la empresa:
+         <span><input type="submit" value="guardar"/></span>
+      </h1>
       <div class="bloque">Nombre: <input type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}"/></div>
       <div class="bloque">cif/nif: <input type="text" name="cifnif" size="12" value="{$fsc->empresa->cifnif}"/></div>
       <div class="bloque">administrador: <input type="text" name="administrador" size="60" value="{$fsc->empresa->administrador}"/></div>
@@ -94,7 +97,6 @@
          {/loop}
          </select>
       </div>
-      <div class="right"><input type="submit" value="guardar"/></div>
    </form>
 </div>
 

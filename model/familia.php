@@ -25,6 +25,9 @@ class familia extends fs_model
    public $codfamilia;
    public $descripcion;
    
+   private static $default_familia;
+
+
    public function __construct($f=FALSE)
    {
       parent::__construct('familias');
@@ -46,6 +49,24 @@ class familia extends fs_model
          return "index.php?page=general_familia&cod=".$this->codfamilia;
       else
          return "index.php?page=general_familias";
+   }
+   
+   public function is_default()
+   {
+      if( isset(self::$default_familia) )
+         return (self::$default_familia == $this->codfamilia);
+      else if( !isset($_COOKIE['default_familia']) )
+         return FALSE;
+      else if($_COOKIE['default_familia'] == $this->codfamilia)
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_familia', $this->codfamilia, time()+FS_COOKIES_EXPIRE);
+      self::$default_familia = $this->codfamilia;
    }
    
    public function get_articulos($offset=0, $limit=FS_ITEM_LIMIT)

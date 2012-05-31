@@ -18,7 +18,11 @@
  */
 
 require_once 'base/fs_model.php';
-
+require_once 'model/agente.php';
+require_once 'model/albaran_proveedor.php';
+require_once 'model/articulo.php';
+require_once 'model/asiento.php';
+require_once 'model/proveedor.php';
 
 class linea_factura_proveedor extends fs_model
 {
@@ -77,6 +81,27 @@ class linea_factura_proveedor extends fs_model
       return number_format($this->pvptotal, 2, ',', '.');
    }
    
+   public function url()
+   {
+      $fac = new factura_proveedor();
+      $fac = $fac->get($this->idfactura);
+      return $fac->url();
+   }
+   
+   public function albaran_url()
+   {
+      $alb = new albaran_proveedor();
+      $alb = $alb->get($this->idalbaran);
+      return $alb->url();
+   }
+   
+   public function articulo_url()
+   {
+      $art = new articulo();
+      $art = $art->get($this->referencia);
+      return $art->url();
+   }
+   
    protected function install()
    {
       return '';
@@ -110,6 +135,19 @@ class linea_factura_proveedor extends fs_model
             $linlist[] = new linea_factura_proveedor($l);
       }
       return $linlist;
+   }
+   
+   public function all_from_articulo($ref, $offset=0)
+   {
+      $linealist = array();
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."' ORDER BY idalbaran DESC",
+              FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_proveedor($l);
+      }
+      return $linealist;
    }
 }
 
@@ -181,6 +219,30 @@ class factura_proveedor extends fs_model
       return 'index.php?page=contabilidad_factura_prov&id='.$this->idfactura;
    }
    
+   public function asiento_url()
+   {
+      $asiento = new asiento();
+      $asiento = $asiento->get($this->idasiento);
+      return $asiento->url();
+   }
+   
+   public function proveedor_url()
+   {
+      $pro = new proveedor();
+      $pro = $pro->get($this->codproveedor);
+      return $pro->url();
+   }
+   
+   public function show_neto()
+   {
+      return number_format($this->neto, 2, ',', ' ');
+   }
+   
+   public function show_iva()
+   {
+      return number_format($this->totaliva, 2, ',', ' ');
+   }
+   
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', '.');
@@ -199,6 +261,30 @@ class factura_proveedor extends fs_model
          return $this->observaciones;
       else
          return substr($this->observaciones, 0, 50).'...';
+   }
+   
+   public function get($id)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      if($fact)
+         return new factura_proveedor($fact[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_by_codigo($cod)
+   {
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".$cod."';");
+      if($fact)
+         return new factura_proveedor($fact[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_lineas()
+   {
+      $linea = new linea_factura_proveedor();
+      return $linea->all_from_factura($this->idfactura);
    }
    
    protected function install()
@@ -224,21 +310,6 @@ class factura_proveedor extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
    
-   public function get($id)
-   {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
-      if($fact)
-         return new factura_proveedor($fact[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_lineas()
-   {
-      $linea = new linea_factura_proveedor();
-      return $linea->all_from_factura($this->idfactura);
-   }
-
    public function all($offset=0)
    {
       $faclist = array();

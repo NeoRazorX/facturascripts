@@ -32,14 +32,14 @@
 </div>
 
 <div class="rounded">
-   <h1>
-      {$fsc->familia->descripcion}
-   </h1>
    <form action="{$fsc->url()}" method="post">
+      <h1>
+         {$fsc->familia->descripcion}
+         <span><input type="submit" value="modificar"/></span>
+      </h1>
       <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
       Descripción:
       <input type="text" name="descripcion" value="{$fsc->familia->descripcion}" size="60"/>
-      <div class="right"><input type="submit" value="modificar"/></div>
    </form>
 </div>
 

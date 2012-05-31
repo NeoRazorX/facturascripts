@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/albaran_cliente.php';
 
 class cliente extends fs_model
 {
@@ -33,6 +34,8 @@ class cliente extends fs_model
    public $codserie;
    public $debaja;
    public $fechabaja;
+   
+   private static $default_cliente;
 
    public function __construct($c=FALSE)
    {
@@ -85,6 +88,30 @@ class cliente extends fs_model
       else
          return "index.php?page=general_clientes";
    }
+   
+   public function is_default()
+   {
+      if( isset(self::$default_cliente) )
+         return (self::$default_cliente == $this->codcliente);
+      else if( !isset($_COOKIE['default_cliente']) )
+         return FALSE;
+      else if($_COOKIE['default_cliente'] == $this->codcliente)
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_cliente', $this->codcliente, time()+FS_COOKIES_EXPIRE);
+      self::$default_cliente = $this->codcliente;
+   }
+   
+   public function get_albaranes($offset=0)
+   {
+      $alb = new albaran_cliente();
+      return $alb->all_from_cliente($this->codcliente, $offset);
+   }
 
    protected function install()
    {
@@ -136,6 +163,18 @@ class cliente extends fs_model
       $clientlist = array();
       $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC",
                                           FS_ITEM_LIMIT, $offset);
+      if($clientes)
+      {
+         foreach($clientes as $c)
+            $clientlist[] = new cliente($c);
+      }
+      return $clientlist;
+   }
+   
+   public function all_full()
+   {
+      $clientlist = array();
+      $clientes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
       if($clientes)
       {
          foreach($clientes as $c)

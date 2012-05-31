@@ -27,6 +27,8 @@ class serie extends fs_model
    public $irpf;
    public $idcuenta;
    
+   private static $default_serie;
+
    public function __construct($s=FALSE)
    {
       parent::__construct('series');
@@ -52,7 +54,25 @@ class serie extends fs_model
    {
       return 'index.php?page=contabilidad_series#'.$this->codserie;
    }
-
+   
+   public function is_default()
+   {
+      if( isset(self::$default_serie) )
+         return (self::$default_serie == $this->codserie);
+      else if( !isset($_COOKIE['default_serie']) )
+         return FALSE;
+      else if($_COOKIE['default_serie'] == $this->codserie)
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_serie', $this->codserie, time()+FS_COOKIES_EXPIRE);
+      self::$default_serie = $this->codserie;
+   }
+   
    protected function install()
    {
       return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)

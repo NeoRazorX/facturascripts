@@ -1,6 +1,9 @@
 <?php
 
-require_once 'core/fs_model.php';
+require_once 'base/fs_model.php';
+require_once 'model/cuenta.php';
+require_once 'model/ejercicio.php';
+require_once 'model/partida.php';
 
 class subcuenta extends fs_model
 {
@@ -24,7 +27,7 @@ class subcuenta extends fs_model
       if($s)
       {
          $this->idsubcuenta = $this->intval($s['idsubcuenta']);
-         $this->codsubcuenta = $s['codsuebcuenta'];
+         $this->codsubcuenta = $s['codsubcuenta'];
          $this->idcuenta = $this->intval($s['idcuenta']);
          $this->codcuenta = $s['codcuenta'];
          $this->codejercicio = $s['codejercicio'];
@@ -55,9 +58,56 @@ class subcuenta extends fs_model
       }
    }
    
+   public function show_debe()
+   {
+      return number_format($this->debe, 2, ',', '.');
+   }
+   
+   public function show_haber()
+   {
+      return number_format($this->haber, 2, ',', '.');
+   }
+   
+   public function show_saldo()
+   {
+      return number_format($this->saldo, 2, ',', '.');
+   }
+   
+   public function url()
+   {
+      return 'index.php?page=contabilidad_subcuenta&id='.$this->idsubcuenta;
+   }
+   
+   public function get_cuenta()
+   {
+      $cuenta = new cuenta();
+      return $cuenta->get($this->idcuenta);
+   }
+   
+   public function get_ejercicio()
+   {
+      $eje = new ejercicio();
+      return $eje->get($this->codejercicio);
+   }
+   
+   public function get_partidas($offset=0)
+   {
+      $part = new partida();
+      return $part->all_from_subcuenta($this->idsubcuenta, $offset);
+   }
+   
    protected function install()
    {
       return "";
+   }
+   
+   public function get($id)
+   {
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
+      if($subc)
+         return new subcuenta($subc[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -94,19 +144,29 @@ class subcuenta extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsubcuenta = '".$this->idsubcuenta."';");
    }
    
-   public function all($offset=0)
+   public function all_from_cuenta($idcuenta)
    {
-      
+      $sublist = array();
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$idcuenta."';");
+      if($subcuentas)
+      {
+         foreach($subcuentas as $s)
+            $sublist[] = new subcuenta($s);
+      }
+      return $sublist;
    }
    
-   public function all_from_cuenta($codcuenta, $offset=0)
+   public function search($query)
    {
-      
-   }
-   
-   public function search($query, $offset=0)
-   {
-      
+      $sublist = array();
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '%".$query."%'
+         OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
+      if($subcuentas)
+      {
+         foreach($subcuentas as $s)
+            $sublist[] = new subcuenta($s);
+      }
+      return $sublist;
    }
 }
 
