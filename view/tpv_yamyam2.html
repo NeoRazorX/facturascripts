@@ -75,11 +75,11 @@
       }
       recalcular();
    }
-   function add_articulo(ref,pvp,iva,paquete)
+   function add_articulo(ref,pvp,iva,paquete,descripcion)
    {
       numlineas += 1;
       $("#numlineas").val(numlineas);
-      $("#tpv_albaran").append("<tr id='linea_"+numlineas+"'><td>"+ref+"</td>\n\
+      $("#tpv_albaran").append("<tr id='linea_"+numlineas+"'><td>"+ref+" "+descripcion+"</td>\n\
             <td align='center'>\n\
             <input type='hidden' id='paquete_"+numlineas+"' name='paquete_"+numlineas+"' value='"+paquete+"'/>\n\
             <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
@@ -99,7 +99,8 @@
       var fpaq = document.getElementById('f_p_'+ref);
       var pvp = fpaq.pvp.value;
       var iva = fpaq.iva.value;
-      add_articulo(ref,pvp,iva,paqid);
+      var descripcion = fpaq.descripcion.value;
+      add_articulo(ref,pvp,iva,paqid,descripcion);
       var grupos = fpaq.grupos.value;
       var radiob;
       var ref2;
@@ -112,7 +113,7 @@
             if( radiob[j].checked )
                break;
          }
-         add_articulo(ref2,0,0,paqid);
+         add_articulo(ref2,0,0,paqid,'');
       }
       close_articulos();
    }
@@ -342,12 +343,14 @@
    <ul>
    {loop="$fsc->paquetes"}
       <li onclick="mostrar_paquete('{$value->referencia}')">
-         {$value->articulo->referencia}<br/>
-         {if condition="!$fsc->desactivar_imagenes"}
+         {$value->articulo->referencia}
+         {if condition="$fsc->desactivar_imagenes"}
+            {$value->articulo->descripcion}<br/>
+         {else}
             {if condition="$value->articulo->imagen_url()"}
-            <img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
+            <br/><img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
             {else}
-            <img src="img/unknown.png" alt="{$value->referencia}"/><br/>
+            <br/><img src="img/unknown.png" alt="{$value->referencia}"/><br/>
             {/if}
          {/if}
          {$value->articulo->show_pvp_iva()} €
@@ -362,6 +365,7 @@
    <form id="f_p_{$value1->referencia}">
       <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
       <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
+      <input type="hidden" name="descripcion" value="{$value->articulo->descripcion}"/>
       <input type="hidden" name="grupos" value="{$value->grupos}"/>
       {loop="$value1->get_grupos()"}
       <div class="grupo">
@@ -389,13 +393,15 @@
    <ul>
    {loop="$fsc->articulos"}
       {if condition="$value2->codfamilia==$value1->codfamilia"}
-      <li onclick="add_articulo('{$value2->referencia}',{$value2->pvp},{$value2->get_iva()},'')">
-         {$value2->referencia}<br/>
-         {if condition="!$fsc->desactivar_imagenes"}
+      <li onclick="add_articulo('{$value2->referencia}','{$value2->pvp}','{$value2->get_iva()}','','{$value2->descripcion}')">
+         {$value2->referencia}
+         {if condition="$fsc->desactivar_imagenes"}
+            {$value2->descripcion}<br/>
+         {else}
             {if condition="$value2->imagen_url()"}
-            <img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
+            <br/><img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
             {else}
-            <img src="img/unknown.png" alt="{$value2->referencia}"/><br/>
+            <br/><img src="img/unknown.png" alt="{$value2->referencia}"/><br/>
             {/if}
          {/if}
          {$value2->show_pvp_iva()} €
