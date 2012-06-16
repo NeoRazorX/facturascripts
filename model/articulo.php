@@ -583,7 +583,7 @@ class articulo extends fs_model
                $artilist[] = new articulo($a);
          }
          /// añadimos las búsquedas por descripción
-         $sql = "SELECT * FROM ".$this->table_name." WHERE descripcion ~~ '%".$text."%' AND bloqueado = FALSE ORDER BY descripcion ASC";
+         $sql = "SELECT * FROM ".$this->table_name." WHERE lower(descripcion) ~~ '%".$text."%' AND bloqueado = FALSE ORDER BY descripcion ASC";
          $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
          if($articulos)
          {
