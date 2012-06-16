@@ -27,7 +27,6 @@ class almacen extends fs_model
    public $telefono;
    public $codpais;
    public $provincia;
-   public $idprovincia;
    public $poblacion;
    public $apartado;
    public $codpostal;
@@ -46,7 +45,6 @@ class almacen extends fs_model
          $this->telefono = $a['telefono'];
          $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
-         $this->idprovincia = intval($a['idprovincia']);
          $this->poblacion = $a['poblacion'];
          $this->apartado = $a['apartado'];
          $this->codpostal = $a['codpostal'];
@@ -62,7 +60,6 @@ class almacen extends fs_model
          $this->telefono = '';
          $this->codpais = NULL;
          $this->provincia = NULL;
-         $this->idprovincia = NULL;
          $this->poblacion = NULL;
          $this->apartado = NULL;
          $this->codpostal = '';
@@ -74,13 +71,25 @@ class almacen extends fs_model
    
    public function url()
    {
-      return 'index.php?page=admin_almacenes#'.$this->codalmacen;
+      if( isset($this->codalmacen) )
+         return 'index.php?page=admin_almacenes#'.$this->codalmacen;
+      else
+         return 'index.php?page=admin_almacenes';
    }
 
    protected function install()
    {
       return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
                VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+   }
+   
+   public function get($cod)
+   {
+      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$cod."';");
+      if($almacen)
+         return new almacen($almacen[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -123,15 +132,6 @@ class almacen extends fs_model
             $listaa[] = new almacen($a);
       }
       return $listaa;
-   }
-   
-   public function get($cod='')
-   {
-      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
-      if($almacen)
-         return new almacen($almacen[0]);
-      else
-         return FALSE;
    }
 }
 

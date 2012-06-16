@@ -25,6 +25,10 @@
          <td align="right">{$value->show_diferencia()} €</td>
          <td align="right">{$value->tickets}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="7">No hay datos.</td>
+      </tr>
       {/loop}
    </table>
 </div>

@@ -22,6 +22,16 @@
    {if condition="$fsc->message"}
       <div class="message">{$fsc->message}</div>
    {/if}
+   {if condition="$fsc->db_history_enabled()"}
+      <div class="rounded">
+         <h1>Consultas SQL:</h1>
+         <ol>
+         {loop="$fsc->get_db_history()"}
+            <li>{$value}</li>
+         {/loop}
+         </ol>
+      </div>
+   {/if}
    <div id="login_window">
       <h1>{$fsc->get_empresa_name()}</h1>
       <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">

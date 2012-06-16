@@ -55,7 +55,9 @@ class fs_db
    public function connect()
    {
       $connected = FALSE;
-      if(!self::$link)
+      if(self::$link)
+         $connected = TRUE;
+      else
       {
          self::$link = pg_pconnect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
          if(self::$link)

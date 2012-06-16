@@ -2,6 +2,13 @@
 
 {if condition="$fsc->articulo"}
 <script type="text/javascript">
+   function sum_stock(id, value)
+   {
+      var uds = parseFloat($("#stock_cantidad_"+id).val()) + value;
+      if(uds < 0)
+         uds = 0;
+      $("#stock_cantidad_"+id).val(uds);
+   }
    $(document).ready(function() {
       $("#b_eliminar_articulo").click(function(event) {
          event.preventDefault();
@@ -16,15 +23,6 @@
             top: ($(window).height() - $("#popup_articulo_imagen").outerHeight())/2
          });
          $("#popup_articulo_imagen").show();
-      });
-      $("#b_paquete").click(function(event) {
-         event.preventDefault();
-         $("#shadow").show();
-         $("#popup_paquete").css({
-            left: ($(window).width() - $("#popup_paquete").outerWidth())/2,
-            top: ($(window).height() - $("#popup_paquete").outerHeight())/2
-         });
-         $("#popup_paquete").show();
       });
    });
 </script>
@@ -129,30 +127,75 @@
    <table class="list">
       <tr>
          <th>Almacén</th>
-         <th>Nombre</th>
-         <th align="right">Cantidad</th>
-         <th align="right">Reservada</th>
-         <th align="right">Disponible</th>
-         <th align="right">Pendiente de recibir</th>
+         <th>Cantidad</th>
+         <th>Reservada</th>
+         <th>Disponible</th>
+         <th>Pendiente de recibir</th>
       </tr>
-      {loop="$fsc->articulo->get_stock()"}
+      {loop="$fsc->stocks"}
       <tr>
-         <td>{$value->codalmacen}</td>
-         <td>{$value->nombre}</td>
-         <td align="right">{$value->cantidad}</td>
-         <td align="right">{$value->reservada}</td>
-         <td align="right">{$value->disponible}</td>
-         <td align="right">{$value->pterecibir}</td>
+         <form action="{$fsc->url()}" method="post">
+            <input type="hidden" name="idstock" value="{$value->idstock}"/>
+            <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
+            <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+            <td>{$value->codalmacen} {$value->nombre}</td>
+            <td align="center">
+               <input type="button" value="-" onclick="sum_stock('{$counter}', -1)"/>
+               <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3"/>
+               <input type="button" value="+" onclick="sum_stock('{$counter}', 1)"/>
+            </td>
+            <td align="center">{$value->reservada}</td>
+            <td align="center">{$value->disponible}</td>
+            <td align="center">{$value->pterecibir}</td>
+            <td><input type="submit" value="guardar"/></td>
+         </form>
+      </tr>
+      {/loop}
+      {if condition="$fsc->nuevos_almacenes"}
+      <tr>
+         <form action="{$fsc->url()}" method="post">
+            <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+            <td>
+               <select name="almacen">
+                  {loop="$fsc->nuevos_almacenes"}
+                  <option value="{$value->codalmacen}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </td>
+            <td align="center"><input type="text" name="cantidad" value="1" size="3"/></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td><input type="submit" value="nuevo"/></td>
+         </form>
+      </tr>
+      {/if}
+   </table>
+</div>
+
+{if condition="$fsc->equivalentes"}
+<div class="rounded">
+   <h1>Artículos equivalentes:</h1>
+   <table class="list">
+      <tr>
+         <th>artículo</th>
+         <th>familia</th>
+         <th>descripción</th>
+         <th>PVP+IVA</th>
+         <th>stock</th>
+      </tr>
+      {loop="$fsc->equivalentes"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->referencia}</a></td>
+         <td>{$value->codfamilia}</td>
+         <td>{$value->descripcion}</td>
+         <td align="right">{$value->show_pvp_iva()} &euro;</td>
+         <td align="right">{$value->stockfis}</td>
       </tr>
       {/loop}
    </table>
 </div>
-
-<div class="popup" id="popup_paquete">
-   <h1>Paquetes</h1>
-   Si lo desdeas puedes convertir este artículo en un paquete o subpaquete:
-   <a href="{$fsc->cache_paquete->add_url($fsc->articulo->referencia)}">añadir a la cesta de paquetes/subpaquetes</a>.
-</div>
+{/if}
 
 <div class="popup" id="popup_articulo_imagen">
    <h1>Imagen:</h1>

@@ -41,12 +41,12 @@ class asiento extends fs_model
          $this->idasiento = NULL;
          $this->numero = NULL;
          $this->idconcepto = NULL;
-         $this->concepto = '';
+         $this->concepto = NULL;
          $this->fecha = Date('d-m-Y');
          $this->codejercicio = NULL;
          $this->codplanasiento = NULL;
          $this->editable = TRUE;
-         $this->documento = '';
+         $this->documento = NULL;
          $this->tipodocumento = NULL;
          $this->importe = 0;
       }
@@ -64,7 +64,10 @@ class asiento extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
+      if( is_null($this->idasiento) )
+         return 'index.php?page=contabilidad_asientos';
+      else
+         return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
    public function factura_url()
@@ -119,21 +122,46 @@ class asiento extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
    }
    
+   public function new_idasiento()
+   {
+      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idasiento_seq');");
+      if($newid)
+         $this->idasiento = intval($newid[0]['nextval']);
+   }
+   
+   public function get_new_numero()
+   {
+      $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
+         WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+      if($num)
+         return (1 + intval($num[0]['num']));
+      else
+         return 1;
+   }
+
    public function save()
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET numero = ".$this->var2str($this->numero).", idconcepto = ".$this->var2str($this->idconcepto).",
-            concepto = ".$this->var2str($this->concepto).", fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
-            codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).", documento = ".$this->var2str($this->documento).",
-            tipodocumento = ".$this->var2str($this->tipodocumento).", importe = ".$this->var2str($this->importe)." WHERE idasiento = '".$this->idasiento."';";
+         $sql = "UPDATE ".$this->table_name." SET numero = ".$this->var2str($this->numero).",
+            idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
+            fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
+            codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).",
+            documento = ".$this->var2str($this->documento).", tipodocumento = ".$this->var2str($this->tipodocumento).",
+            importe = ".$this->var2str($this->importe)." WHERE idasiento = '".$this->idasiento."';";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
-            documento,tipodocumento,importe) VALUES (".$this->var2str($this->numero).",".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
-            ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",
-            ".$this->var2str($this->documento).",".$this->var2str($this->tipodocumento).",".$this->var2str($this->importe).");";
+         $this->new_idasiento();
+         if( is_null($this->numero) )
+            $this->numero = $this->get_new_numero();
+         
+         $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
+            documento,tipodocumento,importe) VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
+            ".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
+            ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",
+            ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",".$this->var2str($this->documento).",
+            ".$this->var2str($this->tipodocumento).",".$this->var2str($this->importe).");";
       }
       return $this->db->exec($sql);
    }

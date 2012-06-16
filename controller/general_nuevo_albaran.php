@@ -18,19 +18,22 @@
  */
 
 require_once 'base/fs_cache.php';
-require_once 'model/articulo.php';
-require_once 'model/cliente.php';
-require_once 'model/proveedor.php';
-require_once 'model/ejercicio.php';
-require_once 'model/serie.php';
-require_once 'model/forma_pago.php';
-require_once 'model/divisa.php';
+require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/albaran_proveedor.php';
+require_once 'model/almacen.php';
+require_once 'model/articulo.php';
+require_once 'model/cliente.php';
+require_once 'model/divisa.php';
+require_once 'model/ejercicio.php';
+require_once 'model/forma_pago.php';
+require_once 'model/proveedor.php';
+require_once 'model/serie.php';
 
 class general_nuevo_albaran extends fs_controller
 {
    public $agente;
+   public $almacen;
    public $articulo;
    public $cliente;
    public $divisa;
@@ -54,9 +57,10 @@ class general_nuevo_albaran extends fs_controller
          $this->new_search();
       else
       {
-         $this->buttons[] = new fs_button('b_new_line', 'añadir');
+         $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
          
          $this->agente = $this->user->get_agente();
+         $this->almacen = new almacen();
          $this->cliente = new cliente();
          $this->divisa = new divisa();
          $this->ejercicio = new ejercicio();
@@ -90,6 +94,9 @@ class general_nuevo_albaran extends fs_controller
       $cliente = $this->cliente->get($_POST['cliente']);
       if( !$cliente->is_default() )
          $cliente->set_default();
+      $dirscliente = $cliente->get_direcciones();
+      
+      $almacen = $this->almacen->get($_POST['almacen']);
       
       $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
       if( !$ejercicio->is_default() )
@@ -111,6 +118,23 @@ class general_nuevo_albaran extends fs_controller
       $albaran->codcliente = $cliente->codcliente;
       $albaran->cifnif = $cliente->cifnif;
       $albaran->nombrecliente = $cliente->nombre;
+      if($dirscliente)
+      {
+         foreach($dirscliente as $d)
+         {
+            if($d->domfacturacion)
+            {
+               $albaran->apartado = $d->apartado;
+               $albaran->ciudad = $d->ciudad;
+               $albaran->coddir = $d->id;
+               $albaran->codpais = $d->codpais;
+               $albaran->codpostal = $d->codpostal;
+               $albaran->direccion = $d->direccion;
+               $albaran->provincia = $d->provincia;
+            }
+         }
+      }
+      $albaran->codalmacen = $almacen->codalmacen;
       $albaran->codejercicio = $ejercicio->codejercicio;
       $albaran->codserie = $serie->codserie;
       $albaran->codpago = $forma_pago->codpago;
@@ -151,7 +175,7 @@ class general_nuevo_albaran extends fs_controller
             }
          }
          if( $albaran->save() )
-            $this->new_message("<a href='".$albaran->url()."'>Albaran</a> guardado correctamente");
+            $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
          else
             $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
       }
@@ -164,6 +188,8 @@ class general_nuevo_albaran extends fs_controller
       $proveedor = $this->proveedor->get($_POST['proveedor']);
       if( !$proveedor->is_default() )
          $proveedor->set_default();
+      
+      $almacen = $this->almacen->get($_POST['almacen']);
       
       $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
       if( !$ejercicio->is_default() )
@@ -184,6 +210,7 @@ class general_nuevo_albaran extends fs_controller
       $albaran = new albaran_proveedor();
       $albaran->codproveedor = $proveedor->codproveedor;
       $albaran->nombre = $proveedor->nombre;
+      $albaran->codalmacen = $almacen->codalmacen;
       $albaran->codejercicio = $ejercicio->codejercicio;
       $albaran->codserie = $serie->codserie;
       $albaran->codpago = $forma_pago->codpago;
@@ -224,12 +251,12 @@ class general_nuevo_albaran extends fs_controller
             }
          }
          if( $albaran->save() )
-            $this->new_message("<a href='".$albaran->url()."'>Albaran</a> guardado correctamente");
+            $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
          else
-            $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
+            $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
       }
       else
-         $this->new_error_msg("¡Imposible guardar el albaran!");
+         $this->new_error_msg("¡Imposible guardar el albarán!");
    }
 }
 

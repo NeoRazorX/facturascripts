@@ -24,6 +24,10 @@
          <td align="right">{$value->show_total()} €</td>
          <td align="right">{$value->show_fecha()}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="7">Ningún albarán encontrado. Pulsa el botón <b>Nuevo albarán</b> para crear uno.</td>
+      </tr>
       {/loop}
       <tr>
          <td colspan="2">

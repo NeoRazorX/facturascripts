@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/paquete.php';
 
@@ -24,7 +25,8 @@ class general_paquetes extends fs_controller
 {
    public $paquete;
    public $cache_paquete;
-   
+   public $results;
+
    public function __construct()
    {
       parent::__construct('general_paquetes', 'Paquetes', 'general', FALSE, TRUE);
@@ -36,21 +38,29 @@ class general_paquetes extends fs_controller
       $this->cache_paquete = new cache_paquete();
       $this->buttons[] = new fs_button('b_nuevo_paquete', 'nuevo paquete');
       
-      if( isset($_GET['add2cache']) )
-      {
+      if( $this->query != '' )
+         $this->new_search();
+      else if( isset($_GET['add2cache']) )
          $this->cache_paquete->add($_GET['add2cache']);
-      }
       else if( isset($_GET['cleancache']) )
-      {
          $this->cache_paquete->clean();
-      }
       else if( isset($_GET['fillcache']) )
       {
          $art = new articulo();
          foreach($art->all(0, 100) as $a)
-         {
             $this->cache_paquete->add($a->referencia);
-         }
+      }
+   }
+   
+   private function new_search()
+   {
+      $art = new articulo();
+      $cache = new fs_cache();
+      $this->results = $cache->get_array('search_'.$this->query);
+      if( count($this->results) < 1 )
+      {
+         $this->results = $art->search($this->query);
+         $cache->set('search_'.$this->query, $this->results);
       }
    }
 }

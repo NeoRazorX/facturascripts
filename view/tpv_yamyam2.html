@@ -177,7 +177,9 @@
    <tr>
       <td valign="top" width="180">
          <ul class="tpv_familias">
+            {if condition="$fsc->paquetes"}
             <li id="paquetes">PAQUETES</li>
+            {/if}
             {loop="$fsc->familias"}
             <li id="fam_{$value->codfamilia}">{$value->descripcion}</li>
             {/loop}
@@ -186,49 +188,102 @@
       <td valign="top">
          <div class="popup" id="popup_opciones_tpv">
             <h1>Opciones:</h1>
-            <div class="bloque">
-               <a href="{$fsc->cliente->url()}">Cliente</a>:
-               <select name="cliente">
-                  {loop="$fsc->cliente->all_full()"}
-                  <option value="{$value->codcliente}">{$value->nombre}</option>
-                  {/loop}
-               </select>
-            </div>
-            <div class="bloque">
-               <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
-               <select name="ejercicio">
-                  {loop="$fsc->ejercicio->all()"}
-                  <option value="{$value->codejercicio}">{$value->nombre}</option>
-                  {/loop}
-               </select>
-            </div>
-            <div class="bloque">
-               <a href="{$fsc->serie->url()}">Serie</a>:
-               <select name="serie">
-                  {loop="$fsc->serie->all()"}
-                  <option value="{$value->codserie}">{$value->descripcion}</option>
-                  {/loop}
-               </select>
-            </div>
-            <div class="bloque">
-               Forma de pago:
-               <select name="forma_pago">
-                  {loop="$fsc->forma_pago->all()"}
-                  <option value="{$value->codpago}">{$value->descripcion}</option>
-                  {/loop}
-               </select>
-            </div>
-            <div class="bloque">
-               Divisa:
-               <select name="divisa">
-                  {loop="$fsc->divisa->all()"}
-                  <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                  {/loop}
-               </select>
-            </div>
-            <div class="bloque">
-               Impresora: <input type="text" name="impresora" value="{$fsc->impresora}" size="4"/>
-            </div>
+            <table>
+               <tr>
+                  <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
+                  <td>
+                     <select name="cliente">
+                        {loop="$fsc->cliente->all_full()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codcliente}">{$value->nombre}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
+                  <td>
+                     <select name="almacen">
+                        {loop="$fsc->almacen->all()"}
+                        <option value="{$value->codalmacen}">{$value->nombre}</option>
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
+                  <td>
+                     <select name="ejercicio">
+                        {loop="$fsc->ejercicio->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codejercicio}">{$value->nombre}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
+                  <td>
+                     <select name="serie">
+                        {loop="$fsc->serie->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->codserie}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right">Forma de pago:</td>
+                  <td>
+                     <select name="forma_pago">
+                        {loop="$fsc->forma_pago->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->codpago}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right">Divisa:</td>
+                  <td>
+                     <select name="divisa">
+                        {loop="$fsc->divisa->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right">Impresora: </td>
+                  <td><input type="text" name="impresora" value="{$fsc->impresora}" size="4"/></td>
+               </tr>
+               <tr>
+                  <td align="right">Mostrar imágenes:</td>
+                  <td>
+                     {if condition="$fsc->desactivar_imagenes"}
+                        <a href="{$fsc->url()}&desactivar_imagenes=FALSE">activar</a>.
+                     {else}
+                        <a href="{$fsc->url()}&desactivar_imagenes=TRUE">desactivar</a>.
+                     {/if}
+                  </td>
+               </tr>
+            </table>
          </div>
          <div class="rounded">
             <div>
@@ -287,15 +342,15 @@
    <ul>
    {loop="$fsc->paquetes"}
       <li onclick="mostrar_paquete('{$value->referencia}')">
-         {if condition="$value->articulo->imagen_url()"}
-            {$value->articulo->referencia}
-            <br/>
-            <img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/>
-            <br/>
-            {$value->articulo->show_pvp_iva()} €
-         {else}
-            {$value->articulo->referencia}<br/>{$value->articulo->show_pvp_iva()} €
+         {$value->articulo->referencia}<br/>
+         {if condition="!$fsc->desactivar_imagenes"}
+            {if condition="$value->articulo->imagen_url()"}
+            <img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
+            {else}
+            <img src="img/unknown.png" alt="{$value->referencia}"/><br/>
+            {/if}
          {/if}
+         {$value->articulo->show_pvp_iva()} €
       </li>
    {/loop}
    </ul>
@@ -336,12 +391,14 @@
       {if condition="$value2->codfamilia==$value1->codfamilia"}
       <li onclick="add_articulo('{$value2->referencia}',{$value2->pvp},{$value2->get_iva()},'')">
          {$value2->referencia}<br/>
-         {if condition="$value2->imagen_url()"}
-            <img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/>
-         {else}
-            <img src="img/unknown.png" alt="{$value2->referencia}"/>
+         {if condition="!$fsc->desactivar_imagenes"}
+            {if condition="$value2->imagen_url()"}
+            <img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
+            {else}
+            <img src="img/unknown.png" alt="{$value2->referencia}"/><br/>
+            {/if}
          {/if}
-         <br/>{$value2->show_pvp_iva()} €
+         {$value2->show_pvp_iva()} €
       </li>
       {/if}
    {/loop}

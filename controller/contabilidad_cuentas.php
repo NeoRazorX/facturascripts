@@ -30,11 +30,8 @@ class contabilidad_cuentas extends fs_controller
       if($this->query != '')
       {
          $this->resultados = $this->cuenta->search($this->query);
-         if( count($this->resultados) < 1)
-         {
-            $subc = new subcuenta();
-            $this->resultados2 = $subc->search($this->query);
-         }
+         $subc = new subcuenta();
+         $this->resultados2 = $subc->search($this->query);
       }
       else if( isset($_POST['ejercicio']) )
       {

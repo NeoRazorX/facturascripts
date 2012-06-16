@@ -28,6 +28,8 @@
          {else}
          <option value="{$value->codagente}">{$value->get_fullname()}</option>
          {/if}
+      {else}
+         <option value="">No hay agentes creados. Debes crear almenos uno.</option>
       {/loop}
       </select>
    </div>

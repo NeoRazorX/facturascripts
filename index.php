@@ -54,4 +54,7 @@ if( $fsc->template )
       $tpl->assign('nlogin', '');
    $tpl->draw( $fsc->template );
 }
+
+$fsc->close();
+
 ?>

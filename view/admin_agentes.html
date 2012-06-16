@@ -48,7 +48,7 @@
    </form>
 </div>
 
-{loop="$fsc->agentes"}
+{loop="$fsc->agente->all()"}
 <div class="rounded">
    <form action ="{$fsc->url()}" method="POST">
       <h1>
@@ -78,6 +78,8 @@
       <div class="right"></div>
    </form>
 </div>
+{else}
+<div class="message">No hay ningún agente creado. Pulsa el botón <b>Nuevo agente</b> para crear uno.</div>
 {/loop}
 
 {include="footer"}

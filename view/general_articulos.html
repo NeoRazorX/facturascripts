@@ -29,6 +29,8 @@
                <select name="codfamilia">
                {loop="$fsc->familia->all()"}
                   <option value="{$value->codfamilia}">{$value->descripcion}</option>
+               {else}
+                  <option value="">No hay familias creadas. Debes crear almenos una.</option>
                {/loop}
                </select>
             </td>
@@ -72,6 +74,10 @@
          <td>{$value->descripcion}</td>
          <td align="right">{$value->show_pvp_iva()} &euro;</td>
          <td align="right">{$value->stockfis}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo artículo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>

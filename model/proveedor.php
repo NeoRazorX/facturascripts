@@ -59,7 +59,7 @@ class proveedor extends fs_model
       }
       else
       {
-         $this->codproveedor = '';
+         $this->codproveedor = NULL;
          $this->nombre = '';
          $this->nombrecomercial = '';
          $this->cifnif = '';
@@ -77,7 +77,10 @@ class proveedor extends fs_model
    
    public function url()
    {
-      return "index.php?page=general_proveedor&cod=".$this->codproveedor;
+      if( is_null($this->codproveedor) )
+         return "index.php?page=general_proveedores";
+      else
+         return "index.php?page=general_proveedor&cod=".$this->codproveedor;
    }
    
    public function is_default()

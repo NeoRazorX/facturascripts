@@ -66,6 +66,10 @@
          <td>{$value->cifnif}</td>
          <td>{$value->telefono1}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="5">Ningún cliente encontrado. Pulse el botón <b>Nuevo cliente</b> para crear uno.</td>
+      </tr>
       {/loop}
       <tr>
          <td>

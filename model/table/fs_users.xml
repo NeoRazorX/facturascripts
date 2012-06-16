@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_users.xml
+    Description:
+        Estructura de la tabla fs_users.
+-->
+
+<tabla>
+   <columna>
+      <nombre>nick</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>password</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>log_key</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>admin</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
+   <columna>
+      <nombre>codagente</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_login</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>fs_users_pkey</nombre>
+      <consulta>PRIMARY KEY (nick)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_agentes</nombre>
+      <consulta>FOREIGN KEY (codagente) REFERENCES agentes (codagente) MATCH SIMPLE ON UPDATE CASCADE ON DELETE SET NULL</consulta>
+   </restriccion>
+</tabla>

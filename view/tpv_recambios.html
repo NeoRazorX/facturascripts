@@ -162,26 +162,12 @@
          $("#f_search_recambios").submit(function(event) {
             event.preventDefault();
          });
-         $("#b_nuevo_albaran_proveedor").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'proveedor';
-            $("#shadow").show();
-            $("#popup_tpv_opciones").css({
-               left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
-               top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
-            });
-            $("#tr_clientes").hide();
-            $("#tr_proveedores").show();
-            $("#popup_tpv_opciones").show();
-         });
          $("#b_nuevo_albaran_cliente").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'cliente';
             $("#shadow").show();
             $("#popup_tpv_opciones").css({
                left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
                top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
             });
-            $("#tr_proveedores").hide();
-            $("#tr_clientes").show();
             $("#popup_tpv_opciones").show();
          });
       });
@@ -201,11 +187,10 @@
    {if condition="$fsc->agente"}
    <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
       <input type="hidden" id="numlineas" name="numlineas" value="0"/>
-      <input type="hidden" name="tipoalbaran" value="cliente"/>
       <div class="popup" id="popup_tpv_opciones"/>
          <h1>Opciones:</h1>
          <table>
-            <tr id="tr_clientes">
+            <tr>
                <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
                <td>
                   <select name="cliente">
@@ -219,16 +204,12 @@
                   </select>
                </td>
             </tr>
-            <tr id="tr_proveedores">
-               <td align="right"><a href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
+            <tr>
+               <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
                <td>
-                  <select name="proveedor">
-                     {loop="$fsc->proveedor->all_full()"}
-                        {if condition="$value->is_default()"}
-                        <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
-                        {else}
-                        <option value="{$value->codproveedor}">{$value->nombre}</option>
-                        {/if}
+                  <select name="almacen">
+                     {loop="$fsc->almacen->all()"}
+                        <option value="{$value->codalmacen}">{$value->nombre}</option>
                      {/loop}
                   </select>
                </td>
@@ -321,11 +302,9 @@
          <br/>
          <table width="100%">
             <tr>
-               <td><input type="button" id="b_nuevo_albaran_proveedor" value="nuevo albarán de proveedor"></td>
                <td align="right"><input type="button" id="b_nuevo_albaran_cliente" value="nuevo albarán de cliente"></td>
             </tr>
          </table>
-      
       </div>
    </form>
    {else}

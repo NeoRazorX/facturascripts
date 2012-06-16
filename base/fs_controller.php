@@ -27,7 +27,6 @@ require_once 'model/empresa.php';
 class fs_controller
 {
    protected $db;
-   private $connected;
    private $uptime;
    public $error_msg;
    public $message;
@@ -52,35 +51,30 @@ class fs_controller
       $this->error_msg = FALSE;
       $this->message = FALSE;
       $this->db = new fs_db();
-      if( !$this->db->connect() )
-      {
-         $this->new_error_msg('¡Imposible conectar con la base de datos!');
-         $this->connected = FALSE;
-      }
-      else
-         $this->connected = TRUE;
-      
-      $this->user = new fs_user();
-      /// recuperamos el mensaje de error de fs_user()
-      $this->new_error_msg( $this->user->error_msg );
-      
-      $this->page = new fs_page( array('name'=>$name,
-                                       'title'=>$title,
-                                       'folder'=>$folder,
-                                       'show_on_menu'=>$shmenu) );
-      /// recuperamos el mensaje de error de fs_page()
-      $this->new_error_msg( $this->page->error_msg );
-      $this->ppage = FALSE;
       
       $this->set_css_file();
       
-      if($this->connected)
+      if( $this->db->connect() )
       {
+         $this->user = new fs_user();
+         /// recuperamos el mensaje de error de fs_user()
+         $this->new_error_msg( $this->user->error_msg );
+         
+         $this->page = new fs_page( array('name'=>$name,
+                                          'title'=>$title,
+                                          'folder'=>$folder,
+                                          'show_on_menu'=>$shmenu) );
+         /// recuperamos el mensaje de error de fs_page()
+         $this->new_error_msg( $this->page->error_msg );
+         $this->ppage = FALSE;
+         
          if( isset($_GET['logout']) )
             $this->log_out();
          else if($this->log_in() AND $this->user_have_access())
          {
-            if( $name != '' )
+            if($name == '')
+               $this->template = 'index';
+            else
             {
                if( isset($_GET['default_page']) )
                   $this->set_default_page();
@@ -102,15 +96,15 @@ class fs_controller
                $this->template = $name;
                $this->process();
             }
-            else
-               $this->template = 'index';
          }
          else if($this->user->logged_on )
             $this->template = 'access_denied';
       }
+      else
+         $this->new_error_msg('¡Imposible conectar con la base de datos!');
    }
    
-   public function __destruct()
+   public function close()
    {
       $this->db->close();
    }
@@ -282,7 +276,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.4';
+      return '0.9.5';
    }
    
    public function select_default_page()
@@ -328,15 +322,10 @@ class fs_controller
          setcookie('css_file', $_GET['css_file'], time()+315360000);
       }
       else if( isset($_COOKIE['css_file']) )
-      {
          $this->css_file = $_COOKIE['css_file'];
-      }
       else
-      {
          $this->css_file = 'base.css';
-      }
    }
-
 
    public function is_admin_page()
    {

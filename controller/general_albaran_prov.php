@@ -42,7 +42,7 @@ class general_albaran_prov extends fs_controller
             $this->page->title = $this->albaran->codigo;
             $this->agente = $this->albaran->get_agente();
             if( !$this->albaran->ptefactura )
-               $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+               $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
          }
       }
    }

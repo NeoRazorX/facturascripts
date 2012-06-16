@@ -17,25 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/caja.php';
-require_once 'model/articulo.php';
-require_once 'model/familia.php';
-require_once 'model/cliente.php';
-require_once 'model/ejercicio.php';
-require_once 'model/serie.php';
-require_once 'model/forma_pago.php';
-require_once 'model/divisa.php';
+require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
+require_once 'model/almacen.php';
+require_once 'model/articulo.php';
+require_once 'model/caja.php';
+require_once 'model/cliente.php';
+require_once 'model/divisa.php';
+require_once 'model/ejercicio.php';
+require_once 'model/familia.php';
+require_once 'model/forma_pago.php';
 require_once 'model/paquete.php';
+require_once 'model/serie.php';
 
 class tpv_yamyam extends fs_controller
 {
    public $agente;
    public $albaran;
+   public $almacen;
    public $articulo;
    public $articulos;
    public $caja;
    public $cliente;
+   public $desactivar_imagenes;
    public $divisa;
    public $ejercicio;
    public $familia;
@@ -56,9 +60,11 @@ class tpv_yamyam extends fs_controller
    {
       $this->css_file = 'touch.css';
       $this->agente = $this->user->get_agente();
+      $this->almacen = new almacen();
       $this->articulo = new articulo();
       $this->caja = new caja();
       $this->cliente = new cliente();
+      $this->desactivar_imagenes = FALSE;
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
@@ -74,6 +80,23 @@ class tpv_yamyam extends fs_controller
       }
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
+      
+      /// gestionamos la desactivación de las imágenes
+      if( isset($_GET['desactivar_imagenes']) )
+      {
+         if($_GET['desactivar_imagenes'] == 'TRUE')
+         {
+            $this->desactivar_imagenes = TRUE;
+            setcookie('desactivar_imagenes', 'TRUE', time()+315360000);
+         }
+         else if($_GET['desactivar_imagenes'] == 'FALSE')
+         {
+            $this->desactivar_imagenes = FALSE;
+            setcookie('desactivar_imagenes', '', time()-315360000);
+         }
+      }
+      else if( isset($_COOKIE['desactivar_imagenes']) )
+         $this->desactivar_imagenes = TRUE;
       
       if($this->agente)
       {
@@ -139,9 +162,7 @@ class tpv_yamyam extends fs_controller
             }
          }
          if(!$encontrado AND $a->pvp > 0 AND !$a->bloqueado)
-         {
             $this->articulos[] = $a;
-         }
       }
       /// cargamos las familias de los articulos cargados
       $this->familias = array();
@@ -157,27 +178,60 @@ class tpv_yamyam extends fs_controller
             }
          }
          if( $encontrado )
-         {
             $this->familias[] = $f;
-         }
       }
    }
    
    private function guardar_ticket()
    {
-      $this->cliente = $this->cliente->get($_POST['cliente']);
-      $this->ejercicio = $this->ejercicio->get($_POST['ejercicio']);
-      $this->serie = $this->serie->get($_POST['serie']);
-      $this->forma_pago = $this->forma_pago->get($_POST['forma_pago']);
-      $this->divisa = $this->divisa->get($_POST['divisa']);
+      $cliente = $this->cliente->get($_POST['cliente']);
+      if( !$cliente->is_default() )
+         $cliente->set_default();
+      $dirscliente = $cliente->get_direcciones();
+      
+      $almacen = $this->almacen->get($_POST['almacen']);
+      
+      $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
+      if( !$ejercicio->is_default() )
+         $ejercicio->set_default();
+      
+      $serie = $this->serie->get($_POST['serie']);
+      if( !$serie->is_default() )
+         $serie->set_default();
+      
+      $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
+      if( !$forma_pago->is_default() )
+         $forma_pago->set_default();
+      
+      $divisa = $this->divisa->get($_POST['divisa']);
+      if( !$divisa->is_default() )
+         $divisa->set_default();
+      
       $this->albaran = new albaran_cliente();
-      $this->albaran->codcliente = $this->cliente->codcliente;
-      $this->albaran->cifnif = $this->cliente->cifnif;
-      $this->albaran->nombrecliente = $this->cliente->nombre;
-      $this->albaran->codejercicio = $this->ejercicio->codejercicio;
-      $this->albaran->codserie = $this->serie->codserie;
-      $this->albaran->codpago = $this->forma_pago->codpago;
-      $this->albaran->coddivisa = $this->divisa->coddivisa;
+      $this->albaran->codcliente = $cliente->codcliente;
+      $this->albaran->cifnif = $cliente->cifnif;
+      $this->albaran->nombrecliente = $cliente->nombre;
+      if($dirscliente)
+      {
+         foreach($dirscliente as $d)
+         {
+            if($d->domfacturacion)
+            {
+               $this->albaran->apartado = $d->apartado;
+               $this->albaran->ciudad = $d->ciudad;
+               $this->albaran->coddir = $d->id;
+               $this->albaran->codpais = $d->codpais;
+               $this->albaran->codpostal = $d->codpostal;
+               $this->albaran->direccion = $d->direccion;
+               $this->albaran->provincia = $d->provincia;
+            }
+         }
+      }
+      $this->albaran->codalmacen = $almacen->codalmacen;
+      $this->albaran->codejercicio = $ejercicio->codejercicio;
+      $this->albaran->codserie = $serie->codserie;
+      $this->albaran->codpago = $forma_pago->codpago;
+      $this->albaran->coddivisa = $divisa->coddivisa;
       $this->albaran->codagente = $this->agente->codagente;
       $this->albaran->observaciones = $_POST['observaciones'];
       if( $this->albaran->save() )
@@ -208,13 +262,13 @@ class tpv_yamyam extends fs_controller
                      $this->albaran->totaleuros = ($this->albaran->neto + $this->albaran->totaliva);
                   }
                   else
-                     $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
+                     $this->new_error_msg("¡Imposible guardar la línea con referencia: ".$linea->referencia);
                }
             }
          }
          if( $this->albaran->save() )
          {
-            $this->new_message("Albaran guardado correctamente");
+            $this->new_message("<a href='".$this->albaran->url()."'>Albarán</a> guardado correctamente.");
             $this->imprimir_ticket();
             
             /// actualizamos la caja
@@ -224,10 +278,10 @@ class tpv_yamyam extends fs_controller
                $this->new_error_msg("¡Imposible actualizar la caja!");
          }
          else
-            $this->new_error_msg("¡Imposible actualizar el albaran!");
+            $this->new_error_msg("¡Imposible actualizar el albarán!");
       }
       else
-         $this->new_error_msg("¡Imposible guardar el albaran!");
+         $this->new_error_msg("¡Imposible guardar el albarán!");
    }
    
    private function borrar_ticket()
@@ -247,7 +301,8 @@ class tpv_yamyam extends fs_controller
                $this->new_error_msg("¡Imposible actualizar la caja!");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
+            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."! ".
+                                 $this->albaran->error_msg);
       }
       else
          $this->new_error_msg("Ticket no encontrado.");

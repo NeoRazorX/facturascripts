@@ -75,7 +75,10 @@ class subcuenta extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_subcuenta&id='.$this->idsubcuenta;
+      if( is_null($this->idsubcuenta) )
+         return 'index.php?page=contabilidad_cuentas';
+      else
+         return 'index.php?page=contabilidad_subcuenta&id='.$this->idsubcuenta;
    }
    
    public function get_cuenta()
@@ -104,6 +107,16 @@ class subcuenta extends fs_model
    public function get($id)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
+      if($subc)
+         return new subcuenta($subc[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_by_codigo($cod, $ejercicio)
+   {
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codsubcuenta = '".$cod."' AND codejercicio = '".$ejercicio."';");
       if($subc)
          return new subcuenta($subc[0]);
       else
@@ -147,7 +160,8 @@ class subcuenta extends fs_model
    public function all_from_cuenta($idcuenta)
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$idcuenta."';");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$idcuenta."'
+         ORDER BY codsubcuenta DESC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -159,7 +173,7 @@ class subcuenta extends fs_model
    public function search($query)
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '%".$query."%'
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '%".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
       {

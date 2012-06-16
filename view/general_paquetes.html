@@ -1,21 +1,83 @@
-{include="header"}
-
-<script type="text/javascript">
-   $(document).ready(function() {
-      $("#b_nuevo_paquete").click(function(event) {
-         event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_paquete").css({
-            left: ($(window).width() - $("#popup_nuevo_paquete").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_paquete").outerHeight())/2
+{if condition="$fsc->query"}
+   <table class="list">
+      <tr>
+         <th>Referencia</th>
+         <th>Descripción</th>
+         <th align="right">PVP+IVA</th>
+      </tr>
+      {loop="$fsc->results"}
+      <tr>
+         <td>
+            <a href="{$fsc->cache_paquete->add_url($value->referencia)}">{$value->referencia}</a>
+         </td>
+         <td>{$value->descripcion}</td>
+         <td align="right">
+            <span title="actualizado el {$value->show_factualizado()}">{$value->show_pvp_iva()} €</span>
+         </td>
+      </tr>
+      {/loop}
+   </table>
+{else}
+   {include="header"}
+   
+   <script type="text/javascript">
+      $(document).ready(function() {
+         $("#b_nuevo_paquete").click(function(event) {
+            event.preventDefault();
+            $("#shadow").show();
+            $("#popup_nuevo_paquete").css({
+               left: ($(window).width() - $("#popup_nuevo_paquete").outerWidth())/2,
+               top: ($(window).height() - $("#popup_nuevo_paquete").outerHeight())/2
+            });
+            $("#popup_nuevo_paquete").show();
          });
-         $("#popup_nuevo_paquete").show();
+         $("#b_buscar_articulos").click(function(event) {
+            event.preventDefault();
+            $("#shadow").show();
+            $("#popup_buscar_articulos").css({
+               left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+               top: 40
+            });
+            $("#popup_buscar_articulos").show();
+            document.f_buscar_articulos.query.focus();
+            document.f_buscar_articulos.query.value = '';
+            $("#search_results").html('');
+         });
+         $("#f_buscar_articulos").keyup(function(event) {
+            if(document.f_buscar_articulos.query.value == '')
+            {
+               $("#search_results").html('');
+               $("#popup_buscar_articulos").css({
+                  left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+                  top: 40
+               });
+            }
+            else
+            {
+               $.ajax({
+                  type: 'POST',
+                  url: '{$fsc->url()}',
+                  dataType: 'html',
+                  data: 'query='+document.f_buscar_articulos.query.value,
+                  success: function(datos) {
+                     $("#search_results").html(datos);
+                     $("#popup_buscar_articulos").css({
+                        left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+                        top: 40
+                     });
+                  }
+               });
+            }
+         });
+         $("#f_buscar_articulos").submit(function(event) {
+            event.preventDefault();
+         });
       });
-   });
-</script>
-
-<div class="popup" id="popup_nuevo_paquete">
+   </script>
+   
+   <div class="popup" id="popup_nuevo_paquete">
    <h1>Nuevo paquete:</h1>
+   {if condition="$fsc->cache_paquete->articulos"}
    <form action="index.php?page=general_paquete" method="post">
       <div class="bloque">
          Este paquete equivale al artículo:
@@ -46,21 +108,38 @@
       </div>
       <div class="right"><input type="submit" value="nuevo paquete"/></div>
    </form>
-</div>
-
-<div class="rounded">
+   {else}
+      No hay ningún artículo en la cesta. Los paquetes se crean con los artículos que hay en la cesta.
+   {/if}
+   </div>
+   
+   <div class="popup" id="popup_buscar_articulos" style="min-width: 60%">
+      <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+         <h1>Buscar artículos:</h1>
+         <div style="text-align: center;">
+            <input type="text" name="query" size="40"/>
+            <input type="submit" value="buscar"/>
+         </div>
+         <div id="search_results"></div>
+      </form>
+   </div>
+   
+   <div class="rounded">
    <h1>Paquetes:</h1>
    <ul class="horizontal">
       {loop="$fsc->paquete->all()"}
       <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      {else}
+      <li>No hay paquetes creados. Pulsa el botón <b>Nuevo Paquete</b> para crear uno.</li>
       {/loop}
    </ul>
-</div>
-
-<div class="rounded">
+   </div>
+   
+   <div class="rounded">
    <h1>
       Cesta:
       <span>
+         <a id="b_buscar_articulos" href="#">añadir...</a> |
          <a href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a> |
          <a href="{$fsc->url()}&cleancache=TRUE">vaciar</a>
       </span>
@@ -68,8 +147,11 @@
    <ul class="horizontal">
       {loop="$fsc->cache_paquete->articulos"}
       <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      {else}
+      <li>No hay artículos en la cesta. Los paquetes se crean a partir de los artículos que hay en la cesta.</li>
       {/loop}
    </ul>
-</div>
-
-{include="footer"}
+   </div>
+   
+   {include="footer"}
+{/if}

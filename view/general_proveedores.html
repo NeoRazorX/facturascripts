@@ -56,6 +56,10 @@
          <td>{$value->cifnif}</td>
          <td>{$value->telefono1}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="5">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo proveedor</b> para crear uno.</td>
+      </tr>
       {/loop}
       <tr>
          <td>

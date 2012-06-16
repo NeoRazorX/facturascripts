@@ -17,21 +17,21 @@
       <td>{$value->folder}</td>
       <td>{$value->title}</td>
       {if condition="$value->show_on_menu"}
-      <td>Si</td>
+      <td align="center">Si</td>
       {else}
-      <td>-</td>
+      <td align="center">-</td>
       {/if}
       {if condition="$value->exists"}
-      <td>Si</td>
+      <td align="center">Si</td>
       {else}
-      <td>-</td>
+      <td align="center">-</td>
       {/if}
       {if condition="$value->enabled"}
-      <td>-</td>
-      <td><a href="{$fsc->page->url()}&AMP;disable={$value->name}">desactivar</a></td>
+      <td align="center">-</td>
+      <td align="center"><a href="{$fsc->page->url()}&AMP;disable={$value->name}">desactivar</a></td>
       {else}
-      <td><a href="{$fsc->page->url()}&AMP;enable={$value->name}">activar</a></td>
-      <td>-</td>
+      <td align="center"><a href="{$fsc->page->url()}&AMP;enable={$value->name}">activar</a></td>
+      <td align="center">-</td>
       {/if}
    </tr>
    {/loop}

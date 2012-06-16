@@ -1,6 +1,29 @@
 {include="header"}
 
 {if condition="$fsc->cliente"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_direcciones").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_direcciones").css({
+            left: ($(window).width() - $("#popup_direcciones").outerWidth())/2,
+            top: ($(window).height() - $("#popup_direcciones").outerHeight())/2
+         });
+         $("#popup_direcciones").show();
+      });
+      $("#b_subcuentas").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_subcuentas").css({
+            left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
+            top: ($(window).height() - $("#popup_subcuentas").outerHeight())/2
+         });
+         $("#popup_subcuentas").show();
+      });
+   });
+</script>
+
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <h1>
@@ -33,6 +56,66 @@
          web: <input type="text" name="web" value="{$fsc->cliente->web}"/>
       </div>
    </form>
+</div>
+
+<div class="popup" id="popup_direcciones" style="min-width: 700px">
+   <h1>Direcciones:</h1>
+   <table class="list">
+      <tr>
+         <th>Envío</th>
+         <th>Facturación</th>
+         <th>Pais</th>
+         <th>Provincia</th>
+         <th>Ciudad</th>
+         <th>Cod. Postal</th>
+         <th>Dirección</th>
+         <th>Apartado</th>
+      </tr>
+      {loop="$fsc->cliente->get_direcciones()"}
+      <tr>
+         {if condition="$value->domenvio"}
+         <td>Si</td>
+         {else}
+         <td>-</td>
+         {/if}
+         {if condition="$value->domfacturacion"}
+         <td>Si</td>
+         {else}
+         <td>-</td>
+         {/if}
+         <td>{$value->codpais}</td>
+         <td>{$value->provincia}</td>
+         <td>{$value->ciudad}</td>
+         <td>{$value->codpostal}</td>
+         <td>{$value->direccion}</td>
+         <td>{$value->apartado}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<div class="popup" id="popup_subcuentas" style="min-width: 700px">
+   <h1>Subcuentas:</h1>
+   <table class="list">
+      <tr>
+         <th>Ejercicio</th>
+         <th>Subcuenta</th>
+         <th>Descripción</th>
+         <th>Debe</th>
+         <th>Haber</th>
+         <th>Saldo</th>
+      </tr>
+      {loop="$fsc->cliente->get_subcuentas()"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td>{$value->descripcion}</td>
+         <td align="right">{$value->show_debe()} €</td>
+         <td align="right">{$value->show_haber()} €</td>
+         <td align="right">{$value->show_saldo()} €</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
 
 <div class="rounded">

@@ -59,6 +59,9 @@ class general_cliente extends fs_controller
       
       if( $this->cliente )
       {
+         $this->buttons[] = new fs_button('b_direcciones', 'direcciones', '#', 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_subcuentas', 'subcuentas', '#', 'button', 'img/zoom.png');
+         
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else

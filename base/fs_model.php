@@ -156,7 +156,7 @@ abstract class fs_model
    private function get_xml_table(&$columnas, &$restricciones)
    {
       $retorno = TRUE;
-      $xml = simplexml_load_file('table/' . $this->table_name . '.xml');
+      $xml = simplexml_load_file('model/table/' . $this->table_name . '.xml');
       if($xml)
       {
          if($xml->columna)
@@ -320,7 +320,7 @@ abstract class fs_model
          $consulta .= '"' . $col['nombre'] . '" ' . $col['tipo'];
          if($col['nulo'] == 'NO')
             $consulta .= " NOT NULL";
-         if($col['defecto'] != "")
+         if($col['defecto'] != "" AND !in_array($col['tipo'], array('serial', 'bigserial')))
             $consulta .= " DEFAULT " . $col['defecto'];
       }
       $consulta .= " );\n" . $this->compare_constraints($xml_restricciones, FALSE);

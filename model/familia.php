@@ -69,6 +69,20 @@ class familia extends fs_model
       self::$default_familia = $this->codfamilia;
    }
    
+   public function set_codfamilia($cod)
+   {
+      if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,4}$/i", $cod) )
+      {
+         $this->codfamilia = $cod;
+         return TRUE;
+      }
+      else
+      {
+         $this->new_error_msg("¡Código inválido! Deben ser entre 1 y 4 caracteres alfanuméricos.");
+         return FALSE;
+      }
+   }
+
    public function get_articulos($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $articulo = new articulo();

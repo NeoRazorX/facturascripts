@@ -26,7 +26,6 @@ class empresa extends fs_model
    public $contintegrada;
    public $recequivalencia;
    public $codserie;
-   public $codcuentarem;
    public $codalmacen;
    public $codpago;
    public $coddivisa;
@@ -38,10 +37,8 @@ class empresa extends fs_model
    public $codpais;
    public $apartado;
    public $provincia;
-   public $idprovincia;
    public $ciudad;
    public $codpostal;
-   public $logo;
    public $direccion;
    public $administrador;
    public $codedi;
@@ -62,7 +59,6 @@ class empresa extends fs_model
          $this->contintegrada = ($e[0]['contintegrada'] == 't');
          $this->recequivalencia = ($e[0]['recequivalencia'] == 't');
          $this->codserie = $e[0]['codserie'];
-         $this->codcuentarem = $e[0]['codcuentarem'];
          $this->codalmacen = $e[0]['codalmacen'];
          $this->codpago = $e[0]['codpago'];
          $this->coddivisa = $e[0]['coddivisa'];
@@ -74,10 +70,8 @@ class empresa extends fs_model
          $this->codpais = $e[0]['codpais'];
          $this->apartado = $e[0]['apartado'];
          $this->provincia = $e[0]['provincia'];
-         $this->idprovincia = intval($e[0]['idprovincia']);
          $this->ciudad = $e[0]['ciudad'];
          $this->codpostal = $e[0]['codpostal'];
-         $this->logo = $e[0]['logo'];
          $this->direccion = $e[0]['direccion'];
          $this->administrador = $e[0]['administrador'];
          $this->codedi = $e[0]['codedi'];
@@ -93,7 +87,6 @@ class empresa extends fs_model
          $this->contintegrada = TRUE;
          $this->recequivalencia = FALSE;
          $this->codserie = NULL;
-         $this->codcuentarem = NULL;
          $this->codalmacen = NULL;
          $this->codpago = NULL;
          $this->coddivisa = NULL;
@@ -105,10 +98,8 @@ class empresa extends fs_model
          $this->codpais = NULL;
          $this->apartado = '';
          $this->provincia = NULL;
-         $this->idprovincia = NULL;
          $this->ciudad = NULL;
          $this->codpostal = NULL;
-         $this->logo = NULL;
          $this->direccion = '';
          $this->administrador = '';
          $this->codedi = NULL;
@@ -127,10 +118,10 @@ class empresa extends fs_model
    protected function install()
    {
       
-      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codcuentarem,codalmacen,
-         codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,idprovincia,ciudad,codpostal,
-         logo,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
-         'http://code.google.com/p/facturascripts/','','','',NULL,'',NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa','','');";
+      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codalmacen,
+         codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,ciudad,codpostal,
+         direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,
+         'http://code.google.com/p/facturascripts/',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa','','');";
    }
    
    public function exists()
@@ -146,14 +137,14 @@ class empresa extends fs_model
       $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).", cifnif = ".$this->var2str($this->cifnif).",
          codedi = ".$this->var2str($this->codedi).", administrador = ".$this->var2str($this->administrador).",
          direccion = ".$this->var2str($this->direccion).",
-         logo = ".$this->var2str($this->logo).", codpostal = ".$this->var2str($this->codpostal).", ciudad = ".$this->var2str($this->ciudad).",
-         idprovincia = ".$this->var2str($this->idprovincia).", provincia = ".$this->var2str($this->provincia).",
+         codpostal = ".$this->var2str($this->codpostal).", ciudad = ".$this->var2str($this->ciudad).",
+         provincia = ".$this->var2str($this->provincia).",
          apartado = ".$this->var2str($this->apartado).",
          codpais = ".$this->var2str($this->codpais).", telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
          email = ".$this->var2str($this->email).", web = ".$this->var2str($this->web).", codejercicio = ".$this->var2str($this->codejercicio).",
          coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
          codalmacen = ".$this->var2str($this->codalmacen).",
-         codcuentarem = ".$this->var2str($this->codcuentarem).", codserie = ".$this->var2str($this->codserie).",
+         codserie = ".$this->var2str($this->codserie).",
          recequivalencia = ".$this->var2str($this->recequivalencia).",
          contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos).",
          lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario)."

@@ -17,17 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/almacen.php';
 require_once 'model/articulo.php';
-require_once 'model/familia.php';
 require_once 'model/impuesto.php';
-require_once 'model/paquete.php';
+require_once 'model/familia.php';
 
 class general_articulo extends fs_controller
 {
+   public $almacen;
    public $articulo;
    public $familia;
    public $impuesto;
-   public $cache_paquete;
+   public $nuevos_almacenes;
+   public $stocks;
+   public $equivalentes;
 
    public function __construct()
    {
@@ -38,7 +41,19 @@ class general_articulo extends fs_controller
    {
       $this->ppage = $this->page->get('general_articulos');
       
-      if( isset($_POST['imagen']) )
+      if( isset($_POST['almacen']) )
+      {
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_POST['referencia']);
+         if($this->articulo)
+         {
+            if( $this->articulo->set_stock($_POST['almacen'], $_POST['cantidad']) )
+               $this->new_message("Stock guardado correctamente.");
+            else
+               $this->new_error_msg( $this->articulo->error_msg );
+         }
+      }
+      else if( isset($_POST['imagen']) )
       {
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_POST['referencia']);
@@ -58,7 +73,7 @@ class general_articulo extends fs_controller
          $this->articulo->set_descripcion($_POST['descripcion']);
          $this->articulo->codfamilia = $_POST['codfamilia'];
          $this->articulo->codbarras = $_POST['codbarras'];
-         $this->articulo->equivalencia = $_POST['equivalencia'];
+         $this->articulo->set_equivalencia($_POST['equivalencia']);
          $this->articulo->destacado = isset($_POST['destacado']);
          $this->articulo->bloqueado = isset($_POST['bloqueado']);
          $this->articulo->controlstock = isset($_POST['controlstock']);
@@ -87,11 +102,25 @@ class general_articulo extends fs_controller
       {
          $this->page->title = $this->articulo->referencia;
          $this->buttons[] = new fs_button('b_imagen', 'imagen');
-         $this->buttons[] = new fs_button('b_paquete', 'paquete');
          $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         $this->almacen = new almacen();
          $this->familia = $this->articulo->get_familia();
          $this->impuesto = new impuesto();
-         $this->cache_paquete = new cache_paquete();
+         $this->stocks = $this->articulo->get_stock();
+         /// metemos en un array los almacenes que no tengan stock de este producto
+         $this->nuevos_almacenes = array();
+         foreach($this->almacen->all() as $a)
+         {
+            $encontrado = FALSE;
+            foreach($this->stocks as $s)
+            {
+               if( $a->codalmacen == $s->codalmacen )
+                  $encontrado = TRUE;
+            }
+            if( !$encontrado )
+               $this->nuevos_almacenes[] = $a;
+         }
+         $this->equivalentes = $this->articulo->get_equivalentes();
       }
    }
    

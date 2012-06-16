@@ -201,7 +201,6 @@ class albaran_proveedor extends fs_model
    public $totalrecargo;
    public $observaciones;
    public $ptefactura;
-   public $revisado;
 
    public function __construct($a=FALSE)
    {
@@ -234,7 +233,6 @@ class albaran_proveedor extends fs_model
          $this->totalrecargo = floatval($a['totalrecargo']);
          $this->observaciones = $a['observaciones'];
          $this->ptefactura = ($a['ptefactura'] == 't');
-         $this->revisado = ($a['revisado'] == 't');
       }
       else
       {
@@ -264,7 +262,6 @@ class albaran_proveedor extends fs_model
          $this->totalrecargo = 0;
          $this->observaciones = '';
          $this->ptefactura = TRUE;
-         $this->revisado = FALSE;
       }
    }
    
@@ -378,9 +375,9 @@ class albaran_proveedor extends fs_model
       $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
       if($numero)
-         $this->numero = sprintf('%06s', (1 + intval($numero[0]['num'])));
+         $this->numero = 1 + intval($numero[0]['num']);
       else
-         $this->numero = '000001';
+         $this->numero = 1;
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
    }
    
@@ -400,7 +397,7 @@ class albaran_proveedor extends fs_model
             totaleuros = ".$this->var2str($this->totaleuros).", irpf = ".$this->var2str($this->irpf).",
             totalirpf = ".$this->var2str($this->totalirpf).", tasaconv = ".$this->var2str($this->tasaconv).",
             recfinanciero = ".$this->var2str($this->recfinanciero).", totalrecargo = ".$this->var2str($this->totalrecargo).",
-            revisado = ".$this->var2str($this->revisado).", observaciones = ".$this->var2str($this->observaciones).",
+            observaciones = ".$this->var2str($this->observaciones).",
             ptefactura = ".$this->var2str($this->ptefactura)." WHERE idalbaran = '".$this->idalbaran."';";
       }
       else
@@ -409,7 +406,7 @@ class albaran_proveedor extends fs_model
          $this->new_codigo();
          $sql = "INSERT INTO ".$this->table_name." (idalbaran,codigo,numero,numproveedor,codejercicio,codserie,coddivisa,
             codpago,codagente,codalmacen,fecha,codproveedor,nombre,cifnif,neto,total,totaliva,totaleuros,irpf,totalirpf,
-            tasaconv,recfinanciero,totalrecargo,observaciones,ptefactura,revisado) VALUES ('".$this->idalbaran."',
+            tasaconv,recfinanciero,totalrecargo,observaciones,ptefactura) VALUES ('".$this->idalbaran."',
             ".$this->var2str($this->codigo).",".$this->var2str($this->numero).",".$this->var2str($this->numproveedor).",
             ".$this->var2str($this->codejercicio).",".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",
             ".$this->var2str($this->codpago).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
@@ -417,8 +414,7 @@ class albaran_proveedor extends fs_model
             ".$this->var2str($this->cifnif).",".$this->var2str($this->neto).",".$this->var2str($this->total).",
             ".$this->var2str($this->totaliva).",".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",
             ".$this->var2str($this->totalirpf).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
-            ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).",
-            ".$this->var2str($this->revisado).");";
+            ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).");";
       }
       return $this->db->exec($sql);
    }

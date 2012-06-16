@@ -64,6 +64,38 @@ class stock extends fs_model
       return '';
    }
    
+   public function set_cantidad($c=0)
+   {
+      $c = floatval($c);
+      $this->cantidad = $c;
+      $this->disponible = ($this->cantidad - $this->reservada);
+   }
+   
+   public function sum_cantidad($c=0)
+   {
+      $c = floatval($c);
+      $this->cantidad += $c;
+      $this->disponible = ($this->cantidad - $this->reservada);
+   }
+   
+   public function get($id)
+   {
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$id."';");
+      if($stock)
+         return new stock($stock[0]);
+      else
+         return FALSE;
+   }
+   
+   public function get_by_referencia($ref)
+   {
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      if($stock)
+         return new stock($stock[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idstock) )
@@ -72,9 +104,11 @@ class stock extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$this->idstock."';");
    }
    
-   public function get_new_idstock()
+   public function new_idstock()
    {
-      return $this->db->select("SELECT nextval('".$this->table_name."_idstock_seq;');");
+      $id = $this->db->select("SELECT nextval('".$this->table_name."_idstock_seq');");
+      if($id)
+         $this->idstock = intval($id[0]['nextval']);
    }
 
    public function save()
@@ -89,13 +123,13 @@ class stock extends fs_model
       }
       else
       {
-         $this->idstock = $this->get_new_idstock();
+         $this->new_idstock();
          $sql = "INSERT INTO ".$this->table_name." (idstock,codalmacen,referencia,nombre,cantidad,reservada,
             disponible,pterecibir) VALUES (".$this->var2str($this->idstock).",".$this->var2str($this->codalmacen).",
             ".$this->var2str($this->referencia).",".$this->var2str($this->nombre).",".$this->var2str($this->cantidad).",
             ".$this->var2str($this->reservada).",".$this->var2str($this->disponible).",".$this->var2str($this->pterecibir).");";
       }
-      $this->db->exec($sql);
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -113,6 +147,15 @@ class stock extends fs_model
             $stocklist[] = new stock($s);
       }
       return $stocklist;
+   }
+   
+   public function total_from_articulo($ref)
+   {
+      $num = 0;
+      $stocks = $this->db->select("SELECT SUM(cantidad) as total FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      if($stocks)
+         $num = floatval($stocks[0]['total']);
+      return $num;
    }
 }
 
@@ -216,7 +259,19 @@ class articulo extends fs_model
    
    public function url()
    {
-      return "index.php?page=general_articulo&ref=".$this->referencia;
+      if( isset($this->referencia) )
+         return "index.php?page=general_articulo&ref=".$this->referencia;
+      else
+         return "index.php?page=general_articulos";
+   }
+   
+   public function get($ref)
+   {
+      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      if($art)
+         return new articulo($art[0]);
+      else
+         return FALSE;
    }
    
    public function get_familia()
@@ -269,29 +324,53 @@ class articulo extends fs_model
       }
    }
    
+   public function get_equivalentes()
+   {
+      $artilist = array();
+      if( !is_null($this->equivalencia) )
+      {
+         $articulos = $this->db->select("SELECT * FROM ".$this->table_name." WHERE equivalencia = '".$this->equivalencia."' ORDER BY referencia ASC;");
+         if($articulos)
+         {
+            foreach($articulos as $a)
+            {
+               if($a['referencia'] != $this->referencia)
+                  $artilist[] = new articulo($a);
+            }
+         }
+      }
+      return $artilist;
+   }
+
    public function imagen_url()
    {
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
          return '../tmp/articulos/'.$this->referencia.'.png';
-      else if( !is_null($this->imagen) )
+      else
       {
-         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
-         if($imagen)
+         if( !isset($this->imagen) )
          {
-            $this->imagen = $this->str2bin($imagen[0]['imagen']);
+            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+            if($imagen)
+               $this->imagen = $this->str2bin($imagen[0]['imagen']);
+            else
+               $this->imagen = NULL;
+            unset($imagen);
+         }
+         
+         if( is_null($this->imagen) )
+            return FALSE;
+         else
+         {
+            if( !file_exists('tmp/articulos') )
+               mkdir('tmp/articulos');
+            
             $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
             fwrite($f, $this->imagen);
             fclose($f);
             return '../tmp/articulos/'.$this->referencia.'.png';
          }
-         else
-         {
-            $this->imagen = NULL;
-            return FALSE;
-         }
       }
-      else
-         return FALSE;
    }
    
    public function set_referencia($ref)
@@ -300,7 +379,7 @@ class articulo extends fs_model
       if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $ref) )
          $this->referencia = $ref;
       else
-         $this->new_error_msg("¡Referencia no valida!");
+         $this->new_error_msg("¡Referencia no válida!");
    }
    
    public function set_descripcion($desc)
@@ -312,11 +391,28 @@ class articulo extends fs_model
          $this->descripcion = $desc;
    }
    
+   public function set_equivalencia($cod)
+   {
+      if($cod == '')
+      {
+         $this->equivalencia = NULL;
+         $this->destacado = FALSE;
+      }
+      else
+      {
+         $cod = str_replace(' ', '_', $cod);
+         if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $cod) )
+            $this->equivalencia = $cod;
+         else
+            $this->new_error_msg("¡Código de equivalencia no válido!");
+      }
+   }
+   
    public function set_pvp($p)
    {
       $this->pvp_ant = $this->pvp;
       $this->pvp = floatval($p);
-      $this->factualizado = Date('j-n-Y');
+      $this->factualizado = Date('d-m-Y');
    }
    
    public function set_pvp_iva($p)
@@ -325,9 +421,83 @@ class articulo extends fs_model
       $pvpi = floatval($p);
       $iva = $this->get_iva();
       $this->pvp = (100*$pvpi)/(100+$iva);
-      $this->factualizado = Date('j-n-Y');
+      $this->factualizado = Date('d-m-Y');
    }
-
+   
+   public function set_stock($almacen, $cantidad=1)
+   {
+      $result = FALSE;
+      $stock = new stock();
+      $encontrado = FALSE;
+      $stocks = $stock->all_from_articulo($this->referencia);
+      foreach($stocks as &$s)
+      {
+         if($s->codalmacen == $almacen)
+         {
+            $s->set_cantidad($cantidad);
+            $result = $s->save();
+            $encontrado = TRUE;
+         }
+      }
+      if( !$encontrado )
+      {
+         $stock->referencia = $this->referencia;
+         $stock->codalmacen = $almacen;
+         $stock->set_cantidad($cantidad);
+         $result = $stock->save();
+      }
+      if($result)
+      {
+         $nuevo_stock = $stock->total_from_articulo($this->referencia);
+         if($this->stockfis != $nuevo_stock)
+         {
+            $this->stockfis =  $nuevo_stock;
+            if( !$this->save() )
+               $this->new_error_msg("Error al actualizar el stock del artículo");
+         }
+      }
+      else
+         $this->new_error_msg("Error al guardar el stock");
+      return $result;
+   }
+   
+   public function sum_stock($almacen, $cantidad=1)
+   {
+      $result = FALSE;
+      $stock = new stock();
+      $encontrado = FALSE;
+      $stocks = $stock->all_from_articulo($this->referencia);
+      foreach($stocks as &$s)
+      {
+         if($s->codalmacen == $almacen)
+         {
+            $s->sum_cantidad($cantidad);
+            $result = $s->save();
+            $encontrado = TRUE;
+         }
+      }
+      if( !$encontrado )
+      {
+         $stock->referencia = $this->referencia;
+         $stock->codalmacen = $almacen;
+         $stock->set_cantidad($cantidad);
+         $result = $stock->save();
+      }
+      if($result)
+      {
+         $nuevo_stock = $stock->total_from_articulo($this->referencia);
+         if($this->stockfis != $nuevo_stock)
+         {
+            $this->stockfis =  $nuevo_stock;
+            if( !$this->save() )
+               $this->new_error_msg("Error al actualizar el stock del artículo");
+         }
+      }
+      else
+         $this->new_error_msg("Error al guardar el stock");
+      return $result;
+   }
+   
    protected function install()
    {
       $fam = new familia();
@@ -393,15 +563,6 @@ class articulo extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
    }
    
-   public function get($ref)
-   {
-      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
-      if($art)
-         return new articulo($art[0]);
-      else
-         return FALSE;
-   }
-   
    public function search($text, $offset=0)
    {
       $artilist = array();
@@ -447,7 +608,7 @@ class articulo extends fs_model
       return $artilist;
    }
    
-   public function multiplicar_precios($codfam,$m=1)
+   public function multiplicar_precios($codfam, $m=1)
    {
       if(isset($codfam) AND $m != 1)
          return $this->db->exec("UPDATE ".$this->table_name." SET pvp = (pvp*".$m.") WHERE codfamilia = ".$this->var2str($codfam).";");
@@ -475,10 +636,7 @@ class articulo extends fs_model
       if($articulos)
       {
          foreach($articulos as $a)
-         {
-            $ao = new articulo($a);
-            $artilist[] = $ao;
-         }
+            $artilist[] = new articulo($a);
       }
       return $artilist;
    }

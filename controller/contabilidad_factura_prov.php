@@ -39,7 +39,7 @@ class contabilidad_factura_prov extends fs_controller
          if($this->factura)
          {
             $this->page->title = $this->factura->codigo;
-            $this->buttons[] = new fs_button('b_ver_asiento', 'asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
          }
       }
    }

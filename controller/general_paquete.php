@@ -84,12 +84,15 @@ class general_paquete extends fs_controller
          }
       }
       else if( isset($_GET['ref']) )
-      {
          $this->paquete = $this->paquete->get($_GET['ref']);
-      }
       else
-      {
          $this->paquete = FALSE;
+      
+      if($this->paquete)
+      {
+         $this->buttons[] = new fs_button('b_eliminar_paquete', 'eliminar',
+                 $this->url()."&delete=".$this->paquete->referencia, 'remove',
+                 'img/remove.png', '-');
       }
    }
    

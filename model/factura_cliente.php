@@ -37,6 +37,8 @@ class linea_factura_cliente extends fs_model
    public $dtopor;
    public $dtolineal;
    public $pvptotal;
+   public $codimpuesto;
+   public $iva;
 
    public function __construct($l=FALSE)
    {
@@ -54,6 +56,8 @@ class linea_factura_cliente extends fs_model
          $this->dtopor = floatval($l['dtopor']);
          $this->dtolineal = floatval($l['dtolineal']);
          $this->pvptotal = floatval($l['pvptotal']);
+         $this->codimpuesto = $l['codimpuesto'];
+         $this->iva = floatval($l['iva']);
       }
       else
       {
@@ -68,6 +72,8 @@ class linea_factura_cliente extends fs_model
          $this->dtopor = 0;
          $this->dtolineal = 0;
          $this->pvptotal = 0;
+         $this->codimpuesto = NULL;
+         $this->iva = 0;
       }
    }
    
@@ -115,9 +121,36 @@ class linea_factura_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
+   public function new_idlinea()
+   {
+      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idlinea_seq');");
+      if($newid)
+         $this->idlinea = intval($newid[0]['nextval']);
+   }
+   
    public function save()
    {
-      ;
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET idfactura = ".$this->var2str($this->idfactura).",
+            idalbaran = ".$this->var2str($this->idalbaran).", referencia = ".$this->var2str($this->referencia).",
+            descripcion = ".$this->var2str($this->descripcion).", cantidad = ".$this->var2str($this->cantidad).",
+            pvpunitario = ".$this->var2str($this->pvpunitario).", pvpsindto = ".$this->var2str($this->pvpsindto).",
+            dtopor = ".$this->var2str($this->dtopor).", dtolineal = ".$this->var2str($this->dtolineal).",
+            pvptotal = ".$this->var2str($this->pvptotal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+            iva = ".$this->var2str($this->iva)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
+      }
+      else
+      {
+         $this->new_idlinea();
+         $sql = "INSERT INTO ".$this->table_name." (idlinea,idfactura,idalbaran,referencia,descripcion,cantidad,
+            pvpunitario,pvpsindto,dtopor,dtolineal,pvptotal,codimpuesto,iva) VALUES (".$this->var2str($this->idlinea).",
+            ".$this->var2str($this->idfactura).",".$this->var2str($this->idalbaran).",".$this->var2str($this->referencia).",
+            ".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",".$this->var2str($this->pvpunitario).",
+            ".$this->var2str($this->pvpsindto).",".$this->var2str($this->dtopor).",".$this->var2str($this->dtolineal).",
+            ".$this->var2str($this->pvptotal).",".$this->var2str($this->codimpuesto).",".$this->var2str($this->iva).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -156,21 +189,44 @@ class factura_cliente extends fs_model
 {
    public $idfactura;
    public $idasiento;
+   public $idpagodevol;
+   public $idfacturarect;
    public $codigo;
    public $numero;
+   public $codigorect;
    public $codejercicio;
    public $codserie;
+   public $codalmacen;
+   public $codpago;
+   public $coddivisa;
    public $fecha;
    public $codcliente;
    public $nombrecliente;
    public $cifnif;
+   public $direccion;
+   public $ciudad;
+   public $provincia;
+   public $apartado;
+   public $coddir;
+   public $codpostal;
+   public $codpais;
    public $codagente;
    public $neto;
    public $totaliva;
    public $total;
    public $totaleuros;
+   public $irpf;
+   public $totalirpf;
+   public $porcomision;
+   public $tasaconv;
+   public $recfinanciero;
+   public $totalrecargo;
    public $observaciones;
-   
+   public $deabono;
+   public $automatica;
+   public $editable;
+   public $nogenerarasiento;
+
    public function __construct($f=FALSE)
    {
       parent::__construct('facturascli');
@@ -178,39 +234,85 @@ class factura_cliente extends fs_model
       {
          $this->idfactura = intval($f['idfactura']);
          $this->idasiento = intval($f['idasiento']);
+         $this->idpagodevol = intval($f['idpagodevol']);
+         $this->idfacturarect = intval($f['idfacturarect']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
+         $this->codigorect = $f['codigorect'];
          $this->codejercicio = $f['codejercicio'];
          $this->codserie = $f['codserie'];
+         $this->codalmacen = $f['codalmacen'];
+         $this->codpago = $f['codpago'];
+         $this->coddivisa = $f['coddivisa'];
          $this->fecha = $f['fecha'];
          $this->codcliente = $f['codcliente'];
          $this->nombrecliente = $f['nombrecliente'];
          $this->cifnif = $f['cifnif'];
+         $this->direccion = $f['direccion'];
+         $this->ciudad = $f['ciudad'];
+         $this->provincia = $f['provincia'];
+         $this->apartado = $f['apartado'];
+         $this->coddir = $f['coddir'];
+         $this->codpostal = $f['codpostal'];
+         $this->codpais = $f['codpais'];
          $this->codagente = $f['codagente'];
          $this->neto = floatval($f['neto']);
          $this->totaliva = floatval($f['totaliva']);
          $this->total = floatval($f['total']);
          $this->totaleuros = floatval($f['totaleuros']);
+         $this->irpf = floatval($f['irpf']);
+         $this->totalirpf = floatval($f['totalirpf']);
+         $this->porcomision = floatval($f['porcomision']);
+         $this->tasaconv = floatval($f['tasaconv']);
+         $this->recfinanciero = floatval($f['recfinanciero']);
+         $this->totalrecargo = floatval($f['totalrecargo']);
          $this->observaciones = $f['observaciones'];
+         $this->deabono = ($f['deabono'] == 't');
+         $this->automatica = ($f['automatica'] == 't');
+         $this->editable = ($f['editable'] == 't');
+         $this->nogenerarasiento = ($f['nogenerarasiento'] == 't');
       }
       else
       {
          $this->idfactura = NULL;
          $this->idasiento = NULL;
-         $this->codigo = '';
-         $this->numero = '';
+         $this->idpagodevol = NULL;
+         $this->idfacturarect = NULL;
+         $this->codigo = NULL;
+         $this->numero = NULL;
+         $this->codigorect = NULL;
          $this->codejercicio = NULL;
          $this->codserie = NULL;
+         $this->codalmacen = NULL;
+         $this->codpago = NULL;
+         $this->coddivisa = NULL;
          $this->fecha = Date('d-m-Y');
          $this->codcliente = NULL;
-         $this->nombrecliente = '';
-         $this->cifnif = '';
+         $this->nombrecliente = NULL;
+         $this->cifnif = NULL;
+         $this->direccion = NULL;
+         $this->provincia = NULL;
+         $this->ciudad = NULL;
+         $this->apartado = NULL;
+         $this->coddir = NULL;
+         $this->codpostal = NULL;
+         $this->codpais = NULL;
          $this->codagente = NULL;
          $this->neto = 0;
          $this->totaliva = 0;
          $this->total = 0;
          $this->totaleuros = 0;
-         $this->observaciones = '';
+         $this->irpf = 0;
+         $this->totalirpf = 0;
+         $this->porcomision = 0;
+         $this->tasaconv = 1;
+         $this->recfinanciero = 0;
+         $this->totalrecargo = 0;
+         $this->observaciones = NULL;
+         $this->deabono = FALSE;
+         $this->automatica = FALSE;
+         $this->editable = TRUE;
+         $this->nogenerarasiento = FALSE;
       }
    }
    
@@ -246,28 +348,40 @@ class factura_cliente extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
+      if( is_null($this->idfactura) )
+         return 'index.php?page=contabilidad_facturas_cli';
+      else
+         return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
    }
    
    public function asiento_url()
    {
       $asiento = new asiento();
       $asiento = $asiento->get($this->idasiento);
-      return $asiento->url();
+      if($asiento)
+         return $asiento->url();
+      else
+         return '#';
    }
    
    public function agente_url()
    {
       $agente = new agente();
       $agente = $agente->get($this->codagente);
-      return $agente->url();
+      if($agente)
+         return $agente->url();
+      else
+         return '#';
    }
    
    public function cliente_url()
    {
       $cliente = new cliente();
       $cliente = $cliente->get($this->codcliente);
-      return $cliente->url();
+      if($cliente)
+         return $cliente->url();
+      else
+         return '#';
    }
    
    public function get($id)
@@ -313,9 +427,75 @@ class factura_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
    }
    
+   public function new_idfactura()
+   {
+      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idfactura_seq');");
+      if($newid)
+         $this->idfactura = intval($newid[0]['nextval']);
+   }
+   
+   public function new_codigo()
+   {
+      $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
+         WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
+      if($numero)
+         $this->numero = 1 + intval($numero[0]['num']);
+      else
+         $this->numero = 1;
+      $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
+   }
+   
    public function save()
    {
-      ;
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
+            idpagodevol = ".$this->var2str($this->idpagodevol).", idfacturarect = ".$this->var2str($this->idfacturarect).",
+            codigo = ".$this->var2str($this->codigo).", numero = ".$this->var2str($this->numero).",
+            codigorect = ".$this->var2str($this->codigorect).", codejercicio = ".$this->var2str($this->codejercicio).",
+            codserie = ".$this->var2str($this->codserie).", codalmacen = ".$this->var2str($this->codalmacen).",
+            codpago = ".$this->var2str($this->codpago).", coddivisa = ".$this->var2str($this->coddivisa).",
+            fecha = ".$this->var2str($this->fecha).", codcliente = ".$this->var2str($this->codcliente).",
+            nombrecliente = ".$this->var2str($this->nombrecliente).", cifnif = ".$this->var2str($this->cifnif).",
+            direccion = ".$this->var2str($this->direccion).", ciudad = ".$this->var2str($this->ciudad).",
+            provincia = ".$this->var2str($this->provincia).",
+            apartado = ".$this->var2str($this->apartado).", coddir = ".$this->var2str($this->coddir).",
+            codpostal = ".$this->var2str($this->codpostal).", codpais = ".$this->var2str($this->codpais).",
+            codagente = ".$this->var2str($this->codagente).", neto = ".$this->var2str($this->neto).",
+            totaliva = ".$this->var2str($this->totaliva).", total = ".$this->var2str($this->total).",
+            totaleuros = ".$this->var2str($this->totaleuros).", irpf = ".$this->var2str($this->irpf).",
+            totalirpf = ".$this->var2str($this->totalirpf).", porcomision = ".$this->var2str($this->porcomision).",
+            tasaconv = ".$this->var2str($this->tasaconv).", recfinanciero = ".$this->var2str($this->recfinanciero).",
+            totalrecargo = ".$this->var2str($this->totalrecargo).", observaciones = ".$this->var2str($this->observaciones).",
+            deabono = ".$this->var2str($this->deabono).", automatica = ".$this->var2str($this->automatica).",
+            editable = ".$this->var2str($this->editable).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento)."
+            WHERE idfactura = ".$this->var2str($this->idfactura).";";
+      }
+      else
+      {
+         $this->new_idfactura();
+         $this->new_codigo();
+         $sql = "INSERT INTO ".$this->table_name." (idfactura,idasiento,idpagodevol,idfacturarect,codigo,numero,
+            codigorect,codejercicio,codserie,codalmacen,codpago,coddivisa,fecha,codcliente,nombrecliente,
+            cifnif,direccion,ciudad,provincia,apartado,coddir,codpostal,codpais,codagente,neto,totaliva,total,totaleuros,
+            irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,deabono,automatica,editable,
+            nogenerarasiento) VALUES (".$this->var2str($this->idfactura).",".$this->var2str($this->idasiento).",
+            ".$this->var2str($this->idpagodevol).",".$this->var2str($this->idfacturarect).",".$this->var2str($this->codigo).",
+            ".$this->var2str($this->numero).",".$this->var2str($this->codigorect).",".$this->var2str($this->codejercicio).",
+            ".$this->var2str($this->codserie).",".$this->var2str($this->codalmacen).",".$this->var2str($this->codpago).",
+            ".$this->var2str($this->coddivisa).",".$this->var2str($this->fecha).",".$this->var2str($this->codcliente).",
+            ".$this->var2str($this->nombrecliente).",".$this->var2str($this->cifnif).",".$this->var2str($this->direccion).",
+            ".$this->var2str($this->ciudad).",".$this->var2str($this->provincia).",".$this->var2str($this->apartado).",
+            ".$this->var2str($this->coddir).",
+            ".$this->var2str($this->codpostal).",".$this->var2str($this->codpais).",
+            ".$this->var2str($this->codagente).",".$this->var2str($this->neto).",".$this->var2str($this->totaliva).",
+            ".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",
+            ".$this->var2str($this->totalirpf).",".$this->var2str($this->porcomision).",".$this->var2str($this->tasaconv).",
+            ".$this->var2str($this->recfinanciero).",".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
+            ".$this->var2str($this->deabono).",".$this->var2str($this->automatica).",".$this->var2str($this->editable).",
+            ".$this->var2str($this->nogenerarasiento).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()

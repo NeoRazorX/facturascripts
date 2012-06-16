@@ -38,7 +38,7 @@ class caja extends fs_model
       if($c)
       {
          $this->id = intval($c['id']);
-         $this->fs_id = $c['fs_id'];
+         $this->fs_id = intval($c['fs_id']);
          $this->fecha_inicial = $c['f_inicio'];
          $this->dinero_inicial = floatval($c['d_inicio']);
          $this->fecha_fin = $c['f_fin'];
@@ -131,6 +131,13 @@ class caja extends fs_model
          return FALSE;
    }
    
+   public function new_id()
+   {
+      $newid = $this->db->select("SELECT nextval('".$this->table_name."_id_seq');");
+      if($newid)
+         $this->id = intval($newid[0]['nextval']);
+   }
+   
    public function save()
    {
       if( $this->exists() )
@@ -142,10 +149,11 @@ class caja extends fs_model
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets) VALUES
-            (".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".$this->var2str($this->fecha_inicial).",
-            ".$this->var2str($this->dinero_inicial).",".$this->var2str($this->fecha_fin).",".$this->var2str($this->dinero_fin).",
-            ".$this->var2str($this->tickets).");";
+         $this->new_id();
+         $sql = "INSERT INTO ".$this->table_name." (id,fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets) VALUES
+            (".$this->var2str($this->id).",".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".
+            $this->var2str($this->fecha_inicial).",".$this->var2str($this->dinero_inicial).",".$this->var2str($this->fecha_fin).
+            ",".$this->var2str($this->dinero_fin).",".$this->var2str($this->tickets).");";
       }
       return $this->db->exec($sql);
    }

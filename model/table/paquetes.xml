@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : paquetes.xml
+    Description:
+        Estructura de la tabla paquetes.
+-->
+<tabla>
+   <columna><nombre>referencia</nombre><tipo>character varying(18)</tipo><nulo>NO</nulo></columna>
+   <restriccion><nombre>paquete_pkey</nombre><consulta>PRIMARY KEY (referencia)</consulta></restriccion>
+   <restriccion><nombre>uniq_referencia_paquetes</nombre><consulta>UNIQUE (referencia)</consulta></restriccion>
+   <restriccion><nombre>ca_paquetes_articulos</nombre><consulta>FOREIGN KEY (referencia)
+      REFERENCES articulos (referencia) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
+</tabla>

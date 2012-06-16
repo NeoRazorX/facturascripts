@@ -19,8 +19,6 @@
 
 class admin_pages extends fs_controller
 {
-   public $new_fsc;
-   
    public function __construct()
    {
       parent::__construct('admin_pages', 'Páginas', 'admin', TRUE, TRUE);
@@ -28,19 +26,31 @@ class admin_pages extends fs_controller
    
    protected function process()
    {
-      if( isset($_GET['enable']) )
+      $this->buttons[] = new fs_button('b_activar_todos', 'Activar todas', $this->url()."&enable_all=TRUE");
+      
+      if( isset($_GET['enable_all']) )
+      {
+         foreach($this->all() as $p)
+         {
+            if( !$p->enabled )
+            {
+               require_once 'controller/'.$p->name.'.php';
+               $new_fsc = new $p->name();
+               $new_fsc->page->save();
+               unset($new_fsc);
+            }
+         }
+      }
+      else if( isset($_GET['enable']) )
       {
          if( file_exists('controller/'.$_GET['enable'].'.php') )
          {
-            if($_GET['enable'] == $this->page->name)
-            {
-               $this->page->save();
-            }
-            else
+            if($_GET['enable'] != $this->page->name)
             {
                require_once 'controller/'.$_GET['enable'].'.php';
-               $this->new_fsc = new $_GET['enable']();
-               $this->new_fsc->page->save();
+               $new_fsc = new $_GET['enable']();
+               $new_fsc->page->save();
+               unset($new_fsc);
             }
          }
          else
@@ -49,9 +59,7 @@ class admin_pages extends fs_controller
       else if( isset($_GET['disable']) )
       {
          if($_GET['disable'] == $this->page->name)
-         {
             $this->new_error_msg("No puedes desactivar esta página");
-         }
          else
          {
             $p = new fs_page( array('name'=>$_GET['disable'],

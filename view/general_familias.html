@@ -36,6 +36,8 @@
    <ul class="horizontal">
    {loop="$fsc->familia->all()"}
       <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
+   {else}
+      <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva familia</b> para crear una.</li>
    {/loop}
    </ul>
 </div>

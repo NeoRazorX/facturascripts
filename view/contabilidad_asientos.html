@@ -20,6 +20,10 @@
          <td align="right">{$value->show_importe()} €</td>
          <td align="right">{$value->show_fecha()}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="5">No hay asientos creados.</td>
+      </tr>
       {/loop}
       <tr>
          <td>

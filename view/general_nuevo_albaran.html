@@ -234,6 +234,16 @@
                </td>
             </tr>
             <tr>
+               <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
+               <td>
+                  <select name="almacen">
+                     {loop="$fsc->almacen->all()"}
+                        <option value="{$value->codalmacen}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+            </tr>
+            <tr>
                <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
                <td>
                   <select name="ejercicio">

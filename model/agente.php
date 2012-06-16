@@ -28,7 +28,6 @@ class agente extends fs_model
    public $codpostal;
    public $codpais;
    public $provincia;
-   public $idprovincia;
    public $ciudad;
    public $direccion;
    public $porcomision;
@@ -50,7 +49,6 @@ class agente extends fs_model
          $this->codpostal = $a['codpostal'];
          $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
-         $this->idprovincia = intval($a['idprovincia']);
          $this->ciudad = $a['ciudad'];
          $this->direccion = $a['direccion'];
          $this->porcomision = $a['porcomision'];
@@ -69,7 +67,6 @@ class agente extends fs_model
          $this->codpostal = NULL;
          $this->codpais = NULL;
          $this->provincia = NULL;
-         $this->idprovincia = NULL;
          $this->ciudad = NULL;
          $this->direccion = NULL;
          $this->porcomision = NULL;
