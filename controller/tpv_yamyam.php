@@ -301,8 +301,7 @@ class tpv_yamyam extends fs_controller
                $this->new_error_msg("¡Imposible actualizar la caja!");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."! ".
-                                 $this->albaran->error_msg);
+            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."! ".$alb->error_msg);
       }
       else
          $this->new_error_msg("Ticket no encontrado.");

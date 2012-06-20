@@ -33,7 +33,6 @@ class general_albaranes_cli extends fs_controller
    {
       $albaran = new albaran_cliente();
       $this->custom_search = TRUE;
-      
       $npage = $this->page->get('general_nuevo_albaran');
       if($npage)
          $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo albarán', $npage->url());
@@ -42,11 +41,6 @@ class general_albaranes_cli extends fs_controller
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
-      
-      if($this->query)
-         $this->resultados = $albaran->search($this->query, $this->offset);
-      else
-         $this->resultados = $albaran->all($this->offset);
       
       if( isset($_GET['delete']) )
       {
@@ -61,6 +55,11 @@ class general_albaranes_cli extends fs_controller
          else
             $this->new_error_msg("¡Albarán no encontrado!");
       }
+      
+      if($this->query)
+         $this->resultados = $albaran->search($this->query, $this->offset);
+      else
+         $this->resultados = $albaran->all($this->offset);
    }
    
    public function anterior_url()

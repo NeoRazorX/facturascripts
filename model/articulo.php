@@ -157,6 +157,24 @@ class stock extends fs_model
          $num = floatval($stocks[0]['total']);
       return $num;
    }
+   
+   public function count()
+   {
+      $num = 0;
+      $stocks = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
+      if($stocks)
+         $num = intval($stocks[0]['total']);
+      return $num;
+   }
+   
+   public function count_by_articulo()
+   {
+      $num = 0;
+      $stocks = $this->db->select("SELECT COUNT(DISTINCT referencia) as total FROM ".$this->table_name.";");
+      if($stocks)
+         $num = intval($stocks[0]['total']);
+      return $num;
+   }
 }
 
 
@@ -639,6 +657,15 @@ class articulo extends fs_model
             $artilist[] = new articulo($a);
       }
       return $artilist;
+   }
+   
+   public function count()
+   {
+      $num = 0;
+      $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
+      if($articulos)
+         $num = intval($articulos[0]['total']);
+      return $num;
    }
 }
 

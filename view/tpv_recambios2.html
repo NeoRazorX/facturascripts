@@ -1,28 +1,3 @@
-{if condition="isset($_POST['query'])"}
-   <!--{$fsc->query}-->
-   <table class="list">
-      <tr>
-         <th>Referencia</th>
-         <th>Descripción</th>
-         <th align="right">PVP+IVA</th>
-         <th align="right">Stock</th>
-      </tr>
-      {loop="$fsc->results"}
-      <tr>
-         <td>
-            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">{$value->referencia}</a>
-         </td>
-         <td>{$value->descripcion}</td>
-         <td align="right">
-            <span title="actualizado el {$value->show_factualizado()}">{$value->show_pvp_iva()} €</span>
-         </td>
-         <td align="right">{$value->stockfis}</td>
-      </tr>
-      {/loop}
-   </table>
-{else}
-   {include="header"}
-   
    <script type="text/javascript">
       var numlineas = 0;
       function number_format(number, decimals, dec_point, thousands_sep)
@@ -122,6 +97,13 @@
          recalcular();
       }
       $(document).ready(function() {
+         $("#b_borrar_ticket").click(function() {
+            window.location.href = "{$fsc->url()}&delete="+prompt('Introduce el código del ticket:');
+         });
+         $("#b_cerrar_caja").click(function() {
+            if( confirm("¿Realmente deseas cerrar la caja?") )
+               window.location.href = "{$fsc->url()}&cerrar_caja=TRUE";
+         });
          $("#b_new_line").click(function(event) {
             event.preventDefault();
             $("#shadow").show();
@@ -130,12 +112,12 @@
                top: 40
             });
             $("#popup_new_line").show();
-            document.f_buscar_articulos.query.focus();
-            document.f_buscar_articulos.query.value = '';
+            document.f_search_recambios.query.focus();
+            document.f_search_recambios.query.value = '';
             $("#search_results").html('');
          });
-         $("#f_buscar_articulos").keyup(function() {
-            if(document.f_buscar_articulos.query.value == '')
+         $("#f_search_recambios").keyup(function() {
+            if(document.f_search_recambios.query.value == '')
             {
                $("#search_results").html('');
                $("#popup_new_line").css({
@@ -149,11 +131,11 @@
                   type: 'POST',
                   url: '{$fsc->url()}',
                   dataType: 'html',
-                  data: 'query='+document.f_buscar_articulos.query.value,
+                  data: 'query='+document.f_search_recambios.query.value,
                   success: function(datos) {
                      var re = /<!--(.*?)-->/g;
                      var m = re.exec( datos );
-                     if( m[1] == document.f_buscar_articulos.query.value )
+                     if( m[1] == document.f_search_recambios.query.value )
                      {
                         $("#search_results").html(datos);
                         $("#popup_new_line").css({
@@ -165,36 +147,22 @@
                });
             }
          });
-         $("#f_buscar_articulos").submit(function(event) {
+         $("#f_search_recambios").submit(function(event) {
             event.preventDefault();
          });
-         $("#b_nuevo_albaran_proveedor").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'proveedor';
-            $("#shadow").show();
-            $("#popup_tpv_opciones").css({
-               left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
-               top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
-            });
-            $("#tr_clientes").hide();
-            $("#tr_proveedores").show();
-            $("#popup_tpv_opciones").show();
-         });
          $("#b_nuevo_albaran_cliente").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'cliente';
             $("#shadow").show();
             $("#popup_tpv_opciones").css({
                left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
                top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
             });
-            $("#tr_proveedores").hide();
-            $("#tr_clientes").show();
             $("#popup_tpv_opciones").show();
          });
       });
    </script>
    
    <div class="popup" id="popup_new_line" style="min-width: 60%">
-      <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+      <form id="f_search_recambios" name="f_search_recambios" action="{$fsc->url()}" method="post">
          <h1>Buscar artículos:</h1>
          <div style="text-align: center;">
             <input type="text" name="query" size="40"/>
@@ -204,14 +172,12 @@
       </form>
    </div>
    
-   {if condition="$fsc->agente"}
    <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
       <input type="hidden" id="numlineas" name="numlineas" value="0"/>
-      <input type="hidden" name="tipoalbaran" value="cliente"/>
       <div class="popup" id="popup_tpv_opciones"/>
          <h1>Opciones:</h1>
          <table>
-            <tr id="tr_clientes">
+            <tr>
                <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
                <td>
                   <select name="cliente">
@@ -220,20 +186,6 @@
                         <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
                         {else}
                         <option value="{$value->codcliente}">{$value->nombre}</option>
-                        {/if}
-                     {/loop}
-                  </select>
-               </td>
-            </tr>
-            <tr id="tr_proveedores">
-               <td align="right"><a href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
-               <td>
-                  <select name="proveedor">
-                     {loop="$fsc->proveedor->all_full()"}
-                        {if condition="$value->is_default()"}
-                        <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
-                        {else}
-                        <option value="{$value->codproveedor}">{$value->nombre}</option>
                         {/if}
                      {/loop}
                   </select>
@@ -306,6 +258,10 @@
                </td>
             </tr>
             <tr>
+               <td align="right">Impresora:</td>
+               <td><input type="text" name="impresora" value="{$fsc->impresora}" size="4"/></td>
+            </tr>
+            <tr>
                <td align="right">Observaciones:</td>
                <td><textarea name="observaciones" cols="50"></textarea></td>
             </tr>
@@ -317,7 +273,7 @@
       <div class="rounded">
          <div class="tpv_total" id="tpv_total">0,00 €</div>
          <div class="bloque">
-            Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+            Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
          <br/><br/>
          <table class="list" id="tpv_albaran">
@@ -333,16 +289,8 @@
          <br/>
          <table width="100%">
             <tr>
-               <td><input type="button" id="b_nuevo_albaran_proveedor" value="nuevo albarán de proveedor"></td>
                <td align="right"><input type="button" id="b_nuevo_albaran_cliente" value="nuevo albarán de cliente"></td>
             </tr>
          </table>
-      
       </div>
    </form>
-   {else}
-      <div class="error">No tienes un agente asociado, y por tanto no puedes crear albaranes.</div>
-   {/if}
-   
-   {include="footer"}
-{/if}

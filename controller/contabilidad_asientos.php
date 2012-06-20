@@ -17,13 +17,30 @@ class contabilidad_asientos extends fs_controller
    {
       $this->asiento = new asiento();
       $this->custom_search = TRUE;
+      $naurl = $this->page->get('contabilidad_nuevo_asiento');
+      if($naurl)
+         $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo asiento', $naurl->url());
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
       
-      if($this->query != '')
+      if( isset($_GET['delete']) )
+      {
+         $asiento = $this->asiento->get($_GET['delete']);
+         if($asiento)
+         {
+            if( $asiento->delete() )
+               $this->new_message("Asiento eliminado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar el asiento! ".$asiento->error_msg);
+         }
+         else
+            $this->new_error_msg("¡Asiento no encontrado!");
+      }
+      
+      if($this->query)
          $this->resultados = $this->asiento->search($this->query, $this->offset);
       else
          $this->resultados = $this->asiento->all($this->offset);

@@ -22,12 +22,12 @@ require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/almacen.php';
 require_once 'model/articulo.php';
+require_once 'model/caja.php';
 require_once 'model/cliente.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
 require_once 'model/empresa.php';
 require_once 'model/forma_pago.php';
-require_once 'model/proveedor.php';
 require_once 'model/serie.php';
 
 class tpv_recambios extends fs_controller
@@ -35,6 +35,7 @@ class tpv_recambios extends fs_controller
    public $agente;
    public $almacen;
    public $articulo;
+   public $caja;
    public $cliente;
    public $divisa;
    public $ejercicio;
@@ -57,10 +58,9 @@ class tpv_recambios extends fs_controller
          $this->new_search();
       else
       {
-         $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
-         
          $this->agente = $this->user->get_agente();
          $this->almacen = new almacen();
+         $this->caja = new caja();
          $this->cliente = new cliente();
          $this->divisa = new divisa();
          $this->ejercicio = new ejercicio();
@@ -76,19 +76,61 @@ class tpv_recambios extends fs_controller
          else if( isset($_COOKIE['impresora']) )
             $this->impresora = $_COOKIE['impresora'];
          
-         if( isset($_POST['cliente']) )
-            $this->nuevo_albaran_cliente();
+         if( $this->agente )
+         {
+            /// obtenemos el bloqueo de caja, sin esto no se puede continuar
+            $this->caja = $this->caja->get_last_from_this_server();
+            if( $this->caja )
+            {
+               if($this->caja->codagente == $this->user->codagente)
+               {
+                  $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
+                  $this->buttons[] = new fs_button('b_borrar_ticket', 'borrar ticket', '#', 'remove', 'img/remove.png');
+                  $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', '#', 'remove', 'img/remove.png');
+                  
+                  if( isset($_GET['cerrar_caja']) )
+                     $this->cerrar_caja();
+                  else if( isset($_POST['cliente']) )
+                     $this->nuevo_albaran_cliente();
+                  else if( isset($_GET['delete']) )
+                     $this->borrar_ticket();
+               }
+               else
+                  $this->new_error_msg("Esta caja está bloqueada por el agente ".$this->caja->agente->get_fullname());
+            }
+            else if( isset($_POST['d_inicial']) )
+            {
+               $this->caja = new caja();
+               $this->caja->codagente = $this->user->codagente;
+               $this->caja->dinero_inicial = floatval($_POST['d_inicial']);
+               $this->caja->dinero_fin = floatval($_POST['d_inicial']);
+               if( $this->caja->save() )
+                  $this->new_message("Caja iniciada con ".$this->caja->show_dinero_inicial()." Euros.");
+               else
+                  $this->new_error_msg("¡Imposible guardar los datos de caja!");
+            }
+            else
+            {
+               if($this->impresora)
+                  $imp = " -d ".$this->impresora;
+               else
+                  $imp = "";
+               shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
+            }
+         }
+         else
+            $this->new_error_msg("¡No tienes un agente asociado a tu usuario!");
       }
    }
    
    private function new_search()
    {
       $cache = new fs_cache();
-      $this->results = $cache->get_array('search_'.$this->query);
+      $this->results = $cache->get_array('search_articulo_'.$this->query);
       if( count($this->results) < 1 )
       {
          $this->results = $this->articulo->search($this->query);
-         $cache->set('search_'.$this->query, $this->results);
+         $cache->set('search_articulo_'.$this->query, $this->results);
       }
    }
    
@@ -181,6 +223,12 @@ class tpv_recambios extends fs_controller
          {
             $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
             $this->imprimir_ticket( $albaran );
+            
+            /// actualizamos la caja
+            $this->caja->dinero_fin += $albaran->totaleuros;
+            $this->caja->tickets += 1;
+            if( !$this->caja->save() )
+               $this->new_error_msg("¡Imposible actualizar la caja!");
          }
          else
             $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
@@ -189,6 +237,97 @@ class tpv_recambios extends fs_controller
          $this->new_error_msg("¡Imposible guardar el albaran!");
    }
    
+   private function cerrar_caja()
+   {
+      $this->caja->fecha_fin = Date('Y-n-j H:i:s');
+      if( $this->caja->save() )
+      {
+         /// abrimos el archivo temporal
+         $file = fopen("/tmp/ticket.txt", "w");
+         if($file)
+         {
+            $empresa = new empresa();
+            $linea = "\n".chr(27).chr(33).chr(56)."CIERRE DE CAJA:".chr(27).chr(33).chr(1)."\n"; /// letras grandes
+            fwrite($file, $linea);
+            $linea = "Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n";
+            fwrite($file, $linea);
+            $linea = "Caja: ".$this->caja->fs_id."\n";
+            fwrite($file, $linea);
+            $linea = "Fecha inicial: ".$this->caja->show_fecha_inicial()."\n";
+            fwrite($file, $linea);
+            $linea = "Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n";
+            fwrite($file, $linea);
+            $linea = "Fecha fin: ".$this->caja->show_fecha_fin()."\n";
+            fwrite($file, $linea);
+            $linea = "Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n";
+            fwrite($file, $linea);
+            $linea = "Diferencia: ".$this->caja->show_diferencia()." Eur.\n";
+            fwrite($file, $linea);
+            $linea = "Tickets: ".$this->caja->tickets."\n\n";
+            fwrite($file, $linea);
+            $linea = "Dinero pesado:\n\n\n";
+            fwrite($file, $linea);
+            $linea = "Observaciones:\n\n\n\n";
+            fwrite($file, $linea);
+            $linea = "Firma:\n\n\n\n\n\n\n";
+            fwrite($file, $linea);
+            
+            /// encabezado común para los tickets
+            $linea = chr(27).chr(33).chr(56).$this->center_text($empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
+            fwrite($file, $linea);
+            $linea = $this->center_text($empresa->lema) . "\n\n";
+            fwrite($file, $linea);
+            $linea = $this->center_text($empresa->direccion . " - " . $empresa->ciudad) . "\n";
+            fwrite($file, $linea);
+            $linea = $this->center_text("CIF: " . $empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
+            fwrite($file, $linea);
+            $linea = $this->center_text($empresa->horario) . "\n";
+            fwrite($file, $linea);
+            fclose($file);
+         }
+         
+         if( file_exists("/tmp/ticket.txt") )
+         {
+            if($this->impresora)
+               $imp = " -d ".$this->impresora;
+            else
+               $imp = "";
+            
+            shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+            shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
+            unlink("/tmp/ticket.txt"); /// borra el ticket
+         }
+         
+         /// recargamos la página
+         header('location: '.$this->url());
+      }
+      else
+         $this->new_error_msg("¡Imposible cerrar la caja!");
+   }
+   
+   private function borrar_ticket()
+   {
+      $albaran = new albaran_cliente();
+      $alb = $albaran->get_by_codigo($_GET['delete']);
+      if($alb)
+      {
+         if( $alb->delete() )
+         {
+            $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
+            
+            /// actualizamos la caja
+            $this->caja->dinero_fin -= $alb->totaleuros;
+            $this->caja->tickets -= 1;
+            if( !$this->caja->save() )
+               $this->new_error_msg("¡Imposible actualizar la caja!");
+         }
+         else
+            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."! ".$alb->error_msg);
+      }
+      else
+         $this->new_error_msg("Ticket no encontrado.");
+   }
+
    private function imprimir_ticket($albaran)
    {
       /// abrimos el archivo temporal

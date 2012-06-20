@@ -40,7 +40,7 @@ class partida extends fs_model
          $this->codsubcuenta = $p['codsubcuenta'];
          $this->idconcepto = $this->intval($p['idconcepto']);
          $this->concepto = $p['concepto'];
-         $this->idcontrapartida = $this->intval($p['idcontrapartida']);
+         $this->idcontrapartida = $p['idcontrapartida'];
          $this->codcontrapartida = $p['codcontrapartida'];
          $this->punteada = ($p['punteada'] == 't');
          $this->tasaconv = $p['tasaconv'];
@@ -108,6 +108,16 @@ class partida extends fs_model
    {
       $subc = new subcuenta();
       $subc = $subc->get($this->idsubcuenta);
+      if($subc)
+         return $subc->url();
+      else
+         return '#';
+   }
+   
+   public function contrapartida_url()
+   {
+      $subc = new subcuenta();
+      $subc = $subc->get($this->idcontrapartida);
       if($subc)
          return $subc->url();
       else

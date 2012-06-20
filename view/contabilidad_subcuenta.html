@@ -17,12 +17,16 @@
          <th>Concepto</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
+         <th>Contrapartida</th>
+         <th>CIF/NIF</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
          <td><a href="{$value->url()}">{$value->concepto}</a></td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
+         <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
+         <td align="center">{$value->cifnif}</td>
       </tr>
       {/loop}
       <tr>
@@ -31,7 +35,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td></td>
+         <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

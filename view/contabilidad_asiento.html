@@ -1,7 +1,18 @@
 {include="header"}
 
 {if condition="$fsc->asiento"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_eliminar_asiento").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar este asiento?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->asiento->idasiento}";
+      });
+   });
+</script>
+
 <div class="rounded">
+   <div class="bloque">Asiento: {$fsc->asiento->codejercicio}</div>
    <div class="bloque">Concepto: {$fsc->asiento->concepto}</div>
    <div class="bloque">Documento: {$fsc->asiento->documento}</div>
    <div class="bloque">Tipo documento: {$fsc->asiento->tipodocumento}</div>
@@ -14,13 +25,17 @@
          <th>Subcuenta</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
+         <th>Contrapartida</th>
+         <th>CIF/NIF</th>
       </tr>
       {loop="$fsc->asiento->get_partidas()"}
       <tr>
          <td>{$value->concepto}</td>
-         <td><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+         <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
+         <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
+         <td align="center">{$value->cifnif}</td>
       </tr>
       {/loop}
    </table>

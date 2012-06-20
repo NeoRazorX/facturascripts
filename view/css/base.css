@@ -258,10 +258,6 @@ div.pages ul {
    font-size: 15px;
 }
 
-div.pages ul li {
-   
-}
-
 div.pages ul li.selected {
    border: 1px dotted white;
 }
@@ -289,10 +285,6 @@ div#shadow {
    height: 100%;
    background: #000;
    opacity: 0.7;
-}
-
-div.main_div {
-   
 }
 
 div.main_div div.popup {
@@ -356,7 +348,7 @@ div.main_div div.bloque {
 }
 
 div.main_div div.right {
-   float: right;
+   text-align: right;
 }
 
 div.main_div table.list {
@@ -411,6 +403,15 @@ div.main_div div.tpv_total {
    padding: 3px;
    padding-left: 6px;
    padding-right: 6px;
+}
+
+h1.jqbar {
+   margin: 5px;
+}
+
+ul.jqbar {
+   padding: 5px;
+   list-style-type: none;
 }
 
 div.footer {

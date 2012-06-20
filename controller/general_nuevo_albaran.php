@@ -81,11 +81,11 @@ class general_nuevo_albaran extends fs_controller
    private function new_search()
    {
       $cache = new fs_cache();
-      $this->results = $cache->get_array('search_'.$this->query);
+      $this->results = $cache->get_array('search_articulo_'.$this->query);
       if( count($this->results) < 1 )
       {
          $this->results = $this->articulo->search($this->query);
-         $cache->set('search_'.$this->query, $this->results);
+         $cache->set('search_articulo_'.$this->query, $this->results);
       }
    }
    

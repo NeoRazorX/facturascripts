@@ -1,4 +1,5 @@
 {if condition="isset($_POST['query'])"}
+   <!--{$fsc->query}-->
    <table class="list">
       <tr>
          <th>Referencia</th>
@@ -43,7 +44,7 @@
             document.f_buscar_articulos.query.value = '';
             $("#search_results").html('');
          });
-         $("#f_buscar_articulos").keyup(function(event) {
+         $("#f_buscar_articulos").keyup(function() {
             if(document.f_buscar_articulos.query.value == '')
             {
                $("#search_results").html('');
@@ -60,11 +61,16 @@
                   dataType: 'html',
                   data: 'query='+document.f_buscar_articulos.query.value,
                   success: function(datos) {
-                     $("#search_results").html(datos);
-                     $("#popup_buscar_articulos").css({
-                        left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-                        top: 40
-                     });
+                     var re = /<!--(.*?)-->/g;
+                     var m = re.exec( datos );
+                     if( m[1] == document.f_buscar_articulos.query.value )
+                     {
+                        $("#search_results").html(datos);
+                        $("#popup_buscar_articulos").css({
+                           left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+                           top: 40
+                        });
+                     }
                   }
                });
             }

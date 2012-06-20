@@ -56,11 +56,11 @@ class general_paquetes extends fs_controller
    {
       $art = new articulo();
       $cache = new fs_cache();
-      $this->results = $cache->get_array('search_'.$this->query);
+      $this->results = $cache->get_array('search_articulo_'.$this->query);
       if( count($this->results) < 1 )
       {
          $this->results = $art->search($this->query);
-         $cache->set('search_'.$this->query, $this->results);
+         $cache->set('search_articulo_'.$this->query, $this->results);
       }
    }
 }

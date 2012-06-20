@@ -26,7 +26,7 @@ class asiento extends fs_model
       {
          $this->idasiento = intval($a['idasiento']);
          $this->numero = $this->intval($a['numero']);
-         $this->idconcepto = $this->intval($a['idconcepto']);
+         $this->idconcepto = $a['idconcepto'];
          $this->concepto = $a['concepto'];
          $this->fecha = $a['fecha'];
          $this->codejercicio = $a['codejercicio'];
@@ -168,7 +168,13 @@ class asiento extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+      if( $this->editable )
+         return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+      else
+      {
+         $this->new_error_msg("El asiento no es editable, por tanto no se puede borrar.");
+         return FALSE;
+      }
    }
    
    public function search($query, $offset=0)

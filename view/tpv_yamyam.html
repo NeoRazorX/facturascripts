@@ -12,10 +12,14 @@
       });
    </script>
    <div class="rounded">
-      <h1>Caja:</h1>
       <form name="f_caja" action="{$fsc->url()}" method="post">
-         ¿Cuanto hay en la caja? <input type="text" name="d_inicial" value="0.00" size="7"/> Euros.
-         <div class="right"><input type="submit" value="guardar"/></div>
+         <h1>
+            Caja:
+            <span><input type="submit" value="guardar"/></span>
+         </h1>
+         ¿Cuanto hay en la caja?
+         <input type="text" name="d_inicial" value="0.00" size="7"/>
+         Euros.
       </form>
    </div>
    {/if}
