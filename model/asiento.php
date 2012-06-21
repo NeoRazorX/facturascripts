@@ -1,9 +1,27 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
-require_once 'model/partida.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
+require_once 'model/partida.php';
+require_once 'model/secuencia.php';
 
 class asiento extends fs_model
 {
@@ -129,14 +147,32 @@ class asiento extends fs_model
          $this->idasiento = intval($newid[0]['nextval']);
    }
    
-   public function get_new_numero()
+   public function new_numero()
    {
-      $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
-      if($num)
-         return (1 + intval($num[0]['num']));
-      else
-         return 1;
+      $secc = new secuencia_contabilidad();
+      $secc = $secc->get_by_params($this->codejercicio, 'nasiento');
+      if($secc)
+      {
+         $this->numero = $secc->valorout;
+         $secc->valorout++;
+         $secc->save();
+      }
+      
+      if(!$secc OR $this->numero <= 1)
+      {
+         $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
+                                   WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+         if($num)
+            $this->numero = 1 + intval($num[0]['num']);
+         else
+            $this->numero = 1;
+         
+         if($secc)
+         {
+            $secc->valorout = 1 + $this->numero;
+            $secc->save();
+         }
+      }
    }
 
    public function save()
@@ -154,7 +190,7 @@ class asiento extends fs_model
       {
          $this->new_idasiento();
          if( is_null($this->numero) )
-            $this->numero = $this->get_new_numero();
+            $this->new_numero();
          
          $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
             documento,tipodocumento,importe) VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",

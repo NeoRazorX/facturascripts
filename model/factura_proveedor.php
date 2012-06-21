@@ -23,6 +23,7 @@ require_once 'model/albaran_proveedor.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/proveedor.php';
+require_once 'model/secuencia.php';
 
 class linea_factura_proveedor extends fs_model
 {

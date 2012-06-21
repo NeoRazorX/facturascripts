@@ -12,4 +12,7 @@
    <columna><nombre>nombre</nombre><tipo>character varying(50)</tipo><nulo>NO</nulo></columna>
    <columna><nombre>idsec</nombre><tipo>serial</tipo><nulo>NO</nulo><defecto>nextval('secuencias_idsec_seq'::regclass)</defecto></columna>
    <restriccion><nombre>secuencias_pkey</nombre><consulta>PRIMARY KEY (idsec)</consulta></restriccion>
+   <restriccion><nombre>ca_secuencias_secuenciasejercicios</nombre><consulta>FOREIGN KEY (id)
+      REFERENCES secuenciasejercicios (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta></restriccion>
 </tabla>

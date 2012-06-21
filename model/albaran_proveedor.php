@@ -22,6 +22,7 @@ require_once 'model/agente.php';
 require_once 'model/articulo.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/proveedor.php';
+require_once 'model/secuencia.php';
 
 class linea_albaran_proveedor extends fs_model
 {
@@ -185,12 +186,12 @@ class linea_albaran_proveedor extends fs_model
    {
       $toplist = array();
       $articulo = new articulo();
-      $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas FROM ".$this->table_name."
-                                            GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
+      $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as compras FROM ".$this->table_name."
+                                         GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
       if($lineas)
       {
          foreach($lineas as $l)
-            $toplist[] = $articulo->get($l['referencia']);
+            $toplist[] = array($articulo->get($l['referencia']), intval($l['compras']));
       }
       return $toplist;
    }
@@ -395,12 +396,31 @@ class albaran_proveedor extends fs_model
    
    public function new_codigo()
    {
-      $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
-      if($numero)
-         $this->numero = 1 + intval($numero[0]['num']);
-      else
-         $this->numero = 1;
+      $sec = new secuencia();
+      $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'nalbaranprov');
+      if($sec)
+      {
+         $this->numero = $sec->valorout;
+         $sec->valorout++;
+         $sec->save();
+      }
+      
+      if(!$sec OR $this->numero <= 1)
+      {
+         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
+            WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
+         if($numero)
+            $this->numero = 1 + intval($numero[0]['num']);
+         else
+            $this->numero = 1;
+         
+         if($sec)
+         {
+            $sec->valorout = 1 + $this->numero;
+            $sec->save();
+         }
+      }
+      
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
    }
    

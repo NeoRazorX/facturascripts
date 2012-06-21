@@ -44,19 +44,19 @@
 </div>
 
 <div class="rounded">
-   <h1>Top ventas:</h1>
+   <h1>Top ventas (unidades):</h1>
    <ul class="horizontal">
       {loop="$fsc->top_ventas"}
-      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
       {/loop}
    </ul>
 </div>
 
 <div class="rounded">
-   <h1>Top compras:</h1>
+   <h1>Top compras (unidades):</h1>
    <ul class="horizontal">
       {loop="$fsc->top_compras"}
-      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
       {/loop}
    </ul>
 </div>

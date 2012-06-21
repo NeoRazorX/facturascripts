@@ -1,4 +1,27 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * Estos tres modelos (secuencia, secuencia_contabilidad y secuencia_ejercicio)
+ * existen para mantener compatibilidad con eneboo, porque maldita la gana que
+ * yo tengo de usar TRES tablas para algo tan simple...
+ */
 
 require_once 'base/fs_model.php';
 require_once 'model/ejercicio.php';
@@ -18,8 +41,8 @@ class secuencia extends fs_model
       parent::__construct('secuencias');
       if($s)
       {
-         $this->idsec = intval($s['idsec']);
-         $this->id = intval($s['id']);
+         $this->idsec = $this->intval($s['idsec']);
+         $this->id = $this->intval($s['id']);
          $this->valorout = intval($s['valorout']);
          $this->valor = intval($s['valor']);
          $this->descripcion = $s['descripcion'];
@@ -74,6 +97,7 @@ class secuencia extends fs_model
             $newsec = new secuencia();
             $newsec->id = $aux->id;
             $newsec->nombre = $nombre;
+            $newsec->descripcion = 'Secuencia del ejercicio '.$eje.' y la serie '.$serie;
             return $newsec;
          }
       }
@@ -124,6 +148,93 @@ class secuencia extends fs_model
    }
 }
 
+class secuencia_contabilidad extends fs_model
+{
+   public $valorout;
+   public $valor;
+   public $descripcion;
+   public $nombre;
+   public $codejercicio;
+   public $idsecuencia; /// pkey
+   
+   public function __construct($s = FALSE)
+   {
+      parent::__construct('co_secuencias');
+      if($s)
+      {
+         $this->codejercicio = $s['codejercicio'];
+         $this->descripcion = $s['descripcion'];
+         $this->idsecuencia = $this->intval($s['idsecuencia']);
+         $this->nombre = $s['nombre'];
+         $this->valor = $this->intval($s['valor']);
+         $this->valorout = intval($s['valorout']);
+      }
+      else
+      {
+         $this->codejercicio = NULL;
+         $this->descripcion = NULL;
+         $this->idsecuencia = NULL;
+         $this->nombre = NULL;
+         $this->valor = NULL;
+         $this->valorout = 1;
+      }
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function get_by_params($eje, $nombre)
+   {
+      $secuencias = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codejercicio = '".$eje."' AND nombre = '".$nombre."';");
+      if($secuencias)
+         return new secuencia_contabilidad($secuencias[0]);
+      else
+         return FALSE;
+   }
+
+   public function exists()
+   {
+      if( is_null($this->idsecuencia) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsecuencia = '".$this->idsecuencia."';");
+   }
+   
+   public function new_id()
+   {
+      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idsecuencia_seq');");
+      if($newid)
+         $this->idsecuencia = intval($newid[0]['nextval']);
+   }
+   
+   public function save()
+   {
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET codejercicio = ".$this->var2str($this->codejercicio).",
+            descripcion = ".$this->var2str($this->descripcion).", nombre = ".$this->var2str($this->nombre).",
+            valor = ".$this->var2str($this->valor).", valorout = ".$this->var2str($this->valorout)."
+            WHERE idsecuencia = '".$this->idsecuencia."';";
+      }
+      else
+      {
+         $this->new_id();
+         $sql = "INSERT INTO ".$this->table_name." (codejercicio,descripcion,nombre,valor,valorout) VALUES
+            (".$this->var2str($this->codejercicio).",".$this->var2str($this->descripcion).",".$this->var2str($this->nombre).",
+            ".$this->var2str($this->valor).",".$this->var2str($this->valorout).");";
+      }
+      return $this->db->exec($sql);
+   }
+   
+   public function delete()
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsecuencia = '".$this->idsecuencia."';");
+   }
+}
+
 class secuencia_ejercicio extends fs_model
 {
    public $id; /// pkey
@@ -142,7 +253,7 @@ class secuencia_ejercicio extends fs_model
       parent::__construct('secuenciasejercicios');
       if($s)
       {
-         $this->id = intval($s['id']);
+         $this->id = $this->intval($s['id']);
          $this->codejercicio = $s['codejercicio'];
          $this->codserie = $s['codserie'];
          $this->nalbarancli = intval($s['nalbarancli']);
@@ -175,7 +286,7 @@ class secuencia_ejercicio extends fs_model
    
    public function get($id)
    {
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$id.";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -184,8 +295,8 @@ class secuencia_ejercicio extends fs_model
    
    public function get_by_params($eje, $serie)
    {
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$eje."
-                                 AND codserie = ".$serie.";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codejercicio = '".$eje."' AND codserie = '".$serie."';");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -198,7 +309,7 @@ class secuencia_ejercicio extends fs_model
       $serie = new serie();
       foreach($eje->all() as $e)
       {
-         $secs = $this->all_from_ejercicio($e);
+         $secs = $this->all_from_ejercicio($e->codejercicio);
          foreach($serie->all() as $serie)
          {
             $encontrada = FALSE;
@@ -268,7 +379,7 @@ class secuencia_ejercicio extends fs_model
    public function all_from_ejercicio($eje)
    {
       $seclist = array();
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$eje.";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$eje."';");
       if($secs)
       {
          foreach($secs as $s)

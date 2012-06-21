@@ -23,6 +23,7 @@ require_once 'model/albaran_cliente.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
+require_once 'model/secuencia.php';
 
 class linea_factura_cliente extends fs_model
 {
@@ -436,12 +437,31 @@ class factura_cliente extends fs_model
    
    public function new_codigo()
    {
-      $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
-      if($numero)
-         $this->numero = 1 + intval($numero[0]['num']);
-      else
-         $this->numero = 1;
+      $sec = new secuencia();
+      $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'nfacturacli');
+      if($sec)
+      {
+         $this->numero = $sec->valorout;
+         $sec->valorout++;
+         $sec->save();
+      }
+      
+      if(!$sec OR $this->numero <= 1)
+      {
+         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
+            WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
+         if($numero)
+            $this->numero = 1 + intval($numero[0]['num']);
+         else
+            $this->numero = 1;
+         
+         if($sec)
+         {
+            $sec->valorout = 1 + $this->numero;
+            $sec->save();
+         }
+      }
+      
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
    }
    
