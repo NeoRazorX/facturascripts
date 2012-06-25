@@ -41,6 +41,7 @@ class fs_controller
    public $custom_search;
    public $query;
    public $buttons;
+   private $empresa_name;
 
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
@@ -67,6 +68,8 @@ class fs_controller
          /// recuperamos el mensaje de error de fs_page()
          $this->new_error_msg( $this->page->error_msg );
          $this->ppage = FALSE;
+         
+         $this->empresa_name = $this->get_empresa_name();
          
          if( isset($_GET['logout']) )
             $this->log_out();
@@ -186,7 +189,7 @@ class fs_controller
    {
       $tiempo = explode(" ", microtime());
       $tiempo = $tiempo[1] + $tiempo[0];
-      return(number_format($tiempo - $this->uptime, 3) . ' segundos');
+      return (number_format($tiempo - $this->uptime, 3) . ' segundos');
    }
    
    public function selects()
@@ -201,14 +204,18 @@ class fs_controller
    
    public function get_empresa_name()
    {
-      if( isset($_COOKIE['empresa']) )
-         return $_COOKIE['empresa'];
+      $name = '';
+      if( isset($this->empresa_name) )
+         $name = $this->empresa_name;
+      else if( isset($_COOKIE['empresa']) )
+         $name = $_COOKIE['empresa'];
       else
       {
          $e = new empresa();
          setcookie('empresa', $e->nombre, time()+FS_COOKIES_EXPIRE);
-         return $e->nombre;
+         $name = $e->nombre;
       }
+      return $name;
    }
    
    protected function load_menu()
@@ -276,7 +283,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.5';
+      return '0.9.6';
    }
    
    public function select_default_page()

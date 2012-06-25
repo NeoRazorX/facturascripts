@@ -48,14 +48,14 @@
       <tr>
          <th>referencia</th>
          <th>descripción</th>
-         <th align="right">PVP</th>
+         <th align="right">PVP+IVA</th>
          <th align="right">stock</th>
       </tr>
       {loop="$fsc->articulos"}
       <tr>
          <td><a href="{$value->url()}">{$value->referencia}</a></td>
          <td>{$value->descripcion}</td>
-         <td align="right">{$value->show_pvp()} &euro;</td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
          <td align="right">{$value->stockfis}</td>
       </tr>
       {/loop}

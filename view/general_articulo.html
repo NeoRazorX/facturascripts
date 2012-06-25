@@ -88,7 +88,7 @@
          </div>
          <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5"/></div>
          <div class="bloque">PVP+IVA ({$fsc->articulo->show_pvp_iva()}): <input type="text" name="pvp_iva" value="" size="5"/></div>
-         <div class="bloque">Actualizado: {$fsc->articulo->show_factualizado()}</div>
+         <div class="bloque">Actualizado: {$fsc->articulo->factualizado}</div>
          <div class="bloque">
             {if condition="$fsc->articulo->secompra"}
             <input type="checkbox" name="secompra" value="TRUE" checked="checked" id="articulo_secompra"/>

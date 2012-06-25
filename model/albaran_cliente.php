@@ -267,7 +267,7 @@ class albaran_cliente extends fs_model
          $this->ciudad = $a['ciudad'];
          $this->provincia = $a['provincia'];
          $this->apartado = $a['apartado'];
-         $this->fecha = $a['fecha'];
+         $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
          $this->hora = $a['hora'];
          $this->neto = floatval($a['neto']);
          $this->total = floatval($a['total']);
@@ -335,19 +335,6 @@ class albaran_cliente extends fs_model
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', ' ');
-   }
-   
-   public function show_fecha()
-   {
-      return Date('d-m-Y', strtotime($this->fecha));
-   }
-   
-   public function show_hora($s=TRUE)
-   {
-      if($s)
-         return Date('H:i:s', strtotime($this->hora));
-      else
-         return Date('H:i', strtotime($this->hora));
    }
    
    public function observaciones_resume()

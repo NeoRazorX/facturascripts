@@ -323,7 +323,7 @@ class tpv_yamyam extends fs_controller
             fwrite($file, $linea);
             $linea = "Caja: ".$this->caja->fs_id."\n";
             fwrite($file, $linea);
-            $linea = "Fecha inicial: ".$this->caja->show_fecha_inicial()."\n";
+            $linea = "Fecha inicial: ".$this->caja->fecha_inicial."\n";
             fwrite($file, $linea);
             $linea = "Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n";
             fwrite($file, $linea);

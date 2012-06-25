@@ -216,7 +216,7 @@ class articulo extends fs_model
          $this->codfamilia = $a['codfamilia'];
          $this->descripcion = $a['descripcion'];
          $this->pvp = floatval($a['pvp']);
-         $this->factualizado = $a['factualizado'];
+         $this->factualizado = Date('d-m-Y', strtotime($a['factualizado']));
          $this->codimpuesto = $a['codimpuesto'];
          $this->stockfis = floatval($a['stockfis']);
          $this->stockmin = floatval($a['stockmin']);
@@ -270,17 +270,12 @@ class articulo extends fs_model
          return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', '');
    }
    
-   public function show_factualizado()
-   {
-      return Date('d-m-Y', strtotime($this->factualizado));
-   }
-   
    public function url()
    {
-      if( isset($this->referencia) )
-         return "index.php?page=general_articulo&ref=".$this->referencia;
-      else
+      if( is_null($this->referencia) )
          return "index.php?page=general_articulos";
+      else
+         return "index.php?page=general_articulo&ref=".$this->referencia;
    }
    
    public function get($ref)

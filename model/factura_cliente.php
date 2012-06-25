@@ -245,7 +245,7 @@ class factura_cliente extends fs_model
          $this->codalmacen = $f['codalmacen'];
          $this->codpago = $f['codpago'];
          $this->coddivisa = $f['coddivisa'];
-         $this->fecha = $f['fecha'];
+         $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
          $this->codcliente = $f['codcliente'];
          $this->nombrecliente = $f['nombrecliente'];
          $this->cifnif = $f['cifnif'];
@@ -330,11 +330,6 @@ class factura_cliente extends fs_model
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', '.');
-   }
-   
-   public function show_fecha()
-   {
-      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function observaciones_resume()

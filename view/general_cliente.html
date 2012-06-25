@@ -26,11 +26,11 @@
 
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <h1>
          {$fsc->cliente->nombre}
          <span><input type="submit" value="modificar"/></span>
       </h1>
-      <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}"/>
       </div>
@@ -60,38 +60,120 @@
 
 <div class="popup" id="popup_direcciones" style="min-width: 700px">
    <h1>Direcciones:</h1>
-   <table class="list">
-      <tr>
-         <th>Envío</th>
-         <th>Facturación</th>
-         <th>Pais</th>
-         <th>Provincia</th>
-         <th>Ciudad</th>
-         <th>Cod. Postal</th>
-         <th>Dirección</th>
-         <th>Apartado</th>
-      </tr>
-      {loop="$fsc->cliente->get_direcciones()"}
-      <tr>
-         {if condition="$value->domenvio"}
-         <td>Si</td>
-         {else}
-         <td>-</td>
-         {/if}
-         {if condition="$value->domfacturacion"}
-         <td>Si</td>
-         {else}
-         <td>-</td>
-         {/if}
-         <td>{$value->codpais}</td>
-         <td>{$value->provincia}</td>
-         <td>{$value->ciudad}</td>
-         <td>{$value->codpostal}</td>
-         <td>{$value->direccion}</td>
-         <td>{$value->apartado}</td>
-      </tr>
-      {/loop}
-   </table>
+   {loop="$fsc->cliente->get_direcciones()"}
+      <div class="grupo">
+         <form action="{$fsc->url()}" method="post"/>
+            <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
+            <input type="hidden" name="coddir" value="{$value->id}"/>
+            <h2>
+               Dirección {$value->id}:
+               <span><input type="submit" value="guardar"/></span>
+            </h2>
+            <div class="bloque">
+               <a href="">País</a>:
+               <select name="pais">
+                  {loop="$fsc->pais->all()"}
+                     {if condition="$value1->codpais==$value2->codpais"}
+                        <option value="{$value2->codpais}" selected="selected">{$value2->nombre}</option>
+                     {else}
+                        <option value="{$value2->codpais}">{$value2->nombre}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+            <div class="bloque">
+               Provincia:
+               <input type="text" name="provincia" value="{$value->provincia}" size="12"/>
+            </div>
+            <div class="bloque">
+               Ciudad:
+               <input type="text" name="ciudad" value="{$value->ciudad}" size="12"/>
+            </div>
+            <div class="bloque">
+               Código postal:
+               <input type="text" name="codpostal" value="{$value->codpostal}" size="6"/>
+            </div>
+            <div class="bloque">
+               Dirección:
+               <input type="text" name="direccion" value="{$value->direccion}" size="25"/>
+            </div>
+            <div class="bloque">
+               Apartado:
+               <input type="text" name="apartado" value="{$value->apartado}" size="6"/>
+            </div>
+            <div class="bloque">
+               {if condition="$value->domenvio"}
+                  <input type="checkbox" name="direnvio" id="direnvio_{$value->id}" value="TRUE" checked="checked"/>
+               {else}
+                  <input type="checkbox" name="direnvio" id="direnvio_{$value->id}" value="TRUE"/>
+               {/if}
+               <label for="direnvio_{$value->id}">Dirección de envío</label>
+            </div>
+            <div class="bloque">
+               {if condition="$value->domfacturacion"}
+                  <input type="checkbox" name="dirfact" id="dirfact_{$value->id}" value="TRUE" checked="checked"/>
+               {else}
+                  <input type="checkbox" name="dirfact" id="dirfact_{$value->id}" value="TRUE"/>
+               {/if}
+               <label for="dirfact_{$value->id}">Dirección de facturación</label>
+            </div>
+            <div class="bloque">
+               Descripción:
+               <input type="text" name="descripcion" value="{$value->descripcion}" size="30"/>
+            </div>
+         </form>
+      </div>
+   {/loop}
+   <div class="grupo">
+      <form action="{$fsc->url()}" method="post">
+         <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
+         <input type="hidden" name="coddir" value=""/>
+         <h2>
+            Nueva dirección:
+            <span><input type="submit" value="guardar"/></span>
+         </h2>
+         <div class="bloque">
+            <a href="">País</a>:
+            <select name="pais">
+               {loop="$fsc->pais->all()"}
+                  <option value="{$value->codpais}">{$value->nombre}</option>
+               {/loop}
+            </select>
+         </div>
+         <div class="bloque">
+            Provincia:
+            <input type="text" name="provincia" size="12"/>
+         </div>
+         <div class="bloque">
+            Ciudad:
+            <input type="text" name="ciudad" size="12"/>
+         </div>
+         <div class="bloque">
+            Código postal:
+            <input type="text" name="codpostal" size="6"/>
+         </div>
+         <div class="bloque">
+            Dirección:
+            <input type="text" name="direccion" size="25"/>
+         </div>
+         <div class="bloque">
+            Apartado:
+            <input type="text" name="apartado" size="6"/>
+         </div>
+         <div class="bloque">
+            <input type="checkbox" name="direnvio" id="ndirenvio" value="TRUE" checked="checked"/>
+            <label for="ndirenvio">Dirección de envío</label>
+         </div>
+         <div class="bloque">
+            <input type="checkbox" name="dirfact" id="ndirfact" value="TRUE" checked="checked"/>
+            <label for="ndirfact">Dirección de facturación</label>
+         </div>
+         <div class="bloque">
+            Descripción:
+            <input type="text" name="descripcion" size="30"/>
+         </div>
+      </form>
+   </div>
 </div>
 
 <div class="popup" id="popup_subcuentas" style="min-width: 700px">
@@ -136,7 +218,7 @@
          <td>{$value->numero2}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>
-         <td align="right">{$value->show_fecha()}</td>
+         <td align="right">{$value->fecha}</td>
       </tr>
       {/loop}
       <tr>

@@ -65,14 +65,6 @@ table#tpv_albaran td {
    vertical-align: middle;
 }
 
-div.popup div.grupo {
-   margin: 5px;
-   margin-bottom: 10px;
-   padding: 5px;
-   background-color: #FFFAA6;
-   border: 1px dashed #333333;
-}
-
 div.popup div.grupo label {
    display: inline-block;
    padding: 10px;

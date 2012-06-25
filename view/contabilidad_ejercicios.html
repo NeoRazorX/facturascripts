@@ -29,11 +29,11 @@
          </tr>
          <tr>
             <td align="right">Fecha de inicio:</td>
-            <td><input type="text" name="fechainicio" value="{$fsc->ejercicio->show_fechainicio()}"/></td>
+            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="12"/></td>
          </tr>
          <tr>
             <td align="right">Fecha fin:</td>
-            <td><input type="text" name="fechafin" value="{$fsc->ejercicio->show_fechafin()}"/></td>
+            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="12"/></td>
          </tr>
          <tr>
             <td align="right">Estado:</td>
@@ -60,10 +60,10 @@
          Nombre: <input type="text" name="nombre" value="{$value->nombre}"/>
       </div>
       <div class="bloque">
-         Fecha de inicio: <input type="text" name="fechaini" value="{$value->show_fechainicio()}"/>
+         Fecha de inicio: <input class="tcal" type="text" name="fechaini" value="{$value->fechainicio}" size="12"/>
       </div>
       <div class="bloque">
-         Fecha fin: <input type="text" name="fechafin" value="{$value->show_fechafin()}"/>
+         Fecha fin: <input class="tcal" type="text" name="fechafin" value="{$value->fechafin}" size="12"/>
       </div>
       <div class="bloque">
          Estado:

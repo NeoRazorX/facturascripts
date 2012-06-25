@@ -72,7 +72,7 @@
          <td><a href="{$value->url()}">{$value->referencia}</a></td>
          <td>{$value->codfamilia}</td>
          <td>{$value->descripcion}</td>
-         <td align="right">{$value->show_pvp_iva()} &euro;</td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
          <td align="right">{$value->stockfis}</td>
       </tr>
       {else}

@@ -174,11 +174,20 @@ class direccion_cliente extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "";
+         $sql = "UPDATE ".$this->table_name." SET codcliente = ".$this->var2str($this->codcliente).",
+            codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
+            provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
+            codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
+            domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
+            descripcion = ".$this->var2str($this->descripcion)." WHERE id = '".$this->id."';";
       }
       else
       {
-         $sql = "";
+         $sql = "INSERT INTO ".$this->table_name." (codcliente,codpais,apartado,provincia,ciudad,codpostal,direccion,
+            domenvio,domfacturacion,descripcion) VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->codpais).",
+            ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
+            ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->domenvio).",
+            ".$this->var2str($this->domfacturacion).",".$this->var2str($this->descripcion).");";
       }
       return $this->db->exec($sql);
    }

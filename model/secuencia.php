@@ -61,6 +61,7 @@ class secuencia extends fs_model
    
    protected function install()
    {
+      $sece = new secuencia_ejercicio();
       return "";
    }
    

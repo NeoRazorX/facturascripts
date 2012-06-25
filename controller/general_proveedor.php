@@ -78,7 +78,7 @@ class general_proveedor extends fs_controller
       if($this->proveedor)
          return $this->proveedor->url();
       else
-         return $this->page->url();
+         return $this->ppage->url();
    }
    
    public function anterior_url()

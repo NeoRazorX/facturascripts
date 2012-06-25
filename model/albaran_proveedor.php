@@ -242,7 +242,7 @@ class albaran_proveedor extends fs_model
          $this->codpago = $a['codpago'];
          $this->codagente = $a['codagente'];
          $this->codalmacen = $a['codalmacen'];
-         $this->fecha = $a['fecha'];
+         $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
          $this->codproveedor = $a['codproveedor'];
          $this->nombre = $a['nombre'];
          $this->cifnif = $a['cifnif'];
@@ -302,11 +302,6 @@ class albaran_proveedor extends fs_model
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', '.');
-   }
-   
-   public function show_fecha()
-   {
-      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function observaciones_resume()

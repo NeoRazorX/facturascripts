@@ -18,11 +18,13 @@
  */
 
 require_once 'model/cliente.php';
+require_once 'model/pais.php';
 
 class general_cliente extends fs_controller
 {
-   public $cliente;
    public $albaranes;
+   public $cliente;
+   public $pais;
    public $offset;
    
    public function __construct()
@@ -34,8 +36,30 @@ class general_cliente extends fs_controller
    {
       $this->ppage = $this->page->get('general_clientes');
       $this->cliente = new cliente();
+      $this->pais = new pais();
       
-      if( isset($_POST['codcliente']) )
+      if( isset($_POST['coddir']) )
+      {
+         $this->cliente = $this->cliente->get( $_POST['codcliente'] );
+         $dir = new direccion_cliente();
+         if($_POST['coddir'] != '')
+            $dir = $dir->get($_POST['coddir']);
+         $dir->apartado = $_POST['apartado'];
+         $dir->ciudad = $_POST['ciudad'];
+         $dir->codcliente = $this->cliente->codcliente;
+         $dir->codpais = $_POST['pais'];
+         $dir->codpostal = $_POST['codpostal'];
+         $dir->descripcion = $_POST['descripcion'];
+         $dir->direccion = $_POST['direccion'];
+         $dir->domenvio = isset($_POST['direnvio']);
+         $dir->domfacturacion = isset($_POST['dirfact']);
+         $dir->provincia = $_POST['provincia'];
+         if( $dir->save() )
+            $this->new_message("Dirección guardada correctamente.");
+         else
+            $this->new_message("¡Imposible guardar la dirección!");
+      }
+      else if( isset($_POST['codcliente']) )
       {
          $this->cliente = $this->cliente->get( $_POST['codcliente'] );
          $this->cliente->nombre = $_POST['nombre'];
@@ -76,7 +100,7 @@ class general_cliente extends fs_controller
       if($this->cliente)
          return $this->cliente->url();
       else
-         return $this->page->url();
+         return $this->ppage->url();
    }
    
    public function anterior_url()

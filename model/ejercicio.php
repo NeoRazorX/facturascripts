@@ -45,8 +45,8 @@ class ejercicio extends fs_model
          $this->plancontable = $e['plancontable'];
          $this->longsubcuenta = intval($e['longsubcuenta']);
          $this->estado = $e['estado'];
-         $this->fechafin = $e['fechafin'];
-         $this->fechainicio = $e['fechainicio'];
+         $this->fechafin = Date('d-m-Y', strtotime($e['fechafin']));
+         $this->fechainicio = Date('d-m-Y', strtotime($e['fechainicio']));
          $this->nombre = $e['nombre'];
          $this->codejercicio = $e['codejercicio'];
       }
@@ -64,16 +64,6 @@ class ejercicio extends fs_model
          $this->codejercicio = NULL;
       }
       
-   }
-   
-   public function show_fechainicio()
-   {
-      return Date('d-m-Y', strtotime($this->fechainicio));
-   }
-   
-   public function show_fechafin()
-   {
-      return Date('d-m-Y', strtotime($this->fechafin));
    }
    
    public function get_new_codigo()

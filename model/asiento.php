@@ -46,7 +46,7 @@ class asiento extends fs_model
          $this->numero = $this->intval($a['numero']);
          $this->idconcepto = $a['idconcepto'];
          $this->concepto = $a['concepto'];
-         $this->fecha = $a['fecha'];
+         $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
          $this->codejercicio = $a['codejercicio'];
          $this->codplanasiento = $a['codplanasiento'];
          $this->editable = ($a['editable'] == 't');
@@ -68,11 +68,6 @@ class asiento extends fs_model
          $this->tipodocumento = NULL;
          $this->importe = 0;
       }
-   }
-   
-   public function show_fecha()
-   {
-      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function show_importe()

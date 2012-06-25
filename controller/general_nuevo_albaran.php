@@ -57,8 +57,6 @@ class general_nuevo_albaran extends fs_controller
          $this->new_search();
       else
       {
-         $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
-         
          $this->agente = $this->user->get_agente();
          $this->almacen = new almacen();
          $this->cliente = new cliente();
@@ -67,6 +65,9 @@ class general_nuevo_albaran extends fs_controller
          $this->forma_pago = new forma_pago();
          $this->proveedor = new proveedor();
          $this->serie = new serie();
+         
+         if($this->agente)
+            $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
          
          if( isset($_POST['tipoalbaran']) )
          {

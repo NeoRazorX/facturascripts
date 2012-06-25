@@ -184,7 +184,7 @@ class factura_proveedor extends fs_model
          $this->numproveedor = $f['numproveedor'];
          $this->codejercicio = $f['codejercicio'];
          $this->codserie = $f['codserie'];
-         $this->fecha = $f['fecha'];
+         $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
          $this->codproveedor = $f['codproveedor'];
          $this->nombre = $f['nombre'];
          $this->cifnif = $f['cifnif'];
@@ -247,11 +247,6 @@ class factura_proveedor extends fs_model
    public function show_total()
    {
       return number_format($this->totaleuros, 2, ',', '.');
-   }
-   
-   public function show_fecha()
-   {
-      return Date('d-m-Y', strtotime($this->fecha));
    }
    
    public function observaciones_resume()

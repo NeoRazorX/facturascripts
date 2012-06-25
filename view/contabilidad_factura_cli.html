@@ -8,16 +8,16 @@
          <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
-         Número: <input type="text" name="numero" value="{$fsc->factura->numero}"/>
-      </div>
-      <div class="bloque">
          Ejercicio: {$fsc->factura->codejercicio}
       </div>
       <div class="bloque">
          Serie: {$fsc->factura->codserie}
       </div>
       <div class="bloque">
-         Fecha: <input type="text" name="fecha" value="{$fsc->factura->fecha}"/>
+         Número: {$fsc->factura->numero}
+      </div>
+      <div class="bloque">
+         Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->factura->fecha}" size="12"/>
       </div>
       {if condition="$fsc->agente"}
       <div class="bloque">

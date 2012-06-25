@@ -105,7 +105,13 @@ class tpv_recambios extends fs_controller
                $this->caja->dinero_inicial = floatval($_POST['d_inicial']);
                $this->caja->dinero_fin = floatval($_POST['d_inicial']);
                if( $this->caja->save() )
+               {
+                  $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
+                  $this->buttons[] = new fs_button('b_borrar_ticket', 'borrar ticket', '#', 'remove', 'img/remove.png');
+                  $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', '#', 'remove', 'img/remove.png');
+                  
                   $this->new_message("Caja iniciada con ".$this->caja->show_dinero_inicial()." Euros.");
+               }
                else
                   $this->new_error_msg("¡Imposible guardar los datos de caja!");
             }
@@ -253,7 +259,7 @@ class tpv_recambios extends fs_controller
             fwrite($file, $linea);
             $linea = "Caja: ".$this->caja->fs_id."\n";
             fwrite($file, $linea);
-            $linea = "Fecha inicial: ".$this->caja->show_fecha_inicial()."\n";
+            $linea = "Fecha inicial: ".$this->caja->fecha_inicial."\n";
             fwrite($file, $linea);
             $linea = "Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n";
             fwrite($file, $linea);
