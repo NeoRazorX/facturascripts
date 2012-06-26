@@ -40,8 +40,9 @@ class contabilidad_factura_cli extends fs_controller
          if($this->factura)
          {
             $this->page->title = $this->factura->codigo;
-            $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
             $this->agente = $this->factura->get_agente();
+            if($this->factura->idasiento)
+               $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
          }
       }
    }
@@ -51,7 +52,7 @@ class contabilidad_factura_cli extends fs_controller
       if($this->factura)
          return $this->factura->url();
       else
-         return $this->page->url();
+         return $this->ppage->url();
    }
 }
 

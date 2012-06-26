@@ -38,6 +38,14 @@
       </div>
       <br/>
       <div class="bloque">
+         {if condition="$fsc->empresa->contintegrada"}
+            <input type="checkbox" name="contintegrada" id="contintegrada" value="TRUE" checked="checked"/>
+         {else}
+            <input type="checkbox" name="contintegrada" id="contintegrada" value="TRUE"/>
+         {/if}
+         <label for="contintegrada">Contabilidad integrada</label>
+      </div>
+      <div class="bloque">
          <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
          <select name="codejercicio">
          {loop="$fsc->ejercicio->all()"}

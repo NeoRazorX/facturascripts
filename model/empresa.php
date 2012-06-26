@@ -84,7 +84,7 @@ class empresa extends fs_model
       {
          $this->id = NULL;
          $this->stockpedidos = FALSE;
-         $this->contintegrada = TRUE;
+         $this->contintegrada = FALSE;
          $this->recequivalencia = FALSE;
          $this->codserie = NULL;
          $this->codalmacen = NULL;

@@ -337,6 +337,19 @@ class albaran_cliente extends fs_model
       return number_format($this->totaleuros, 2, ',', ' ');
    }
    
+   public function show_fecha()
+   {
+      return $this->fecha;
+   }
+   
+   public function show_hora($s=TRUE)
+   {
+      if($s)
+         return Date('H:i:s', strtotime($this->hora));
+      else
+         return Date('H:i', strtotime($this->hora));
+   }
+   
    public function observaciones_resume()
    {
       if($this->observaciones == '')

@@ -342,7 +342,7 @@ class tpv_recambios extends fs_controller
       {
          $empresa = new empresa();
          $linea = "\nTicket: " . $albaran->codigo;
-         $linea .= " " . $albaran->show_fecha();
+         $linea .= " " . $albaran->fecha;
          $linea .= " " . $albaran->show_hora(FALSE) . "\n";
          fwrite($file, $linea);
          $linea = "Cliente: " . $albaran->nombrecliente . "\n";

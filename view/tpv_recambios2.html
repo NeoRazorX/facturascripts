@@ -30,11 +30,14 @@
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
-      function ajustar_total(num)
+      function ajustar_total()
       {
          var total = 0;
          var uds = 0;
          var pvp = 0;
+         var dto = 0;
+         var iva = 0;
+         var tpv_total = 0;
          for(var i=1; i<=numlineas; i++)
          {
             if($("#linea_"+i).length > 0)
@@ -42,17 +45,26 @@
                total = parseFloat( $("#total_"+i).val() );
                uds = parseFloat( $("#cantidad_"+i).val() );
                pvp = parseFloat( $("#pvp_"+i).val() );
-               $("#dto_"+i).val(100 - (100*total)/(pvp*uds));
+               dto = 100 - (100*total)/(pvp*uds);
+               if( isNaN(dto) )
+                  $("#dto_"+i).val(0);
+               else
+                  $("#dto_"+i).val(dto);
+               iva = parseFloat( $("#iva_"+i).val() );
+               $("#totiva_"+i).val( (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100) );
+               tpv_total += (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100);
             }
          }
-         recalcular();
+         $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
-      function ajustar_totiva(num)
+      function ajustar_totiva()
       {
          var totiva = 0;
          var uds = 0;
          var pvp = 0;
          var iva = 0;
+         var dto = 0;
+         var tpv_total = 0;
          for(var i=1; i<=numlineas; i++)
          {
             if($("#linea_"+i).length > 0)
@@ -61,10 +73,16 @@
                uds = parseFloat( $("#cantidad_"+i).val() );
                pvp = parseFloat( $("#pvp_"+i).val() );
                iva = parseFloat( $("#iva_"+i).val() );
-               $("#dto_"+i).val(100 - (100*totiva)/(pvp*uds*(100+iva)/100));
+               dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
+               if( isNaN(dto) )
+                  $("#dto_"+i).val(0);
+               else
+                  $("#dto_"+i).val(dto);
+               $("#total_"+i).val( uds*pvp*(100-dto)/100 );
+               tpv_total += (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100);
             }
          }
-         recalcular();
+         $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
       function linea_sum_ud(num,value)
       {
@@ -86,10 +104,10 @@
                <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='2'/>\n\
                <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
                <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
-               <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"' size='5' onkeyup='recalcular()'/> €</td>\n\
-               <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+"' size='4' onkeyup='recalcular()'/> %</td>\n\
-               <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+"' size='5' onkeyup='ajustar_total("+numlineas+")'/> €</td>\n\
-               <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+"' size='5' onkeyup='ajustar_totiva("+numlineas+")'/> €</td></tr>");
+               <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"' size='6' onkeyup='recalcular()'/> €</td>\n\
+               <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+"' size='5' onkeyup='recalcular()'/> %</td>\n\
+               <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+"' size='6' onkeyup='ajustar_total()'/> €</td>\n\
+               <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+"' size='6' onkeyup='ajustar_totiva()'/> €</td></tr>");
          $('div.popup').each(function() {
             $(this).hide();
          });

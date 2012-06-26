@@ -41,7 +41,12 @@ class caja extends fs_model
          $this->fs_id = intval($c['fs_id']);
          $this->fecha_inicial = Date('d-m-Y H:i:s', strtotime($c['f_inicio']));
          $this->dinero_inicial = floatval($c['d_inicio']);
-         $this->fecha_fin = Date('d-m-Y H:i:s', strtotime($c['f_fin']));
+         
+         if( is_null($c['f_fin']) )
+            $this->fecha_fin = NULL;
+         else
+            $this->fecha_fin = Date('d-m-Y H:i:s', strtotime($c['f_fin']));
+         
          $this->dinero_fin = floatval($c['d_fin']);
          $this->codagente = $c['codagente'];
          $this->agente = new agente();
@@ -53,7 +58,7 @@ class caja extends fs_model
          $this->id = NULL;
          $this->fs_id = FS_ID;
          $this->codagente = NULL;
-         $this->fecha_inicial = Date('Y-m-d H:i:s');
+         $this->fecha_inicial = Date('d-m-Y H:i:s');
          $this->dinero_inicial = 0;
          $this->fecha_fin = NULL;
          $this->dinero_fin = 0;

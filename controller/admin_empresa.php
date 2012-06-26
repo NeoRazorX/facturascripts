@@ -65,6 +65,7 @@ class admin_empresa extends fs_controller
          $this->empresa->email = $_POST['email'];
          $this->empresa->lema = $_POST['lema'];
          $this->empresa->horario = $_POST['horario'];
+         $this->empresa->contintegrada = isset($_POST['contintegrada']);
          $this->empresa->codejercicio = $_POST['codejercicio'];
          $this->empresa->codserie = $_POST['codserie'];
          $this->empresa->coddivisa = $_POST['coddivisa'];

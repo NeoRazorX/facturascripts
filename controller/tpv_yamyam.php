@@ -383,7 +383,7 @@ class tpv_yamyam extends fs_controller
       {
          $empresa = new empresa();
          $linea = "\nTicket: " . $this->albaran->codigo;
-         $linea .= " " . $this->albaran->show_fecha();
+         $linea .= " " . $this->albaran->fecha;
          $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
          fwrite($file, $linea);
          $linea = "Cliente: " . $this->albaran->nombrecliente . "\n";

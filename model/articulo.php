@@ -390,9 +390,16 @@ class articulo extends fs_model
    {
       $ref = str_replace(' ', '_', $ref);
       if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $ref) )
+      {
          $this->referencia = $ref;
+         return TRUE;
+      }
       else
-         $this->new_error_msg("¡Referencia no válida!");
+      {
+         $this->new_error_msg("¡Referencia no válida! Debe tener entre 1 y 18 caracteres.
+            Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
+         return FALSE;
+      }
    }
    
    public function set_descripcion($desc)
