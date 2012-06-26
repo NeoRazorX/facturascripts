@@ -17,11 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_cache.php';
+
 class admin_info extends fs_controller
 {
    public function __construct()
    {
       parent::__construct('admin_info', 'Información del sistema', 'admin', TRUE, TRUE);
+   }
+   
+   protected function process()
+   {
+      $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',
+              $this->url()."&clean_cache=TRUE", 'remove', 'img/remove.png', '-');
+      
+      if( isset($_GET['clean_cache']) )
+      {
+         $cache = new fs_cache();
+         if( $cache->clean() )
+            $this->new_message("Cache limpiada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible limpiar la cache!");
+      }
    }
    
    public function uname()

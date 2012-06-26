@@ -41,10 +41,10 @@ class fs_cache
       $this->cache->close();
    }
    
-   public function set($key, $object)
+   public function set($key, $object, $expire=FS_COOKIES_EXPIRE)
    {
       if($this->connected)
-         $this->cache->set($key, $object, FALSE, 28800);
+         $this->cache->set($key, $object, FALSE, $expire);
    }
    
    public function get($key)
@@ -71,6 +71,14 @@ class fs_cache
    {
       if($this->connected)
          $this->cache->delete($key);
+   }
+   
+   public function clean()
+   {
+      if($this->connected)
+         return $this->cache->flush();
+      else
+         return FALSE;
    }
 }
 
