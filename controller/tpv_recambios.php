@@ -240,7 +240,7 @@ class tpv_recambios extends fs_controller
             $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
       }
       else
-         $this->new_error_msg("¡Imposible guardar el albaran!");
+         $this->new_error_msg("¡Imposible guardar el albarán!");
    }
    
    private function cerrar_caja()

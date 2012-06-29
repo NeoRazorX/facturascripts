@@ -17,14 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/divisa.php';
+require_once 'model/forma_pago.php';
+require_once 'model/pais.php';
 require_once 'model/proveedor.php';
+require_once 'model/serie.php';
 
 class general_proveedor extends fs_controller
 {
-   public $proveedor;
    public $albaranes;
+   public $divisa;
+   public $forma_pago;
    public $offset;
-   
+   public $pais;
+   public $proveedor;
+   public $serie;
+
    public function __construct()
    {
       parent::__construct('general_proveedor', 'Proveedor', 'general', FALSE, FALSE);
@@ -33,8 +41,36 @@ class general_proveedor extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_proveedores');
+      $this->divisa = new divisa();
+      $this->forma_pago = new forma_pago();
+      $this->pais = new pais();
+      $this->serie = new serie();
       
-      if( isset($_POST['codproveedor']) )
+      if( isset($_POST['coddir']) )
+      {
+         $this->proveedor = new proveedor();
+         $this->proveedor = $this->proveedor->get($_POST['codproveedor']);
+         if( $this->proveedor )
+         {
+            $direccion = new direccion_proveedor();
+            if($_POST['coddir'] != '')
+               $direccion = $direccion->get($_POST['coddir']);
+            $direccion->apartado = $_POST['apartado'];
+            $direccion->ciudad = $_POST['ciudad'];
+            $direccion->codpais = $_POST['pais'];
+            $direccion->codpostal = $_POST['codpostal'];
+            $direccion->codproveedor = $this->proveedor->codproveedor;
+            $direccion->descripcion = $_POST['descripcion'];
+            $direccion->direccion = $_POST['direccion'];
+            $direccion->direccionppal = isset($_POST['direccionppal']);
+            $direccion->provincia = $_POST['provincia'];
+            if( $direccion->save() )
+               $this->new_message("Dirección guardada correctamente.");
+            else
+               $this->new_error_msg("¡Imposible guardar la dirección! ".$direccion->error_msg);
+         }
+      }
+      else if( isset($_POST['codproveedor']) )
       {
          $this->proveedor = new proveedor();
          $this->proveedor = $this->proveedor->get($_POST['codproveedor']);
@@ -48,6 +84,10 @@ class general_proveedor extends fs_controller
             $this->proveedor->fax = $_POST['fax'];
             $this->proveedor->email = $_POST['email'];
             $this->proveedor->web = $_POST['web'];
+            $this->proveedor->observaciones = $_POST['observaciones'];
+            $this->proveedor->codserie = $_POST['codserie'];
+            $this->proveedor->codpago = $_POST['codpago'];
+            $this->proveedor->coddivisa = $_POST['coddivisa'];
             if( $this->proveedor->save() )
                $this->new_message('Datos del proveedor modificados correctamente.');
             else
@@ -63,6 +103,8 @@ class general_proveedor extends fs_controller
       if( $this->proveedor )
       {
          $this->page->title = $this->proveedor->codproveedor;
+         $this->buttons[] = new fs_button('b_direcciones', 'direcciones', '#', 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_subcuentas', 'subcuentas', '#', 'button', 'img/zoom.png');
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
@@ -85,12 +127,14 @@ class general_proveedor extends fs_controller
    {
       if($this->offset > '0')
          return $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+      return '';
    }
    
    public function siguiente_url()
    {
       if(count($this->albaranes) == FS_ITEM_LIMIT)
          return $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      return '';
    }
 }
 

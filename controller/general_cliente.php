@@ -18,14 +18,20 @@
  */
 
 require_once 'model/cliente.php';
+require_once 'model/divisa.php';
+require_once 'model/forma_pago.php';
 require_once 'model/pais.php';
+require_once 'model/serie.php';
 
 class general_cliente extends fs_controller
 {
    public $albaranes;
    public $cliente;
+   public $divisa;
+   public $forma_pago;
    public $pais;
    public $offset;
+   public $serie;
    
    public function __construct()
    {
@@ -36,7 +42,10 @@ class general_cliente extends fs_controller
    {
       $this->ppage = $this->page->get('general_clientes');
       $this->cliente = new cliente();
+      $this->divisa = new divisa();
+      $this->forma_pago = new forma_pago();
       $this->pais = new pais();
+      $this->serie = new serie();
       
       if( isset($_POST['coddir']) )
       {
@@ -70,10 +79,14 @@ class general_cliente extends fs_controller
          $this->cliente->fax = $_POST['fax'];
          $this->cliente->web = $_POST['web'];
          $this->cliente->email = $_POST['email'];
+         $this->cliente->observaciones = $_POST['observaciones'];
+         $this->cliente->codserie = $_POST['codserie'];
+         $this->cliente->codpago = $_POST['codpago'];
+         $this->cliente->coddivisa = $_POST['coddivisa'];
          if( $this->cliente->save() )
-            $this->new_message("Datos del cliente modificados correctamente");
+            $this->new_message("Datos del cliente modificados correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar los datos del cliente!".$this->cliente->error_msg);
+            $this->new_error_msg("¡Imposible modificar los datos del cliente! ".$this->cliente->error_msg);
       }
       else if( isset($_GET['cod']) )
       {

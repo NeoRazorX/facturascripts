@@ -46,7 +46,7 @@
          <th>nombre</th>
          <th>nomre comercial</th>
          <th>cifnif</th>
-         <th>teléfono</th>
+         <th>observaciones</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
@@ -54,7 +54,7 @@
          <td>{$value->nombre}</td>
          <td>{$value->nombrecomercial}</td>
          <td>{$value->cifnif}</td>
-         <td>{$value->telefono1}</td>
+         <td>{$value->observaciones_resume()}</td>
       </tr>
       {else}
       <tr>

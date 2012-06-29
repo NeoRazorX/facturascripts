@@ -32,33 +32,77 @@
          <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
-         Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}"/>
+         Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}" size="25"/>
       </div>
       <div class="bloque">
-         Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->cliente->nombrecomercial}"/>
+         Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->cliente->nombrecomercial}" size="35"/>
       </div>
       <div class="bloque">
-         cif/nif: <input type="text" name="cifnif" value="{$fsc->cliente->cifnif}"/>
+         cif/nif: <input type="text" name="cifnif" value="{$fsc->cliente->cifnif}" size="10"/>
       </div>
       <div class="bloque">
-         Telefono1: <input type="text" name="telefono1" value="{$fsc->cliente->telefono1}"/>
+         Telefono1: <input type="text" name="telefono1" value="{$fsc->cliente->telefono1}" size="9"/>
       </div>
       <div class="bloque">
-         Telefono2: <input type="text" name="telefono2" value="{$fsc->cliente->telefono2}"/>
+         Telefono2: <input type="text" name="telefono2" value="{$fsc->cliente->telefono2}" size="9"/>
       </div>
       <div class="bloque">
-         Fax: <input type="text" name="fax" value="{$fsc->cliente->fax}"/>
+         Fax: <input type="text" name="fax" value="{$fsc->cliente->fax}" size="9"/>
       </div>
       <div class="bloque">
-         email: <input type="text" name="email" value="{$fsc->cliente->email}"/>
+         Email: <input type="text" name="email" value="{$fsc->cliente->email}" size="15"/>
       </div>
       <div class="bloque">
-         web: <input type="text" name="web" value="{$fsc->cliente->web}"/>
+         Web: <input type="text" name="web" value="{$fsc->cliente->web}" size="15"/>
+      </div>
+      <table>
+         <tr>
+            <td>Observaciones:</td>
+            <td><textarea name="observaciones" rows="2" cols="60">{$fsc->cliente->observaciones}</textarea></td>
+         </tr>
+      </table>
+      <div>
+         <div class="bloque">
+            <a href="{$fsc->serie->url()}">Serie</a>:
+            <select name="codserie">
+               {loop="$fsc->serie->all()"}
+                  {if condition="$value->codserie==$fsc->cliente->codserie"}
+                     <option value="{$value->codserie}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                     <option value="{$value->codserie}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+         <div class="bloque">
+            Forma de pago:
+            <select name="codpago">
+               {loop="$fsc->forma_pago->all()"}
+                  {if condition="$value->codpago==$fsc->cliente->codpago"}
+                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                     <option value="{$value->codpago}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+         <div class="bloque">
+            Divisa:
+            <select name="coddivisa">
+               {loop="$fsc->divisa->all()"}
+                  {if condition="$value->coddivisa==$fsc->cliente->coddivisa"}
+                     <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
       </div>
    </form>
 </div>
 
-<div class="popup" id="popup_direcciones" style="min-width: 700px">
+<div class="popup" id="popup_direcciones">
    <h1>Direcciones:</h1>
    {loop="$fsc->cliente->get_direcciones()"}
       <div class="grupo">
@@ -66,7 +110,7 @@
             <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
             <input type="hidden" name="coddir" value="{$value->id}"/>
             <h2>
-               Dirección {$value->id}:
+               Dirección #{$value->id}:
                <span><input type="submit" value="guardar"/></span>
             </h2>
             <div class="bloque">

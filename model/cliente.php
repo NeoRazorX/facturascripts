@@ -226,6 +226,7 @@ class cliente extends fs_model
    public $codpago;
    public $debaja;
    public $fechabaja;
+   public $observaciones;
    
    private static $default_cliente;
 
@@ -248,6 +249,7 @@ class cliente extends fs_model
          $this->codpago = $c['codpago'];
          $this->debaja = ($c['debaja'] == 't');
          $this->fechabaja = $c['fechabaja'];
+         $this->observaciones = $c['observaciones'];
       }
       else
       {
@@ -265,12 +267,23 @@ class cliente extends fs_model
          $this->codpago = NULL;
          $this->debaja = FALSE;
          $this->fechabaja = NULL;
+         $this->observaciones = NULL;
       }
    }
    
    protected function install()
    {
       return '';
+   }
+   
+   public function observaciones_resume()
+   {
+      if($this->observaciones == '')
+         return '-';
+      else if( strlen($this->observaciones) < 60 )
+         return $this->observaciones;
+      else
+         return substr($this->observaciones, 0, 50).'...';
    }
    
    public function url()
@@ -366,15 +379,16 @@ class cliente extends fs_model
             nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
             codserie = ".$this->var2str($this->codserie).", coddivisa = ".$this->var2str($this->coddivisa).",
             codpago = ".$this->var2str($this->codpago).", debaja = ".$this->var2str($this->debaja).",
-            fechabaja = ".$this->var2str($this->fechabaja)." WHERE codcliente = '".$this->codcliente."';";
+            fechabaja = ".$this->var2str($this->fechabaja).", observaciones = ".$this->var2str($this->observaciones)."
+            WHERE codcliente = '".$this->codcliente."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,codserie,coddivisa,codpago,
-            debaja) VALUES (".$this->var2str($this->codcliente).",
+            debaja,fechabaja,observaciones) VALUES (".$this->var2str($this->codcliente).",
             ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
             ".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
-            ".$this->var2str($this->debaja).");";
+            ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",".$this->var2str($this->observaciones).");";
       }
       return $this->db->exec($sql);
    }
@@ -414,7 +428,8 @@ class cliente extends fs_model
       $clilist = array();
       $query = strtolower($query);
       $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente ~~ '%".$query."%'
-         OR lower(nombre) ~~ '%".$query."%' OR lower(nombrecomercial) ~~ '%".$query."%' ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
+         OR lower(nombre) ~~ '%".$query."%' OR lower(nombrecomercial) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".$query."%'
+            ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
       if($clientes)
       {
          foreach($clientes as $c)

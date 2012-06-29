@@ -3,7 +3,10 @@
 {if condition="$fsc->subcuenta"}
 <div class="rounded">
    <div class="bloque">Descripción: {$fsc->subcuenta->descripcion}</div>
-   <div class="bloque">Ejercicio: <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></div>
+   <div class="bloque">
+      Ejercicio:
+      <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+   </div>
    <div class="bloque">
       Pertenece a la cuenta: <a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a>
    </div>
