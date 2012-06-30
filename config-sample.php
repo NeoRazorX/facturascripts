@@ -30,7 +30,7 @@ define('FS_CACHE_HOST', 'localhost');
 define('FS_CACHE_PORT', 11211);
 
 /// caducidad (en segundos) de todas las coockies
-define('FS_COOKIES_EXPIRE', 172800);
+define('FS_COOKIES_EXPIRE', 315360000);
 
 /// el número de elementos a mostrar en pantalla
 define('FS_ITEM_LIMIT', 50);

@@ -35,8 +35,8 @@
             uds = parseFloat( $("#cantidad_"+i).val() );
             pvp = parseFloat( $("#pvp_"+i).val() );
             iva = parseFloat( $("#iva_"+i).val() );
-            $("#total_"+i).html( number_format((uds*pvp)+(uds*pvp*iva/100),2,',','.') );
-            tpv_total += Math.round( ((uds*pvp)+(uds*pvp*iva/100))*100 )/100;
+            $("#pvpt_"+i).val( uds*pvp*(100+iva)/100 );
+            tpv_total += Math.round( (uds*pvp*(100+iva)/100)*100 )/100;
          }
       }
       $("#tpv_total").html( number_format(tpv_total,2,',','.') +" €");
@@ -75,10 +75,23 @@
       }
       recalcular();
    }
+   function ajustar_pvpt(num)
+   {
+      if($("#linea_"+num).length > 0)
+      {
+         var uds = parseFloat( $("#cantidad_"+num).val() );
+         var iva = parseFloat( $("#iva_"+num).val() );
+         var pvpt = parseFloat( $("#pvpt_"+num).val() );
+         $("#pvp_"+num).val( 100*pvpt/(uds*(100+iva)) );
+         recalcular();
+      }
+   }
    function add_articulo(ref,pvp,iva,paquete,descripcion)
    {
       numlineas += 1;
       $("#numlineas").val(numlineas);
+      pvp = parseFloat(pvp);
+      iva = parseFloat(iva);
       $("#tpv_albaran").append("<tr id='linea_"+numlineas+"'><td>"+ref+" "+descripcion+"</td>\n\
             <td align='center'>\n\
             <input type='hidden' id='paquete_"+numlineas+"' name='paquete_"+numlineas+"' value='"+paquete+"'/>\n\
@@ -87,9 +100,12 @@
             <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
             <input type='button' value='  -  ' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
             <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
-            <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/>\n\
-            </td><td align='right'>"+number_format(pvp,2,',','.')+" €</td>\n\
-            <td align='right'><span id='total_"+numlineas+"'>"+number_format(pvp,2,',','.')+"</span> €</td></tr>");
+            <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
+            <td align='right'>\n\
+               <input type='text' id='pvpt_"+numlineas+"' name='pvpt_"+numlineas+"' value='"+(pvp*(100+iva)/100)+
+               "' autocomplete='off' size='6' onclick='this.select()' onkeyup='ajustar_pvpt(\""+numlineas+"\")'/>\n\
+            </td>\n\
+            </tr>");
       recalcular();
       close_articulos();
    }
@@ -297,8 +313,7 @@
                <tr>
                   <th>Articulo</th>
                   <th>Ud.</th>
-                  <th align="right">PVP</th>
-                  <th width="150" align="right">Total</th>
+                  <th align="right">Total</th>
                </tr>
             </table>
             <table width="100%">

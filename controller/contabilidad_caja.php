@@ -39,7 +39,7 @@ class contabilidad_caja extends fs_controller
       else
          $this->offset = 0;
       
-      $this->resultados = $this->caja->all();
+      $this->resultados = $this->caja->all($this->offset);
    }
    
    public function anterior_url()

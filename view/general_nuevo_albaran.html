@@ -49,8 +49,8 @@
                dto = parseFloat( $("#dto_"+i).val() );
                iva = parseFloat( $("#iva_"+i).val() );
                $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               $("#totiva_"+i).val( (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100) );
-               tpv_total += (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100);
+               $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
+               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
             }
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
@@ -76,8 +76,8 @@
                else
                   $("#dto_"+i).val(dto);
                iva = parseFloat( $("#iva_"+i).val() );
-               $("#totiva_"+i).val( (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100) );
-               tpv_total += (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100);
+               $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
+               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
             }
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
@@ -104,7 +104,7 @@
                else
                   $("#dto_"+i).val(dto);
                $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               tpv_total += (uds*pvp*(100-dto)/100)+((uds*pvp*(100-dto)/100)*iva/100);
+               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
             }
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
@@ -129,10 +129,14 @@
                <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='2'/>\n\
                <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
                <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
-               <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"' size='6' onkeyup='recalcular()'/> €</td>\n\
-               <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+"' size='5' onkeyup='recalcular()'/> %</td>\n\
-               <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+"' size='6' onkeyup='ajustar_total()'/> €</td>\n\
-               <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+"' size='6' onkeyup='ajustar_totiva()'/> €</td></tr>");
+               <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
+                  "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
+               <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
+                  "' size='5' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
+               <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
+                  "' size='6' onkeyup='ajustar_total()' onclick='this.select()' autocomplete='off'/> €</td>\n\
+               <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
+                  "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
          $('div.popup').each(function() {
             $(this).hide();
          });
