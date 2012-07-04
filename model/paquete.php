@@ -73,9 +73,9 @@ class subpaquete extends fs_model
       parent::__construct('subpaquetes');
       if($s)
       {
-         $this->id = intval($s['id']);
+         $this->id = $this->intval($s['id']);
          $this->referenciapaq = $s['referenciapaq'];
-         $this->grupo = intval($s['grupo']);
+         $this->grupo = $this->intval($s['grupo']);
          $this->referencia = $s['referencia'];
          $this->existe = TRUE;
       }

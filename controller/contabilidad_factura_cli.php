@@ -33,17 +33,29 @@ class contabilidad_factura_cli extends fs_controller
    {
       $this->ppage = $this->page->get('contabilidad_facturas_cli');
       
-      if( isset($_GET['id']) )
+      if( isset($_POST['idfactura']) )
+      {
+         $this->factura = new factura_cliente();
+         $this->factura = $this->factura->get($_POST['idfactura']);
+         $this->factura->fecha = $_POST['fecha'];
+         $this->factura->observaciones = $_POST['observaciones'];
+         if( $this->factura->save() )
+            $this->new_message("Factura modificada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar la factura!");
+      }
+      else if( isset($_GET['id']) )
       {
          $this->factura = new factura_cliente();
          $this->factura = $this->factura->get($_GET['id']);
-         if($this->factura)
-         {
-            $this->page->title = $this->factura->codigo;
-            $this->agente = $this->factura->get_agente();
-            if($this->factura->idasiento)
-               $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
-         }
+      }
+      
+      if($this->factura)
+      {
+         $this->page->title = $this->factura->codigo;
+         $this->agente = $this->factura->get_agente();
+         if($this->factura->idasiento)
+            $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
       }
    }
    

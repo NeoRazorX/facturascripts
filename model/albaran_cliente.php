@@ -44,8 +44,8 @@ class linea_albaran_cliente extends fs_model
       parent::__construct('lineasalbaranescli');
       if($l)
       {
-         $this->idlinea = intval($l['idlinea']);
-         $this->idalbaran = intval($l['idalbaran']);
+         $this->idlinea = $this->intval($l['idlinea']);
+         $this->idalbaran = $this->intval($l['idalbaran']);
          $this->referencia = $l['referencia'];
          $this->descripcion = $l['descripcion'];
          $this->cantidad = floatval($l['cantidad']);
@@ -246,8 +246,8 @@ class albaran_cliente extends fs_model
       parent::__construct('albaranescli');
       if($a)
       {
-         $this->idalbaran = intval($a['idalbaran']);
-         $this->idfactura = intval($a['idfactura']);
+         $this->idalbaran = $this->intval($a['idalbaran']);
+         $this->idfactura = $this->intval($a['idfactura']);
          $this->codigo = $a['codigo'];
          $this->codagente = $a['codagente'];
          $this->codserie = $a['codserie'];
@@ -370,17 +370,17 @@ class albaran_cliente extends fs_model
    
    public function factura_url()
    {
-      if( !$this->ptefactura )
+      if( $this->ptefactura )
+         return '#';
+      else
       {
          $fac = new factura_cliente();
          $fac = $fac->get($this->idfactura);
          if($fac)
             return $fac->url();
          else
-            return $this->url();
+            return '#';
       }
-      else
-         return $this->url();
    }
    
    public function agente_url()
@@ -532,7 +532,7 @@ class albaran_cliente extends fs_model
    
    public function delete()
    {
-      if(!$this->ptefactura AND (is_null($this->idfactura) OR $this->idfactura == 0))
+      if($this->ptefactura AND (is_null($this->idfactura) OR $this->idfactura == 0))
          return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
       else
       {

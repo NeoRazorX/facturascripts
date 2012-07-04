@@ -43,8 +43,8 @@ class secuencia extends fs_model
       {
          $this->idsec = $this->intval($s['idsec']);
          $this->id = $this->intval($s['id']);
-         $this->valorout = intval($s['valorout']);
-         $this->valor = intval($s['valor']);
+         $this->valorout = $this->intval($s['valorout']);
+         $this->valor = $this->intval($s['valor']);
          $this->descripcion = $s['descripcion'];
          $this->nombre = $s['nombre'];
       }
@@ -168,7 +168,7 @@ class secuencia_contabilidad extends fs_model
          $this->idsecuencia = $this->intval($s['idsecuencia']);
          $this->nombre = $s['nombre'];
          $this->valor = $this->intval($s['valor']);
-         $this->valorout = intval($s['valorout']);
+         $this->valorout = $this->intval($s['valorout']);
       }
       else
       {
@@ -257,13 +257,13 @@ class secuencia_ejercicio extends fs_model
          $this->id = $this->intval($s['id']);
          $this->codejercicio = $s['codejercicio'];
          $this->codserie = $s['codserie'];
-         $this->nalbarancli = intval($s['nalbarancli']);
-         $this->nalbaranprov = intval($s['nalbaranprov']);
-         $this->nfacturacli = intval($s['nfacturacli']);
-         $this->nfacturaprov = intval($s['nfacturaprov']);
-         $this->npedidocli = intval($s['npedidocli']);
-         $this->npedidoprov = intval($s['npedidoprov']);
-         $this->npresupuestocli = intval($s['npresupuestocli']);
+         $this->nalbarancli = $this->intval($s['nalbarancli']);
+         $this->nalbaranprov = $this->intval($s['nalbaranprov']);
+         $this->nfacturacli = $this->intval($s['nfacturacli']);
+         $this->nfacturaprov = $this->intval($s['nfacturaprov']);
+         $this->npedidocli = $this->intval($s['npedidocli']);
+         $this->npedidoprov = $this->intval($s['npedidoprov']);
+         $this->npresupuestocli = $this->intval($s['npresupuestocli']);
       }
       else
       {

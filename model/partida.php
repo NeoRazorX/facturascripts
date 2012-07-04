@@ -34,7 +34,7 @@ class partida extends fs_model
       parent::__construct('co_partidas');
       if($p)
       {
-         $this->idpartida = intval($p['idpartida']);
+         $this->idpartida = $this->intval($p['idpartida']);
          $this->idasiento = $this->intval($p['idasiento']);
          $this->idsubcuenta = $this->intval($p['idsubcuenta']);
          $this->codsubcuenta = $p['codsubcuenta'];

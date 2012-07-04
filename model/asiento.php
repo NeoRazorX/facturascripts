@@ -42,7 +42,7 @@ class asiento extends fs_model
       parent::__construct('co_asientos');
       if($a)
       {
-         $this->idasiento = intval($a['idasiento']);
+         $this->idasiento = $this->intval($a['idasiento']);
          $this->numero = $this->intval($a['numero']);
          $this->idconcepto = $a['idconcepto'];
          $this->concepto = $a['concepto'];

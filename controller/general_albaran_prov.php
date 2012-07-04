@@ -33,17 +33,32 @@ class general_albaran_prov extends fs_controller
    {
       $this->ppage = $this->page->get('general_albaranes_prov');
       
-      if(isset($_GET['id']))
+      if( isset($_POST['idalbaran']) )
+      {
+         $this->albaran = new albaran_proveedor();
+         $this->albaran = $this->albaran->get($_POST['idalbaran']);
+         $this->albaran->numproveedor = $_POST['numproveedor'];
+         $this->albaran->fecha = $_POST['fecha'];
+         $this->albaran->observaciones = $_POST['observaciones'];
+         if( $this->albaran->save() )
+            $this->new_message("Albarán modificado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar el albarán!");
+      }
+      else if( isset($_GET['id']) )
       {
          $this->albaran = new albaran_proveedor();
          $this->albaran = $this->albaran->get($_GET['id']);
-         if($this->albaran)
-         {
-            $this->page->title = $this->albaran->codigo;
-            $this->agente = $this->albaran->get_agente();
-            if( !$this->albaran->ptefactura )
-               $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
-         }
+      }
+      
+      if($this->albaran)
+      {
+         $this->page->title = $this->albaran->codigo;
+         $this->agente = $this->albaran->get_agente();
+         if( $this->albaran->ptefactura )
+            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+         else
+            $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
       }
    }
    

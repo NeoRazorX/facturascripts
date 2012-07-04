@@ -2,7 +2,8 @@
 
 {if condition="$fsc->factura"}
 <div class="rounded">
-   <form>
+   <form action="{$fsc->factura->url()}" method="post">
+      <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
          <a href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
          <span><input type="submit" value="modificar"/></span>

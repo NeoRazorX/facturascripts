@@ -120,7 +120,7 @@ class direccion_cliente extends fs_model
       parent::__construct('dirclientes');
       if($d)
       {
-         $this->id = intval($d['id']);
+         $this->id = $this->intval($d['id']);
          $this->codcliente = $d['codcliente'];
          $this->codpais = $d['codpais'];
          $this->apartado = $d['apartado'];

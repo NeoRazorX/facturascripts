@@ -46,9 +46,9 @@ class linea_factura_cliente extends fs_model
       parent::__construct('lineasfacturascli');
       if($l)
       {
-         $this->idlinea = intval($l['idlinea']);
-         $this->idfactura = intval($l['idfactura']);
-         $this->idalbaran = intval($l['idalbaran']);
+         $this->idlinea = $this->intval($l['idlinea']);
+         $this->idfactura = $this->intval($l['idfactura']);
+         $this->idalbaran = $this->intval($l['idalbaran']);
          $this->referencia = $l['referencia'];
          $this->descripcion = $l['descripcion'];
          $this->cantidad = floatval($l['cantidad']);
@@ -233,10 +233,10 @@ class factura_cliente extends fs_model
       parent::__construct('facturascli');
       if($f)
       {
-         $this->idfactura = intval($f['idfactura']);
-         $this->idasiento = intval($f['idasiento']);
-         $this->idpagodevol = intval($f['idpagodevol']);
-         $this->idfacturarect = intval($f['idfacturarect']);
+         $this->idfactura = $this->intval($f['idfactura']);
+         $this->idasiento = $this->intval($f['idasiento']);
+         $this->idpagodevol = $this->intval($f['idpagodevol']);
+         $this->idfacturarect = $this->intval($f['idfacturarect']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
          $this->codigorect = $f['codigorect'];

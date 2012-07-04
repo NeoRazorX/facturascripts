@@ -44,9 +44,9 @@ class linea_factura_proveedor extends fs_model
       parent::__construct('lineasfacturasprov');
       if($l)
       {
-         $this->idlinea = intval($l['idlinea']);
-         $this->idfactura = intval($l['idfactura']);
-         $this->idalbaran = intval($l['idalbaran']);
+         $this->idlinea = $this->intval($l['idlinea']);
+         $this->idfactura = $this->intval($l['idfactura']);
+         $this->idalbaran = $this->intval($l['idalbaran']);
          $this->referencia = $l['referencia'];
          $this->descripcion = $l['descripcion'];
          $this->cantidad = floatval($l['cantidad']);
@@ -177,8 +177,8 @@ class factura_proveedor extends fs_model
       parent::__construct('facturasprov');
       if($f)
       {
-         $this->idfactura = intval($f['idfactura']);
-         $this->idasiento = intval($f['idasiento']);
+         $this->idfactura = $this->intval($f['idfactura']);
+         $this->idasiento = $this->intval($f['idasiento']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
          $this->numproveedor = $f['numproveedor'];
@@ -298,7 +298,30 @@ class factura_proveedor extends fs_model
       
    public function save()
    {
-      ;
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
+            codigo = ".$this->var2str($this->codigo).", numero = ".$this->var2str($this->numero).",
+            numproveedor = ".$this->var2str($this->numproveedor).", codejercicio = ".$this->var2str($this->codejercicio).",
+            codserie = ".$this->var2str($this->codserie).", fecha = ".$this->var2str($this->fecha).",
+            codproveedor = ".$this->var2str($this->codproveedor).", nombre = ".$this->var2str($this->nombre).",
+            cifnif = ".$this->var2str($this->cifnif).", neto = ".$this->var2str($this->neto).",
+            totaliva = ".$this->var2str($this->totaliva).", total = ".$this->var2str($this->total).",
+            totaleuros = ".$this->var2str($this->totaleuros).", observaciones = ".$this->var2str($this->observaciones)."
+            WHERE idfactura = '".$this->idfactura."';";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (idfactura,idasiento,codigo,numero,numproveedor,codejercicio,
+            codserie,fecha,codproveedor,nombre,cifnif,neto,totaliva,total,totaleuros,observaciones) VALUES
+            (".$this->var2str($this->idfactura).",".$this->var2str($this->idasiento).",".$this->var2str($this->codigo).",
+            ".$this->var2str($this->numero).",".$this->var2str($this->numproveedor).",".$this->var2str($this->codejercicio).",
+            ".$this->var2str($this->codserie).",".$this->var2str($this->fecha).",".$this->var2str($this->codproveedor).",
+            ".$this->var2str($this->nombre).",".$this->var2str($this->cifnif).",".$this->var2str($this->neto).",
+            ".$this->var2str($this->totaliva).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
+            ".$this->var2str($this->observaciones).");";
+      }
+      return $this->db->exec($sql);
    }
    
    public function delete()

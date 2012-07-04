@@ -41,7 +41,7 @@ class fs_cache
       $this->cache->close();
    }
    
-   public function set($key, $object, $expire=FS_COOKIES_EXPIRE)
+   public function set($key, $object, $expire=3600)
    {
       if($this->connected)
          $this->cache->set($key, $object, FALSE, $expire);

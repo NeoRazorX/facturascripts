@@ -10,7 +10,13 @@
       {loop="$fsc->results"}
       <tr>
          <td>
-            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">{$value->referencia}</a>
+            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">
+               {if condition="$value->bloqueado"}
+                  <s>{$value->referencia}</s>
+               {else}
+                  {$value->referencia}
+               {/if}
+            </a>
          </td>
          <td>{$value->descripcion}</td>
          <td align="right">

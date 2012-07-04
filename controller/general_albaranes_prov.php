@@ -36,14 +36,27 @@ class general_albaranes_prov extends fs_controller
       
       $npage = $this->page->get('general_nuevo_albaran');
       if($npage)
-      {
          $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo albarán', $npage->url());
-      }
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
+      
+      if( isset($_GET['delete']) )
+      {
+         $alb1 = new albaran_proveedor();
+         $alb1 = $alb1->get($_GET['delete']);
+         if($alb1)
+         {
+            if( $alb1->delete() )
+               $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible borrar el albarán ".$alb1->codigo."! ".$alb1->error_msg);
+         }
+         else
+            $this->new_error_msg("¡Albarán no encontrado!");
+      }
       
       if($this->query != '')
          $this->resultados = $albaran->search($this->query, $this->offset);

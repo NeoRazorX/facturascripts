@@ -39,11 +39,11 @@ class ejercicio extends fs_model
       parent::__construct('ejercicios');
       if($e)
       {
-         $this->idasientocierre = intval($e['idasientocierre']);
-         $this->idasientopyg = intval($e['idasientopyg']);
-         $this->idasientoapertura = intval($e['idasientoapertura']);
+         $this->idasientocierre = $this->intval($e['idasientocierre']);
+         $this->idasientopyg = $this->intval($e['idasientopyg']);
+         $this->idasientoapertura = $this->intval($e['idasientoapertura']);
          $this->plancontable = $e['plancontable'];
-         $this->longsubcuenta = intval($e['longsubcuenta']);
+         $this->longsubcuenta = $this->intval($e['longsubcuenta']);
          $this->estado = $e['estado'];
          $this->fechafin = Date('d-m-Y', strtotime($e['fechafin']));
          $this->fechainicio = Date('d-m-Y', strtotime($e['fechainicio']));

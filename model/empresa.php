@@ -54,7 +54,7 @@ class empresa extends fs_model
       $e = $this->db->select("SELECT * FROM ".$this->table_name.";");
       if($e)
       {
-         $this->id = intval($e[0]['id']);
+         $this->id = $this->intval($e[0]['id']);
          $this->stockpedidos = ($e[0]['stockpedidos'] == 't');
          $this->contintegrada = ($e[0]['contintegrada'] == 't');
          $this->recequivalencia = ($e[0]['recequivalencia'] == 't');

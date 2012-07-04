@@ -37,7 +37,7 @@ class stock extends fs_model
       parent::__construct('stocks');
       if($s)
       {
-         $this->idstock = intval($s['idstock']);
+         $this->idstock = $this->intval($s['idstock']);
          $this->codalmacen = $s['codalmacen'];
          $this->referencia = $s['referencia'];
          $this->nombre = $s['nombre'];
@@ -595,7 +595,7 @@ class articulo extends fs_model
             $sql .= " WHERE (referencia ~~ '%".$text."%' OR codbarras = '".$text."')";
          else
             $sql .= " WHERE lower(referencia) ~~ '%".$text."%'";
-         $sql .= " AND bloqueado = FALSE ORDER BY referencia ASC";
+         $sql .= " ORDER BY referencia ASC";
          $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
          if($articulos)
          {
@@ -603,7 +603,7 @@ class articulo extends fs_model
                $artilist[] = new articulo($a);
          }
          /// añadimos las búsquedas por descripción
-         $sql = "SELECT * FROM ".$this->table_name." WHERE lower(descripcion) ~~ '%".$text."%' AND bloqueado = FALSE ORDER BY descripcion ASC";
+         $sql = "SELECT * FROM ".$this->table_name." WHERE lower(descripcion) ~~ '%".$text."%' ORDER BY descripcion ASC";
          $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
          if($articulos)
          {

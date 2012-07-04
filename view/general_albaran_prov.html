@@ -1,12 +1,23 @@
 {include="header"}
 
 {if condition="$fsc->albaran"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar este albarán?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}";
+      });
+   });
+</script>
+
 <div class="rounded">
-   <h1>
-      <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
-      <span><input type="submit" value="modificar"/></span>
-   </h1>
-   <form>
+   <form action="{$fsc->albaran->url()}" method="post">
+      <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
+      <h1>
+         <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
+         <span><input type="submit" value="modificar"/></span>
+      </h1>
       <div class="bloque">
          Número: {$fsc->albaran->numero}
       </div>

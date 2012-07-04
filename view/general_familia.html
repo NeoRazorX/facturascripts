@@ -53,7 +53,11 @@
       </tr>
       {loop="$fsc->articulos"}
       <tr>
-         <td><a href="{$value->url()}">{$value->referencia}</a></td>
+         {if condition="$value->bloqueado"}
+            <td><a href="{$value->url()}"><s>{$value->referencia}</s></a></td>
+         {else}
+            <td><a href="{$value->url()}">{$value->referencia}</a></td>
+         {/if}
          <td>{$value->descripcion}</td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
          <td align="right">{$value->stockfis}</td>

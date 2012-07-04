@@ -50,7 +50,7 @@ class general_albaranes_cli extends fs_controller
             if( $alb1->delete() )
                $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
             else
-               $this->new_error_msg("¡Imposible borrar el albarán! ".$alb1->error_msg);
+               $this->new_error_msg("¡Imposible borrar el albarán ".$alb1->codigo."! ".$alb1->error_msg);
          }
          else
             $this->new_error_msg("¡Albarán no encontrado!");
