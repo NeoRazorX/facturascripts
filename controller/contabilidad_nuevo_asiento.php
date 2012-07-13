@@ -28,7 +28,6 @@ class contabilidad_nuevo_asiento extends fs_controller
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();
       $this->ppage = $this->page->get('contabilidad_asientos');
-      $this->buttons[] = new fs_button('b_add_partida', 'añadir partida');
       
       if(isset($_POST['ejercicio']) AND isset($_POST['tipo']) AND isset($_POST['query']))
          $this->new_search();

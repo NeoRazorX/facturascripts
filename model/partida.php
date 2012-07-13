@@ -88,12 +88,12 @@ class partida extends fs_model
    
    public function show_debe()
    {
-      return number_format($this->debe, 2, ',', '.');
+      return number_format($this->debe, 2, ',', ' ');
    }
    
    public function show_haber()
    {
-      return number_format($this->haber, 2, ',', '.');
+      return number_format($this->haber, 2, ',', ' ');
    }
    
    public function url()

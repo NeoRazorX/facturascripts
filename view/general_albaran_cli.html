@@ -2,18 +2,215 @@
 
 {if condition="$fsc->albaran"}
 <script type="text/javascript">
+   var numlineas = 0;
+   function number_format(number, decimals, dec_point, thousands_sep)
+   {
+      var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+      var d = dec_point == undefined ? "," : dec_point;
+      var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
+      var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+      return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+   }
+   function recalcular()
+   {
+      var aneto = 0;
+      var aiva = 0;
+      var atotal = 0;
+      var uds = 0;
+      var pvp = 0;
+      var dto = 0;
+      var iva = 0;
+      for(var i=0; i<=100; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            pvp = parseFloat( $("#pvp_"+i).val() );
+            dto = parseFloat( $("#dto_"+i).val() );
+            iva = parseFloat( $("#iva_"+i).val() );
+            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
+            $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
+            aneto += uds*pvp*(100-dto)/100;
+            aiva += uds*pvp*(100-dto)/100*(iva/100);
+            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+            if(i > numlineas)
+               numlineas = i;
+         }
+      }
+      $("#aneto").html( number_format(aneto,2,',',' ') );
+      $("#aiva").html( number_format(aiva,2,',',' ') );
+      $("#atotal").html( number_format(atotal,2,',',' ') );
+   }
+   function linea_sum_ud(num,value)
+   {
+      var udl = parseFloat($("#cantidad_"+num).val()) + value;
+      if(udl < 1)
+         $("#linea_"+num).remove();
+      else
+         $("#cantidad_"+num).val(udl);
+      recalcular();
+   }
+   function ajustar_total()
+   {
+      var total = 0;
+      var uds = 0;
+      var pvp = 0;
+      var dto = 0;
+      var iva = 0;
+      var aneto = 0;
+      var aiva = 0;
+      var atotal = 0;
+      for(var i=0; i<=100; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            total = parseFloat( $("#total_"+i).val() );
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            pvp = parseFloat( $("#pvp_"+i).val() );
+            dto = 100 - (100*total)/(pvp*uds);
+            if( isNaN(dto) )
+               $("#dto_"+i).val(0);
+            else
+               $("#dto_"+i).val(dto);
+            iva = parseFloat( $("#iva_"+i).val() );
+            $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
+            aneto += uds*pvp*(100-dto)/100;
+            aiva += uds*pvp*(100-dto)/100*(iva/100);
+            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+         }
+      }
+      $("#aneto").html( number_format(aneto,2,',',' ') );
+      $("#aiva").html( number_format(aiva,2,',',' ') );
+      $("#atotal").html( number_format(atotal,2,',',' ') );
+   }
+   function ajustar_totiva()
+   {
+      var totiva = 0;
+      var uds = 0;
+      var pvp = 0;
+      var iva = 0;
+      var dto = 0;
+      var aneto = 0;
+      var aiva = 0;
+      var atotal = 0;
+      for(var i=0; i<=100; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            totiva = parseFloat( $("#totiva_"+i).val() );
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            pvp = parseFloat( $("#pvp_"+i).val() );
+            iva = parseFloat( $("#iva_"+i).val() );
+            dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
+            if( isNaN(dto) )
+               $("#dto_"+i).val(0);
+            else
+               $("#dto_"+i).val(dto);
+            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
+            aneto += uds*pvp*(100-dto)/100;
+            aiva += uds*pvp*(100-dto)/100*(iva/100);
+            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+         }
+      }
+      $("#aneto").html( number_format(aneto,2,',',' ') );
+      $("#aiva").html( number_format(aiva,2,',',' ') );
+      $("#atotal").html( number_format(atotal,2,',',' ') );
+   }
+   function add_articulo(ref,desc,pvp,dto,iva)
+   {
+      numlineas += 1;
+      $("#lineas_albaran").append("<tr id='linea_"+numlineas+"'>\n\
+         <td><input type='hidden' name='idlinea_"+numlineas+"' value='-1'/>\n\
+            <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
+            <a target='_blank' href='index.php?page=general_articulo&ref="+ref+"'>"+ref+"</a> "+desc+"</td>\n\
+         <td align='center'><input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/>\n\
+            <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='3'/>\n\
+            <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
+         <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
+            <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
+               "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
+         <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
+            "' size='4' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
+         <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
+            "' size='6' onkeyup='ajustar_total("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td>\n\
+         <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
+            "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+      $('div.popup').each(function() {
+         $(this).hide();
+      });
+      $("#shadow").hide();
+      recalcular();
+   }
    $(document).ready(function() {
+      recalcular();
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar este albarán?") )
             window.location.href = "{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}";
       });
+      $("#b_new_line").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_new_line").css({
+            left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+            top: 40
+         });
+         $("#popup_new_line").show();
+         document.f_buscar_articulos.query.focus();
+         document.f_buscar_articulos.query.value = '';
+         $("#search_results").html('');
+      });
+      $("#f_buscar_articulos").keyup(function() {
+         if(document.f_buscar_articulos.query.value == '')
+         {
+            $("#search_results").html('');
+            $("#popup_new_line").css({
+               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+               top: 40
+            });
+         }
+         else
+         {
+            $.ajax({
+               type: 'POST',
+               url: '{$fsc->nuevo_albaran_url}',
+               dataType: 'html',
+               data: 'query='+document.f_buscar_articulos.query.value,
+               success: function(datos) {
+                  var re = /<!--(.*?)-->/g;
+                  var m = re.exec( datos );
+                  if( m[1] == document.f_buscar_articulos.query.value )
+                  {
+                     $("#search_results").html(datos);
+                     $("#popup_new_line").css({
+                        left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+                        top: 40
+                     });
+                  }
+               }
+            });
+         }
+      });
+      $("#f_buscar_articulos").submit(function(event) {
+         event.preventDefault();
+      });
    });
 </script>
 
-<div class="rounded">
-   <form action="{$fsc->albaran->url()}" method="post">
-      <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
+<div class="popup" id="popup_new_line" style="min-width: 60%">
+   <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+      <h1>Buscar artículos:</h1>
+      <div style="text-align: center;">
+            <input type="text" name="query" size="40"/>
+            <input type="submit" value="buscar"/>
+      </div>
+      <div id="search_results"></div>
+   </form>
+</div>
+
+<form action="{$fsc->albaran->url()}" method="post">
+   <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
+   <div class="rounded">
       <h1>
          <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
          <span><input type="submit" value="modificar"/></span>
@@ -47,49 +244,120 @@
             </td>
          </tr>
       </table>
-   </form>
-</div>
+   </div>
+
+{if condition="$fsc->albaran->ptefactura"}
+   <input type="hidden" name="lineas" value="TRUE"/>
+   <div class="rounded">
+      <table class="list" id="lineas_albaran">
+         <tr>
+            <th>Artículo</th>
+            <th>Cantidad</th>
+            <th>PVP</th>
+            <th>dto.</th>
+            <th>Total</th>
+            <th>Total+IVA</th>
+         </tr>
+         {loop="$fsc->albaran->get_lineas()"}
+         <tr id="linea_{$counter}">
+            <td>
+               <a href="{$value->articulo_url()}">{$value->referencia}</a>
+               {$value->descripcion}
+               <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
+               <input type="hidden" name="iva_{$counter}" id="iva_{$counter}" value="{$value->iva}"/>
+            </td>
+            <td align="center">
+               <input type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
+               <input type="text" name="cantidad_{$counter}" id="cantidad_{$counter}" value="{$value->cantidad}"
+                      size="3" autocomplete="off"/>
+               <input type="button" value="+" onclick="linea_sum_ud('{$counter}',1)"/>
+            </td>
+            <td align="center">
+               <input type="text" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
+                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/> €
+            </td>
+            <td align="center">
+               <input type="text" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
+                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/> %
+            </td>
+            <td align="center">
+               <input type="text" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
+                      onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/> €
+            </td>
+            <td align="center">
+               <input type="text" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
+                      onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/> €
+            </td>
+         </tr>
+         {/loop}
+      </table>
+      <div class="new_line">
+         <a href="#" id="b_new_line">Añadir artículo...</a>
+      </div>
+   </div>
+{else}
+   <div class="rounded">
+      <table class="list">
+         <tr>
+            <th>Artículo</th>
+            <th align="right">Cantidad</th>
+            <th align="right">PVP</th>
+            <th align="right">dto</th>
+            <th align="right">Total</th>
+         </tr>
+         {loop="$fsc->albaran->get_lineas()"}
+         <tr>
+            <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td align="right">{$value->cantidad}</td>
+            <td align="right">{$value->show_pvp()} €</td>
+            <td align="right">{$value->dtopor} %</td>
+            <td align="right">{$value->show_total()} €</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+{/if}
 
 <div class="rounded">
    <table class="list">
+      {if condition="$fsc->albaran->ptefactura"}
       <tr>
-         <th>Artículo</th>
-         <th align="right">Cantidad</th>
-         <th align="right">PVP</th>
-         <th align="right">dto</th>
-         <th align="right">Total</th>
+         <td></td>
+         <th>Anterior</th>
+         <th>Nuevo</th>
+         <td></td>
+         <th>Anterior</th>
+         <th>Nuevo</th>
+         <td></td>
+         <th>Anterior</th>
+         <th>Nuevo</th>
       </tr>
-      {loop="$fsc->albaran->get_lineas()"}
       <tr>
-         <td>
-            <a href="{$value->articulo_url()}">{$value->referencia}</a>
-            {$value->descripcion}
-         </td>
-         <td align="right">{$value->cantidad}</td>
-         <td align="right">{$value->show_pvp()} €</td>
-         <td align="right">{$value->dtopor} %</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right"><b>Neto:</b></td>
+         <td align="center">{$fsc->albaran->show_neto()} €</td>
+         <td align="center"><span id="aneto"></span> €</td>
+         <td align="right"><b>IVA:</b></td>
+         <td align="center">{$fsc->albaran->show_iva()} €</td>
+         <td align="center"><span id="aiva"></span> €</td>
+         <td align="right"><b>Total:</b></td>
+         <td align="center">{$fsc->albaran->show_total()} €</td>
+         <td align="center"><span id="atotal"></span> €</td>
       </tr>
-      {/loop}
+      {else}
       <tr>
-         <td colspan="2"></td>
-         <td colspan="3">
-            <table class="list">
-               <tr>
-                  <th>Neto:</th>
-                  <th>IVA:</th>
-                  <th>Total:</th>
-               </tr>
-               <tr>
-                  <td align="center">{$fsc->albaran->show_neto()} €</td>
-                  <td align="center">{$fsc->albaran->show_iva()} €</td>
-                  <td align="center">{$fsc->albaran->show_total()} €</td>
-               </tr>
-            </table>
-         </td>
+         <th>Neto</th>
+         <th>IVA</th>
+         <th>Total</th>
       </tr>
+      <tr>
+         <td align="center">{$fsc->albaran->show_neto()} €</td>
+         <td align="center">{$fsc->albaran->show_iva()} €</td>
+         <td align="center">{$fsc->albaran->show_total()} €</td>
+      </tr>
+      {/if}
    </table>
 </div>
+</form>
 {/if}
 
 {include="footer"}

@@ -56,11 +56,11 @@
       <tr>
          <td>{$value->name}</td>
          {if condition="$value->enabled"}
-            <td>-</td>
-            <td><a href="{$fsc->url()}&amp;disable={$value->name}">denegar</a></td>
+            <td align="center">-</td>
+            <td align="center"><a href="{$fsc->url()}&amp;disable={$value->name}">denegar</a></td>
          {else}
-            <td><a href="{$fsc->url()}&amp;enable={$value->name}">permitir</a></td>
-            <td>-</td>
+            <td align="center"><a href="{$fsc->url()}&amp;enable={$value->name}">permitir</a></td>
+            <td align="center">-</td>
          {/if}
       </tr>
       {/loop}

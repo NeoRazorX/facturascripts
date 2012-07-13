@@ -38,7 +38,8 @@
 
 {loop="$fsc->impuesto->all()"}
 <div class="rounded">
-   <form>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
       <h1>
          {$value->codimpuesto}
          <span><input type="submit" value="modificar"/></span>

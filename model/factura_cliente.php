@@ -80,12 +80,12 @@ class linea_factura_cliente extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvpunitario, 2, ',', '.');
+      return number_format($this->pvpunitario, 2, ',', ' ');
    }
    
    public function show_total()
    {
-      return number_format($this->pvptotal, 2, ',', '.');
+      return number_format($this->pvptotal, 2, ',', ' ');
    }
    
    public function url()
@@ -329,7 +329,7 @@ class factura_cliente extends fs_model
    
    public function show_total()
    {
-      return number_format($this->totaleuros, 2, ',', '.');
+      return number_format($this->totaleuros, 2, ',', ' ');
    }
    
    public function observaciones_resume()

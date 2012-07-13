@@ -73,7 +73,7 @@ class fs_user extends fs_model
       $agente = new agente();
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."','',NULL,TRUE);";
    }
-
+   
    public function get($n = '')
    {
       $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick='".$n."';");

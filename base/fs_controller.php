@@ -180,7 +180,7 @@ class fs_controller
    
    public function log_out()
    {
-      setcookie('user', '', time()-FS_COOKIES_EXPIRE);
+      ///setcookie('user', '', time()-FS_COOKIES_EXPIRE);
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
       setcookie('empresa', '', time()-FS_COOKIES_EXPIRE);
    }

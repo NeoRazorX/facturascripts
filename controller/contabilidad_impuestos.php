@@ -35,10 +35,15 @@ class contabilidad_impuestos extends fs_controller
       
       if( isset($_POST['codimpuesto']) )
       {
-         $this->impuesto->codimpuesto = $_POST['codimpuesto'];
-         $this->impuesto->descripcion = $_POST['descripcion'];
-         $this->impuesto->iva = $_POST['iva'];
-         if( $this->impuesto->save() )
+         $impuesto = $this->impuesto->get($_POST['codimpuesto']);
+         if( !$impuesto )
+         {
+            $impuesto = new impuesto();
+            $impuesto->codimpuesto = $_POST['codimpuesto'];
+         }
+         $impuesto->descripcion = $_POST['descripcion'];
+         $impuesto->iva = $_POST['iva'];
+         if( $impuesto->save() )
             $this->new_message("Impuesto guardado correctamente");
          else
             $this->new_error_msg("¡Error al guardar el impuesto!");

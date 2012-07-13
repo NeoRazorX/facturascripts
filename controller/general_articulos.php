@@ -23,10 +23,10 @@ require_once 'model/impuesto.php';
 
 class general_articulos extends fs_controller
 {
-   public $resultados;
-   public $offset;
-   public $impuesto;
    public $familia;
+   public $impuesto;
+   public $offset;
+   public $resultados;
 
    public function __construct()
    {
@@ -35,13 +35,22 @@ class general_articulos extends fs_controller
    
    protected function process()
    {
-      $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo artículo');
       $this->familia = new familia();
       $this->impuesto = new impuesto();
       $articulo = new articulo();
       
-      if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
+      $this->custom_search = TRUE;
+      $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo artículo');
+      $this->buttons[] = new fs_button('b_modo_rajoy','modo rajoy', '#', 'button', 'img/tools.png');
+      
+      if( isset($_POST['modo_rajoy']) )
+      {
+         if( $articulo->move_codimpuesto($_POST['codimpuesto'], $_POST['codimpuesto2']) )
+            $this->new_message("Artículos modificados correctamente ¡Disfruta de los 4 días que le quedan a tu empresa!");
+         else
+            $this->new_error_msg("¡Impodible modificar los artículos!");
+      }
+      else if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
       {
          if( $articulo->set_referencia($_POST['referencia']) )
          {

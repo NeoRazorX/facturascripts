@@ -206,10 +206,6 @@ class articulo extends fs_model
    public function __construct($a=FALSE)
    {
       parent::__construct('articulos');
-      
-      if( !isset(self::$impuestos) )
-         self::$impuestos = array();
-      
       if($a)
       {
          $this->referencia = $a['referencia'];
@@ -307,6 +303,9 @@ class articulo extends fs_model
    
    public function get_iva()
    {
+      if( !isset(self::$impuestos) )
+         self::$impuestos = array();
+      
       if( isset($this->iva) )
          return $this->iva;
       else
@@ -668,6 +667,12 @@ class articulo extends fs_model
       if($articulos)
          $num = intval($articulos[0]['total']);
       return $num;
+   }
+   
+   public function move_codimpuesto($cod0, $cod1)
+   {
+      return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).
+                             " WHERE codimpuesto = ".$this->var2str($cod0).";");
    }
 }
 

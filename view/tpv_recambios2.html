@@ -107,7 +107,7 @@
                <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
                   "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
                <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
-                  "' size='5' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
+                  "' size='4' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
                <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
                   "' size='6' onkeyup='ajustar_total()' onclick='this.select()' autocomplete='off'/> €</td>\n\
                <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
@@ -308,7 +308,10 @@
                <th>Total+IVA</th>
             </tr>
          </table>
-         <br/>
+         <div class="new_line">
+            <a href="#" id="b_new_line">Añadir artículo...</a>
+         </div>
+         <br/><br/>
          <table width="100%">
             <tr>
                <td align="right"><input type="button" id="b_nuevo_albaran_cliente" value="nuevo albarán de cliente"></td>

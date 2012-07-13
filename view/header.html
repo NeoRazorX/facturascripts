@@ -3,6 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->get_empresa_name()}/{$fsc->page->title}</title>
+   <link rel="shortcut icon" href="img/favicon.ico" />
    <link href="css/{$fsc->css_file}" rel="stylesheet" type="text/css" />
    <script type="text/javascript" src="js/jquery.js"></script>
    <script type="text/javascript" src="js/tcal.js"></script>
@@ -76,7 +77,9 @@
             <a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »
          {/if}
          {$fsc->page->title}
-         {if condition="$fsc->is_admin_page()"}*{/if}
+         {if condition="$fsc->is_admin_page()"}
+            <img src="img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
+         {/if}
       </div>
       <div id="header_buttons">
          <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>

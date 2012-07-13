@@ -66,9 +66,6 @@ class general_nuevo_albaran extends fs_controller
          $this->proveedor = new proveedor();
          $this->serie = new serie();
          
-         if($this->agente)
-            $this->buttons[] = new fs_button('b_new_line', 'añadir artículo');
-         
          if( isset($_POST['tipoalbaran']) )
          {
             if($_POST['tipoalbaran'] == 'cliente')

@@ -134,7 +134,7 @@ class impuesto extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codsubcuentadeu = ".$this->var2str($this->codsubcuentadeu).",
-            codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).", codsubcuentaivadadue = ".$this->var2str($this->codsubcuentaivadedadue).",
+            codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).", codsubcuentaivadedadue = ".$this->var2str($this->codsubcuentaivadedadue).",
             codsubcuentaivadevadue = ".$this->var2str($this->codsubcuentaivadevadue).",
             codsubcuentaivadeventue = ".$this->var2str($this->codsubcuentaivadeventue).",
             codsubcuentarep = ".$this->var2str($this->codsubcuentarep).", codsubcuentasop = ".$this->var2str($this->codsubcuentasop).",
@@ -143,23 +143,23 @@ class impuesto extends fs_model
             idsubcuentarep = ".$this->var2str($this->idsubcuentarep).",
             idsubcuentasop = ".$this->var2str($this->idsubcuentasop).", idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
             idsubcuentaivadedadue = ".$this->var2str($this->idsubcuentaivadedadue).", descripcion = ".$this->var2str($this->descripcion).",
-            iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo).",
+            iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
             WHERE codimpuesto = '".$this->codimpuesto."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codimpuesto,codsubcuentadeu,codsubcuentaacr,codsubcuentaivadedadue,
-                 codsubcuentaivadevadue,codsubcuentaivadeventue,codsubcuentarep,codsubcuentasop,idsubcuentaacr,
-                 idsubcuentadeu,idsubcuentaivadeventue,idsubcuentarep,idsubcuentasop,idsubcuentaivadevadue,idsubcuentaivadedadue,
-                 descripcion,iva,recargo) VALUES (".$this->var2str($this->codimpuesto).",".$this->var2str($this->codsubcuentadeu).",
-                 ".$this->var2str($this->codsubcuentaacr).",".$this->var2str($this->codsubcuentaivadedadue).",
-                 ".$this->var2str($this->codsubcuentaivadevadue).",".$this->var2str($this->codsubcuentaivadeventue).",
-                 ".$this->var2str($this->codsubcuentarep).",".$this->var2str($this->codsubcuentasop).",
-                 ".$this->var2str($this->idsubcuentaacr).",".$this->var2str($this->idsubcuentadeu).",
-                 ".$this->var2str($this->idsubcuentaivadeventue).",".$this->var2str($this->idsubcuentarep).",
-                 ".$this->var2str($this->idsubcuentasop).",".$this->var2str($this->idsubcuentaivadevadue).",
-                 ".$this->var2str($this->idsubcuentaivadedadue).",".$this->var2str($this->descripcion).",
-                 ".$this->var2str($this->iva).",".$this->var2str($this->recargo).");";
+            codsubcuentaivadevadue,codsubcuentaivadeventue,codsubcuentarep,codsubcuentasop,idsubcuentaacr,
+            idsubcuentadeu,idsubcuentaivadeventue,idsubcuentarep,idsubcuentasop,idsubcuentaivadevadue,idsubcuentaivadedadue,
+            descripcion,iva,recargo) VALUES (".$this->var2str($this->codimpuesto).",".$this->var2str($this->codsubcuentadeu).",
+            ".$this->var2str($this->codsubcuentaacr).",".$this->var2str($this->codsubcuentaivadedadue).",
+            ".$this->var2str($this->codsubcuentaivadevadue).",".$this->var2str($this->codsubcuentaivadeventue).",
+            ".$this->var2str($this->codsubcuentarep).",".$this->var2str($this->codsubcuentasop).",
+            ".$this->var2str($this->idsubcuentaacr).",".$this->var2str($this->idsubcuentadeu).",
+            ".$this->var2str($this->idsubcuentaivadeventue).",".$this->var2str($this->idsubcuentarep).",
+            ".$this->var2str($this->idsubcuentasop).",".$this->var2str($this->idsubcuentaivadevadue).",
+            ".$this->var2str($this->idsubcuentaivadedadue).",".$this->var2str($this->descripcion).",
+            ".$this->var2str($this->iva).",".$this->var2str($this->recargo).");";
       }
       return $this->db->exec($sql);
    }

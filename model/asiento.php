@@ -72,7 +72,7 @@ class asiento extends fs_model
    
    public function show_importe()
    {
-      return number_format($this->importe, 2, ',', '.');
+      return number_format($this->importe, 2, ',', ' ');
    }
    
    public function url()

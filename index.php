@@ -50,6 +50,8 @@ if( $fsc->template )
       $tpl->assign('nlogin', $_POST['user']);
    else if( isset($_GET['nlogin']) )
       $tpl->assign('nlogin', $_GET['nlogin']);
+   else if( isset($_COOKIE['user']) )
+      $tpl->assign('nlogin', $_COOKIE['user']);
    else
       $tpl->assign('nlogin', '');
    $tpl->draw( $fsc->template );

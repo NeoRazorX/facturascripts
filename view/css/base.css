@@ -232,6 +232,10 @@ div#header_location a {
    font-weight: bold;
 }
 
+div#header_location img {
+   vertical-align: middle;
+}
+
 div#header_search {
    text-align: right;
 }
@@ -422,6 +426,17 @@ div.main_div div.tpv_total {
    padding: 3px;
    padding-left: 6px;
    padding-right: 6px;
+}
+
+div.main_div div.new_line {
+   margin: 2px;
+   padding: 5px;
+   border: 1px dashed #333333;
+}
+
+div.main_div div.new_line a {
+   color: black;
+   font-size: 15px;
 }
 
 div.footer {

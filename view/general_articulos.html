@@ -12,6 +12,15 @@
          $("#popup_nuevo_articulo").show();
          document.f_nuevo_articulo.referencia.focus();
       });
+      $("#b_modo_rajoy").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_modo_rajoy").css({
+            left: ($(window).width() - $("#popup_modo_rajoy").outerWidth())/2,
+            top: ($(window).height() - $("#popup_modo_rajoy").outerHeight())/2
+         });
+         $("#popup_modo_rajoy").show();
+      });
    });
 </script>
 
@@ -52,6 +61,29 @@
       </table>
       <br/>
       <div class="right"><input type="submit" value="nuevo artículo"/></div>
+   </form>
+</div>
+
+<div class="popup" id="popup_modo_rajoy">
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="modo_rajoy" value="TRUE"/>
+      <center>
+         <img src="http://i.imgur.com/2vvx8.png" alt="mariano"/>
+      </center>
+      Mover los artículos con
+      <select name="codimpuesto">
+         {loop="$fsc->impuesto->all()"}
+            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+         {/loop}
+      </select>
+      a
+      <select name="codimpuesto2">
+         {loop="$fsc->impuesto->all()"}
+            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+         {/loop}
+      </select>
+      Y ...
+      <input type="submit" value="¡Que nos jodan!"/>
    </form>
 </div>
 

@@ -55,22 +55,20 @@
          <td align="right">{$value->show_total()} €</td>
       </tr>
       {/loop}
+   </table>
+</div>
+
+<div class="rounded">
+   <table class="list">
       <tr>
-         <td colspan="3"></td>
-         <td colspan="3">
-            <table class="list">
-               <tr>
-                  <th>Neto:</th>
-                  <th>IVA:</th>
-                  <th>Total:</th>
-               </tr>
-               <tr>
-                  <td align="center">{$fsc->factura->show_neto()} €</td>
-                  <td align="center">{$fsc->factura->show_iva()} €</td>
-                  <td align="center">{$fsc->factura->show_total()} €</td>
-               </tr>
-            </table>
-         </td>
+         <th>Neto:</th>
+         <th>IVA:</th>
+         <th>Total:</th>
+      </tr>
+      <tr>
+         <td align="center">{$fsc->factura->show_neto()} €</td>
+         <td align="center">{$fsc->factura->show_iva()} €</td>
+         <td align="center">{$fsc->factura->show_total()} €</td>
       </tr>
    </table>
 </div>

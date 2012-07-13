@@ -18,6 +18,7 @@
  */
 
 require_once 'model/albaran_cliente.php';
+require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
 require_once 'model/empresa.php';
@@ -30,6 +31,7 @@ class general_albaran_cli extends fs_controller
 {
    public $albaran;
    public $agente;
+   public $nuevo_albaran_url;
    
    public function __construct()
    {
@@ -40,18 +42,21 @@ class general_albaran_cli extends fs_controller
    {
       $this->ppage = $this->page->get('general_albaranes_cli');
       
+      /*
+       * buscamos la url del script general_nuevo_albaran,
+       * imprescindible para buscar nuevo artículos.
+       */
+      $nuevoalbp = $this->page->get('general_nuevo_albaran');
+      if($nuevoalbp)
+         $this->nuevo_albaran_url = $nuevoalbp->url();
+      else
+         $this->nuevo_albaran_url = $this->url();
+      
       if( isset($_POST['idalbaran']) )
       {
          $this->albaran = new albaran_cliente();
          $this->albaran = $this->albaran->get($_POST['idalbaran']);
-         $this->albaran->numero2 = $_POST['numero2'];
-         $this->albaran->fecha = $_POST['fecha'];
-         $this->albaran->hora = $_POST['hora'];
-         $this->albaran->observaciones = $_POST['observaciones'];
-         if( $this->albaran->save() )
-            $this->new_message("Albarán modificado correctamente.");
-         else
-            $this->new_error_msg("¡Imposible modificar el albarán!");
+         $this->modificar();
       }
       else if( isset($_GET['id']) )
       {
@@ -85,6 +90,103 @@ class general_albaran_cli extends fs_controller
          return $this->page->url();
    }
    
+   private function modificar()
+   {
+      $this->albaran->numero2 = $_POST['numero2'];
+      $this->albaran->fecha = $_POST['fecha'];
+      $this->albaran->hora = $_POST['hora'];
+      $this->albaran->observaciones = $_POST['observaciones'];
+      
+      if( isset($_POST['lineas']) )
+      {
+         $lineas = $this->albaran->get_lineas();
+         /// eliminamos las líneas que no encontremos en el $_POST
+         foreach($lineas as $l)
+         {
+            $encontrada = FALSE;
+            for($num = 0; $num <= 100; $num++)
+            {
+               if( isset($_POST['idlinea_'.$num]) )
+               {
+                  if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                  {
+                     $encontrada = TRUE;
+                     break;
+                  }
+               }
+            }
+            if( !$encontrada )
+            {
+               if( !$l->delete() )
+                  $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
+            }
+         }
+         
+         $neto = 0;
+         $iva = 0;
+         $total = 0;
+         /// modificamos y/o añadimos las demás líneas
+         for($num = 0; $num <= 100; $num++)
+         {
+            $encontrada = FALSE;
+            if( isset($_POST['idlinea_'.$num]) )
+            {
+               foreach($lineas as $l)
+               {
+                  if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                  {
+                     $encontrada = TRUE;
+                     
+                     $l->cantidad = floatval($_POST['cantidad_'.$num]);
+                     $l->pvpunitario = floatval($_POST['pvp_'.$num]);
+                     $l->dtopor = floatval($_POST['dto_'.$num]);
+                     $l->dtolineal = 0;
+                     $l->pvpsindto = ($l->cantidad * $l->pvpunitario);
+                     $l->pvptotal = ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
+                     $neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
+                     $total += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * (100 + $l->iva)/100);
+                     $iva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
+                     if( !$l->save() )
+                        $this->new_error_msg("¡Imposible modificar la línea del artículo ".$l->referencia."!");
+                     
+                     break;
+                  }
+               }
+               if(!$encontrada AND intval($_POST['idlinea_'.$num]) == -1 AND isset($_POST['referencia_'.$num]))
+               {
+                  $articulo = new articulo();
+                  $articulo = $articulo->get( $_POST['referencia_'.$num] );
+                  if($articulo)
+                  {
+                     $linea = new linea_albaran_cliente();
+                     $linea->referencia = $articulo->referencia;
+                     $linea->descripcion = $articulo->descripcion;
+                     $linea->codimpuesto = $articulo->codimpuesto;
+                     $linea->iva = $articulo->get_iva();
+                     $linea->idalbaran = $this->albaran->idalbaran;
+                     $linea->cantidad = floatval($_POST['cantidad_'.$num]);
+                     $linea->pvpunitario = floatval($_POST['pvp_'.$num]);
+                     $linea->dtopor = floatval($_POST['dto_'.$num]);
+                     $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
+                     $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     if( !$linea->save() )
+                        $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
+                  }
+               }
+            }
+         }
+         $this->albaran->neto = $neto;
+         $this->albaran->totaliva = $iva;
+         $this->albaran->total = $total;
+         $this->albaran->totaleuros = $total;
+      }
+      
+      if( $this->albaran->save() )
+         $this->new_message("Albarán modificado correctamente.");
+      else
+         $this->new_error_msg("¡Imposible modificar el albarán!");
+   }
+
    private function generar_factura()
    {
       $factura = new factura_cliente();

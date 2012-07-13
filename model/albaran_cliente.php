@@ -76,17 +76,22 @@ class linea_albaran_cliente extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvpunitario, 2, ',', '.');
+      return number_format($this->pvpunitario, 2, ',', ' ');
    }
    
    public function show_pvp_iva()
    {
-      return number_format($this->pvpunitario + ($this->pvpunitario * $this->iva / 100), 2, ',', '.');
+      return number_format($this->pvpunitario*(100+$this->iva)/100, 2, ',', ' ');
    }
    
    public function show_total()
    {
-      return number_format($this->pvptotal, 2, ',', '.');
+      return number_format($this->pvptotal, 2, ',', ' ');
+   }
+   
+   public function show_total_iva()
+   {
+      return number_format($this->pvptotal*(100+$this->iva)/100, 2, ',', ' ');
    }
    
    public function url()
@@ -268,7 +273,10 @@ class albaran_cliente extends fs_model
          $this->provincia = $a['provincia'];
          $this->apartado = $a['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
-         $this->hora = $a['hora'];
+         if( is_null($a['hora']) )
+            $this->hora = '00:00:00';
+         else
+            $this->hora = $a['hora'];
          $this->neto = floatval($a['neto']);
          $this->total = floatval($a['total']);
          $this->totaliva = floatval($a['totaliva']);
