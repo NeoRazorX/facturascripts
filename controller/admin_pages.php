@@ -86,7 +86,7 @@ class admin_pages extends fs_controller
       }
       foreach(scandir('controller') as $f)
       {
-         if(!is_dir($f) AND $f != '')
+         if(is_string($f) AND strlen($f) > 0 AND !is_dir($f))
          {
             $found = FALSE;
             foreach($pages as $p)
