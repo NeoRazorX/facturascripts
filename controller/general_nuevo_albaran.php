@@ -76,6 +76,10 @@ class general_nuevo_albaran extends fs_controller
       }
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    private function new_search()
    {
       $cache = new fs_cache();

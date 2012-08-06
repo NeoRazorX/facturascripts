@@ -53,6 +53,11 @@ class general_familia extends fs_controller
       {
          $this->page->title = $this->familia->codfamilia;
          $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas', '#', '', 'img/tools.png', '*');
+         
+         if( $this->page->get('general_cargar_familia') )
+            $this->buttons[] = new fs_button('b_load_familia', 'cargar', '#');
+         
+         $this->buttons[] = new fs_button('b_download_familia', 'descargar', $this->url().'&download=TRUE', '', 'img/save.png', '*');
          $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/remove.png', '-');
          
          if( isset($_POST['multiplicar']) )
@@ -60,6 +65,10 @@ class general_familia extends fs_controller
             $art = new articulo();
             $art->multiplicar_precios($this->familia->codfamilia, floatval($_POST['multiplicar']));
          }
+         else if( isset($_GET['download']) )
+            $this->download();
+         else if( isset($_POST['archivo']) )
+            $this->upload();
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
@@ -67,6 +76,10 @@ class general_familia extends fs_controller
             $this->offset = 0;
          $this->articulos = $this->familia->get_articulos($this->offset);
       }
+   }
+   
+   public function version() {
+      return parent::version().'-1';
    }
    
    public function url()
@@ -91,6 +104,49 @@ class general_familia extends fs_controller
       if(count($this->articulos)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
+   }
+   
+   private function download()
+   {
+      $this->template = FALSE;
+      header( "content-type: text/plain; charset=UTF-8" );
+      echo "REF;PVP;DESC;CODBAR;\n";
+      $num = 0;
+      $articulos = $this->familia->get_articulos($num);
+      while(count($articulos) > 0)
+      {
+         foreach($articulos as $a)
+            echo $a->referencia.';'.$a->pvp.';'.$this->change_dot($a->descripcion).';'.$a->codbarras.";\n";
+         unset($articulos);
+         $num += FS_ITEM_LIMIT;
+         $articulos = $this->familia->get_articulos($num);
+      }
+   }
+   
+   private function change_dot($var)
+   {
+      return str_replace(';', '', $var);
+   }
+   
+   private function upload()
+   {
+      if( is_uploaded_file($_FILES['farchivo']['tmp_name']) )
+      {
+         if( !file_exists("tmp/familias") )
+            mkdir("tmp/familias");
+         else if( file_exists("tmp/familias/".$this->familia->codfamilia.'.csv') )
+            unlink("tmp/familias/".$this->familia->codfamilia.'.csv');
+         
+         copy($_FILES['farchivo']['tmp_name'], "tmp/familias/".$this->familia->codfamilia.'.csv');
+         
+         $page = $this->page->get("general_cargar_familia");
+         if($page)
+            header('location: '.$page->url().'&fam='.$this->familia->codfamilia.'&reboot=TRUE');
+         else
+            $this->new_error_msg("No tienes permiso para acceder a general_cargar_familia");
+      }
+      else
+         $this->new_error_msg("¡Imposible cargar el archivo!");
    }
 }
 

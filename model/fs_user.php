@@ -32,6 +32,9 @@ class fs_user extends fs_model
    public $agente;
    public $admin;
    public $last_login;
+   public $last_login_time;
+   public $last_ip;
+   public $last_browser;
 
    public function __construct($a = FALSE)
    {
@@ -42,22 +45,32 @@ class fs_user extends fs_model
          $this->password = $a['password'];
          $this->log_key = $a['log_key'];
          $this->codagente = intval($a['codagente']);
+         
          if($this->codagente < 1)
             $this->codagente = NULL;
-         if($a['admin'] == 't')
-            $this->admin = TRUE;
+         
+         $this->admin = ($a['admin'] == 't');
+         $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
+         
+         if( is_null($a['last_login_time']) )
+            $this->last_login_time = '00:00:00';
          else
-            $this->admin = FALSE;
-         $this->last_login = $a['last_login'];
+            $this->last_login_time = $a['last_login_time'];
+         
+         $this->last_ip = $a['last_ip'];
+         $this->last_browser = $a['last_browser'];
       }
       else
       {
-         $this->nick = '';
-         $this->password = '';
-         $this->log_key = '';
+         $this->nick = NULL;
+         $this->password = NULL;
+         $this->log_key = NULL;
          $this->codagente = NULL;
          $this->admin = FALSE;
-         $this->last_login = Date('d-m-Y');
+         $this->last_login = NULL;
+         $this->last_login_time = NULL;
+         $this->last_ip = NULL;
+         $this->last_browser = NULL;
       }
       $this->logged_on = FALSE;
       $this->agente = NULL;
@@ -65,18 +78,21 @@ class fs_user extends fs_model
    
    public function url()
    {
-      return 'index.php?page=admin_user&snick='.$this->nick;
+      if( is_null($this->nick) )
+         return 'index.php?page=admin_users';
+      else
+         return 'index.php?page=admin_user&snick='.$this->nick;
    }
 
    protected function install()
    {
       $agente = new agente();
-      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."','',NULL,TRUE);";
+      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
    }
    
    public function get($n = '')
    {
-      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick='".$n."';");
+      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = '".$n."';");
       if($u)
          return new fs_user($u[0]);
       else
@@ -127,7 +143,7 @@ class fs_user extends fs_model
    
    public function show_last_login()
    {
-      return Date('d-m-Y', strtotime($this->last_login));
+      return Date('d-m-Y', strtotime($this->last_login)).' '.$this->last_login_time;
    }
    
    public function set_nick($n='')
@@ -177,6 +193,15 @@ class fs_user extends fs_model
       $this->log_key = sha1( strval(rand()) );
       $this->logged_on = TRUE;
       $this->last_login = Date('d-m-Y');
+      $this->last_login_time = Date('H:i:s');
+      $this->last_ip = $_SERVER['REMOTE_ADDR'];
+      
+      try {
+         $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
+      }
+      catch (Exception $e) {
+         $this->last_browser = 'UNKNOWN';
+      }
    }
    
    public function exists()
@@ -193,14 +218,16 @@ class fs_user extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET password = '".$this->password."',
                  log_key = '".$this->log_key."', codagente = ".$this->var2str($this->codagente).",
-                 admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).
-                 " WHERE nick = '".$this->nick."';";
+                 admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
+                 last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
+                 last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = '".$this->nick."';";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login) VALUES
-                 ('".$this->nick."','".$this->password."','".$this->log_key."',".$this->var2str($this->codagente).
-                 ",".$this->var2str($this->admin).",".$this->var2str($this->last_login).");";
+         $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,last_browser)
+                 VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
+                 ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
+                 ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
       }
       return $this->db->exec($sql);
    }

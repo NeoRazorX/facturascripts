@@ -31,6 +31,10 @@ class contabilidad_asiento extends fs_controller
          $this->asiento = FALSE;
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function url()
    {
       if( $this->asiento )

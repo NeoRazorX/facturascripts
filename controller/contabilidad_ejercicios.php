@@ -46,6 +46,10 @@ class contabilidad_ejercicios extends fs_controller
             $this->new_error_msg("¡Imposible guardar el ejercicio!");
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

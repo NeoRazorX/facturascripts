@@ -52,6 +52,10 @@ class general_paquetes extends fs_controller
       }
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    private function new_search()
    {
       $art = new articulo();

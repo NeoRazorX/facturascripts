@@ -467,6 +467,11 @@ div.footer table td.left {
    text-align: left;
 }
 
+div.copyright img,
+div.footer img {
+   vertical-align: middle;
+}
+
 /* reglas para las gráficas generadas con jquery.charts.js */
 h1.jqbar {
    margin: 5px;

@@ -81,6 +81,10 @@ class admin_empresa extends fs_controller
             $this->new_error_msg ('Error al actualizar la base de datos.');
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

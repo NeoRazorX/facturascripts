@@ -93,6 +93,10 @@ class general_articulos extends fs_controller
          $this->resultados = $articulo->all($this->offset);
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function anterior_url()
    {
       $url = '';

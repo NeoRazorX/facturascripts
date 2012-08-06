@@ -53,6 +53,10 @@ class general_familias extends fs_controller
             $this->new_message("Familia ".$_GET['delete']." eliminada correctamente");
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

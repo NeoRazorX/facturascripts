@@ -78,6 +78,10 @@ class admin_user extends fs_controller
          $this->suser = FALSE;
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function all()
    {
       $returnlist = array();

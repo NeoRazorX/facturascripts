@@ -124,6 +124,10 @@ class general_articulo extends fs_controller
       }
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function url()
    {
       if($this->articulo)

@@ -150,6 +150,10 @@ class tpv_yamyam extends fs_controller
          $this->new_error_msg("¡No tienes un agente asociado a tu usuario!");
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    private function cargar_datos_tpv()
    {
       /// cargamos todos los paquetes

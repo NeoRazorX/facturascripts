@@ -58,6 +58,10 @@ class contabilidad_factura_prov extends fs_controller
       }
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function url()
    {
       if($this->factura)

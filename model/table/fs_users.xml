@@ -37,6 +37,21 @@
       <tipo>date</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>last_login_time</nombre>
+      <tipo>time</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_ip</nombre>
+      <tipo>character varying(40)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_browser</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>fs_users_pkey</nombre>
       <consulta>PRIMARY KEY (nick)</consulta>

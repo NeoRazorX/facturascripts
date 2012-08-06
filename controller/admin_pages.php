@@ -110,6 +110,10 @@ class admin_pages extends fs_controller
       }
       return $pages;
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

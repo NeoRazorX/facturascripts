@@ -64,6 +64,10 @@ class general_albaranes_prov extends fs_controller
          $this->resultados = $albaran->all($this->offset);
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function anterior_url()
    {
       $url = '';

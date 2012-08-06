@@ -33,6 +33,10 @@ class informe_articulos extends fs_controller
       $this->top_ventas = $linea_alb_cli->top_by_articulo();
       $this->top_compras = $linea_alb_pro->top_by_articulo();
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

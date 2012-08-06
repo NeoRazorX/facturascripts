@@ -6,6 +6,7 @@
       <th>página</th>
       <th>carpeta</th>
       <th>titulo</th>
+      <th>versión</th>
       <th>en menú</th>
       <th>existe</th>
       <th>inactiva</th>
@@ -16,6 +17,7 @@
       <td><a href="{$value->url()}">{$value->name}</a></td>
       <td>{$value->folder}</td>
       <td>{$value->title}</td>
+      <td>{$value->version}</td>
       {if condition="$value->show_on_menu"}
       <td align="center">Si</td>
       {else}

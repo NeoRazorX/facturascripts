@@ -64,6 +64,7 @@ class fs_controller
          $this->page = new fs_page( array('name'=>$name,
                                           'title'=>$title,
                                           'folder'=>$folder,
+                                          'version'=>$this->version(),
                                           'show_on_menu'=>$shmenu) );
          /// recuperamos el mensaje de error de fs_page()
          $this->new_error_msg( $this->page->error_msg );
@@ -180,7 +181,6 @@ class fs_controller
    
    public function log_out()
    {
-      ///setcookie('user', '', time()-FS_COOKIES_EXPIRE);
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
       setcookie('empresa', '', time()-FS_COOKIES_EXPIRE);
    }
@@ -283,7 +283,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.6';
+      return '0.9.7';
    }
    
    public function select_default_page()

@@ -3,6 +3,15 @@
 {if condition="$fsc->familia"}
 <script type="text/javascript">
    $(document).ready(function() {
+      $("#b_load_familia").click(function(event) {
+         event.preventDefault();
+         $("#shadow").show();
+         $("#popup_load_familia").css({
+            left: ($(window).width() - $("#popup_load_familia").outerWidth())/2,
+            top: ($(window).height() - $("#popup_load_familia").outerHeight())/2
+         });
+         $("#popup_load_familia").show();
+      });
       $("#b_herramientas_familia").click(function(event) {
          event.preventDefault();
          $("#shadow").show();
@@ -12,8 +21,6 @@
          });
          $("#popup_herramientas_familia").show();
       });
-   });
-   $(document).ready(function() {
       $("#b_eliminar_familia").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar esta familia?") )
@@ -27,7 +34,30 @@
    <form action="{$fsc->url()}" method="post">
       Multiplicar precios por:
       <input type="text" name="multiplicar" value="1" size="3"/>
-      <div class="right"><input type="submit" value="aplicar"/></div>
+      <input type="submit" value="aplicar"/>
+   </form>
+</div>
+
+<div class="popup" id="popup_load_familia">
+   <h1>Cargar familia:</h1>
+   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+      El archivo debe estar en formato csv: valores separados por punto y coma y sin separador de texto,
+      <br/>
+      adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
+      <br/>
+      Pulsa el botón descargar para ver un ejemplo.
+      <br/><br/>
+      <table width="100%">
+         <tr>
+            <td>
+               Archivo: <input name='farchivo' type='file'/>
+               <input name='archivo' type='hidden' value='TRUE'/>
+            </td>
+            <td align="right">
+               <input type="submit" value="cargar"/>
+            </td>
+         </tr>
+      </table>
    </form>
 </div>
 

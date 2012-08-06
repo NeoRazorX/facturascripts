@@ -50,21 +50,23 @@
    <table class="list">
       <tr>
          <th>nick</th>
-         <th>contraseña</th>
          <th>agente</th>
          <th>administrador</th>
+         <th>IP</th>
+         <th>Navegador</th>
          <th align="right">último login</th>
       </tr>
       {loop="$fsc->user->all()"}
       <tr>
          <td><a href="{$value->url()}">{$value->nick}</a></td>
-         <td>-</td>
          <td><a href="{$value->get_agente_url()}">{$value->get_agente_fullname()}</a></td>
          {if condition="$value->admin"}
-         <td align="center">Si</td>
+            <td align="center">Si</td>
          {else}
-         <td align="center">-</td>
+            <td align="center">-</td>
          {/if}
+         <td align="center">{$value->last_ip}</td>
+         <td align="center">{$value->last_browser}</td>
          <td align="right">{$value->show_last_login()}</td>
       </tr>
       {/loop}

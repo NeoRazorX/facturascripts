@@ -24,6 +24,7 @@ class fs_page extends fs_model
    public $name;
    public $title;
    public $folder;
+   public $version;
    public $show_on_menu;
    public $exists;
    public $enabled;
@@ -36,16 +37,18 @@ class fs_page extends fs_model
          $this->name = $p['name'];
          $this->title = $p['title'];
          $this->folder = $p['folder'];
-         if($p['show_on_menu'] == 't')
-            $this->show_on_menu = TRUE;
+         if( isset($p['version']) )
+            $this->version = $p['version'];
          else
-            $this->show_on_menu = FALSE;
+            $this->version = NULL;
+         $this->show_on_menu = ($p['show_on_menu'] == 't');
       }
       else
       {
-         $this->name = '';
-         $this->title = '';
-         $this->folder = '';
+         $this->name = NULL;
+         $this->title = NULL;
+         $this->folder = NULL;
+         $this->version = NULL;
          $this->show_on_menu = TRUE;
       }
       $this->exists = FALSE;
@@ -54,7 +57,16 @@ class fs_page extends fs_model
    
    protected function install()
    {
-      return "INSERT INTO ".$this->table_name." (name,title,folder,show_on_menu) VALUES ('admin_pages','páginas','admin',TRUE);";
+      return "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
+              VALUES ('admin_pages','páginas','admin',NULL,TRUE);";
+   }
+   
+   public function url()
+   {
+      if( is_null($this->name) )
+         return 'index.php?page=admin_pages';
+      else
+         return 'index.php?page='.$this->name;
    }
    
    public function exists()
@@ -78,13 +90,16 @@ class fs_page extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET title = '".$this->title."', folder = '".$this->folder.
-                "', show_on_menu = ".$this->var2str($this->show_on_menu)." WHERE name = '".$this->name."';";
+         $sql = "UPDATE ".$this->table_name." SET title = '".$this->title."', folder = '".$this->folder."',
+                 version = ".$this->var2str($this->version).", show_on_menu = ".$this->var2str($this->show_on_menu)."
+                 WHERE name = '".$this->name."';";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,show_on_menu) VALUES
-            ('".$this->name."','".$this->title."','".$this->folder."',".$this->var2str($this->show_on_menu).");";
+         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu) VALUES
+                 (".$this->var2str($this->name).",".$this->var2str($this->title).",
+                 ".$this->var2str($this->folder).",".$this->var2str($this->version).",
+                 ".$this->var2str($this->show_on_menu).");";
       }
       return $this->db->exec($sql);
    }
@@ -104,11 +119,6 @@ class fs_page extends fs_model
             $pagelist[] = new fs_page($p);
       }
       return $pagelist;
-   }
-   
-   public function url()
-   {
-      return 'index.php?page='.$this->name;
    }
 }
 

@@ -47,6 +47,10 @@ class admin_paises extends fs_controller
          $pais->delete();
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

@@ -45,6 +45,10 @@ class contabilidad_facturas_prov extends fs_controller
          $this->resultados = $factura->all($this->offset);
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function anterior_url()
    {
       $url = '';

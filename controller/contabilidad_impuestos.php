@@ -49,6 +49,10 @@ class contabilidad_impuestos extends fs_controller
             $this->new_error_msg("¡Error al guardar el impuesto!");
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

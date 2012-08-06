@@ -46,6 +46,10 @@ class contabilidad_asientos extends fs_controller
          $this->resultados = $this->asiento->all($this->offset);
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function anterior_url()
    {
       $url = '';

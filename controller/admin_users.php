@@ -59,6 +59,10 @@ class admin_users extends fs_controller
          $nu->delete();
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

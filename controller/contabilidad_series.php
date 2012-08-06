@@ -44,6 +44,10 @@ class contabilidad_series extends fs_controller
             $this->new_error_msg("¡Imposible guardar serie!");
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

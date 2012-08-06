@@ -51,6 +51,10 @@ class admin_agentes extends fs_controller
          $this->agente->delete();
       }
    }
+   
+   public function version() {
+      return parent::version().'-1';
+   }
 }
 
 ?>

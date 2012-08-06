@@ -660,10 +660,13 @@ class articulo extends fs_model
       return $artilist;
    }
    
-   public function count()
+   public function count($codfamilia=FALSE)
    {
       $num = 0;
-      $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
+      if( $codfamilia )
+         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name." WHERE codfamilia = '".$codfamilia."';");
+      else
+         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
       if($articulos)
          $num = intval($articulos[0]['total']);
       return $num;

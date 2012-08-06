@@ -41,6 +41,10 @@ class contabilidad_subcuenta extends fs_controller
          $this->subcuenta = FALSE;
    }
    
+   public function version() {
+      return parent::version().'-1';
+   }
+   
    public function url()
    {
       if( $this->subcuenta )
