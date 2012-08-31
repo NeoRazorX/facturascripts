@@ -133,8 +133,8 @@ class cuenta extends fs_model
    public function search($query, $offset=0)
    {
       $cuenlist = array();
-      $query = strtolower($query);
-      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '%".$query."%'
+      $query = strtolower( trim($query) );
+      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)
       {

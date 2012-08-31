@@ -39,6 +39,20 @@ class contabilidad_facturas_cli extends fs_controller
       else
          $this->offset = 0;
       
+      if( isset($_GET['delete']) )
+      {
+         $fact = $factura->get($_GET['delete']);
+         if($fact)
+         {
+            if( $fact->delete() )
+               $this->new_message("Factura eliminada correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar la factura!");
+         }
+         else
+            $this->new_error_msg("¡Factura no encontrada!");
+      }
+      
       if($this->query != '')
          $this->resultados = $factura->search($this->query, $this->offset);
       else

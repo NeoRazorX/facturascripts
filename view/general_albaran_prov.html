@@ -5,11 +5,32 @@
    $(document).ready(function() {
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         if( confirm("¿Estas seguro de que deseas eliminar este albarán?") )
-            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}";
+         $("#shadow").show();
+         $("#popup_eliminar").css({
+            left: ($(window).width() - $("#popup_eliminar").outerWidth())/2,
+            top: ($(window).height() - $("#popup_eliminar").outerHeight())/2
+         });
+         $("#popup_eliminar").show();
       });
    });
 </script>
+
+<div class="popup" id="popup_eliminar">
+   <h1>Eliminar albarán</h1>
+   {if condition="$fsc->albaran->idfactura"}
+      <ul>
+         <li>Hay una factura asociada que será eliminada junto con este albarán.</li>
+      </ul>
+   {/if}
+   <table width="100%">
+      <tr>
+         <td>¿Realmente desea eliminar este albarán?</td>
+         <td align="right">
+            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}">eliminar</a>
+         </td>
+      </tr>
+   </table>
+</div>
 
 <div class="rounded">
    <form action="{$fsc->albaran->url()}" method="post">
@@ -52,7 +73,8 @@
          <th align="right">Cantidad</th>
          <th align="right">PVP</th>
          <th align="right">dto</th>
-         <th align="right">Total</th>
+         <th align="right">IVA</th>
+         <th align="right">Total+IVA</th>
       </tr>
       {loop="$fsc->albaran->get_lineas()"}
       <tr>
@@ -63,7 +85,8 @@
          <td align="right">{$value->cantidad}</td>
          <td align="right">{$value->show_pvp()} €</td>
          <td align="right">{$value->dtopor} %</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->iva} %</td>
+         <td align="right">{$value->show_total_iva()} €</td>
       </tr>
       {/loop}
    </table>

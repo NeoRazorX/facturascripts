@@ -411,10 +411,20 @@ class proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $prolist = array();
-      $query = strtolower($query);
-      $proveedores = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codproveedor ~~ '%".$query."%'
-         OR lower(nombre) ~~ '%".$query."%' OR lower(nombrecomercial) ~~ '%".$query."%'
-         OR lower(observaciones) ~~ '%".$query."%' ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
+      $query = strtolower( trim($query) );
+      
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+         $consulta .= "codproveedor ~~ '%".$query."%' OR cifnif ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'";
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $consulta .= "lower(nombre) ~~ '%".$buscar."%' OR lower(cifnif) ~~ '%".$buscar."%'
+            OR lower(observaciones) ~~ '%".$buscar."%'";
+      }
+      $consulta .= " ORDER BY nombre ASC";
+      
+      $proveedores = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($proveedores)
       {
          foreach($proveedores as $p)

@@ -44,7 +44,6 @@
       <tr>
          <th>código</th>
          <th>nombre</th>
-         <th>nomre comercial</th>
          <th>cifnif</th>
          <th>observaciones</th>
       </tr>
@@ -52,13 +51,12 @@
       <tr>
          <td><a href="{$value->url()}">{$value->codproveedor}</a></td>
          <td>{$value->nombre}</td>
-         <td>{$value->nombrecomercial}</td>
          <td>{$value->cifnif}</td>
          <td>{$value->observaciones_resume()}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="5">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo proveedor</b> para crear uno.</td>
+         <td colspan="4">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo proveedor</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>
@@ -67,7 +65,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="3"></td>
+         <td colspan="2"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

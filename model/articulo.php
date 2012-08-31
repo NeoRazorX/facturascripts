@@ -255,13 +255,13 @@ class articulo extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvp, 2, ',', '.');
+      return number_format($this->pvp, 2, '.', ' ');
    }
    
    public function show_pvp_iva($coma=TRUE)
    {
       if($coma)
-         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, ',', '.');
+         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', ' ');
       else
          return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', '');
    }
@@ -582,47 +582,30 @@ class articulo extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
    }
    
-   public function search($text, $offset=0)
+   public function search($query, $offset=0)
    {
       $artilist = array();
-      if( isset($text) )
+      $query = strtolower( trim($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
       {
-         /// búsqueda por referencia y código de barras
-         $sql = "SELECT * FROM ".$this->table_name;
-         $text = strtolower($text);
-         if( is_numeric($text) )
-            $sql .= " WHERE (referencia ~~ '%".$text."%' OR codbarras = '".$text."')";
-         else
-            $sql .= " WHERE lower(referencia) ~~ '%".$text."%'";
-         $sql .= " ORDER BY referencia ASC";
-         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-         if($articulos)
-         {
-            foreach($articulos as $a)
-               $artilist[] = new articulo($a);
-         }
-         /// añadimos las búsquedas por descripción
-         $sql = "SELECT * FROM ".$this->table_name." WHERE lower(descripcion) ~~ '%".$text."%' ORDER BY descripcion ASC";
-         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-         if($articulos)
-         {
-            foreach($articulos as $a)
-            {
-               $aux = new articulo($a);
-               if( !in_array($aux, $artilist) )
-                  $artilist[] = $aux;
-            }
-         }
+         $sql .= "referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
+            OR codbarras = '".$query."'";
       }
       else
       {
-         $sql = "SELECT * FROM ".$this->table_name." ORDER BY referencia ASC";
-         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-         if($articulos)
-         {
-            foreach($articulos as $a)
-               $artilist[] = new articulo($a);
-         }
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
+            OR lower(descripcion) ~~ '%".$buscar."%'";
+      }
+      $sql .= " ORDER BY referencia ASC";
+      
+      $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if($articulos)
+      {
+         foreach($articulos as $a)
+            $artilist[] = new articulo($a);
       }
       return $artilist;
    }
@@ -672,10 +655,20 @@ class articulo extends fs_model
       return $num;
    }
    
-   public function move_codimpuesto($cod0, $cod1)
+   public function move_codimpuesto($cod0, $cod1, $mantener=FALSE)
    {
-      return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).
-                             " WHERE codimpuesto = ".$this->var2str($cod0).";");
+      if($mantener)
+      {
+         $impuesto = new impuesto();
+         $impuesto0 = $impuesto->get($cod0);
+         $impuesto1 = $impuesto->get($cod1);
+         $multiplo = (100 + $impuesto0->iva) / (100 + $impuesto1->iva);
+         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).",
+            pvp = (pvp*".$multiplo.") WHERE codimpuesto = ".$this->var2str($cod0).";");
+      }
+      else
+         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1)."
+            WHERE codimpuesto = ".$this->var2str($cod0).";");
    }
 }
 

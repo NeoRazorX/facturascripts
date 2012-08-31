@@ -126,13 +126,14 @@
          <td align='center'><input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/>\n\
             <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='3'/>\n\
             <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
-         <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
+         <td align='center'>\n\
             <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
                "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
          <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
             "' size='4' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
          <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
             "' size='6' onkeyup='ajustar_total("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td>\n\
+         <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>"+iva+" %</td>\n\
          <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
             "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
       $('div.popup').each(function() {
@@ -145,8 +146,12 @@
       recalcular();
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
-         if( confirm("¿Estas seguro de que deseas eliminar este albarán?") )
-            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}";
+         $("#shadow").show();
+         $("#popup_eliminar").css({
+            left: ($(window).width() - $("#popup_eliminar").outerWidth())/2,
+            top: ($(window).height() - $("#popup_eliminar").outerHeight())/2
+         });
+         $("#popup_eliminar").show();
       });
       $("#b_new_line").click(function(event) {
          event.preventDefault();
@@ -208,6 +213,23 @@
    </form>
 </div>
 
+<div class="popup" id="popup_eliminar">
+   <h1>Eliminar albarán</h1>
+   {if condition="$fsc->albaran->idfactura"}
+      <ul>
+         <li>Hay una factura asociada que será eliminada junto con este albarán.</li>
+      </ul>
+   {/if}
+   <table width="100%">
+      <tr>
+         <td>¿Realmente desea eliminar este albarán?</td>
+         <td align="right">
+            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->albaran->idalbaran}">eliminar</a>
+         </td>
+      </tr>
+   </table>
+</div>
+
 <form action="{$fsc->albaran->url()}" method="post">
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <div class="rounded">
@@ -256,6 +278,7 @@
             <th>PVP</th>
             <th>dto.</th>
             <th>Total</th>
+            <th>IVA</th>
             <th>Total+IVA</th>
          </tr>
          {loop="$fsc->albaran->get_lineas()"}
@@ -264,7 +287,6 @@
                <a href="{$value->articulo_url()}">{$value->referencia}</a>
                {$value->descripcion}
                <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
-               <input type="hidden" name="iva_{$counter}" id="iva_{$counter}" value="{$value->iva}"/>
             </td>
             <td align="center">
                <input type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
@@ -285,6 +307,10 @@
                       onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/> €
             </td>
             <td align="center">
+               <input type="hidden" name="iva_{$counter}" id="iva_{$counter}" value="{$value->iva}"/>
+               {$value->iva} %
+            </td>
+            <td align="center">
                <input type="text" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
                       onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/> €
             </td>
@@ -303,7 +329,8 @@
             <th align="right">Cantidad</th>
             <th align="right">PVP</th>
             <th align="right">dto</th>
-            <th align="right">Total</th>
+            <th align="right">IVA</th>
+            <th align="right">Total+IVA</th>
          </tr>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
@@ -311,7 +338,8 @@
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$value->show_pvp()} €</td>
             <td align="right">{$value->dtopor} %</td>
-            <td align="right">{$value->show_total()} €</td>
+            <td align="right">{$value->iva} %</td>
+            <td align="right">{$value->show_total_iva()} €</td>
          </tr>
          {/loop}
       </table>

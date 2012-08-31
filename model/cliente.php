@@ -426,10 +426,20 @@ class cliente extends fs_model
    public function search($query, $offset=0)
    {
       $clilist = array();
-      $query = strtolower($query);
-      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente ~~ '%".$query."%'
-         OR lower(nombre) ~~ '%".$query."%' OR lower(nombrecomercial) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".$query."%'
-            ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
+      $query = strtolower( trim($query) );
+      
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+         $consulta .= "codcliente ~~ '%".$query."%' OR cifnif ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'";
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $consulta .= "lower(nombre) ~~ '%".$buscar."%' OR lower(cifnif) ~~ '%".$buscar."%'
+            OR lower(observaciones) ~~ '%".$buscar."%'";
+      }
+      $consulta .= " ORDER BY nombre ASC";
+      
+      $clientes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($clientes)
       {
          foreach($clientes as $c)

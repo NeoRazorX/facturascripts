@@ -38,6 +38,8 @@ class linea_albaran_proveedor extends fs_model
    public $pvptotal;
    public $pvpsindto;
    public $pvpunitario;
+   public $irpf;
+   public $recargo;
    
    public function __construct($l=FALSE)
    {
@@ -56,6 +58,8 @@ class linea_albaran_proveedor extends fs_model
          $this->pvptotal = floatval($l['pvptotal']);
          $this->pvpsindto = floatval($l['pvpsindto']);
          $this->pvpunitario = floatval($l['pvpunitario']);
+         $this->irpf = floatval($l['irpf']);
+         $this->recargo = floatval($l['recargo']);
       }
       else
       {
@@ -71,17 +75,24 @@ class linea_albaran_proveedor extends fs_model
          $this->pvptotal = 0;
          $this->pvpsindto = 0;
          $this->pvpunitario = 0;
+         $this->irpf = 0;
+         $this->recargo = 0;
       }
    }
    
    public function show_pvp()
    {
-      return number_format($this->pvpunitario, 2, ',', ' ');
+      return number_format($this->pvpunitario, 2, '.', ' ');
    }
    
    public function show_total()
    {
-      return number_format($this->pvptotal, 2, ',', ' ');
+      return number_format($this->pvptotal, 2, '.', ' ');
+   }
+   
+   public function show_total_iva()
+   {
+      return number_format($this->pvptotal*(100+$this->iva)/100, 2, '.', ' ');
    }
    
    public function url()
@@ -127,18 +138,20 @@ class linea_albaran_proveedor extends fs_model
             cantidad = ".$this->var2str($this->cantidad).", dtopor = ".$this->var2str($this->dtopor).",
             dtolineal = ".$this->var2str($this->dtolineal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
             iva = ".$this->var2str($this->iva).", pvptotal = ".$this->var2str($this->pvptotal).",
-            pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario)."
+            pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario).",
+            irpf = ".$this->var2str($this->irpf).", recargo = ".$this->var2str($this->recargo)."
             WHERE idlinea = '".$this->idlinea."';";
       }
       else
       {
          $this->new_idlinea();
          $sql = "INSERT INTO ".$this->table_name." (idlinea,idalbaran,referencia,descripcion,cantidad,dtopor,
-            dtolineal,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario) VALUES (".$this->var2str($this->idlinea).",".$this->var2str($this->idalbaran).",
-            ".$this->var2str($this->referencia).",".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",
+            dtolineal,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo) VALUES (".$this->var2str($this->idlinea).",
+            ".$this->var2str($this->idalbaran).",".$this->var2str($this->referencia).",
+            ".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",
             ".$this->var2str($this->dtopor).",".$this->var2str($this->dtolineal).",".$this->var2str($this->codimpuesto).",
             ".$this->var2str($this->iva).",".$this->var2str($this->pvptotal).",".$this->var2str($this->pvpsindto).",
-            ".$this->var2str($this->pvpunitario).");";
+            ".$this->var2str($this->pvpunitario).",".$this->var2str($this->irpf).",".$this->var2str($this->recargo).");";
       }
       return $this->db->exec($sql);
    }
@@ -291,17 +304,17 @@ class albaran_proveedor extends fs_model
    
    public function show_neto()
    {
-      return number_format($this->neto, 2, ',', ' ');
+      return number_format($this->neto, 2, '.', ' ');
    }
    
    public function show_iva()
    {
-      return number_format($this->totaliva, 2, ',', ' ');
+      return number_format($this->totaliva, 2, '.', ' ');
    }
    
    public function show_total()
    {
-      return number_format($this->totaleuros, 2, ',', ' ');
+      return number_format($this->totaleuros, 2, '.', ' ');
    }
    
    public function observaciones_resume()
@@ -459,13 +472,13 @@ class albaran_proveedor extends fs_model
    
    public function delete()
    {
-      if($this->ptefactura AND (is_null($this->idfactura) OR $this->idfactura == 0))
-         return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
-      else
+      if($this->idfactura)
       {
-         $this->new_error_msg("Este albarán está vinculado a una factura.");
-         return FALSE;
+         $factura = new factura_proveedor();
+         $factura = $factura->get($this->idfactura);
+         $factura->delete();
       }
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
    }
    
    public function all($offset=0)
@@ -497,9 +510,21 @@ class albaran_proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $alblist = array();
-      $query = strtolower($query);
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."  WHERE codigo ~~ '%".$query."%'
-         OR lower(observaciones) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      $query = strtolower( trim($query) );
+      
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+      {
+         $consulta .= "codigo ~~ '%".$query."%' OR numproveedor ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'
+            OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
+      }
+      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
+         $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
+      else
+         $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
+      $consulta .= " ORDER BY fecha DESC";
+      
+      $albaranes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)

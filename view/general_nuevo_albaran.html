@@ -3,6 +3,7 @@
    <table class="list">
       <tr>
          <th>Referencia</th>
+         <th>Cod. equivalencia</th>
          <th>Descripción</th>
          <th align="right">PVP+IVA</th>
          <th align="right">Stock</th>
@@ -18,6 +19,7 @@
             {/if}
             </a>
          </td>
+         <td>{$value->equivalencia}</td>
          <td>{$value->descripcion}</td>
          <td align="right">
             <span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} €</span>
@@ -61,7 +63,7 @@
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
-      function ajustar_total(num)
+      function ajustar_total()
       {
          var total = 0;
          var uds = 0;
@@ -88,7 +90,7 @@
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
-      function ajustar_totiva(num)
+      function ajustar_totiva()
       {
          var totiva = 0;
          var uds = 0;
@@ -110,7 +112,7 @@
                else
                   $("#dto_"+i).val(dto);
                $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
+               tpv_total += totiva;
             }
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");

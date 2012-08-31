@@ -103,6 +103,10 @@ class general_articulo extends fs_controller
          $this->page->title = $this->articulo->referencia;
          $this->buttons[] = new fs_button('b_imagen', 'imagen');
          $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         
+         if($this->articulo->bloqueado)
+            $this->new_error_msg("Este artículo está bloqueado.");
+         
          $this->almacen = new almacen();
          $this->familia = $this->articulo->get_familia();
          $this->impuesto = new impuesto();

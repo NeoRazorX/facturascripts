@@ -18,6 +18,12 @@
  */
 
 require_once 'model/albaran_proveedor.php';
+require_once 'model/asiento.php';
+require_once 'model/empresa.php';
+require_once 'model/factura_proveedor.php';
+require_once 'model/partida.php';
+require_once 'model/proveedor.php';
+require_once 'model/subcuenta.php';
 
 class general_albaran_prov extends fs_controller
 {
@@ -55,11 +61,18 @@ class general_albaran_prov extends fs_controller
       {
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
+         
+         if( isset($_GET['facturar']) )
+            $this->generar_factura();
+         
          if( $this->albaran->ptefactura )
-            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
          else
             $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
       }
+      else
+         $this->new_error_msg("¡Albarán de proveedor no encontrado!");
    }
    
    public function version() {
@@ -72,6 +85,219 @@ class general_albaran_prov extends fs_controller
          return $this->albaran->url();
       else
          return $this->page->url();
+   }
+   
+   private function generar_factura()
+   {
+      $factura = new factura_proveedor();
+      $factura->automatica = TRUE;
+      $factura->cifnif = $this->albaran->cifnif;
+      $factura->codalmacen = $this->albaran->codalmacen;
+      $factura->coddivisa = $this->albaran->coddivisa;
+      $factura->codejercicio = $this->albaran->codejercicio;
+      $factura->codpago = $this->albaran->codpago;
+      $factura->codproveedor = $this->albaran->codproveedor;
+      $factura->codserie = $this->albaran->codserie;
+      $factura->fecha = $this->albaran->fecha;
+      $factura->irpf = $this->albaran->irpf;
+      $factura->neto = $this->albaran->neto;
+      $factura->nombre = $this->albaran->nombre;
+      $factura->numproveedor = $this->albaran->numproveedor;
+      $factura->observaciones = $this->albaran->observaciones;
+      $factura->recfinanciero = $this->albaran->recfinanciero;
+      $factura->tasaconv = $this->albaran->tasaconv;
+      $factura->total = $this->albaran->total;
+      $factura->totaleuros = $this->albaran->totaleuros;
+      $factura->totalirpf = $this->albaran->totalirpf;
+      $factura->totaliva = $this->albaran->totaliva;
+      $factura->totalrecargo = $this->albaran->totalrecargo;
+      if( $factura->save() )
+      {
+         $continuar = TRUE;
+         foreach($this->albaran->get_lineas() as $l)
+         {
+            $linea = new linea_factura_proveedor();
+            $linea->cantidad = $l->cantidad;
+            $linea->codimpuesto = $l->codimpuesto;
+            $linea->descripcion = $l->descripcion;
+            $linea->dtolineal = $l->dtolineal;
+            $linea->dtopor = $l->dtopor;
+            $linea->idalbaran = $this->albaran->idalbaran;
+            $linea->idfactura = $factura->idfactura;
+            $linea->irpf = $l->irpf;
+            $linea->iva = $l->iva;
+            $linea->pvpsindto = $l->pvpsindto;
+            $linea->pvptotal = $l->pvptotal;
+            $linea->pvpunitario = $l->pvpunitario;
+            $linea->recargo = $l->recargo;
+            $linea->referencia = $l->referencia;
+            if( !$linea->save() )
+            {
+               $continuar = FALSE;
+               $this->new_error_msg("¡Imposible guardar la línea el artículo ".$linea->referencia."! ");
+               break;
+            }
+         }
+         
+         if( $continuar )
+            $this->generar_asiento($factura);
+         else
+         {
+            if( $factura->delete() )
+               $this->new_error_msg("La factura se ha borrado.");
+            else
+               $this->new_error_msg("¡Imposible borrar la factura!");
+         }
+      }
+      else
+         $this->new_error_msg("¡Imposible guardar la factura!");
+   }
+   
+   private function generar_asiento($factura)
+   {
+      $empresa = new empresa();
+      if( !$empresa->contintegrada )
+      {
+         $this->albaran->idfactura = $factura->idfactura;
+         $this->albaran->ptefactura = FALSE;
+         if( $this->albaran->save() )
+            $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+      }
+      else
+      {
+         $asiento = new asiento();
+         $asiento->codejercicio = $factura->codejercicio;
+         $asiento->concepto = "Su factura ".$factura->codigo." - ".$factura->nombre;
+         $asiento->documento = $factura->codigo;
+         $asiento->editable = FALSE;
+         $asiento->fecha = $factura->fecha;
+         $asiento->importe = $factura->totaleuros;
+         $asiento->tipodocumento = "Factura de proveedor";
+         if( $asiento->save() )
+         {
+            $asiento_correcto = TRUE;
+            $subcuenta = new subcuenta();
+            $proveedor = new proveedor();
+            $proveedor = $proveedor->get($factura->codproveedor);
+            $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
+            $partida0 = new partida();
+            $partida0->idasiento = $asiento->idasiento;
+            $partida0->concepto = $asiento->concepto;
+            $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
+            $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
+            $partida0->debe = $factura->totaleuros;
+            $partida0->coddivisa = $factura->coddivisa;
+            if( !$partida0->save() )
+            {
+               $asiento_correcto = FALSE;
+               $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida0->codsubcuenta."!");
+            }
+            
+            /// desglosamos el IVA
+            $totales_iva = array();
+            foreach($factura->get_lineas() as $l)
+            {
+               $encontrado = FALSE;
+               foreach($totales_iva as &$t)
+               {
+                  if($t[0] == $l->codimpuesto)
+                  {
+                     $encontrado = TRUE;
+                     $t[2] += $l->pvptotal;
+                     $t[3] += ($l->iva * $l->pvptotal / 100);
+                  }
+               }
+               
+               if( !$encontrado )
+                  $totales_iva[] = array($l->codimpuesto, $l->iva, $l->pvptotal, ($l->iva * $l->pvptotal / 100));
+            }
+            /// generamos una partida por cada impuesto
+            $subcuenta_iva = $subcuenta->get_by_codigo('4720000000', $asiento->codejercicio);
+            foreach($totales_iva as $t)
+            {
+               if($subcuenta_iva AND $asiento_correcto)
+               {
+                  $partida1 = new partida();
+                  $partida1->idasiento = $asiento->idasiento;
+                  $partida1->concepto = $asiento->concepto;
+                  $partida1->idsubcuenta = $subcuenta_iva->idsubcuenta;
+                  $partida1->codsubcuenta = $subcuenta_iva->codsubcuenta;
+                  $partida1->haber = $t[3];
+                  $partida1->idcontrapartida = $subcuenta_prov->idsubcuenta;
+                  $partida1->codcontrapartida = $subcuenta_prov->codsubcuenta;
+                  $partida1->cifnif = $proveedor->cifnif;
+                  $partida1->documento = $asiento->documento;
+                  $partida1->tipodocumento = $asiento->tipodocumento;
+                  $partida1->codserie = $factura->codserie;
+                  $partida1->factura = $factura->idfactura;
+                  $partida1->baseimponible = $t[2];
+                  $partida1->iva = $t[1];
+                  $partida1->coddivisa = $factura->coddivisa;
+                  if( !$partida1->save() )
+                  {
+                     $asiento_correcto = FALSE;
+                     $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida1->codsubcuenta."!");
+                  }
+               }
+            }
+            
+            $subcuenta_compras = $subcuenta->get_by_codigo('6000000000', $asiento->codejercicio);
+            if($subcuenta_compras AND $asiento_correcto)
+            {
+               $partida2 = new partida();
+               $partida2->idasiento = $asiento->idasiento;
+               $partida2->concepto = $asiento->concepto;
+               $partida2->idsubcuenta = $subcuenta_compras->idsubcuenta;
+               $partida2->codsubcuenta = $subcuenta_compras->codsubcuenta;
+               $partida2->haber = $factura->neto;
+               $partida2->coddivisa = $factura->coddivisa;
+               if( !$partida2->save() )
+               {
+                  $asiento_correcto = FALSE;
+                  $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida2->codsubcuenta."!");
+               }
+            }
+            
+            if( $asiento_correcto )
+            {
+               $factura->idasiento = $asiento->idasiento;
+               if( $factura->save() )
+               {
+                  $this->albaran->idfactura = $factura->idfactura;
+                  $this->albaran->ptefactura = FALSE;
+                  if( $this->albaran->save() )
+                     $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+                  else
+                     $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+               }
+               else
+                  $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
+            }
+            else
+            {
+               if( $asiento->delete() )
+               {
+                  $this->new_message("El asiento se ha borrado.");
+                  if( $factura->delete() )
+                     $this->new_message("La factura se ha borrado.");
+                  else
+                     $this->new_error_msg("¡Imposible borrar la factura!");
+               }
+               else
+                  $this->new_error_msg("¡Imposible borrar el asiento!");
+            }
+         }
+         else
+         {
+            $this->new_error_msg("¡Imposible guardar el asiento!");
+            if( $factura->delete() )
+               $this->new_error_msg("La factura se ha borrado.");
+            else
+               $this->new_error_msg("¡Imposible borrar la factura!");
+         }
+      }
    }
 }
 

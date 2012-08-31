@@ -88,12 +88,12 @@ class partida extends fs_model
    
    public function show_debe()
    {
-      return number_format($this->debe, 2, ',', ' ');
+      return number_format($this->debe, 2, '.', ' ');
    }
    
    public function show_haber()
    {
-      return number_format($this->haber, 2, ',', ' ');
+      return number_format($this->haber, 2, '.', ' ');
    }
    
    public function url()
@@ -179,8 +179,8 @@ class partida extends fs_model
    public function all_from_subcuenta($id, $offset=0)
    {
       $plist = array();
-      $partidas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."'",
-              FS_ITEM_LIMIT, $offset);
+      $partidas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."'
+         ORDER BY idpartida DESC", FS_ITEM_LIMIT, $offset);
       if($partidas)
       {
          foreach($partidas as $p)
@@ -192,7 +192,7 @@ class partida extends fs_model
    public function all_from_asiento($id)
    {
       $plist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$id."';");
+      $partidas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$id."' ORDER BY codsubcuenta ASC;");
       if($partidas)
       {
          foreach($partidas as $p)

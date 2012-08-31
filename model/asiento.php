@@ -72,7 +72,7 @@ class asiento extends fs_model
    
    public function show_importe()
    {
-      return number_format($this->importe, 2, ',', ' ');
+      return number_format($this->importe, 2, '.', ' ');
    }
    
    public function url()
@@ -199,21 +199,46 @@ class asiento extends fs_model
    
    public function delete()
    {
-      if( $this->editable )
-         return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
-      else
+      if($this->tipodocumento == 'Factura de cliente')
       {
-         $this->new_error_msg("El asiento no es editable, por tanto no se puede borrar.");
-         return FALSE;
+         $fac = new factura_cliente();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+         {
+            $fac->editable = TRUE;
+            $fac->idasiento = NULL;
+            $fac->save();
+         }
       }
+      else if($this->tipodocumento == 'Factura de proveedor')
+      {
+         $fac = new factura_proveedor();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+         {
+            $fac->idasiento = NULL;
+            $fac->save();
+         }
+      }
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
    }
    
    public function search($query, $offset=0)
    {
       $alist = array();
-      $query = strtolower($query);
-      $asientos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE lower(concepto) ~~ '%".$query."%'
-         OR lower(documento) ~~ '%".$query."%' ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      $query = strtolower( trim($query) );
+      
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+         $consulta .= "numero::TEXT ~~ '%".$query."%' OR concepto ~~ '%".$query."%'
+            OR importe BETWEEN ".($query-.01)." AND ".($query+.01);
+      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
+         $consulta .= "fecha = '".$query."' OR concepto ~~ '%".$query."%'";
+      else
+         $consulta .= "lower(concepto) ~~ '%".$buscar = str_replace(' ', '%', $query)."%'";
+      $consulta .= " ORDER BY fecha DESC";
+      
+      $asientos = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($asientos)
       {
          foreach($asientos as $a)

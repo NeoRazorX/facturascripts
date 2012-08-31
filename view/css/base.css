@@ -387,6 +387,11 @@ div.main_div table.list tr:hover {
    background-color: #FFFAA6;
 }
 
+div.main_div table.list td.locked {
+   background-color: #fdcece;
+   text-decoration: line-through;
+}
+
 div.main_div ul.horizontal {
    margin: 5px;
    padding: 5px;
@@ -413,6 +418,24 @@ div.main_div a.next {
    font-size: 18px;
    text-transform: capitalize;
    text-decoration: none;
+}
+
+div.main_div a.remove {
+   display: inline-block;
+   padding: 2px;
+   padding-left: 5px;
+   padding-right: 5px;
+   background-color: #D74937;
+   color: white;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   text-transform: capitalize;
+   text-decoration: none;
+   font-variant: small-caps;
+   font-size: 16px;
 }
 
 div.main_div div.tpv_total {

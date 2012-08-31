@@ -12,14 +12,14 @@
          $("#popup_nuevo_articulo").show();
          document.f_nuevo_articulo.referencia.focus();
       });
-      $("#b_modo_rajoy").click(function(event) {
+      $("#b_modificar_iva").click(function(event) {
          event.preventDefault();
          $("#shadow").show();
-         $("#popup_modo_rajoy").css({
-            left: ($(window).width() - $("#popup_modo_rajoy").outerWidth())/2,
-            top: ($(window).height() - $("#popup_modo_rajoy").outerHeight())/2
+         $("#popup_modificar_iva").css({
+            left: ($(window).width() - $("#popup_modificar_iva").outerWidth())/2,
+            top: ($(window).height() - $("#popup_modificar_iva").outerHeight())/2
          });
-         $("#popup_modo_rajoy").show();
+         $("#popup_modificar_iva").show();
       });
    });
 </script>
@@ -64,12 +64,10 @@
    </form>
 </div>
 
-<div class="popup" id="popup_modo_rajoy">
+<div class="popup" id="popup_modificar_iva">
    <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="modo_rajoy" value="TRUE"/>
-      <center>
-         <img src="http://i.imgur.com/2vvx8.png" alt="mariano"/>
-      </center>
+      <input type="hidden" name="mod_iva" value="TRUE"/>
+      <h1>Modificar IVA:</h1>
       Mover los artículos con
       <select name="codimpuesto">
          {loop="$fsc->impuesto->all()"}
@@ -82,8 +80,11 @@
             <option value="{$value->codimpuesto}">{$value->descripcion}</option>
          {/loop}
       </select>
-      Y ...
-      <input type="submit" value="¡Que nos jodan!"/>
+      <br/>
+      <input type="checkbox" id="cb_mantener" name="mantener" value="TRUE"/>
+      <label for="cb_mantener">Mentener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
+      <br/><br/>
+      <div class="right"><input type="submit" value="Aplicar"/></div>
    </form>
 </div>
 
@@ -94,6 +95,7 @@
    <table class="list">
       <tr>
          <th>referencia</th>
+         <th>cod. equivalencia</th>
          <th>familia</th>
          <th>descripción</th>
          <th align="right">PVP+IVA</th>
@@ -102,10 +104,11 @@
       {loop="$fsc->resultados"}
       <tr>
          {if condition="$value->bloqueado"}
-            <td><s><a href="{$value->url()}">{$value->referencia}</a></s></td>
+            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a></td>
          {else}
             <td><a href="{$value->url()}">{$value->referencia}</a></td>
          {/if}
+         <td>{$value->equivalencia}</td>
          <td>{$value->codfamilia}</td>
          <td>{$value->descripcion}</td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
@@ -113,7 +116,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo artículo</b> para crear uno.</td>
+         <td colspan="6">Ningun artículo encontrado. Pulsa el botón <b>Nuevo artículo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>
@@ -122,7 +125,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="3"></td>
+         <td colspan="4"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

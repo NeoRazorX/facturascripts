@@ -41,12 +41,14 @@ class general_articulos extends fs_controller
       
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo artículo');
-      $this->buttons[] = new fs_button('b_modo_rajoy','modo rajoy', '#', 'button', 'img/tools.png');
+      $this->buttons[] = new fs_button('b_modificar_iva','modificar iva', '#', 'button', 'img/tools.png');
       
-      if( isset($_POST['modo_rajoy']) )
+      if( isset($_POST['mod_iva']) )
       {
-         if( $articulo->move_codimpuesto($_POST['codimpuesto'], $_POST['codimpuesto2']) )
-            $this->new_message("Artículos modificados correctamente ¡Disfruta de los 4 días que le quedan a tu empresa!");
+         if($_POST['codimpuesto'] == $_POST['codimpuesto2'])
+            $this->new_error_msg("¡Has seleccionado el mismo IVA dos veces!");
+         else if( $articulo->move_codimpuesto($_POST['codimpuesto'], $_POST['codimpuesto2'], isset($_POST['mantener'])) )
+            $this->new_message("Artículos modificados correctamente.");
          else
             $this->new_error_msg("¡Impodible modificar los artículos!");
       }

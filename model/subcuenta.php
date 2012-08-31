@@ -60,17 +60,17 @@ class subcuenta extends fs_model
    
    public function show_debe()
    {
-      return number_format($this->debe, 2, ',', '.');
+      return number_format($this->debe, 2, '.', ' ');
    }
    
    public function show_haber()
    {
-      return number_format($this->haber, 2, ',', '.');
+      return number_format($this->haber, 2, '.', ' ');
    }
    
    public function show_saldo()
    {
-      return number_format($this->saldo, 2, ',', '.');
+      return number_format($this->saldo, 2, '.', ' ');
    }
    
    public function url()
@@ -174,7 +174,7 @@ class subcuenta extends fs_model
    {
       $sublist = array();
       $query = strtolower($query);
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '%".$query."%'
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
       {
@@ -189,7 +189,7 @@ class subcuenta extends fs_model
       $sublist = array();
       $query = strtolower($query);
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$ejercicio."'
-         AND (codsubcuenta ~~ '%".$query."%' OR lower(descripcion) ~~ '%".$query."%')
+         AND (codsubcuenta ~~ '".$query."%' OR lower(descripcion) ~~ '%".$query."%')
          ORDER BY codcuenta ASC;");
       if($subcuentas)
       {

@@ -73,13 +73,13 @@ class general_albaran_cli extends fs_controller
             $this->generar_factura();
          
          if( $this->albaran->ptefactura )
-         {
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
-            $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
-         }
          else
             $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
       }
+      else
+         $this->new_error_msg("¡Albarán de cliente no encontrado!");
    }
    
    public function version() {
@@ -135,12 +135,11 @@ class general_albaran_cli extends fs_controller
             $encontrada = FALSE;
             if( isset($_POST['idlinea_'.$num]) )
             {
-               foreach($lineas as $l)
+               foreach($lineas as &$l)
                {
                   if($l->idlinea == intval($_POST['idlinea_'.$num]))
                   {
                      $encontrada = TRUE;
-                     
                      $l->cantidad = floatval($_POST['cantidad_'.$num]);
                      $l->pvpunitario = floatval($_POST['pvp_'.$num]);
                      $l->dtopor = floatval($_POST['dto_'.$num]);
@@ -152,7 +151,6 @@ class general_albaran_cli extends fs_controller
                      $iva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
                      if( !$l->save() )
                         $this->new_error_msg("¡Imposible modificar la línea del artículo ".$l->referencia."!");
-                     
                      break;
                   }
                }
@@ -173,6 +171,9 @@ class general_albaran_cli extends fs_controller
                      $linea->dtopor = floatval($_POST['dto_'.$num]);
                      $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
                      $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     $neto += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     $total += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * (100 + $linea->iva)/100);
+                     $iva += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * $linea->iva/100);
                      if( !$linea->save() )
                         $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
                   }
@@ -231,15 +232,18 @@ class general_albaran_cli extends fs_controller
             $n->descripcion = $l->descripcion;
             $n->dtolineal = $l->dtolineal;
             $n->dtopor = $l->dtopor;
+            $n->irpf = $l->irpf;
             $n->iva = $l->iva;
             $n->pvpsindto = $l->pvpsindto;
             $n->pvptotal = $l->pvptotal;
             $n->pvpunitario = $l->pvpunitario;
+            $n->recargo = $l->recargo;
             $n->referencia = $l->referencia;
             if( !$n->save() )
             {
                $continuar = FALSE;
                $this->new_error_msg("¡Imposible guardar la línea el artículo ".$n->referencia."! ");
+               break;
             }
          }
          
@@ -248,29 +252,25 @@ class general_albaran_cli extends fs_controller
          else
          {
             if( $factura->delete() )
-               $this->new_message("La factura se ha borrado.");
+               $this->new_error_msg("La factura se ha borrado.");
             else
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
       }
       else
-         $this->new_error_msg("¡Imposible generar la factura!");
+         $this->new_error_msg("¡Imposible guardar la factura!");
    }
    
    private function generar_asiento($factura)
    {
       $empresa = new empresa();
-      if( !$factura )
-      {
-         $this->new_error_msg("¡Factura no encontrada!");
-      }
-      else if( !$empresa->contintegrada )
+      if( !$empresa->contintegrada )
       {
          $this->albaran->idfactura = $factura->idfactura;
          $this->albaran->editable = FALSE;
          $this->albaran->ptefactura = FALSE;
          if( $this->albaran->save() )
-            $this->new_message("Factura generada correctamente.");
+            $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
          else
             $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
       }
@@ -288,7 +288,6 @@ class general_albaran_cli extends fs_controller
          {
             $asiento_correcto = TRUE;
             $subcuenta = new subcuenta();
-            
             $cliente = new cliente();
             $cliente = $cliente->get($factura->codcliente);
             $subcuenta_cli = $cliente->get_subcuenta($asiento->codejercicio);
@@ -310,7 +309,7 @@ class general_albaran_cli extends fs_controller
             foreach($factura->get_lineas() as $l)
             {
                $encontrado = FALSE;
-               foreach($totales_iva as $t)
+               foreach($totales_iva as &$t)
                {
                   if($t[0] == $l->codimpuesto)
                   {
@@ -379,7 +378,7 @@ class general_albaran_cli extends fs_controller
                   $this->albaran->editable = FALSE;
                   $this->albaran->ptefactura = FALSE;
                   if( $this->albaran->save() )
-                     $this->new_message("Factura generada correctamente.");
+                     $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
                   else
                      $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
                }
@@ -402,9 +401,9 @@ class general_albaran_cli extends fs_controller
          }
          else
          {
-            $this->new_error_msg("¡Imposible generar el asiento!");
+            $this->new_error_msg("¡Imposible guardar el asiento!");
             if( $factura->delete() )
-               $this->new_message("La factura se ha borrado.");
+               $this->new_error_msg("La factura se ha borrado.");
             else
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
