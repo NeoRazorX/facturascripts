@@ -63,33 +63,6 @@
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
       }
-      function ajustar_total()
-      {
-         var total = 0;
-         var uds = 0;
-         var pvp = 0;
-         var dto = 0;
-         var iva = 0;
-         var tpv_total = 0;
-         for(var i=1; i<=numlineas; i++)
-         {
-            if($("#linea_"+i).length > 0)
-            {
-               total = parseFloat( $("#total_"+i).val() );
-               uds = parseFloat( $("#cantidad_"+i).val() );
-               pvp = parseFloat( $("#pvp_"+i).val() );
-               dto = 100 - (100*total)/(pvp*uds);
-               if( isNaN(dto) )
-                  $("#dto_"+i).val(0);
-               else
-                  $("#dto_"+i).val(dto);
-               iva = parseFloat( $("#iva_"+i).val() );
-               $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
-               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
-            }
-         }
-         $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
-      }
       function ajustar_totiva()
       {
          var totiva = 0;
@@ -141,9 +114,9 @@
                   "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
                <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
                   "' size='5' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
-               <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
-                  "' size='6' onkeyup='ajustar_total()' onclick='this.select()' autocomplete='off'/> €</td>\n\
-               <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
+               <td align='center'>"+iva+" %</td>\n\
+               <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
+               <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
                   "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
          $('div.popup').each(function() {
             $(this).hide();
@@ -356,7 +329,7 @@
                <th>Cantidad</th>
                <th>PVP</th>
                <th>Dto.</th>
-               <th>Total</th>
+               <th>IVA</th>
                <th>Total+IVA</th>
             </tr>
          </table>

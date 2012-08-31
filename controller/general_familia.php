@@ -55,9 +55,9 @@ class general_familia extends fs_controller
          $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas', '#', '', 'img/tools.png', '*');
          
          if( $this->page->get('general_cargar_familia') )
-            $this->buttons[] = new fs_button('b_load_familia', 'cargar', '#');
+            $this->buttons[] = new fs_button('b_load_familia', 'importar', '#');
          
-         $this->buttons[] = new fs_button('b_download_familia', 'descargar', $this->url().'&download=TRUE', '', 'img/save.png', '*');
+         $this->buttons[] = new fs_button('b_download_familia', 'exportar', $this->url().'&download=TRUE', '', 'img/save.png', '*');
          $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/remove.png', '-');
          
          if( isset($_POST['multiplicar']) )

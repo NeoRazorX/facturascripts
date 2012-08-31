@@ -102,7 +102,7 @@ class general_cargar_familia extends fs_controller
    public $ready;
    
    public function __construct() {
-      parent::__construct('general_cargar_familia', 'cargar familia', 'general', FALSE, FALSE);
+      parent::__construct('general_cargar_familia', 'importar familia', 'general', FALSE, FALSE);
    }
    
    protected function process()

@@ -143,7 +143,7 @@ class linea_albaran_cliente extends fs_model
             cantidad = ".$this->var2str($this->cantidad).", dtopor = ".$this->var2str($this->dtopor).",
             dtolineal = ".$this->var2str($this->dtolineal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
             iva = ".$this->var2str($this->iva).", pvptotal = ".$this->var2str($this->pvptotal).",
-            pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario)."
+            pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario).",
             irpf = ".$this->var2str($this->irpf).", recargo = ".$this->var2str($this->recargo)."
             WHERE idlinea = '".$this->idlinea."';";
       }
@@ -430,7 +430,7 @@ class albaran_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".strtoupper($cod)."';");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = '".strtoupper($cod)."';");
       if($albaran)
          return new albaran_cliente($albaran[0]);
       else

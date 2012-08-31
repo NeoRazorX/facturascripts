@@ -253,6 +253,13 @@ class articulo extends fs_model
       $this->iva = NULL;
    }
    
+   protected function install()
+   {
+      $fam = new familia();
+      $imp = new impuesto();
+      return '';
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvp, 2, '.', ' ');
@@ -261,9 +268,9 @@ class articulo extends fs_model
    public function show_pvp_iva($coma=TRUE)
    {
       if($coma)
-         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', ' ');
+         return number_format($this->pvp * (100 + $this->get_iva()) / 100, 2, '.', ' ');
       else
-         return number_format($this->pvp + ($this->pvp * $this->get_iva() / 100), 2, '.', '');
+         return number_format($this->pvp * (100 + $this->get_iva()) / 100, 2, '.', '');
    }
    
    public function url()
@@ -430,17 +437,22 @@ class articulo extends fs_model
    public function set_pvp($p)
    {
       $this->pvp_ant = $this->pvp;
-      $this->pvp = floatval($p);
       $this->factualizado = Date('d-m-Y');
+      
+      $iva = $this->get_iva();
+      /// redondeamos el pvp+iva para a continuación recalcular el pvp
+      $pvpi = round(floatval($p)*(100+$iva)/100, 2);
+      $this->pvp = (100*$pvpi)/(100+$iva);
    }
    
    public function set_pvp_iva($p)
    {
       $this->pvp_ant = $this->pvp;
-      $pvpi = floatval($p);
+      $this->factualizado = Date('d-m-Y');
+      
+      $pvpi = round(floatval($p), 2);
       $iva = $this->get_iva();
       $this->pvp = (100*$pvpi)/(100+$iva);
-      $this->factualizado = Date('d-m-Y');
    }
    
    public function set_stock($almacen, $cantidad=1)
@@ -515,13 +527,6 @@ class articulo extends fs_model
       else
          $this->new_error_msg("Error al guardar el stock");
       return $result;
-   }
-   
-   protected function install()
-   {
-      $fam = new familia();
-      $imp = new impuesto();
-      return '';
    }
    
    public function exists()
