@@ -24,6 +24,8 @@ require_once 'model/familia.php';
 class family_data
 {
    public $codfamilia;
+   public $codimpuesto;
+   public $sufijo;
    public $action;
    public $num_articulos;
    public $lineas;
@@ -37,10 +39,12 @@ class family_data
    public $pvp_diferencia;
    public $pvp_sum_diferencias;
    
-   public function __construct($codfamilia, $num_articulos=0)
+   public function __construct($codfamilia, $codimpuesto=NULL, $sufijo='', $num_articulos=0)
    {
       $this->codfamilia = $codfamilia;
-      $this->action = FALSE;
+      $this->codimpuesto = $codimpuesto;
+      $this->sufijo = $sufijo;
+      $this->action = 'test';
       $this->num_articulos = $num_articulos;
       $this->lineas = -1;
       $this->lineas_procesadas = 0;
@@ -93,7 +97,7 @@ class family_data
    }
 }
 
-class general_cargar_familia extends fs_controller
+class general_importar_familia extends fs_controller
 {
    public $articulo;
    private $cache;
@@ -102,7 +106,7 @@ class general_cargar_familia extends fs_controller
    public $ready;
    
    public function __construct() {
-      parent::__construct('general_cargar_familia', 'importar familia', 'general', FALSE, FALSE);
+      parent::__construct('general_importar_familia', 'importar familia', 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -116,44 +120,79 @@ class general_cargar_familia extends fs_controller
          $familia = new familia();
          $this->familia = $familia->get($_GET['fam']);
       }
+      else if( isset($_POST['fam']) )
+      {
+         $familia = new familia();
+         $this->familia = $familia->get($_POST['fam']);
+      }
       
       if( $this->familia )
       {
+         if( isset($_POST['archivo']) )
+         {
+            if( is_uploaded_file($_FILES['farchivo']['tmp_name']) )
+            {
+               if( !file_exists("tmp/familias") )
+                  mkdir("tmp/familias");
+               else if( file_exists("tmp/familias/".$this->familia->codfamilia.'.csv') )
+                  unlink("tmp/familias/".$this->familia->codfamilia.'.csv');
+               
+               copy($_FILES['farchivo']['tmp_name'], "tmp/familias/".$this->familia->codfamilia.'.csv');
+               
+               /// limpiamos la cache
+               $this->cache->delete('family_data_'.$this->familia->codfamilia);
+               $this->family_data = new family_data($this->familia->codfamilia, $_POST['impuesto'],
+                    $_POST['sufijo'], $this->articulo->count($this->familia->codfamilia));
+               $this->save_family_data();
+            }
+            else
+               $this->new_error_msg("¡Imposible cargar el archivo!");
+         }
+         
          if( file_exists("tmp/familias/".$this->familia->codfamilia.".csv") )
          {
-            if( isset($_GET['reboot']) )
+            if( isset($_GET['cancelar']) )
             {
                $this->cache->delete('family_data_'.$this->familia->codfamilia);
-               $this->family_data = new family_data($this->familia->codfamilia, $this->articulo->count($this->familia->codfamilia));
-               $this->new_message("Reiniciada la cache.");
+               unlink("tmp/familias/".$this->familia->codfamilia.'.csv');
+               header("location: ".$this->familia->url());
             }
             else
                $this->family_data = $this->get_family_data();
             
             if( isset($_GET['action']) )
-            {
                $this->family_data->set_action($_GET['action']);
-               
-               if( !$this->family_data->action )
-                  $this->buttons[] = new fs_button('b_test', 'comprobar', $this->url().'&action=test');
-               else if( $this->family_data->ready2start() )
-                  $this->buttons[] = new fs_button('b_start', 'comenzar', $this->url().'&action=start');
-               $this->buttons[] = new fs_button('b_reboot', 'reiniciar', $this->url().'&reboot=TRUE', 'remove', 'img/remove.png');
-               
-               if( $this->family_data->action == 'test' )
-                  $this->ready = $this->test_csv_file();
-               else if( $this->family_data->action == 'start' )
-                  $this->ready = $this->csv2articulos();
-            }
-            else
+            
+            if($this->family_data->action == 'test')
             {
-               $this->family_data->action = FALSE;
-               $this->buttons[] = new fs_button('b_test', 'comprobar', $this->url().'&action=test');
-               $this->buttons[] = new fs_button('b_reboot', 'reiniciar', $this->url().'&reboot=TRUE', 'remove', 'img/remove.png');
+               $this->ready = $this->test_csv_file();
+               if( !$this->ready )
+               {
+                  $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
+                                     "/".$this->family_data->lineas);
+               }
+               else
+               {
+                  $this->new_message("Comprobación finalizada. Pulsa el botón procesar para comenzar.");
+                  $this->buttons[] = new fs_button('b_start', 'procesar', $this->url().'&action=start');
+               }
             }
+            else if($this->family_data->action == 'start')
+            {
+               $this->ready = $this->csv2articulos();
+               if( !$this->ready )
+               {
+                  $this->new_message("Procesando ... ".$this->family_data->lineas_procesadas.
+                                     "/".$this->family_data->lineas);
+               }
+               else
+                  $this->new_message("Proceso finalizado");
+            }
+            
+            $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE', 'remove', 'img/remove.png');
          }
          else
-            $this->new_error_msg("¡No se ha encontrado el archivo ".$this->familia.".csv!");
+            $this->new_error_msg("¡No se ha encontrado el archivo ".$this->familia->codfamilia.".csv!");
       }
       else
          $this->new_error_msg("¡Ninguna familia seleccionada!");
@@ -167,7 +206,8 @@ class general_cargar_familia extends fs_controller
          return $this->page->url();
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-1';
    }
    
@@ -177,7 +217,7 @@ class general_cargar_familia extends fs_controller
       if($data)
          return $data;
       else
-         return new family_data($this->familia->codfamilia, $this->articulo->count($this->familia->codfamilia));
+         return new family_data($this->familia->codfamilia);
    }
    
    private function save_family_data()
@@ -242,7 +282,7 @@ class general_cargar_familia extends fs_controller
    {
       if(count($tarifa) >= 4)
       {
-         $articulo = $this->articulo->get( $tarifa[0] );
+         $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
             $this->family_data->articulos_actualizados += 1;
@@ -327,7 +367,7 @@ class general_cargar_familia extends fs_controller
       
       if(count($tarifa) >= 4)
       {
-         $articulo = $this->articulo->get( $tarifa[0] );
+         $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
             // sustituimos las comas por puntos en el pvp
@@ -357,13 +397,14 @@ class general_cargar_familia extends fs_controller
          else
          {
             $articulo = new articulo();
-            $articulo->set_referencia($tarifa[0]);
+            $articulo->set_referencia($tarifa[0] . $this->family_data->sufijo);
             // sustituimos las comas por puntos en el pvp
             $tarifa[1] = str_replace(',', '.', $tarifa[1]);
             $articulo->set_pvp($tarifa[1]);
             $articulo->set_descripcion($tarifa[2]);
             $articulo->codbarras = $tarifa[3];
             $articulo->codfamilia = $this->familia->codfamilia;
+            $articulo->codimpuesto = $this->family_data->codimpuesto;
             if( $articulo->save() )
             {
                $retorno = TRUE;
@@ -371,6 +412,8 @@ class general_cargar_familia extends fs_controller
             }
          }
       }
+      else
+         $retorno = TRUE;
       
       return $retorno;
    }

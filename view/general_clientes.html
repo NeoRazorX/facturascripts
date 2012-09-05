@@ -24,14 +24,6 @@
             <td><input type="text" name="codcliente" value="{$fsc->cliente->get_new_codigo()}" size="6" maxlegth="6"/></td>
          </tr>
          <tr>
-            <td align="right">Nombre:</td>
-            <td><input type="text" name="nombre" value="" size="30"/></td>
-         </tr>
-         <tr>
-            <td align="right">CIF/NIF:</td>
-            <td><input type="text" name="cifnif" value=""/></td>
-         </tr>
-         <tr>
             <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
             <td>
                <select name="codserie">
@@ -40,6 +32,40 @@
                {/loop}
                </select>
             </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="nombre" value="" size="30"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="cifnif" value=""/></td>
+         </tr>
+         <tr>
+            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
+            <td>
+               <select name="pais">
+                  {loop="$fsc->pais->all()"}
+                     <option value="{$value->codpais}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Provincia:</td>
+            <td><input type="text" name="provincia" size="12"/></td>
+         </tr>
+         <tr>
+            <td align="right">Ciudad:</td>
+            <td><input type="text" name="ciudad" size="12"/></td>
+         </tr>
+         <tr>
+            <td align="right">Código postal:</td>
+            <td><input type="text" name="codpostal" size="6"/></td>
+         </tr>
+         <tr>
+            <td align="right">Dirección:</td>
+            <td><input type="text" name="direccion" size="25"/></td>
          </tr>
       </table>
       <div class="right"><input type="submit" value="nuevo cliente"/></div>

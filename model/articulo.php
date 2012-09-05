@@ -67,7 +67,10 @@ class stock extends fs_model
    public function set_cantidad($c=0)
    {
       $c = floatval($c);
-      $this->cantidad = $c;
+      if($c > 0)
+         $this->cantidad = $c;
+      else
+         $this->cantidad = 0;
       $this->disponible = ($this->cantidad - $this->reservada);
    }
    
@@ -75,6 +78,8 @@ class stock extends fs_model
    {
       $c = floatval($c);
       $this->cantidad += $c;
+      if($this->cantidad < 0)
+         $this->cantidad = 0;
       $this->disponible = ($this->cantidad - $this->reservada);
    }
    
@@ -505,6 +510,7 @@ class articulo extends fs_model
             $s->sum_cantidad($cantidad);
             $result = $s->save();
             $encontrado = TRUE;
+            break;
          }
       }
       if( !$encontrado )
@@ -521,11 +527,11 @@ class articulo extends fs_model
          {
             $this->stockfis =  $nuevo_stock;
             if( !$this->save() )
-               $this->new_error_msg("Error al actualizar el stock del artículo");
+               $this->new_error_msg("¡Error al actualizar el stock del artículo!");
          }
       }
       else
-         $this->new_error_msg("Error al guardar el stock");
+         $this->new_error_msg("¡Error al guardar el stock!");
       return $result;
    }
    

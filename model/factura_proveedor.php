@@ -84,6 +84,11 @@ class linea_factura_proveedor extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvpunitario, 2, '.', ' ');
@@ -113,16 +118,18 @@ class linea_factura_proveedor extends fs_model
       return $alb->url();
    }
    
+   public function albaran_numero()
+   {
+      $alb = new albaran_proveedor();
+      $alb = $alb->get($this->idalbaran);
+      return $alb->numero;
+   }
+   
    public function articulo_url()
    {
       $art = new articulo();
       $art = $art->get($this->referencia);
       return $art->url();
-   }
-   
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -170,6 +177,28 @@ class linea_factura_proveedor extends fs_model
    public function delete()
    {
       return $this->db->exit("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      
+      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+      $totalsindto = $this->pvpunitario * $this->cantidad;
+      if( abs($this->pvptotal - $total) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
+                              ". Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->pvpsindto - $totalsindto) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
+                              ". Valor correcto: ".$totalsindto);
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function all_from_factura($id)
@@ -298,6 +327,26 @@ class linea_iva_factura_proveedor extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
    }
    
+   public function test()
+   {
+      $status = TRUE;
+      
+      $totaliva = $this->neto * $this->iva / 100;
+      $total = $this->neto * (100 + $this->iva) / 100;
+      if( abs($totaliva - $this->totaliva) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de totaliva de la línea de ".$this->codimpuesto." Valor correcto: ".$totaliva);
+         $status = FALSE;
+      }
+      else if( abs($total - $this->totallinea) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de totallinea de la línea de ".$this->codimpuesto." Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      
+      return $status;
+   }
+   
    public function all_from_factura($id)
    {
       $linealist = array();
@@ -415,6 +464,11 @@ class factura_proveedor extends fs_model
          $this->totalrecargo = 0;
       }
    }
+
+   protected function install()
+   {
+      return '';
+   }
    
    public function url()
    {
@@ -499,28 +553,28 @@ class factura_proveedor extends fs_model
          {
             foreach($lineas as $l)
             {
+               $i = 0;
                $encontrada = FALSE;
-               foreach($lineasi as &$li)
+               while($i < count($lineasi))
                {
-                  if($l->codimpuesto == $li->codimpuesto)
+                  if($l->codimpuesto == $lineasi[$i]->codimpuesto)
                   {
                      $encontrada = TRUE;
-                     $li->neto += $l->pvptotal;
-                     $li->totaliva += ($l->pvptotal*$l->iva)/100;
-                     $li->totallinea = $li->neto + $li->totaliva;
-                     break;
+                     $lineasi[$i]->neto += $l->pvptotal;
+                     $lineasi[$i]->totaliva += ($l->pvptotal*$l->iva)/100;
+                     $lineasi[$i]->totallinea = $lineasi[$i]->neto + $lineasi[$i]->totaliva;
                   }
+                  $i++;
                }
                if( !$encontrada )
                {
-                  $lineai = new linea_iva_factura_proveedor();
-                  $lineai->idfactura = $this->idfactura;
-                  $lineai->codimpuesto = $l->codimpuesto;
-                  $lineai->iva = $l->iva;
-                  $lineai->neto = $l->pvptotal;
-                  $lineai->totaliva = ($l->pvptotal*$l->iva)/100;
-                  $lineai->totallinea = $lineai->neto + $lineai->totaliva;
-                  $lineasi[] = $lineai;
+                  $lineasi[$i] = new linea_iva_factura_proveedor();
+                  $lineasi[$i]->idfactura = $this->idfactura;
+                  $lineasi[$i]->codimpuesto = $l->codimpuesto;
+                  $lineasi[$i]->iva = $l->iva;
+                  $lineasi[$i]->neto = $l->pvptotal;
+                  $lineasi[$i]->totaliva = ($l->pvptotal*$l->iva)/100;
+                  $lineasi[$i]->totallinea = $lineasi[$i]->neto + $lineasi[$i]->totaliva;
                }
             }
             /// guardamos
@@ -529,11 +583,6 @@ class factura_proveedor extends fs_model
          }
       }
       return $lineasi;
-   }
-
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -637,6 +686,82 @@ class factura_proveedor extends fs_model
       $this->db->exec("UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = '".$this->idfactura."';");
       /// eliminamos
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      $neto = 0;
+      $iva = 0;
+      $total = 0;
+      
+      /// comprobamos las líneas
+      foreach($this->get_lineas() as $l)
+      {
+         if( !$l->test() )
+         {
+            $this->new_error_msg( $l->error_msg );
+            $status = FALSE;
+         }
+         
+         $neto += $l->pvptotal;
+         $iva += $l->pvptotal * $l->iva / 100;
+         $total += $l->pvptotal * (100 + $l->iva) / 100;
+      }
+      if( abs($this->neto - $neto) > .01 )
+      {
+         $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
+         $status = FALSE;
+      }
+      else if( abs($this->totaliva - $iva) > .01 )
+      {
+         $this->new_error_msg("Valor totaliva incorrecto. Valor correcto: ".$iva);
+         $status = FALSE;
+      }
+      else if( abs($this->total - $total) > .01 )
+      {
+         $this->new_error_msg("Valor total incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->totaleuros - $total) > .01 )
+      {
+         $this->new_error_msg("Valor totaleuros incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      
+      /// comprobamos las líneas de IVA
+      $neto = 0;
+      $iva = 0;
+      $total = 0;
+      foreach($this->get_lineas_iva() as $li)
+      {
+         if( !$li->test() )
+         {
+            $this->new_error_msg( $li->error_msg );
+            $status = FALSE;
+         }
+         
+         $neto += $li->neto;
+         $iva += $li->totaliva;
+         $total += $li->totallinea;
+      }
+      if( abs($this->neto - $neto) > .01 )
+      {
+         $this->new_error_msg("Valor neto incorrecto en las líneas de IVA. Valor correcto: ".$neto);
+         $status = FALSE;
+      }
+      else if( abs($this->totaliva - $iva) > .01 )
+      {
+         $this->new_error_msg("Valor totaliva incorrecto en las líneas de IVA. Valor correcto: ".$iva);
+         $status = FALSE;
+      }
+      else if( abs($this->total - $total) > .01 )
+      {
+         $this->new_error_msg("Valor total incorrecto en las líneas de IVA. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function all($offset=0)

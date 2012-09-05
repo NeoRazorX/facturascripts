@@ -222,6 +222,9 @@ class tpv_recambios extends fs_controller
                      $linea->pvptotal = floatval($_POST['total_'.$i]);
                      if( $linea->save() )
                      {
+                        /// descontamos del stock
+                        $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
+                        
                         $albaran->neto += $linea->pvptotal;
                         $albaran->totaliva += ($linea->iva * $linea->pvptotal / 100);
                         $albaran->total = ($albaran->neto + $albaran->totaliva);

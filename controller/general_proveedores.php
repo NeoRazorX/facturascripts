@@ -17,12 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/pais.php';
 require_once 'model/proveedor.php';
 
 class general_proveedores extends fs_controller
 {
-   public $proveedor;
    public $offset;
+   public $pais;
+   public $proveedor;
    public $resultados;
    
    public function __construct()
@@ -34,7 +36,31 @@ class general_proveedores extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button('b_nuevo_proveedor', 'nuevo proveedor');
+      $this->pais = new pais();
       $this->proveedor = new proveedor();
+      
+      if( isset($_POST['codproveedor']) )
+      {
+         $this->proveedor->codproveedor = $_POST['codproveedor'];
+         $this->proveedor->nombre = $_POST['nombre'];
+         $this->proveedor->nombrecomercial = $_POST['nombre'];
+         $this->proveedor->cifnif = $_POST['cifnif'];
+         if( $this->proveedor->save() )
+         {
+            $dirproveedor = new direccion_proveedor();
+            $dirproveedor->codproveedor = $this->proveedor->codproveedor;
+            $dirproveedor->descripcion = "Principal";
+            $dirproveedor->codpais = $_POST['pais'];
+            $dirproveedor->provincia = $_POST['provincia'];
+            $dirproveedor->ciudad = $_POST['ciudad'];
+            $dirproveedor->codpostal = $_POST['codpostal'];
+            $dirproveedor->direccion = $_POST['direccion'];
+            $dirproveedor->save();
+            header('location: '.$this->proveedor->url());
+         }
+         else
+            $this->new_error_msg("¡Imposible crear el proveedor!");
+      }
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -45,17 +71,6 @@ class general_proveedores extends fs_controller
          $this->resultados = $this->proveedor->search($this->query, $this->offset);
       else
          $this->resultados = $this->proveedor->all($this->offset);
-      
-      if( isset($_POST['codproveedor']) )
-      {
-         $this->proveedor->codproveedor = $_POST['codproveedor'];
-         $this->proveedor->nombre = $_POST['nombre'];
-         $this->proveedor->cifnif = $_POST['cifnif'];
-         if( $this->proveedor->save() )
-            header('location: '.$this->proveedor->url());
-         else
-            $this->new_error_msg("¡Imposible crear el proveedor!");
-      }
    }
    
    public function version() {

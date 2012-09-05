@@ -19,12 +19,15 @@
 
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 
 class general_familia extends fs_controller
 {
-   public $familia;
    public $articulos;
+   public $familia;
+   public $impuesto;
    public $offset;
+   public $pag_importar;
 
    public function __construct()
    {
@@ -34,6 +37,7 @@ class general_familia extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_familias');
+      $this->pag_importar = $this->page->get('general_importar_familia');
       
       if( isset($_POST['cod']) )
       {
@@ -52,10 +56,12 @@ class general_familia extends fs_controller
       if($this->familia)
       {
          $this->page->title = $this->familia->codfamilia;
+         $this->impuesto = new impuesto();
+         
          $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas', '#', '', 'img/tools.png', '*');
          
-         if( $this->page->get('general_cargar_familia') )
-            $this->buttons[] = new fs_button('b_load_familia', 'importar', '#');
+         if( $this->pag_importar )
+            $this->buttons[] = new fs_button('b_importar_familia', 'importar', '#');
          
          $this->buttons[] = new fs_button('b_download_familia', 'exportar', $this->url().'&download=TRUE', '', 'img/save.png', '*');
          $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/remove.png', '-');
@@ -67,13 +73,12 @@ class general_familia extends fs_controller
          }
          else if( isset($_GET['download']) )
             $this->download();
-         else if( isset($_POST['archivo']) )
-            $this->upload();
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else
             $this->offset = 0;
+         
          $this->articulos = $this->familia->get_articulos($this->offset);
       }
    }
@@ -116,37 +121,11 @@ class general_familia extends fs_controller
       while(count($articulos) > 0)
       {
          foreach($articulos as $a)
-            echo $a->referencia.';'.$a->pvp.';'.$this->change_dot($a->descripcion).';'.$a->codbarras.";\n";
+            echo $a->referencia.';'.$a->pvp.';'.str_replace(';', '', $a->descripcion).';'.$a->codbarras.";\n";
          unset($articulos);
          $num += FS_ITEM_LIMIT;
          $articulos = $this->familia->get_articulos($num);
       }
-   }
-   
-   private function change_dot($var)
-   {
-      return str_replace(';', '', $var);
-   }
-   
-   private function upload()
-   {
-      if( is_uploaded_file($_FILES['farchivo']['tmp_name']) )
-      {
-         if( !file_exists("tmp/familias") )
-            mkdir("tmp/familias");
-         else if( file_exists("tmp/familias/".$this->familia->codfamilia.'.csv') )
-            unlink("tmp/familias/".$this->familia->codfamilia.'.csv');
-         
-         copy($_FILES['farchivo']['tmp_name'], "tmp/familias/".$this->familia->codfamilia.'.csv');
-         
-         $page = $this->page->get("general_cargar_familia");
-         if($page)
-            header('location: '.$page->url().'&fam='.$this->familia->codfamilia.'&reboot=TRUE');
-         else
-            $this->new_error_msg("No tienes permiso para acceder a general_cargar_familia");
-      }
-      else
-         $this->new_error_msg("¡Imposible cargar el archivo!");
    }
 }
 

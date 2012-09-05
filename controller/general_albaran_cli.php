@@ -69,6 +69,10 @@ class general_albaran_cli extends fs_controller
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
          
+         /// comprobamos el albarán
+         if( !$this->albaran->test() )
+            $this->new_error_msg( $this->albaran->error_msg );
+         
          if( isset($_GET['facturar']) )
             $this->generar_factura();
          

@@ -271,6 +271,9 @@ class tpv_yamyam extends fs_controller
                      $linea->pvptotal = ($linea->pvpunitario * $linea->cantidad);
                      if( $linea->save() )
                      {
+                        /// descontamos del stock
+                        $articulo->sum_stock($this->albaran->codalmacen, 0 - $linea->cantidad);
+                        
                         $this->albaran->neto += $linea->pvptotal;
                         $this->albaran->totaliva += ($linea->iva * $linea->pvptotal / 100);
                         $this->albaran->total = ($this->albaran->neto + $this->albaran->totaliva);

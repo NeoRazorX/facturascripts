@@ -11,7 +11,7 @@
       {loop="$fsc->results"}
       <tr>
          <td>
-            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">
+            <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">
             {if condition="$value->bloqueado"}
                <s>{$value->referencia}</s>
             {else}
@@ -107,7 +107,8 @@
                <td><input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
                <a target='_blank' href='index.php?page=general_articulo&ref="+ref+"'>"+ref+"</a> "+desc+"</td>\n\
                <td align='center'><input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/>\n\
-               <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='2'/>\n\
+               <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' onkeyup='recalcular()'\n\
+                  autocomplete='off' value='1' size='2'/>\n\
                <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
                <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
                <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
@@ -334,7 +335,7 @@
             </tr>
          </table>
          <div class="new_line">
-            <a href="#" id="b_new_line">Añadir artículo...</a>
+            <a name="new_line" href="#" id="b_new_line">Añadir artículo...</a>
          </div>
          <br/><br/>
          <table width="100%">

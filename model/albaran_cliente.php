@@ -80,6 +80,11 @@ class linea_albaran_cliente extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvpunitario, 2, '.', ' ');
@@ -112,11 +117,6 @@ class linea_albaran_cliente extends fs_model
       $art = new articulo();
       $art = $art->get($this->referencia);
       return $art->url();
-   }
-   
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -164,6 +164,28 @@ class linea_albaran_cliente extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      
+      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+      $totalsindto = $this->pvpunitario * $this->cantidad;
+      if( abs($this->pvptotal - $total) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
+                              ". Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->pvpsindto - $totalsindto) > .01 )
+      {
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
+                              ". Valor correcto: ".$totalsindto);
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function all_from_albaran($id)
@@ -338,6 +360,11 @@ class albaran_cliente extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_neto()
    {
       return number_format($this->neto, 2, '.', ' ');
@@ -351,11 +378,6 @@ class albaran_cliente extends fs_model
    public function show_total()
    {
       return number_format($this->totaleuros, 2, '.', ' ');
-   }
-   
-   public function show_fecha()
-   {
-      return $this->fecha;
    }
    
    public function show_hora($s=TRUE)
@@ -447,11 +469,6 @@ class albaran_cliente extends fs_model
    {
       $agente = new agente();
       return $agente->get($this->codagente);
-   }
-   
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -557,7 +574,51 @@ class albaran_cliente extends fs_model
       }
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
    }
-
+   
+   public function test()
+   {
+      $status = TRUE;
+      $neto = 0;
+      $iva = 0;
+      $total = 0;
+      
+      foreach($this->get_lineas() as $l)
+      {
+         if( !$l->test() )
+         {
+            $this->new_error_msg( $l->error_msg );
+            $status = FALSE;
+         }
+         
+         $neto += $l->pvptotal;
+         $iva += $l->pvptotal * $l->iva / 100;
+         $total += $l->pvptotal * (100 + $l->iva) / 100;
+      }
+      
+      if( abs($this->neto - $neto) > .01 )
+      {
+         $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
+         $status = FALSE;
+      }
+      else if( abs($this->totaliva - $iva) > .01 )
+      {
+         $this->new_error_msg("Valor totaliva incorrecto. Valor correcto: ".$iva);
+         $status = FALSE;
+      }
+      else if( abs($this->total - $total) > .01 )
+      {
+         $this->new_error_msg("Valor total incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->totaleuros - $total) > .01 )
+      {
+         $this->new_error_msg("Valor totaleuros incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      
+      return $status;
+   }
+   
    public function all($offset=0)
    {
       $albalist = array();

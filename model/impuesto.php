@@ -89,6 +89,12 @@ class impuesto extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA10','IVA 10%','10','0');".
+           "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA21','IVA 21%','21','0');";
+   }
+   
    public function url()
    {
       if( is_null($this->codimpuesto) )
@@ -113,12 +119,6 @@ class impuesto extends fs_model
    {
       setcookie('default_impuesto', $this->codimpuesto, time()+FS_COOKIES_EXPIRE);
       self::$default_impuesto = $this->codimpuesto;
-   }
-
-   protected function install()
-   {
-      return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA8','IVA 8%','8','0');".
-           "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA18','IVA 18%','18','0');";
    }
    
    public function exists()

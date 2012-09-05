@@ -106,6 +106,8 @@ class general_cliente extends fs_controller
          
          $this->albaranes = $this->cliente->get_albaranes($this->offset);
       }
+      else
+         $this->new_error_msg("¡Cliente no encontrado!");
    }
    
    public function version() {

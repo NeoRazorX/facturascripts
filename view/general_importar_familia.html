@@ -4,16 +4,21 @@
    {if condition="!$fsc->ready"}
    <script type="text/javascript">
       $(document).ready(function() {
-         setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1000);
+         setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
       });
    </script>
    {/if}
 
-<div class="rounded">
+   {if condition="$fsc->family_data"}
+   <div class="rounded">
    <h1>
       <a href="{$fsc->familia->url()}">{$fsc->familia->codfamilia}</a>
-      <span>{$fsc->family_data->lineas_procesadas} / {$fsc->family_data->lineas}</span>
    </h1>
+   <ul class="horizontal">
+      <li>Impuesto: {$fsc->family_data->codimpuesto}</li>
+      <li>Sufijo: {$fsc->family_data->sufijo}</li>
+      <li>Líneas: {$fsc->family_data->lineas}</li>
+   </ul>
    <ul class="horizontal">
       <li>
          Nuevos:
@@ -44,7 +49,8 @@
          {$fsc->family_data->pvp_diferencia}
       </li>
    </ul>
-</div>
+   </div>
+   {/if}
 {/if}
 
 {include="footer"}

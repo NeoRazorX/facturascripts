@@ -18,12 +18,14 @@
  */
 
 require_once 'model/cliente.php';
+require_once 'model/pais.php';
 require_once 'model/serie.php';
 
 class general_clientes extends fs_controller
 {
    public $cliente;
    public $offset;
+   public $pais;
    public $resultados;
    public $serie;
    
@@ -37,7 +39,32 @@ class general_clientes extends fs_controller
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button('b_nuevo_cliente', 'nuevo cliente');
       $this->cliente = new cliente();
+      $this->pais = new pais();
       $this->serie = new serie();
+      
+      if( isset($_POST['codcliente']) )
+      {
+         $this->cliente->codcliente = $_POST['codcliente'];
+         $this->cliente->nombre = $_POST['nombre'];
+         $this->cliente->nombrecomercial = $_POST['nombre'];
+         $this->cliente->cifnif = $_POST['cifnif'];
+         $this->cliente->codserie = $_POST['codserie'];
+         if( $this->cliente->save() )
+         {
+            $dircliente = new direccion_cliente();
+            $dircliente->codcliente = $this->cliente->codcliente;
+            $dircliente->codpais = $_POST['pais'];
+            $dircliente->provincia = $_POST['provincia'];
+            $dircliente->ciudad = $_POST['ciudad'];
+            $dircliente->codpostal = $_POST['codpostal'];
+            $dircliente->direccion = $_POST['direccion'];
+            $dircliente->descripcion = 'Principal';
+            $dircliente->save();
+            header('location: '.$this->cliente->url());
+         }
+         else
+            $this->new_error_msg("¡Imposible guardar los datos del cliente!");
+      }
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -48,19 +75,6 @@ class general_clientes extends fs_controller
          $this->resultados = $this->cliente->search($this->query, $this->offset);
       else
          $this->resultados = $this->cliente->all($this->offset);
-      
-      if( isset($_POST['codcliente']) )
-      {
-         $this->cliente->codcliente = $_POST['codcliente'];
-         $this->cliente->nombre = $_POST['nombre'];
-         $this->cliente->nombrecomercial = $_POST['nombre'];
-         $this->cliente->cifnif = $_POST['cifnif'];
-         $this->cliente->codserie = $_POST['codserie'];
-         if( $this->cliente->save() )
-            header('location: '.$this->cliente->url());
-         else
-            $this->new_error_msg("¡Imposible guardar los datos del cliente!");
-      }
    }
    
    public function version() {

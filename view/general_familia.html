@@ -3,14 +3,14 @@
 {if condition="$fsc->familia"}
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_load_familia").click(function(event) {
+      $("#b_importar_familia").click(function(event) {
          event.preventDefault();
          $("#shadow").show();
-         $("#popup_load_familia").css({
-            left: ($(window).width() - $("#popup_load_familia").outerWidth())/2,
-            top: ($(window).height() - $("#popup_load_familia").outerHeight())/2
+         $("#popup_importar_familia").css({
+            left: ($(window).width() - $("#popup_importar_familia").outerWidth())/2,
+            top: ($(window).height() - $("#popup_importar_familia").outerHeight())/2
          });
-         $("#popup_load_familia").show();
+         $("#popup_importar_familia").show();
       });
       $("#b_herramientas_familia").click(function(event) {
          event.preventDefault();
@@ -38,24 +38,41 @@
    </form>
 </div>
 
-<div class="popup" id="popup_load_familia">
+<div class="popup" id="popup_importar_familia">
    <h1>Importar familia:</h1>
-   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+   <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
+      <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
+      <input name='archivo' type='hidden' value='TRUE'/>
       El archivo debe estar en formato csv: valores separados por punto y coma y sin separador de texto,
       <br/>
       adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
       <br/>
-      Pulsa el botón descargar para ver un ejemplo.
+      Pulsa el botón exportar para ver un ejemplo.
       <br/><br/>
       <table width="100%">
          <tr>
+            <td align="right">Archivo:</td>
+            <td><input name='farchivo' type='file'/></td>
+         </tr>
+         <tr>
+            <td align="right">Impuesto:</td>
             <td>
-               Archivo: <input name='farchivo' type='file'/>
-               <input name='archivo' type='hidden' value='TRUE'/>
+               <select name="impuesto">
+                  {loop="$fsc->impuesto->all()"}
+                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
             </td>
-            <td align="right">
-               <input type="submit" value="importar"/>
+         </tr>
+         <tr>
+            <td align="right">Sufijo para los artículos:</td>
+            <td>
+               <input name='sufijo' type='text' size="5" maxlength="5"/>
+               Se añade al final de la referencia de cada artículo.
             </td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right"><input type="submit" value="importar"/></td>
          </tr>
       </table>
    </form>

@@ -113,6 +113,8 @@ class general_proveedor extends fs_controller
          
          $this->albaranes = $this->proveedor->get_albaranes($this->offset);
       }
+      else
+         $this->new_error_msg("¡Proveedor no encontrado!");
    }
    
    public function version() {

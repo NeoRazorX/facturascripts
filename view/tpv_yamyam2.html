@@ -119,7 +119,8 @@
             <input type='hidden' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+"'/>\n\
             <input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
             <input type='button' value='  -  ' onclick='linea_sum_ud("+numlineas+",-1)'/> &nbsp;\n\
-            <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='1'/> &nbsp;\n\
+            <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"'\n\
+               onkeyup='recalcular()' autocomplete='off' value='1' size='1'/> &nbsp;\n\
             <input type='button' value='  +  ' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
             <td align='right'>\n\
                <input type='"+pvpt_itype+"' id='pvpt_"+numlineas+"' name='pvpt_"+numlineas+"' value='"+(pvp*(100+iva)/100)+
