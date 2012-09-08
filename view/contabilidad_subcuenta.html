@@ -20,6 +20,8 @@
          <th>Concepto</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
+         <th align="right">IVA</th>
+         <th align="right">Base imponible</th>
          <th>Contrapartida</th>
          <th>CIF/NIF</th>
       </tr>
@@ -28,6 +30,8 @@
          <td><a href="{$value->url()}">{$value->concepto}</a></td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
+         <td align="right">{$value->iva} %</td>
+         <td align="right">{$value->show_baseimponible()} €</td>
          <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
          <td align="center">{$value->cifnif}</td>
       </tr>
@@ -38,7 +42,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="3"></td>
+         <td colspan="5"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

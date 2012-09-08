@@ -29,6 +29,9 @@ class contabilidad_subcuenta extends fs_controller
             $this->cuenta = $this->subcuenta->get_cuenta();
             $this->ejercicio = $this->subcuenta->get_ejercicio();
             
+            if( !$this->subcuenta->test() )
+               $this->new_error_msg( $this->subcuenta->error_msg );
+            
             if( isset($_GET['offset']) )
                $this->offset = intval($_GET['offset']);
             else
@@ -42,7 +45,7 @@ class contabilidad_subcuenta extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()

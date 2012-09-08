@@ -130,6 +130,8 @@
          {loop name="$fsc->user->all()"}
             {if condition="$value->nick != $fsc->user->nick"}
                <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+            {else}
+               <li class='selected'><a hre="#">{$value->nick}</a></li>
             {/if}
          {/loop}
          </ul>

@@ -25,6 +25,8 @@
          <th>Subcuenta</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
+         <th align="right">IVA</th>
+         <th align="right">Base imponible</th>
          <th>Contrapartida</th>
          <th>CIF/NIF</th>
       </tr>
@@ -34,6 +36,8 @@
          <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
+         <td align="right">{$value->iva} %</td>
+         <td align="right">{$value->show_baseimponible()} €</td>
          <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
          <td align="center">{$value->cifnif}</td>
       </tr>

@@ -78,9 +78,7 @@ class contabilidad_nuevo_asiento extends fs_controller
                }
             }
             if( $partidas_correctas )
-            {
                $this->new_message("<a href='".$this->asiento->url()."'>Asiento</a> guardado correctamente!");
-            }
             else
             {
                if( $this->asiento->delete() )
@@ -95,7 +93,7 @@ class contabilidad_nuevo_asiento extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    private function new_search()

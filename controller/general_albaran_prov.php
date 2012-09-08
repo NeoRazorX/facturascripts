@@ -80,7 +80,7 @@ class general_albaran_prov extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()
@@ -191,7 +191,7 @@ class general_albaran_prov extends fs_controller
             $partida0->concepto = $asiento->concepto;
             $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
             $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
-            $partida0->debe = $factura->totaleuros;
+            $partida0->haber = $factura->totaleuros;
             $partida0->coddivisa = $factura->coddivisa;
             if( !$partida0->save() )
             {
@@ -199,27 +199,9 @@ class general_albaran_prov extends fs_controller
                $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida0->codsubcuenta."!");
             }
             
-            /// desglosamos el IVA
-            $totales_iva = array();
-            foreach($factura->get_lineas() as $l)
-            {
-               $encontrado = FALSE;
-               foreach($totales_iva as &$t)
-               {
-                  if($t[0] == $l->codimpuesto)
-                  {
-                     $encontrado = TRUE;
-                     $t[2] += $l->pvptotal;
-                     $t[3] += ($l->iva * $l->pvptotal / 100);
-                  }
-               }
-               
-               if( !$encontrado )
-                  $totales_iva[] = array($l->codimpuesto, $l->iva, $l->pvptotal, ($l->iva * $l->pvptotal / 100));
-            }
             /// generamos una partida por cada impuesto
             $subcuenta_iva = $subcuenta->get_by_codigo('4720000000', $asiento->codejercicio);
-            foreach($totales_iva as $t)
+            foreach($factura->get_lineas_iva() as $li)
             {
                if($subcuenta_iva AND $asiento_correcto)
                {
@@ -228,7 +210,7 @@ class general_albaran_prov extends fs_controller
                   $partida1->concepto = $asiento->concepto;
                   $partida1->idsubcuenta = $subcuenta_iva->idsubcuenta;
                   $partida1->codsubcuenta = $subcuenta_iva->codsubcuenta;
-                  $partida1->haber = $t[3];
+                  $partida1->debe = $li->totaliva;
                   $partida1->idcontrapartida = $subcuenta_prov->idsubcuenta;
                   $partida1->codcontrapartida = $subcuenta_prov->codsubcuenta;
                   $partida1->cifnif = $proveedor->cifnif;
@@ -236,8 +218,8 @@ class general_albaran_prov extends fs_controller
                   $partida1->tipodocumento = $asiento->tipodocumento;
                   $partida1->codserie = $factura->codserie;
                   $partida1->factura = $factura->idfactura;
-                  $partida1->baseimponible = $t[2];
-                  $partida1->iva = $t[1];
+                  $partida1->baseimponible = $li->neto;
+                  $partida1->iva = $li->iva;
                   $partida1->coddivisa = $factura->coddivisa;
                   if( !$partida1->save() )
                   {
@@ -255,7 +237,7 @@ class general_albaran_prov extends fs_controller
                $partida2->concepto = $asiento->concepto;
                $partida2->idsubcuenta = $subcuenta_compras->idsubcuenta;
                $partida2->codsubcuenta = $subcuenta_compras->codsubcuenta;
-               $partida2->haber = $factura->neto;
+               $partida2->debe = $factura->neto;
                $partida2->coddivisa = $factura->coddivisa;
                if( !$partida2->save() )
                {

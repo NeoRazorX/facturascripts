@@ -69,8 +69,10 @@
       var haber = 0;
       for(var i=1; i<=numlineas; i++)
       {
-         debe += parseFloat( $("#debe_"+i).val() );
-         haber += parseFloat( $("#haber_"+i).val() );
+         if( !isNaN( $("#debe_"+i).val() ) )
+            debe += parseFloat( $("#debe_"+i).val() );
+         if( !isNaN( $("#haber_"+i).val() ) )
+            haber += parseFloat( $("#haber_"+i).val() );
       }
       document.f_asiento.importe.value = Math.max(debe,haber);
       document.f_asiento.descuadre.value = debe - haber;
@@ -93,12 +95,15 @@
             <div class='bloque'>\n\
                <input type='hidden' id='idsubcuenta_"+numlineas+"' name='idsubcuenta_"+numlineas+"'/>\n\
                Subcuenta:\n\
-               <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10' onclick='buscar_subcuenta(\""+numlineas+"\",\"subcuenta\")'/>\n\
+               <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
+                  onclick='buscar_subcuenta(\""+numlineas+"\",\"subcuenta\")'/>\n\
                <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='60' disabled='disabled'/>\n\
             </div>\n\
             <div class='bloque'>\n\
-               debe: <input type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='6' onchange='recalcular()'/>\n\
-               haber: <input type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='6' value='0' onchange='recalcular()'/>\n\
+               debe: <input type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='6'\n\
+                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+               haber: <input type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='6' value='0'\n\
+                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
             </div>\n\
             <div class='bloque'>\n\
                ID concepto:\n\

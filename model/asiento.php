@@ -70,6 +70,11 @@ class asiento extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_importe()
    {
       return number_format($this->importe, 2, '.', ' ');
@@ -120,11 +125,6 @@ class asiento extends fs_model
    {
       $partida = new partida();
       return $partida->all_from_asiento($this->idasiento);
-   }
-   
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -220,7 +220,43 @@ class asiento extends fs_model
             $fac->save();
          }
       }
+      /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
+      foreach($this->get_partidas() as $p)
+         $p->delete();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      $debe = 0;
+      $haber = 0;
+      foreach($this->get_partidas() as $p)
+      {
+         if( !$p->test() )
+         {
+            $this->new_error_msg( $p->error_msg );
+            $status = FALSE;
+         }
+         
+         $debe += $p->debe;
+         $haber += $p->haber;
+      }
+      
+      $importe = max( array($debe, $haber) );
+      $total = $debe - $haber;
+      if( abs($this->importe - $importe) > .01 )
+      {
+         $this->new_error_msg("Valor importe incorrecto. Valor correcto: ".$importe);
+         $status = FALSE;
+      }
+      else if( abs($total) > .01 )
+      {
+         $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function search($query, $offset=0)

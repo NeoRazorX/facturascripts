@@ -58,6 +58,11 @@ class subcuenta extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_debe()
    {
       return number_format($this->debe, 2, '.', ' ');
@@ -99,11 +104,6 @@ class subcuenta extends fs_model
       return $part->all_from_subcuenta($this->idsubcuenta, $offset);
    }
    
-   protected function install()
-   {
-      return "";
-   }
-   
    public function get($id)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
@@ -135,9 +135,15 @@ class subcuenta extends fs_model
    {
       if( $this->exists() )
       {
+         $partida = new partida();
+         $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
+         $this->debe = $totales['debe'];
+         $this->haber = $totales['haber'];
+         $this->saldo = $totales['saldo'];
          $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).", idcuenta = ".$this->var2str($this->idcuenta).",
-            codcuenta = ".$this->var2str($this->codcuenta).", codejercicio = ".$this->var2str($this->codejercicio).", coddivisa = ".$this->var2str($this->coddivisa).",
-            codimpuesto = ".$this->var2str($this->codimpuesto).", descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
+            codcuenta = ".$this->var2str($this->codcuenta).", codejercicio = ".$this->var2str($this->codejercicio).",
+            coddivisa = ".$this->var2str($this->coddivisa).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+            descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
             haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).", recargo = ".$this->var2str($this->recargo).",
             iva = ".$this->var2str($this->iva)." WHERE idsubcuenta = '".$this->idsubcuenta."';";
       }
@@ -155,6 +161,30 @@ class subcuenta extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsubcuenta = '".$this->idsubcuenta."';");
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      $partida = new partida();
+      $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
+      if( abs($this->debe - $totales['debe']) > .01 )
+      {
+         $this->new_error_msg("Valor debe incorrecto. Valor correcto: ".$totales['debe']);
+         $status = FALSE;
+      }
+      else if( abs($this->haber - $totales['haber']) > .01 )
+      {
+         $this->new_error_msg("Valor haber incorrecto. Valor correcto: ".$totales['haber']);
+         $status = FALSE;
+      }
+      else if( abs($this->saldo - $totales['saldo']) > .01 )
+      {
+         $this->new_error_msg("Valor saldo incorrecto. Valor correcto: ".$totales['saldo']);
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function all_from_cuenta($idcuenta)

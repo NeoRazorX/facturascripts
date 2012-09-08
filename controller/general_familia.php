@@ -84,7 +84,7 @@ class general_familia extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()

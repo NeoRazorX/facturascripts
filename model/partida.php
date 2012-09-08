@@ -86,6 +86,11 @@ class partida extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function show_debe()
    {
       return number_format($this->debe, 2, '.', ' ');
@@ -96,6 +101,11 @@ class partida extends fs_model
       return number_format($this->haber, 2, '.', ' ');
    }
    
+   public function show_baseimponible()
+   {
+      return number_format($this->baseimponible, 2, '.', ' ');
+   }
+   
    public function url()
    {
       if( is_null($this->idasiento) )
@@ -104,29 +114,34 @@ class partida extends fs_model
          return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
+   public function get_subcuenta()
+   {
+      $subcuenta = new subcuenta();
+      return $subcuenta->get( $this->idsubcuenta );
+   }
+   
    public function subcuenta_url()
    {
-      $subc = new subcuenta();
-      $subc = $subc->get($this->idsubcuenta);
+      $subc = $this->get_subcuenta();
       if($subc)
          return $subc->url();
       else
          return '#';
    }
    
-   public function contrapartida_url()
+   public function get_contrapartida()
    {
       $subc = new subcuenta();
-      $subc = $subc->get($this->idcontrapartida);
+      return $subc->get( $this->idcontrapartida );
+   }
+   
+   public function contrapartida_url()
+   {
+      $subc = $this->get_contrapartida();
       if($subc)
          return $subc->url();
       else
          return '#';
-   }
-
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -168,12 +183,49 @@ class partida extends fs_model
             ".$this->var2str($this->tipodocumento).",".$this->var2str($this->documento).",".$this->var2str($this->cifnif).",
             ".$this->var2str($this->debe).",".$this->var2str($this->haber).");";
       }
-      return $this->db->exec($sql);
+      
+      if( $this->db->exec($sql) )
+      {
+         $subc = $this->get_subcuenta();
+         $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+         return TRUE;
+      }
+      else
+         return FALSE;
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = '".$this->idpartida."';");
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = '".$this->idpartida."';") )
+      {
+         $subc = $this->get_subcuenta();
+         $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+         return TRUE;
+      }
+      else
+         return FALSE;
+   }
+   
+   public function test()
+   {
+      $status = TRUE;
+      
+      if( $this->iva > 0 )
+      {
+         $totaliva = $this->baseimponible * $this->iva / 100;
+         if( $this->debe != 0 AND  abs($this->debe - $totaliva) > .01 )
+         {
+            $this->new_error_msg("Valor debe incorrecto. Valor correcto ".$totaliva);
+            $status = FALSE;
+         }
+         else if( $this->haber != 0 AND abs($this->haber - $totaliva) > .01 )
+         {
+            $this->new_error_msg("Valor haber incorrecto. Valor correcto ".$totaliva);
+            $status = FALSE;
+         }
+      }
+      
+      return $status;
    }
    
    public function all_from_subcuenta($id, $offset=0)
@@ -199,6 +251,30 @@ class partida extends fs_model
             $plist[] = new partida($p);
       }
       return $plist;
+   }
+   
+   public function totales_from_subcuenta($id)
+   {
+      $totales = array(
+          'debe' => 0,
+          'haber' => 0,
+          'saldo' => 0
+      );
+      $resultados = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber
+         FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
+      if( $resultados )
+      {
+         $totales['debe'] = floatval( $resultados[0]['debe'] );
+         $totales['haber'] = floatval( $resultados[0]['haber'] );
+      }
+      else
+      {
+         $totales['debe'] = 0;
+         $totales['haber'] = 0;
+      }
+      $totales['saldo'] = $totales['debe'] - $totales['haber'];
+      
+      return $totales;
    }
 }
 
