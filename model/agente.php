@@ -77,6 +77,11 @@ class agente extends fs_model
          $this->codagente = NULL;
       }
    }
+
+   protected function install()
+   {
+      return "";
+   }
    
    public function get_fullname()
    {
@@ -96,10 +101,14 @@ class agente extends fs_model
    {
       return "index.php?page=admin_agentes#".$this->codagente;
    }
-
-   protected function install()
+   
+   public function get($cod)
    {
-      return "";
+      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$cod."';");
+      if($a)
+         return new agente($a[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -112,6 +121,7 @@ class agente extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."', apellidos = '".$this->apellidos.
@@ -128,26 +138,27 @@ class agente extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = '".$this->codagente."';");
    }
    
-   public function get($cod)
+   private function clean_cache()
    {
-      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$cod."';");
-      if($a)
-         return new agente($a[0]);
-      else
-         return FALSE;
+      $this->cache->delete('m_agente_all');
    }
    
    public function all()
    {
-      $listagentes = array();
-      $agentes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
-      if($agentes)
+      $listagentes = $this->cache->get_array('m_agente_all');
+      if( !$listagentes )
       {
-         foreach($agentes as $a)
-            $listagentes[] = new agente($a);
+         $agentes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+         if($agentes)
+         {
+            foreach($agentes as $a)
+               $listagentes[] = new agente($a);
+         }
+         $this->cache->set('m_agente_all', $listagentes);
       }
       return $listagentes;
    }

@@ -10,21 +10,21 @@
       $(document).ready(function() {
          $("#login_window").css({
             left: ($(window).width() - $('#login_window').outerWidth())/2,
-            top: (($(window).height() - $('#login_window').outerHeight())/2)-50
+            top: ($(window).height() - $('#login_window').outerHeight())/2
          });
          document.f_login.password.focus();
       });
    </script>
 </head>
-<body class="log_in">
+<body>
    {if condition="$fsc->error_msg"}
       <div class="error">{$fsc->error_msg}</div>
    {/if}
    {if condition="$fsc->message"}
       <div class="message">{$fsc->message}</div>
    {/if}
-   {if condition="$fsc->db_history_enabled()"}
-      <div class="rounded">
+   {if condition="FS_DB_HISTORY"}
+      <div id="login_sql">
          <h1>Consultas SQL:</h1>
          <ol>
          {loop="$fsc->get_db_history()"}
@@ -34,7 +34,12 @@
       </div>
    {/if}
    <div id="login_window">
-      <h1>{$fsc->get_empresa_name()}</h1>
+      {if condition="FS_DEMO"}
+         <h1>Demo: {$fsc->get_empresa_name()}</h1>
+         <div class="message">contraseña: demo</div>
+      {else}
+         <h1>{$fsc->get_empresa_name()}</h1>
+      {/if}
       <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
       <table>
          <tr>
@@ -64,21 +69,39 @@
       </form>
    </div>
    <div class='copyright'>
+      {if condition="FS_DEMO"}
       <table>
          <tr>
             <td class="left">
-               Tiempo de ejecución: {$fsc->duration()} |
-               Consultas: {$fsc->selects()} |
-               Transacciones: {$fsc->transactions()}
+               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
+                  Tutorial de instalación</a> |
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
+               <a target="_blank" href="http://www.neorazorx.com">mi blog</a> |
+               <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>
             </td>
             <td class="right">
-               <img src="img/bug.png" alt="bug"/>
-               <a target="_blank" href="http://www.kelinux.net/community/facturascripts">Reportar un error</a> |
                <i><a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
                es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a></i>
             </td>
          </tr>
       </table>
+      {else}
+      <table>
+         <tr>
+            <td class="left">
+               Consultas: {$fsc->selects()} |
+               Transacciones: {$fsc->transactions()} |
+               Tiempo de ejecución: {$fsc->duration()}
+            </td>
+            <td class="right">
+               <img src="img/bug.png" alt="bug"/>
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
+               <i><a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
+               es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a></i>
+            </td>
+         </tr>
+      </table>
+      {/if}
    </div>
 </body>
 </html>

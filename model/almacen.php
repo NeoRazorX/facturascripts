@@ -68,6 +68,12 @@ class almacen extends fs_model
          $this->codalmacen = NULL;
       }
    }
+
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
+               VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+   }
    
    public function url()
    {
@@ -75,12 +81,6 @@ class almacen extends fs_model
          return 'index.php?page=admin_almacenes#'.$this->codalmacen;
       else
          return 'index.php?page=admin_almacenes';
-   }
-
-   protected function install()
-   {
-      return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
-               VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
    
    public function get($cod)
@@ -102,6 +102,7 @@ class almacen extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."', poblacion = '".$this->poblacion."',
@@ -119,17 +120,27 @@ class almacen extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_almacen_all');
    }
    
    public function all()
    {
-      $listaa = array();
-      $almacenes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codalmacen ASC;");
-      if($almacenes)
+      $listaa = $this->cache->get_array('m_almacen_all');
+      if( !$listaa )
       {
-         foreach($almacenes as $a)
-            $listaa[] = new almacen($a);
+         $almacenes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codalmacen ASC;");
+         if($almacenes)
+         {
+            foreach($almacenes as $a)
+               $listaa[] = new almacen($a);
+         }
+         $this->cache->set('m_almacen_all', $listaa);
       }
       return $listaa;
    }

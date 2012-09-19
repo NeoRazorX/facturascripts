@@ -37,22 +37,27 @@ class general_clientes extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_cliente', 'nuevo cliente');
+      $this->buttons[] = new fs_button('b_nuevo_cliente', 'nuevo');
       $this->cliente = new cliente();
       $this->pais = new pais();
       $this->serie = new serie();
       
       if( isset($_POST['codcliente']) )
       {
-         $this->cliente->codcliente = $_POST['codcliente'];
-         $this->cliente->nombre = $_POST['nombre'];
-         $this->cliente->nombrecomercial = $_POST['nombre'];
-         $this->cliente->cifnif = $_POST['cifnif'];
-         $this->cliente->codserie = $_POST['codserie'];
-         if( $this->cliente->save() )
+         $cliente = $this->cliente->get($_POST['codcliente']);
+         if( !$cliente )
+         {
+            $cliente = new cliente();
+            $cliente->codcliente = $_POST['codcliente'];
+         }
+         $cliente->nombre = $_POST['nombre'];
+         $cliente->nombrecomercial = $_POST['nombre'];
+         $cliente->cifnif = $_POST['cifnif'];
+         $cliente->codserie = $_POST['codserie'];
+         if( $cliente->save() )
          {
             $dircliente = new direccion_cliente();
-            $dircliente->codcliente = $this->cliente->codcliente;
+            $dircliente->codcliente = $cliente->codcliente;
             $dircliente->codpais = $_POST['pais'];
             $dircliente->provincia = $_POST['provincia'];
             $dircliente->ciudad = $_POST['ciudad'];
@@ -60,7 +65,7 @@ class general_clientes extends fs_controller
             $dircliente->direccion = $_POST['direccion'];
             $dircliente->descripcion = 'Principal';
             $dircliente->save();
-            header('location: '.$this->cliente->url());
+            header('location: '.$cliente->url());
          }
          else
             $this->new_error_msg("¡Imposible guardar los datos del cliente!");
@@ -78,7 +83,7 @@ class general_clientes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

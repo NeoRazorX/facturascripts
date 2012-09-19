@@ -21,14 +21,14 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="ncodfamilia" size="4" maxlength="4"/></td>
+            <td><input type="text" name="ncodfamilia" size="4" maxlength="4" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Descripción:</td>
-            <td><input type="text" name="ndescripcion" size="60"/></td>
+            <td><input type="text" name="ndescripcion" size="60" autocomplete="off"/></td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nueva familia"/></div>
+      <div class="right"><input type="submit" value="nueva"/></div>
    </form>
 </div>
 
@@ -37,7 +37,7 @@
    {loop="$fsc->familia->all()"}
       <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
    {else}
-      <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva familia</b> para crear una.</li>
+      <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>
    {/loop}
    </ul>
 </div>

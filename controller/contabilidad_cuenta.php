@@ -20,12 +20,15 @@ class contabilidad_cuenta extends fs_controller
       {
          $this->cuenta = new cuenta();
          $this->cuenta = $this->cuenta->get($_GET['id']);
-         if($this->cuenta)
-         {
-            $this->page->title = 'Cuenta: '.$this->cuenta->codcuenta;
-            $this->ejercicio = $this->cuenta->get_ejercicio();
-         }
       }
+      
+      if($this->cuenta)
+      {
+         $this->page->title = 'Cuenta: '.$this->cuenta->codcuenta;
+         $this->ejercicio = $this->cuenta->get_ejercicio();
+      }
+      else
+         $this->new_error_msg("Cuenta no encontrada.");
    }
    
    public function version() {

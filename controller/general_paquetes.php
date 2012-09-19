@@ -36,7 +36,7 @@ class general_paquetes extends fs_controller
    {
       $this->paquete = new paquete();
       $this->cache_paquete = new cache_paquete();
-      $this->buttons[] = new fs_button('b_nuevo_paquete', 'nuevo paquete');
+      $this->buttons[] = new fs_button('b_nuevo_paquete', 'nuevo');
       
       if( $this->query != '' )
          $this->new_search();
@@ -53,14 +53,14 @@ class general_paquetes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-3';
    }
    
    private function new_search()
    {
       $art = new articulo();
       $cache = new fs_cache();
-      $this->results = $cache->get_array('search_articulo_'.$this->query);
+      $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
       if( count($this->results) < 1 )
       {
          $this->results = $art->search($this->query);

@@ -9,13 +9,13 @@
       </tr>
       {loop="$fsc->results"}
       <tr>
+         {if condition="$value->bloqueado"}
+         <td class="locked">
+         {else}
          <td>
+         {/if}
             <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">
-               {if condition="$value->bloqueado"}
-                  <s>{$value->referencia}</s>
-               {else}
-                  {$value->referencia}
-               {/if}
+               {$value->referencia}
             </a>
          </td>
          <td>{$value->descripcion}</td>

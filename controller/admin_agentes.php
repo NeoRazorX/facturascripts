@@ -31,29 +31,43 @@ class admin_agentes extends fs_controller
    protected function process()
    {
       $this->agente = new agente();
-      $this->buttons[] = new fs_button('b_nuevo_agente', 'nuevo agente');
+      $this->buttons[] = new fs_button('b_nuevo_agente', 'nuevo');
       
       if( isset($_POST['scodagente']) )
       {
-         $this->agente->codagente = $_POST['scodagente'];
-         $this->agente->nombre = $_POST['snombre'];
-         $this->agente->apellidos = $_POST['sapellidos'];
-         $this->agente->dnicif = $_POST['sdnicif'];
-         $this->agente->telefono = $_POST['stelefono'];
-         $this->agente->email = $_POST['semail'];
-         if( $this->agente->save() )
-            $this->new_message("Datos del agente actualizados");
+         $age0 = $this->agente->get($_POST['scodagente']);
+         if( !$age0 )
+         {
+            $age0 = new agente();
+            $age0->codagente = $_POST['scodagente'];
+         }
+         $age0->nombre = $_POST['snombre'];
+         $age0->apellidos = $_POST['sapellidos'];
+         $age0->dnicif = $_POST['sdnicif'];
+         $age0->telefono = $_POST['stelefono'];
+         $age0->email = $_POST['semail'];
+         if( $age0->save() )
+            $this->new_message("Agente ".$age0->codagente." modificado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar el agente ".$age0->codagente."!");
       }
       else if( isset($_GET['delete']) )
       {
-         $this->agente = new agente();
-         $this->agente = $this->agente->get($_GET['delete']);
-         $this->agente->delete();
+         $age0 = $this->agente->get($_GET['delete']);
+         if($age0)
+         {
+            if( $this->agente->delete() )
+               $this->new_message("Agente ".$age0->codagente." eliminado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar el agente ".$age0->codagente."!");
+         }
+         else
+            $this->new_error_msg("¡Agente no encontrado!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

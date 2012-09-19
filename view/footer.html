@@ -1,4 +1,4 @@
-   {if condition="$fsc->db_history_enabled()"}
+   {if condition="FS_DB_HISTORY"}
       <div class="rounded">
          <h1>Consultas SQL:</h1>
          <ol>
@@ -23,13 +23,13 @@
                {/if}
             </td>
             <td>
-               Tiempo de ejecución: {$fsc->duration()} |
                Consultas: {$fsc->selects()} |
-               Transacciones: {$fsc->transactions()}
+               Transacciones: {$fsc->transactions()} |
+               Tiempo de ejecución: {$fsc->duration()}
             </td>
             <td class="right">
                <img src="img/bug.png" alt="bug"/>
-               <a target="_blank" href="http://www.kelinux.net/community/facturascripts">Reportar un error</a> |
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
                <a target="_blank" href='http://code.google.com/p/facturascripts/'>Web oficial</a>
             </td>
          </tr>

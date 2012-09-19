@@ -31,22 +31,30 @@ class contabilidad_series extends fs_controller
    protected function process()
    {
       $this->serie = new serie();
-      $this->buttons[] = new fs_button('b_nueva_serie', 'nueva serie');
+      $this->buttons[] = new fs_button('b_nueva_serie', 'nueva');
       
       if( isset($_POST['codserie']) )
       {
-         $this->serie->codserie = $_POST['codserie'];
-         $this->serie->descripcion = $_POST['descripcion'];
-         $this->serie->siniva = ($_POST['siniva'] == 'TRUE');
-         if( $this->serie->save() )
-            $this->new_message("Serie guardada correctamente");
+         $serie = $this->serie->get($_POST['codserie']);
+         if( !$serie )
+         {
+            $serie = new serie();
+            $serie->codserie = $_POST['codserie'];
+         }
+         $serie->descripcion = $_POST['descripcion'];
+         if( isset($_POST['siniva']) )
+            $serie->siniva = TRUE;
          else
-            $this->new_error_msg("¡Imposible guardar serie!");
+            $serie->siniva = FALSE;
+         if( $serie->save() )
+            $this->new_message("Serie ".$serie->codserie." modificada correctamente");
+         else
+            $this->new_error_msg("¡Imposible modificar serie ".$serie->codserie."!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

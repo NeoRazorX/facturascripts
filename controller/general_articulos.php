@@ -20,6 +20,7 @@
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
+require_once 'model/tarifa.php';
 
 class general_articulos extends fs_controller
 {
@@ -27,6 +28,7 @@ class general_articulos extends fs_controller
    public $impuesto;
    public $offset;
    public $resultados;
+   public $tarifa;
 
    public function __construct()
    {
@@ -37,13 +39,43 @@ class general_articulos extends fs_controller
    {
       $this->familia = new familia();
       $this->impuesto = new impuesto();
+      $this->tarifa = new tarifa();
       $articulo = new articulo();
       
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo artículo');
+      $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo');
+      $this->buttons[] = new fs_button('b_tarifas','tarifas', '#', 'button', 'img/zoom.png');
       $this->buttons[] = new fs_button('b_modificar_iva','modificar iva', '#', 'button', 'img/tools.png');
       
-      if( isset($_POST['mod_iva']) )
+      if( isset($_POST['codtarifa']) )
+      {
+         $tar0 = $this->tarifa->get($_POST['codtarifa']);
+         if( !$tar0 )
+         {
+            $tar0 = new tarifa();
+            $tar0->codtarifa = $_POST['codtarifa'];
+         }
+         $tar0->nombre = $_POST['nombre'];
+         $tar0->incporcentual = floatval( $_POST['incporcentual'] );
+         if( $tar0->save() )
+            $this->new_message("Tarifa guardada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar la tarifa!");
+      }
+      else if( isset($_GET['delete_tarifa']) )
+      {
+          $tar0 = $this->tarifa->get($_GET['delete_tarifa']);
+          if($tar0)
+          {
+             if( $tar0->delete() )
+                $this->new_message("Tarifa borrada correctamente.");
+             else
+                $this->new_error_msg("¡Imposible borrar la tarifa!");
+          }
+          else
+             $this->new_error_msg("¡La tarifa no existe!");
+      }
+      else if( isset($_POST['mod_iva']) )
       {
          if($_POST['codimpuesto'] == $_POST['codimpuesto2'])
             $this->new_error_msg("¡Has seleccionado el mismo IVA dos veces!");
@@ -96,7 +128,7 @@ class general_articulos extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

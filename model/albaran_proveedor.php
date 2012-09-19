@@ -267,7 +267,16 @@ class albaran_proveedor extends fs_model
       if($a)
       {
          $this->idalbaran = $this->intval($a['idalbaran']);
-         $this->idfactura = $this->intval($a['idfactura']);
+         if($a['ptefactura'] == 't')
+         {
+            $this->ptefactura = TRUE;
+            $this->idfactura = NULL;
+         }
+         else
+         {
+            $this->ptefactura = FALSE;
+            $this->idfactura = $this->intval($a['idfactura']);
+         }
          $this->codigo = $a['codigo'];
          $this->numero = $a['numero'];
          $this->numproveedor = $a['numproveedor'];
@@ -291,7 +300,6 @@ class albaran_proveedor extends fs_model
          $this->recfinanciero = floatval($a['recfinanciero']);
          $this->totalrecargo = floatval($a['totalrecargo']);
          $this->observaciones = $a['observaciones'];
-         $this->ptefactura = ($a['ptefactura'] == 't');
       }
       else
       {
@@ -510,6 +518,7 @@ class albaran_proveedor extends fs_model
       $iva = 0;
       $total = 0;
       
+      /// comprobamos las líneas
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -523,6 +532,7 @@ class albaran_proveedor extends fs_model
          $total += $l->pvptotal * (100 + $l->iva) / 100;
       }
       
+      /// comprobamos los totales
       if( abs($this->neto - $neto) > .01 )
       {
          $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
@@ -544,14 +554,39 @@ class albaran_proveedor extends fs_model
          $status = FALSE;
       }
       
+      /// comprobamos las facturas asociadas
+      $linea_factura = new linea_factura_proveedor();
+      $facturas = $linea_factura->facturas_from_albaran( $this->idalbaran );
+      if($facturas)
+      {
+         if( count($facturas) > 1 )
+         {
+            $this->new_error_msg("Este albarán esta asociado a las siguientes facturas (y no debería):");
+            foreach($facturas as $f)
+               $this->new_error_msg("<a href='".$f->url()."'>".$f->codigo."</a>");
+            $status = FALSE;
+         }
+         else if($facturas[0]->idfactura != $this->idfactura)
+         {
+            $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.
+                                  La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
+            $status = FALSE;
+         }
+      }
+      else if( !is_null($this->idfactura) )
+      {
+         $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.");
+         $status = FALSE;
+      }
+      
       return $status;
    }
    
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC",
-                                           FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -563,8 +598,8 @@ class albaran_proveedor extends fs_model
    public function all_from_proveedor($codproveedor, $offset=0)
    {
       $alblist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."  WHERE codproveedor = '".$codproveedor."' ORDER BY fecha DESC",
-              FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."  WHERE codproveedor = '".$codproveedor."'
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -588,7 +623,7 @@ class albaran_proveedor extends fs_model
          $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
       else
          $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
-      $consulta .= " ORDER BY fecha DESC";
+      $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $albaranes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($albaranes)

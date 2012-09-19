@@ -64,7 +64,12 @@
             {/if}
          {/loop}
       </div>
-      <div id="header_logo">{$fsc->get_empresa_name()}</div>
+      <div id="header_logo">
+         {if condition="FS_DEMO"}
+            Demo:
+         {/if}
+         {$fsc->get_empresa_name()}
+      </div>
       <div id="header_user">
          <a href="#" id="b_user_list">{$fsc->user->nick}</a>
          <a href="{$fsc->url()}&logout=TRUE"><img src="img/logout.png" alt="salir" title="cerrar sesión"/></a>
@@ -102,7 +107,7 @@
       <div id="header_search">
          {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
-               <input type="text" name="query" value="{$fsc->query}"/>
+               <input type="text" name="query" value="{$fsc->query}" autocomplete="off"/>
                <input type="submit" value="buscar"/>
             </form>
          {/if}

@@ -35,20 +35,25 @@ class general_proveedores extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_proveedor', 'nuevo proveedor');
+      $this->buttons[] = new fs_button('b_nuevo_proveedor', 'nuevo');
       $this->pais = new pais();
       $this->proveedor = new proveedor();
       
       if( isset($_POST['codproveedor']) )
       {
-         $this->proveedor->codproveedor = $_POST['codproveedor'];
-         $this->proveedor->nombre = $_POST['nombre'];
-         $this->proveedor->nombrecomercial = $_POST['nombre'];
-         $this->proveedor->cifnif = $_POST['cifnif'];
-         if( $this->proveedor->save() )
+         $proveedor = $this->proveedor->get($_POST['codproveedor']);
+         if( !$proveedor )
+         {
+            $proveedor = new proveedor();
+            $proveedor->codproveedor = $_POST['codproveedor'];
+         }
+         $proveedor->nombre = $_POST['nombre'];
+         $proveedor->nombrecomercial = $_POST['nombre'];
+         $proveedor->cifnif = $_POST['cifnif'];
+         if( $proveedor->save() )
          {
             $dirproveedor = new direccion_proveedor();
-            $dirproveedor->codproveedor = $this->proveedor->codproveedor;
+            $dirproveedor->codproveedor = $proveedor->codproveedor;
             $dirproveedor->descripcion = "Principal";
             $dirproveedor->codpais = $_POST['pais'];
             $dirproveedor->provincia = $_POST['provincia'];
@@ -56,7 +61,7 @@ class general_proveedores extends fs_controller
             $dirproveedor->codpostal = $_POST['codpostal'];
             $dirproveedor->direccion = $_POST['direccion'];
             $dirproveedor->save();
-            header('location: '.$this->proveedor->url());
+            header('location: '.$proveedor->url());
          }
          else
             $this->new_error_msg("¡Imposible crear el proveedor!");
@@ -74,7 +79,7 @@ class general_proveedores extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

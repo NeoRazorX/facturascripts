@@ -31,7 +31,7 @@ class general_familias extends fs_controller
    protected function process()
    {
       $this->familia = new familia();
-      $this->buttons[] = new fs_button('b_nueva_familia', 'nueva familia');
+      $this->buttons[] = new fs_button('b_nueva_familia', 'nueva');
       
       if( isset($_POST['ncodfamilia']) )
       {
@@ -41,6 +41,8 @@ class general_familias extends fs_controller
             $fam->descripcion = $_POST['ndescripcion'];
             if( $fam->save() )
                Header('location: ' . $fam->url());
+            else
+               $this->new_error_msg("¡Imposible guardar la familia!");
          }
          else
             $this->new_error_msg($fam->error_msg);
@@ -51,11 +53,13 @@ class general_familias extends fs_controller
          $fam->codfamilia = $_GET['delete'];
          if( $fam->delete() )
             $this->new_message("Familia ".$_GET['delete']." eliminada correctamente");
+         else
+            $this->new_error_msg("¡Imposible eliminar la familia ".$_GET['delete']."!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

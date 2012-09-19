@@ -19,38 +19,44 @@
 
 class fs_cache
 {
-   private $cache;
-   private $connected;
-
+   private static $memcache;
+   private static $connected;
+   
    public function __construct()
    {
-      $this->cache = new Memcache();
-      try
+      if( !isset(self::$memcache) )
       {
-         $this->cache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
-         $this->connected = TRUE;
-      }
-      catch (Exception $e)
-      {
-         $this->connected = FALSE;
+         try
+         {
+            self::$memcache = new Memcache();
+            self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
+            self::$connected = TRUE;
+         }
+         catch(Exception $e)
+         {
+            self::$connected = FALSE;
+         }
       }
    }
    
    public function __destruct()
    {
-      $this->cache->close();
+      if( !isset(self::$memcache) )
+      {
+         self::$memcache->close();
+      }
    }
    
    public function set($key, $object, $expire=3600)
    {
-      if($this->connected)
-         $this->cache->set($key, $object, FALSE, $expire);
+      if( self::$connected )
+         self::$memcache->set($key, $object, FALSE, $expire);
    }
    
    public function get($key)
    {
-      if($this->connected)
-         return $this->cache->get($key);
+      if( self::$connected )
+         return self::$memcache->get($key);
       else
          return FALSE;
    }
@@ -58,9 +64,9 @@ class fs_cache
    public function get_array($key)
    {
       $aa = array();
-      if($this->connected)
+      if( self::$connected )
       {
-         $a = $this->cache->get($key);
+         $a = self::$memcache->get($key);
          if($a)
             $aa = $a;
       }
@@ -69,14 +75,16 @@ class fs_cache
 
    public function delete($key)
    {
-      if($this->connected)
-         $this->cache->delete($key);
+      if( self::$connected )
+         return self::$memcache->delete($key);
+      else
+         return FALSE;
    }
    
    public function clean()
    {
-      if($this->connected)
-         return $this->cache->flush();
+      if( self::$connected )
+         return self::$memcache->flush();
       else
          return FALSE;
    }

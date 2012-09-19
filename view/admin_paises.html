@@ -21,14 +21,14 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="scodpais" size="18" maxlength="20"/></td>
+            <td><input type="text" name="scodpais" size="18" maxlength="20" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Nombre:</td>
-            <td><input type="text" name="snombre"/></td>
+            <td><input type="text" name="snombre" autocomplete="off"/></td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nuevo país"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
 
@@ -45,7 +45,7 @@
       </h1>
       Nombre del país:
       <input type="hidden" name="scodpais" value="{$value->codpais}"/>
-      <input type="text" name="snombre" value="{$value->nombre}"/>
+      <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
    </form>
 </div>
 {/loop}

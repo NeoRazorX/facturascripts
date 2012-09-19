@@ -53,6 +53,12 @@ class divisa extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,bandera,fecha,codiso)
+         VALUES ('EUR','EUROS','1','','".Date('j-n-Y')."','978');";
+   }
+   
    public function is_default()
    {
       if( isset(self::$default_divisa) )
@@ -69,12 +75,6 @@ class divisa extends fs_model
    {
       setcookie('default_divisa', $this->coddivisa, time()+FS_COOKIES_EXPIRE);
       self::$default_divisa = $this->coddivisa;
-   }
-   
-   protected function install()
-   {
-      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,bandera,fecha,codiso)
-         VALUES ('EUR','EUROS','1','','".Date('j-n-Y')."','978');";
    }
    
    public function get($cod)
@@ -94,22 +94,32 @@ class divisa extends fs_model
    
    public function save()
    {
-      ;
+      $this->clean_cache();
    }
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = '".$this->coddivisa."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_divisa_all');
    }
    
    public function all()
    {
-      $listad = array();
-      $divisas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
-      if($divisas)
+      $listad = $this->cache->get_array('m_divisa_all');
+      if( !$listad )
       {
-         foreach($divisas as $d)
-            $listad[] = new divisa($d);
+         $divisas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
+         if($divisas)
+         {
+            foreach($divisas as $d)
+               $listad[] = new divisa($d);
+         }
+         $this->cache->set('m_divisa_all', $listad);
       }
       return $listad;
    }

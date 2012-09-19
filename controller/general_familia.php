@@ -81,6 +81,8 @@ class general_familia extends fs_controller
          
          $this->articulos = $this->familia->get_articulos($this->offset);
       }
+      else
+         $this->new_error_msg("Familia no encontrada.");
    }
    
    public function version() {

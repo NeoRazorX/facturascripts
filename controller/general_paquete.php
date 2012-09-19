@@ -94,6 +94,8 @@ class general_paquete extends fs_controller
                  $this->url()."&delete=".$this->paquete->referencia, 'remove',
                  'img/remove.png', '-');
       }
+      else
+         $this->new_error_msg("Paquete no encontrado.");
    }
    
    public function version() {

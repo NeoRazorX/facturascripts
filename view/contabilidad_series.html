@@ -21,31 +21,32 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="codserie" size="2" maxlength="2"/></td>
+            <td><input type="text" name="codserie" size="2" maxlength="2" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion"/></td>
+            <td><input type="text" name="descripcion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right"><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
             <td><label for="serie_sin_iva">sin IVA</label></td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nueva serie"/></div>
+      <div class="right"><input type="submit" value="nueva"/></div>
    </form>
 </div>
 
 {loop="$fsc->serie->all()"}
 <div class="rounded">
-   <form>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codserie" value="{$value->codserie}"/>
       <h1>
          {$value->codserie}
          <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
          Descripción:
-         <input type="text" name="descripcion" value="{$value->descripcion}"/>
+         <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
       </div>
       <div class="bloque">
          {if condition="$value->siniva"}

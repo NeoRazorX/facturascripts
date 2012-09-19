@@ -36,7 +36,7 @@ class general_albaranes_prov extends fs_controller
       
       $npage = $this->page->get('general_nuevo_albaran');
       if($npage)
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo albarán', $npage->url());
+         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo', $npage->url());
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -65,7 +65,7 @@ class general_albaranes_prov extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

@@ -31,24 +31,29 @@ class contabilidad_ejercicios extends fs_controller
    protected function process()
    {
       $this->ejercicio = new ejercicio();
-      $this->buttons[] = new fs_button('b_nuevo_ejercicio', 'nuevo ejercicio');
+      $this->buttons[] = new fs_button('b_nuevo_ejercicio', 'nuevo');
       
       if( isset($_POST['codejercicio']) )
       {
-         $this->ejercicio->codejercicio = $_POST['codejercicio'];
-         $this->ejercicio->nombre = $_POST['nombre'];
-         $this->ejercicio->fechainicio = $_POST['fechainicio'];
-         $this->ejercicio->fechafin = $_POST['fechafin'];
-         $this->ejercicio->estado = $_POST['estado'];
-         if( $this->ejercicio->save() )
-            $this->new_message("Ejercicio guardado correctamente");
+         $eje0 = $this->ejercicio->get($_POST['codejercicio']);
+         if( !$eje0 )
+         {
+            $eje0 = new ejercicio();
+            $eje0->codejercicio = $_POST['codejercicio'];
+         }
+         $eje0->nombre = $_POST['nombre'];
+         $eje0->fechainicio = $_POST['fechainicio'];
+         $eje0->fechafin = $_POST['fechafin'];
+         $eje0->estado = $_POST['estado'];
+         if( $eje0->save() )
+            $this->new_message("Ejercicio ".$eje0->codejercicio." modificado correctamente");
          else
-            $this->new_error_msg("¡Imposible guardar el ejercicio!");
+            $this->new_error_msg("¡Imposible modificar el ejercicio ".$eje0->codejercicio."!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

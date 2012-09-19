@@ -43,6 +43,11 @@ class familia extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function url()
    {
       if( isset($this->codfamilia) )
@@ -82,16 +87,20 @@ class familia extends fs_model
          return FALSE;
       }
    }
+   
+   public function get($cod)
+   {
+      $f = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$cod."';");
+      if($f)
+         return new familia($f[0]);
+      else
+         return FALSE;
+   }
 
    public function get_articulos($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $articulo = new articulo();
       return $articulo->all_from_familia($this->codfamilia, $offset, $limit);
-   }
-
-   protected function install()
-   {
-      return '';
    }
    
    public function exists()
@@ -104,39 +113,37 @@ class familia extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
-      {
          $sql = "UPDATE ".$this->table_name." SET descripcion = '".$this->descripcion."' WHERE codfamilia = '".$this->codfamilia."';";
-      }
       else
-      {
          $sql = "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES ('".$this->codfamilia."','".$this->descripcion."');";
-      }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codfamilia = '".$this->codfamilia."';");
    }
    
-   public function get($cod)
+   private function clean_cache()
    {
-      $f = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$cod."';");
-      if($f)
-         return new familia($f[0]);
-      else
-         return FALSE;
+      $this->cache->delete('m_familia_all');
    }
-
+   
    public function all()
    {
-      $famlist = array();
-      $familias = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
-      if($familias)
+      $famlist = $this->cache->get_array('m_familia_all');
+      if( !$famlist )
       {
-         foreach($familias as $f)
-            $famlist[] = new familia($f);
+         $familias = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
+         if($familias)
+         {
+            foreach($familias as $f)
+               $famlist[] = new familia($f);
+         }
+         $this->cache->set('m_familia_all', $famlist);
       }
       return $famlist;
    }

@@ -21,11 +21,13 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" size="4" maxlength="4"/></td>
+            <td>
+               <input type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" size="4" maxlength="4" autocomplete="off"/>
+            </td>
          </tr>
          <tr>
             <td align="right">Nombre:</td>
-            <td><input type="text" name="nombre"/></td>
+            <td><input type="text" name="nombre" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Fecha de inicio:</td>
@@ -45,22 +47,23 @@
             </td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nuevo ejercicio"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
 
 {loop="$fsc->ejercicio->all()"}
 <div class="rounded">
-   <form>
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codejercicio" value="{$value->codejercicio}"/>
       <h1>
          {$value->codejercicio}
          <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
-         Nombre: <input type="text" name="nombre" value="{$value->nombre}"/>
+         Nombre: <input type="text" name="nombre" value="{$value->nombre}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Fecha de inicio: <input class="tcal" type="text" name="fechaini" value="{$value->fechainicio}" size="12"/>
+         Fecha de inicio: <input class="tcal" type="text" name="fechainicio" value="{$value->fechainicio}" size="12"/>
       </div>
       <div class="bloque">
          Fecha fin: <input class="tcal" type="text" name="fechafin" value="{$value->fechafin}" size="12"/>

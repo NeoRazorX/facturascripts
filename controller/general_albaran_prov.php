@@ -66,7 +66,7 @@ class general_albaran_prov extends fs_controller
          if( !$this->albaran->test() )
             $this->new_error_msg( $this->albaran->error_msg );
          
-         if( isset($_GET['facturar']) )
+         if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
             $this->generar_factura();
          
          if( $this->albaran->ptefactura )
@@ -80,7 +80,7 @@ class general_albaran_prov extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function url()
@@ -126,7 +126,7 @@ class general_albaran_prov extends fs_controller
             $linea->descripcion = $l->descripcion;
             $linea->dtolineal = $l->dtolineal;
             $linea->dtopor = $l->dtopor;
-            $linea->idalbaran = $this->albaran->idalbaran;
+            $linea->idalbaran = $l->idalbaran;
             $linea->idfactura = $factura->idfactura;
             $linea->irpf = $l->irpf;
             $linea->iva = $l->iva;
@@ -144,7 +144,20 @@ class general_albaran_prov extends fs_controller
          }
          
          if( $continuar )
-            $this->generar_asiento($factura);
+         {
+            $this->albaran->idfactura = $factura->idfactura;
+            $this->albaran->ptefactura = FALSE;
+            if( $this->albaran->save() )
+               $this->generar_asiento($factura);
+            else
+            {
+               $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+               if( $factura->delete() )
+                  $this->new_error_msg("La factura se ha borrado.");
+               else
+                  $this->new_error_msg("¡Imposible borrar la factura!");
+            }
+         }
          else
          {
             if( $factura->delete() )
@@ -161,14 +174,7 @@ class general_albaran_prov extends fs_controller
    {
       $empresa = new empresa();
       if( !$empresa->contintegrada )
-      {
-         $this->albaran->idfactura = $factura->idfactura;
-         $this->albaran->ptefactura = FALSE;
-         if( $this->albaran->save() )
-            $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-         else
-            $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
-      }
+         $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
       else
       {
          $asiento = new asiento();
@@ -250,14 +256,7 @@ class general_albaran_prov extends fs_controller
             {
                $factura->idasiento = $asiento->idasiento;
                if( $factura->save() )
-               {
-                  $this->albaran->idfactura = $factura->idfactura;
-                  $this->albaran->ptefactura = FALSE;
-                  if( $this->albaran->save() )
-                     $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-                  else
-                     $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
-               }
+                  $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }

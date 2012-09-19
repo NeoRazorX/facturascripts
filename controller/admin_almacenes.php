@@ -31,32 +31,45 @@ class admin_almacenes extends fs_controller
    protected function process()
    {
       $this->almacen = new almacen();
-      $this->buttons[] = new fs_button('b_nuevo_almacen', 'nuevo almacen');
+      $this->buttons[] = new fs_button('b_nuevo_almacen', 'nuevo');
       
       if( isset($_POST['scodalmacen']) )
       {
-         $this->almacen->codalmacen = $_POST['scodalmacen'];
-         $this->almacen->nombre = $_POST['snombre'];
-         $this->almacen->direccion = $_POST['sdireccion'];
-         $this->almacen->codpostal = $_POST['scodpostal'];
-         $this->almacen->poblacion = $_POST['spoblacion'];
-         $this->almacen->telefono = $_POST['stelefono'];
-         $this->almacen->fax = $_POST['sfax'];
-         $this->almacen->contacto = $_POST['scontacto'];
-         $this->almacen->save();
+         $al0 = $this->almacen->get($_POST['scodalmacen']);
+         if( !$al0 )
+         {
+            $al0 = new almacen();
+            $al0->codalmacen = $_POST['scodalmacen'];
+         }
+         $al0->nombre = $_POST['snombre'];
+         $al0->direccion = $_POST['sdireccion'];
+         $al0->codpostal = $_POST['scodpostal'];
+         $al0->poblacion = $_POST['spoblacion'];
+         $al0->telefono = $_POST['stelefono'];
+         $al0->fax = $_POST['sfax'];
+         $al0->contacto = $_POST['scontacto'];
+         if( $al0->save() )
+            $this->new_message("Almacén ".$al0->codalmacen." modificado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar el almacén ".$al0->codalmacen."!");
       }
       else if( isset($_GET['delete']) )
       {
-         $this->almacen->codalmacen = $_GET['delete'];
-         if( $this->almacen->delete() )
-            $this->new_message("Almacén eliminado correctamente");
+         $al0 = $this->almacen->get($_GET['delete']);
+         if( $al0 )
+         {
+            if( $al0->delete() )
+               $this->new_message("Almacén ".$al0->codalmacen." eliminado correctamente");
+            else
+               $this->new_error_msg("¡Imposible eliminar el almacén ".$al0->codalmacen."!".$this->almacen->error_msg);
+         }
          else
-            $this->new_error_msg("¡Imposible eliminar el almacén!".$this->almacen->error_msg);
+            $this->new_error_msg("¡Almacén no encontrado!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

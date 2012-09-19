@@ -175,22 +175,12 @@ class fs_user extends fs_model
          return FALSE;
       }
    }
-
-   public function all()
-   {
-      $userlist = array();
-      $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nick ASC;");
-      if($users)
-      {
-         foreach($users as $u)
-            $userlist[] = new fs_user($u);
-      }
-      return $userlist;
-   }
    
    public function new_logkey()
    {
-      $this->log_key = sha1( strval(rand()) );
+      if( is_null($this->log_key) OR !FS_DEMO )
+         $this->log_key = sha1( strval(rand()) );
+      
       $this->logged_on = TRUE;
       $this->last_login = Date('d-m-Y');
       $this->last_login_time = Date('H:i:s');
@@ -200,7 +190,7 @@ class fs_user extends fs_model
          $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
       }
       catch (Exception $e) {
-         $this->last_browser = 'UNKNOWN';
+         $this->last_browser = $e;
       }
    }
    
@@ -214,6 +204,7 @@ class fs_user extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET password = '".$this->password."',
@@ -234,7 +225,29 @@ class fs_user extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_fs_user_all');
+   }
+   
+   public function all()
+   {
+      $userlist = $this->cache->get_array('m_fs_user_all');
+      if( !$userlist )
+      {
+         $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nick ASC;");
+         if($users)
+         {
+            foreach($users as $u)
+               $userlist[] = new fs_user($u);
+         }
+         $this->cache->set('m_fs_user_all', $userlist);
+      }
+      return $userlist;
    }
 }
 

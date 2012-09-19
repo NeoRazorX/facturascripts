@@ -373,6 +373,7 @@ class cliente extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
@@ -395,7 +396,13 @@ class cliente extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcliente = '".$this->codcliente."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_cliente_all');
    }
    
    public function all($offset=0)
@@ -413,12 +420,16 @@ class cliente extends fs_model
    
    public function all_full()
    {
-      $clientlist = array();
-      $clientes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
-      if($clientes)
+      $clientlist = $this->cache->get_array('m_cliente_all');
+      if( !$clientlist )
       {
-         foreach($clientes as $c)
-            $clientlist[] = new cliente($c);
+         $clientes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+         if($clientes)
+         {
+            foreach($clientes as $c)
+               $clientlist[] = new cliente($c);
+         }
+         $this->cache->set('m_cliente_all', $clientlist);
       }
       return $clientlist;
    }

@@ -31,7 +31,7 @@ class contabilidad_impuestos extends fs_controller
    protected function process()
    {
       $this->impuesto = new impuesto();
-      $this->buttons[] = new fs_button('b_nuevo_impuesto', 'nuevo impuesto');
+      $this->buttons[] = new fs_button('b_nuevo_impuesto', 'nuevo');
       
       if( isset($_POST['codimpuesto']) )
       {
@@ -42,16 +42,16 @@ class contabilidad_impuestos extends fs_controller
             $impuesto->codimpuesto = $_POST['codimpuesto'];
          }
          $impuesto->descripcion = $_POST['descripcion'];
-         $impuesto->iva = $_POST['iva'];
+         $impuesto->iva = floatval( $_POST['iva'] );
          if( $impuesto->save() )
-            $this->new_message("Impuesto guardado correctamente");
+            $this->new_message("Impuesto ".$impuesto->codimpuesto." modificado correctamente.");
          else
-            $this->new_error_msg("¡Error al guardar el impuesto!");
+            $this->new_error_msg("¡Error al modificar el impuesto ".$impuesto->codimpuesto."!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

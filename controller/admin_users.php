@@ -32,36 +32,48 @@ class admin_users extends fs_controller
    protected function process()
    {
       $this->agente = new agente();
-      $this->buttons[] = new fs_button('b_nuevo_usuario', 'nuevo usuario');
+      $this->buttons[] = new fs_button('b_nuevo_usuario', 'nuevo');
       
       if( isset($_POST['nnick']) )
       {
-         $nu = new fs_user();
-         if($nu->set_nick($_POST['nnick']) AND $nu->set_password($_POST['npassword']))
+         $nu = $this->user->get($_POST['nnick']);
+         if( $nu )
+            Header( 'location: '.$nu->url() );
+         else
          {
-            if( isset($_POST['nadmin']) )
-               $nu->admin = TRUE;
-            if( isset($_POST['ncodagente']) )
-               $nu->codagente = $_POST['ncodagente'];
-            if( !$nu->exists() )
+            $nu = new fs_user();
+            if($nu->set_nick($_POST['nnick']) AND $nu->set_password($_POST['npassword']))
             {
+               if( isset($_POST['nadmin']) )
+                  $nu->admin = TRUE;
+               if( isset($_POST['ncodagente']) )
+                  $nu->codagente = $_POST['ncodagente'];
                if( $nu->save() )
                   Header('location: index.php?page=admin_user&snick=' . $nu->nick);
+               else
+                  $this->new_error_msg("¡Imposible guardar el usuario!");
             }
             else
-               Header('location: index.php?page=admin_user&snick=' . $nu->nick);
+               $this->new_error_msg( $nu->error_msg );
          }
-         $this->new_error_msg( $nu->error_msg );
       }
       else if( isset($_GET['delete']) )
       {
          $nu = $this->user->get($_GET['delete']);
-         $nu->delete();
+         if( $nu )
+         {
+            if( $nu->delete() )
+               $this->new_message("Usuario ".$nu->nick." eliminado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar al usuario ".$nu->nick."!");
+         }
+         else
+            $this->new_error_msg("¡Usuario no encontrado!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

@@ -228,6 +228,19 @@ class linea_factura_cliente extends fs_model
       }
       return $linealist;
    }
+   
+   public function facturas_from_albaran($id)
+   {
+      $facturalist = array();
+      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
+      if($lineas)
+      {
+         $factura = new factura_cliente();
+         foreach($lineas as $l)
+            $facturalist[] = $factura->get( $l['idfactura'] );
+      }
+      return $facturalist;
+   }
 }
 
 
@@ -829,7 +842,7 @@ class factura_cliente extends fs_model
    public function all($offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC",
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC",
                                           FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
@@ -852,7 +865,7 @@ class factura_cliente extends fs_model
          $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
       else
          $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
-      $consulta .= " ORDER BY fecha DESC";
+      $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $facturas = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($facturas)

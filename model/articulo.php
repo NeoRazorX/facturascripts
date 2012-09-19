@@ -20,6 +20,7 @@
 require_once 'base/fs_model.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
+require_once 'model/tarifa.php';
 
 class stock extends fs_model
 {
@@ -179,6 +180,118 @@ class stock extends fs_model
       if($stocks)
          $num = intval($stocks[0]['total']);
       return $num;
+   }
+}
+
+
+class tarifa_articulo extends fs_model
+{
+   public $id;
+   public $referencia;
+   public $codtarifa;
+   public $nombre;
+   public $pvp;
+   public $descuento;
+   public $iva;
+   
+   public function __construct($t = FALSE)
+   {
+      parent::__construct('articulostarifas');
+      if( $t )
+      {
+         $this->id = $this->intval( $t['id'] );
+         $this->referencia = $t['referencia'];
+         $this->codtarifa = $t['codtarifa'];
+         $this->descuento = floatval($t['descuento']);
+      }
+      else
+      {
+         $this->id = NULL;
+         $this->referencia = NULL;
+         $this->codtarifa = NULL;
+         $this->descuento = 0;
+      }
+      $this->nombre = NULL;
+      $this->pvp = 0;
+      $this->iva = 0;
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function show_descuento()
+   {
+      return number_format($this->descuento, 2, '.', ' ');
+   }
+   
+   public function show_pvp_iva($coma=TRUE)
+   {
+      if( $coma )
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', ' ');
+      else
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', '');
+   }
+   
+   public function set_pvp_iva($p)
+   {
+      $pvpi = floatval($p);
+      if($this->pvp > 0)
+         $this->descuento = 100 - 10000*$pvpi/($this->pvp*(100+$this->iva));
+      else
+         $this->descuento = 0;
+   }
+   
+   public function get($id)
+   {
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+      if( $tarifa )
+         return new tarifa_articulo($tarifa[0]);
+      else
+         return FALSE;
+   }
+   
+   public function exists()
+   {
+      if( is_null($this->id) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+   }
+   
+   public function save()
+   {
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET referencia = ".$this->var2str($this->referencia).",
+            codtarifa = ".$this->var2str($this->codtarifa).", descuento = ".$this->var2str($this->descuento)."
+            WHERE id = ".$this->var2str($this->id).";";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (referencia,codtarifa,descuento) VALUES
+            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",
+            ".$this->var2str($this->descuento).");";
+      }
+      return $this->db->exec($sql);
+   }
+   
+   public function delete()
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+   }
+   
+   public function all_from_articulo($ref)
+   {
+      $tarlist = array();
+      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      if( $tarifas )
+      {
+         foreach($tarifas as $t)
+            $tarlist[] = new tarifa_articulo($t);
+      }
+      return $tarlist;
    }
 }
 
@@ -365,7 +478,57 @@ class articulo extends fs_model
       }
       return $artilist;
    }
-
+   
+   /*
+    * Devuelve un array con las tarifas asignadas a ese artículo.
+    * Si todas = TRUE -> devuelve además las que no están asignadas.
+    */
+   public function get_tarifas($todas=FALSE)
+   {
+      $tarifa = new tarifa();
+      $tarifas = $tarifa->all();
+      $tarifa_articulo = new tarifa_articulo();
+      $tas = $tarifa_articulo->all_from_articulo( $this->referencia );
+      if( $todas )
+      {
+         foreach($tarifas as $t)
+         {
+            $encontrada = FALSE;
+            foreach($tas as $ta)
+            {
+               if( $ta->codtarifa == $t->codtarifa )
+               {
+                  $encontrada = TRUE;
+                  break;
+               }
+            }
+            if( !$encontrada )
+            {
+               /// añadimos las tarifas que no tiene asignadas
+               $tas[] = new tarifa_articulo( array('id' => NULL,
+                                                   'codtarifa' => $t->codtarifa,
+                                                   'referencia' => $this->referencia,
+                                                   'descuento' => 0 - $t->incporcentual) );
+            }
+         }
+      }
+      /// rellenamos las tarifas
+      foreach($tas as $ta)
+      {
+         foreach($tarifas as $t)
+         {
+            if( $t->codtarifa == $ta->codtarifa )
+            {
+               $ta->nombre = $t->nombre;
+               $ta->pvp = $this->pvp;
+               $ta->iva = $this->get_iva();
+               break;
+            }
+         }
+      }
+      return $tas;
+   }
+   
    public function imagen_url()
    {
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )

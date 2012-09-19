@@ -112,7 +112,7 @@
             <li>El grupo 4 para el postre.</li>
          </ul>
       </div>
-      <div class="right"><input type="submit" value="nuevo paquete"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
    {else}
       No hay ningún artículo en la cesta. Los paquetes se crean con los artículos que hay en la cesta.
@@ -136,7 +136,7 @@
       {loop="$fsc->paquete->all()"}
       <li><a href="{$value->url()}">{$value->referencia}</a></li>
       {else}
-      <li>No hay paquetes creados. Pulsa el botón <b>Nuevo Paquete</b> para crear uno.</li>
+      <li>No hay paquetes creados. Pulsa el botón <b>Nuevo</b> para crear uno.</li>
       {/loop}
    </ul>
    </div>

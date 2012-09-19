@@ -21,38 +21,38 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="scodalmacen" size="4" maxlength="4"/></td>
+            <td><input type="text" name="scodalmacen" size="4" maxlength="4" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Nombre:</td>
-            <td><input type="text" name="snombre"/></td>
+            <td><input type="text" name="snombre" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Dirección:</td>
-            <td><input type="text" name="sdireccion"/></td>
+            <td><input type="text" name="sdireccion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Código postal:</td>
-            <td><input type="text" name="scodpostal"/></td>
+            <td><input type="text" name="scodpostal" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Localidad:</td>
-            <td><input type="text" name="spoblacion"/></td>
+            <td><input type="text" name="spoblacion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Teléfono:</td>
-            <td><input type="text" name="stelefono"/></td>
+            <td><input type="text" name="stelefono" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Fax:</td>
-            <td><input type="text" name="sfax"/></td>
+            <td><input type="text" name="sfax" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Contacto:</td>
-            <td><input type="text" name="scontacto"/></td>
+            <td><input type="text" name="scontacto" autocomplete="off"/></td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nuevo almacén"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
 
@@ -69,25 +69,25 @@
       </h1>
       <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
       <div class="bloque">
-         Nombre: <input type="text" name="snombre" value="{$value->nombre}"/>
+         Nombre: <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Dirección: <input type="text" name="sdireccion" value="{$value->direccion}"/>
+         Dirección: <input type="text" name="sdireccion" value="{$value->direccion}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Código postal: <input type="text" name="scodpostal" value="{$value->codpostal}"/>
+         Código postal: <input type="text" name="scodpostal" value="{$value->codpostal}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Población: <input type="text" name="spoblacion" value="{$value->poblacion}"/>
+         Población: <input type="text" name="spoblacion" value="{$value->poblacion}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}"/>
+         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Fax: <input type="text" name="sfax" value="{$value->fax}"/>
+         Fax: <input type="text" name="sfax" value="{$value->fax}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Contacto: <input type="text" name="scontacto" value="{$value->contacto}"/>
+         Contacto: <input type="text" name="scontacto" value="{$value->contacto}" autocomplete="off"/>
       </div>
    </form>
 </div>

@@ -21,30 +21,32 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10"/></td>
+            <td>
+               <input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
+            </td>
          </tr>
          <tr>
             <td align="right">Nombre:</td>
-            <td><input type="text" name="snombre" maxlength="50"/></td>
+            <td><input type="text" name="snombre" maxlength="50" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Apellidos:</td>
-            <td><input type="text" name="sapellidos" maxlength="100"/></td>
+            <td><input type="text" name="sapellidos" maxlength="100" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">CIF/NIF:</td>
-            <td><input type="text" name="sdnicif"/></td>
+            <td><input type="text" name="sdnicif" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Teléfono:</td>
-            <td><input type="text" name="stelefono"/></td>
+            <td><input type="text" name="stelefono" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Email:</td>
-            <td><input type="text" name="semail"/></td>
+            <td><input type="text" name="semail" autocomplete="off"/></td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nuevo agente"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
 
@@ -61,25 +63,25 @@
       </h1>
       <input type="hidden" name="scodagente" value="{$value->codagente}"/>
       <div class="bloque">
-         Nombre: <input type="text" name="snombre" value="{$value->nombre}" maxlength="50"/>
+         Nombre: <input type="text" name="snombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Apellidos: <input type="text" name="sapellidos" value="{$value->apellidos}" maxlength="100"/>
+         Apellidos: <input type="text" name="sapellidos" value="{$value->apellidos}" maxlength="100" autocomplete="off"/>
       </div>
       <div class="bloque">
-         DNI/CIF: <input type="text" name="sdnicif" value="{$value->dnicif}"/>
+         DNI/CIF: <input type="text" name="sdnicif" value="{$value->dnicif}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}"/>
+         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Email: <input type="text" name="semail" value="{$value->email}"/>
+         Email: <input type="text" name="semail" value="{$value->email}" autocomplete="off"/>
       </div>
       <div class="right"></div>
    </form>
 </div>
 {else}
-<div class="message">No hay ningún agente creado. Pulsa el botón <b>Nuevo agente</b> para crear uno.</div>
+<div class="message">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</div>
 {/loop}
 
 {include="footer"}

@@ -50,6 +50,12 @@ class serie extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
+            VALUES ('A','SERIE A',FALSE,'0',NULL);";
+   }
+   
    public function url()
    {
       return 'index.php?page=contabilidad_series#'.$this->codserie;
@@ -73,12 +79,6 @@ class serie extends fs_model
       self::$default_serie = $this->codserie;
    }
    
-   protected function install()
-   {
-      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
-            VALUES ('A','SERIE A',FALSE,'0',NULL);";
-   }
-   
    public function get($cod)
    {
       $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = '".$cod."';");
@@ -95,6 +95,7 @@ class serie extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
@@ -112,17 +113,27 @@ class serie extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codserie = '".$this->codserie."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_serie_all');
    }
    
    public function all()
    {
-      $serielist = array();
-      $series = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codserie ASC;");
-      if($series)
+      $serielist = $this->cache->get_array('m_serie_all');
+      if( !$serielist )
       {
-         foreach($series as $s)
-            $serielist[] = new serie($s);
+         $series = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codserie ASC;");
+         if($series)
+         {
+            foreach($series as $s)
+               $serielist[] = new serie($s);
+         }
+         $this->cache->set('m_serie_all', $serielist);
       }
       return $serielist;
    }

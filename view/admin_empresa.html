@@ -6,19 +6,37 @@
          Datos de la empresa:
          <span><input type="submit" value="modificar"/></span>
       </h1>
-      <div class="bloque">Nombre: <input type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}"/></div>
-      <div class="bloque">cif/nif: <input type="text" name="cifnif" size="12" value="{$fsc->empresa->cifnif}"/></div>
-      <div class="bloque">administrador: <input type="text" name="administrador" size="60" value="{$fsc->empresa->administrador}"/></div>
+      <div class="bloque">
+         Nombre:
+         <input type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         cif/nif:
+         <input type="text" name="cifnif" size="12" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         administrador:
+         <input type="text" name="administrador" size="60" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+      </div>
       <br/>
-      <div class="bloque">Dirección: <input type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}"/></div>
-      <div class="bloque">ciudad: <input type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}"/></div>
-      <div class="bloque">código postal: <input type="text" name="codpostal" size="10" value="{$fsc->empresa->codpostal}"/></div>
+      <div class="bloque">
+         Dirección:
+         <input type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         ciudad:
+         <input type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         código postal:
+         <input type="text" name="codpostal" size="10" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+      </div>
       <div class="bloque">
          <a href="{$fsc->pais->url()}">País</a>:
          <select name="codpais">
          {loop="$fsc->pais->all()"}
             {if condition="$fsc->empresa->codpais == $value->codpais"}
-               <option value="{$value->codpais}" selected>{$value->nombre}</option>
+               <option value="{$value->codpais}" selected="selected">{$value->nombre}</option>
             {else}
                <option value="{$value->codpais}">{$value->nombre}</option>
             {/if}
@@ -26,14 +44,32 @@
          </select>
       </div>
       <br/>
-      <div class="bloque">Teléfono: <input type="text" name="telefono" size="12" value="{$fsc->empresa->telefono}"/></div>
-      <div class="bloque">fax: <input type="text" name="fax" size="12" value="{$fsc->empresa->fax}"/></div>
+      <div class="bloque">
+         Teléfono:
+         <input type="text" name="telefono" size="12" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         fax:
+         <input type="text" name="fax" size="12" value="{$fsc->empresa->fax}" autocomplete="off"/>
+      </div>
       <br/>
-      <div class="bloque">Web: <input type="text" name="web" size="50" value="{$fsc->empresa->web}"/></div>
-      <div class="bloque">email: <input type="text" name="email" size="30" value="{$fsc->empresa->email}"/></div>
+      <div class="bloque">
+         Web:
+         <input type="text" name="web" size="50" value="{$fsc->empresa->web}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         email:
+         <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
+      </div>
       <div>
-         <div class="bloque">Lema: <input type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}"/></div>
-         <div class="bloque">Horario: <input type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}"/></div>
+         <div class="bloque">
+            Lema:
+            <input type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            Horario:
+            <input type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}" autocomplete="off"/>
+         </div>
          Lema y horario aparecen en el ticket.
       </div>
       <br/>
@@ -50,7 +86,7 @@
          <select name="codejercicio">
          {loop="$fsc->ejercicio->all()"}
             {if condition="$fsc->empresa->codejercicio == $value->codejercicio"}
-               <option value="{$value->codejercicio}" selected>{$value->nombre}</option>
+               <option value="{$value->codejercicio}" selected="selected">{$value->nombre}</option>
             {else}
                <option value="{$value->codejercicio}">{$value->nombre}</option>
             {/if}
@@ -62,7 +98,7 @@
          <select name="codserie">
          {loop="$fsc->serie->all()"}
             {if condition="$fsc->empresa->codserie == $value->codserie"}
-               <option value="{$value->codserie}" selected>{$value->descripcion}</option>
+               <option value="{$value->codserie}" selected="selected">{$value->descripcion}</option>
             {else}
                <option value="{$value->codserie}">{$value->descripcion}</option>
             {/if}
@@ -74,7 +110,7 @@
          <select name="codpago">
          {loop="$fsc->forma_pago->all()"}
             {if condition="$fsc->empresa->codpago == $value->codpago"}
-               <option value="{$value->codpago}" selected>{$value->descripcion}</option>
+               <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
             {else}
                <option value="{$value->codpago}">{$value->descripcion}</option>
             {/if}
@@ -86,7 +122,7 @@
          <select name="coddivisa">
          {loop="$fsc->divisa->all()"}
             {if condition="$fsc->empresa->coddivisa == $value->coddivisa"}
-               <option value="{$value->coddivisa}" selected>{$value->descripcion}</option>
+               <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
             {else}
                <option value="{$value->coddivisa}">{$value->descripcion}</option>
             {/if}
@@ -98,7 +134,7 @@
          <select name="codalmacen">
          {loop="$fsc->almacen->all()"}
             {if condition="$fsc->empresa->codalmacen == $value->codalmacen"}
-               <option value="{$value->codalmacen}" selected>{$value->nombre}</option>
+               <option value="{$value->codalmacen}" selected="selected">{$value->nombre}</option>
             {else}
                <option value="{$value->codalmacen}">{$value->nombre}</option>
             {/if}

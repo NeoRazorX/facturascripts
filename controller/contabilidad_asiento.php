@@ -18,21 +18,20 @@ class contabilidad_asiento extends fs_controller
       {
          $this->asiento = new asiento();
          $this->asiento = $this->asiento->get($_GET['id']);
-         if( $this->asiento )
-         {
-            $this->page->title = 'Asiento: '.$this->asiento->numero;
-            
-            if( !$this->asiento->test() )
-               $this->new_error_msg( $this->asiento->error_msg );
-            
-            $url = $this->asiento->factura_url();
-            if($url != '')
-               $this->buttons[] = new fs_button('b_ver_factura', $this->asiento->tipodocumento, $url, 'button', 'img/zoom.png');
-            $this->buttons[] = new fs_button('b_eliminar_asiento', 'eliminar', '#', 'remove', 'img/remove.png');
-         }
       }
-      else
-         $this->asiento = FALSE;
+      
+      if( $this->asiento )
+      {
+         $this->page->title = 'Asiento: '.$this->asiento->numero;
+         
+         if( !$this->asiento->test() )
+            $this->new_error_msg( $this->asiento->error_msg );
+         
+         $url = $this->asiento->factura_url();
+         if($url != '')
+            $this->buttons[] = new fs_button('b_ver_factura', $this->asiento->tipodocumento, $url, 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_eliminar_asiento', 'eliminar', '#', 'remove', 'img/remove.png');
+      }
    }
    
    public function version() {

@@ -27,175 +27,221 @@
    });
 </script>
 
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <h1>
-         {$fsc->articulo->descripcion}
-         <span>
-            {if condition="$fsc->articulo->bloqueado"}
-            <input type="checkbox" name="bloqueado" value="TRUE" checked="checked" id="articulo_bloqueado"/>
-            {else}
-            <input type="checkbox" name="bloqueado" value="TRUE" id="articulo_bloqueado"/>
-            {/if}
-            <label for="articulo_bloqueado">bloqueado</label>
-            &nbsp;
-            <input type="submit" value="modificar"/>
-         </span>
-      </h1>
-      <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-      <div class="bloque">
-         Descripción:
-         <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60"/>
-      </div>
-      <div class="bloque">
-         <a href="{$fsc->familia->url()}">Familia</a>:
-         <select name="codfamilia">
-         {loop="$fsc->familia->all()"}
-            {if condition="$value->codfamilia==$fsc->articulo->codfamilia"}
-               <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
-            {else}
-               <option value="{$value->codfamilia}">{$value->descripcion}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
-      <div class="bloque">Código de barras: <input type="text" name="codbarras" value="{$fsc->articulo->codbarras}"/></div>
-      <div>
-         Código de equivalencia:
-         <input type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}"/>
-         Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.
-         <div class="bloque">
-         {if condition="$fsc->articulo->destacado"}
-            <input type="checkbox" name="destacado" value="TRUE" checked="checked" id="articulo_destacado"/>
-         {else}
-            <input type="checkbox" name="destacado" value="TRUE" id="articulo_destacado"/>
-         {/if}
-         <label for="articulo_destacado">Destacar frente a productos equivalentes</label>
-         </div>
-      </div>
-      <div>
-         <div class="bloque">
-            IVA:
-            <select name="codimpuesto">
-            {loop="$fsc->impuesto->all()"}
-               {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
-               <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+<table width="100%">
+   <tr>
+      <td valign="top">
+         <div class="rounded">
+         <form action="{$fsc->url()}" method="post">
+         <h1>
+            {$fsc->articulo->descripcion}
+            <span>
+               {if condition="$fsc->articulo->bloqueado"}
+               <input type="checkbox" name="bloqueado" value="TRUE" checked="checked" id="articulo_bloqueado"/>
                {else}
-               <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+               <input type="checkbox" name="bloqueado" value="TRUE" id="articulo_bloqueado"/>
+               {/if}
+               <label for="articulo_bloqueado">bloqueado</label>
+               &nbsp;
+               <input type="submit" value="modificar"/>
+            </span>
+         </h1>
+         <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+         <div class="bloque">
+            Descripción:
+            <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            <a href="{$fsc->familia->url()}">Familia</a>:
+            <select name="codfamilia">
+            {loop="$fsc->familia->all()"}
+               {if condition="$value->codfamilia==$fsc->articulo->codfamilia"}
+                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+               {else}
+                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
                {/if}
             {/loop}
             </select>
          </div>
-         <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5"/></div>
-         <div class="bloque">PVP+IVA ({$fsc->articulo->show_pvp_iva()}): <input type="text" name="pvp_iva" value="" size="5"/></div>
-         <div class="bloque">Actualizado: {$fsc->articulo->factualizado}</div>
          <div class="bloque">
-            {if condition="$fsc->articulo->secompra"}
-            <input type="checkbox" name="secompra" value="TRUE" checked="checked" id="articulo_secompra"/>
-            {else}
-            <input type="checkbox" name="secompra" value="TRUE" id="articulo_secompra"/>
-            {/if}
-            <label for="articulo_secompra">se compra</label>
+            Código de barras:
+            <input type="text" name="codbarras" value="{$fsc->articulo->codbarras}" autocomplete="off"/>
          </div>
-         <div class="bloque">
-            {if condition="$fsc->articulo->sevende"}
-            <input type="checkbox" name="sevende" value="TRUE" checked="checked" id="articulo_sevende"/>
+         <div>
+            Código de equivalencia:
+            <input type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}" autocomplete="off"/>
+            Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.
+            <div class="bloque">
+            {if condition="$fsc->articulo->destacado"}
+               <input type="checkbox" name="destacado" value="TRUE" checked="checked" id="articulo_destacado"/>
             {else}
-            <input type="checkbox" name="sevende" value="TRUE" id="articulo_sevende"/>
+               <input type="checkbox" name="destacado" value="TRUE" id="articulo_destacado"/>
             {/if}
-            <label for="articulo_sevende">Se vende</label>
+            <label for="articulo_destacado">Destacar frente a productos equivalentes</label>
+            </div>
          </div>
-      </div>
-      <div>Observaciones:<br/><textarea name="observaciones" cols="60">{$fsc->articulo->observaciones}</textarea></div>
-      <div>
-         <div class="bloque">Stock: <input type="text" name="stockfis" value="{$fsc->articulo->stockfis}" size="5" disabled="disabled"/></div>
-         <div class="bloque">Stock mínimo: <input type="text" name="stockmin" value="{$fsc->articulo->stockmin}" size="5"/></div>
-         <div class="bloque">Stock máximo: <input type="text" name="stockmax" value="{$fsc->articulo->stockmax}" size="5"/></div>
-         <div class="bloque">
-            {if condition="$fsc->articulo->controlstock"}
-            <input type="checkbox" name="controlstock" value="TRUE" checked="checked" id="articulo_controlstock"/>
-            {else}
-            <input type="checkbox" name="controlstock" value="TRUE" id="articulo_controlstock"/>
-            {/if}
-            <label for="articulo_controlstock">Permitir ventas sin stock</label>
-         </div>
-      </div>
-   </form>
-</div>
-
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th>Almacén</th>
-         <th>Cantidad</th>
-         <th>Reservada</th>
-         <th>Disponible</th>
-         <th>Pendiente de recibir</th>
-      </tr>
-      {loop="$fsc->stocks"}
-      <tr>
-         <form action="{$fsc->url()}" method="post">
-            <input type="hidden" name="idstock" value="{$value->idstock}"/>
-            <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
-            <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-            <td>{$value->codalmacen} {$value->nombre}</td>
-            <td align="center">
-               <input type="button" value="-" onclick="sum_stock('{$counter}', -1)"/>
-               <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3"/>
-               <input type="button" value="+" onclick="sum_stock('{$counter}', 1)"/>
-            </td>
-            <td align="center">{$value->reservada}</td>
-            <td align="center">{$value->disponible}</td>
-            <td align="center">{$value->pterecibir}</td>
-            <td align="center"><input type="submit" value="guardar"/></td>
-         </form>
-      </tr>
-      {/loop}
-      {if condition="$fsc->nuevos_almacenes"}
-      <tr>
-         <form action="{$fsc->url()}" method="post">
-            <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-            <td>
-               <select name="almacen">
-                  {loop="$fsc->nuevos_almacenes"}
-                  <option value="{$value->codalmacen}">{$value->nombre}</option>
-                  {/loop}
+         <div>
+            <div class="bloque">
+               IVA:
+               <select name="codimpuesto">
+               {loop="$fsc->impuesto->all()"}
+                  {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
+                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
                </select>
-            </td>
-            <td align="center"><input type="text" name="cantidad" value="1" size="3"/></td>
-            <td align="center"></td>
-            <td align="center"></td>
-            <td align="center"></td>
-            <td align="center"><input type="submit" value="nuevo"/></td>
+            </div>
+         <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off"/></div>
+            <div class="bloque">Actualizado: {$fsc->articulo->factualizado}</div>
+            <div class="bloque">
+               {if condition="$fsc->articulo->secompra"}
+               <input type="checkbox" name="secompra" value="TRUE" checked="checked" id="articulo_secompra"/>
+               {else}
+               <input type="checkbox" name="secompra" value="TRUE" id="articulo_secompra"/>
+               {/if}
+               <label for="articulo_secompra">se compra</label>
+            </div>
+            <div class="bloque">
+               {if condition="$fsc->articulo->sevende"}
+               <input type="checkbox" name="sevende" value="TRUE" checked="checked" id="articulo_sevende"/>
+               {else}
+               <input type="checkbox" name="sevende" value="TRUE" id="articulo_sevende"/>
+               {/if}
+               <label for="articulo_sevende">Se vende</label>
+            </div>
+         </div>
+         <div>Observaciones:<br/><textarea name="observaciones" cols="60">{$fsc->articulo->observaciones}</textarea></div>
+         <div>
+            <div class="bloque">
+               Stock:
+               <input type="text" name="stockfis" value="{$fsc->articulo->stockfis}" size="5" disabled="disabled"/>
+            </div>
+            <div class="bloque">
+               Stock mínimo:
+               <input type="text" name="stockmin" value="{$fsc->articulo->stockmin}" size="5" autocomplete="off"/>
+            </div>
+            <div class="bloque">
+               Stock máximo:
+               <input type="text" name="stockmax" value="{$fsc->articulo->stockmax}" size="5" autocomplete="off"/>
+            </div>
+            <div class="bloque">
+               {if condition="$fsc->articulo->controlstock"}
+               <input type="checkbox" name="controlstock" value="TRUE" checked="checked" id="articulo_controlstock"/>
+               {else}
+               <input type="checkbox" name="controlstock" value="TRUE" id="articulo_controlstock"/>
+               {/if}
+               <label for="articulo_controlstock">Permitir ventas sin stock</label>
+            </div>
+         </div>
          </form>
-      </tr>
-      {/if}
-   </table>
-</div>
-
-{if condition="$fsc->equivalentes"}
-<div class="rounded">
-   <h1>Artículos equivalentes:</h1>
-   <table class="list">
-      <tr>
-         <th>artículo</th>
-         <th>familia</th>
-         <th>descripción</th>
-         <th>PVP+IVA</th>
-         <th>stock</th>
-      </tr>
-      {loop="$fsc->equivalentes"}
-      <tr>
-         <td><a href="{$value->url()}">{$value->referencia}</a></td>
-         <td>{$value->codfamilia}</td>
-         <td>{$value->descripcion}</td>
-         <td align="right">{$value->show_pvp_iva()} &euro;</td>
-         <td align="right">{$value->stockfis}</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
-{/if}
+         </div>
+         <div class="rounded">
+         <table class="list">
+         <tr>
+            <th>Almacén</th>
+            <th>Cantidad</th>
+            <th>Reservada</th>
+            <th>Disponible</th>
+            <th>Pendiente de recibir</th>
+         </tr>
+         {loop="$fsc->stocks"}
+         <tr>
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="idstock" value="{$value->idstock}"/>
+               <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td>{$value->codalmacen} {$value->nombre}</td>
+               <td align="center">
+                  <input type="button" value="-" onclick="sum_stock('{$counter}', -1)"/>
+                  <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3" autocomplete="off"/>
+                  <input type="button" value="+" onclick="sum_stock('{$counter}', 1)"/>
+               </td>
+               <td align="center">{$value->reservada}</td>
+               <td align="center">{$value->disponible}</td>
+               <td align="center">{$value->pterecibir}</td>
+               <td align="right"><input type="submit" value="guardar"/></td>
+            </form>
+         </tr>
+         {/loop}
+         {if condition="$fsc->nuevos_almacenes"}
+         <tr>
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td>
+                  <select name="almacen">
+                     {loop="$fsc->nuevos_almacenes"}
+                     <option value="{$value->codalmacen}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td align="center"><input type="text" name="cantidad" value="1" size="3" autocomplete="off"/></td>
+               <td align="center"></td>
+               <td align="center"></td>
+               <td align="center"></td>
+               <td align="right"><input type="submit" value="nuevo"/></td>
+            </form>
+         </tr>
+         {/if}
+         </table>
+         </div>
+      </td>
+      <td valign="top">
+         <div class="rounded">
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <table class="list">
+                  <tr>
+                     <th>Tarifa</th>
+                     <th>Descuento</th>
+                     <th>PVP+IVA</th>
+                  </tr>
+                  <tr>
+                     <td>General</td>
+                     <td align="center">0.00 %</td>
+                     <td align="center">
+                        <input type="text" name="pvpiva" value="{$fsc->articulo->show_pvp_iva(FALSE)}" size="5" autocomplete="off"/>
+                     </td>
+                  </tr>
+                  {loop="$fsc->articulo->get_tarifas(TRUE)"}
+                  <tr>
+                     <td>{$value->nombre}</td>
+                     <td align="center">{$value->show_descuento()} %</td>
+                     <td align="center">
+                        <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
+                        <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
+                        <input type="text" name="pvpiva_{$counter}" value="{$value->show_pvp_iva(FALSE)}" size="5" autocomplete="off"/>
+                     </td>
+                  </tr>
+                  {/loop}
+                  <tr>
+                     <td colspan="3" align="right"><input type="submit" value="modificar"/></td>
+                  </tr>
+               </table>
+            </form>
+         </div>
+         {if condition="$fsc->equivalentes"}
+            <div class="rounded">
+               <h1>Artículos equivalentes:</h1>
+               <table class="list">
+                  <tr>
+                     <th>artículo</th>
+                     <th>PVP+IVA</th>
+                     <th>stock</th>
+                  </tr>
+                  {loop="$fsc->equivalentes"}
+                  <tr>
+                     <td><a href="{$value->url()}">{$value->referencia}</a></td>
+                     <td align="right">{$value->show_pvp_iva()} &euro;</td>
+                     <td align="right">{$value->stockfis}</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         {/if}
+      </td>
+   </tr>
+</table>
 
 <div class="popup" id="popup_articulo_imagen">
    <h1>Imagen:</h1>

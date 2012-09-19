@@ -88,6 +88,7 @@ class fs_page extends fs_model
 
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET title = '".$this->title."', folder = '".$this->folder."',
@@ -106,17 +107,27 @@ class fs_page extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = '".$this->name."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_fs_page_all');
    }
    
    public function all()
    {
-      $pagelist = array();
-      $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY name ASC;");
-      if($pages)
+      $pagelist = $this->cache->get_array('m_fs_page_all');
+      if( !$pagelist )
       {
-         foreach($pages as $p)
-            $pagelist[] = new fs_page($p);
+         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY name ASC;");
+         if($pages)
+         {
+            foreach($pages as $p)
+               $pagelist[] = new fs_page($p);
+         }
+         $this->cache->set('m_fs_page_all', $pagelist);
       }
       return $pagelist;
    }

@@ -131,12 +131,23 @@ class fs_controller
 
    public function log_in()
    {
-      if(isset($_POST['user']) AND isset($_POST['password']))
+      if( isset($_POST['user']) AND isset($_POST['password']) )
       {
          $user = $this->user->get($_POST['user']);
          if($user)
          {
             if($user->password == sha1($_POST['password']))
+            {
+               $user->new_logkey();
+               if( $user->save() )
+               {
+                  setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
+                  setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
+                  $this->user = $user;
+                  $this->load_menu();
+               }
+            }
+            else if(FS_DEMO AND $_POST['password'] == 'demo')
             {
                $user->new_logkey();
                if( $user->save() )
@@ -153,7 +164,7 @@ class fs_controller
          else
             $this->new_error_msg('El usuario no existe!');
       }
-      else if(isset($_COOKIE['user']) AND isset($_COOKIE['logkey']))
+      else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
          $user = $this->user->get($_COOKIE['user']);
          if($user)
@@ -188,8 +199,7 @@ class fs_controller
    public function duration()
    {
       $tiempo = explode(" ", microtime());
-      $tiempo = $tiempo[1] + $tiempo[0];
-      return (number_format($tiempo - $this->uptime, 3) . ' segundos');
+      return (number_format($tiempo[1] + $tiempo[0] - $this->uptime, 3) . ' s');
    }
    
    public function selects()
@@ -283,7 +293,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.7';
+      return '0.9.8';
    }
    
    public function select_default_page()
@@ -356,11 +366,6 @@ class fs_controller
    public function url()
    {
       return $this->page->url();
-   }
-   
-   public function db_history_enabled()
-   {
-      return FS_DB_HISTORY;
    }
    
    public function get_db_history()

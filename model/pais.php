@@ -44,15 +44,24 @@ class pais extends fs_model
          $this->codiso = NULL;
       }
    }
+
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');";
+   }
    
    public function url()
    {
       return 'index.php?page=admin_paises#'.$this->codpais;
    }
-
-   protected function install()
+   
+   public function get($cod)
    {
-      return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');";
+      $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = '".$cod."';");
+      if($pais)
+         return new pais($pais[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -65,30 +74,37 @@ class pais extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
-      {
          $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."' WHERE codpais = '".$this->codpais."';";
-      }
       else
-      {
          $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES ('".$this->codpais."','".$this->nombre."');";
-      }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpais = '".$this->codpais."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_pais_all');
    }
    
    public function all()
    {
-      $listap = array();
-      $paises = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpais ASC;");
-      if($paises)
+      $listap = $this->cache->get_array('m_pais_all');
+      if( !$listap )
       {
-         foreach($paises as $p)
-            $listap[] = new pais($p);
+         $paises = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpais ASC;");
+         if($paises)
+         {
+            foreach($paises as $p)
+               $listap[] = new pais($p);
+         }
+         $this->cache->set('m_pais_all', $listap);
       }
       return $listap;
    }

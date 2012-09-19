@@ -254,6 +254,11 @@ class proveedor extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function observaciones_resume()
    {
       if($this->observaciones == '')
@@ -288,6 +293,15 @@ class proveedor extends fs_model
    {
       setcookie('default_proveedor', $this->codproveedor, time()+FS_COOKIES_EXPIRE);
       self::$default_proveedor = $this->codproveedor;
+   }
+   
+   public function get($cod)
+   {
+      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$cod."';");
+      if($prov)
+         return new proveedor($prov[0]);
+      else
+         return FALSE;
    }
    
    public function get_new_codigo()
@@ -331,11 +345,6 @@ class proveedor extends fs_model
       $dir = new direccion_proveedor();
       return $dir->all_from_proveedor($this->codproveedor);
    }
-
-   protected function install()
-   {
-      return '';
-   }
    
    public function exists()
    {
@@ -347,6 +356,7 @@ class proveedor extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
@@ -371,16 +381,13 @@ class proveedor extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codproveedor = '".$this->codproveedor."';");
    }
    
-   public function get($cod)
+   private function clean_cache()
    {
-      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$cod."';");
-      if($prov)
-         return new proveedor($prov[0]);
-      else
-         return FALSE;
+      $this->cache->delete('m_proveedor_all');
    }
    
    public function all($offset=0)
@@ -398,12 +405,16 @@ class proveedor extends fs_model
    
    public function all_full()
    {
-      $provelist = array();
-      $proveedores = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
-      if($proveedores)
+      $provelist = $this->cache->get_array('m_proveedor_all');
+      if( !$provelist )
       {
-         foreach($proveedores as $p)
-            $provelist[] = new proveedor($p);
+         $proveedores = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+         if($proveedores)
+         {
+            foreach($proveedores as $p)
+               $provelist[] = new proveedor($p);
+         }
+         $this->cache->set('m_proveedor_all', $provelist);
       }
       return $provelist;
    }

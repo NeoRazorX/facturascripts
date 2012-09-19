@@ -282,7 +282,16 @@ class albaran_cliente extends fs_model
       if($a)
       {
          $this->idalbaran = $this->intval($a['idalbaran']);
-         $this->idfactura = $this->intval($a['idfactura']);
+         if($a['ptefactura'] == 't')
+         {
+            $this->ptefactura = TRUE;
+            $this->idfactura = NULL;
+         }
+         else
+         {
+            $this->ptefactura = FALSE;
+            $this->idfactura = $this->intval($a['idfactura']);
+         }
          $this->codigo = $a['codigo'];
          $this->codagente = $a['codagente'];
          $this->codserie = $a['codserie'];
@@ -318,7 +327,6 @@ class albaran_cliente extends fs_model
          $this->recfinanciero = floatval($a['recfinanciero']);
          $this->totalrecargo = floatval($a['totalrecargo']);
          $this->observaciones = $a['observaciones'];
-         $this->ptefactura = ($a['ptefactura'] == 't');
       }
       else
       {
@@ -582,6 +590,7 @@ class albaran_cliente extends fs_model
       $iva = 0;
       $total = 0;
       
+      /// comprobamos las líneas
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -595,6 +604,7 @@ class albaran_cliente extends fs_model
          $total += $l->pvptotal * (100 + $l->iva) / 100;
       }
       
+      /// comprobamos los totales
       if( abs($this->neto - $neto) > .01 )
       {
          $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
@@ -616,13 +626,38 @@ class albaran_cliente extends fs_model
          $status = FALSE;
       }
       
+      /// comprobamos las facturas asociadas
+      $linea_factura = new linea_factura_cliente();
+      $facturas = $linea_factura->facturas_from_albaran( $this->idalbaran );
+      if($facturas)
+      {
+         if( count($facturas) > 1 )
+         {
+            $this->new_error_msg("Este albarán esta asociado a las siguientes facturas (y no debería):");
+            foreach($facturas as $f)
+               $this->new_error_msg("<a href='".$f->url()."'>".$f->codigo."</a>");
+            $status = FALSE;
+         }
+         else if($facturas[0]->idfactura != $this->idfactura)
+         {
+            $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.
+                                  La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
+            $status = FALSE;
+         }
+      }
+      else if( !is_null($this->idfactura) )
+      {
+         $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.");
+         $status = FALSE;
+      }
+      
       return $status;
    }
    
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY idalbaran DESC",
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC",
                                            FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
@@ -636,7 +671,7 @@ class albaran_cliente extends fs_model
    {
       $albalist = array();
       $albaranes = $this->db->select_limit("SELECT fecha,codagente,COUNT(idalbaran) as num,AVG(totaleuros) as media,SUM(totaleuros) as total
-         FROM ".$this->table_name." GROUP BY fecha,codagente ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+         FROM ".$this->table_name." GROUP BY fecha,codagente ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          $agente = new agente();
@@ -657,8 +692,8 @@ class albaran_cliente extends fs_model
    public function all_from_cliente($codcliente, $offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."' ORDER BY fecha DESC",
-              FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."'
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -682,7 +717,7 @@ class albaran_cliente extends fs_model
          $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
       else
          $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
-      $consulta .= " ORDER BY fecha DESC";
+      $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $albaranes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($albaranes)
@@ -691,6 +726,20 @@ class albaran_cliente extends fs_model
             $alblist[] = new albaran_cliente($a);
       }
       return $alblist;
+   }
+   
+   public function search_from_cliente($codcliente, $desde, $hasta)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."'
+         AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta)."
+         ORDER BY fecha DESC, codigo DESC");
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $albalist[] = new albaran_cliente($a);
+      }
+      return $albalist;
    }
 }
 

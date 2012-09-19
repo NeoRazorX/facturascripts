@@ -31,25 +31,39 @@ class admin_paises extends fs_controller
    protected function process()
    {
       $this->pais = new pais();
-      $this->buttons[] = new fs_button('b_nuevo_pais', 'nuevo país');
+      $this->buttons[] = new fs_button('b_nuevo_pais', 'nuevo');
       
-      if( isset($_POST['scodpais']) AND isset($_POST['snombre']))
+      if( isset($_POST['scodpais']) )
       {
-         $pais = new pais();
-         $pais->codpais = $_POST['scodpais'];
+         $pais = $this->pais->get($_POST['scodpais']);
+         if( !$pais )
+         {
+            $pais = new pais();
+            $pais->codpais = $_POST['scodpais'];
+         }
          $pais->nombre = $_POST['snombre'];
-         $pais->save();
+         if( $pais->save() )
+            $this->new_message("País ".$pais->nombre." modificado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible modificar el país ".$pais->nombre."!");
       }
       else if( isset($_GET['delete']) )
       {
-         $pais = new pais();
-         $pais->codpais = $_GET['delete'];
-         $pais->delete();
+         $pais = $this->pais->get($_GET['delete']);
+         if( $pais )
+         {
+            if( $pais->delete() )
+               $this->new_message("País ".$pais->nombre." eliminado correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar el país ".$pais->nombre."!");
+         }
+         else
+            $this->new_error_msg("¡País no encontrado!");
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

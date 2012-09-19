@@ -19,7 +19,7 @@ class contabilidad_asientos extends fs_controller
       $this->custom_search = TRUE;
       $naurl = $this->page->get('contabilidad_nuevo_asiento');
       if($naurl)
-         $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo asiento', $naurl->url());
+         $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo', $naurl->url());
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -47,7 +47,7 @@ class contabilidad_asientos extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

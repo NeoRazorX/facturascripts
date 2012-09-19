@@ -192,6 +192,11 @@ class paquete extends fs_model
          $this->subpaquetes = array();
       }
    }
+
+   protected function install()
+   {
+      return "";
+   }
    
    public function url()
    {
@@ -257,11 +262,6 @@ class paquete extends fs_model
       if($this->grupos < 1)
          $this->grupos = 1;
    }
-
-   protected function install()
-   {
-      return "";
-   }
    
    public function exists()
    {
@@ -273,6 +273,7 @@ class paquete extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
          return TRUE;
       else
@@ -281,17 +282,27 @@ class paquete extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_paquete_all');
    }
    
    public function all()
    {
-      $paqlist = array();
-      $paqs = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC;");
-      if($paqs)
+      $paqlist = $this->cache->get_array('m_paquete_all');
+      if( !$paqlist )
       {
-         foreach($paqs as $p)
-            $paqlist[] = new paquete($p);
+         $paqs = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC;");
+         if($paqs)
+         {
+            foreach($paqs as $p)
+               $paqlist[] = new paquete($p);
+         }
+         $this->cache->set('m_paquete_all', $paqlist);
       }
       return $paqlist;
    }

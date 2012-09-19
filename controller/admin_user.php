@@ -36,11 +36,14 @@ class admin_user extends fs_controller
       $this->agente = new agente();
       
       if( isset($_GET['snick']) )
-      {
          $this->suser = $this->user->get($_GET['snick']);
+      
+      if( $this->suser )
+      {
+         $this->page->title = $this->suser->nick;
+         
          if( $this->suser->exists() )
          {
-            $this->page->title = $this->suser->nick;
             if($this->user->nick != $this->suser->nick)
                $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/remove.png', '-');
             
@@ -48,12 +51,15 @@ class admin_user extends fs_controller
             {
                if( isset($_POST['spassword']) )
                   $this->suser->set_password($_POST['spassword']);
+               
                if( isset($_POST['scodagente']) )
                   $this->suser->codagente = $_POST['scodagente'];
+               
                if( isset($_POST['sadmin']) )
                   $this->suser->admin = TRUE;
                else
                   $this->suser->admin = FALSE;
+               
                if( $this->suser->save() )
                   $this->new_message("Datos modificados correctamente.");
                else
@@ -61,25 +67,23 @@ class admin_user extends fs_controller
             }
             else if( isset($_GET['enable']) )
             {
-               $a = new fs_access( array('fs_user'=> $this->suser->nick,
-                                         'fs_page'=>$_GET['enable']) );
+               $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$_GET['enable']) );
                $a->save();
             }
             else if( isset($_GET['disable']) )
             {
-               $a = new fs_access( array('fs_user'=> $this->suser->nick,
-                                         'fs_page'=>$_GET['disable']) );
+               $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$_GET['disable']) );
                if( $a->exists() )
                   $a->delete();
             }
          }
       }
       else
-         $this->suser = FALSE;
+         $this->new_error_msg("Usuario no encontrado.");
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function all()

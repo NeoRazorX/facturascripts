@@ -68,7 +68,7 @@ class contabilidad_factura_prov extends fs_controller
             $this->generar_pdf();
       }
       else
-         $this->new_error_msg("¡Factura no encontrada!");
+         $this->new_error_msg("¡Factura de proveedor no encontrada!");
    }
    
    public function version() {

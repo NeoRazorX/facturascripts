@@ -121,6 +121,15 @@ class impuesto extends fs_model
       self::$default_impuesto = $this->codimpuesto;
    }
    
+   public function get($cod)
+   {
+      $impuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$cod."';");
+      if($impuesto)
+         return new impuesto($impuesto[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->codimpuesto) )
@@ -131,6 +140,7 @@ class impuesto extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codsubcuentadeu = ".$this->var2str($this->codsubcuentadeu).",
@@ -166,26 +176,27 @@ class impuesto extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
    }
    
-   public function get($cod)
+   private function clean_cache()
    {
-      $impuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$cod."';");
-      if($impuesto)
-         return new impuesto($impuesto[0]);
-      else
-         return FALSE;
+      $this->cache->delete('m_impuesto_all');
    }
    
    public function all()
    {
-      $impuestolist = array();
-      $impuestos = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codimpuesto ASC;");
-      if($impuestos)
+      $impuestolist = $this->cache->get_array('m_impuesto_all');
+      if( !$impuestolist )
       {
-         foreach($impuestos as $i)
-            $impuestolist[] = new impuesto($i);
+         $impuestos = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codimpuesto ASC;");
+         if($impuestos)
+         {
+            foreach($impuestos as $i)
+               $impuestolist[] = new impuesto($i);
+         }
+         $this->cache->set('m_impuesto_all', $impuestolist);
       }
       return $impuestolist;
    }

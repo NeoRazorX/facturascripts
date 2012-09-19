@@ -21,18 +21,18 @@
       <table>
          <tr>
             <td align="right">Código:</td>
-            <td><input type="text" name="codimpuesto" size="10" maxlength="10"/></td>
+            <td><input type="text" name="codimpuesto" size="10" maxlength="10" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion"/></td>
+            <td><input type="text" name="descripcion" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right">%IVA:</td>
-            <td><input type="text" name="iva" value="0" size="4"/></td>
+            <td align="right">IVA:</td>
+            <td><input type="text" name="iva" value="0" size="4" autocomplete="off"/> %</td>
          </tr>
       </table>
-      <div class="right"><input type="submit" value="nuevo impuesto"/></div>
+      <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
 </div>
 
@@ -45,10 +45,10 @@
          <span><input type="submit" value="modificar"/></span>
       </h1>
       <div class="bloque">
-         Descripción: <input type="text" name="descripcion" value="{$value->descripcion}"/>
+         Descripción: <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         %IVA: <input type="text" name="iva" value="{$value->iva}" size="4"/>
+         IVA: <input type="text" name="iva" value="{$value->iva}" size="4" autocomplete="off"/> %
       </div>
    </form>
 </div>

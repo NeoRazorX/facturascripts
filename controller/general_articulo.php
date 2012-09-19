@@ -19,8 +19,8 @@
 
 require_once 'model/almacen.php';
 require_once 'model/articulo.php';
-require_once 'model/impuesto.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 
 class general_articulo extends fs_controller
 {
@@ -41,7 +41,51 @@ class general_articulo extends fs_controller
    {
       $this->ppage = $this->page->get('general_articulos');
       
-      if( isset($_POST['almacen']) )
+      if( isset($_POST['pvpiva']) )
+      {
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_POST['referencia']);
+         if($this->articulo)
+         {
+            $continuar = TRUE;
+            $this->articulo->set_pvp_iva( $_POST['pvpiva'] );
+            if( !$this->articulo->save() )
+            {
+               $this->new_error_msg("¡Imposible modificar el artículo!");
+               $continuar = FALSE;
+            }
+            $tarifa_articulo = new tarifa_articulo();
+            for($i = 0; $i < 100; $i++)
+            {
+               if( isset($_POST['codtarifa_'.$i]) )
+               {
+                  if($_POST['id_'.$i] != '')
+                     $ta = $tarifa_articulo->get($_POST['id_'.$i]);
+                  else
+                     $ta = FALSE;
+                  if( !$ta )
+                  {
+                     $ta = new tarifa_articulo();
+                     $ta->codtarifa = $_POST['codtarifa_'.$i];
+                     $ta->referencia = $this->articulo->referencia;
+                  }
+                  $ta->pvp = $this->articulo->pvp;
+                  $ta->iva = $this->articulo->get_iva();
+                  $ta->set_pvp_iva($_POST['pvpiva_'.$i]);
+                  if( !$ta->save() )
+                  {
+                     $this->new_error_msg("¡Imposible modificar la tarifa!");
+                     $continuar = FALSE;
+                  }
+               }
+               else
+                  break;
+            }
+            if( $continuar )
+               $this->new_message("Tarifas modificadas correctamente.");
+         }
+      }
+      else if( isset($_POST['almacen']) )
       {
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_POST['referencia']);
@@ -79,10 +123,7 @@ class general_articulo extends fs_controller
          $this->articulo->controlstock = isset($_POST['controlstock']);
          $this->articulo->secompra = isset($_POST['secompra']);
          $this->articulo->sevende = isset($_POST['sevende']);
-         if( $_POST['pvp_iva'] != '' )
-            $this->articulo->set_pvp_iva($_POST['pvp_iva']);
-         else
-            $this->articulo->set_pvp($_POST['pvp']);
+         $this->articulo->set_pvp($_POST['pvp']);
          $this->articulo->codimpuesto = $_POST['codimpuesto'];
          $this->articulo->observaciones = $_POST['observaciones'];
          $this->articulo->stockmin = $_POST['stockmin'];
@@ -126,6 +167,8 @@ class general_articulo extends fs_controller
          }
          $this->equivalentes = $this->articulo->get_equivalentes();
       }
+      else
+         $this->new_error_msg("Artículo no encontrado.");
    }
    
    public function version() {

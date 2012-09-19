@@ -23,25 +23,26 @@ class contabilidad_subcuenta extends fs_controller
       {
          $this->subcuenta = new subcuenta();
          $this->subcuenta = $this->subcuenta->get($_GET['id']);
-         if($this->subcuenta)
-         {
-            $this->page->title = 'Subcuenta: '.$this->subcuenta->codsubcuenta;
-            $this->cuenta = $this->subcuenta->get_cuenta();
-            $this->ejercicio = $this->subcuenta->get_ejercicio();
-            
-            if( !$this->subcuenta->test() )
-               $this->new_error_msg( $this->subcuenta->error_msg );
-            
-            if( isset($_GET['offset']) )
-               $this->offset = intval($_GET['offset']);
-            else
-               $this->offset = 0;
-            
-            $this->resultados = $this->subcuenta->get_partidas($this->offset);
-         }
+      }
+      
+      if($this->subcuenta)
+      {
+         $this->page->title = 'Subcuenta: '.$this->subcuenta->codsubcuenta;
+         $this->cuenta = $this->subcuenta->get_cuenta();
+         $this->ejercicio = $this->subcuenta->get_ejercicio();
+         
+         if( !$this->subcuenta->test() )
+            $this->new_error_msg( $this->subcuenta->error_msg );
+         
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
+         else
+            $this->offset = 0;
+         
+         $this->resultados = $this->subcuenta->get_partidas($this->offset);
       }
       else
-         $this->subcuenta = FALSE;
+         $this->new_error_msg("Subcuenta no encontrada.");
    }
    
    public function version() {

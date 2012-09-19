@@ -33,9 +33,14 @@ class general_albaranes_cli extends fs_controller
    {
       $albaran = new albaran_cliente();
       $this->custom_search = TRUE;
+      
       $npage = $this->page->get('general_nuevo_albaran');
       if($npage)
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo albarán', $npage->url());
+         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo', $npage->url());
+      
+      $agpage = $this->page->get('general_agrupar_albaranes_cli');
+      if($agpage)
+         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
@@ -63,7 +68,7 @@ class general_albaranes_cli extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

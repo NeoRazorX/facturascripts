@@ -50,6 +50,12 @@ class forma_pago extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
+            ('CONT','CONTADO','Emitidos',NULL,FALSE);";
+   }
+   
    public function is_default()
    {
       if( isset(self::$default_formapago) )
@@ -66,12 +72,6 @@ class forma_pago extends fs_model
    {
       setcookie('default_formapago', $this->codpago, time()+FS_COOKIES_EXPIRE);
       self::$default_formapago = $this->codpago;
-   }
-   
-   protected function install()
-   {
-      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            ('CONT','CONTADO','Emitidos',NULL,FALSE);";
    }
    
    public function get($cod)
@@ -93,6 +93,7 @@ class forma_pago extends fs_model
    
    public function save()
    {
+      $this->clean_cache();
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
@@ -110,17 +111,27 @@ class forma_pago extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpago = '".$this->codpago."';");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('m_forma_pago_all');
    }
    
    public function all()
    {
-      $listaformas = array();
-      $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpago ASC;");
-      if($formas)
+      $listaformas = $this->cache->get_array('m_forma_pago_all');
+      if( !$listaformas )
       {
-         foreach($formas as $f)
-            $listaformas[] = new forma_pago($f);
+         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpago ASC;");
+         if($formas)
+         {
+            foreach($formas as $f)
+               $listaformas[] = new forma_pago($f);
+         }
+         $this->cache->set('m_forma_pago_all', $listaformas);
       }
       return $listaformas;
    }

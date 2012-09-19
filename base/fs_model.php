@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_cache.php';
 require_once 'base/fs_db.php';
 
 abstract class fs_model
@@ -24,16 +25,43 @@ abstract class fs_model
    protected $db;
    protected $table_name;
    protected static $checked_tables;
+   protected $cache;
    public $error_msg;
-
+   
    public function __construct($name = '')
    {
       $this->db = new fs_db();
       $this->table_name = $name;
+      $this->cache = new fs_cache();
       $this->error_msg = FALSE;
       
-      if(!self::$checked_tables)
-         self::$checked_tables = array();
+      if( !self::$checked_tables )
+      {
+         self::$checked_tables = $this->cache->get_array('fs_checked_tables');
+         if( self::$checked_tables )
+         {
+            /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
+            $tables = $this->db->list_tables();
+            foreach(self::$checked_tables as $ct)
+            {
+               $found = FALSE;
+               foreach($tables as $t)
+               {
+                  if($ct == $t['name'])
+                  {
+                     $found = TRUE;
+                     break;
+                  }
+               }
+               if( !$found )
+               {
+                  self::$checked_tables = array();
+                  $this->cache->delete('fs_checked_tables');
+                  break;
+               }
+            }
+         }
+      }
       
       if($name != '')
       {
@@ -41,6 +69,7 @@ abstract class fs_model
          {
             $this->check_table($name);
             self::$checked_tables[] = $name;
+            $this->cache->set('fs_checked_tables', self::$checked_tables);
          }
       }
    }
