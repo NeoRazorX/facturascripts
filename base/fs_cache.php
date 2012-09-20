@@ -50,13 +50,13 @@ class fs_cache
    public function set($key, $object, $expire=3600)
    {
       if( self::$connected )
-         self::$memcache->set($key, $object, FALSE, $expire);
+         self::$memcache->set(FS_CACHE_PREFIX.$key, $object, FALSE, $expire);
    }
    
    public function get($key)
    {
       if( self::$connected )
-         return self::$memcache->get($key);
+         return self::$memcache->get(FS_CACHE_PREFIX.$key);
       else
          return FALSE;
    }
@@ -66,7 +66,7 @@ class fs_cache
       $aa = array();
       if( self::$connected )
       {
-         $a = self::$memcache->get($key);
+         $a = self::$memcache->get(FS_CACHE_PREFIX.$key);
          if($a)
             $aa = $a;
       }
@@ -76,7 +76,7 @@ class fs_cache
    public function delete($key)
    {
       if( self::$connected )
-         return self::$memcache->delete($key);
+         return self::$memcache->delete(FS_CACHE_PREFIX.$key);
       else
          return FALSE;
    }

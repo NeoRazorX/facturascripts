@@ -19,15 +19,29 @@ define('FS_DB_PORT', '5432');
 define('FS_DB_NAME', '');
 define('FS_DB_USER', '');
 define('FS_DB_PASS', '');
+
+/*
+ * En cada ejecución muestra todas las sentencias SQL utilizadas.
+ */
 define('FS_DB_HISTORY', FALSE);
+
+/*
+ * Habilita el modo demo, para pruebas.
+ * Este modo permite hacer login con cualquier usuario y la contraseña demo,
+ * además deshabilita el límite de una conexión por usuario.
+ */
+define('FS_DEMO', FALSE);
 
 /*
  * Configuración de memcache.
  * Host: la ip del servidor donde está memcached.
  * port: el puerto en el que se ejecuta memcached.
+ * prefix: prefijo para las claves, por si tienes varias instancias de
+ * FacturaScripts conectadas al mismo servidor memcache.
  */
 define('FS_CACHE_HOST', 'localhost');
 define('FS_CACHE_PORT', 11211);
+define('FS_CACHE_PREFIX', '');
 
 /// caducidad (en segundos) de todas las coockies
 define('FS_COOKIES_EXPIRE', 315360000);
