@@ -115,8 +115,6 @@ abstract class fs_model
          else
             return 'FALSE';
       }
-      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $v) ) /// es una fecha
-         return "'".Date('Y-m-d', strtotime($v))."'";
       else
          return "'".addslashes($v)."'";
    }

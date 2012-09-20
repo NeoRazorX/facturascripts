@@ -61,7 +61,12 @@ class fs_db
       {
          self::$link = pg_pconnect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
          if(self::$link)
+         {
             $connected = TRUE;
+            
+            /// establecemos el formato de fecha para la conexión
+            pg_query(self::$link, "SET DATESTYLE TO PostgreSQL,European;");
+         }
       }
       return $connected;
    }
