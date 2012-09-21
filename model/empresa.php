@@ -129,7 +129,7 @@ class empresa extends fs_model
       if(is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id='".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id=".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -148,13 +148,13 @@ class empresa extends fs_model
          recequivalencia = ".$this->var2str($this->recequivalencia).",
          contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos).",
          lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario)."
-         WHERE id = '".$this->id."';";
+         WHERE id = ".$this->var2str($this->id).";";
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
 }
 

@@ -113,20 +113,26 @@ class fs_controller
       $this->db->close();
    }
    
-   public function new_error_msg($msg)
+   public function new_error_msg($msg='')
    {
-      if( !$this->error_msg )
-         $this->error_msg = $msg;
-      else
-         $this->error_msg .= "<br/>" . $msg;
+      if( $msg )
+      {
+         if( !$this->error_msg )
+            $this->error_msg = $msg;
+         else
+            $this->error_msg .= "<br/>" . $msg;
+      }
    }
    
-   public function new_message($msg)
+   public function new_message($msg='')
    {
-      if( !$this->message )
-         $this->message = $msg;
-      else
-         $this->message .= '<br/>' . $msg;
+      if( $msg )
+      {
+         if( !$this->message )
+            $this->message = $msg;
+         else
+            $this->message .= '<br/>' . $msg;
+      }
    }
 
    public function log_in()
@@ -293,7 +299,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.8';
+      return '0.9.9';
    }
    
    public function select_default_page()
@@ -335,11 +341,28 @@ class fs_controller
    {
       if( isset($_GET['css_file']) )
       {
-         $this->css_file = $_GET['css_file'];
-         setcookie('css_file', $_GET['css_file'], time()+315360000);
+         if( file_exists('view/css/'.$_GET['css_file']) )
+         {
+            $this->css_file = $_GET['css_file'];
+            setcookie('css_file', $_GET['css_file'], time()+315360000);
+         }
+         else
+         {
+            $this->new_error_msg("Archivo CSS no encontrado.");
+            $this->css_file = 'base.css';
+         }
       }
       else if( isset($_COOKIE['css_file']) )
-         $this->css_file = $_COOKIE['css_file'];
+      {
+         if( file_exists('view/css/'.$_COOKIE['css_file']) )
+            $this->css_file = $_COOKIE['css_file'];
+         else
+         {
+            $this->new_error_msg("Archivo CSS no encontrado.");
+            $this->css_file = 'base.css';
+            setcookie('css_file', $this->css_file, time()+315360000);
+         }
+      }
       else
          $this->css_file = 'base.css';
    }
@@ -355,8 +378,7 @@ class fs_controller
          return TRUE;
       else if( !$this->admin_page )
       {
-         $a = new fs_access( array('fs_user'=>$this->user->nick,
-                                   'fs_page'=>$this->page->name) );
+         $a = new fs_access( array('fs_user'=>$this->user->nick, 'fs_page'=>$this->page->name) );
          return $a->exists();
       }
       else

@@ -85,7 +85,7 @@ class almacen extends fs_model
    
    public function get($cod)
    {
-      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$cod."';");
+      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($cod).";");
       if($almacen)
          return new almacen($almacen[0]);
       else
@@ -97,7 +97,7 @@ class almacen extends fs_model
       if( is_null($this->codalmacen) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
    public function save()
@@ -105,15 +105,18 @@ class almacen extends fs_model
       $this->clean_cache();
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."', poblacion = '".$this->poblacion."',
-                 direccion = '".$this->direccion."', codpostal = '".$this->codpostal."', telefono = '".$this->telefono."',
-                 fax = '".$this->fax."', contacto = '".$this->contacto."' WHERE codalmacen = '".$this->codalmacen."';";
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+            poblacion = ".$this->var2str($this->poblacion).", direccion = ".$this->var2str($this->direccion).",
+            codpostal = ".$this->var2str($this->codpostal).", telefono = ".$this->var2str($this->telefono).",
+            fax = ".$this->var2str($this->fax).", contacto = ".$this->var2str($this->contacto)."
+            WHERE codalmacen = ".$this->var2str($this->codalmacen).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto) VALUES
-                 ('".$this->codalmacen."','".$this->nombre."','".$this->poblacion."','".$this->direccion."','".$this->codpostal."',
-                 '".$this->telefono."','".$this->fax."','".$this->contacto."');";
+            (".$this->var2str($this->codalmacen).",".$this->var2str($this->nombre).",".$this->var2str($this->poblacion).",
+            ".$this->var2str($this->direccion).",".$this->var2str($this->codpostal).",".$this->var2str($this->telefono).",
+            ".$this->var2str($this->fax).",".$this->var2str($this->contacto).");";
       }
       return $this->db->exec($sql);
    }
@@ -121,7 +124,7 @@ class almacen extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codalmacen = '".$this->codalmacen."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
    private function clean_cache()

@@ -86,7 +86,7 @@ class stock extends fs_model
    
    public function get($id)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$id."';");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($id).";");
       if($stock)
          return new stock($stock[0]);
       else
@@ -95,7 +95,7 @@ class stock extends fs_model
    
    public function get_by_referencia($ref)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($stock)
          return new stock($stock[0]);
       else
@@ -107,7 +107,7 @@ class stock extends fs_model
       if( is_null($this->idstock) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = '".$this->idstock."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function new_idstock()
@@ -125,7 +125,7 @@ class stock extends fs_model
             referencia = ".$this->var2str($this->referencia).", nombre = ".$this->var2str($this->nombre).",
             cantidad = ".$this->var2str($this->cantidad).", reservada = ".$this->var2str($this->reservada).",
             disponible = ".$this->var2str($this->disponible).", pterecibir = ".$this->var2str($this->pterecibir)."
-            WHERE idstock = '".$this->idstock."';";
+            WHERE idstock = ".$this->var2str($this->idstock).";";
       }
       else
       {
@@ -140,13 +140,13 @@ class stock extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idstock = '".$this->idstock."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function all_from_articulo($ref)
    {
       $stocklist = array();
-      $stocks = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      $stocks = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($stocks)
       {
          foreach($stocks as $s)
@@ -158,7 +158,8 @@ class stock extends fs_model
    public function total_from_articulo($ref)
    {
       $num = 0;
-      $stocks = $this->db->select("SELECT SUM(cantidad) as total FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      $stocks = $this->db->select("SELECT SUM(cantidad) as total FROM ".$this->table_name."
+         WHERE referencia = ".$this->var2str($ref).";");
       if($stocks)
          $num = floatval($stocks[0]['total']);
       return $num;
@@ -245,7 +246,7 @@ class tarifa_articulo extends fs_model
    
    public function get($id)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if( $tarifa )
          return new tarifa_articulo($tarifa[0]);
       else
@@ -257,7 +258,7 @@ class tarifa_articulo extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -271,21 +272,20 @@ class tarifa_articulo extends fs_model
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (referencia,codtarifa,descuento) VALUES
-            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",
-            ".$this->var2str($this->descuento).");";
+            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",".$this->var2str($this->descuento).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_articulo($ref)
    {
       $tarlist = array();
-      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if( $tarifas )
       {
          foreach($tarifas as $t)
@@ -401,7 +401,7 @@ class articulo extends fs_model
    
    public function get($ref)
    {
-      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($art)
          return new articulo($art[0]);
       else
@@ -466,7 +466,8 @@ class articulo extends fs_model
       $artilist = array();
       if( !is_null($this->equivalencia) )
       {
-         $articulos = $this->db->select("SELECT * FROM ".$this->table_name." WHERE equivalencia = '".$this->equivalencia."' ORDER BY referencia ASC;");
+         $articulos = $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE equivalencia = ".$this->var2str($this->equivalencia)." ORDER BY referencia ASC;");
          if($articulos)
          {
             foreach($articulos as $a)
@@ -537,7 +538,8 @@ class articulo extends fs_model
       {
          if( !isset($this->imagen) )
          {
-            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
+               WHERE referencia = ".$this->var2str($this->referencia).";");
             if($imagen)
                $this->imagen = $this->str2bin($imagen[0]['imagen']);
             else
@@ -703,7 +705,7 @@ class articulo extends fs_model
       if( is_null($this->referencia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    public function save()
@@ -711,7 +713,8 @@ class articulo extends fs_model
       /// cargamos la imágen si todavía no lo habíamos hecho
       if( !isset($this->imagen) )
       {
-         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
+            WHERE referencia = ".$this->var2str($this->referencia).";");
          if($imagen)
             $this->imagen = $this->str2bin($imagen[0]['imagen']);
          else
@@ -733,7 +736,7 @@ class articulo extends fs_model
             bloqueado = ".$this->var2str($this->bloqueado).", sevende = ".$this->var2str($this->sevende).",
             secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
             codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
-            imagen = ".$this->bin2str($this->imagen)." WHERE referencia = '".$this->referencia."';";
+            imagen = ".$this->bin2str($this->imagen)." WHERE referencia = ".$this->var2str($this->referencia).";";
       }
       else
       {
@@ -753,13 +756,13 @@ class articulo extends fs_model
    {
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
          unlink('tmp/articulos/'.$this->referencia.'.png');
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    public function search($query, $offset=0)
    {
       $artilist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $sql = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
@@ -787,7 +790,8 @@ class articulo extends fs_model
    public function multiplicar_precios($codfam, $m=1)
    {
       if(isset($codfam) AND $m != 1)
-         return $this->db->exec("UPDATE ".$this->table_name." SET pvp = (pvp*".$m.") WHERE codfamilia = ".$this->var2str($codfam).";");
+         return $this->db->exec("UPDATE ".$this->table_name." SET pvp = (pvp*".floatval($m).")
+            WHERE codfamilia = ".$this->var2str($codfam).";");
       else
          return TRUE;
    }
@@ -807,8 +811,8 @@ class articulo extends fs_model
    public function all_from_familia($codfamilia, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();
-      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$codfamilia."' ORDER BY referencia ASC",
-                                           $limit, $offset);
+      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codfamilia = ".$this->var2str($codfamilia)." ORDER BY referencia ASC", $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)
@@ -821,7 +825,8 @@ class articulo extends fs_model
    {
       $num = 0;
       if( $codfamilia )
-         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name." WHERE codfamilia = '".$codfamilia."';");
+         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name."
+            WHERE codfamilia = ".$this->var2str($codfamilia).";");
       else
          $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
       if($articulos)

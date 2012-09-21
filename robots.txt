@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /base/
+Disallow: /controller/
+Disallow: /ezpdf/
+Disallow: /model/
+Disallow: /nbproject/
+Disallow: /raintpl/
+Disallow: /view/

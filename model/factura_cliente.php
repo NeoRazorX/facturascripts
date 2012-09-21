@@ -140,7 +140,7 @@ class linea_factura_cliente extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
@@ -179,7 +179,7 @@ class linea_factura_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function test()
@@ -207,7 +207,7 @@ class linea_factura_cliente extends fs_model
    public function all_from_factura($id)
    {
       $linlist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -219,8 +219,8 @@ class linea_factura_cliente extends fs_model
    public function all_from_articulo($ref, $offset=0)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."' ORDER BY idalbaran DESC",
-              FS_ITEM_LIMIT, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref)."
+         ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -232,7 +232,7 @@ class linea_factura_cliente extends fs_model
    public function facturas_from_albaran($id)
    {
       $facturalist = array();
-      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
+      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($lineas)
       {
          $factura = new factura_cliente();
@@ -313,7 +313,7 @@ class linea_iva_factura_cliente extends fs_model
    public function exists()
    {
       if( isset($this->idlinea) )
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
       else
          return FALSE;
    }
@@ -326,7 +326,7 @@ class linea_iva_factura_cliente extends fs_model
             neto = ".$this->var2str($this->neto).", codimpuesto = ".$this->var2str($this->codimpuesto).",
             iva = ".$this->var2str($this->iva).", totaliva = ".$this->var2str($this->totaliva).",
             recargo = ".$this->var2str($this->recargo).", totalrecargo = ".$this->var2str($this->totalrecargo).",
-            totallinea = ".$this->var2str($this->totallinea)." WHERE idlinea = '".$this->idlinea."';";
+            totallinea = ".$this->var2str($this->totallinea)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
       }
       else
       {
@@ -340,7 +340,7 @@ class linea_iva_factura_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");;
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");;
    }
    
    public function test()
@@ -366,7 +366,7 @@ class linea_iva_factura_cliente extends fs_model
    public function all_from_factura($id)
    {
       $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -578,7 +578,7 @@ class factura_cliente extends fs_model
    
    public function get($id)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$id."';");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -587,7 +587,7 @@ class factura_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = '".$cod."';");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -655,7 +655,7 @@ class factura_cliente extends fs_model
       if( is_null($this->idfactura) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    public function new_idfactura()
@@ -758,9 +758,10 @@ class factura_cliente extends fs_model
             $asiento->delete();
       }
       /// desvinculamos el/los albaranes asociados
-      $this->db->exec("UPDATE albaranescli SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = '".$this->idfactura."';");
+      $this->db->exec("UPDATE albaranescli SET idfactura = NULL, ptefactura = TRUE
+         WHERE idfactura = ".$this->var2str($this->idfactura).";");
       /// eliminamos
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = '".$this->idfactura."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    public function test()
@@ -842,8 +843,8 @@ class factura_cliente extends fs_model
    public function all($offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC",
-                                          FS_ITEM_LIMIT, $offset);
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)
@@ -855,7 +856,7 @@ class factura_cliente extends fs_model
    public function search($query, $offset=0)
    {
       $faclist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

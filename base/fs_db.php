@@ -204,24 +204,6 @@ class fs_db
       return($resultado);
    }
    
-   /// devuelve el número de tuplas de una consulta
-   function num_rows($sql)
-   {
-      $total = 0;
-      if(self::$link)
-      {
-         self::$history[] = $sql;
-         $filas = pg_query(self::$link, $sql);
-         if($filas)
-         {
-            $total = pg_num_rows($filas);
-            pg_free_result($filas);
-         }
-         self::$t_selects++;
-      }
-      return($total);
-   }
-
    /// ejecuta una consulta sobre la base de datos
    public function exec($sql)
    {
@@ -238,6 +220,11 @@ class fs_db
          self::$t_transactions++;
       }
       return($resultado);
+   }
+   
+   public function escape_string($s='')
+   {
+      return pg_escape_string(self::$link, $s);
    }
 }
 

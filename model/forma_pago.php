@@ -76,7 +76,7 @@ class forma_pago extends fs_model
    
    public function get($cod)
    {
-      $pago = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = '".$cod."';");
+      $pago = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($cod).";");
       if($pago)
          return new forma_pago($pago[0]);
       else
@@ -88,7 +88,8 @@ class forma_pago extends fs_model
       if( is_null($this->codpago) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = '".$this->codpago."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codpago = ".$this->var2str($this->codpago).";");
    }
    
    public function save()
@@ -98,13 +99,14 @@ class forma_pago extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
             genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
-            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = '".$this->codpago."';";
+            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            (".$this->codpago.",".$this->var2str($this->descripcion).",".$this->var2str($this->genrecibos).",
-            ".$this->var2str($this->codcuenta).",".$this->var2str($this->domiciliado).");";
+            (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
+            ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
+            ".$this->var2str($this->domiciliado).");";
       }
       return $this->db->exec($sql);
    }
@@ -112,7 +114,7 @@ class forma_pago extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpago = '".$this->codpago."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpago = ".$this->var2str($this->codpago).";");
    }
    
    private function clean_cache()

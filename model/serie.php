@@ -81,7 +81,7 @@ class serie extends fs_model
    
    public function get($cod)
    {
-      $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = '".$cod."';");
+      $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($cod).";");
       if($serie)
          return new serie($serie[0]);
       else
@@ -90,7 +90,8 @@ class serie extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = '".$this->codserie."';");
+      return $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codserie = ".$this->var2str($this->codserie).";");
    }
    
    public function save()
@@ -100,7 +101,7 @@ class serie extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
             siniva = ".$this->var2str($this->siniva).", irpf = ".$this->var2str($this->irpf).",
-            idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = '".$this->codserie."';";
+            idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = ".$this->var2str($this->codserie).";";
       }
       else
       {
@@ -114,7 +115,7 @@ class serie extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codserie = '".$this->codserie."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codserie = ".$this->var2str($this->codserie).";");
    }
    
    private function clean_cache()

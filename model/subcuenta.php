@@ -106,7 +106,7 @@ class subcuenta extends fs_model
    
    public function get($id)
    {
-      $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
       if($subc)
          return new subcuenta($subc[0]);
       else
@@ -116,7 +116,7 @@ class subcuenta extends fs_model
    public function get_by_codigo($cod, $ejercicio)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codsubcuenta = '".$cod."' AND codejercicio = '".$ejercicio."';");
+         WHERE codsubcuenta = ".$this->var2str($cod)." AND codejercicio = ".$this->var2str($ejercicio).";");
       if($subc)
          return new subcuenta($subc[0]);
       else
@@ -128,7 +128,8 @@ class subcuenta extends fs_model
       if( is_null($this->idsubcuenta) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$this->idsubcuenta."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
    public function save()
@@ -140,18 +141,21 @@ class subcuenta extends fs_model
          $this->debe = $totales['debe'];
          $this->haber = $totales['haber'];
          $this->saldo = $totales['saldo'];
-         $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).", idcuenta = ".$this->var2str($this->idcuenta).",
-            codcuenta = ".$this->var2str($this->codcuenta).", codejercicio = ".$this->var2str($this->codejercicio).",
+         $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
+            idcuenta = ".$this->var2str($this->idcuenta).", codcuenta = ".$this->var2str($this->codcuenta).",
+            codejercicio = ".$this->var2str($this->codejercicio).",
             coddivisa = ".$this->var2str($this->coddivisa).", codimpuesto = ".$this->var2str($this->codimpuesto).",
             descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
-            haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).", recargo = ".$this->var2str($this->recargo).",
-            iva = ".$this->var2str($this->iva)." WHERE idsubcuenta = '".$this->idsubcuenta."';";
+            haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
+            recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
+            WHERE idsubcuenta = '".$this->idsubcuenta."';";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codsubcuenta,idcuenta,codcuenta,codejercicio,coddivisa,codimpuesto,descripcion,
-            debe,haber,saldo,recargo,iva) VALUES (".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idcuenta).",".$this->var2str($this->codcuenta).",
-            ".$this->var2str($this->codejercicio).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
+            debe,haber,saldo,recargo,iva) VALUES (".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idcuenta).",
+            ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
+            ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
             ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",".$this->var2str($this->haber).",
             ".$this->var2str($this->saldo).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
       }
@@ -160,7 +164,8 @@ class subcuenta extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsubcuenta = '".$this->idsubcuenta."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name."
+         WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
    public function test()
@@ -190,8 +195,8 @@ class subcuenta extends fs_model
    public function all_from_cuenta($idcuenta)
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$idcuenta."'
-         ORDER BY codsubcuenta DESC;");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta DESC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -203,7 +208,7 @@ class subcuenta extends fs_model
    public function search($query)
    {
       $sublist = array();
-      $query = strtolower($query);
+      $query = $this->escape_string( strtolower( trim($query) ) );
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
@@ -217,10 +222,10 @@ class subcuenta extends fs_model
    public function search_by_ejercicio($ejercicio, $query)
    {
       $sublist = array();
-      $query = strtolower($query);
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$ejercicio."'
-         AND (codsubcuenta ~~ '".$query."%' OR lower(descripcion) ~~ '%".$query."%')
-         ORDER BY codcuenta ASC;");
+      $query = $this->escape_string( strtolower( trim($query) ) );
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codejercicio = ".$this->var2str($ejercicio)." AND (codsubcuenta ~~ '".$query."%'
+         OR lower(descripcion) ~~ '%".$query."%') ORDER BY codcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

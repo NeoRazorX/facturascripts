@@ -74,12 +74,15 @@ abstract class fs_model
       }
    }
    
-   protected function new_error_msg($msg)
+   protected function new_error_msg($msg = '')
    {
-      if( !$this->error_msg )
-         $this->error_msg = $msg;
-      else
-         $this->error_msg .= '<br/>' . $msg;
+      if( $msg )
+      {
+         if( !$this->error_msg )
+            $this->error_msg = $msg;
+         else
+            $this->error_msg .= '<br/>' . $msg;
+      }
    }
 
 
@@ -104,6 +107,11 @@ abstract class fs_model
    /// Esta función sirve para eliminar los datos del objeto de la base de datos
    abstract public function delete();
    
+   public function escape_string($s='')
+   {
+      return $this->db->escape_string($s);
+   }
+   
    protected function var2str($v)
    {
       if( is_null($v) )
@@ -116,7 +124,7 @@ abstract class fs_model
             return 'FALSE';
       }
       else
-         return "'".addslashes($v)."'";
+         return "'" . $this->db->escape_string($v) . "'";
    }
    
    protected function bin2str($v)

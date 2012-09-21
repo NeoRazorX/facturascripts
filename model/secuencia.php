@@ -67,7 +67,7 @@ class secuencia extends fs_model
    
    public function get($idsec)
    {
-      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsec = '".$idsec."';");
+      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsec = ".$this->var2str($idsec).";");
       if($sec)
          return new secuencia($sec[0]);
       else
@@ -76,7 +76,8 @@ class secuencia extends fs_model
    
    public function get_by_params($id, $nombre)
    {
-      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."' AND nombre = '".$nombre."';");
+      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id)."
+         AND nombre = ".$this->var2str($nombre).";");
       if($sec)
          return new secuencia($sec[0]);
       else
@@ -114,7 +115,8 @@ class secuencia extends fs_model
       if( is_null($this->idsec) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsec = '".$this->idsec."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE idsec = ".$this->var2str($this->idsec).";");
    }
    
    public function new_idsec()
@@ -145,7 +147,7 @@ class secuencia extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsec = '".$this->idsec."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsec = ".$this->var2str($this->idsec).";");
    }
 }
 
@@ -189,7 +191,7 @@ class secuencia_contabilidad extends fs_model
    public function get_by_params($eje, $nombre)
    {
       $secuencias = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = '".$eje."' AND nombre = '".$nombre."';");
+         WHERE codejercicio = ".$this->var2str($eje)." AND nombre = ".$this->var2str($nombre).";");
       if($secuencias)
          return new secuencia_contabilidad($secuencias[0]);
       else
@@ -201,7 +203,8 @@ class secuencia_contabilidad extends fs_model
       if( is_null($this->idsecuencia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsecuencia = '".$this->idsecuencia."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
    }
    
    public function new_id()
@@ -218,7 +221,7 @@ class secuencia_contabilidad extends fs_model
          $sql = "UPDATE ".$this->table_name." SET codejercicio = ".$this->var2str($this->codejercicio).",
             descripcion = ".$this->var2str($this->descripcion).", nombre = ".$this->var2str($this->nombre).",
             valor = ".$this->var2str($this->valor).", valorout = ".$this->var2str($this->valorout)."
-            WHERE idsecuencia = '".$this->idsecuencia."';";
+            WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";";
       }
       else
       {
@@ -232,7 +235,7 @@ class secuencia_contabilidad extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsecuencia = '".$this->idsecuencia."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
    }
 }
 
@@ -287,7 +290,7 @@ class secuencia_ejercicio extends fs_model
    
    public function get($id)
    {
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -297,7 +300,7 @@ class secuencia_ejercicio extends fs_model
    public function get_by_params($eje, $serie)
    {
       $secs = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = '".$eje."' AND codserie = '".$serie."';");
+         WHERE codejercicio = ".$this->var2str($eje)." AND codserie = ".$this->var2str($serie).";");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -339,7 +342,7 @@ class secuencia_ejercicio extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function new_id()
@@ -374,13 +377,13 @@ class secuencia_ejercicio extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_ejercicio($eje)
    {
       $seclist = array();
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$eje."';");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($eje).";");
       if($secs)
       {
          foreach($secs as $s)

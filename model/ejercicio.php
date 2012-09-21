@@ -106,7 +106,7 @@ class ejercicio extends fs_model
    
    public function get($cod)
    {
-      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$cod."';");
+      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($cod).";");
       if($ejercicio)
          return new ejercicio($ejercicio[0]);
       else
@@ -118,7 +118,8 @@ class ejercicio extends fs_model
       if( is_null($this->codejercicio) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
    }
    
    public function save()
@@ -131,7 +132,7 @@ class ejercicio extends fs_model
             estado = ".$this->var2str($this->estado).", longsubcuenta = ".$this->var2str($this->longsubcuenta).",
             plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
             idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
-            WHERE codejercicio = '".$this->codejercicio."';";
+            WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
       }
       else
       {
@@ -148,7 +149,7 @@ class ejercicio extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codejercicio = '".$this->codejercicio."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
    }
    
    private function clean_cache()

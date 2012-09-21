@@ -57,7 +57,7 @@ class pais extends fs_model
    
    public function get($cod)
    {
-      $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = '".$cod."';");
+      $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = ".$this->var2str($cod).";");
       if($pais)
          return new pais($pais[0]);
       else
@@ -69,23 +69,26 @@ class pais extends fs_model
       if( is_null($this->codpais) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = '".$this->codpais."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
    public function save()
    {
       $this->clean_cache();
       if( $this->exists() )
-         $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."' WHERE codpais = '".$this->codpais."';";
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)."
+            WHERE codpais = ".$this->var2str($this->codpais).";";
       else
-         $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES ('".$this->codpais."','".$this->nombre."');";
+         $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES
+            (".$this->var2str($this->codpais).",".$this->var2str($this->nombre).");";
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpais = '".$this->codpais."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
    private function clean_cache()

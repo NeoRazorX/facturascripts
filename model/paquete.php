@@ -95,11 +95,11 @@ class subpaquete extends fs_model
       return "";
    }
    
-   public function get($id=NULL)
+   public function get($id)
    {
       if( isset($id) )
       {
-         $subpack = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+         $subpack = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
          if($subpack)
             return new subpaquete($subpack[0]);
          else
@@ -124,7 +124,8 @@ class subpaquete extends fs_model
    public function all_from_paquete($ref)
    {
       $subpaqlist = array();
-      $subpaquetes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referenciapaq = '".$ref."' ORDER BY referencia ASC;");
+      $subpaquetes = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE referenciapaq = ".$this->var2str($ref)." ORDER BY referencia ASC;");
       if($subpaquetes)
       {
          foreach($subpaquetes as $s)
@@ -138,26 +139,22 @@ class subpaquete extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
    {
       if( $this->exists() )
-      {
          return TRUE;
-      }
       else
-      {
          return $this->db->exec("INSERT INTO ".$this->table_name." (referenciapaq,grupo,referencia)
             VALUES (".$this->var2str($this->referenciapaq).",".$this->var2str($this->grupo).",
             ".$this->var2str($this->referencia).");");
-      }
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
 }
 
@@ -206,11 +203,11 @@ class paquete extends fs_model
          return "index.php?page=general_paquetes";
    }
 
-   public function get($ref=NULL)
+   public function get($ref)
    {
       if( isset($ref) )
       {
-         $pack = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."';");
+         $pack = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
          if($pack)
             return new paquete($pack[0]);
          else
@@ -268,7 +265,8 @@ class paquete extends fs_model
       if( is_null($this->referencia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    public function save()
@@ -277,13 +275,15 @@ class paquete extends fs_model
       if( $this->exists() )
          return TRUE;
       else
-         return $this->db->exec("INSERT INTO ".$this->table_name." (referencia) VALUES ('".$this->referencia."');");
+         return $this->db->exec("INSERT INTO ".$this->table_name." (referencia)
+            VALUES (".$this->var2str($this->referencia).");");
    }
    
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = '".$this->referencia."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name."
+         WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    private function clean_cache()

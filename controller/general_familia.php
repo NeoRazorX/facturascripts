@@ -69,7 +69,7 @@ class general_familia extends fs_controller
          if( isset($_POST['multiplicar']) )
          {
             $art = new articulo();
-            $art->multiplicar_precios($this->familia->codfamilia, floatval($_POST['multiplicar']));
+            $art->multiplicar_precios($this->familia->codfamilia, $_POST['multiplicar']);
          }
          else if( isset($_GET['download']) )
             $this->download();

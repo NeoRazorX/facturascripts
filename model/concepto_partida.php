@@ -29,7 +29,7 @@ class concepto_partida extends fs_model
    
    public function get($id)
    {
-      $concepto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idconceptopar = '".$id."';");
+      $concepto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idconceptopar = ".$this->var2str($id).";");
       if($concepto)
          return new concepto_partida($concepto[0]);
       else
@@ -41,7 +41,8 @@ class concepto_partida extends fs_model
       if( is_null($this->idconceptopar) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idconceptopar = '".$this->idconceptopar."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE idconceptopar = ".$this->var2str($this->idconceptopar).";");
    }
    
    public function save()
@@ -59,7 +60,7 @@ class concepto_partida extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idconceptopar = '".$this->idconceptopar."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idconceptopar = ".$this->var2str($this->idconceptopar).";");
    }
    
    public function all()

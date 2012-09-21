@@ -104,7 +104,7 @@ class agente extends fs_model
    
    public function get($cod)
    {
-      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$cod."';");
+      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente=".$this->var2str($cod).";");
       if($a)
          return new agente($a[0]);
       else
@@ -116,7 +116,7 @@ class agente extends fs_model
       if( is_null($this->codagente) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente='".$this->codagente."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente=".$this->var2str($this->codagente).";");
    }
    
    public function save()
@@ -124,14 +124,16 @@ class agente extends fs_model
       $this->clean_cache();
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = '".$this->nombre."', apellidos = '".$this->apellidos.
-                "', dnicif = '".$this->dnicif."', telefono = '".$this->telefono."', email = '".$this->email."'
-                 WHERE codagente = '".$this->codagente."';";
+         $sql = "UPDATE ".$this->table_name." SET nombre = " . $this->var2str($this->nombre) . ",
+            apellidos = " . $this->var2str($this->apellidos) . ", dnicif = " . $this->var2str($this->dnicif) . ",
+            telefono = " . $this->var2str($this->telefono) . ", email = " . $this->var2str($this->email) . "
+            WHERE codagente = " . $this->var2str($this->codagente) . ";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email) VALUES
-                 ('".$this->codagente."','".$this->nombre."','".$this->apellidos."','".$this->dnicif."','".$this->telefono."','".$this->email."');";
+            (".$this->var2str($this->codagente).",".$this->var2str($this->nombre).",".$this->var2str($this->apellidos).",
+            ".$this->var2str($this->dnicif).",".$this->var2str($this->telefono).",".$this->var2str($this->email).");";
       }
       return $this->db->exec($sql);
    }
@@ -139,7 +141,7 @@ class agente extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = '".$this->codagente."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
    
    private function clean_cache()

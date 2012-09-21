@@ -149,7 +149,8 @@ class partida extends fs_model
       if( is_null($this->idpartida) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpartida = '".$this->idpartida."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE idpartida = ".$this->var2str($this->idpartida).";");
    }
    
    public function save()
@@ -196,7 +197,7 @@ class partida extends fs_model
    
    public function delete()
    {
-      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = '".$this->idpartida."';") )
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = ".$this->var2str($this->idpartida).";") )
       {
          $subc = $this->get_subcuenta();
          $subc->save(); /// guardamos la subcuenta para actualizar su saldo
@@ -231,7 +232,7 @@ class partida extends fs_model
    public function all_from_subcuenta($id, $offset=0)
    {
       $plist = array();
-      $partidas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = '".$id."'
+      $partidas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id)."
          ORDER BY idpartida DESC", FS_ITEM_LIMIT, $offset);
       if($partidas)
       {
@@ -244,7 +245,8 @@ class partida extends fs_model
    public function all_from_asiento($id)
    {
       $plist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$id."' ORDER BY codsubcuenta ASC;");
+      $partidas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idasiento = ".$this->var2str($id)." ORDER BY codsubcuenta ASC;");
       if($partidas)
       {
          foreach($partidas as $p)
@@ -261,7 +263,7 @@ class partida extends fs_model
           'saldo' => 0
       );
       $resultados = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber
-         FROM ".$this->table_name." WHERE idsubcuenta = '".$id."';");
+         FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
       if( $resultados )
       {
          $totales['debe'] = floatval( $resultados[0]['debe'] );

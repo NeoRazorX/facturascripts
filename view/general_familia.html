@@ -38,6 +38,7 @@
    </form>
 </div>
 
+{if condition="$fsc->pag_importar"}
 <div class="popup" id="popup_importar_familia">
    <h1>Importar familia:</h1>
    <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
@@ -77,6 +78,7 @@
       </table>
    </form>
 </div>
+{/if}
 
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
@@ -118,7 +120,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="2"></td>
+         <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

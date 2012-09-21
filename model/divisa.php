@@ -56,7 +56,7 @@ class divisa extends fs_model
    protected function install()
    {
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,bandera,fecha,codiso)
-         VALUES ('EUR','EUROS','1','','".Date('j-n-Y')."','978');";
+         VALUES ('EUR','EUROS','1','','".Date('d-m-Y')."','978');";
    }
    
    public function is_default()
@@ -79,7 +79,7 @@ class divisa extends fs_model
    
    public function get($cod)
    {
-      $divisa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = '".$cod."';");
+      $divisa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($cod).";");
       if($divisa)
          return new divisa($divisa[0]);
    }
@@ -89,7 +89,7 @@ class divisa extends fs_model
       if( is_null($this->coddivisa) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = '".$this->coddivisa."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    public function save()
@@ -100,7 +100,7 @@ class divisa extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = '".$this->coddivisa."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    private function clean_cache()

@@ -66,7 +66,8 @@ class subcuenta_proveedor extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -76,14 +77,14 @@ class subcuenta_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_proveedor($codprov)
    {
       $sclist = array();
-      $subcs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$codprov."'
-         ORDER BY codejercicio DESC;");
+      $subcs = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codproveedor = ".$this->var2str($codprov)." ORDER BY codejercicio DESC;");
       if($subcs)
       {
          foreach($subcs as $s)
@@ -144,7 +145,7 @@ class direccion_proveedor extends fs_model
    
    public function get($id)
    {
-      $dir = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+      $dir = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if($dir)
          return new direccion_proveedor($dir[0]);
       else
@@ -156,7 +157,7 @@ class direccion_proveedor extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -168,7 +169,7 @@ class direccion_proveedor extends fs_model
             provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
             codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
             direccionppal = ".$this->var2str($this->direccionppal).", descripcion = ".$this->var2str($this->descripcion)."
-            WHERE id = '".$this->id."';";
+            WHERE id = ".$this->var2str($this->id).";";
       }
       else
       {
@@ -183,13 +184,14 @@ class direccion_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_proveedor($codprov)
    {
       $dirlist = array();
-      $dirs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$codprov."';");
+      $dirs = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codproveedor = ".$this->var2str($codprov).";");
       if($dirs)
       {
          foreach($dirs as $d)
@@ -297,7 +299,7 @@ class proveedor extends fs_model
    
    public function get($cod)
    {
-      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$cod."';");
+      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($cod).";");
       if($prov)
          return new proveedor($prov[0]);
       else
@@ -351,7 +353,8 @@ class proveedor extends fs_model
       if( is_null($this->codproveedor) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = '".$this->codproveedor."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
    }
    
    public function save()
@@ -365,12 +368,13 @@ class proveedor extends fs_model
             fax = ".$this->var2str($this->fax).", email = ".$this->var2str($this->email).",
             web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
             coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
-            observaciones = ".$this->var2str($this->observaciones)." WHERE codproveedor = '".$this->codproveedor."';";
+            observaciones = ".$this->var2str($this->observaciones)."
+            WHERE codproveedor = ".$this->var2str($this->codproveedor).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codproveedor,nombre,nombrecomercial,cifnif,telefono1,telefono2,
-            fax,email,web,codserie,coddivisa,codpago,observaciones) VALUES ('".$this->codproveedor."',
+            fax,email,web,codserie,coddivisa,codpago,observaciones) VALUES (".$this->var2str($this->codproveedor).",
             ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
             ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",".$this->var2str($this->fax).",
             ".$this->var2str($this->email).",".$this->var2str($this->web).",".$this->var2str($this->codserie).",
@@ -382,7 +386,8 @@ class proveedor extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codproveedor = '".$this->codproveedor."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name."
+         WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
    }
    
    private function clean_cache()
@@ -393,8 +398,8 @@ class proveedor extends fs_model
    public function all($offset=0)
    {
       $provelist = array();
-      $proveedores = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC",
-                                             FS_ITEM_LIMIT, $offset);
+      $proveedores = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
       if($proveedores)
       {
          foreach($proveedores as $p)
@@ -422,7 +427,7 @@ class proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $prolist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

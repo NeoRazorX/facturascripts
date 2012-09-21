@@ -78,11 +78,8 @@ class admin_pages extends fs_controller
       $pages = array();
       foreach($this->page->all() as $p)
       {
-         if( !in_array($p, $pages) )
-         {
-            $p->enabled = TRUE;
-            $pages[] = $p;
-         }
+         $p->enabled = TRUE;
+         $pages[] = $p;
       }
       foreach(scandir('controller') as $f)
       {

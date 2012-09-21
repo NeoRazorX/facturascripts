@@ -123,7 +123,7 @@ class impuesto extends fs_model
    
    public function get($cod)
    {
-      $impuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$cod."';");
+      $impuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = ".$this->var2str($cod).";");
       if($impuesto)
          return new impuesto($impuesto[0]);
       else
@@ -135,7 +135,8 @@ class impuesto extends fs_model
       if( is_null($this->codimpuesto) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";");
    }
    
    public function save()
@@ -154,7 +155,7 @@ class impuesto extends fs_model
             idsubcuentasop = ".$this->var2str($this->idsubcuentasop).", idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
             idsubcuentaivadedadue = ".$this->var2str($this->idsubcuentaivadedadue).", descripcion = ".$this->var2str($this->descripcion).",
             iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
-            WHERE codimpuesto = '".$this->codimpuesto."';";
+            WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";";
       }
       else
       {
@@ -177,7 +178,7 @@ class impuesto extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codimpuesto = '".$this->codimpuesto."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";");
    }
    
    private function clean_cache()

@@ -114,7 +114,7 @@ class asiento extends fs_model
 
    public function get($id)
    {
-      $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$id."';");
+      $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($id).";");
       if($asiento)
          return new asiento($asiento[0]);
       else
@@ -132,7 +132,7 @@ class asiento extends fs_model
       if( is_null($this->idasiento) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
    public function new_idasiento()
@@ -179,7 +179,7 @@ class asiento extends fs_model
             fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
             codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).",
             documento = ".$this->var2str($this->documento).", tipodocumento = ".$this->var2str($this->tipodocumento).",
-            importe = ".$this->var2str($this->importe)." WHERE idasiento = '".$this->idasiento."';";
+            importe = ".$this->var2str($this->importe)." WHERE idasiento = ".$this->var2str($this->idasiento).";";
       }
       else
       {
@@ -223,7 +223,7 @@ class asiento extends fs_model
       /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
       foreach($this->get_partidas() as $p)
          $p->delete();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = '".$this->idasiento."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
    public function test()
@@ -262,7 +262,7 @@ class asiento extends fs_model
    public function search($query, $offset=0)
    {
       $alist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

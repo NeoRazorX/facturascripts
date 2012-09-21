@@ -105,14 +105,14 @@ class caja extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function get($id)
    {
       if( isset($id) )
       {
-         $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+         $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
          if($caja)
             return new caja($caja[0]);
          else
@@ -124,7 +124,7 @@ class caja extends fs_model
    
    public function get_last_from_this_server()
    {
-      $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_id = '".FS_ID."' AND f_fin IS NULL;");
+      $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
       if($caja)
          return new caja($caja[0]);
       else
@@ -145,7 +145,7 @@ class caja extends fs_model
          $sql = "UPDATE ".$this->table_name." SET fs_id = ".$this->var2str($this->fs_id).", codagente = ".$this->var2str($this->codagente).",
             f_inicio = ".$this->var2str($this->fecha_inicial).", d_inicio = ".$this->var2str($this->dinero_inicial).",
             f_fin = ".$this->var2str($this->fecha_fin).", d_fin = ".$this->var2str($this->dinero_fin).",
-            tickets = ".$this->var2str($this->tickets)." WHERE id = '".$this->id."';";
+            tickets = ".$this->var2str($this->tickets)." WHERE id = ".$this->var2str($this->id).";";
       }
       else
       {
@@ -160,7 +160,7 @@ class caja extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all($offset=0, $limit=FS_ITEM_LIMIT)

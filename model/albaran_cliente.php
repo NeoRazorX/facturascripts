@@ -124,7 +124,7 @@ class linea_albaran_cliente extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
@@ -163,7 +163,7 @@ class linea_albaran_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = '".$this->idlinea."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function test()
@@ -191,7 +191,7 @@ class linea_albaran_cliente extends fs_model
    public function all_from_albaran($id)
    {
       $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -203,8 +203,8 @@ class linea_albaran_cliente extends fs_model
    public function all_from_articulo($ref, $offset=0)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = '".$ref."' ORDER BY idalbaran DESC",
-              FS_ITEM_LIMIT, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -227,7 +227,7 @@ class linea_albaran_cliente extends fs_model
       $toplist = array();
       $articulo = new articulo();
       $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas FROM ".$this->table_name."
-                                         GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
+         GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
       if($lineas)
       {
          foreach($lineas as $l)
@@ -451,7 +451,7 @@ class albaran_cliente extends fs_model
    
    public function get($id)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$id."';");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($albaran)
          return new albaran_cliente($albaran[0]);
       else
@@ -460,7 +460,7 @@ class albaran_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = '".strtoupper($cod)."';");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
       if($albaran)
          return new albaran_cliente($albaran[0]);
       else
@@ -484,7 +484,7 @@ class albaran_cliente extends fs_model
       if( is_null($this->idalbaran) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function new_idalbaran()
@@ -546,7 +546,7 @@ class albaran_cliente extends fs_model
             tasaconv = ".$this->var2str($this->tasaconv).", recfinanciero = ".$this->var2str($this->recfinanciero).",
             totalrecargo = ".$this->var2str($this->totalrecargo).", observaciones = ".$this->var2str($this->observaciones).",
             ptefactura = ".$this->var2str($this->ptefactura)."
-            WHERE idalbaran = '".$this->idalbaran."';";
+            WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
       }
       else
       {
@@ -555,7 +555,7 @@ class albaran_cliente extends fs_model
          $sql = "INSERT INTO ".$this->table_name." (idalbaran,idfactura,codigo,codagente,codserie,codejercicio,codcliente,
             codpago,coddivisa,codalmacen,codpais,coddir,codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,provincia,apartado,
             fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,
-            ptefactura) VALUES (".$this->idalbaran.",".$this->var2str($this->idfactura).",".$this->var2str($this->codigo).",
+            ptefactura) VALUES (".  $this->var2str($this->idalbaran).",".$this->var2str($this->idfactura).",".$this->var2str($this->codigo).",
             ".$this->var2str($this->codagente).",".$this->var2str($this->codserie).",".$this->var2str($this->codejercicio).",
             ".$this->var2str($this->codcliente).",".$this->var2str($this->codpago).",".$this->var2str($this->coddivisa).",
             ".$this->var2str($this->codalmacen).",".$this->var2str($this->codpais).",".$this->var2str($this->coddir).",
@@ -580,7 +580,7 @@ class albaran_cliente extends fs_model
          if($factura)
             $factura->delete();
       }
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = '".$this->idalbaran."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function test()
@@ -657,8 +657,7 @@ class albaran_cliente extends fs_model
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC",
-                                           FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -692,7 +691,7 @@ class albaran_cliente extends fs_model
    public function all_from_cliente($codcliente, $offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."'
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente)."
          ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
@@ -705,7 +704,7 @@ class albaran_cliente extends fs_model
    public function search($query, $offset=0)
    {
       $alblist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
@@ -731,7 +730,7 @@ class albaran_cliente extends fs_model
    public function search_from_cliente($codcliente, $desde, $hasta)
    {
       $albalist = array();
-      $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$codcliente."'
+      $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente)."
          AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta)."
          ORDER BY fecha DESC, codigo DESC");
       if($albaranes)

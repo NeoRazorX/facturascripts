@@ -53,7 +53,7 @@ class cuenta extends fs_model
    
    public function get($id)
    {
-      $cuenta = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$id."';");
+      $cuenta = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($id).";");
       if($cuenta)
          return new cuenta($cuenta[0]);
       else
@@ -77,17 +77,18 @@ class cuenta extends fs_model
       if( is_null($this->idcuenta) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = '".$this->idcuenta."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
    }
    
    public function save()
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codcuenta = ".$this->var2str($this->codcuenta).", codejercicio = ".$this->var2str($this->codejercicio).",
+         $sql = "UPDATE ".$this->table_name." SET codcuenta = ".$this->var2str($this->codcuenta).",
+            codejercicio = ".$this->var2str($this->codejercicio).",
             idepigrafe = ".$this->var2str($this->idepigrafe).", codepigrafe = ".$this->var2str($this->codepigrafe).",
             descripcion = ".$this->var2str($this->descripcion).", codbalance = ".$this->var2str($this->codbalance).",
-            idcuentaesp = ".$this->var2str($this->idcuentaesp)." WHERE idcuenta = '".$this->idcuenta."';";
+            idcuentaesp = ".$this->var2str($this->idcuentaesp)." WHERE idcuenta = ".$this->var2str($this->idcuenta).";";
       }
       else
       {
@@ -101,7 +102,7 @@ class cuenta extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idcuenta = '".$this->idcuenta."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
    }
    
    public function all($offset=0)
@@ -120,7 +121,7 @@ class cuenta extends fs_model
    public function all_from_ejercicio($codejercicio, $offset=0)
    {
       $cuenlist = array();
-      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codejercicio = '".$codejercicio."'
+      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($codejercicio)."
          ORDER BY codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)
       {
@@ -133,7 +134,7 @@ class cuenta extends fs_model
    public function search($query, $offset=0)
    {
       $cuenlist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)

@@ -66,7 +66,7 @@ class subcuenta_cliente extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -84,14 +84,14 @@ class subcuenta_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_cliente($cod)
    {
       $sublist = array();
-      $subcs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$cod."'
-                                  ORDER BY codejercicio DESC;");
+      $subcs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod)."
+         ORDER BY codejercicio DESC;");
       if($subcs)
       {
          foreach($subcs as $s)
@@ -155,7 +155,7 @@ class direccion_cliente extends fs_model
    
    public function get($id)
    {
-      $dir = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$id."';");
+      $dir = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if($dir)
          return new direccion_cliente($dir[0]);
       else
@@ -167,7 +167,7 @@ class direccion_cliente extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = '".$this->id."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
@@ -179,7 +179,7 @@ class direccion_cliente extends fs_model
             provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
             codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
             domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
-            descripcion = ".$this->var2str($this->descripcion)." WHERE id = '".$this->id."';";
+            descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
       }
       else
       {
@@ -194,13 +194,13 @@ class direccion_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = '".$this->id."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_cliente($cod)
    {
       $dirlist = array();
-      $dirs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$cod."';");
+      $dirs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod).";");
       if($dirs)
       {
          foreach($dirs as $d)
@@ -314,7 +314,7 @@ class cliente extends fs_model
    
    public function get($cod)
    {
-      $cli = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$cod."';");
+      $cli = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod).";");
       if($cli)
          return new cliente($cli[0]);
       else
@@ -359,7 +359,7 @@ class cliente extends fs_model
       if( is_null($this->codcliente) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = '".$this->codcliente."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($this->codcliente).";");
    }
    
    public function get_new_codigo()
@@ -381,7 +381,7 @@ class cliente extends fs_model
             codserie = ".$this->var2str($this->codserie).", coddivisa = ".$this->var2str($this->coddivisa).",
             codpago = ".$this->var2str($this->codpago).", debaja = ".$this->var2str($this->debaja).",
             fechabaja = ".$this->var2str($this->fechabaja).", observaciones = ".$this->var2str($this->observaciones)."
-            WHERE codcliente = '".$this->codcliente."';";
+            WHERE codcliente = ".$this->var2str($this->codcliente).";";
       }
       else
       {
@@ -397,7 +397,7 @@ class cliente extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcliente = '".$this->codcliente."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($this->codcliente).";");
    }
    
    private function clean_cache()
@@ -408,8 +408,7 @@ class cliente extends fs_model
    public function all($offset=0)
    {
       $clientlist = array();
-      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC",
-                                          FS_ITEM_LIMIT, $offset);
+      $clientes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC", FS_ITEM_LIMIT, $offset);
       if($clientes)
       {
          foreach($clientes as $c)
@@ -437,7 +436,7 @@ class cliente extends fs_model
    public function search($query, $offset=0)
    {
       $clilist = array();
-      $query = strtolower( trim($query) );
+      $query = $this->escape_string( strtolower( trim($query) ) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

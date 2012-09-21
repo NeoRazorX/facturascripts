@@ -87,12 +87,13 @@ class fs_user extends fs_model
    protected function install()
    {
       $agente = new agente();
-      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin) VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
+      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
+         VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
    }
    
    public function get($n = '')
    {
-      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = '".$n."';");
+      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
       if($u)
          return new fs_user($u[0]);
       else
@@ -199,7 +200,7 @@ class fs_user extends fs_model
       if( is_null($this->nick) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    public function save()
@@ -207,18 +208,18 @@ class fs_user extends fs_model
       $this->clean_cache();
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET password = '".$this->password."',
-                 log_key = '".$this->log_key."', codagente = ".$this->var2str($this->codagente).",
-                 admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
-                 last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
-                 last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = '".$this->nick."';";
+         $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password).",
+            log_key = ".$this->var2str($this->log_key).", codagente = ".$this->var2str($this->codagente).",
+            admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
+            last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
+            last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = ".$this->var2str($this->nick).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,last_browser)
-                 VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
-                 ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
-                 ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
+            VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
+            ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
+            ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
       }
       return $this->db->exec($sql);
    }
@@ -226,7 +227,7 @@ class fs_user extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = '".$this->nick."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    private function clean_cache()

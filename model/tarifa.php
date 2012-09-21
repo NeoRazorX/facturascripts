@@ -49,7 +49,7 @@ class tarifa extends fs_model
    
    public function get($cod)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = '".$cod."';");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = ".$this->var2str($cod).";");
       if($tarifa)
          return new tarifa( $tarifa[0] );
       else
@@ -70,7 +70,8 @@ class tarifa extends fs_model
       if( is_null($this->codtarifa) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = '".$this->codtarifa."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
    }
    
    public function save()
@@ -85,7 +86,8 @@ class tarifa extends fs_model
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual) VALUES
-            (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",".$this->var2str($this->incporcentual).");";
+            (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
+            ".$this->var2str($this->incporcentual).");";
       }
       return $this->db->exec($sql);
    }
@@ -93,7 +95,8 @@ class tarifa extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codtarifa = '".$this->codtarifa."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name."
+         WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
    }
    
    private function clean_cache()

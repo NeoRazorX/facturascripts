@@ -90,7 +90,7 @@ class familia extends fs_model
    
    public function get($cod)
    {
-      $f = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$cod."';");
+      $f = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($cod).";");
       if($f)
          return new familia($f[0]);
       else
@@ -108,23 +108,27 @@ class familia extends fs_model
       if( is_null($this->codfamilia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codfamilia = '".$this->codfamilia."';");
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
    }
    
    public function save()
    {
       $this->clean_cache();
       if( $this->exists() )
-         $sql = "UPDATE ".$this->table_name." SET descripcion = '".$this->descripcion."' WHERE codfamilia = '".$this->codfamilia."';";
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion)."
+            WHERE codfamilia = ".$this->var2str($this->codfamilia).";";
       else
-         $sql = "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES ('".$this->codfamilia."','".$this->descripcion."');";
+         $sql = "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES
+            (".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).");";
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codfamilia = '".$this->codfamilia."';");
+      return $this->db->exec("DELETE FROM ".$this->table_name."
+         WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
    }
    
    private function clean_cache()
