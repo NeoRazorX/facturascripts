@@ -1,5 +1,5 @@
    {if condition="FS_DB_HISTORY"}
-      <div class="rounded">
+      <div id="sql_history">
          <h1>Consultas SQL:</h1>
          <ol>
          {loop="$fsc->get_db_history()"}
@@ -29,8 +29,7 @@
             </td>
             <td class="right">
                <img src="img/bug.png" alt="bug"/>
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
-               <a target="_blank" href='http://code.google.com/p/facturascripts/'>Web oficial</a>
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a>
             </td>
          </tr>
       </table>

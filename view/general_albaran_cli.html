@@ -136,6 +136,7 @@
          <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>"+iva+" %</td>\n\
          <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
             "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+      $("#popup_message").hide();
       $('div.popup').each(function() {
          $(this).hide();
       });
@@ -152,6 +153,7 @@
             top: ($(window).height() - $("#popup_eliminar").outerHeight())/2
          });
          $("#popup_eliminar").show();
+         $("#popup_message").show();
       });
       $("#b_new_line").click(function(event) {
          event.preventDefault();
@@ -161,6 +163,7 @@
             top: 40
          });
          $("#popup_new_line").show();
+         $("#popup_message").show();
          document.f_buscar_articulos.query.focus();
          document.f_buscar_articulos.query.value = '';
          $("#search_results").html('');

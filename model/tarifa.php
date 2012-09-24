@@ -44,6 +44,7 @@ class tarifa extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return '';
    }
    

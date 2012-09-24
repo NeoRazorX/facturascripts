@@ -42,7 +42,7 @@ class fs_controller
    public $query;
    public $buttons;
    private $empresa_name;
-
+   
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
       $tiempo = explode(' ', microtime());
@@ -134,7 +134,12 @@ class fs_controller
             $this->message .= '<br/>' . $msg;
       }
    }
-
+   
+   public function url()
+   {
+      return $this->page->url();
+   }
+   
    public function log_in()
    {
       if( isset($_POST['user']) AND isset($_POST['password']) )
@@ -216,6 +221,11 @@ class fs_controller
    public function transactions()
    {
       return $this->db->get_transactions();
+   }
+   
+   public function get_db_history()
+   {
+      return $this->db->get_history();
    }
    
    public function get_empresa_name()
@@ -312,12 +322,12 @@ class fs_controller
             if($page)
                Header('location: index.php?page=' . $_COOKIE['default_page']);
             else if(count($this->menu) > 0)
-               Header('location: index.php?page=' . $this->menu[0]->name);
+               Header('location: index.php?page=' . $this->menu[0]->name . '&show_dpa=TRUE');
             else
                Header('location: index.php?page=admin_pages');
          }
          else if(count($this->menu) > 0)
-            Header('location: index.php?page=' . $this->menu[0]->name);
+            Header('location: index.php?page=' . $this->menu[0]->name . '&show_dpa=TRUE');
          else
             Header('location: index.php?page=admin_pages');
       }
@@ -327,7 +337,7 @@ class fs_controller
    {
       if($_GET['default_page'] == 'TRUE')
       {
-         setcookie('default_page', $this->page->name, time()+315360000);
+         setcookie('default_page', $this->page->name, time()+FS_COOKIES_EXPIRE);
          $this->default_page = TRUE;
       }
       else
@@ -337,6 +347,11 @@ class fs_controller
       }
    }
    
+   public function show_default_page_advice()
+   {
+      return isset($_GET['show_dpa']);
+   }
+   
    public function set_css_file()
    {
       if( isset($_GET['css_file']) )
@@ -344,7 +359,7 @@ class fs_controller
          if( file_exists('view/css/'.$_GET['css_file']) )
          {
             $this->css_file = $_GET['css_file'];
-            setcookie('css_file', $_GET['css_file'], time()+315360000);
+            setcookie('css_file', $_GET['css_file'], time()+FS_COOKIES_EXPIRE);
          }
          else
          {
@@ -360,13 +375,13 @@ class fs_controller
          {
             $this->new_error_msg("Archivo CSS no encontrado.");
             $this->css_file = 'base.css';
-            setcookie('css_file', $this->css_file, time()+315360000);
+            setcookie('css_file', $this->css_file, time()+FS_COOKIES_EXPIRE);
          }
       }
       else
          $this->css_file = 'base.css';
    }
-
+   
    public function is_admin_page()
    {
       return $this->admin_page;
@@ -383,16 +398,6 @@ class fs_controller
       }
       else
          return FALSE;;
-   }
-   
-   public function url()
-   {
-      return $this->page->url();
-   }
-   
-   public function get_db_history()
-   {
-      return $this->db->get_history();
    }
 }
 

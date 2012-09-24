@@ -47,6 +47,7 @@ class pais extends fs_model
 
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');";
    }
    

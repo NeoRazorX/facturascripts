@@ -91,6 +91,7 @@ class impuesto extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA10','IVA 10%','10','0');".
            "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA21','IVA 21%','21','0');";
    }

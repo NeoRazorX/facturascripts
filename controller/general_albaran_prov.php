@@ -173,8 +173,15 @@ class general_albaran_prov extends fs_controller
    private function generar_asiento($factura)
    {
       $empresa = new empresa();
+      $proveedor = new proveedor();
+      $proveedor = $proveedor->get($factura->codproveedor);
+      $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
+      
       if( !$empresa->contintegrada )
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+      else if( !$subcuenta_prov )
+         $this->new_message("El proveedor no tiene asociada una subcuenta, y por tanto no se generará
+            un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
       else
       {
          $asiento = new asiento();
@@ -189,9 +196,6 @@ class general_albaran_prov extends fs_controller
          {
             $asiento_correcto = TRUE;
             $subcuenta = new subcuenta();
-            $proveedor = new proveedor();
-            $proveedor = $proveedor->get($factura->codproveedor);
-            $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
             $partida0 = new partida();
             $partida0->idasiento = $asiento->idasiento;
             $partida0->concepto = $asiento->concepto;

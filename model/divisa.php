@@ -55,6 +55,7 @@ class divisa extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,bandera,fecha,codiso)
          VALUES ('EUR','EUROS','1','','".Date('d-m-Y')."','978');";
    }

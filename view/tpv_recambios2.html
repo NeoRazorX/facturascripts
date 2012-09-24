@@ -86,6 +86,7 @@
                <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
                <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
                   "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+         $("#popup_message").hide();
          $('div.popup').each(function() {
             $(this).hide();
          });
@@ -108,6 +109,7 @@
                top: 40
             });
             $("#popup_new_line").show();
+            $("#popup_message").show();
             document.f_search_recambios.query.focus();
             document.f_search_recambios.query.value = '';
             $("#search_results").html('');
@@ -153,6 +155,7 @@
                top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
             });
             $("#popup_tpv_opciones").show();
+            $("#popup_message").show();
          });
       });
    </script>

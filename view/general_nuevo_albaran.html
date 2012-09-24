@@ -119,6 +119,7 @@
                <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
                <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
                   "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+         $("#popup_message").hide();
          $('div.popup').each(function() {
             $(this).hide();
          });
@@ -134,6 +135,7 @@
                top: 40
             });
             $("#popup_new_line").show();
+            $("#popup_message").show();
             document.f_buscar_articulos.query.focus();
             document.f_buscar_articulos.query.value = '';
             $("#search_results").html('');
@@ -182,6 +184,7 @@
             $("#tr_clientes").hide();
             $("#tr_proveedores").show();
             $("#popup_tpv_opciones").show();
+            $("#popup_message").show();
          });
          $("#b_nuevo_albaran_cliente").click(function() {
             document.f_new_albaran.tipoalbaran.value = 'cliente';
@@ -193,6 +196,7 @@
             $("#tr_proveedores").hide();
             $("#tr_clientes").show();
             $("#popup_tpv_opciones").show();
+            $("#popup_message").show();
          });
       });
    </script>

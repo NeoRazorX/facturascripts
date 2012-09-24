@@ -52,6 +52,7 @@ class serie extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
             VALUES ('A','SERIE A',FALSE,'0',NULL);";
    }

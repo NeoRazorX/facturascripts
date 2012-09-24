@@ -16,123 +16,66 @@ a {
    color: #2F33AB;
 }
 
-input[type='submit'], input[type='button'] {
-   display: inline-block;
-   background-color: #55BA42;
-   padding-bottom: 0px;
-   border: 1px solid #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
-   text-transform: capitalize;
-   font-size: 16px;
-   font-variant: small-caps;
-   font-weight: bold;
+div#login_header {
+   margin-top: 0px;
+   margin-left: 6px;
+   margin-right: 6px;
+   margin-bottom: 10px;
+   padding: 5px;
    color: white;
+   font-size: 16px;
 }
 
-input[type='submit']:hover, input[type='button']:hover {
-   background-color: #333333;
-   cursor: pointer;
+a#fs_logo {
+   margin-right: 20px;
+   color: white;
+   font-family: 'Oleo Script';
+   font-size: 30px;
+   font-weight: bold;
+   text-transform: capitalize;
+   text-decoration: none;
+   vertical-align: middle;
 }
 
-input[type='text'], input[type='password'] {
-   border: 1px solid #333333;
+div#login_header input[type='text'], div#login_header input[type='password'],
+div#login_header select {
+   padding: 2px;
 }
 
-div#login_sql {
+div#sql_history {
    margin: 5px;
    padding: 5px;
    border: 1px dashed silver;
 }
 
-div#login_sql h1 {
+div#sql_history h1 {
    margin: 5px;
    font-size: 20px;
 }
 
-div#login_window {
-   display: table;
-   position: fixed;
-   top: 50px;
-   left: 50px;
-   padding: 5px;
-   background-color: white;
-   border: 5px solid #999999;
-   border-top-left-radius: 5px 5px;
-   border-top-right-radius: 5px 5px;
-   border-bottom-left-radius: 5px 5px;
-   border-bottom-right-radius: 5px 5px;
+div.advice, div.message, div.error {
+   margin: 10px;
+   padding: 10px;
+   border: 1px solid #333333;
+   text-align: center;
+   font-size: 16px;
    color: black;
 }
 
-div#login_window h1 {
-   margin: 0px;
-   margin-bottom: 10px;
-   padding: 5px;
-   background-color: #3768B8;
-   color: white;
-   text-align: center;
-   text-transform: capitalize;
-   font-family: 'Oleo Script', cursive;
-   font-size: 30px;
+div.advice {
+   background-color: #ACD6F5;
 }
 
-div#login_window table {
-   width: 100%;
-}
-
-div.copyright {
-   position: fixed;
-   bottom: 0px;
-   left: 15px;
-   right: 15px;
-   padding-top: 10px;
-   padding-bottom: 10px;
-   background-color: white;
-   border-top: 5px solid #999999;
-   border-left: 5px solid #999999;
-   border-right: 5px solid #999999;
-   border-top-left-radius: 5px 5px;
-   border-top-right-radius: 5px 5px;
-   color: black;
-   font-size: 14px;
-   text-align: center;
-}
-
-div.copyright table {
-   width: 100%;
-}
-
-div.copyright table td.left {
-   text-align: left;
-   padding-left: 5px;
-}
-
-div.copyright table td.right {
-   text-align: right;
-   padding-right: 5px;
+div.advice img {
+   vertical-align: middle;
 }
 
 div.message {
-   text-align: center;
-   font-size: 16px;
    background-color: #FFFAA6;
-   color: black;
-   border: 1px solid #333333;
-   padding: 10px;
-   margin: 10px;
 }
 
 div.error {
-   text-align: center;
-   font-size: 18px;
    background-color: #E47575;
-   color: black;
-   border: 1px solid #333333;
-   padding: 10px;
-   margin: 10px;
 }
 
 div.header {
@@ -145,30 +88,26 @@ div.header_box {
    display: table-row;
 }
 
-div#header_logo, div#header_folders, div#header_user,
-div#header_buttons, div#header_location, div#header_search {
+div#header_folders, div#header_logo, div#header_user,
+div#header_buttons, div#header_search {
    display: table-cell;
    vertical-align: top;
    padding: 5px;
-}
-
-div#header_logo {
-   font-family: 'Oleo Script', cursive;
-   font-size: 30px;
-   font-weight: bold;
-   text-transform: capitalize;
-   text-align: center;
 }
 
 div#header_folders a.selected {
    text-decoration: underline;
 }
 
+div#header_logo {
+   text-align: center;
+}
+
 div#header_user {
    text-align: right;
 }
 
-div#header_folders a, div#header_user a {
+div#header_folders a, div#header_user a.button {
    display: inline-block;
    margin-left: 5px;
    margin-right: 5px;
@@ -186,15 +125,45 @@ div#header_folders a, div#header_user a {
    color: white;
 }
 
-div#header_user img {
-   vertical-align: middle;
+a#fs_exit {
+   display: inline-block;
+   margin-left: 15px;
+   padding: 2px;
+   background-color: #333333;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   vertical-align: baseline;
+}
+
+a#fs_exit img {
+   vertical-align: bottom;
 }
 
 div#header_buttons {
-   text-align: center;
+   text-align: left;
 }
 
-div#header_buttons a {
+div#header_location {
+   display: inline-block;
+   padding-left: 15px;
+   padding-right: 15px;
+   text-transform: capitalize;
+   font-variant: small-caps;
+}
+
+div#header_location a {
+   color: white;
+   font-weight: bold;
+}
+
+div#header_location img {
+   vertical-align: middle;
+}
+
+div#header_buttons a.button, div#header_buttons a.remove {
    display: inline-block;
    margin-left: 5px;
    margin-right: 5px;
@@ -220,21 +189,6 @@ div#header_buttons a.remove {
 
 div#header_buttons img {
    vertical-align: bottom;
-}
-
-div#header_location {
-   padding-left: 15px;
-   text-transform: capitalize;
-   font-variant: small-caps;
-}
-
-div#header_location a {
-   color: white;
-   font-weight: bold;
-}
-
-div#header_location img {
-   vertical-align: middle;
 }
 
 div#header_search {
@@ -327,7 +281,7 @@ div.main_div div.popup h1 {
    color: white;
    text-align: center;
    text-transform: capitalize;
-   font-family: 'Oleo Script', cursive;
+   font-family: 'Oleo Script';
    font-size: 30px;
 }
 
@@ -347,6 +301,20 @@ div.main_div div.popup div.grupo {
    padding: 5px;
    background-color: #FFFAA6;
    border: 1px dashed #333333;
+}
+
+div.main_div div#popup_message {
+   display: none;
+   position: fixed;
+   bottom: 5px;
+   right: 5px;
+   z-index: 3;
+   padding: 5px;
+   border: 1px solid black;
+   background-color: #FFFAA6;
+   color: black;
+   text-align: center;
+   font-size: 16px;
 }
 
 div.main_div div.rounded {
@@ -426,27 +394,9 @@ div.main_div a.next {
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
-   font-size: 18px;
-   text-transform: capitalize;
-   text-decoration: none;
-}
-
-div.main_div a.remove {
-   display: inline-block;
-   padding: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   background-color: #D74937;
-   color: white;
-   border: 1px solid #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
-   text-transform: capitalize;
-   text-decoration: none;
-   font-variant: small-caps;
    font-size: 16px;
+   text-transform: capitalize;
+   text-decoration: none;
 }
 
 div.main_div div.tpv_total {
@@ -501,8 +451,44 @@ div.footer table td.left {
    text-align: left;
 }
 
-div.copyright img,
 div.footer img {
+   vertical-align: middle;
+}
+
+div.main_div a.remove, input[type='submit'], input[type='button'] {
+   display: inline-block;
+   vertical-align: middle;
+   padding: 1px;
+   padding-left: 5px;
+   padding-right: 5px;
+   border: 1px solid #333333;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   text-transform: capitalize;
+   font-variant: small-caps;
+   font-weight: bold;
+   font-size: 16px;
+   color: white;
+}
+
+input[type='submit'], input[type='button'] {
+   background-color: #55BA42;
+}
+
+div.main_div a.remove {
+   background-color: #D74937;
+   text-decoration: none;
+}
+
+input[type='submit']:hover, input[type='button']:hover {
+   background-color: #333333;
+   cursor: pointer;
+}
+
+input[type='text'], input[type='password'] {
+   border: 1px solid #333333;
    vertical-align: middle;
 }
 

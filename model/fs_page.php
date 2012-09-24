@@ -57,6 +57,7 @@ class fs_page extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
               VALUES ('admin_pages','páginas','admin',NULL,TRUE);";
    }

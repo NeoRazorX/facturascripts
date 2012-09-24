@@ -76,7 +76,7 @@ class tpv_yamyam extends fs_controller
       if( isset($_POST['impresora']) )
       {
          $this->impresora = $_POST['impresora'];
-         setcookie('impresora', $this->impresora, time()+315360000);
+         setcookie('impresora', $this->impresora, time()+FS_COOKIES_EXPIRE);
       }
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
@@ -87,12 +87,12 @@ class tpv_yamyam extends fs_controller
          if($_GET['desactivar_imagenes'] == 'TRUE')
          {
             $this->desactivar_imagenes = TRUE;
-            setcookie('desactivar_imagenes', 'TRUE', time()+315360000);
+            setcookie('desactivar_imagenes', 'TRUE', time()+FS_COOKIES_EXPIRE);
          }
          else if($_GET['desactivar_imagenes'] == 'FALSE')
          {
             $this->desactivar_imagenes = FALSE;
-            setcookie('desactivar_imagenes', '', time()-315360000);
+            setcookie('desactivar_imagenes', '', time()-FS_COOKIES_EXPIRE);
          }
       }
       else if( isset($_COOKIE['desactivar_imagenes']) )

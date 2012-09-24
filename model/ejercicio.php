@@ -67,6 +67,7 @@ class ejercicio extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
             idasientoapertura,idasientopyg,idasientocierre) VALUES ('0001','".Date('Y')."',
             '".Date('01-01-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";

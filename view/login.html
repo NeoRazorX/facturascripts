@@ -4,14 +4,10 @@
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->get_empresa_name()}</title>
    <link rel="shortcut icon" href="img/favicon.ico" />
-   <link href="css/{$fsc->css_file}" rel="stylesheet" type="text/css" />
+   <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
    <script type="text/javascript" src="js/jquery.js"></script>
    <script type="text/javascript">
       $(document).ready(function() {
-         $("#login_window").css({
-            left: ($(window).width() - $('#login_window').outerWidth())/2,
-            top: ($(window).height() - $('#login_window').outerHeight())/2
-         });
          document.f_login.password.focus();
       });
    </script>
@@ -30,34 +26,21 @@
    {/if}
 </head>
 <body>
-   {if condition="$fsc->error_msg"}
-      <div class="error">{$fsc->error_msg}</div>
-   {/if}
-   {if condition="$fsc->message"}
-      <div class="message">{$fsc->message}</div>
-   {/if}
-   {if condition="FS_DB_HISTORY"}
-      <div id="login_sql">
-         <h1>Consultas SQL:</h1>
-         <ol>
-         {loop="$fsc->get_db_history()"}
-            <li>{$value}</li>
-         {/loop}
-         </ol>
-      </div>
-   {/if}
-   <div id="login_window">
-      {if condition="FS_DEMO"}
-         <h1>Demo: {$fsc->get_empresa_name()}</h1>
-         <div class="message">contraseña: demo</div>
-      {else}
-         <h1>{$fsc->get_empresa_name()}</h1>
-      {/if}
+   <div id="login_header">
       <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
-      <table>
+      <table width="100%">
          <tr>
-            <td align="right">Usuario:</td>
             <td>
+               <a id="fs_logo" href="index.php">
+                  {if condition="FS_DEMO"}
+                     FacturaScripts
+                  {else}
+                     {$fsc->get_empresa_name()}
+                  {/if}
+               </a>
+            </td>
+            <td align="right">
+               Usuario:
                <select name="user">
                {loop name="$fsc->user->all()"}
                   {if condition="$value->nick == $nlogin"}
@@ -67,54 +50,123 @@
                   {/if}
                {/loop}
                </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Contraseña:</td>
-            <td><input type="password" name="password" size="8" maxlength="20"/></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input type="submit" value="entrar"/>
+               &nbsp; contraseña:
+               <input type="password" name="password" size="8" maxlength="20"/>
+               &nbsp; <input type="submit" value="entrar"/>
             </td>
          </tr>
       </table>
       </form>
    </div>
-   <div class='copyright'>
+   <div class="main_div">
+      {if condition="$fsc->error_msg"}
+      <div class="error">{$fsc->error_msg}</div>
+      {/if}
+      {if condition="$fsc->message"}
+      <div class="message">{$fsc->message}</div>
+      {/if}
       {if condition="FS_DEMO"}
+      <div class='rounded'>
+         <h1>Demo online:</h1>
+         <a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
+         es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a>.
+         Puedes entrar con cualquier usuario y la contraseña <b>demo</b>.
+         <br/><br/>
+         Enlaces de interés:
+         <ul>
+            <li>
+               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
+               Tutorial de instalación</a>.
+            </li>
+            <li>
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a>.
+            </li>
+         </ul>
+         Puedes seguir el desarrollo de FacturaScripts a través de mi
+         <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
+         o <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>.
+      </div>
+      {else}
+      <div class="rounded">
+         <h1>Información importante:</h1>
+         <ul>
+            <li>
+               <a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
+               es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a>.
+            </li>
+            <li>
+               Si tienes cualquier problema o sugerencia no dudes en
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">reportar un error</a>.
+            </li>
+            <li>
+               Puedes seguir el desarrollo de FacturaScripts a través de mi
+               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
+               o <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>.
+            </li>
+         </ul>
+      </div>
+      {/if}
+      <div class="rounded">
+         <h1>Novedades:</h1>
+         <ul>
+            <li>Nueva pantalla de login.</li>
+            <li>
+               El menú superior ahora se adapta mejor a resoluciones pequeñas.
+               Los menús se cierran si vuelves a pulsar el botón.
+            </li>
+            <li>Añadidos mensajes de ayuda con los popups y la página de inicio
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=13">issue #13</a>).
+            </li>
+            <li>
+               Si al generar una factura a partir de un albarán no se encuentra una subcuenta asociada al
+               cliente/proveedor se genera la factura pero no el asiento, y se informa al usuario de ello
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=8">issue #8</a>).
+            </li>
+            <li>
+               Solucionados los problemas de SQL injection
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=11">issue #11</a>).
+            </li>
+            <li>
+               Solucionado el problema de seguridad con el CSS
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=12">issue #12</a>).
+            </li>
+            <li>Ya se pueden crear tarifas desde general > articulos > tarifas.</li>
+            <li>Se pueden personalizar las tarifas para cada artículo.</li>
+            <li>Ya se pueden agrupar albaranes de cliente para generar una única factura.</li>
+            <li>Importantes mejoras de rencimiendo gracias al uso de Memcache.</li>
+         </ul>
+      </div>
+      {if condition="FS_DB_HISTORY"}
+      <div id="sql_history">
+         <h1>Consultas SQL:</h1>
+         <ol>
+         {loop="$fsc->get_db_history()"}
+            <li>{$value}</li>
+         {/loop}
+         </ol>
+      </div>
+      {/if}
+   </div>
+   <div class="footer">
       <table>
          <tr>
             <td class="left">
-               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
-                  Tutorial de instalación</a> |
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
-               <a target="_blank" href="http://www.neorazorx.com">mi blog</a> |
-               <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>
+               CSS:
+               {if condition="$fsc->css_file=='base.css'"}
+                  <a class="selected" href="{$fsc->url()}&css_file=base.css">normal</a> |
+                  <a href="{$fsc->url()}&css_file=touch.css">touch</a>
+               {else}
+                  <a href="{$fsc->url()}&css_file=base.css">normal</a> |
+                  <a class="selected" href="{$fsc->url()}&css_file=touch.css">touch</a>
+               {/if}
             </td>
             <td class="right">
-               <i><a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
-               es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a></i>
-            </td>
-         </tr>
-      </table>
-      {else}
-      <table>
-         <tr>
-            <td class="left">
                Consultas: {$fsc->selects()} |
                Transacciones: {$fsc->transactions()} |
                Tiempo de ejecución: {$fsc->duration()}
             </td>
-            <td class="right">
-               <img src="img/bug.png" alt="bug"/>
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a> |
-               <i><a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
-               es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a></i>
-            </td>
          </tr>
       </table>
-      {/if}
    </div>
 </body>
 </html>

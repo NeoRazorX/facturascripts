@@ -1,16 +1,11 @@
 @import url("base.css");
 
-input, textarea {
+input[type='text'], input[type='password'], textarea, select {
    padding: 5px;
    font-size: 16px;
 }
 
-select {
-   font-size: 20px;
-}
-
-input.cancel,
-input.comfirm {
+input.cancel, input.comfirm {
    padding: 10px;
    border: 1px outset #333333;
    color: white;
@@ -117,9 +112,7 @@ div.popup ul li img {
    height: 80px;
 }
 
-input#tpv_total2,
-input#tpv_efectivo,
-input#tpv_cambio {
+input#tpv_total2, input#tpv_efectivo, input#tpv_cambio {
    background-color: #333333;
    color: white;
    text-align: right;

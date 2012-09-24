@@ -71,7 +71,7 @@ class tpv_recambios extends fs_controller
          if( isset($_POST['impresora']) )
          {
             $this->impresora = $_POST['impresora'];
-            setcookie('impresora', $this->impresora, time()+315360000);
+            setcookie('impresora', $this->impresora, time()+FS_COOKIES_EXPIRE);
          }
          else if( isset($_COOKIE['impresora']) )
             $this->impresora = $_COOKIE['impresora'];

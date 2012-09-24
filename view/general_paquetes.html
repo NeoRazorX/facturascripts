@@ -31,6 +31,7 @@
                top: ($(window).height() - $("#popup_nuevo_paquete").outerHeight())/2
             });
             $("#popup_nuevo_paquete").show();
+            $("#popup_message").show();
          });
          $("#b_buscar_articulos").click(function(event) {
             event.preventDefault();
@@ -40,6 +41,7 @@
                top: 40
             });
             $("#popup_buscar_articulos").show();
+            $("#popup_message").show();
             document.f_buscar_articulos.query.focus();
             document.f_buscar_articulos.query.value = '';
             $("#search_results").html('');

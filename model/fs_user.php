@@ -75,6 +75,14 @@ class fs_user extends fs_model
       $this->logged_on = FALSE;
       $this->agente = NULL;
    }
+
+   protected function install()
+   {
+      $this->clean_cache();
+      $agente = new agente();
+      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
+         VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
+   }
    
    public function url()
    {
@@ -82,13 +90,6 @@ class fs_user extends fs_model
          return 'index.php?page=admin_users';
       else
          return 'index.php?page=admin_user&snick='.$this->nick;
-   }
-
-   protected function install()
-   {
-      $agente = new agente();
-      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
-         VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
    }
    
    public function get($n = '')

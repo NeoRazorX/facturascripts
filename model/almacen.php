@@ -71,6 +71,7 @@ class almacen extends fs_model
 
    protected function install()
    {
+      $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
                VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
