@@ -4,20 +4,14 @@
    $(document).ready(function() {
       $("#b_nuevo_cliente").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_cliente").css({
-            left: ($(window).width() - $("#popup_nuevo_cliente").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_cliente").outerHeight())/2
-         });
-         $("#popup_nuevo_cliente").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_cliente');
          document.f_nuevo_cliente.nombre.focus();
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_cliente">
-   <h1>Nuevo cliente:</h1>
+   <h1>Nuevo cliente</h1>
    <form name="f_nuevo_cliente" action="{$fsc->url()}" method="post">
       <table>
          <tr>
@@ -95,7 +89,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="4">Ningún cliente encontrado. Pulse el botón <b>Nuevo cliente</b> para crear uno.</td>
+         <td colspan="4">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>

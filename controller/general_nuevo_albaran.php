@@ -77,11 +77,14 @@ class general_nuevo_albaran extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    private function new_search()
    {
+      /// cambiamos la plantilla GTML
+      $this->template = 'ajax/general_nuevo_albaran';
+      
       $cache = new fs_cache();
       $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
       if( count($this->results) < 1 )

@@ -35,7 +35,9 @@ class fs_user extends fs_model
    public $last_login_time;
    public $last_ip;
    public $last_browser;
-
+   
+   private $menu;
+   
    public function __construct($a = FALSE)
    {
       parent::__construct('fs_users');
@@ -75,7 +77,7 @@ class fs_user extends fs_model
       $this->logged_on = FALSE;
       $this->agente = NULL;
    }
-
+   
    protected function install()
    {
       $this->clean_cache();
@@ -137,6 +139,55 @@ class fs_user extends fs_model
          return $this->url();
    }
    
+   public function get_menu($reload=FALSE)
+   {
+      if( !isset($this->menu) OR $reload)
+      {
+         $this->menu = array();
+         $page = new fs_page();
+         
+         if( $this->admin )
+            $this->menu = $page->all();
+         else
+         {
+            $access = new fs_access();
+            $access_list = $access->all_from_nick($this->nick);
+            foreach($page->all() as $p)
+            {
+               foreach($access_list as $a)
+               {
+                  if($p->name == $a->fs_page)
+                  {
+                     $this->menu[] = $p;
+                     break;
+                  }
+               }
+            }
+         }
+      }
+      return $this->menu;
+   }
+   
+   public function have_access_to($page_name, $admin_page)
+   {
+      if( $this->admin )
+         $status = TRUE;
+      else
+      {
+         $status = FALSE;
+         foreach($this->get_menu() as $m)
+         {
+            if($m->name == $page_name)
+            {
+               /// los no administradores no pueden acceder a páginas de administración
+               $status = !$admin_page;
+               break;
+            }
+         }
+      }
+      return $status;
+   }
+   
    public function get_accesses()
    {
       $access = new fs_access();
@@ -146,21 +197,6 @@ class fs_user extends fs_model
    public function show_last_login()
    {
       return Date('d-m-Y', strtotime($this->last_login)).' '.$this->last_login_time;
-   }
-   
-   public function set_nick($n='')
-   {
-      $n = trim($n);
-      if( preg_match("/^[A-Z0-9_]{3,12}$/i", $n) )
-      {
-         $this->nick = $n;
-         return TRUE;
-      }
-      else
-      {
-         $this->new_error_msg('El nick debe tener entre 3 y 12 caracteres alfanuméricos');
-         return FALSE;
-      }
    }
    
    public function set_password($p='')
@@ -204,25 +240,47 @@ class fs_user extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
-   public function save()
+   public function test()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      $status = FALSE;
+      
+      $this->nick = trim($this->nick);
+      
+      if( !preg_match("/^[A-Z0-9_]{3,12}$/i", $this->nick) )
       {
-         $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password).",
-            log_key = ".$this->var2str($this->log_key).", codagente = ".$this->var2str($this->codagente).",
-            admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
-            last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
-            last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = ".$this->var2str($this->nick).";";
+         $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
+            valen número o letras, pero no la Ñ ni acentos.");
       }
       else
+         return TRUE;
+      
+      return $status;
+   }
+   
+   public function save()
+   {
+      if( $this->test() )
       {
-         $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,last_browser)
-            VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
-            ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
-            ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password).",
+               log_key = ".$this->var2str($this->log_key).", codagente = ".$this->var2str($this->codagente).",
+               admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
+               last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
+               last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = ".$this->var2str($this->nick).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,last_browser)
+               VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
+               ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
+               ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
+         }
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
+      else
+         return FALSE;
    }
    
    public function delete()

@@ -64,7 +64,7 @@ class general_proveedores extends fs_controller
             header('location: '.$proveedor->url());
          }
          else
-            $this->new_error_msg("¡Imposible crear el proveedor!");
+            $this->new_error_msg("¡Imposible guardar el proveedor!");
       }
       
       if( isset($_GET['offset']) )
@@ -79,7 +79,7 @@ class general_proveedores extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function anterior_url()

@@ -49,9 +49,9 @@ class admin_almacenes extends fs_controller
          $al0->fax = $_POST['sfax'];
          $al0->contacto = $_POST['scontacto'];
          if( $al0->save() )
-            $this->new_message("Almacén ".$al0->codalmacen." modificado correctamente.");
+            $this->new_message("Almacén ".$al0->codalmacen." guardado correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar el almacén ".$al0->codalmacen."!");
+            $this->new_error_msg("¡Imposible guardar el almacén!");
       }
       else if( isset($_GET['delete']) )
       {
@@ -61,7 +61,7 @@ class admin_almacenes extends fs_controller
             if( $al0->delete() )
                $this->new_message("Almacén ".$al0->codalmacen." eliminado correctamente");
             else
-               $this->new_error_msg("¡Imposible eliminar el almacén ".$al0->codalmacen."!".$this->almacen->error_msg);
+               $this->new_error_msg("¡Imposible eliminar el almacén!");
          }
          else
             $this->new_error_msg("¡Almacén no encontrado!");
@@ -69,7 +69,7 @@ class admin_almacenes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

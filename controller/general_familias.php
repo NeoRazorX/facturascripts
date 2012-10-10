@@ -36,16 +36,12 @@ class general_familias extends fs_controller
       if( isset($_POST['ncodfamilia']) )
       {
          $fam = new familia();
-         if( $fam->set_codfamilia($_POST['ncodfamilia']) )
-         {
-            $fam->descripcion = $_POST['ndescripcion'];
-            if( $fam->save() )
-               Header('location: ' . $fam->url());
-            else
-               $this->new_error_msg("¡Imposible guardar la familia!");
-         }
+         $fam->codfamilia = $_POST['ncodfamilia'];
+         $fam->descripcion = $_POST['ndescripcion'];
+         if( $fam->save() )
+            Header('location: ' . $fam->url());
          else
-            $this->new_error_msg($fam->error_msg);
+            $this->new_error_msg("¡Imposible guardar la familia!");
       }
       else if( isset($_GET['delete']) )
       {
@@ -59,7 +55,7 @@ class general_familias extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-4';
    }
 }
 

@@ -1,34 +1,6 @@
-{if condition="isset($_POST['query'])"}
-   <!--{$fsc->query}-->
-   <table class="list">
-   <tr>
-      <th>Código</th>
-      <th>Descripción</th>
-      <th align="right">debe</th>
-      <th align="right">haber</th>
-      <th align="right">saldo</th>
-   </tr>
-   {loop="$fsc->resultados"}
-   <tr>
-      <td>
-         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
-            {$value->codsubcuenta}
-         </a>
-      </td>
-      <td>
-         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
-            {$value->descripcion}
-         </a>
-      </td>
-      <td align="right">{$value->show_debe()} €</td>
-      <td align="right">{$value->show_haber()} €</td>
-      <td align="right">{$value->show_saldo()} €</td>
-   </tr>
-   {/loop}
-   </table>
-{else}
-   {include="header"}
-   <script type="text/javascript">
+{include="header"}
+
+<script type="text/javascript">
    var numlineas = 0;
    function buscar_subcuenta(num, tipo)
    {
@@ -43,7 +15,6 @@
          top: 40
       });
       $("#popup_subcuentas").show();
-      $("#popup_message").show();
       document.f_buscar_subcuentas.query.focus();
    }
    function select_subcuenta(idsubcuenta, codsubcuenta, descripcion)
@@ -119,7 +90,7 @@
                Tipo documento:\n\
                <select name='tipodocumento_"+numlineas+"'>\n\
                   <option>---</option>\n\
-                  <option>Recivo</option>\n\
+                  <option>Recibo</option>\n\
                   <option>Factura de cliente</option>\n\
                   <option>Factura de proveedor</option>\n\
                </select>\n\
@@ -178,9 +149,9 @@
             event.preventDefault();
          });
    });
-   </script>
-   
-   <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
+</script>
+
+<form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
    <input type="hidden" name="numlineas" value="0"/>
    <div class="rounded">
       <h1>
@@ -217,7 +188,7 @@
          Tipo documento:
          <select name="tipodocumento">
             <option>---</option>
-            <option>Recivo</option>
+            <option>Recibo</option>
             <option>Factura de cliente</option>
             <option>Factura de proveedor</option>
          </select>
@@ -245,20 +216,20 @@
          <a href="#" id="b_add_partida">Añadir partida...</a>
       </div>
    </div>
-   </form>
-   
-   <div class="popup" id="popup_subcuentas">
+</form>
+
+<div class="popup" id="popup_subcuentas">
    <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
       <input type="hidden" name="ejercicio"/>
       <input type="hidden" name="tipo"/>
       <input type="hidden" name="numlinea"/>
-      <h1>Buscar subcuentas:</h1>
+      <h1>Buscar subcuentas</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40"/>
          <input type="submit" value="buscar"/>
       </div>
    </form>
    <div id="subcuentas"></div>
-   </div>
-   {include="footer"}
-{/if}
+</div>
+
+{include="footer"}

@@ -65,7 +65,7 @@ class fs_db
             $connected = TRUE;
             
             /// establecemos el formato de fecha para la conexión
-            pg_query(self::$link, "SET DATESTYLE TO PostgreSQL,European;");
+            pg_query(self::$link, "SET DATESTYLE TO ISO, DMY;");
          }
       }
       return $connected;

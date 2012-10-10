@@ -44,14 +44,14 @@ class contabilidad_impuestos extends fs_controller
          $impuesto->descripcion = $_POST['descripcion'];
          $impuesto->iva = floatval( $_POST['iva'] );
          if( $impuesto->save() )
-            $this->new_message("Impuesto ".$impuesto->codimpuesto." modificado correctamente.");
+            $this->new_message("Impuesto ".$impuesto->codimpuesto." guardado correctamente.");
          else
-            $this->new_error_msg("¡Error al modificar el impuesto ".$impuesto->codimpuesto."!");
+            $this->new_error_msg("¡Error al guardar el impuesto!");
       }
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

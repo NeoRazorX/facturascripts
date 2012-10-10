@@ -42,10 +42,32 @@ class linea_factura_cliente extends fs_model
    public $dtolineal;
    public $referencia;
    public $iva;
-
+   
+   private $codigo;
+   private $fecha;
+   private $factura_url;
+   private $albaran_codigo;
+   private $albaran_numero;
+   private $albaran_url;
+   private $articulo_url;
+   
+   private static $facturas;
+   private static $albaranes;
+   private static $articulos;
+   
    public function __construct($l=FALSE)
    {
       parent::__construct('lineasfacturascli');
+      
+      if( !isset(self::$facturas) )
+         self::$facturas = array();
+      
+      if( !isset(self::$albaranes) )
+         self::$albaranes = array();
+      
+      if( !isset(self::$articulos) )
+         self::$articulos = array();
+      
       if($l)
       {
          $this->idlinea = $this->intval($l['idlinea']);
@@ -89,6 +111,86 @@ class linea_factura_cliente extends fs_model
       return '';
    }
    
+   private function fill()
+   {
+      $encontrado = FALSE;
+      foreach(self::$facturas as $f)
+      {
+         if($f->idfactura == $this->idfactura)
+         {
+            $this->codigo = $f->codigo;
+            $this->fecha = $f->fecha;
+            $this->factura_url = $f->url();
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      if( !$encontrado )
+      {
+         $fac = new factura_cliente();
+         $fac = $fac->get($this->idfactura);
+         if($fac)
+         {
+            $this->codigo = $fac->codigo;
+            $this->fecha = $fac->fecha;
+            $this->factura_url = $fac->url();
+            self::$facturas[] = $fac;
+         }
+      }
+      
+      $encontrado = FALSE;
+      foreach(self::$albaranes as $a)
+      {
+         if($a->idalbaran == $this->idalbaran)
+         {
+            $this->albaran_codigo = $a->codigo;
+            if( is_null($a->numero2) OR $a->numero2 == '')
+               $this->albaran_numero = $a->numero;
+            else
+               $this->albaran_numero = $a->numero2;
+            $this->albaran_url = $a->url();
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      if( !$encontrado )
+      {
+         $alb = new albaran_cliente();
+         $alb = $alb->get($this->idalbaran);
+         if($alb)
+         {
+            $this->albaran_codigo = $alb->codigo;
+            if( is_null($alb->numero2) OR $alb->numero2 == '')
+               $this->albaran_numero = $alb->numero;
+            else
+               $this->albaran_numero = $alb->numero2;
+            $this->albaran_url = $alb->url();
+            self::$albaranes[] = $alb;
+         }
+      }
+      
+      $encontrado = FALSE;
+      foreach(self::$articulos as $a)
+      {
+         if($a->referencia == $this->referencia)
+         {
+            $this->articulo_url = $a->url();
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      if( !$encontrado )
+      {
+         $art = new articulo();
+         $art = $art->get($this->referencia);
+         if($art)
+         {
+            $this->articulo_url = $art->url();
+            self::$articulos[] = $art;
+         }
+      }
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvpunitario, 2, '.', ' ');
@@ -104,35 +206,53 @@ class linea_factura_cliente extends fs_model
       return number_format($this->pvptotal*(100+$this->iva)/100, 2, '.', ' ');
    }
    
+   public function show_codigo()
+   {
+      if( !isset($this->codigo) )
+         $this->fill();
+      return $this->codigo;
+   }
+   
+   public function show_fecha()
+   {
+      if( !isset($this->fecha) )
+         $this->fill();
+      return $this->fecha;
+   }
+   
    public function url()
    {
-      $fac = new factura_cliente();
-      $fac = $fac->get($this->idfactura);
-      return $fac->url();
+      if( !isset($this->factura_url) )
+         $this->fill();
+      return $this->factura_url;
+   }
+   
+   public function albaran_codigo()
+   {
+      if( !isset($this->albaran_codigo) )
+         $this->fill();
+      return $this->albaran_codigo;
    }
    
    public function albaran_url()
    {
-      $alb = new albaran_cliente();
-      $alb = $alb->get($this->idalbaran);
-      return $alb->url();
+      if( !isset($this->albaran_url) )
+         $this->fill();
+      return $this->albaran_url;
    }
    
    public function albaran_numero()
    {
-      $alb = new albaran_cliente();
-      $alb = $alb->get($this->idalbaran);
-      if($alb->numero2 == '')
-         return $alb->numero;
-      else
-         return $alb->numero2;
+      if( !isset($this->albaran_numero) )
+         $this->fill();
+      return $this->albaran_numero;
    }
    
    public function articulo_url()
    {
-      $art = new articulo();
-      $art = $art->get($this->referencia);
-      return $art->url();
+      if( !isset($this->articulo_url) )
+         $this->fill();
+      return $this->articulo_url;
    }
    
    public function exists()
@@ -191,13 +311,13 @@ class linea_factura_cliente extends fs_model
       if( abs($this->pvptotal - $total) > .01 )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
-                              ". Valor correcto: ".$total);
+            " de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }
       else if( abs($this->pvpsindto - $totalsindto) > .01 )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
-                              ". Valor correcto: ".$totalsindto);
+            " de la factura. Valor correcto: ".$totalsindto);
          $status = FALSE;
       }
       
@@ -351,12 +471,14 @@ class linea_iva_factura_cliente extends fs_model
       $total = $this->neto * (100 + $this->iva) / 100;
       if( abs($totaliva - $this->totaliva) > .01 )
       {
-         $this->new_error_msg("Error en el valor de totaliva de la línea de ".$this->codimpuesto." Valor correcto: ".$totaliva);
+         $this->new_error_msg("Error en el valor de totaliva de la línea de iva del impuesto ".$this->codimpuesto."
+            de la factura. Valor correcto: ".$totaliva);
          $status = FALSE;
       }
       else if( abs($total - $this->totallinea) > .01 )
       {
-         $this->new_error_msg("Error en el valor de totallinea de la línea de ".$this->codimpuesto." Valor correcto: ".$total);
+         $this->new_error_msg("Error en el valor de totallinea de la línea de iva del impuesto ".$this->codimpuesto."
+            de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }
       
@@ -695,9 +817,17 @@ class factura_cliente extends fs_model
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
    }
    
+   public function test()
+   {
+      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      return TRUE;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
             idpagodevol = ".$this->var2str($this->idpagodevol).", idfacturarect = ".$this->var2str($this->idfacturarect).",
@@ -720,6 +850,7 @@ class factura_cliente extends fs_model
             deabono = ".$this->var2str($this->deabono).", automatica = ".$this->var2str($this->automatica).",
             editable = ".$this->var2str($this->editable).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento)."
             WHERE idfactura = ".$this->var2str($this->idfactura).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -744,8 +875,8 @@ class factura_cliente extends fs_model
             ".$this->var2str($this->recfinanciero).",".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
             ".$this->var2str($this->deabono).",".$this->var2str($this->automatica).",".$this->var2str($this->editable).",
             ".$this->var2str($this->nogenerarasiento).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -764,7 +895,7 @@ class factura_cliente extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
-   public function test()
+   public function full_test()
    {
       $status = TRUE;
       $neto = 0;
@@ -775,10 +906,7 @@ class factura_cliente extends fs_model
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
-         {
-            $this->new_error_msg( $l->error_msg );
             $status = FALSE;
-         }
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
@@ -786,22 +914,22 @@ class factura_cliente extends fs_model
       }
       if( abs($this->neto - $neto) > .01 )
       {
-         $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
+         $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
       else if( abs($this->totaliva - $iva) > .01 )
       {
-         $this->new_error_msg("Valor totaliva incorrecto. Valor correcto: ".$iva);
+         $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
       else if( abs($this->total - $total) > .01 )
       {
-         $this->new_error_msg("Valor total incorrecto. Valor correcto: ".$total);
+         $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
       else if( abs($this->totaleuros - $total) > .01 )
       {
-         $this->new_error_msg("Valor totaleuros incorrecto. Valor correcto: ".$total);
+         $this->new_error_msg("Valor totaleuros de la factura incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
       
@@ -812,10 +940,7 @@ class factura_cliente extends fs_model
       foreach($this->get_lineas_iva() as $li)
       {
          if( !$li->test() )
-         {
-            $this->new_error_msg( $li->error_msg );
             $status = FALSE;
-         }
          
          $neto += $li->neto;
          $iva += $li->totaliva;

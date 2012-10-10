@@ -173,7 +173,7 @@ class general_importar_familia extends fs_controller
                }
                else
                {
-                  $this->new_message("Comprobación finalizada. Pulsa el botón procesar para comenzar.");
+                  $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
                   $this->buttons[] = new fs_button('b_start', 'procesar', $this->url().'&action=start');
                }
             }
@@ -373,7 +373,7 @@ class general_importar_familia extends fs_controller
             // sustituimos las comas por puntos en el pvp
             $tarifa[1] = str_replace(',', '.', $tarifa[1]);
             $articulo->set_pvp($tarifa[1]);
-            $articulo->set_descripcion($tarifa[2]);
+            $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
             if( $articulo->save() )
             {
@@ -397,11 +397,11 @@ class general_importar_familia extends fs_controller
          else
          {
             $articulo = new articulo();
-            $articulo->set_referencia($tarifa[0] . $this->family_data->sufijo);
+            $articulo->referencia = $tarifa[0] . $this->family_data->sufijo;
             // sustituimos las comas por puntos en el pvp
             $tarifa[1] = str_replace(',', '.', $tarifa[1]);
             $articulo->set_pvp($tarifa[1]);
-            $articulo->set_descripcion($tarifa[2]);
+            $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
             $articulo->codfamilia = $this->familia->codfamilia;
             $articulo->codimpuesto = $this->family_data->codimpuesto;

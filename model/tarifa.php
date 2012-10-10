@@ -75,22 +75,44 @@ class tarifa extends fs_model
             WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codtarifa = trim($this->codtarifa);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codtarifa) )
+         $this->new_error_msg("Código de tarifa no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
+         $this->new_error_msg("Nombre de tarifa no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            incporcentual = ".$this->var2str($this->incporcentual)."
-            WHERE codtarifa = ".$this->var2str($this->codtarifa).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               incporcentual = ".$this->var2str($this->incporcentual)."
+               WHERE codtarifa = ".$this->var2str($this->codtarifa).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual) VALUES
+               (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->incporcentual).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual) VALUES
-            (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
-            ".$this->var2str($this->incporcentual).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

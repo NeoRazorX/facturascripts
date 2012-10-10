@@ -5,23 +5,11 @@
    $(document).ready(function() {
       $("#b_direcciones").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_direcciones").css({
-            left: ($(window).width() - $("#popup_direcciones").outerWidth())/2,
-            top: ($(window).height() - $("#popup_direcciones").outerHeight())/2
-         });
-         $("#popup_direcciones").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_direcciones');
       });
       $("#b_subcuentas").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_subcuentas").css({
-            left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-            top: ($(window).height() - $("#popup_subcuentas").outerHeight())/2
-         });
-         $("#popup_subcuentas").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_subcuentas');
       });
    });
 </script>
@@ -105,7 +93,7 @@
 </div>
 
 <div class="popup" id="popup_direcciones">
-   <h1>Direcciones:</h1>
+   <h1>Direcciones</h1>
    {loop="$fsc->proveedor->get_direcciones()"}
       <div class="grupo">
          <form action="{$fsc->url()}" method="post"/>
@@ -211,7 +199,7 @@
 </div>
 
 <div class="popup" id="popup_subcuentas" style="min-width: 700px">
-   <h1>Subcuentas:</h1>
+   <h1>Subcuentas</h1>
    <table class="list">
       <tr>
          <th>Ejercicio</th>

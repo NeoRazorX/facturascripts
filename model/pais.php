@@ -24,7 +24,7 @@ class pais extends fs_model
    public $codiso;
    public $bandera;
    public $nombre;
-   public $codpais;
+   public $codpais; /// pkey
    
    public function __construct($p=FALSE)
    {
@@ -53,7 +53,10 @@ class pais extends fs_model
    
    public function url()
    {
-      return 'index.php?page=admin_paises#'.$this->codpais;
+      if( is_null($this->codpais) )
+         return 'index.php?page=admin_paises';
+      else
+         return 'index.php?page=admin_paises#'.$this->codpais;
    }
    
    public function get($cod)
@@ -74,16 +77,38 @@ class pais extends fs_model
             WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codpais = trim($this->codpais);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais) )
+         $this->new_error_msg("Código del país no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+         $this->new_error_msg("Nombre del país no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)."
-            WHERE codpais = ".$this->var2str($this->codpais).";";
+      if( $this->test() )
+      {
+         $this->clean_cache();
+         if( $this->exists() )
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)."
+               WHERE codpais = ".$this->var2str($this->codpais).";";
+         else
+            $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES
+               (".$this->var2str($this->codpais).",".$this->var2str($this->nombre).");";
+         return $this->db->exec($sql);
+      }
       else
-         $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES
-            (".$this->var2str($this->codpais).",".$this->var2str($this->nombre).");";
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

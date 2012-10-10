@@ -136,7 +136,6 @@
          <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>"+iva+" %</td>\n\
          <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
             "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
-      $("#popup_message").hide();
       $('div.popup').each(function() {
          $(this).hide();
       });
@@ -147,13 +146,7 @@
       recalcular();
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_eliminar").css({
-            left: ($(window).width() - $("#popup_eliminar").outerWidth())/2,
-            top: ($(window).height() - $("#popup_eliminar").outerHeight())/2
-         });
-         $("#popup_eliminar").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_eliminar');
       });
       $("#b_new_line").click(function(event) {
          event.preventDefault();
@@ -163,7 +156,6 @@
             top: 40
          });
          $("#popup_new_line").show();
-         $("#popup_message").show();
          document.f_buscar_articulos.query.focus();
          document.f_buscar_articulos.query.value = '';
          $("#search_results").html('');
@@ -207,7 +199,7 @@
 
 <div class="popup" id="popup_new_line" style="min-width: 60%">
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h1>Buscar artículos:</h1>
+      <h1>Buscar artículos</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
          <input type="submit" value="buscar"/>

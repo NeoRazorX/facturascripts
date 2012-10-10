@@ -16,54 +16,17 @@ a {
    color: #2F33AB;
 }
 
-div#login_header {
-   margin-top: 0px;
-   margin-left: 6px;
-   margin-right: 6px;
-   margin-bottom: 10px;
-   padding: 5px;
-   color: white;
-   font-size: 16px;
-}
-
-a#fs_logo {
-   margin-right: 20px;
-   color: white;
-   font-family: 'Oleo Script';
-   font-size: 30px;
-   font-weight: bold;
-   text-transform: capitalize;
-   text-decoration: none;
-   vertical-align: middle;
-}
-
-div#login_header input[type='text'], div#login_header input[type='password'],
-div#login_header select {
-   padding: 2px;
-}
-
-div#sql_history {
-   margin: 5px;
-   padding: 5px;
-   border: 1px dashed silver;
-}
-
-div#sql_history h1 {
-   margin: 5px;
-   font-size: 20px;
-}
-
 div.advice, div.message, div.error {
    margin: 10px;
    padding: 10px;
    border: 1px solid #333333;
-   text-align: center;
    font-size: 16px;
    color: black;
 }
 
 div.advice {
    background-color: #ACD6F5;
+   text-align: center;
 }
 
 div.advice img {
@@ -135,7 +98,7 @@ a#fs_exit {
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
-   vertical-align: baseline;
+   vertical-align: top;
 }
 
 a#fs_exit img {
@@ -254,6 +217,21 @@ div#shadow {
    opacity: 0.7;
 }
 
+div#popup_message {
+   display: inline-block;
+   position: fixed;
+   left: 0px;
+   right: 0px;
+   bottom: 0px;
+   z-index: 3;
+   padding: 5px;
+   opacity: 1;
+   color: white;
+   font-size: 18px;
+   font-weight: bold;
+   text-align: center;
+}
+
 div.main_div div.popup {
    display: none;
    z-index: 3;
@@ -301,20 +279,6 @@ div.main_div div.popup div.grupo {
    padding: 5px;
    background-color: #FFFAA6;
    border: 1px dashed #333333;
-}
-
-div.main_div div#popup_message {
-   display: none;
-   position: fixed;
-   bottom: 5px;
-   right: 5px;
-   z-index: 3;
-   padding: 5px;
-   border: 1px solid black;
-   background-color: #FFFAA6;
-   color: black;
-   text-align: center;
-   font-size: 16px;
 }
 
 div.main_div div.rounded {
@@ -490,6 +454,45 @@ input[type='submit']:hover, input[type='button']:hover {
 input[type='text'], input[type='password'] {
    border: 1px solid #333333;
    vertical-align: middle;
+}
+
+div#login_header {
+   margin-top: 0px;
+   margin-left: 6px;
+   margin-right: 6px;
+   margin-bottom: 10px;
+   padding: 5px;
+   color: white;
+   font-size: 18px;
+   font-weight: bold;
+   text-transform: capitalize;
+}
+
+a#fs_logo {
+   margin-right: 20px;
+   color: white;
+   font-family: 'Oleo Script';
+   font-size: 30px;
+   font-weight: bold;
+   text-transform: capitalize;
+   text-decoration: none;
+}
+
+div#login_header input[type='submit'],
+div#login_header input[type='password'],
+div#login_header select {
+   padding: 5px;
+}
+
+div#sql_history {
+   margin: 5px;
+   padding: 5px;
+   border: 1px dashed silver;
+}
+
+div#sql_history h1 {
+   margin: 5px;
+   font-size: 20px;
 }
 
 /* reglas para las gráficas generadas con jquery.charts.js */

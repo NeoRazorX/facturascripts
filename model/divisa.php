@@ -93,9 +93,15 @@ class divisa extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       $this->clean_cache();
+      return FALSE;
    }
    
    public function delete()

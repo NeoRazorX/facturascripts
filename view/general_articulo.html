@@ -13,17 +13,11 @@
       $("#b_eliminar_articulo").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar este articulo?") )
-         window.location.href = "{$fsc->ppage->url()}&delete={$fsc->articulo->referencia}";
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->articulo->referencia}";
       });
       $("#b_imagen").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_articulo_imagen").css({
-            left: ($(window).width() - $("#popup_articulo_imagen").outerWidth())/2,
-            top: ($(window).height() - $("#popup_articulo_imagen").outerHeight())/2
-         });
-         $("#popup_articulo_imagen").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_articulo_imagen');
       });
    });
 </script>
@@ -221,6 +215,47 @@
                </table>
             </form>
          </div>
+         
+         {if condition="$fsc->ultimas_ventas"}
+            <div class="rounded">
+               <h1>Últimas ventas:</h1>
+               <table class="list">
+                  <tr>
+                     <th>Fecha</th>
+                     <th>Albarán</th>
+                     <th>PVP+IVA</th>
+                  </tr>
+                  {loop="$fsc->ultimas_ventas"}
+                  <tr>
+                     <td>{$value->show_fecha()}</td>
+                     <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
+                     <td align="right">{$value->show_pvp_iva()} &euro;</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         {/if}
+         
+         {if condition="$fsc->ultimas_compras"}
+            <div class="rounded">
+               <h1>Últimas compras:</h1>
+               <table class="list">
+                  <tr>
+                     <th>Fecha</th>
+                     <th>Albarán</th>
+                     <th>PVP+IVA</th>
+                  </tr>
+                  {loop="$fsc->ultimas_compras"}
+                  <tr>
+                     <td>{$value->show_fecha()}</td>
+                     <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
+                     <td align="right">{$value->show_pvp_iva()} &euro;</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         {/if}
+         
          {if condition="$fsc->equivalentes"}
             <div class="rounded">
                <h1>Artículos equivalentes:</h1>
@@ -245,7 +280,7 @@
 </table>
 
 <div class="popup" id="popup_articulo_imagen">
-   <h1>Imagen:</h1>
+   <h1>Imagen</h1>
    Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
    {if condition="$fsc->articulo->imagen_url()"}
       <center><img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/></center>

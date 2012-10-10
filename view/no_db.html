@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>FacturaScripts</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <link rel="shortcut icon" href="img/favicon.ico" />
+      <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
+      <script type="text/javascript" src="js/jquery.js"></script>
+   </head>
+   <body>
+      {if condition="$fsc->get_errors()"}
+         <div class="error">
+            {loop="$fsc->get_errors()"}
+               <li>{$value}</li>
+            {/loop}
+         </div>
+      {/if}
+      {if condition="$fsc->get_messages()"}
+         <div class="message">
+            {loop="$fsc->get_messages()"}
+               <li>{$value}</li>
+            {/loop}
+         </div>
+      {/if}
+   </body>
+</html>

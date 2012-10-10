@@ -24,16 +24,19 @@ abstract class fs_model
 {
    protected $db;
    protected $table_name;
-   protected static $checked_tables;
    protected $cache;
-   public $error_msg;
+   
+   private static $checked_tables;
+   private static $errors;
    
    public function __construct($name = '')
    {
       $this->db = new fs_db();
       $this->table_name = $name;
       $this->cache = new fs_cache();
-      $this->error_msg = FALSE;
+      
+      if( !self::$errors )
+         self::$errors = array();
       
       if( !self::$checked_tables )
       {
@@ -74,18 +77,17 @@ abstract class fs_model
       }
    }
    
-   protected function new_error_msg($msg = '')
+   protected function new_error_msg($msg = FALSE)
    {
       if( $msg )
-      {
-         if( !$this->error_msg )
-            $this->error_msg = $msg;
-         else
-            $this->error_msg .= '<br/>' . $msg;
-      }
+         self::$errors[] = $msg;
    }
-
-
+   
+   public function get_errors()
+   {
+      return self::$errors;
+   }
+   
    /*
     * Esta función es llamada al crear una tabla.
     * Permite insertar tuplas o lo que desees.
@@ -97,7 +99,10 @@ abstract class fs_model
     * en la base de datos.
     */
    abstract public function exists();
-
+   
+   /// Esta función devuelve TRUE si los datos del objeto son válidos
+   abstract public function test();
+   
    /*
     * Esta función sirve tanto para insertar como para actualizar
     * los datos del objeto en la base de datos.
@@ -187,6 +192,23 @@ abstract class fs_model
       }
       else
          return 'fecha desconocida';
+   }
+   
+   /*
+    * Esta función convierte:
+    * < en &lt;
+    * > en &gt;
+    * " en &quot;
+    * 
+    * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
+    * porque te encontrarás con muchas sorpresas desagradables.
+    */
+   public function no_html($t)
+   {
+      $newt  = preg_replace('/</', '&lt;', $t);
+      $newt  = preg_replace('/>/', '&gt;', $newt);
+      $newt  = preg_replace('/"/', '&quot;', $newt);
+      return $newt;
    }
    
    /// obtiene las columnas y restricciones del fichero xml para una tabla

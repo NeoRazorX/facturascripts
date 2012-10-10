@@ -4,13 +4,7 @@
    $(document).ready(function() {
       $("#b_nuevo_ejercicio").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_ejercicio").css({
-            left: ($(window).width() - $("#popup_nuevo_ejercicio").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_ejercicio").outerHeight())/2
-         });
-         $("#popup_nuevo_ejercicio").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_ejercicio');
          document.f_nuevo_ejercicio.nombre.focus();
       });
    });
@@ -18,7 +12,7 @@
 
 <div class="popup" id="popup_nuevo_ejercicio">
    <form name="f_nuevo_ejercicio" action="{$fsc->url()}" method="post">
-      <h1>Nuevo ejercicio:</h1>
+      <h1>Nuevo ejercicio</h1>
       <table>
          <tr>
             <td align="right">Código:</td>

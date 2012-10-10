@@ -45,17 +45,15 @@ class concepto_partida extends fs_model
             WHERE idconceptopar = ".$this->var2str($this->idconceptopar).";");
    }
    
+   public function test()
+   {
+      $this->concepto = $this->no_html( trim($this->concepto) );
+      return TRUE;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
-      {
-         $sql = "";
-      }
-      else
-      {
-         $sql = "";
-      }
-      return $this->db->exec($sql);
+      return FALSE;
    }
    
    public function delete()

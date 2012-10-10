@@ -55,14 +55,13 @@ class contabilidad_factura_prov extends fs_controller
       {
          $this->page->title = $this->factura->codigo;
          
-         /// comprobamos la factura
-         if( !$this->factura->test() )
-            $this->new_error_msg( $this->factura->error_msg );
-         
          $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png');
          if($this->factura->idasiento)
             $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+         
+         /// comprobamos la factura
+         $this->factura->full_test();
          
          if( isset($_GET['imprimir']) )
             $this->generar_pdf();
@@ -72,7 +71,7 @@ class contabilidad_factura_prov extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()
@@ -97,7 +96,7 @@ class contabilidad_factura_prov extends fs_controller
       
       $pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
       $pdf->addInfo('Subject', 'Factura de cliente ' . $this->factura->codigo);
-      $pdf->addInfo('Author', $this->get_empresa_name());
+      $pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->factura->get_lineas();
       $lineas_iva = $this->factura->get_lineas_iva();
@@ -117,28 +116,10 @@ class contabilidad_factura_prov extends fs_controller
             
             $pdf->ezText("\n\n\n\n", 12);
             
-            /// Creamos la tabla del encabezado
-            $filas = array(
-                array(
-                    'campos' => "<b>Factura:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
-                    'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
-                    'cliente' => $this->factura->nombre."\n"
-                )
-            );
-            $pdf->ezTable($filas,
-                    array('campos' => '', 'factura' => '', 'cliente' => ''),
-                    '',
-                    array(
-                        'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 60),
-                            'factura' => array('justification' => 'left'),
-                            'cliente' => array('justification' => 'right')
-                        ),
-                        'showLines' => 0,
-                        'width' => 540
-                    )
-            );
-            $pdf->ezText("\n", 12);
+            /// La cabecera
+            $pdf->ezText("<b>Factura de proveedor:</b> ".$this->factura->codigo."   <b>Fecha:</b> ".
+                    $this->factura->fecha."\n<b>Proveedor:</b> ".$this->factura->nombre."   <b>CIF/NIF:</b> ".
+                    $this->factura->cifnif."\n", 10);
             
             /// Creamos la tabla con las lineas de la factura
             $saltos = 0;

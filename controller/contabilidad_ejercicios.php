@@ -46,14 +46,14 @@ class contabilidad_ejercicios extends fs_controller
          $eje0->fechafin = $_POST['fechafin'];
          $eje0->estado = $_POST['estado'];
          if( $eje0->save() )
-            $this->new_message("Ejercicio ".$eje0->codejercicio." modificado correctamente");
+            $this->new_message("Ejercicio ".$eje0->codejercicio." guardado correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar el ejercicio ".$eje0->codejercicio."!");
+            $this->new_error_msg("¡Imposible guardar el ejercicio!");
       }
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

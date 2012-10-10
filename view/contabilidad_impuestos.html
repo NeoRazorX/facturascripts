@@ -4,13 +4,7 @@
    $(document).ready(function() {
       $("#b_nuevo_impuesto").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_impuesto").css({
-            left: ($(window).width() - $("#popup_nuevo_impuesto").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_impuesto").outerHeight())/2
-         });
-         $("#popup_nuevo_impuesto").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_impuesto');
          document.f_nuevo_impuesto.codimpuesto.focus();
       });
    });
@@ -18,7 +12,7 @@
 
 <div class="popup" id="popup_nuevo_impuesto">
    <form name="f_nuevo_impuesto" action="{$fsc->url()}" method="post">
-      <h1>Nuevo impuesto:</h1>
+      <h1>Nuevo impuesto</h1>
       <table>
          <tr>
             <td align="right">Código:</td>

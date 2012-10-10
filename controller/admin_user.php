@@ -49,7 +49,7 @@ class admin_user extends fs_controller
             
             if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
             {
-               if( isset($_POST['spassword']) )
+               if($_POST['spassword'] != '')
                   $this->suser->set_password($_POST['spassword']);
                
                if( isset($_POST['scodagente']) )
@@ -63,7 +63,7 @@ class admin_user extends fs_controller
                if( $this->suser->save() )
                   $this->new_message("Datos modificados correctamente.");
                else
-                  $this->new_error_msg( $this->suser->error_msg );
+                  $this->new_error_msg("¡Imposible modificar los datos!");
             }
             else if( isset($_GET['enable']) )
             {
@@ -83,7 +83,7 @@ class admin_user extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function all()

@@ -43,7 +43,10 @@ class cuenta extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_cuenta&id='.$this->idcuenta;
+      if( is_null($this->idcuenta) )
+         return 'index.php?page=contabilidad_cuentas';
+      else
+         return 'index.php?page=contabilidad_cuenta&id='.$this->idcuenta;
    }
    
    protected function install()
@@ -80,15 +83,24 @@ class cuenta extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
    }
    
+   public function test()
+   {
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      return TRUE;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codcuenta = ".$this->var2str($this->codcuenta).",
             codejercicio = ".$this->var2str($this->codejercicio).",
             idepigrafe = ".$this->var2str($this->idepigrafe).", codepigrafe = ".$this->var2str($this->codepigrafe).",
             descripcion = ".$this->var2str($this->descripcion).", codbalance = ".$this->var2str($this->codbalance).",
             idcuentaesp = ".$this->var2str($this->idcuentaesp)." WHERE idcuenta = ".$this->var2str($this->idcuenta).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -96,8 +108,8 @@ class cuenta extends fs_model
             VALUES (".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",".$this->var2str($this->idepigrafe).",
            ".$this->var2str($this->codepigrafe).",".$this->var2str($this->descripcion).",".$this->var2str($this->codbalance).",
            ".$this->var2str($this->idcuentaesp).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()

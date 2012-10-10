@@ -2,74 +2,13 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-   <title>{$fsc->get_empresa_name()} - {$fsc->page->title}</title>
+   <title>{$fsc->empresa->nombre} - {$fsc->page->title}</title>
    <link rel="shortcut icon" href="img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
    <script type="text/javascript" src="js/jquery.js"></script>
    <script type="text/javascript" src="js/tcal.js"></script>
-   <script type="text/javascript">
-      function fs_select_folder(folder)
-      {
-         if( folder == '' )
-         {
-            $('#user_list').hide();
-            $('div.pages div').each(function() {
-               $(this).hide();
-            });
-         }
-         else if( $('#folder_'+folder).is(":visible") )
-         {
-            $('#folder_'+folder).hide();
-         }
-         else
-         {
-            $('#user_list').hide();
-            $('div.pages div').each(function() {
-               $(this).hide();
-            });
-            $('#folder_'+folder).css({
-               display: 'inline-block',
-               position: 'fixed',
-               left: $("#b_folder_"+folder).position().left+5,
-               top: $("#b_folder_"+folder).position().top+32
-            });
-            $('#folder_'+folder).show();
-         }
-      }
-      $(document).ready(function() {
-         $("#b_user_list").click(function(event) {
-            event.preventDefault();
-            if( $('#user_list').is(":visible") )
-            {
-               $('#user_list').hide();
-            }
-            else
-            {
-               $('div.pages div').each(function() {
-                  $(this).hide();
-               });
-               $('#user_list').css({
-                  display: 'inline-block',
-                  position: 'fixed',
-                  left: $("#b_user_list").position().left,
-                  top: $("#b_user_list").position().top+32
-               });
-               $('#user_list').show();
-            }
-         });
-         $("#header_logo, #header_buttons, #header_search, div.main_div, div.footer").click(function() {
-            fs_select_folder('');
-         });
-         $("#shadow").click(function() {
-            $('div.popup').each(function() {
-               $(this).hide();
-            });
-            $("#popup_message").hide();
-            $("#shadow").hide();
-         });
-      });
-   </script>
-   {if condition="FS_DEMO"}
+   <script type="text/javascript" src="js/base.js"></script>
+   {if condition="$demo"}
       <script type="text/javascript">
          var _gaq = _gaq || [];
          _gaq.push(['_setAccount', 'UA-417932-8']);
@@ -96,7 +35,7 @@
          {/loop}
          </div>
          <div id="header_logo">
-            <a id="fs_logo" href="index.php">{if condition="FS_DEMO"}FacturaScripts{else}{$fsc->get_empresa_name()}{/if}</a>
+            <a id="fs_logo" href="index.php">{if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}</a>
          </div>
          <div id="header_user">
             <a class="button" href="#" id="b_user_list">{$fsc->user->nick}</a>
@@ -104,6 +43,7 @@
          </div>
       </div>
    </div>
+   {if condition="$fsc->page->name"}
    <div class="header">
       <div class="header_box">
          <div id="header_buttons">
@@ -142,6 +82,7 @@
          </div>
       </div>
    </div>
+   {/if}
    <div class="pages">
       {loop="$fsc->folders()"}
          <div id="folder_{$value}">
@@ -170,8 +111,9 @@
          </ul>
       </div>
    </div>
-   <div id="shadow"></div>
-   <div class="main_div">
+   <div id="shadow">
+      <div id="popup_message">Pulsa el fondo ensombrecido para cerrar el diálogo.</div>
+   </div>
 {if condition="$fsc->show_default_page_advice()"}
    <div class="advice">
       Se ha seleccionado la primera página de tu lista. Si queres que sea otra tu
@@ -179,10 +121,18 @@
       <img src="img/star_off.png" alt="página de inicio" /> en la página que quieras.
    </div>
 {/if}
-{if condition="$fsc->error_msg"}
-   <div class="error">{$fsc->error_msg}</div>
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}
+         <li>{$value}</li>
+      {/loop}
+   </div>
 {/if}
-{if condition="$fsc->message"}
-   <div class="message">{$fsc->message}</div>
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}
+         <li>{$value}</li>
+      {/loop}
+   </div>
 {/if}
-   <div id="popup_message">Pulsa el fondo ensombrecido para cerrar el diálogo.</div>
+   <div class="main_div">

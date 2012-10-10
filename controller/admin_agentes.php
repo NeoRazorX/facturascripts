@@ -47,19 +47,19 @@ class admin_agentes extends fs_controller
          $age0->telefono = $_POST['stelefono'];
          $age0->email = $_POST['semail'];
          if( $age0->save() )
-            $this->new_message("Agente ".$age0->codagente." modificado correctamente.");
+            $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar el agente ".$age0->codagente."!");
+            $this->new_error_msg("¡Imposible guardar el agente!");
       }
       else if( isset($_GET['delete']) )
       {
          $age0 = $this->agente->get($_GET['delete']);
          if($age0)
          {
-            if( $this->agente->delete() )
+            if( $age0->delete() )
                $this->new_message("Agente ".$age0->codagente." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el agente ".$age0->codagente."!");
+               $this->new_error_msg("¡Imposible eliminar el agente!");
          }
          else
             $this->new_error_msg("¡Agente no encontrado!");
@@ -67,7 +67,7 @@ class admin_agentes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

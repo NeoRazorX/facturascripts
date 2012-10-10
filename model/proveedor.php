@@ -70,9 +70,15 @@ class subcuenta_proveedor extends fs_model
             WHERE id = ".$this->var2str($this->id).";");
    }
    
+   public function test()
+   {
+      return TRUE;
+   }
+
+
    public function save()
    {
-      ;
+      return FALSE;
    }
    
    public function delete()
@@ -160,8 +166,21 @@ class direccion_proveedor extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
+   public function test()
+   {
+      $this->apartado = $this->no_html( trim($this->apartado) );
+      $this->ciudad = $this->no_html( trim($this->ciudad) );
+      $this->codpostal = $this->no_html( trim($this->codpostal) );
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->direccion = $this->no_html( trim($this->direccion) );
+      $this->provincia = $this->no_html( trim($this->provincia) );
+      return TRUE;
+   }
+   
    public function save()
    {
+      if( !$this->test() )
+         return FALSE;
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codproveedor = ".$this->var2str($this->codproveedor).",
@@ -170,6 +189,7 @@ class direccion_proveedor extends fs_model
             codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
             direccionppal = ".$this->var2str($this->direccionppal).", descripcion = ".$this->var2str($this->descripcion)."
             WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -178,8 +198,8 @@ class direccion_proveedor extends fs_model
             ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
             ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->direccionppal).",
             ".$this->var2str($this->descripcion).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -358,30 +378,55 @@ class proveedor extends fs_model
             WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codproveedor = trim($this->codproveedor);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->nombrecomercial = $this->no_html( trim($this->nombrecomercial) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codproveedor) )
+         $this->new_error_msg("Código de proveedor no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+         $this->new_error_msg("Nombre de proveedor no válido.");
+      else if( strlen($this->nombrecomercial) < 1 OR strlen($this->nombrecomercial) > 100 )
+         $this->new_error_msg("Nombre comercial de proveedor no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
-            telefono1 = ".$this->var2str($this->telefono1).", telefono2 = ".$this->var2str($this->telefono2).",
-            fax = ".$this->var2str($this->fax).", email = ".$this->var2str($this->email).",
-            web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
-            coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
-            observaciones = ".$this->var2str($this->observaciones)."
-            WHERE codproveedor = ".$this->var2str($this->codproveedor).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
+               telefono1 = ".$this->var2str($this->telefono1).", telefono2 = ".$this->var2str($this->telefono2).",
+               fax = ".$this->var2str($this->fax).", email = ".$this->var2str($this->email).",
+               web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
+               coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
+               observaciones = ".$this->var2str($this->observaciones)."
+               WHERE codproveedor = ".$this->var2str($this->codproveedor).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codproveedor,nombre,nombrecomercial,cifnif,telefono1,telefono2,
+               fax,email,web,codserie,coddivisa,codpago,observaciones) VALUES (".$this->var2str($this->codproveedor).",
+               ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
+               ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",".$this->var2str($this->fax).",
+               ".$this->var2str($this->email).",".$this->var2str($this->web).",".$this->var2str($this->codserie).",
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->observaciones).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codproveedor,nombre,nombrecomercial,cifnif,telefono1,telefono2,
-            fax,email,web,codserie,coddivisa,codpago,observaciones) VALUES (".$this->var2str($this->codproveedor).",
-            ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
-            ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",".$this->var2str($this->fax).",
-            ".$this->var2str($this->email).",".$this->var2str($this->web).",".$this->var2str($this->codserie).",
-            ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->observaciones).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

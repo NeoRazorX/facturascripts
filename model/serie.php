@@ -21,7 +21,7 @@ require_once 'base/fs_model.php';
 
 class serie extends fs_model
 {
-   public $codserie;
+   public $codserie; /// pkey
    public $descripcion;
    public $siniva;
    public $irpf;
@@ -59,7 +59,10 @@ class serie extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_series#'.$this->codserie;
+      if( is_null($this->codserie) )
+         return 'index.php?page=contabilidad_series';
+      else
+         return 'index.php?page=contabilidad_series#'.$this->codserie;
    }
    
    public function is_default()
@@ -91,26 +94,51 @@ class serie extends fs_model
    
    public function exists()
    {
-      return $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codserie = ".$this->var2str($this->codserie).";");
+      if( is_null($this->codserie) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codserie = ".$this->var2str($this->codserie).";");
+   }
+   
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codserie = trim($this->codserie);
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie) )
+         $this->new_error_msg("Código de serie no válido.");
+      else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100 )
+         $this->new_error_msg("Descripción de serie no válida.");
+      else
+         $status = TRUE;
+      
+      return $status;
    }
    
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            siniva = ".$this->var2str($this->siniva).", irpf = ".$this->var2str($this->irpf).",
-            idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = ".$this->var2str($this->codserie).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+               siniva = ".$this->var2str($this->siniva).", irpf = ".$this->var2str($this->irpf).",
+               idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = ".$this->var2str($this->codserie).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
+               VALUES (".$this->var2str($this->codserie).",".$this->var2str($this->descripcion).",".$this->var2str($this->siniva).",
+               ".$this->var2str($this->irpf).",".$this->var2str($this->idcuenta).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
-            VALUES (".$this->var2str($this->codserie).",".$this->var2str($this->descripcion).",".$this->var2str($this->siniva).",
-            ".$this->var2str($this->irpf).",".$this->var2str($this->idcuenta).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

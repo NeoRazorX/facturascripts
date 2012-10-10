@@ -4,41 +4,24 @@
    $(document).ready(function() {
       $("#b_nuevo_articulo").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_articulo").css({
-            left: ($(window).width() - $("#popup_nuevo_articulo").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_articulo").outerHeight())/2
-         });
-         $("#popup_nuevo_articulo").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_articulo');
          document.f_nuevo_articulo.referencia.focus();
       });
       $("#b_tarifas").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_tarifas").css({
-            left: ($(window).width() - $("#popup_tarifas").outerWidth())/2,
-            top: ($(window).height() - $("#popup_tarifas").outerHeight())/2
-         });
-         $("#popup_tarifas").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_tarifas');
       });
       $("#b_modificar_iva").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_modificar_iva").css({
-            left: ($(window).width() - $("#popup_modificar_iva").outerWidth())/2,
-            top: ($(window).height() - $("#popup_modificar_iva").outerHeight())/2
-         });
-         $("#popup_modificar_iva").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_modificar_iva');
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_articulo">
+   <h1>Nuevo artículo</h1>
+   {if condition="$fsc->familia->all()"}
    <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
-      <h1>Nuevo artículo:</h1>
       <table>
          <tr>
             <td align="right">Referencia:</td>
@@ -50,8 +33,6 @@
                <select name="codfamilia">
                {loop="$fsc->familia->all()"}
                   <option value="{$value->codfamilia}">{$value->descripcion}</option>
-               {else}
-                  <option value="">No hay familias creadas. Debes crear almenos una.</option>
                {/loop}
                </select>
             </td>
@@ -74,10 +55,15 @@
       <br/>
       <div class="right"><input type="submit" value="nuevo"/></div>
    </form>
+   {else}
+   <div class="error">
+      No hay <a target="_blank" href="{$fsc->familia->url()}">familias</a> creadas. Debes crear al menos una.
+   </div>
+   {/if}
 </div>
 
 <div class="popup" id="popup_tarifas">
-   <h1>Tarifas:</h1>
+   <h1>Tarifas</h1>
    {loop="$fsc->tarifa->all()"}
       <div class="grupo">
          <form action="{$fsc->url()}" method="post">
@@ -125,7 +111,7 @@
 <div class="popup" id="popup_modificar_iva">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="mod_iva" value="TRUE"/>
-      <h1>Modificar IVA:</h1>
+      <h1>Modificar IVA</h1>
       Mover los artículos con
       <select name="codimpuesto">
          {loop="$fsc->impuesto->all()"}

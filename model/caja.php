@@ -138,6 +138,11 @@ class caja extends fs_model
          $this->id = intval($newid[0]['nextval']);
    }
    
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       if( $this->exists() )

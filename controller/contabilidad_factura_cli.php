@@ -56,14 +56,13 @@ class contabilidad_factura_cli extends fs_controller
          $this->page->title = $this->factura->codigo;
          $this->agente = $this->factura->get_agente();
          
-         /// comprobamos la factura
-         if( !$this->factura->test() )
-            $this->new_error_msg( $this->factura->error_msg );
-         
          $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png');
          if($this->factura->idasiento)
             $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+         
+         /// comprobamos la factura
+         $this->factura->full_test();
          
          if( isset($_GET['imprimir']) )
             $this->generar_pdf();
@@ -73,7 +72,7 @@ class contabilidad_factura_cli extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-3';
    }
    
    public function url()
@@ -98,7 +97,7 @@ class contabilidad_factura_cli extends fs_controller
       
       $pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
       $pdf->addInfo('Subject', 'Factura de cliente ' . $this->factura->codigo);
-      $pdf->addInfo('Author', $this->get_empresa_name());
+      $pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->factura->get_lineas();
       $lineas_iva = $this->factura->get_lineas_iva();
@@ -121,7 +120,7 @@ class contabilidad_factura_cli extends fs_controller
             /// Creamos la tabla del encabezado
             $filas = array(
                 array(
-                    'campos' => "<b>Factura:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
+                    'campos' => "<b>Factura de cliente:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
                     'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
                     'cliente' => $this->factura->nombrecliente."\n".$this->factura->direccion."\n".
                                  "CP: ".$this->factura->codpostal."\n".$this->factura->ciudad.", ".$this->factura->provincia
@@ -132,7 +131,7 @@ class contabilidad_factura_cli extends fs_controller
                     '',
                     array(
                         'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 60),
+                            'campos' => array('justification' => 'right', 'width' => 100),
                             'factura' => array('justification' => 'left'),
                             'cliente' => array('justification' => 'right')
                         ),

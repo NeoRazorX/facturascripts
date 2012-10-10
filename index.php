@@ -54,6 +54,8 @@ if( $fsc->template )
       $tpl->assign('nlogin', $_COOKIE['user']);
    else
       $tpl->assign('nlogin', '');
+   $tpl->assign('db_history', FS_DB_HISTORY);
+   $tpl->assign('demo', FS_DEMO);
    $tpl->draw( $fsc->template );
 }
 

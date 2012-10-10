@@ -28,8 +28,8 @@ class fs_controller
 {
    protected $db;
    private $uptime;
-   public $error_msg;
-   public $message;
+   private $errors;
+   private $messages;
    public $user;
    public $page;
    public $ppage;
@@ -41,45 +41,44 @@ class fs_controller
    public $custom_search;
    public $query;
    public $buttons;
-   private $empresa_name;
+   public $empresa;
    
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
       $tiempo = explode(' ', microtime());
       $this->uptime = $tiempo[1] + $tiempo[0];
       $this->admin_page = $admin;
-      $this->template = 'login';
-      $this->error_msg = FALSE;
-      $this->message = FALSE;
+      $this->errors = array();
+      $this->messages = array();
       $this->db = new fs_db();
-      
       $this->set_css_file();
       
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         /// recuperamos el mensaje de error de fs_user()
-         $this->new_error_msg( $this->user->error_msg );
-         
-         $this->page = new fs_page( array('name'=>$name,
-                                          'title'=>$title,
-                                          'folder'=>$folder,
-                                          'version'=>$this->version(),
-                                          'show_on_menu'=>$shmenu) );
-         /// recuperamos el mensaje de error de fs_page()
-         $this->new_error_msg( $this->page->error_msg );
+         $this->page = new fs_page( array('name'=>$name, 'title'=>$title, 'folder'=>$folder,
+             'version'=>$this->version(), 'show_on_menu'=>$shmenu) );
          $this->ppage = FALSE;
+         $this->empresa = new empresa();
          
-         $this->empresa_name = $this->get_empresa_name();
-         
+         $this->template = 'index';
          if( isset($_GET['logout']) )
+         {
+            $this->template = 'login';
             $this->log_out();
-         else if($this->log_in() AND $this->user_have_access())
+         }
+         else if( !$this->log_in() )
+            $this->template = 'login';
+         else if( $this->user->have_access_to($this->page->name, $this->admin_page) )
          {
             if($name == '')
-               $this->template = 'index';
+            {
+               $this->new_error_msg('¡Página no encontrada!');
+               $this->prevent_default_page();
+            }
             else
             {
+               /// ¿Quieres que sea tu página de inicio? ¿O ya lo es?
                if( isset($_GET['default_page']) )
                   $this->set_default_page();
                else if( !isset($_COOKIE['default_page']) )
@@ -101,11 +100,17 @@ class fs_controller
                $this->process();
             }
          }
-         else if($this->user->logged_on )
-            $this->template = 'access_denied';
+         else
+         {
+            $this->new_error_msg("Acceso denegado.");
+            $this->prevent_default_page();
+         }
       }
       else
+      {
+         $this->template = 'no_db';
          $this->new_error_msg('¡Imposible conectar con la base de datos!');
+      }
    }
    
    public function close()
@@ -113,26 +118,29 @@ class fs_controller
       $this->db->close();
    }
    
-   public function new_error_msg($msg='')
+   public function new_error_msg($msg=FALSE)
    {
       if( $msg )
-      {
-         if( !$this->error_msg )
-            $this->error_msg = $msg;
-         else
-            $this->error_msg .= "<br/>" . $msg;
-      }
+         $this->errors[] = $msg;
    }
    
-   public function new_message($msg='')
+   public function get_errors()
+   {
+      if( isset($this->empresa) )
+         return array_merge($this->errors, $this->empresa->get_errors());
+      else
+         return $this->errors;
+   }
+   
+   public function new_message($msg=FALSE)
    {
       if( $msg )
-      {
-         if( !$this->message )
-            $this->message = $msg;
-         else
-            $this->message .= '<br/>' . $msg;
-      }
+         $this->messages[] = $msg;
+   }
+   
+   public function get_messages()
+   {
+      return $this->messages;
    }
    
    public function url()
@@ -140,25 +148,14 @@ class fs_controller
       return $this->page->url();
    }
    
-   public function log_in()
+   private function log_in()
    {
       if( isset($_POST['user']) AND isset($_POST['password']) )
       {
          $user = $this->user->get($_POST['user']);
          if($user)
          {
-            if($user->password == sha1($_POST['password']))
-            {
-               $user->new_logkey();
-               if( $user->save() )
-               {
-                  setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
-                  setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
-                  $this->user = $user;
-                  $this->load_menu();
-               }
-            }
-            else if(FS_DEMO AND $_POST['password'] == 'demo')
+            if($user->password == sha1($_POST['password']) OR (FS_DEMO AND $_POST['password'] == 'demo'))
             {
                $user->new_logkey();
                if( $user->save() )
@@ -201,10 +198,9 @@ class fs_controller
       return $this->user->logged_on;
    }
    
-   public function log_out()
+   private function log_out()
    {
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
-      setcookie('empresa', '', time()-FS_COOKIES_EXPIRE);
    }
    
    public function duration()
@@ -228,54 +224,17 @@ class fs_controller
       return $this->db->get_history();
    }
    
-   public function get_empresa_name()
+   protected function load_menu($reload=FALSE)
    {
-      $name = '';
-      if( isset($this->empresa_name) )
-         $name = $this->empresa_name;
-      else if( isset($_COOKIE['empresa']) )
-         $name = $_COOKIE['empresa'];
-      else
+      $this->menu = $this->user->get_menu($reload);
+      
+      /// actualizamos los datos de la página
+      foreach($this->menu as $m)
       {
-         $e = new empresa();
-         setcookie('empresa', $e->nombre, time()+FS_COOKIES_EXPIRE);
-         $name = $e->nombre;
-      }
-      return $name;
-   }
-   
-   protected function load_menu()
-   {
-      $this->menu = array();
-      $menu = $this->page->all();
-      if(count($menu) > 0)
-      {
-         /// actualizamos los datos de la página
-         foreach($menu as $m)
+         if($m->name == $this->page->name AND $m != $this->page)
          {
-            if($m->name == $this->page->name AND $m != $this->page)
-            {
-               $this->page->save();
-               break;
-            }
-         }
-         
-         if( $this->user->admin )
-            $this->menu = $menu;
-         else
-         {
-            foreach($menu as $m)
-            {
-               /// decidimos si se lo mostramos al usuario o no
-               foreach($this->user->get_accesses() as $a)
-               {
-                  if($m->name == $a->fs_page)
-                  {
-                     $this->menu[] = $m;
-                     break;
-                  }
-               }
-            }
+            $this->page->save();
+            break;
          }
       }
    }
@@ -309,31 +268,42 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.9';
+      return '0.9.10';
    }
    
    public function select_default_page()
    {
       if( $this->user->logged_on )
       {
+         $url = FALSE;
+         
          if( isset($_COOKIE['default_page']) )
          {
             $page = $this->page->get($_COOKIE['default_page']);
             if($page)
-               Header('location: index.php?page=' . $_COOKIE['default_page']);
-            else if(count($this->menu) > 0)
-               Header('location: index.php?page=' . $this->menu[0]->name . '&show_dpa=TRUE');
+               $url = 'index.php?page=' . $_COOKIE['default_page'];
             else
-               Header('location: index.php?page=admin_pages');
+               setcookie('default_page', '', time()-FS_COOKIES_EXPIRE);
          }
-         else if(count($this->menu) > 0)
-            Header('location: index.php?page=' . $this->menu[0]->name . '&show_dpa=TRUE');
-         else
-            Header('location: index.php?page=admin_pages');
+         
+         if( !$url )
+         {
+            $url = 'index.php?page=admin_pages';
+            foreach($this->menu as $p)
+            {
+               if($p->show_on_menu)
+               {
+                  $url = $p->url() . '&show_dpa=TRUE';
+                  break;
+               }
+            }
+         }
+         
+         Header('location: '.$url);
       }
    }
    
-   public function set_default_page()
+   private function set_default_page()
    {
       if($_GET['default_page'] == 'TRUE')
       {
@@ -347,12 +317,21 @@ class fs_controller
       }
    }
    
+   private function prevent_default_page()
+   {
+      if( isset($_COOKIE['default_page']) )
+      {
+         if($_COOKIE['default_page'] == $this->page->name)
+            setcookie('default_page', '', time()-FS_COOKIES_EXPIRE);
+      }
+   }
+   
    public function show_default_page_advice()
    {
       return isset($_GET['show_dpa']);
    }
    
-   public function set_css_file()
+   private function set_css_file()
    {
       if( isset($_GET['css_file']) )
       {
@@ -385,19 +364,6 @@ class fs_controller
    public function is_admin_page()
    {
       return $this->admin_page;
-   }
-   
-   public function user_have_access()
-   {
-      if( $this->user->admin )
-         return TRUE;
-      else if( !$this->admin_page )
-      {
-         $a = new fs_access( array('fs_user'=>$this->user->nick, 'fs_page'=>$this->page->name) );
-         return $a->exists();
-      }
-      else
-         return FALSE;;
    }
 }
 

@@ -4,20 +4,14 @@
    $(document).ready(function() {
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_agente").css({
-            left: ($(window).width() - $("#popup_nuevo_agente").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_agente").outerHeight())/2
-         });
-         $("#popup_nuevo_agente").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_agente');
          document.f_nuevo_agente.snombre.focus();
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_agente">
-   <h1>Nuevo agente:</h1>
+   <h1>Nuevo agente</h1>
    <form name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
       <table>
          <tr>
@@ -57,7 +51,7 @@
       <h1>
          Código: <a name="{$value->codagente}">{$value->codagente}</a>
          <span>
-            <a class="remove" href="{$fsc->url()}&amp;delete={$value->codagente}">eliminar</a>
+            <a class="remove" href="{$fsc->url()}&delete={$value->codagente}">eliminar</a>
             &nbsp;
             <input type="submit" value="modificar"/>
          </span>

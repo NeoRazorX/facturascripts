@@ -126,6 +126,11 @@ class secuencia extends fs_model
          $this->idsec = intval($newid[0]['nextval']);
    }
    
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       if( $this->exists() )
@@ -212,6 +217,11 @@ class secuencia_contabilidad extends fs_model
       $newid = $this->db->select("SELECT nextval('".$this->table_name."_idsecuencia_seq');");
       if($newid)
          $this->idsecuencia = intval($newid[0]['nextval']);
+   }
+   
+   public function test()
+   {
+      return TRUE;
    }
    
    public function save()
@@ -350,6 +360,11 @@ class secuencia_ejercicio extends fs_model
       $newid = $this->db->select("SELECT nextval('".$this->table_name."_id_seq');");
       if($newid)
          $this->id = intval($newid[0]['nextval']);
+   }
+   
+   public function test()
+   {
+      return TRUE;
    }
    
    public function save()

@@ -169,32 +169,52 @@ class asiento extends fs_model
          }
       }
    }
-
+   
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->concepto = $this->no_html( trim($this->concepto) );
+      $this->documento = $this->no_html( trim($this->documento) );
+      
+      if( strlen($this->concepto) < 1 OR strlen($this->concepto) > 255 )
+         $this->new_error_msg("Concepto del asiento no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET numero = ".$this->var2str($this->numero).",
-            idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
-            fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
-            codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).",
-            documento = ".$this->var2str($this->documento).", tipodocumento = ".$this->var2str($this->tipodocumento).",
-            importe = ".$this->var2str($this->importe)." WHERE idasiento = ".$this->var2str($this->idasiento).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET numero = ".$this->var2str($this->numero).",
+               idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
+               fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
+               codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).",
+               documento = ".$this->var2str($this->documento).", tipodocumento = ".$this->var2str($this->tipodocumento).",
+               importe = ".$this->var2str($this->importe)." WHERE idasiento = ".$this->var2str($this->idasiento).";";
+         }
+         else
+         {
+            $this->new_idasiento();
+            if( is_null($this->numero) )
+               $this->new_numero();
+            
+            $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
+               documento,tipodocumento,importe) VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
+               ".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
+               ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",
+               ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",".$this->var2str($this->documento).",
+               ".$this->var2str($this->tipodocumento).",".$this->var2str($this->importe).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $this->new_idasiento();
-         if( is_null($this->numero) )
-            $this->new_numero();
-         
-         $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
-            documento,tipodocumento,importe) VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
-            ".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
-            ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",
-            ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",".$this->var2str($this->documento).",
-            ".$this->var2str($this->tipodocumento).",".$this->var2str($this->importe).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()
@@ -226,7 +246,7 @@ class asiento extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
-   public function test()
+   public function full_test()
    {
       $status = TRUE;
       $debe = 0;
@@ -234,10 +254,7 @@ class asiento extends fs_model
       foreach($this->get_partidas() as $p)
       {
          if( !$p->test() )
-         {
-            $this->new_error_msg( $p->error_msg );
             $status = FALSE;
-         }
          
          $debe += $p->debe;
          $haber += $p->haber;
@@ -247,7 +264,7 @@ class asiento extends fs_model
       $total = $debe - $haber;
       if( abs($this->importe - $importe) > .01 )
       {
-         $this->new_error_msg("Valor importe incorrecto. Valor correcto: ".$importe);
+         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
          $status = FALSE;
       }
       else if( abs($total) > .01 )

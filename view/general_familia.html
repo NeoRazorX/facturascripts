@@ -5,23 +5,11 @@
    $(document).ready(function() {
       $("#b_importar_familia").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_importar_familia").css({
-            left: ($(window).width() - $("#popup_importar_familia").outerWidth())/2,
-            top: ($(window).height() - $("#popup_importar_familia").outerHeight())/2
-         });
-         $("#popup_importar_familia").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_importar_familia');
       });
       $("#b_herramientas_familia").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_herramientas_familia").css({
-            left: ($(window).width() - $("#popup_herramientas_familia").outerWidth())/2,
-            top: ($(window).height() - $("#popup_herramientas_familia").outerHeight())/2
-         });
-         $("#popup_herramientas_familia").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_herramientas_familia');
       });
       $("#b_eliminar_familia").click(function(event) {
          event.preventDefault();
@@ -32,7 +20,7 @@
 </script>
 
 <div class="popup" id="popup_herramientas_familia">
-   <h1>Herramientas:</h1>
+   <h1>Herramientas</h1>
    <form action="{$fsc->url()}" method="post">
       Multiplicar precios por:
       <input type="text" name="multiplicar" value="1" size="3"/>
@@ -42,7 +30,7 @@
 
 {if condition="$fsc->pag_importar"}
 <div class="popup" id="popup_importar_familia">
-   <h1>Importar familia:</h1>
+   <h1>Importar familia</h1>
    <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
       <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
       <input name='archivo' type='hidden' value='TRUE'/>

@@ -84,7 +84,10 @@ class ejercicio extends fs_model
    
    public function url()
    {
-      return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;
+      if( is_null($this->codejercicio) )
+         return 'index.php?page=contabilidad_ejercicios';
+      else
+         return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;
    }
    
    public function is_default()
@@ -123,28 +126,50 @@ class ejercicio extends fs_model
             WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codejercicio = trim($this->codejercicio);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      
+      if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio) )
+         $this->new_error_msg("Código de cliente no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+         $this->new_error_msg("Nombre de cliente no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            fechainicio = ".$this->var2str($this->fechainicio).", fechafin = ".$this->var2str($this->fechafin).",
-            estado = ".$this->var2str($this->estado).", longsubcuenta = ".$this->var2str($this->longsubcuenta).",
-            plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
-            idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
-            WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               fechainicio = ".$this->var2str($this->fechainicio).", fechafin = ".$this->var2str($this->fechafin).",
+               estado = ".$this->var2str($this->estado).", longsubcuenta = ".$this->var2str($this->longsubcuenta).",
+               plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
+               idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
+               WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
+               idasientoapertura,idasientopyg,idasientocierre) VALUES (".$this->var2str($this->codejercicio).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechafin).",".$this->var2str($this->estado).",
+               ".$this->var2str($this->longsubcuenta).",".$this->var2str($this->plancontable).",
+               ".$this->var2str($this->idasientoapertura).",".$this->var2str($this->idasientopyg).",
+               ".$this->var2str($this->idasientocierre).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
-            idasientoapertura,idasientopyg,idasientocierre) VALUES (".$this->var2str($this->codejercicio).",".$this->var2str($this->nombre).",
-            ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechafin).",".$this->var2str($this->estado).",
-            ".$this->var2str($this->longsubcuenta).",".$this->var2str($this->plancontable).",
-            ".$this->var2str($this->idasientoapertura).",".$this->var2str($this->idasientopyg).",
-            ".$this->var2str($this->idasientocierre).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

@@ -1,40 +1,11 @@
-{if condition="isset($_POST['query'])"}
-   <!--{$fsc->query}-->
-   <table class="list">
-      <tr>
-         <th>Referencia</th>
-         <th>Descripción</th>
-         <th align="right">PVP+IVA</th>
-         <th align="right">Stock</th>
-      </tr>
-      {loop="$fsc->results"}
-      <tr>
-         {if condition="$value->bloqueado"}
-         <td class="locked">
-         {else}
-         <td>
-         {/if}
-            <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->descripcion}','{$value->pvp}','0','{$value->get_iva()}')">
-               {$value->referencia}
-            </a>
-         </td>
-         <td>{$value->descripcion}</td>
-         <td align="right">
-            <span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} €</span>
-         </td>
-         <td align="right">{$value->stockfis}</td>
-      </tr>
-      {/loop}
-   </table>
-{else}
-   {include="header"}
-   
-   {if condition="$fsc->agente"}
-      {if condition="$fsc->caja"}
-         {if condition="$fsc->caja->codagente==$fsc->user->codagente"}
-            {include="tpv_recambios2"}
-         {/if}
-      {else}
+{include="header"}
+
+{if condition="$fsc->agente"}
+   {if condition="$fsc->caja"}
+      {if condition="$fsc->caja->codagente==$fsc->user->codagente"}
+         {include="tpv_recambios2"}
+      {/if}
+   {else}
       <script type="text/javascript">
          $(document).ready(function() {
             document.f_caja.d_inicial.select();
@@ -47,12 +18,11 @@
                <span><input type="submit" value="guardar"/></span>
             </h1>
             ¿Cuanto hay en la caja?
-            <input type="text" name="d_inicial" value="0.00" size="7"/>
+            <input type="text" name="d_inicial" value="0.00" size="7" autocomplete="off"/>
             Euros.
          </form>
       </div>
-      {/if}
    {/if}
-   
-   {include="footer"}
 {/if}
+
+{include="footer"}

@@ -83,7 +83,7 @@ class general_clientes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function anterior_url()

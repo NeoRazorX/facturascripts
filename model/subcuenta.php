@@ -132,15 +132,43 @@ class subcuenta extends fs_model
             WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
+   public function test()
+   {
+      $status = TRUE;
+      
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      
+      $partida = new partida();
+      $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
+      $this->debe = $totales['debe'];
+      $this->haber = $totales['haber'];
+      $this->saldo = $totales['saldo'];
+      
+      if( abs($this->debe - $totales['debe']) > .01 )
+      {
+         $this->new_error_msg("Valor debe de la subcuenta incorrecto. Valor correcto: ".$totales['debe']);
+         $status = FALSE;
+      }
+      else if( abs($this->haber - $totales['haber']) > .01 )
+      {
+         $this->new_error_msg("Valor haber de la subcuenta incorrecto. Valor correcto: ".$totales['haber']);
+         $status = FALSE;
+      }
+      else if( abs($this->saldo - $totales['saldo']) > .01 )
+      {
+         $this->new_error_msg("Valor saldo de la subcuenta incorrecto. Valor correcto: ".$totales['saldo']);
+         $status = FALSE;
+      }
+      
+      return $status;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->exists() )
       {
-         $partida = new partida();
-         $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
-         $this->debe = $totales['debe'];
-         $this->haber = $totales['haber'];
-         $this->saldo = $totales['saldo'];
          $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
             idcuenta = ".$this->var2str($this->idcuenta).", codcuenta = ".$this->var2str($this->codcuenta).",
             codejercicio = ".$this->var2str($this->codejercicio).",
@@ -149,6 +177,7 @@ class subcuenta extends fs_model
             haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
             recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
             WHERE idsubcuenta = '".$this->idsubcuenta."';";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -158,38 +187,14 @@ class subcuenta extends fs_model
             ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
             ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",".$this->var2str($this->haber).",
             ".$this->var2str($this->saldo).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name."
          WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
-   }
-   
-   public function test()
-   {
-      $status = TRUE;
-      $partida = new partida();
-      $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
-      if( abs($this->debe - $totales['debe']) > .01 )
-      {
-         $this->new_error_msg("Valor debe incorrecto. Valor correcto: ".$totales['debe']);
-         $status = FALSE;
-      }
-      else if( abs($this->haber - $totales['haber']) > .01 )
-      {
-         $this->new_error_msg("Valor haber incorrecto. Valor correcto: ".$totales['haber']);
-         $status = FALSE;
-      }
-      else if( abs($this->saldo - $totales['saldo']) > .01 )
-      {
-         $this->new_error_msg("Valor saldo incorrecto. Valor correcto: ".$totales['saldo']);
-         $status = FALSE;
-      }
-      
-      return $status;
    }
    
    public function all_from_cuenta($idcuenta)

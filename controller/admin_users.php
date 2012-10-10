@@ -42,7 +42,8 @@ class admin_users extends fs_controller
          else
          {
             $nu = new fs_user();
-            if($nu->set_nick($_POST['nnick']) AND $nu->set_password($_POST['npassword']))
+            $nu->nick = $_POST['nnick'];
+            if( $nu->set_password($_POST['npassword']) )
             {
                if( isset($_POST['nadmin']) )
                   $nu->admin = TRUE;
@@ -53,8 +54,6 @@ class admin_users extends fs_controller
                else
                   $this->new_error_msg("¡Imposible guardar el usuario!");
             }
-            else
-               $this->new_error_msg( $nu->error_msg );
          }
       }
       else if( isset($_GET['delete']) )
@@ -65,7 +64,7 @@ class admin_users extends fs_controller
             if( $nu->delete() )
                $this->new_message("Usuario ".$nu->nick." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar al usuario ".$nu->nick."!");
+               $this->new_error_msg("¡Imposible eliminar al usuario!");
          }
          else
             $this->new_error_msg("¡Usuario no encontrado!");
@@ -73,7 +72,7 @@ class admin_users extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

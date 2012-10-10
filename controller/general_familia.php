@@ -46,6 +46,8 @@ class general_familia extends fs_controller
          $this->familia->descripcion = $_POST['descripcion'];
          if( $this->familia->save() )
             $this->new_message("Datos modificados correctamente");
+         else
+            $this->new_error_msg("Imposible modificar los datos.");
       }
       else if( isset($_GET['cod']) )
       {
@@ -86,7 +88,7 @@ class general_familia extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-4';
    }
    
    public function url()

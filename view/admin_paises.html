@@ -4,20 +4,14 @@
    $(document).ready(function() {
       $("#b_nuevo_pais").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_pais").css({
-            left: ($(window).width() - $("#popup_nuevo_pais").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_pais").outerHeight())/2
-         });
-         $("#popup_nuevo_pais").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_pais');
          document.f_nuevo_pais.scodpais.focus();
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_pais">
-   <h1>Nuevo país:</h1>
+   <h1>Nuevo país</h1>
    <form name="f_nuevo_pais" action="{$fsc->url()}" method="post">
       <table>
          <tr>

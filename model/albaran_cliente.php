@@ -26,7 +26,7 @@ require_once 'model/secuencia.php';
 
 class linea_albaran_cliente extends fs_model
 {
-   public $idlinea;
+   public $idlinea; /// pkey
    public $idalbaran;
    public $referencia;
    public $descripcion;
@@ -40,10 +40,25 @@ class linea_albaran_cliente extends fs_model
    public $pvpunitario;
    public $irpf;
    public $recargo;
+   
+   private $codigo;
+   private $fecha;
+   private $albaran_url;
+   private $articulo_url;
+   
+   private static $albaranes;
+   private static $articulos;
 
    public function __construct($l=FALSE)
    {
       parent::__construct('lineasalbaranescli');
+      
+      if( !isset(self::$albaranes) )
+         self::$albaranes = array();
+      
+      if( !isset(self::$articulos) )
+         self::$articulos = array();
+      
       if($l)
       {
          $this->idlinea = $this->intval($l['idlinea']);
@@ -85,6 +100,55 @@ class linea_albaran_cliente extends fs_model
       return '';
    }
    
+   private function fill()
+   {
+      $encontrado = FALSE;
+      foreach(self::$albaranes as $a)
+      {
+         if($a->idalbaran == $this->idalbaran)
+         {
+            $this->codigo = $a->codigo;
+            $this->fecha = $a->fecha;
+            $this->albaran_url = $a->url();
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      if( !$encontrado )
+      {
+         $alb = new albaran_cliente();
+         $alb = $alb->get($this->idalbaran);
+         if( $alb )
+         {
+            $this->codigo = $alb->codigo;
+            $this->fecha = $alb->fecha;
+            $this->albaran_url = $alb->url();
+            self::$albaranes[] = $alb;
+         }
+      }
+      
+      $encontrado = FALSE;
+      foreach(self::$articulos as $a)
+      {
+         if($a->referencia == $this->referencia)
+         {
+            $this->articulo_url = $a->url();
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      if( !$encontrado )
+      {
+         $art = new articulo();
+         $art = $art->get($this->referencia);
+         if($art)
+         {
+            $this->articulo_url = $art->url();
+            self::$articulos[] = $art;
+         }
+      }
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvpunitario, 2, '.', ' ');
@@ -105,18 +169,32 @@ class linea_albaran_cliente extends fs_model
       return number_format($this->pvptotal*(100+$this->iva)/100, 2, '.', ' ');
    }
    
+   public function show_codigo()
+   {
+      if( !isset($this->codigo) )
+         $this->fill();
+      return $this->codigo;
+   }
+   
+   public function show_fecha()
+   {
+      if( !isset($this->fecha) )
+         $this->fill();
+      return $this->fecha;
+   }
+   
    public function url()
    {
-      $alb = new albaran_cliente();
-      $alb = $alb->get($this->idalbaran);
-      return $alb->url();
+      if( !isset($this->albaran_url) )
+         $this->fill();
+      return $this->albaran_url;
    }
    
    public function articulo_url()
    {
-      $art = new articulo();
-      $art = $art->get($this->referencia);
-      return $art->url();
+      if( !isset($this->articulo_url) )
+         $this->fill();
+      return $this->articulo_url;
    }
    
    public function exists()
@@ -172,16 +250,17 @@ class linea_albaran_cliente extends fs_model
       
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
+      
       if( abs($this->pvptotal - $total) > .01 )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
-                              ". Valor correcto: ".$total);
+            " del albarán. Valor correcto: ".$total);
          $status = FALSE;
       }
       else if( abs($this->pvpsindto - $totalsindto) > .01 )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
-                              ". Valor correcto: ".$totalsindto);
+            " del albarán. Valor correcto: ".$totalsindto);
          $status = FALSE;
       }
       
@@ -200,11 +279,11 @@ class linea_albaran_cliente extends fs_model
       return $linealist;
    }
    
-   public function all_from_articulo($ref, $offset=0)
+   public function all_from_articulo($ref, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $linealist = array();
       $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
+         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", $limit, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -524,9 +603,17 @@ class albaran_cliente extends fs_model
       $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
    }
    
+   public function test()
+   {
+      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      return TRUE;
+   }
+   
    public function save()
    {
-      if( $this->exists() )
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET idfactura = ".$this->var2str($this->idfactura).",
             codigo = ".$this->var2str($this->codigo).", codagente = ".$this->var2str($this->codagente).",
@@ -547,6 +634,7 @@ class albaran_cliente extends fs_model
             totalrecargo = ".$this->var2str($this->totalrecargo).", observaciones = ".$this->var2str($this->observaciones).",
             ptefactura = ".$this->var2str($this->ptefactura)."
             WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -567,8 +655,8 @@ class albaran_cliente extends fs_model
             ".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",".$this->var2str($this->totalirpf).",
             ".$this->var2str($this->porcomision).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
             ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -583,7 +671,7 @@ class albaran_cliente extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
-   public function test()
+   public function full_test()
    {
       $status = TRUE;
       $neto = 0;
@@ -594,10 +682,7 @@ class albaran_cliente extends fs_model
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
-         {
-            $this->new_error_msg( $l->error_msg );
             $status = FALSE;
-         }
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
@@ -607,22 +692,22 @@ class albaran_cliente extends fs_model
       /// comprobamos los totales
       if( abs($this->neto - $neto) > .01 )
       {
-         $this->new_error_msg("Valor neto incorrecto. Valor correcto: ".$neto);
+         $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
       else if( abs($this->totaliva - $iva) > .01 )
       {
-         $this->new_error_msg("Valor totaliva incorrecto. Valor correcto: ".$iva);
+         $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
       else if( abs($this->total - $total) > .01 )
       {
-         $this->new_error_msg("Valor total incorrecto. Valor correcto: ".$total);
+         $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
       else if( abs($this->totaleuros - $total) > .01 )
       {
-         $this->new_error_msg("Valor totaleuros incorrecto. Valor correcto: ".$total);
+         $this->new_error_msg("Valor totaleuros del albarán incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
       
@@ -633,15 +718,16 @@ class albaran_cliente extends fs_model
       {
          if( count($facturas) > 1 )
          {
-            $this->new_error_msg("Este albarán esta asociado a las siguientes facturas (y no debería):");
+            $msg = "Este albarán esta asociado a las siguientes facturas (y no debería):";
             foreach($facturas as $f)
-               $this->new_error_msg("<a href='".$f->url()."'>".$f->codigo."</a>");
+               $msg .= " <a href='".$f->url()."'>".$f->codigo."</a>";
+            $this->new_error_msg($msg);
             $status = FALSE;
          }
          else if($facturas[0]->idfactura != $this->idfactura)
          {
             $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.
-                                  La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
+               La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
             $status = FALSE;
          }
       }

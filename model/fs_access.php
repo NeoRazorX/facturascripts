@@ -34,8 +34,8 @@ class fs_access extends fs_model
       }
       else
       {
-         $this->fs_user = '';
-         $this->fs_page = '';
+         $this->fs_user = NULL;
+         $this->fs_page = NULL;
       }
    }
    
@@ -51,6 +51,11 @@ class fs_access extends fs_model
       else
          return $this->db->select("SELECT * FROM ".$this->table_name."
             WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
    }
    
    public function save()

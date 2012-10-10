@@ -34,11 +34,6 @@ class contabilidad_facturas_prov extends fs_controller
       $factura = new factura_proveedor();
       $this->custom_search = TRUE;
       
-      if( isset($_GET['offset']) )
-         $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
-      
       if( isset($_GET['delete']) )
       {
          $fact = $factura->get($_GET['delete']);
@@ -49,7 +44,14 @@ class contabilidad_facturas_prov extends fs_controller
             else
                $this->new_error_msg("¡Imposible eliminar la factura!");
          }
+         else
+            $this->new_error_msg("Factura no encontrada.");
       }
+      
+      if( isset($_GET['offset']) )
+         $this->offset = intval($_GET['offset']);
+      else
+         $this->offset = 0;
       
       if($this->query != '')
          $this->resultados = $factura->search($this->query, $this->offset);
@@ -58,7 +60,7 @@ class contabilidad_facturas_prov extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function anterior_url()

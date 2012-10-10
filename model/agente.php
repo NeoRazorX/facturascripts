@@ -35,7 +35,7 @@ class agente extends fs_model
    public $dnicif;
    public $nombre;
    public $apellidos;
-   public $codagente;
+   public $codagente; /// pkey
    
    public function __construct($a=FALSE)
    {
@@ -51,7 +51,7 @@ class agente extends fs_model
          $this->provincia = $a['provincia'];
          $this->ciudad = $a['ciudad'];
          $this->direccion = $a['direccion'];
-         $this->porcomision = $a['porcomision'];
+         $this->porcomision = floatval($a['porcomision']);
          $this->irpf = floatval($a['irpf']);
          $this->dnicif = $a['dnicif'];
          $this->nombre = $a['nombre'];
@@ -100,7 +100,10 @@ class agente extends fs_model
    
    public function url()
    {
-      return "index.php?page=admin_agentes#".$this->codagente;
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
+      else
+         return "index.php?page=admin_agentes#".$this->codagente;
    }
    
    public function get($cod)
@@ -120,23 +123,51 @@ class agente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente=".$this->var2str($this->codagente).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codagente = trim($this->codagente);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->apellidos = $this->no_html( trim($this->apellidos) );
+      $this->dnicif = $this->no_html( trim($this->dnicif) );
+      $this->telefono = $this->no_html( trim($this->telefono) );
+      $this->email = $this->no_html( trim($this->email) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codagente) )
+         $this->new_error_msg("Código de agente no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
+         $this->new_error_msg("Nombre de agente no válido.");
+      else if( strlen($this->apellidos) < 1 OR strlen($this->apellidos) > 50 )
+         $this->new_error_msg("Apellidos del agente no válidos.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = " . $this->var2str($this->nombre) . ",
-            apellidos = " . $this->var2str($this->apellidos) . ", dnicif = " . $this->var2str($this->dnicif) . ",
-            telefono = " . $this->var2str($this->telefono) . ", email = " . $this->var2str($this->email) . "
-            WHERE codagente = " . $this->var2str($this->codagente) . ";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = " . $this->var2str($this->nombre) . ",
+               apellidos = " . $this->var2str($this->apellidos) . ", dnicif = " . $this->var2str($this->dnicif) . ",
+               telefono = " . $this->var2str($this->telefono) . ", email = " . $this->var2str($this->email) . "
+               WHERE codagente = " . $this->var2str($this->codagente) . ";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email) VALUES
+               (".$this->var2str($this->codagente).",".$this->var2str($this->nombre).",".$this->var2str($this->apellidos).",
+               ".$this->var2str($this->dnicif).",".$this->var2str($this->telefono).",".$this->var2str($this->email).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email) VALUES
-            (".$this->var2str($this->codagente).",".$this->var2str($this->nombre).",".$this->var2str($this->apellidos).",
-            ".$this->var2str($this->dnicif).",".$this->var2str($this->telefono).",".$this->var2str($this->email).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

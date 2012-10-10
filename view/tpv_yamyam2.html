@@ -10,19 +10,12 @@
    }
    function close_articulos()
    {
-      $("#popup_message").hide();
       $("div.popup").hide();
       $("#shadow").hide();
    }
    function mostrar_paquete(paq)
    {
-      $("#shadow").show();
-      $("#paquete_"+paq).css({
-         left: ($(window).width() - $("#paquete_"+paq).outerWidth())/2,
-         top: ($(window).height() - $("#paquete_"+paq).outerHeight())/2
-      });
-      $("#paquete_"+paq).show();
-      $("#popup_message").show();
+      fs_show_popup('paquete_'+paq);
    }
    function recalcular()
    {
@@ -161,33 +154,15 @@
          $('#' + $(this).attr('for')).attr('checked', 'checked');
       });
       $("#paquetes").click(function(event) {
-         $("#shadow").show();
-         $("#all_paquetes").css({
-            left: ($(window).width() - $('#all_paquetes').outerWidth())/2,
-            top: ($(window).height() - $('#all_paquetes').outerHeight())/2
-         });
-         $("#all_paquetes").show();
-         $("#popup_message").show();
+         fs_show_popup('all_paquetes');
       });
       {loop="$fsc->familias"}
       $("#fam_{$value->codfamilia}").click(function(event) {
-         $("#shadow").show();
-         $("#articulos_{$value->codfamilia}").css({
-            left: ($(window).width() - $('#articulos_{$value->codfamilia}').outerWidth())/2,
-            top: ($(window).height() - $('#articulos_{$value->codfamilia}').outerHeight())/2
-         });
-         $("#articulos_{$value->codfamilia}").show();
-         $("#popup_message").show();
+         fs_show_popup('articulos_{$value->codfamilia}');
       });
       {/loop}
       $("#b_guardar_ticket").click(function() {
-         $("#shadow").show();
-         $("#fin_ticket").css({
-            left: ($(window).width() - $('#fin_ticket').outerWidth())/2,
-            top: ($(window).height() - $('#fin_ticket').outerHeight())/2
-         });
-         $("#fin_ticket").show();
-         $("#popup_message").show();
+         fs_show_popup('fin_ticket');
          document.form_tpv_albaran.efectivo.value = '0.00';
          document.form_tpv_albaran.cambio.value = '0.00';
          document.form_tpv_albaran.efectivo.select();
@@ -204,13 +179,7 @@
       });
       $("#b_opciones_tpv").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_opciones_tpv").css({
-            left: ($(window).width() - $('#popup_opciones_tpv').outerWidth())/2,
-            top: ($(window).height() - $('#popup_opciones_tpv').outerHeight())/2
-         });
-         $("#popup_opciones_tpv").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_opciones_tpv');
       });
    });
 </script>
@@ -379,7 +348,7 @@
 </form>
 
 <div class="popup" id="all_paquetes">
-   <h1>Paquetes:</h1>
+   <h1>Paquetes</h1>
    <ul>
    {loop="$fsc->paquetes"}
       <li onclick="mostrar_paquete('{$value->referencia}')">

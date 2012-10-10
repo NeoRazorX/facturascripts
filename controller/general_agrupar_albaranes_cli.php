@@ -20,7 +20,6 @@
 require_once 'model/albaran_cliente.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
-require_once 'model/empresa.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
@@ -176,9 +175,15 @@ class general_agrupar_albaranes_cli extends fs_controller
    
    private function generar_asiento($factura)
    {
-      $empresa = new empresa();
-      if( !$empresa->contintegrada )
+      $cliente = new cliente();
+      $cliente = $cliente->get($factura->codcliente);
+      $subcuenta_cli = $cliente->get_subcuenta($factura->codejercicio);
+      
+      if( !$this->empresa->contintegrada )
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+      else if( !$subcuenta_cli )
+         $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará
+            un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
       else
       {
          $asiento = new asiento();
@@ -193,9 +198,6 @@ class general_agrupar_albaranes_cli extends fs_controller
          {
             $asiento_correcto = TRUE;
             $subcuenta = new subcuenta();
-            $cliente = new cliente();
-            $cliente = $cliente->get($factura->codcliente);
-            $subcuenta_cli = $cliente->get_subcuenta($asiento->codejercicio);
             $partida0 = new partida();
             $partida0->idasiento = $asiento->idasiento;
             $partida0->concepto = $asiento->concepto;

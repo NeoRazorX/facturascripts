@@ -67,7 +67,7 @@ class general_proveedor extends fs_controller
             if( $direccion->save() )
                $this->new_message("Dirección guardada correctamente.");
             else
-               $this->new_error_msg("¡Imposible guardar la dirección! ".$direccion->error_msg);
+               $this->new_error_msg("¡Imposible guardar la dirección!");
          }
       }
       else if( isset($_POST['codproveedor']) )
@@ -118,7 +118,7 @@ class general_proveedor extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()
@@ -133,14 +133,16 @@ class general_proveedor extends fs_controller
    {
       if($this->offset > '0')
          return $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
-      return '';
+      else
+         return '';
    }
    
    public function siguiente_url()
    {
       if(count($this->albaranes) == FS_ITEM_LIMIT)
          return $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
-      return '';
+      else
+         return '';
    }
 }
 

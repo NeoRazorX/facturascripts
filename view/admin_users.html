@@ -4,20 +4,14 @@
    $(document).ready(function() {
       $("#b_nuevo_usuario").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_usuario").css({
-            left: ($(window).width() - $("#popup_nuevo_usuario").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_usuario").outerHeight())/2
-         });
-         $("#popup_nuevo_usuario").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_usuario');
          document.f_nuevo_usuario.nnick.focus();
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_usuario">
-   <h1>Nuevo usuario:</h1>
+   <h1>Nuevo usuario</h1>
    <form name="f_nuevo_usuario" action="{$fsc->page->url()}" method="POST">
       <table>
          <tr>

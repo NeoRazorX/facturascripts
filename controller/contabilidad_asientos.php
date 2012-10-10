@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'model/asiento.php';
 
@@ -17,14 +34,10 @@ class contabilidad_asientos extends fs_controller
    {
       $this->asiento = new asiento();
       $this->custom_search = TRUE;
+      
       $naurl = $this->page->get('contabilidad_nuevo_asiento');
       if($naurl)
          $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo', $naurl->url());
-      
-      if( isset($_GET['offset']) )
-         $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       if( isset($_GET['delete']) )
       {
@@ -34,11 +47,16 @@ class contabilidad_asientos extends fs_controller
             if( $asiento->delete() )
                $this->new_message("Asiento eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el asiento! ".$asiento->error_msg);
+               $this->new_error_msg("¡Imposible eliminar el asiento!");
          }
          else
             $this->new_error_msg("¡Asiento no encontrado!");
       }
+      
+      if( isset($_GET['offset']) )
+         $this->offset = intval($_GET['offset']);
+      else
+         $this->offset = 0;
       
       if($this->query)
          $this->resultados = $this->asiento->search($this->query, $this->offset);
@@ -47,7 +65,7 @@ class contabilidad_asientos extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function anterior_url()

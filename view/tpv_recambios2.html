@@ -86,7 +86,6 @@
                <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
                <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
                   "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
-         $("#popup_message").hide();
          $('div.popup').each(function() {
             $(this).hide();
          });
@@ -109,7 +108,6 @@
                top: 40
             });
             $("#popup_new_line").show();
-            $("#popup_message").show();
             document.f_search_recambios.query.focus();
             document.f_search_recambios.query.value = '';
             $("#search_results").html('');
@@ -149,20 +147,14 @@
             event.preventDefault();
          });
          $("#b_nuevo_albaran_cliente").click(function() {
-            $("#shadow").show();
-            $("#popup_tpv_opciones").css({
-               left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
-               top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
-            });
-            $("#popup_tpv_opciones").show();
-            $("#popup_message").show();
+            fs_show_popup('popup_tpv_opciones');
          });
       });
    </script>
    
    <div class="popup" id="popup_new_line" style="min-width: 60%">
       <form id="f_search_recambios" name="f_search_recambios" action="{$fsc->url()}" method="post">
-         <h1>Buscar artículos:</h1>
+         <h1>Buscar artículos</h1>
          <div style="text-align: center;">
             <input type="text" name="query" size="40" autocomplete="off"/>
             <input type="submit" value="buscar"/>
@@ -174,7 +166,7 @@
    <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
       <input type="hidden" id="numlineas" name="numlineas" value="0"/>
       <div class="popup" id="popup_tpv_opciones"/>
-         <h1>Opciones:</h1>
+         <h1>Opciones</h1>
          <table>
             <tr>
                <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>

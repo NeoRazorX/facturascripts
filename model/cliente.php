@@ -69,6 +69,11 @@ class subcuenta_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       if( $this->exists() )
@@ -170,8 +175,21 @@ class direccion_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
+   public function test()
+   {
+      $this->apartado = $this->no_html( trim($this->apartado) );
+      $this->ciudad = $this->no_html( trim($this->ciudad) );
+      $this->codpostal = $this->no_html( trim($this->codpostal) );
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->direccion = $this->no_html( trim($this->direccion) );
+      $this->provincia = $this->no_html( trim($this->provincia) );
+      return TRUE;
+   }
+   
    public function save()
    {
+      if( !$this->test() )
+         return FALSE;
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codcliente = ".$this->var2str($this->codcliente).",
@@ -180,6 +198,7 @@ class direccion_cliente extends fs_model
             codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
             domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
             descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -188,8 +207,8 @@ class direccion_cliente extends fs_model
             ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
             ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->domenvio).",
             ".$this->var2str($this->domfacturacion).",".$this->var2str($this->descripcion).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -372,27 +391,54 @@ class cliente extends fs_model
          return '000001';
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codcliente = trim($this->codcliente);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->nombrecomercial = $this->no_html( trim($this->nombrecomercial) );
+      $this->cifnif = $this->no_html( trim($this->cifnif) );
+      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcliente) )
+         $this->new_error_msg("Código de cliente no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+         $this->new_error_msg("Nombre de cliente no válido.");
+      else if( strlen($this->nombrecomercial) < 1 OR strlen($this->nombrecomercial) > 100 )
+         $this->new_error_msg("Nombre comercial de cliente no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
-            codserie = ".$this->var2str($this->codserie).", coddivisa = ".$this->var2str($this->coddivisa).",
-            codpago = ".$this->var2str($this->codpago).", debaja = ".$this->var2str($this->debaja).",
-            fechabaja = ".$this->var2str($this->fechabaja).", observaciones = ".$this->var2str($this->observaciones)."
-            WHERE codcliente = ".$this->var2str($this->codcliente).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
+               codserie = ".$this->var2str($this->codserie).", coddivisa = ".$this->var2str($this->coddivisa).",
+               codpago = ".$this->var2str($this->codpago).", debaja = ".$this->var2str($this->debaja).",
+               fechabaja = ".$this->var2str($this->fechabaja).", observaciones = ".$this->var2str($this->observaciones)."
+               WHERE codcliente = ".$this->var2str($this->codcliente).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,codserie,coddivisa,codpago,
+               debaja,fechabaja,observaciones) VALUES (".$this->var2str($this->codcliente).",
+               ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
+               ".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
+               ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",".$this->var2str($this->observaciones).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,codserie,coddivisa,codpago,
-            debaja,fechabaja,observaciones) VALUES (".$this->var2str($this->codcliente).",
-            ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
-            ".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
-            ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",".$this->var2str($this->observaciones).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

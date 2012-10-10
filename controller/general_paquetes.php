@@ -53,11 +53,14 @@ class general_paquetes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function new_search()
    {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_paquetes';
+      
       $art = new articulo();
       $cache = new fs_cache();
       $this->results = $cache->get_array('search_articulo_'.$this->query, 600);

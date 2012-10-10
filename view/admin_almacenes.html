@@ -4,20 +4,14 @@
    $(document).ready(function() {
       $("#b_nuevo_almacen").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_almacen").css({
-            left: ($(window).width() - $("#popup_nuevo_almacen").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_almacen").outerHeight())/2
-         });
-         $("#popup_nuevo_almacen").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_almacen');
          document.f_nuevo_almacen.scodalmacen.focus();
       });
    });
 </script>
 
 <div class="popup" id="popup_nuevo_almacen">
-   <h1>Nuevo almacén:</h1>
+   <h1>Nuevo almacén</h1>
    <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post">
       <table>
          <tr>

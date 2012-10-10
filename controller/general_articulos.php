@@ -60,7 +60,7 @@ class general_articulos extends fs_controller
          if( $tar0->save() )
             $this->new_message("Tarifa guardada correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar la tarifa!");
+            $this->new_error_msg("¡Imposible guardar la tarifa!");
       }
       else if( isset($_GET['delete_tarifa']) )
       {
@@ -86,23 +86,19 @@ class general_articulos extends fs_controller
       }
       else if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
       {
-         if( $articulo->set_referencia($_POST['referencia']) )
+         $articulo->referencia = $_POST['referencia'];
+         $articulo->descripcion = $_POST['referencia'];
+         $articulo->codfamilia = $_POST['codfamilia'];
+         $articulo->codimpuesto = $_POST['codimpuesto'];
+         if( $articulo->save() )
          {
-            $articulo->descripcion = $_POST['referencia'];
-            $articulo->codfamilia = $_POST['codfamilia'];
-            $articulo->codimpuesto = $_POST['codimpuesto'];
-            if( $articulo->save() )
-            {
-               $imp = $this->impuesto->get($_POST['codimpuesto']);
-               if($imp)
-                  $imp->set_default();
-               header('location: '.$articulo->url());
-            }
-            else
-               $this->new_error_msg("¡Error al crear el articulo! ".$articulo->error_msg);
+            $imp = $this->impuesto->get($_POST['codimpuesto']);
+            if($imp)
+               $imp->set_default();
+            header('location: '.$articulo->url());
          }
          else
-            $this->new_error_msg($articulo->error_msg);
+            $this->new_error_msg("¡Error al crear el articulo!");
       }
       else if( isset($_GET['delete']) )
       {
@@ -112,7 +108,7 @@ class general_articulos extends fs_controller
             if( $art->delete() )
                $this->new_message("Articulo ".$art->referencia." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Error al eliminarl el articulo! ".$art->error_msg);
+               $this->new_error_msg("¡Error al eliminarl el articulo!");
          }
       }
       
@@ -128,7 +124,7 @@ class general_articulos extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function anterior_url()

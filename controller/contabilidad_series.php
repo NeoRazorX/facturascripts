@@ -42,19 +42,16 @@ class contabilidad_series extends fs_controller
             $serie->codserie = $_POST['codserie'];
          }
          $serie->descripcion = $_POST['descripcion'];
-         if( isset($_POST['siniva']) )
-            $serie->siniva = TRUE;
-         else
-            $serie->siniva = FALSE;
+         $serie->siniva = isset($_POST['siniva']);
          if( $serie->save() )
-            $this->new_message("Serie ".$serie->codserie." modificada correctamente");
+            $this->new_message("Serie ".$serie->codserie." guardada correctamente");
          else
-            $this->new_error_msg("¡Imposible modificar serie ".$serie->codserie."!");
+            $this->new_error_msg("¡Imposible guardar la serie!");
       }
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

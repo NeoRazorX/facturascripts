@@ -133,7 +133,12 @@ class subpaquete extends fs_model
       }
       return $subpaqlist;
    }
-
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function exists()
    {
       if( is_null($this->id) )
@@ -198,10 +203,10 @@ class paquete extends fs_model
    
    public function url()
    {
-      if( isset($this->referencia) )
-         return "index.php?page=general_paquete&ref=".$this->referencia;
-      else
+      if( is_null($this->referencia) )
          return "index.php?page=general_paquetes";
+      else
+         return "index.php?page=general_paquete&ref=".$this->referencia;
    }
 
    public function get($ref)
@@ -268,6 +273,11 @@ class paquete extends fs_model
       else
          return $this->db->select("SELECT * FROM ".$this->table_name."
             WHERE referencia = ".$this->var2str($this->referencia).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
    }
    
    public function save()

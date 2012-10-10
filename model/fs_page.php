@@ -28,7 +28,7 @@ class fs_page extends fs_model
    public $show_on_menu;
    public $exists;
    public $enabled;
-
+   
    public function __construct($p=FALSE)
    {
       parent::__construct('fs_pages');
@@ -86,7 +86,12 @@ class fs_page extends fs_model
       else
          return FALSE;
    }
-
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       $this->clean_cache();

@@ -21,7 +21,6 @@ require_once 'model/albaran_cliente.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
-require_once 'model/empresa.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
@@ -68,25 +67,24 @@ class general_albaran_cli extends fs_controller
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
          
-         /// comprobamos el albarán
-         if( !$this->albaran->test() )
-            $this->new_error_msg( $this->albaran->error_msg );
-         
-         if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
-            $this->generar_factura();
-         
          if( $this->albaran->ptefactura )
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
          else
             $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         
+         /// comprobamos el albarán
+         $this->albaran->full_test();
+         
+         if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
+            $this->generar_factura();
       }
       else
          $this->new_error_msg("¡Albarán de cliente no encontrado!");
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()
@@ -280,12 +278,11 @@ class general_albaran_cli extends fs_controller
    
    private function generar_asiento($factura)
    {
-      $empresa = new empresa();
       $cliente = new cliente();
       $cliente = $cliente->get($factura->codcliente);
       $subcuenta_cli = $cliente->get_subcuenta($factura->codejercicio);
       
-      if( !$empresa->contintegrada )
+      if( !$this->empresa->contintegrada )
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
       else if( !$subcuenta_cli )
          $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará

@@ -4,13 +4,7 @@
    $(document).ready(function() {
       $("#b_nueva_serie").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nueva_serie").css({
-            left: ($(window).width() - $("#popup_nueva_serie").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nueva_serie").outerHeight())/2
-         });
-         $("#popup_nueva_serie").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nueva_serie');
          document.f_nueva_serie.codserie.focus();
       });
    });
@@ -18,7 +12,7 @@
 
 <div class="popup" id="popup_nueva_serie">
    <form name="f_nueva_serie" action="{$fsc->url()}" method="post">
-      <h1>Nueva serie:</h1>
+      <h1>Nueva serie</h1>
       <table>
          <tr>
             <td align="right">Código:</td>

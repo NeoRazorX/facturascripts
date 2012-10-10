@@ -113,16 +113,38 @@ class familia extends fs_model
             WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codfamilia = trim($this->codfamilia);
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      
+      if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codfamilia) )
+         $this->new_error_msg("Código de familia no válido.");
+      else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100 )
+         $this->new_error_msg("Descripción de familia no válida.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion)."
-            WHERE codfamilia = ".$this->var2str($this->codfamilia).";";
+      if( $this->test() )
+      {
+         $this->clean_cache();
+         if( $this->exists() )
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion)."
+               WHERE codfamilia = ".$this->var2str($this->codfamilia).";";
+         else
+            $sql = "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES
+               (".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).");";
+         return $this->db->exec($sql);
+      }
       else
-         $sql = "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES
-            (".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).");";
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

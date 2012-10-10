@@ -26,7 +26,6 @@ require_once 'model/caja.php';
 require_once 'model/cliente.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
-require_once 'model/empresa.php';
 require_once 'model/forma_pago.php';
 require_once 'model/serie.php';
 
@@ -128,11 +127,14 @@ class tpv_recambios extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    private function new_search()
    {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/tpv_recambios';
+      
       $cache = new fs_cache();
       $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
       if( count($this->results) < 1 )
@@ -263,7 +265,6 @@ class tpv_recambios extends fs_controller
          $file = fopen("/tmp/ticket.txt", "w");
          if($file)
          {
-            $empresa = new empresa();
             $linea = "\n".chr(27).chr(33).chr(56)."CIERRE DE CAJA:".chr(27).chr(33).chr(1)."\n"; /// letras grandes
             fwrite($file, $linea);
             $linea = "Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n";
@@ -290,15 +291,15 @@ class tpv_recambios extends fs_controller
             fwrite($file, $linea);
             
             /// encabezado común para los tickets
-            $linea = chr(27).chr(33).chr(56).$this->center_text($empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
+            $linea = chr(27).chr(33).chr(56).$this->center_text($this->empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
             fwrite($file, $linea);
-            $linea = $this->center_text($empresa->lema) . "\n\n";
+            $linea = $this->center_text($this->empresa->lema) . "\n\n";
             fwrite($file, $linea);
-            $linea = $this->center_text($empresa->direccion . " - " . $empresa->ciudad) . "\n";
+            $linea = $this->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n";
             fwrite($file, $linea);
-            $linea = $this->center_text("CIF: " . $empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
+            $linea = $this->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
             fwrite($file, $linea);
-            $linea = $this->center_text($empresa->horario) . "\n";
+            $linea = $this->center_text($this->empresa->horario) . "\n";
             fwrite($file, $linea);
             fclose($file);
          }
@@ -339,7 +340,7 @@ class tpv_recambios extends fs_controller
                $this->new_error_msg("¡Imposible actualizar la caja!");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."! ".$alb->error_msg);
+            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
       }
       else
          $this->new_error_msg("Ticket no encontrado.");
@@ -351,7 +352,6 @@ class tpv_recambios extends fs_controller
       $file = fopen("/tmp/ticket.txt", "w");
       if($file)
       {
-         $empresa = new empresa();
          $linea = "\nTicket: " . $albaran->codigo;
          $linea .= " " . $albaran->fecha;
          $linea .= " " . $albaran->show_hora(FALSE) . "\n";
@@ -386,15 +386,15 @@ class tpv_recambios extends fs_controller
          $linea .= "\n\n\n";
          fwrite($file, $linea);
          
-         $linea = chr(27).chr(33).chr(56).$this->center_text($empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
+         $linea = chr(27).chr(33).chr(56).$this->center_text($this->empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
          fwrite($file, $linea);
-         $linea = $this->center_text($empresa->lema) . "\n\n";
+         $linea = $this->center_text($this->empresa->lema) . "\n\n";
          fwrite($file, $linea);
-         $linea = $this->center_text($empresa->direccion . " - " . $empresa->ciudad) . "\n";
+         $linea = $this->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n";
          fwrite($file, $linea);
-         $linea = $this->center_text("CIF: " . $empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
+         $linea = $this->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
          fwrite($file, $linea);
-         $linea = $this->center_text($empresa->horario) . "\n";
+         $linea = $this->center_text($this->empresa->horario) . "\n";
          fwrite($file, $linea);
          fclose($file);
       }

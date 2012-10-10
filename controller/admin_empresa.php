@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/empresa.php';
 require_once 'model/almacen.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
@@ -27,7 +26,6 @@ require_once 'model/pais.php';
 
 class admin_empresa extends fs_controller
 {
-   public $empresa;
    public $almacen;
    public $divisa;
    public $ejercicio;
@@ -42,7 +40,6 @@ class admin_empresa extends fs_controller
    
    protected function process()
    {
-      $this->empresa = new empresa();
       $this->almacen = new almacen();
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();
@@ -78,12 +75,12 @@ class admin_empresa extends fs_controller
             setcookie('empresa', $this->empresa->nombre, time()+FS_COOKIES_EXPIRE);
          }
          else
-            $this->new_error_msg ('Error al actualizar la base de datos.');
+            $this->new_error_msg ('Error al guardar los datos.');
       }
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-3';
    }
 }
 

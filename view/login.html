@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-   <title>{$fsc->get_empresa_name()}</title>
+   <title>{$fsc->empresa->nombre}</title>
    <link rel="shortcut icon" href="img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
    <script type="text/javascript" src="js/jquery.js"></script>
@@ -11,7 +11,7 @@
          document.f_login.password.focus();
       });
    </script>
-   {if condition="FS_DEMO"}
+   {if condition="$demo"}
       <script type="text/javascript">
          var _gaq = _gaq || [];
          _gaq.push(['_setAccount', 'UA-417932-8']);
@@ -32,11 +32,7 @@
          <tr>
             <td>
                <a id="fs_logo" href="index.php">
-                  {if condition="FS_DEMO"}
-                     FacturaScripts
-                  {else}
-                     {$fsc->get_empresa_name()}
-                  {/if}
+                  {if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}
                </a>
             </td>
             <td align="right">
@@ -59,34 +55,23 @@
       </form>
    </div>
    <div class="main_div">
-      {if condition="$fsc->error_msg"}
-      <div class="error">{$fsc->error_msg}</div>
+      {if condition="$fsc->get_errors()"}
+         <div class="error">
+            {loop="$fsc->get_errors()"}
+               <li>{$value}</li>
+            {/loop}
+         </div>
       {/if}
-      {if condition="$fsc->message"}
-      <div class="message">{$fsc->message}</div>
+      {if condition="$fsc->get_messages()"}
+         <div class="message">
+            {loop="$fsc->get_messages()"}
+               <li>{$value}</li>
+            {/loop}
+         </div>
       {/if}
-      {if condition="FS_DEMO"}
-      <div class='rounded'>
-         <h1>Demo online:</h1>
-         <a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
-         es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a>.
-         Puedes entrar con cualquier usuario y la contraseña <b>demo</b>.
-         <br/><br/>
-         Enlaces de interés:
-         <ul>
-            <li>
-               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
-               Tutorial de instalación</a>.
-            </li>
-            <li>
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a>.
-            </li>
-         </ul>
-         Puedes seguir el desarrollo de FacturaScripts a través de mi
-         <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
-         o <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>.
-      </div>
-      {else}
+      {if condition="$demo"}
+         <div class="advice">Puedes entrar con cualquier usuario y la contraseña <b>demo</b>.</div>
+      {/if}
       <div class="rounded">
          <h1>Información importante:</h1>
          <ul>
@@ -99,16 +84,32 @@
                <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">reportar un error</a>.
             </li>
             <li>
+               Si quieres instalarlo en tu servidor lee este
+               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
+               tutorial de instalación</a>.
+            </li>
+            <li>
                Puedes seguir el desarrollo de FacturaScripts a través de mi
                <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
-               o <a target="_blank" href="https://twitter.com/neorazorx">mi twitter</a>.
+               o mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a>.
             </li>
          </ul>
       </div>
-      {/if}
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>Solucionado el bug que impedía la correcta lectura de las fechas del modelo caja.</li>
+            <li>Se han mejorado fs_controller y fs_user para minimizar el número de consultas SQL.</li>
+            <li>Los artículos ahora muestran los últimos precios de venta y de compra.</li>
+            <li>
+               Se han optimizado los siguiente modelos: empresa, linea_albaran_cliente,
+               linea_albaran_proveedor, linea_factura_cliente y linea_factura_proveedor.
+            </li>
+            <li>Añadidas comprobaciones para impedir guardar modelos vacíos.</li>
+            <li>
+               Eliminadas las faltas ortográficas del formulario de nuevo asiento
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=14">issue #14</a>).
+            </li>
             <li>Nueva pantalla de login.</li>
             <li>
                El menú superior ahora se adapta mejor a resoluciones pequeñas.
@@ -136,7 +137,7 @@
             <li>Importantes mejoras de rencimiendo gracias al uso de Memcache.</li>
          </ul>
       </div>
-      {if condition="FS_DB_HISTORY"}
+      {if condition="$db_history"}
       <div id="sql_history">
          <h1>Consultas SQL:</h1>
          <ol>

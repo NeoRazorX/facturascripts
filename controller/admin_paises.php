@@ -43,9 +43,9 @@ class admin_paises extends fs_controller
          }
          $pais->nombre = $_POST['snombre'];
          if( $pais->save() )
-            $this->new_message("País ".$pais->nombre." modificado correctamente.");
+            $this->new_message("País ".$pais->nombre." guardado correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar el país ".$pais->nombre."!");
+            $this->new_error_msg("¡Imposible guardar el país!");
       }
       else if( isset($_GET['delete']) )
       {
@@ -55,7 +55,7 @@ class admin_paises extends fs_controller
             if( $pais->delete() )
                $this->new_message("País ".$pais->nombre." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el país ".$pais->nombre."!");
+               $this->new_error_msg("¡Imposible eliminar el país!");
          }
          else
             $this->new_error_msg("¡País no encontrado!");
@@ -63,7 +63,7 @@ class admin_paises extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
 }
 

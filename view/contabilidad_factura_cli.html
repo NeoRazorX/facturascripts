@@ -5,13 +5,7 @@
    $(document).ready(function() {
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_eliminar").css({
-            left: ($(window).width() - $("#popup_eliminar").outerWidth())/2,
-            top: ($(window).height() - $("#popup_eliminar").outerHeight())/2
-         });
-         $("#popup_eliminar").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_eliminar');
       });
    });
 </script>
@@ -77,7 +71,7 @@
       </tr>
       {loop="$fsc->factura->get_lineas()"}
       <tr>
-         <td><a href="{$value->albaran_url()}">{$value->idalbaran}</a></td>
+         <td><a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a></td>
          <td>
             <a href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}

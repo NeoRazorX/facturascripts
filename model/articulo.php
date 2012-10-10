@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/albaran_cliente.php';
+require_once 'model/albaran_proveedor.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
 require_once 'model/tarifa.php';
@@ -62,6 +64,7 @@ class stock extends fs_model
    
    protected function install()
    {
+      $a = new articulo();
       return '';
    }
    
@@ -116,7 +119,12 @@ class stock extends fs_model
       if($id)
          $this->idstock = intval($id[0]['nextval']);
    }
-
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
    public function save()
    {
       if( $this->exists() )
@@ -219,6 +227,8 @@ class tarifa_articulo extends fs_model
    
    protected function install()
    {
+      $a = new articulo();
+      $t = new tarifa();
       return '';
    }
    
@@ -259,6 +269,11 @@ class tarifa_articulo extends fs_model
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
    }
    
    public function save()
@@ -324,6 +339,10 @@ class articulo extends fs_model
    public function __construct($a=FALSE)
    {
       parent::__construct('articulos');
+      
+      if( !isset(self::$impuestos) )
+         self::$impuestos = array();
+      
       if($a)
       {
          $this->referencia = $a['referencia'];
@@ -378,6 +397,11 @@ class articulo extends fs_model
       return '';
    }
    
+   public function get_descripcion_esc()
+   {
+      return addslashes($this->descripcion);
+   }
+   
    public function show_pvp()
    {
       return number_format($this->pvp, 2, '.', ' ');
@@ -428,9 +452,6 @@ class articulo extends fs_model
    
    public function get_iva()
    {
-      if( !isset(self::$impuestos) )
-         self::$impuestos = array();
-      
       if( isset($this->iva) )
          return $this->iva;
       else
@@ -506,10 +527,8 @@ class articulo extends fs_model
             if( !$encontrada )
             {
                /// añadimos las tarifas que no tiene asignadas
-               $tas[] = new tarifa_articulo( array('id' => NULL,
-                                                   'codtarifa' => $t->codtarifa,
-                                                   'referencia' => $this->referencia,
-                                                   'descuento' => 0 - $t->incporcentual) );
+               $tas[] = new tarifa_articulo( array('id' => NULL, 'codtarifa' => $t->codtarifa,
+                   'referencia' => $this->referencia, 'descuento' => 0 - $t->incporcentual) );
             }
          }
       }
@@ -528,6 +547,18 @@ class articulo extends fs_model
          }
       }
       return $tas;
+   }
+   
+   public function get_lineas_albaran_cli($offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $linea = new linea_albaran_cliente();
+      return $linea->all_from_articulo($this->referencia, $offset, $limit);
+   }
+   
+   public function get_lineas_albaran_prov($offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $linea = new linea_albaran_proveedor();
+      return $linea->all_from_articulo($this->referencia, $offset, $limit);
    }
    
    public function imagen_url()
@@ -559,48 +590,6 @@ class articulo extends fs_model
             fclose($f);
             return '../tmp/articulos/'.$this->referencia.'.png';
          }
-      }
-   }
-   
-   public function set_referencia($ref)
-   {
-      $ref = str_replace(' ', '_', $ref);
-      if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $ref) )
-      {
-         $this->referencia = $ref;
-         return TRUE;
-      }
-      else
-      {
-         $this->new_error_msg("¡Referencia no válida! Debe tener entre 1 y 18 caracteres.
-            Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
-         return FALSE;
-      }
-   }
-   
-   public function set_descripcion($desc)
-   {
-      $desc = trim($desc);
-      if(strlen($desc) > 100)
-         $this->descripcion = substr($desc, 0, 99);
-      else
-         $this->descripcion = $desc;
-   }
-   
-   public function set_equivalencia($cod)
-   {
-      if($cod == '')
-      {
-         $this->equivalencia = NULL;
-         $this->destacado = FALSE;
-      }
-      else
-      {
-         $cod = str_replace(' ', '_', $cod);
-         if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $cod) )
-            $this->equivalencia = $cod;
-         else
-            $this->new_error_msg("¡Código de equivalencia no válido!");
       }
    }
    
@@ -708,8 +697,10 @@ class articulo extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
-   public function save()
+   public function test()
    {
+      $status = FALSE;
+      
       /// cargamos la imágen si todavía no lo habíamos hecho
       if( !isset($this->imagen) )
       {
@@ -724,8 +715,41 @@ class articulo extends fs_model
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
          unlink('tmp/articulos/'.$this->referencia.'.png');
       
+      $this->referencia = str_replace(' ', '_', trim($this->referencia));
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->equivalencia = str_replace(' ', '_', trim($this->equivalencia));
+      $this->codbarras = $this->no_html( trim($this->codbarras) );
+      $this->observaciones = $this->no_html( trim($this->observaciones) );
       
-      if( $this->exists() )
+      if($this->equivalencia == '')
+      {
+         $this->equivalencia = NULL;
+         $this->destacado = FALSE;
+      }
+      
+      if( !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $this->referencia) )
+      {
+         $this->new_error_msg("¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.
+            Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
+      }
+      else if( strlen($this->descripcion) > 100 )
+         $this->descripcion = substr($this->descripcion, 0, 99);
+      else if( !is_null($this->equivalencia) AND !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $this->equivalencia) )
+      {
+         $this->new_error_msg("¡Código de equivalencia del artículos no válido! Debe tener entre 1 y 18 caracteres.
+            Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
+      }
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
+   public function save()
+   {
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
             codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
@@ -737,6 +761,7 @@ class articulo extends fs_model
             secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
             codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
             imagen = ".$this->bin2str($this->imagen)." WHERE referencia = ".$this->var2str($this->referencia).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -748,8 +773,8 @@ class articulo extends fs_model
             ".$this->var2str($this->controlstock).",".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
             ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",".$this->var2str($this->equivalencia).",
             ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).");";
+         return $this->db->exec($sql);
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()

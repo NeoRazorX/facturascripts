@@ -4,13 +4,7 @@
    $(document).ready(function() {
       $("#b_nuevo_proveedor").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_nuevo_proveedor").css({
-            left: ($(window).width() - $("#popup_nuevo_proveedor").outerWidth())/2,
-            top: ($(window).height() - $("#popup_nuevo_proveedor").outerHeight())/2
-         });
-         $("#popup_nuevo_proveedor").show();
-         $("#popup_message").show();
+         fs_show_popup('popup_nuevo_proveedor');
          document.f_nuevo_proveedor.nombre.focus();
       });
    });
@@ -18,7 +12,7 @@
 
 <div class="popup" id="popup_nuevo_proveedor">
    <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
-      <h1>Nuevo proveedor:</h1>
+      <h1>Nuevo proveedor</h1>
       <table>
          <tr>
             <td align="right">Código:</td>
@@ -85,7 +79,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="4">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo proveedor</b> para crear uno.</td>
+         <td colspan="4">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>

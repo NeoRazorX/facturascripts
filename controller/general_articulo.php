@@ -31,6 +31,8 @@ class general_articulo extends fs_controller
    public $nuevos_almacenes;
    public $stocks;
    public $equivalentes;
+   public $ultimas_ventas;
+   public $ultimas_compras;
 
    public function __construct()
    {
@@ -94,7 +96,7 @@ class general_articulo extends fs_controller
             if( $this->articulo->set_stock($_POST['almacen'], $_POST['cantidad']) )
                $this->new_message("Stock guardado correctamente.");
             else
-               $this->new_error_msg( $this->articulo->error_msg );
+               $this->new_error_msg("Error al guardar el stock.");
          }
       }
       else if( isset($_POST['imagen']) )
@@ -107,17 +109,17 @@ class general_articulo extends fs_controller
             if( $this->articulo->save() )
                $this->new_message("Imagen del articulo modificada correctamente");
             else
-               $this->new_error_msg("¡Error al guardar la imagen del articulo!".$this->articulo->error_msg);
+               $this->new_error_msg("¡Error al guardar la imagen del articulo!");
          }
       }
       else if( isset($_POST['referencia']) )
       {
          $this->articulo = new articulo();
          $this->articulo = $this->articulo->get($_POST['referencia']);
-         $this->articulo->set_descripcion($_POST['descripcion']);
+         $this->articulo->descripcion = $_POST['descripcion'];
          $this->articulo->codfamilia = $_POST['codfamilia'];
          $this->articulo->codbarras = $_POST['codbarras'];
-         $this->articulo->set_equivalencia($_POST['equivalencia']);
+         $this->articulo->equivalencia = $_POST['equivalencia'];
          $this->articulo->destacado = isset($_POST['destacado']);
          $this->articulo->bloqueado = isset($_POST['bloqueado']);
          $this->articulo->controlstock = isset($_POST['controlstock']);
@@ -131,7 +133,7 @@ class general_articulo extends fs_controller
          if( $this->articulo->save() )
             $this->new_message("Datos del articulo modificados correctamente");
          else
-            $this->new_error_msg("¡Error al guardar el articulo!".$this->articulo->error_msg);
+            $this->new_error_msg("¡Error al guardar el articulo!");
       }
       else if( isset($_GET['ref']) )
       {
@@ -165,6 +167,9 @@ class general_articulo extends fs_controller
             if( !$encontrado )
                $this->nuevos_almacenes[] = $a;
          }
+         
+         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 3);
+         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 3);
          $this->equivalentes = $this->articulo->get_equivalentes();
       }
       else
@@ -172,7 +177,7 @@ class general_articulo extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()

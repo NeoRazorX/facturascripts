@@ -39,7 +39,7 @@ class general_paquete extends fs_controller
          if( $this->paquete->delete() )
             header("location: ".$this->ppage->url());
          else
-            $this->new_error_msg("¡Imposible eliminar el paquete!".$this->paquete->error_msg);
+            $this->new_error_msg("¡Imposible eliminar el paquete!");
       }
       else if( isset($_POST['referenciapaq']) )
       {
@@ -69,7 +69,7 @@ class general_paquete extends fs_controller
                      }
                      else
                         $this->new_error_msg("¡Imposible guardar el subpaquete del grupo ".$subp->grupo.
-                                " con referencia ".$subp->referencia."!".$subp->error_msg);
+                                " con referencia ".$subp->referencia."!");
                   }
                }
             }
@@ -80,7 +80,7 @@ class general_paquete extends fs_controller
             $this->paquete->referencia = $_POST['referenciapaq'];
             $this->paquete->set_grupos($_POST['grupos']);
             if( !$this->paquete->save() )
-               $this->new_error_msg("¡Imposible guardar los datos del paquete!".$this->paquete->error_msg);
+               $this->new_error_msg("¡Imposible guardar los datos del paquete!");
          }
       }
       else if( isset($_GET['ref']) )
@@ -99,7 +99,7 @@ class general_paquete extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()

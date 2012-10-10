@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_cache.php';
 require_once 'model/asiento.php';
@@ -88,16 +105,19 @@ class contabilidad_nuevo_asiento extends fs_controller
             }
          }
          else
-            $this->new_error_msg("¡Imposible guardar el asiento! ".$this->asiento->error_msg);
+            $this->new_error_msg("¡Imposible guardar el asiento!");
       }
    }
    
    public function version() {
-      return parent::version().'-2';
+      return parent::version().'-4';
    }
    
    private function new_search()
    {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/contabilidad_nuevo_asiento';
+      
       $cache = new fs_cache();
       $this->resultados = $cache->get_array('search_subcuenta_ejercicio_'.$_POST['ejercicio'].'_'.$this->query);
       if( count($this->resultados) < 1 )

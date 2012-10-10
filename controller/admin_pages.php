@@ -62,15 +62,12 @@ class admin_pages extends fs_controller
             $this->new_error_msg("No puedes desactivar esta página");
          else
          {
-            $p = new fs_page( array('name'=>$_GET['disable'],
-                                    'title'=>'',
-                                    'folder'=>'',
-                                    'show_on_menu'=>TRUE) );
+            $p = new fs_page( array('name'=>$_GET['disable'], 'title'=>'',
+                'folder'=>'', 'show_on_menu'=>TRUE) );
             $p->delete();
-            $this->new_error_msg($p->error_msg);
          }
       }
-      $this->load_menu();
+      $this->load_menu(TRUE);
    }
 
    public function all()
@@ -109,7 +106,7 @@ class admin_pages extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

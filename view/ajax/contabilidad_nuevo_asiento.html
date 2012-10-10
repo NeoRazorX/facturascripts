@@ -1,0 +1,27 @@
+<!--{$fsc->query}-->
+<table class="list">
+   <tr>
+      <th>Código</th>
+      <th>Descripción</th>
+      <th align="right">debe</th>
+      <th align="right">haber</th>
+      <th align="right">saldo</th>
+   </tr>
+   {loop="$fsc->resultados"}
+   <tr>
+      <td>
+         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
+            {$value->codsubcuenta}
+         </a>
+      </td>
+      <td>
+         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
+            {$value->descripcion}
+         </a>
+      </td>
+      <td align="right">{$value->show_debe()} €</td>
+      <td align="right">{$value->show_haber()} €</td>
+      <td align="right">{$value->show_saldo()} €</td>
+   </tr>
+   {/loop}
+</table>

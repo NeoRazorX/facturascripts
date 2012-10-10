@@ -93,23 +93,34 @@ class forma_pago extends fs_model
             WHERE codpago = ".$this->var2str($this->codpago).";");
    }
    
+   public function test()
+   {
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      return preg_match("/^[A-Z0-9_]{1,10}$/i", $this->codpago);
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
-            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+               genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
+               domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
+               (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
+               ".$this->var2str($this->domiciliado).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
-            ".$this->var2str($this->domiciliado).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

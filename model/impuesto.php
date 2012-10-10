@@ -21,7 +21,7 @@ require_once 'base/fs_model.php';
 
 class impuesto extends fs_model
 {
-   public $codimpuesto;
+   public $codimpuesto; /// pkey
    public $codsubcuentadeu;
    public $codsubcuentaacr;
    public $codsubcuentaivadedadue;
@@ -140,40 +140,62 @@ class impuesto extends fs_model
             WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codimpuesto = trim($this->codimpuesto);
+      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codimpuesto) )
+         $this->new_error_msg("Código del impuesto no válido.");
+      else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 50 )
+         $this->new_error_msg("Descripción del impuesto no válida.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codsubcuentadeu = ".$this->var2str($this->codsubcuentadeu).",
-            codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).", codsubcuentaivadedadue = ".$this->var2str($this->codsubcuentaivadedadue).",
-            codsubcuentaivadevadue = ".$this->var2str($this->codsubcuentaivadevadue).",
-            codsubcuentaivadeventue = ".$this->var2str($this->codsubcuentaivadeventue).",
-            codsubcuentarep = ".$this->var2str($this->codsubcuentarep).", codsubcuentasop = ".$this->var2str($this->codsubcuentasop).",
-            idsubcuentaacr = ".$this->var2str($this->idsubcuentaacr).", idsubcuentadeu = ".$this->var2str($this->idsubcuentadeu).",
-            idsubcuentaivadeventue = ".$this->var2str($this->idsubcuentaivadeventue).",
-            idsubcuentarep = ".$this->var2str($this->idsubcuentarep).",
-            idsubcuentasop = ".$this->var2str($this->idsubcuentasop).", idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
-            idsubcuentaivadedadue = ".$this->var2str($this->idsubcuentaivadedadue).", descripcion = ".$this->var2str($this->descripcion).",
-            iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
-            WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET codsubcuentadeu = ".$this->var2str($this->codsubcuentadeu).",
+               codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).", codsubcuentaivadedadue = ".$this->var2str($this->codsubcuentaivadedadue).",
+               codsubcuentaivadevadue = ".$this->var2str($this->codsubcuentaivadevadue).",
+               codsubcuentaivadeventue = ".$this->var2str($this->codsubcuentaivadeventue).",
+               codsubcuentarep = ".$this->var2str($this->codsubcuentarep).", codsubcuentasop = ".$this->var2str($this->codsubcuentasop).",
+               idsubcuentaacr = ".$this->var2str($this->idsubcuentaacr).", idsubcuentadeu = ".$this->var2str($this->idsubcuentadeu).",
+               idsubcuentaivadeventue = ".$this->var2str($this->idsubcuentaivadeventue).",
+               idsubcuentarep = ".$this->var2str($this->idsubcuentarep).",
+               idsubcuentasop = ".$this->var2str($this->idsubcuentasop).", idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
+               idsubcuentaivadedadue = ".$this->var2str($this->idsubcuentaivadedadue).", descripcion = ".$this->var2str($this->descripcion).",
+               iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
+               WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codimpuesto,codsubcuentadeu,codsubcuentaacr,codsubcuentaivadedadue,
+               codsubcuentaivadevadue,codsubcuentaivadeventue,codsubcuentarep,codsubcuentasop,idsubcuentaacr,
+               idsubcuentadeu,idsubcuentaivadeventue,idsubcuentarep,idsubcuentasop,idsubcuentaivadevadue,idsubcuentaivadedadue,
+               descripcion,iva,recargo) VALUES (".$this->var2str($this->codimpuesto).",".$this->var2str($this->codsubcuentadeu).",
+               ".$this->var2str($this->codsubcuentaacr).",".$this->var2str($this->codsubcuentaivadedadue).",
+               ".$this->var2str($this->codsubcuentaivadevadue).",".$this->var2str($this->codsubcuentaivadeventue).",
+               ".$this->var2str($this->codsubcuentarep).",".$this->var2str($this->codsubcuentasop).",
+               ".$this->var2str($this->idsubcuentaacr).",".$this->var2str($this->idsubcuentadeu).",
+               ".$this->var2str($this->idsubcuentaivadeventue).",".$this->var2str($this->idsubcuentarep).",
+               ".$this->var2str($this->idsubcuentasop).",".$this->var2str($this->idsubcuentaivadevadue).",
+               ".$this->var2str($this->idsubcuentaivadedadue).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->iva).",".$this->var2str($this->recargo).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codimpuesto,codsubcuentadeu,codsubcuentaacr,codsubcuentaivadedadue,
-            codsubcuentaivadevadue,codsubcuentaivadeventue,codsubcuentarep,codsubcuentasop,idsubcuentaacr,
-            idsubcuentadeu,idsubcuentaivadeventue,idsubcuentarep,idsubcuentasop,idsubcuentaivadevadue,idsubcuentaivadedadue,
-            descripcion,iva,recargo) VALUES (".$this->var2str($this->codimpuesto).",".$this->var2str($this->codsubcuentadeu).",
-            ".$this->var2str($this->codsubcuentaacr).",".$this->var2str($this->codsubcuentaivadedadue).",
-            ".$this->var2str($this->codsubcuentaivadevadue).",".$this->var2str($this->codsubcuentaivadeventue).",
-            ".$this->var2str($this->codsubcuentarep).",".$this->var2str($this->codsubcuentasop).",
-            ".$this->var2str($this->idsubcuentaacr).",".$this->var2str($this->idsubcuentadeu).",
-            ".$this->var2str($this->idsubcuentaivadeventue).",".$this->var2str($this->idsubcuentarep).",
-            ".$this->var2str($this->idsubcuentasop).",".$this->var2str($this->idsubcuentaivadevadue).",
-            ".$this->var2str($this->idsubcuentaivadedadue).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->iva).",".$this->var2str($this->recargo).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

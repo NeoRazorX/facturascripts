@@ -32,7 +32,7 @@ class almacen extends fs_model
    public $codpostal;
    public $direccion;
    public $nombre;
-   public $codalmacen;
+   public $codalmacen; /// pkey
    
    public function __construct($a = FALSE)
    {
@@ -73,7 +73,7 @@ class almacen extends fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
-               VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+         VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
    
    public function url()
@@ -101,25 +101,53 @@ class almacen extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
+   public function test()
+   {
+      $status = FALSE;
+      
+      $this->codalmacen = trim($this->codalmacen);
+      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->poblacion = $this->no_html( trim($this->poblacion) );
+      $this->direccion = $this->no_html( trim($this->direccion) );
+      $this->codpostal = $this->no_html( trim($this->codpostal) );
+      $this->telefono = $this->no_html( trim($this->telefono) );
+      $this->fax = $this->no_html( trim($this->fax) );
+      $this->contacto = $this->no_html( trim($this->contacto) );
+      
+      if( !preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen) )
+         $this->new_error_msg("Código de almacén no válido.");
+      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+         $this->new_error_msg("Nombre de almacén no válido.");
+      else
+         $status = TRUE;
+      
+      return $status;
+   }
+   
    public function save()
    {
-      $this->clean_cache();
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-            poblacion = ".$this->var2str($this->poblacion).", direccion = ".$this->var2str($this->direccion).",
-            codpostal = ".$this->var2str($this->codpostal).", telefono = ".$this->var2str($this->telefono).",
-            fax = ".$this->var2str($this->fax).", contacto = ".$this->var2str($this->contacto)."
-            WHERE codalmacen = ".$this->var2str($this->codalmacen).";";
+         $this->clean_cache();
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               poblacion = ".$this->var2str($this->poblacion).", direccion = ".$this->var2str($this->direccion).",
+               codpostal = ".$this->var2str($this->codpostal).", telefono = ".$this->var2str($this->telefono).",
+               fax = ".$this->var2str($this->fax).", contacto = ".$this->var2str($this->contacto)."
+               WHERE codalmacen = ".$this->var2str($this->codalmacen).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto) VALUES
+               (".$this->var2str($this->codalmacen).",".$this->var2str($this->nombre).",".$this->var2str($this->poblacion).",
+               ".$this->var2str($this->direccion).",".$this->var2str($this->codpostal).",".$this->var2str($this->telefono).",
+               ".$this->var2str($this->fax).",".$this->var2str($this->contacto).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto) VALUES
-            (".$this->var2str($this->codalmacen).",".$this->var2str($this->nombre).",".$this->var2str($this->poblacion).",
-            ".$this->var2str($this->direccion).",".$this->var2str($this->codpostal).",".$this->var2str($this->telefono).",
-            ".$this->var2str($this->fax).",".$this->var2str($this->contacto).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()

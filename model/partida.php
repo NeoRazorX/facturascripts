@@ -153,6 +153,31 @@ class partida extends fs_model
             WHERE idpartida = ".$this->var2str($this->idpartida).";");
    }
    
+   public function test()
+   {
+      $status = TRUE;
+      
+      $this->concepto = $this->no_html( trim($this->concepto) );
+      $this->documento = $this->no_html( trim($this->documento) );
+      
+      if( $this->iva > 0 )
+      {
+         $totaliva = $this->baseimponible * $this->iva / 100;
+         if( $this->debe != 0 AND  abs($this->debe - $totaliva) > .01 )
+         {
+            $this->new_error_msg("Valor debe de la partida incorrecto. Valor correcto ".$totaliva);
+            $status = FALSE;
+         }
+         else if( $this->haber != 0 AND abs($this->haber - $totaliva) > .01 )
+         {
+            $this->new_error_msg("Valor haber de la partida incorrecto. Valor correcto ".$totaliva);
+            $status = FALSE;
+         }
+      }
+      
+      return $status;
+   }
+   
    public function save()
    {
       if( $this->exists() )
@@ -185,7 +210,9 @@ class partida extends fs_model
             ".$this->var2str($this->debe).",".$this->var2str($this->haber).");";
       }
       
-      if( $this->db->exec($sql) )
+      if( !$this->test() )
+         return FALSE;
+      else if( $this->db->exec($sql) )
       {
          $subc = $this->get_subcuenta();
          $subc->save(); /// guardamos la subcuenta para actualizar su saldo
@@ -205,28 +232,6 @@ class partida extends fs_model
       }
       else
          return FALSE;
-   }
-   
-   public function test()
-   {
-      $status = TRUE;
-      
-      if( $this->iva > 0 )
-      {
-         $totaliva = $this->baseimponible * $this->iva / 100;
-         if( $this->debe != 0 AND  abs($this->debe - $totaliva) > .01 )
-         {
-            $this->new_error_msg("Valor debe incorrecto. Valor correcto ".$totaliva);
-            $status = FALSE;
-         }
-         else if( $this->haber != 0 AND abs($this->haber - $totaliva) > .01 )
-         {
-            $this->new_error_msg("Valor haber incorrecto. Valor correcto ".$totaliva);
-            $status = FALSE;
-         }
-      }
-      
-      return $status;
    }
    
    public function all_from_subcuenta($id, $offset=0)

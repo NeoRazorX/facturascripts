@@ -86,7 +86,7 @@ class general_cliente extends fs_controller
          if( $this->cliente->save() )
             $this->new_message("Datos del cliente modificados correctamente.");
          else
-            $this->new_error_msg("¡Imposible modificar los datos del cliente! ".$this->cliente->error_msg);
+            $this->new_error_msg("¡Imposible modificar los datos del cliente!");
       }
       else if( isset($_GET['cod']) )
       {
@@ -111,7 +111,7 @@ class general_cliente extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function url()
@@ -126,12 +126,16 @@ class general_cliente extends fs_controller
    {
       if($this->offset > '0')
          return $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+      else
+         return '';
    }
    
    public function siguiente_url()
    {
       if(count($this->albaranes) == FS_ITEM_LIMIT)
          return $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      else
+         return '';
    }
 }
 
