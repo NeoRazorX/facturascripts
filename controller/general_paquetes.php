@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/paquete.php';
 
@@ -53,7 +52,7 @@ class general_paquetes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    private function new_search()
@@ -62,13 +61,7 @@ class general_paquetes extends fs_controller
       $this->template = 'ajax/general_paquetes';
       
       $art = new articulo();
-      $cache = new fs_cache();
-      $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
-      if( count($this->results) < 1 )
-      {
-         $this->results = $art->search($this->query);
-         $cache->set('search_articulo_'.$this->query, $this->results);
-      }
+      $this->results = $art->search($this->query);
    }
 }
 

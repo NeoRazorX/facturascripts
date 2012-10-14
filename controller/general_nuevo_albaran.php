@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/albaran_proveedor.php';
@@ -77,21 +76,14 @@ class general_nuevo_albaran extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function new_search()
    {
-      /// cambiamos la plantilla GTML
+      /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran';
-      
-      $cache = new fs_cache();
-      $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
-      if( count($this->results) < 1 )
-      {
-         $this->results = $this->articulo->search($this->query);
-         $cache->set('search_articulo_'.$this->query, $this->results);
-      }
+      $this->results = $this->articulo->search($this->query);
    }
    
    private function nuevo_albaran_cliente()

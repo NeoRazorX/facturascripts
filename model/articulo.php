@@ -399,7 +399,7 @@ class articulo extends fs_model
    
    public function get_descripcion_esc()
    {
-      return addslashes($this->descripcion);
+      return addslashes( $this->no_html($this->descripcion) );
    }
    
    public function show_pvp()
