@@ -81,18 +81,35 @@
          <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
          <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>\n\
          <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
-            "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
+            "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/></td>\n\
          <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
-            "' size='5' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
-         <td align='center'>"+iva+" %</td>\n\
-         <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
-         <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
-            "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+            "' size='4' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/></td>\n\
+         <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
+            "'size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/></td>\n\
+         <td align='center'>"+iva+"</td>\n\
+         <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
+            "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/></td></tr>");
       $('div.popup').each(function() {
          $(this).hide();
       });
       $("#shadow").hide();
       recalcular();
+   }
+   function new_articulo()
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}&new_articulo=TRUE',
+         dataType: 'html',
+         data: $("form[name=f_nuevo_articulo]").serialize(),
+         success: function(datos) {
+            $("#search_results").html(datos);
+            $("#popup_new_line").css({
+               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+               top: 40
+            });
+         }
+      });
    }
    $(document).ready(function() {
          $("#b_new_line").click(function(event) {
@@ -173,8 +190,8 @@
          <input type="text" name="query" size="40" autocomplete="off"/>
          <input type="submit" value="buscar"/>
       </div>
-      <div id="search_results"></div>
    </form>
+   <div id="search_results"></div>
 </div>
 
 {if condition="$fsc->agente"}
@@ -296,8 +313,9 @@
             <th>Artículo</th>
             <th>Cantidad</th>
             <th>PVP</th>
-            <th>Dto.</th>
-            <th>IVA</th>
+            <th>Dto. %</th>
+            <th>Total</th>
+            <th>IVA %</th>
             <th>Total+IVA</th>
          </tr>
       </table>

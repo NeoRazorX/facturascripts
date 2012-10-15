@@ -142,6 +142,22 @@
       $("#shadow").hide();
       recalcular();
    }
+   function new_articulo()
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->nuevo_albaran_url}&new_articulo=TRUE',
+         dataType: 'html',
+         data: $("form[name=f_nuevo_articulo]").serialize(),
+         success: function(datos) {
+            $("#search_results").html(datos);
+            $("#popup_new_line").css({
+               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+               top: 40
+            });
+         }
+      });
+   }
    $(document).ready(function() {
       recalcular();
       $("#b_remove_albaran").click(function(event) {
@@ -204,8 +220,8 @@
          <input type="text" name="query" size="40" autocomplete="off"/>
          <input type="submit" value="buscar"/>
       </div>
-      <div id="search_results"></div>
    </form>
+   <div id="search_results"></div>
 </div>
 
 <div class="popup" id="popup_eliminar">

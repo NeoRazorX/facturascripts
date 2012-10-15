@@ -25,7 +25,9 @@ require_once 'model/articulo.php';
 require_once 'model/cliente.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
+require_once 'model/familia.php';
 require_once 'model/forma_pago.php';
+require_once 'model/impuesto.php';
 require_once 'model/proveedor.php';
 require_once 'model/serie.php';
 
@@ -37,7 +39,9 @@ class general_nuevo_albaran extends fs_controller
    public $cliente;
    public $divisa;
    public $ejercicio;
+   public $familia;
    public $forma_pago;
+   public $impuesto;
    public $proveedor;
    public $results;
    public $serie;
@@ -52,7 +56,9 @@ class general_nuevo_albaran extends fs_controller
       $this->articulo = new articulo();
       $this->results = array();
       
-      if( $this->query != '' )
+      if( isset($_GET['new_articulo']) )
+         $this->new_articulo();
+      else if( $this->query != '' )
          $this->new_search();
       else
       {
@@ -79,8 +85,28 @@ class general_nuevo_albaran extends fs_controller
       return parent::version().'-4';
    }
    
+   private function new_articulo()
+   {
+      $this->familia = new familia();
+      $this->impuesto = new impuesto();
+      
+      $art0 = new articulo();
+      $art0->referencia = $_POST['referencia'];
+      $art0->descripcion = $_POST['referencia'];
+      $art0->codfamilia = $_POST['codfamilia'];
+      $art0->codimpuesto = $_POST['codimpuesto'];
+      if( $art0->save() )
+         $this->results[] = $art0;
+      
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_nuevo_albaran';
+   }
+   
    private function new_search()
    {
+      $this->familia = new familia();
+      $this->impuesto = new impuesto();
+      
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran';
       $this->results = $this->articulo->search($this->query);

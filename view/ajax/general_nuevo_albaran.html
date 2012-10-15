@@ -1,4 +1,21 @@
 <!--{$fsc->query}-->
+
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}
+         <li>{$value}</li>
+      {/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}
+         <li>{$value}</li>
+      {/loop}
+   </div>
+{/if}
+
+{if condition="$fsc->results"}
 <table class="list">
    <tr>
       <th>Referencia</th>
@@ -23,3 +40,35 @@
    </tr>
    {/loop}
 </table>
+{else}
+<div class="message">
+   No se han encontrado resultados para la búsqueda <b>{$fsc->query}</b>.
+   <br/><br/>
+   Si lo desea puede crear el artículo <b>{$fsc->query}</b> desde el siguiente formulario:
+   <br/>
+   {if condition="$fsc->familia->all()"}
+   <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
+      <b>Referencia</b>: <input type="text" name="referencia" value="{$fsc->query}" size="20" maxlength="18" autocomplete="off"/>
+      <a href="{$fsc->familia->url()}">Familia</a>:
+      <select name="codfamilia">
+         {loop="$fsc->familia->all()"}
+            <option value="{$value->codfamilia}">{$value->descripcion}</option>
+         {/loop}
+      </select>
+      <a href="{$fsc->impuesto->url()}">IVA</a>:
+      <select name="codimpuesto">
+         {loop="$fsc->impuesto->all()"}
+            {if condition="$value->is_default()"}
+               <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+            {else}
+               <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+            {/if}
+         {/loop}
+      </select>
+      <input type="button" value="nuevo" onclick="new_articulo()"/>
+   </form>
+   {else}
+   No hay <a target="_blank" href="{$fsc->familia->url()}">familias</a> creadas. Debes crear al menos una.
+   {/if}
+</div>
+{/if}

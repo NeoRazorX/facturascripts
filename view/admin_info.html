@@ -33,4 +33,34 @@
    </table>
 </div>
 
+<div class="rounded">
+   <h1>Bloqueos en la base de datos:</h1>
+   <table class="list">
+      <tr>
+         <th>Base de datos</th>
+         <th>relname</th>
+         <th>relation</th>
+         <th>transaction ID</th>
+         <th>PID</th>
+         <th>modo</th>
+         <th>granted</th>
+      </tr>
+      {loop="$fsc->get_locks()"}
+      <tr>
+         <td>{$value.database}</td>
+         <td>{$value.relname}</td>
+         <td>{$value.relation}</td>
+         <td>{$value.transactionid}</td>
+         <td>{$value.pid}</td>
+         <td>{$value.mode}</td>
+         <td>{$value.granted}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="7">Ningún bloqueo detectado.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
 {include="footer"}

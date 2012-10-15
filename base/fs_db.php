@@ -226,6 +226,11 @@ class fs_db
    {
       return pg_escape_string(self::$link, $s);
    }
+   
+   public function get_locks()
+   {
+      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks WHERE relfilenode=relation AND NOT granted;");
+   }
 }
 
 ?>
