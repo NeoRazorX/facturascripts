@@ -188,27 +188,29 @@ class direccion_cliente extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codcliente = ".$this->var2str($this->codcliente).",
-            codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
-            provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
-            codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
-            domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
-            descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET codcliente = ".$this->var2str($this->codcliente).",
+               codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
+               provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
+               codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
+               domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
+               descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codcliente,codpais,apartado,provincia,ciudad,codpostal,direccion,
+               domenvio,domfacturacion,descripcion) VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->codpais).",
+               ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
+               ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->domenvio).",
+               ".$this->var2str($this->domfacturacion).",".$this->var2str($this->descripcion).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codcliente,codpais,apartado,provincia,ciudad,codpostal,direccion,
-            domenvio,domfacturacion,descripcion) VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->codpais).",
-            ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
-            ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->domenvio).",
-            ".$this->var2str($this->domfacturacion).",".$this->var2str($this->descripcion).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()
@@ -320,10 +322,8 @@ class cliente extends fs_model
          return (self::$default_cliente == $this->codcliente);
       else if( !isset($_COOKIE['default_cliente']) )
          return FALSE;
-      else if($_COOKIE['default_cliente'] == $this->codcliente)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_cliente'] == $this->codcliente);
    }
    
    public function set_default()
@@ -422,18 +422,26 @@ class cliente extends fs_model
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
                nombrecomercial = ".$this->var2str($this->nombrecomercial).", cifnif = ".$this->var2str($this->cifnif).",
-               codserie = ".$this->var2str($this->codserie).", coddivisa = ".$this->var2str($this->coddivisa).",
-               codpago = ".$this->var2str($this->codpago).", debaja = ".$this->var2str($this->debaja).",
-               fechabaja = ".$this->var2str($this->fechabaja).", observaciones = ".$this->var2str($this->observaciones)."
+               telefono1 = ".$this->var2str($this->telefono1).", telefono2 = ".$this->var2str($this->telefono2).",
+               fax = ".$this->var2str($this->fax).", email = ".$this->var2str($this->email).",
+               web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
+               coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
+               debaja = ".$this->var2str($this->debaja).", fechabaja = ".$this->var2str($this->fechabaja).",
+               observaciones = ".$this->var2str($this->observaciones)."
                WHERE codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,codserie,coddivisa,codpago,
-               debaja,fechabaja,observaciones) VALUES (".$this->var2str($this->codcliente).",
-               ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
-               ".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
-               ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",".$this->var2str($this->observaciones).");";
+            $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,telefono1,
+               telefono2,fax,email,web,codserie,coddivisa,codpago,debaja,fechabaja,observaciones) VALUES
+               (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
+               ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",
+               ".$this->var2str($this->fax).",".$this->var2str($this->email).",
+               ".$this->var2str($this->web).",".$this->var2str($this->codserie).",
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
+               ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",
+               ".$this->var2str($this->observaciones).");";
          }
          return $this->db->exec($sql);
       }

@@ -63,10 +63,8 @@ class forma_pago extends fs_model
          return (self::$default_formapago == $this->codpago);
       else if( !isset($_COOKIE['default_formapago']) )
          return FALSE;
-      else if($_COOKIE['default_formapago'] == $this->codpago)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_formapago'] == $this->codpago);
    }
    
    public function set_default()

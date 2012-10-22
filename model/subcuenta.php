@@ -165,30 +165,32 @@ class subcuenta extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      else if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
-            idcuenta = ".$this->var2str($this->idcuenta).", codcuenta = ".$this->var2str($this->codcuenta).",
-            codejercicio = ".$this->var2str($this->codejercicio).",
-            coddivisa = ".$this->var2str($this->coddivisa).", codimpuesto = ".$this->var2str($this->codimpuesto).",
-            descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
-            haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
-            recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
-            WHERE idsubcuenta = '".$this->idsubcuenta."';";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
+               idcuenta = ".$this->var2str($this->idcuenta).", codcuenta = ".$this->var2str($this->codcuenta).",
+               codejercicio = ".$this->var2str($this->codejercicio).",
+               coddivisa = ".$this->var2str($this->coddivisa).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
+               haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
+               recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
+               WHERE idsubcuenta = '".$this->idsubcuenta."';";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codsubcuenta,idcuenta,codcuenta,codejercicio,coddivisa,codimpuesto,descripcion,
+               debe,haber,saldo,recargo,iva) VALUES (".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idcuenta).",
+               ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
+               ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",".$this->var2str($this->haber).",
+               ".$this->var2str($this->saldo).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codsubcuenta,idcuenta,codcuenta,codejercicio,coddivisa,codimpuesto,descripcion,
-            debe,haber,saldo,recargo,iva) VALUES (".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idcuenta).",
-            ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
-            ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
-            ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",".$this->var2str($this->haber).",
-            ".$this->var2str($this->saldo).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()

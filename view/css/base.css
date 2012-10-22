@@ -383,6 +383,7 @@ div.main_div div.new_line {
 }
 
 div.main_div div.new_line a {
+   display: block;
    color: black;
    font-size: 15px;
 }

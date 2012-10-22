@@ -41,12 +41,10 @@ class general_proveedores extends fs_controller
       
       if( isset($_POST['codproveedor']) )
       {
-         $proveedor = $this->proveedor->get($_POST['codproveedor']);
-         if( !$proveedor )
-         {
-            $proveedor = new proveedor();
-            $proveedor->codproveedor = $_POST['codproveedor'];
-         }
+         $this->set_default_elements();
+         
+         $proveedor = new proveedor();
+         $proveedor->codproveedor = $_POST['codproveedor'];
          $proveedor->nombre = $_POST['nombre'];
          $proveedor->nombrecomercial = $_POST['nombre'];
          $proveedor->cifnif = $_POST['cifnif'];
@@ -60,8 +58,10 @@ class general_proveedores extends fs_controller
             $dirproveedor->ciudad = $_POST['ciudad'];
             $dirproveedor->codpostal = $_POST['codpostal'];
             $dirproveedor->direccion = $_POST['direccion'];
-            $dirproveedor->save();
-            header('location: '.$proveedor->url());
+            if( $dirproveedor->save() )
+               header('location: '.$proveedor->url());
+            else
+               $this->new_error_msg("¡Imposible guardar la dirección el proveedor!");
          }
          else
             $this->new_error_msg("¡Imposible guardar el proveedor!");
@@ -79,7 +79,7 @@ class general_proveedores extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function anterior_url()
@@ -100,6 +100,16 @@ class general_proveedores extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['pais']) )
+      {
+         $pais = $this->pais->get($_POST['pais']);
+         if( $pais )
+            $pais->set_default();
+      }
    }
 }
 

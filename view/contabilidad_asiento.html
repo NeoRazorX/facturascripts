@@ -12,16 +12,36 @@
 </script>
 
 <div class="rounded">
-   <div class="bloque">Asiento: {$fsc->asiento->codejercicio}</div>
-   <div class="bloque">Concepto: {$fsc->asiento->concepto}</div>
-   <div class="bloque">Documento: {$fsc->asiento->documento}</div>
-   <div class="bloque">Tipo documento: {$fsc->asiento->tipodocumento}</div>
-   <div class="bloque">Fecha: {$fsc->asiento->fecha}</div>
-   <div class="bloque">Importe: {$fsc->asiento->show_importe()} €</div>
-   <br/>
    <table class="list">
       <tr>
+         <th align="left">Ejercicio</th>
+         <th>Fecha</th>
          <th>Concepto</th>
+         <th>Documento</th>
+         <th align="right">Importe</th>
+      </tr>
+      <tr>
+         <td>{$fsc->asiento->codejercicio}</td>
+         <td align="center">{$fsc->asiento->fecha}</td>
+         <td align="center">{$fsc->asiento->concepto}</td>
+         <td align="center">
+            {if condition="$fsc->asiento->tipodocumento"}
+               {$fsc->asiento->tipodocumento}:
+            {/if}
+            {if condition="$fsc->asiento->documento"}
+               <a href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+            {else}
+               -
+            {/if}
+         </td>
+         <td align="right">{$fsc->asiento->show_importe()} €</td>
+      </tr>
+   </table>
+</div>
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Concepto</th>
          <th>Subcuenta</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>

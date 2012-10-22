@@ -270,7 +270,8 @@ class linea_albaran_proveedor extends fs_model
    public function all_from_albaran($id)
    {
       $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idalbaran = ".$this->var2str($id)." ORDER BY referencia ASC;");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -575,7 +576,6 @@ class albaran_proveedor extends fs_model
                recfinanciero = ".$this->var2str($this->recfinanciero).", totalrecargo = ".$this->var2str($this->totalrecargo).",
                observaciones = ".$this->var2str($this->observaciones).",
                ptefactura = ".$this->var2str($this->ptefactura)." WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
-            return $this->db->exec($sql);
          }
          else
          {
@@ -592,8 +592,8 @@ class albaran_proveedor extends fs_model
                ".$this->var2str($this->totaliva).",".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
                ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).");";
-            return $this->db->exec($sql);
          }
+         return $this->db->exec($sql);
       }
       else
          return FALSE;

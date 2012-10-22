@@ -327,7 +327,8 @@ class linea_factura_proveedor extends fs_model
    public function all_from_factura($id)
    {
       $linlist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idfactura = ".$this->var2str($id)." ORDER BY referencia ASC;");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -778,49 +779,51 @@ class factura_proveedor extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      else if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET deabono = ".$this->var2str($this->deabono).",
-            codigo = ".$this->var2str($this->codigo).", automatica = ".$this->var2str($this->automatica).",
-            total = ".$this->var2str($this->total).", neto = ".$this->var2str($this->neto).",
-            cifnif = ".$this->var2str($this->cifnif).", observaciones = ".$this->var2str($this->observaciones).",
-            idpagodevol = ".$this->var2str($this->idpagodevol).", codalmacen = ".$this->var2str($this->codalmacen).",
-            irpf = ".$this->var2str($this->irpf).", totaleuros = ".$this->var2str($this->totaleuros).",
-            nombre = ".$this->var2str($this->nombre).", codpago = ".$this->var2str($this->codpago).",
-            codproveedor = ".$this->var2str($this->codproveedor).", idfacturarect = ".$this->var2str($this->idfacturarect).",
-            numproveedor = ".$this->var2str($this->numproveedor).", codigorect = ".$this->var2str($this->codigorect).",
-            codserie = ".$this->var2str($this->codserie).", idasiento = ".$this->var2str($this->idasiento).",
-            totalirpf = ".$this->var2str($this->totalirpf).", totaliva = ".$this->var2str($this->totaliva).",
-            coddivisa = ".$this->var2str($this->coddivisa).", numero = ".$this->var2str($this->numero).",
-            codejercicio = ".$this->var2str($this->codejercicio).", tasaconv = ".$this->var2str($this->tasaconv).",
-            recfinanciero = ".$this->var2str($this->recfinanciero).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento).",
-            totalrecargo = ".$this->var2str($this->totalrecargo).", fecha = ".$this->var2str($this->fecha)."
-            WHERE idfactura = ".$this->var2str($this->idfactura).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET deabono = ".$this->var2str($this->deabono).",
+               codigo = ".$this->var2str($this->codigo).", automatica = ".$this->var2str($this->automatica).",
+               total = ".$this->var2str($this->total).", neto = ".$this->var2str($this->neto).",
+               cifnif = ".$this->var2str($this->cifnif).", observaciones = ".$this->var2str($this->observaciones).",
+               idpagodevol = ".$this->var2str($this->idpagodevol).", codalmacen = ".$this->var2str($this->codalmacen).",
+               irpf = ".$this->var2str($this->irpf).", totaleuros = ".$this->var2str($this->totaleuros).",
+               nombre = ".$this->var2str($this->nombre).", codpago = ".$this->var2str($this->codpago).",
+               codproveedor = ".$this->var2str($this->codproveedor).", idfacturarect = ".$this->var2str($this->idfacturarect).",
+               numproveedor = ".$this->var2str($this->numproveedor).", codigorect = ".$this->var2str($this->codigorect).",
+               codserie = ".$this->var2str($this->codserie).", idasiento = ".$this->var2str($this->idasiento).",
+               totalirpf = ".$this->var2str($this->totalirpf).", totaliva = ".$this->var2str($this->totaliva).",
+               coddivisa = ".$this->var2str($this->coddivisa).", numero = ".$this->var2str($this->numero).",
+               codejercicio = ".$this->var2str($this->codejercicio).", tasaconv = ".$this->var2str($this->tasaconv).",
+               recfinanciero = ".$this->var2str($this->recfinanciero).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento).",
+               totalrecargo = ".$this->var2str($this->totalrecargo).", fecha = ".$this->var2str($this->fecha)."
+               WHERE idfactura = ".$this->var2str($this->idfactura).";";
+         }
+         else
+         {
+            $this->new_idfactura();
+            $this->new_codigo();
+            $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,observaciones,
+               idpagodevol,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
+               idfactura,codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
+               recfinanciero,nogenerarasiento,totalrecargo,fecha) VALUES (".$this->var2str($this->deabono).",
+               ".$this->var2str($this->codigo).",".$this->var2str($this->automatica).",".$this->var2str($this->total).",
+               ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",
+               ".$this->var2str($this->codalmacen).",".$this->var2str($this->irpf).",".$this->var2str($this->totaleuros).",
+               ".$this->var2str($this->nombre).",".$this->var2str($this->codpago).",".$this->var2str($this->codproveedor).",
+               ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",".$this->var2str($this->idfactura).",
+               ".$this->var2str($this->codigorect).",".$this->var2str($this->codserie).",".$this->var2str($this->idasiento).",
+               ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->coddivisa).",
+               ".$this->var2str($this->numero).",".$this->var2str($this->codejercicio).",".$this->var2str($this->tasaconv).",
+               ".$this->var2str($this->recfinanciero).",".$this->var2str($this->nogenerarasiento).",
+               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->fecha).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $this->new_idfactura();
-         $this->new_codigo();
-         $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,observaciones,
-            idpagodevol,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
-            idfactura,codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
-            recfinanciero,nogenerarasiento,totalrecargo,fecha) VALUES (".$this->var2str($this->deabono).",
-            ".$this->var2str($this->codigo).",".$this->var2str($this->automatica).",".$this->var2str($this->total).",
-            ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",
-            ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",
-            ".$this->var2str($this->codalmacen).",".$this->var2str($this->irpf).",".$this->var2str($this->totaleuros).",
-            ".$this->var2str($this->nombre).",".$this->var2str($this->codpago).",".$this->var2str($this->codproveedor).",
-            ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",".$this->var2str($this->idfactura).",
-            ".$this->var2str($this->codigorect).",".$this->var2str($this->codserie).",".$this->var2str($this->idasiento).",
-            ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->coddivisa).",
-            ".$this->var2str($this->numero).",".$this->var2str($this->codejercicio).",".$this->var2str($this->tasaconv).",
-            ".$this->var2str($this->recfinanciero).",".$this->var2str($this->nogenerarasiento).",
-            ".$this->var2str($this->totalrecargo).",".$this->var2str($this->fecha).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()
@@ -829,7 +832,8 @@ class factura_proveedor extends fs_model
       {
          $asiento = new asiento();
          $asiento = $asiento->get($this->idasiento);
-         $asiento->delete();
+         if( $asiento )
+            $asiento->delete();
       }
       /// desvinculamos el/los albaranes asociados
       $this->db->exec("UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE
@@ -904,6 +908,21 @@ class factura_proveedor extends fs_model
       {
          $this->new_error_msg("Valor total incorrecto en las líneas de IVA. Valor correcto: ".$total);
          $status = FALSE;
+      }
+      
+      /// comprobamos el asiento
+      if( !is_null($this->idasiento) )
+      {
+         $asiento = new asiento();
+         $asiento = $asiento->get($this->idasiento);
+         if( $asiento )
+         {
+            if($asiento->tipodocumento != 'Factura de proveedor' OR $asiento->documento != $this->codigo)
+            {
+               $this->new_error_msg("Esta factura apunta a un <a href='".$this->asiento_url()."'>asiento incorrecto</a>.");
+               $status = FALSE;
+            }
+         }
       }
       
       return $status;

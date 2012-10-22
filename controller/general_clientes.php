@@ -44,12 +44,10 @@ class general_clientes extends fs_controller
       
       if( isset($_POST['codcliente']) )
       {
-         $cliente = $this->cliente->get($_POST['codcliente']);
-         if( !$cliente )
-         {
-            $cliente = new cliente();
-            $cliente->codcliente = $_POST['codcliente'];
-         }
+         $this->set_default_elements();
+         
+         $cliente = new cliente();
+         $cliente->codcliente = $_POST['codcliente'];
          $cliente->nombre = $_POST['nombre'];
          $cliente->nombrecomercial = $_POST['nombre'];
          $cliente->cifnif = $_POST['cifnif'];
@@ -64,8 +62,10 @@ class general_clientes extends fs_controller
             $dircliente->codpostal = $_POST['codpostal'];
             $dircliente->direccion = $_POST['direccion'];
             $dircliente->descripcion = 'Principal';
-            $dircliente->save();
-            header('location: '.$cliente->url());
+            if( $dircliente->save() )
+               header('location: '.$cliente->url());
+            else
+               $this->new_error_msg("¡Imposible guardar la dirección del cliente!");
          }
          else
             $this->new_error_msg("¡Imposible guardar los datos del cliente!");
@@ -83,7 +83,7 @@ class general_clientes extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function anterior_url()
@@ -104,6 +104,23 @@ class general_clientes extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['pais']) )
+      {
+         $pais = $this->pais->get($_POST['pais']);
+         if( $pais )
+            $pais->set_default();
+      }
+      
+      if( isset($_POST['codserie']) )
+      {
+         $serie = $this->serie->get($_POST['codserie']);
+         if( $serie )
+            $serie->set_default();
+      }
    }
 }
 

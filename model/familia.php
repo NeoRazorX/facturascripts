@@ -51,10 +51,10 @@ class familia extends fs_model
    
    public function url()
    {
-      if( isset($this->codfamilia) )
-         return "index.php?page=general_familia&cod=".$this->codfamilia;
-      else
+      if( is_null($this->codfamilia) )
          return "index.php?page=general_familias";
+      else
+         return "index.php?page=general_familia&cod=".$this->codfamilia;
    }
    
    public function is_default()
@@ -63,30 +63,14 @@ class familia extends fs_model
          return (self::$default_familia == $this->codfamilia);
       else if( !isset($_COOKIE['default_familia']) )
          return FALSE;
-      else if($_COOKIE['default_familia'] == $this->codfamilia)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_familia'] == $this->codfamilia);
    }
    
    public function set_default()
    {
       setcookie('default_familia', $this->codfamilia, time()+FS_COOKIES_EXPIRE);
       self::$default_familia = $this->codfamilia;
-   }
-   
-   public function set_codfamilia($cod)
-   {
-      if( preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,4}$/i", $cod) )
-      {
-         $this->codfamilia = $cod;
-         return TRUE;
-      }
-      else
-      {
-         $this->new_error_msg("¡Código inválido! Deben ser entre 1 y 4 caracteres alfanuméricos.");
-         return FALSE;
-      }
    }
    
    public function get($cod)
@@ -121,7 +105,7 @@ class familia extends fs_model
       $this->descripcion = $this->no_html( trim($this->descripcion) );
       
       if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codfamilia) )
-         $this->new_error_msg("Código de familia no válido.");
+         $this->new_error_msg("Código de familia no válido. Deben ser entre 1 y 4 caracteres alfanuméricos.");
       else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100 )
          $this->new_error_msg("Descripción de familia no válida.");
       else

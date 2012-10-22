@@ -66,10 +66,8 @@ class divisa extends fs_model
          return (self::$default_divisa == $this->coddivisa);
       else if( !isset($_COOKIE['default_divisa']) )
          return FALSE;
-      else if($_COOKIE['default_divisa'] == $this->coddivisa)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_divisa'] == $this->coddivisa);
    }
    
    public function set_default()

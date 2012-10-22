@@ -179,27 +179,29 @@ class direccion_proveedor extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codproveedor = ".$this->var2str($this->codproveedor).",
-            codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
-            provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
-            codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
-            direccionppal = ".$this->var2str($this->direccionppal).", descripcion = ".$this->var2str($this->descripcion)."
-            WHERE id = ".$this->var2str($this->id).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET codproveedor = ".$this->var2str($this->codproveedor).",
+               codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
+               provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
+               codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
+               direccionppal = ".$this->var2str($this->direccionppal).", descripcion = ".$this->var2str($this->descripcion)."
+               WHERE id = ".$this->var2str($this->id).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codproveedor,codpais,apartado,provincia,ciudad,codpostal,direccion,
+               direccionppal,descripcion) VALUES (".$this->var2str($this->codproveedor).",".$this->var2str($this->codpais).",
+               ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
+               ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->direccionppal).",
+               ".$this->var2str($this->descripcion).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codproveedor,codpais,apartado,provincia,ciudad,codpostal,direccion,
-            direccionppal,descripcion) VALUES (".$this->var2str($this->codproveedor).",".$this->var2str($this->codpais).",
-            ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
-            ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->direccionppal).",
-            ".$this->var2str($this->descripcion).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()
@@ -306,10 +308,8 @@ class proveedor extends fs_model
          return (self::$default_proveedor == $this->codproveedor);
       else if( !isset($_COOKIE['default_proveedor']) )
          return FALSE;
-      else if($_COOKIE['default_proveedor'] == $this->codproveedor)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_proveedor'] == $this->codproveedor);
    }
    
    public function set_default()

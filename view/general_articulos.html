@@ -32,7 +32,11 @@
             <td>
                <select name="codfamilia">
                {loop="$fsc->familia->all()"}
+                  {if condition="$value->is_default()"}
+                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+                  {else}
                   <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                  {/if}
                {/loop}
                </select>
             </td>
@@ -138,23 +142,23 @@
    {/if}
    <table class="list">
       <tr>
-         <th>referencia</th>
-         <th>cod. equivalencia</th>
          <th>familia</th>
-         <th>descripción</th>
+         <th>referencia + descripción</th>
+         <th>cod. equivalencia</th>
+         <th align="right">PVP</th>
          <th align="right">PVP+IVA</th>
          <th align="right">stock</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
+         <td>{$value->codfamilia}</td>
          {if condition="$value->bloqueado"}
-            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a></td>
+            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {else}
-            <td><a href="{$value->url()}">{$value->referencia}</a></td>
+            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
          <td>{$value->equivalencia}</td>
-         <td>{$value->codfamilia}</td>
-         <td>{$value->descripcion}</td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp()} &euro;</span></td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
          <td align="right">{$value->stockfis}</td>
       </tr>

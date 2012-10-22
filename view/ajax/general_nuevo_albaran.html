@@ -18,9 +18,9 @@
 {if condition="$fsc->results"}
 <table class="list">
    <tr>
-      <th>Referencia</th>
+      <th>Referencia + descripción</th>
       <th>Cod. equivalencia</th>
-      <th>Descripción</th>
+      <th align="right">PVP</th>
       <th align="right">PVP+IVA</th>
       <th align="right">Stock</th>
    </tr>
@@ -28,11 +28,12 @@
    <tr>
       {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
          <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_esc()}','{$value->pvp}','0','{$value->get_iva()}')">
-            {$value->referencia}
-         </a>
+            {$value->referencia}</a> {$value->descripcion}
       </td>
       <td>{$value->equivalencia}</td>
-      <td>{$value->descripcion}</td>
+      <td align="right">
+         <span title="actualizado el {$value->factualizado}">{$value->show_pvp()} €</span>
+      </td>
       <td align="right">
          <span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} €</span>
       </td>

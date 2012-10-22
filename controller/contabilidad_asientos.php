@@ -39,6 +39,8 @@ class contabilidad_asientos extends fs_controller
       if($naurl)
          $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo', $naurl->url());
       
+      $this->buttons[] = new fs_button('b_renumerar', 'renumerar', $this->url().'&renumerar=TRUE', '', 'img/tools.png');
+      
       if( isset($_GET['delete']) )
       {
          $asiento = $this->asiento->get($_GET['delete']);
@@ -51,6 +53,11 @@ class contabilidad_asientos extends fs_controller
          }
          else
             $this->new_error_msg("¡Asiento no encontrado!");
+      }
+      else if( isset($_GET['renumerar']) )
+      {
+         if( $this->asiento->renumerar() )
+            $this->new_message("Asientos renumerados.");
       }
       
       if( isset($_GET['offset']) )

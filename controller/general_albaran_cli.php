@@ -137,22 +137,22 @@ class general_albaran_cli extends fs_controller
             $encontrada = FALSE;
             if( isset($_POST['idlinea_'.$num]) )
             {
-               foreach($lineas as &$l)
+               foreach($lineas as $k => $value)
                {
-                  if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                  if($value->idlinea == intval($_POST['idlinea_'.$num]))
                   {
                      $encontrada = TRUE;
-                     $l->cantidad = floatval($_POST['cantidad_'.$num]);
-                     $l->pvpunitario = floatval($_POST['pvp_'.$num]);
-                     $l->dtopor = floatval($_POST['dto_'.$num]);
-                     $l->dtolineal = 0;
-                     $l->pvpsindto = ($l->cantidad * $l->pvpunitario);
-                     $l->pvptotal = ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
-                     $neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
-                     $total += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * (100 + $l->iva)/100);
-                     $iva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
-                     if( !$l->save() )
-                        $this->new_error_msg("¡Imposible modificar la línea del artículo ".$l->referencia."!");
+                     $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
+                     $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
+                     $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
+                     $lineas[$k]->dtolineal = 0;
+                     $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
+                     $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     $neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     $total += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * (100 + $value->iva)/100);
+                     $iva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
+                     if( !$lineas[$k]->save() )
+                        $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
                      break;
                   }
                }
@@ -332,7 +332,7 @@ class general_albaran_cli extends fs_controller
                   $partida1->documento = $asiento->documento;
                   $partida1->tipodocumento = $asiento->tipodocumento;
                   $partida1->codserie = $factura->codserie;
-                  $partida1->factura = $factura->idfactura;
+                  $partida1->factura = $factura->numero;
                   $partida1->baseimponible = $li->neto;
                   $partida1->iva = $li->iva;
                   $partida1->coddivisa = $factura->coddivisa;

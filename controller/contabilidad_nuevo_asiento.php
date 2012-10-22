@@ -50,13 +50,7 @@ class contabilidad_nuevo_asiento extends fs_controller
          $this->new_search();
       else if( isset($_POST['codejercicio']) AND isset($_POST['fecha']) )
       {
-         $ejercicio = $this->ejercicio->get($_POST['codejercicio']);
-         if( !$ejercicio->is_default() )
-            $ejercicio->set_default();
-         
-         $divisa = $this->divisa->get($_POST['divisa']);
-         if( !$divisa->is_default() )
-            $divisa->set_default();
+         $this->set_default_elements();
          
          $this->asiento->codejercicio = $_POST['codejercicio'];
          $this->asiento->idconcepto = $_POST['idconceptopar'];
@@ -110,7 +104,7 @@ class contabilidad_nuevo_asiento extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    private function new_search()
@@ -125,6 +119,23 @@ class contabilidad_nuevo_asiento extends fs_controller
          $subc = new subcuenta();
          $this->resultados = $subc->search_by_ejercicio($_POST['ejercicio'], $this->query);
          $cache->set('search_subcuenta_ejercicio_'.$_POST['ejercicio'].'_'.$this->query, $this->resultados);
+      }
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['divisa']) )
+      {
+         $divisa = $this->divisa->get($_POST['divisa']);
+         if( $divisa )
+            $divisa->set_default();
+      }
+      
+      if( isset($_POST['codejercicio']) )
+      {
+         $ejercicio = $this->ejercicio->get($_POST['codejercicio']);
+         if( $ejercicio )
+            $ejercicio->set_default();
       }
    }
 }

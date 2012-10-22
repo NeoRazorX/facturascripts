@@ -66,6 +66,11 @@ class caja extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return "";
+   }
+   
    public function show_fecha_fin()
    {
       if( is_null($this->fecha_fin) )
@@ -93,11 +98,6 @@ class caja extends fs_model
          return number_format ($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
       else
          return '-';
-   }
-   
-   protected function install()
-   {
-      return "";
    }
    
    public function exists()

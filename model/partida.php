@@ -131,8 +131,13 @@ class partida extends fs_model
    
    public function get_contrapartida()
    {
-      $subc = new subcuenta();
-      return $subc->get( $this->idcontrapartida );
+      if( is_null($this->idcontrapartida) )
+         return FALSE;
+      else
+      {
+         $subc = new subcuenta();
+         return $subc->get( $this->idcontrapartida );
+      }
    }
    
    public function contrapartida_url()
@@ -180,43 +185,46 @@ class partida extends fs_model
    
    public function save()
    {
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
-            idsubcuenta = ".$this->var2str($this->idsubcuenta).", codsubcuenta = ".$this->var2str($this->codsubcuenta).",
-            idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
-            idcontrapartida = ".$this->var2str($this->idcontrapartida).", codcontrapartida = ".$this->var2str($this->codcontrapartida).",
-            punteada = ".$this->var2str($this->punteada).", tasaconv = ".$this->var2str($this->tasaconv).",
-            coddivisa = ".$this->var2str($this->coddivisa).", haberme = ".$this->var2str($this->haberme).",
-            debeme = ".$this->var2str($this->debeme).", recargo = ".$this->var2str($this->recargo).",
-            iva = ".$this->var2str($this->iva).", baseimponible = ".$this->var2str($this->baseimponible).",
-            factura = ".$this->var2str($this->factura).", codserie = ".$this->var2str($this->codserie).",
-            tipodocumento = ".$this->var2str($this->tipodocumento).", documento = ".$this->var2str($this->documento).",
-            cifnif = ".$this->var2str($this->cifnif).", debe = ".$this->var2str($this->debe).",
-            haber = ".$this->var2str($this->haber)." WHERE idpartida = ".$this->var2str($this->idpartida).";";
-      }
-      else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (idasiento,idsubcuenta,codsubcuenta,idconcepto,
-            concepto,idcontrapartida,codcontrapartida,punteada,tasaconv,coddivisa,haberme,debeme,recargo,iva,
-            baseimponible,factura,codserie,tipodocumento,documento,cifnif,debe,haber) VALUES
-            (".$this->var2str($this->idasiento).",".$this->var2str($this->idsubcuenta).",
-            ".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
-            ".$this->var2str($this->idcontrapartida).",".$this->var2str($this->codcontrapartida).",".$this->var2str($this->punteada).",
-            ".$this->var2str($this->tasaconv).",".$this->var2str($this->coddivisa).",".$this->var2str($this->haberme).",
-            ".$this->var2str($this->debeme).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).",
-            ".$this->var2str($this->baseimponible).",".$this->var2str($this->factura).",".$this->var2str($this->codserie).",
-            ".$this->var2str($this->tipodocumento).",".$this->var2str($this->documento).",".$this->var2str($this->cifnif).",
-            ".$this->var2str($this->debe).",".$this->var2str($this->haber).");";
-      }
-      
-      if( !$this->test() )
-         return FALSE;
-      else if( $this->db->exec($sql) )
-      {
-         $subc = $this->get_subcuenta();
-         $subc->save(); /// guardamos la subcuenta para actualizar su saldo
-         return TRUE;
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
+               idsubcuenta = ".$this->var2str($this->idsubcuenta).", codsubcuenta = ".$this->var2str($this->codsubcuenta).",
+               idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
+               idcontrapartida = ".$this->var2str($this->idcontrapartida).", codcontrapartida = ".$this->var2str($this->codcontrapartida).",
+               punteada = ".$this->var2str($this->punteada).", tasaconv = ".$this->var2str($this->tasaconv).",
+               coddivisa = ".$this->var2str($this->coddivisa).", haberme = ".$this->var2str($this->haberme).",
+               debeme = ".$this->var2str($this->debeme).", recargo = ".$this->var2str($this->recargo).",
+               iva = ".$this->var2str($this->iva).", baseimponible = ".$this->var2str($this->baseimponible).",
+               factura = ".$this->var2str($this->factura).", codserie = ".$this->var2str($this->codserie).",
+               tipodocumento = ".$this->var2str($this->tipodocumento).", documento = ".$this->var2str($this->documento).",
+               cifnif = ".$this->var2str($this->cifnif).", debe = ".$this->var2str($this->debe).",
+               haber = ".$this->var2str($this->haber)." WHERE idpartida = ".$this->var2str($this->idpartida).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (idasiento,idsubcuenta,codsubcuenta,idconcepto,
+               concepto,idcontrapartida,codcontrapartida,punteada,tasaconv,coddivisa,haberme,debeme,recargo,iva,
+               baseimponible,factura,codserie,tipodocumento,documento,cifnif,debe,haber) VALUES
+               (".$this->var2str($this->idasiento).",".$this->var2str($this->idsubcuenta).",
+               ".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
+               ".$this->var2str($this->idcontrapartida).",".$this->var2str($this->codcontrapartida).",".$this->var2str($this->punteada).",
+               ".$this->var2str($this->tasaconv).",".$this->var2str($this->coddivisa).",".$this->var2str($this->haberme).",
+               ".$this->var2str($this->debeme).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).",
+               ".$this->var2str($this->baseimponible).",".$this->var2str($this->factura).",".$this->var2str($this->codserie).",
+               ".$this->var2str($this->tipodocumento).",".$this->var2str($this->documento).",".$this->var2str($this->cifnif).",
+               ".$this->var2str($this->debe).",".$this->var2str($this->haber).");";
+         }
+         
+         if( $this->db->exec($sql) )
+         {
+            $subc = $this->get_subcuenta();
+            $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
       else
          return FALSE;

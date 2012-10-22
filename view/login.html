@@ -98,6 +98,17 @@
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>Mejorados los tests de integridad de los asientos.</li>
+            <li>
+               Solucionado el bug que impedía guardar el teléfono, web, etc de los clientes
+               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=15">issue #15</a>).
+            </li>
+            <li>Ya se pueden crear nuevos artículos desde general_nuevo_albaran.</li>
+            <li>
+               Ahora las cookies que determinan valores por defecto como el cliente predeterminado
+               se actualizan en cada elección, en lugar de dejar que caduquen.
+            </li>
+            <li>Solucionados los problemas de HTML injection.</li>
             <li>Solucionado el bug que impedía la correcta lectura de las fechas del modelo caja.</li>
             <li>Se han mejorado fs_controller y fs_user para minimizar el número de consultas SQL.</li>
             <li>Los artículos ahora muestran los últimos precios de venta y de compra.</li>
@@ -110,31 +121,6 @@
                Eliminadas las faltas ortográficas del formulario de nuevo asiento
                (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=14">issue #14</a>).
             </li>
-            <li>Nueva pantalla de login.</li>
-            <li>
-               El menú superior ahora se adapta mejor a resoluciones pequeñas.
-               Los menús se cierran si vuelves a pulsar el botón.
-            </li>
-            <li>Añadidos mensajes de ayuda con los popups y la página de inicio
-               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=13">issue #13</a>).
-            </li>
-            <li>
-               Si al generar una factura a partir de un albarán no se encuentra una subcuenta asociada al
-               cliente/proveedor se genera la factura pero no el asiento, y se informa al usuario de ello
-               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=8">issue #8</a>).
-            </li>
-            <li>
-               Solucionados los problemas de SQL injection
-               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=11">issue #11</a>).
-            </li>
-            <li>
-               Solucionado el problema de seguridad con el CSS
-               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=12">issue #12</a>).
-            </li>
-            <li>Ya se pueden crear tarifas desde general > articulos > tarifas.</li>
-            <li>Se pueden personalizar las tarifas para cada artículo.</li>
-            <li>Ya se pueden agrupar albaranes de cliente para generar una única factura.</li>
-            <li>Importantes mejoras de rencimiendo gracias al uso de Memcache.</li>
          </ul>
       </div>
       {if condition="$db_history"}

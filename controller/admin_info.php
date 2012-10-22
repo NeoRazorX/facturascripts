@@ -81,6 +81,11 @@ class admin_info extends fs_controller
       return parent::version();
    }
    
+   public function fs_db_name()
+   {
+      return FS_DB_NAME;
+   }
+   
    public function get_locks()
    {
       return $this->db->get_locks();

@@ -224,7 +224,7 @@ class general_albaran_prov extends fs_controller
                   $partida1->documento = $asiento->documento;
                   $partida1->tipodocumento = $asiento->tipodocumento;
                   $partida1->codserie = $factura->codserie;
-                  $partida1->factura = $factura->idfactura;
+                  $partida1->factura = $factura->numero;
                   $partida1->baseimponible = $li->neto;
                   $partida1->iva = $li->iva;
                   $partida1->coddivisa = $factura->coddivisa;

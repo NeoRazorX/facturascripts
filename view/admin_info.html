@@ -3,17 +3,22 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <td align="right"><b>FacturaScripts:</b></td>
-         <td>{$fsc->fs_version()}</td>
+         <th><b>Base de datos</b></th>
+         <th><b>FacturaScripts</b></th>
+         <th><b>PHP</b></th>
+         <th><b>PostgreSQL</b></th>
       </tr>
       <tr>
-         <td align="right"><b>PHP:</b></td>
-         <td>{$fsc->php_version()}</td>
+         <td align="center">{$fsc->fs_db_name()}</td>
+         <td align="center">{$fsc->fs_version()}</td>
+         <td align="center">{$fsc->php_version()}</td>
+         <td align="center">{$fsc->pg_version()}</td>
       </tr>
-      <tr>
-         <td align="right"><b>PostgreSQL:</b></td>
-         <td>{$fsc->pg_version()}</td>
-      </tr>
+   </table>
+</div>
+
+<div class="rounded">
+   <table class="list">
       <tr>
          <td align="right"><b>Sistema Operativo:</b></td>
          <td>{$fsc->uname()}</td>

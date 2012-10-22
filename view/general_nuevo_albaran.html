@@ -46,13 +46,23 @@
             {
                totiva = parseFloat( $("#totiva_"+i).val() );
                uds = parseFloat( $("#cantidad_"+i).val() );
-               pvp = parseFloat( $("#pvp_"+i).val() );
+               
+               if( $("#pvp_"+i).val() == 0 )
+               {
+                  pvp = 1;
+                  $("#pvp_"+i).val(1);
+               }
+               else
+                  pvp = parseFloat( $("#pvp_"+i).val() );
+               
                iva = parseFloat( $("#iva_"+i).val() );
                dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
+               
                if( isNaN(dto) )
                   $("#dto_"+i).val(0);
                else
                   $("#dto_"+i).val(dto);
+               
                $("#total_"+i).val( uds*pvp*(100-dto)/100 );
                tpv_total += totiva;
             }

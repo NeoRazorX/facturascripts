@@ -26,6 +26,8 @@ class pais extends fs_model
    public $nombre;
    public $codpais; /// pkey
    
+   private static $default_pais;
+   
    public function __construct($p=FALSE)
    {
       parent::__construct('paises');
@@ -57,6 +59,22 @@ class pais extends fs_model
          return 'index.php?page=admin_paises';
       else
          return 'index.php?page=admin_paises#'.$this->codpais;
+   }
+   
+   public function is_default()
+   {
+      if( isset(self::$default_pais) )
+         return (self::$default_pais == $this->codpais);
+      else if( !isset($_COOKIE['default_pais']) )
+         return FALSE;
+      else
+         return ( $_COOKIE['default_paus'] == $this->codpais );
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_pais', $this->codpais, time()+FS_COOKIES_EXPIRE);
+      self::$default_pais = $this->codpais;
    }
    
    public function get($cod)

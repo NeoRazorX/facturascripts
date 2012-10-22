@@ -56,6 +56,8 @@ class general_agrupar_albaranes_cli extends fs_controller
          $this->agrupar();
       else if( isset($_POST['cliente']) )
       {
+         $this->set_default_elements();
+         
          $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'], $_POST['desde'], $_POST['hasta']);
          if( !$this->resultados )
             $this->new_message("Sin resultados.");
@@ -229,7 +231,7 @@ class general_agrupar_albaranes_cli extends fs_controller
                   $partida1->documento = $asiento->documento;
                   $partida1->tipodocumento = $asiento->tipodocumento;
                   $partida1->codserie = $factura->codserie;
-                  $partida1->factura = $factura->idfactura;
+                  $partida1->factura = $factura->numero;
                   $partida1->baseimponible = $li->neto;
                   $partida1->iva = $li->iva;
                   $partida1->coddivisa = $factura->coddivisa;
@@ -289,6 +291,20 @@ class general_agrupar_albaranes_cli extends fs_controller
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
       }
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['cliente']) )
+      {
+         $cliente = $this->cliente->get($_POST['cliente']);
+         if( $cliente )
+            $cliente->set_default();
+      }
+   }
+   
+   public function version() {
+      return parent::version().'-2';
    }
 }
 

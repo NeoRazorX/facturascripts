@@ -34,6 +34,27 @@ class contabilidad_caja extends fs_controller
    {
       $this->caja = new caja();
       
+      $caja0 = $this->caja->get_last_from_this_server();
+      if( $caja0 )
+      {
+         if( isset($_GET['cerrar']) )
+         {
+            if( $this->user->admin )
+            {
+               $caja0->fecha_fin = Date('Y-n-j H:i:s');
+               if( $caja0->save() )
+                  $this->new_message("Caja cerrada correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible cerrar la caja!");
+            }
+            else
+               $this->new_error_msg("Tienes que ser administrador para poder cerrar la caja desde aquí. ¡Listo!");
+         }
+         else
+            $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', $this->url().'&cerrar=TRUE',
+                                             'remove', 'img/remove.png');
+      }
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
@@ -42,8 +63,9 @@ class contabilidad_caja extends fs_controller
       $this->resultados = $this->caja->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-1';
+   public function version()
+   {
+      return parent::version().'-2';
    }
    
    public function anterior_url()

@@ -10,7 +10,7 @@
    <columna><nombre>idsubcuenta</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codsubcuenta</nombre><tipo>character varying(15)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>web</nombre><tipo>character varying(250)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>email</nombre><tipo>character varying(30)</tipo><nulo>YES</nulo></columna>
+   <columna><nombre>email</nombre><tipo>character varying(50)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>fax</nombre><tipo>character varying(30)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>telefono2</nombre><tipo>character varying(30)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>regimeniva</nombre><tipo>character varying</tipo><nulo>YES</nulo></columna>

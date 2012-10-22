@@ -49,6 +49,8 @@ class admin_empresa extends fs_controller
       
       if( isset($_POST['nombre']) )
       {
+         $this->set_default_elements();
+         
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->cifnif = $_POST['cifnif'];
          $this->empresa->administrador = $_POST['administrador'];
@@ -80,7 +82,52 @@ class admin_empresa extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['codalmacen']) )
+      {
+         $almacen = $this->almacen->get($_POST['codalmacen']);
+         if( $almacen )
+            $almacen->set_default();
+      }
+      
+      if( isset($_POST['coddivisa']) )
+      {
+         $divisa = $this->divisa->get($_POST['coddivisa']);
+         if( $divisa )
+            $divisa->set_default();
+      }
+      
+      if( isset($_POST['codejercicio']) )
+      {
+         $ejercicio = $this->ejercicio->get($_POST['codejercicio']);
+         if( $ejercicio )
+            $ejercicio->set_default();
+      }
+      
+      if( isset($_POST['codpago']) )
+      {
+         $fpago = $this->forma_pago->get($_POST['codpago']);
+         if( $fpago )
+            $fpago->set_default();
+      }
+      
+      if( isset($_POST['codserie']) )
+      {
+         $serie = $this->serie->get($_POST['codserie']);
+         if( $serie )
+            $serie->set_default();
+      }
+      
+      if( isset($_POST['codpais']) )
+      {
+         $pais = $this->pais->get($_POST['codpais']);
+         if( $pais )
+            $pais->set_default();
+      }
    }
 }
 

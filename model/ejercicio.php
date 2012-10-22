@@ -96,10 +96,8 @@ class ejercicio extends fs_model
          return (self::$default_ejercicio == $this->codejercicio);
       else if( !isset($_COOKIE['default_ejercicio']) )
          return FALSE;
-      else if($_COOKIE['default_ejercicio'] == $this->codejercicio)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_ejercicio'] == $this->codejercicio);
    }
    
    public function set_default()

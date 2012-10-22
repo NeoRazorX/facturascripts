@@ -110,10 +110,8 @@ class impuesto extends fs_model
          return (self::$default_impuesto == $this->codimpuesto);
       else if( !isset($_COOKIE['default_impuesto']) )
          return FALSE;
-      else if($_COOKIE['default_impuesto'] == $this->codimpuesto)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_impuesto'] == $this->codimpuesto);
    }
 
    public function set_default()
@@ -148,7 +146,7 @@ class impuesto extends fs_model
       $this->descripcion = $this->no_html( trim($this->descripcion) );
       
       if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codimpuesto) )
-         $this->new_error_msg("Código del impuesto no válido.");
+         $this->new_error_msg("Código del impuesto no válido. Debe tener entre 1 y 10 caracteres alfanuméricos.");
       else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 50 )
          $this->new_error_msg("Descripción del impuesto no válida.");
       else
@@ -165,14 +163,16 @@ class impuesto extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET codsubcuentadeu = ".$this->var2str($this->codsubcuentadeu).",
-               codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).", codsubcuentaivadedadue = ".$this->var2str($this->codsubcuentaivadedadue).",
+               codsubcuentaacr = ".$this->var2str($this->codsubcuentaacr).",
+                  codsubcuentaivadedadue = ".$this->var2str($this->codsubcuentaivadedadue).",
                codsubcuentaivadevadue = ".$this->var2str($this->codsubcuentaivadevadue).",
                codsubcuentaivadeventue = ".$this->var2str($this->codsubcuentaivadeventue).",
                codsubcuentarep = ".$this->var2str($this->codsubcuentarep).", codsubcuentasop = ".$this->var2str($this->codsubcuentasop).",
                idsubcuentaacr = ".$this->var2str($this->idsubcuentaacr).", idsubcuentadeu = ".$this->var2str($this->idsubcuentadeu).",
                idsubcuentaivadeventue = ".$this->var2str($this->idsubcuentaivadeventue).",
                idsubcuentarep = ".$this->var2str($this->idsubcuentarep).",
-               idsubcuentasop = ".$this->var2str($this->idsubcuentasop).", idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
+               idsubcuentasop = ".$this->var2str($this->idsubcuentasop).",
+                  idsubcuentaivadevadue = ".$this->var2str($this->idsubcuentaivadevadue).",
                idsubcuentaivadedadue = ".$this->var2str($this->idsubcuentaivadedadue).", descripcion = ".$this->var2str($this->descripcion).",
                iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo)."
                WHERE codimpuesto = ".$this->var2str($this->codimpuesto).";";

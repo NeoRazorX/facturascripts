@@ -620,12 +620,12 @@ class articulo extends fs_model
       $stock = new stock();
       $encontrado = FALSE;
       $stocks = $stock->all_from_articulo($this->referencia);
-      foreach($stocks as &$s)
+      foreach($stocks as $k => $value)
       {
-         if($s->codalmacen == $almacen)
+         if($value->codalmacen == $almacen)
          {
-            $s->set_cantidad($cantidad);
-            $result = $s->save();
+            $stocks[$k]->set_cantidad($cantidad);
+            $result = $stocks[$k]->save();
             $encontrado = TRUE;
          }
       }
@@ -657,12 +657,12 @@ class articulo extends fs_model
       $stock = new stock();
       $encontrado = FALSE;
       $stocks = $stock->all_from_articulo($this->referencia);
-      foreach($stocks as &$s)
+      foreach($stocks as $k => $value)
       {
-         if($s->codalmacen == $almacen)
+         if($value->codalmacen == $almacen)
          {
-            $s->sum_cantidad($cantidad);
-            $result = $s->save();
+            $stocks[$k]->sum_cantidad($cantidad);
+            $result = $stocks[$k]->save();
             $encontrado = TRUE;
             break;
          }
@@ -747,34 +747,36 @@ class articulo extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      else if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
-            factualizado = ".$this->var2str($this->factualizado).", codimpuesto = ".$this->var2str($this->codimpuesto).",
-            stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
-            stockmax = ".$this->var2str($this->stockmax).",
-            controlstock = ".$this->var2str($this->controlstock).", destacado = ".$this->var2str($this->destacado).",
-            bloqueado = ".$this->var2str($this->bloqueado).", sevende = ".$this->var2str($this->sevende).",
-            secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
-            codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
-            imagen = ".$this->bin2str($this->imagen)." WHERE referencia = ".$this->var2str($this->referencia).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+               codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
+               factualizado = ".$this->var2str($this->factualizado).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
+               stockmax = ".$this->var2str($this->stockmax).",
+               controlstock = ".$this->var2str($this->controlstock).", destacado = ".$this->var2str($this->destacado).",
+               bloqueado = ".$this->var2str($this->bloqueado).", sevende = ".$this->var2str($this->sevende).",
+               secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
+               codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
+               imagen = ".$this->bin2str($this->imagen)." WHERE referencia = ".$this->var2str($this->referencia).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,factualizado,codimpuesto,stockfis,
+               stockmin,stockmax,controlstock,destacado,bloqueado,secompra,sevende,equivalencia,codbarras,observaciones,imagen)
+               VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->pvp).",".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
+               ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",".$this->var2str($this->stockmax).",
+               ".$this->var2str($this->controlstock).",".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
+               ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",".$this->var2str($this->equivalencia).",
+               ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,factualizado,codimpuesto,stockfis,
-            stockmin,stockmax,controlstock,destacado,bloqueado,secompra,sevende,equivalencia,codbarras,observaciones,imagen)
-            VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->pvp).",".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
-            ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",".$this->var2str($this->stockmax).",
-            ".$this->var2str($this->controlstock).",".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
-            ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",".$this->var2str($this->equivalencia).",
-            ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()

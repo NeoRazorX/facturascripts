@@ -273,6 +273,34 @@ class asiento extends fs_model
          $status = FALSE;
       }
       
+      /// comprobamos la factura asociada
+      if($this->tipodocumento == 'Factura de cliente')
+      {
+         $fac = new factura_cliente();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+         {
+            if($fac->idasiento != $this->idasiento)
+            {
+               $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
+               $status = FALSE;
+            }
+         }
+      }
+      else if($this->tipodocumento == 'Factura de proveedor')
+      {
+         $fac = new factura_proveedor();
+         $fac = $fac->get_by_codigo($this->documento);
+         if($fac)
+         {
+            if($fac->idasiento != $this->idasiento)
+            {
+               $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
+               $status = FALSE;
+            }
+         }
+      }
+      
       return $status;
    }
    
@@ -310,6 +338,71 @@ class asiento extends fs_model
             $alist[] = new asiento($a);
       }
       return $alist;
+   }
+   
+   public function descuadrados()
+   {
+      /// creamos un objeto partida para asegurarnos de que existe la tabla co_partidas
+      $partida = new partida();
+      
+      $alist = array();
+      $descuadrados = $this->db->select("SELECT p.idasiento,a.numero,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
+         FROM co_partidas p, co_asientos a
+         WHERE p.idasiento = a.idasiento
+         GROUP BY p.idasiento,a.numero
+         HAVING (SUM(p.haber) - SUM(p.debe) > 0.01)
+         ORDER BY p.idasiento ASC;");
+      if( $descuadrados )
+      {
+         foreach($descuadrados as $d)
+            $alist[] = $this->get($d['idasiento']);
+      }
+      return $alist;
+   }
+   
+   /// renumera todos los asientos. Devuelve FALSE en caso de error
+   public function renumerar()
+   {
+      $posicion = 0;
+      $numero = 1;
+      $codejercicio = FALSE;
+      $sql = '';
+      $continuar = TRUE;
+      $consulta = "SELECT idasiento,codejercicio,numero,fecha FROM co_asientos
+         ORDER BY codejercicio ASC, fecha ASC, idasiento ASC";
+      
+      $asientos = $this->db->select_limit($consulta, 1000, $posicion);
+      while($asientos AND $continuar)
+      {
+         foreach($asientos as $col)
+         {
+            /// reseteamos en cada ejercicio
+            if($col['codejercicio'] != $codejercicio)
+            {
+               $codejercicio = $col['codejercicio'];
+               $numero = 1;
+            }
+            
+            if($col['numero'] != $numero)
+               $sql .= "UPDATE co_asientos SET numero = '$numero' WHERE idasiento = '" . $col['idasiento'] . "'; ";
+            
+            $numero++;
+         }
+         $posicion += 1000;
+         
+         if($sql != '')
+         {
+            if( !$this->db->exec($sql) )
+            {
+               $this->new_error_msg("Se ha producido un error mientras se renumeraban los asientos del ejercicio ".$codejercicio);
+               $continuar = FALSE;
+            }
+         }
+         
+         $asientos = $this->db->select_limit($consulta, 1000, $posicion);
+      }
+      
+      return $continuar;
    }
 }
 

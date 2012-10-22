@@ -91,25 +91,27 @@ class cuenta extends fs_model
    
    public function save()
    {
-      if( !$this->test() )
-         return FALSE;
-      else if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET codcuenta = ".$this->var2str($this->codcuenta).",
-            codejercicio = ".$this->var2str($this->codejercicio).",
-            idepigrafe = ".$this->var2str($this->idepigrafe).", codepigrafe = ".$this->var2str($this->codepigrafe).",
-            descripcion = ".$this->var2str($this->descripcion).", codbalance = ".$this->var2str($this->codbalance).",
-            idcuentaesp = ".$this->var2str($this->idcuentaesp)." WHERE idcuenta = ".$this->var2str($this->idcuenta).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET codcuenta = ".$this->var2str($this->codcuenta).",
+               codejercicio = ".$this->var2str($this->codejercicio).",
+               idepigrafe = ".$this->var2str($this->idepigrafe).", codepigrafe = ".$this->var2str($this->codepigrafe).",
+               descripcion = ".$this->var2str($this->descripcion).", codbalance = ".$this->var2str($this->codbalance).",
+               idcuentaesp = ".$this->var2str($this->idcuentaesp)." WHERE idcuenta = ".$this->var2str($this->idcuenta).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codcuenta,codejercicio,idepigrafe,codepigrafe,descripcion,codbalance,idcuentaesp)
+               VALUES (".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",".$this->var2str($this->idepigrafe).",
+              ".$this->var2str($this->codepigrafe).",".$this->var2str($this->descripcion).",".$this->var2str($this->codbalance).",
+              ".$this->var2str($this->idcuentaesp).");";
+         }
          return $this->db->exec($sql);
       }
       else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codcuenta,codejercicio,idepigrafe,codepigrafe,descripcion,codbalance,idcuentaesp)
-            VALUES (".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",".$this->var2str($this->idepigrafe).",
-           ".$this->var2str($this->codepigrafe).",".$this->var2str($this->descripcion).",".$this->var2str($this->codbalance).",
-           ".$this->var2str($this->idcuentaesp).");";
-         return $this->db->exec($sql);
-      }
+         return FALSE;
    }
    
    public function delete()

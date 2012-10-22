@@ -86,17 +86,14 @@ class general_articulos extends fs_controller
       }
       else if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
       {
+         $this->set_default_elements();
+         
          $articulo->referencia = $_POST['referencia'];
          $articulo->descripcion = $_POST['referencia'];
          $articulo->codfamilia = $_POST['codfamilia'];
          $articulo->codimpuesto = $_POST['codimpuesto'];
          if( $articulo->save() )
-         {
-            $imp = $this->impuesto->get($_POST['codimpuesto']);
-            if($imp)
-               $imp->set_default();
             header('location: '.$articulo->url());
-         }
          else
             $this->new_error_msg("¡Error al crear el articulo!");
       }
@@ -124,7 +121,7 @@ class general_articulos extends fs_controller
    }
    
    public function version() {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function anterior_url()
@@ -145,6 +142,23 @@ class general_articulos extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
+   }
+   
+   private function set_default_elements()
+   {
+      if( isset($_POST['codfamilia']) )
+      {
+         $fam0 = $this->familia->get($_POST['codfamilia']);
+         if( $fam0 )
+            $fam0->set_default();
+      }
+      
+      if( isset($_POST['codimpuesto']) )
+      {
+         $imp0 = $this->impuesto->get($_POST['codimpuesto']);
+         if( $imp0 )
+            $imp0->set_default();
+      }
    }
 }
 

@@ -34,6 +34,8 @@ class almacen extends fs_model
    public $nombre;
    public $codalmacen; /// pkey
    
+   private static $default_almacen;
+   
    public function __construct($a = FALSE)
    {
       parent::__construct('almacenes');
@@ -78,10 +80,26 @@ class almacen extends fs_model
    
    public function url()
    {
-      if( isset($this->codalmacen) )
-         return 'index.php?page=admin_almacenes#'.$this->codalmacen;
-      else
+      if( is_null($this->codalmacen) )
          return 'index.php?page=admin_almacenes';
+      else
+         return 'index.php?page=admin_almacenes#'.$this->codalmacen;
+   }
+   
+   public function is_default()
+   {
+      if( isset(self::$default_almacen) )
+         return (self::$default_almacen == $this->codalmacen);
+      else if( !isset($_COOKIE['default_almacen']) )
+         return FALSE;
+      else
+         return ( $_COOKIE['default_almacen'] == $this->codalmacen );
+   }
+   
+   public function set_default()
+   {
+      setcookie('default_almacen', $this->codalmacen, time()+FS_COOKIES_EXPIRE);
+      self::$default_almacen = $this->codalmacen;
    }
    
    public function get($cod)

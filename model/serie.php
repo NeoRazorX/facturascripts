@@ -71,10 +71,8 @@ class serie extends fs_model
          return (self::$default_serie == $this->codserie);
       else if( !isset($_COOKIE['default_serie']) )
          return FALSE;
-      else if($_COOKIE['default_serie'] == $this->codserie)
-         return TRUE;
       else
-         return FALSE;
+         return ($_COOKIE['default_serie'] == $this->codserie);
    }
    
    public function set_default()

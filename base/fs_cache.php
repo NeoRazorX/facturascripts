@@ -42,9 +42,7 @@ class fs_cache
    public function __destruct()
    {
       if( !isset(self::$memcache) )
-      {
          self::$memcache->close();
-      }
    }
    
    public function set($key, $object, $expire=3600)
@@ -72,7 +70,23 @@ class fs_cache
       }
       return $aa;
    }
-
+   
+   public function get_array2($key, &$error)
+   {
+      $aa = array();
+      $error = TRUE;
+      if( self::$connected )
+      {
+         $a = self::$memcache->get(FS_CACHE_PREFIX.$key);
+         if( is_array($a) )
+         {
+            $aa = $a;
+            $error = FALSE;
+         }
+      }
+      return $aa;
+   }
+   
    public function delete($key)
    {
       if( self::$connected )
