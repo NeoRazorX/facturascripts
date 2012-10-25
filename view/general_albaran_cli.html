@@ -3,14 +3,6 @@
 {if condition="$fsc->albaran"}
 <script type="text/javascript">
    var numlineas = 0;
-   function number_format(number, decimals, dec_point, thousands_sep)
-   {
-      var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-      var d = dec_point == undefined ? "," : dec_point;
-      var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-      var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-      return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-   }
    function recalcular()
    {
       var aneto = 0;
@@ -136,10 +128,7 @@
          <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>"+iva+" %</td>\n\
          <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
             "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
-      $('div.popup').each(function() {
-         $(this).hide();
-      });
-      $("#shadow").hide();
+      fs_hide_popups();
       recalcular();
    }
    function new_articulo()
@@ -158,6 +147,38 @@
          }
       });
    }
+   function buscar_articulos()
+   {
+      if(document.f_buscar_articulos.query.value == '')
+      {
+         $("#search_results").html('');
+         $("#popup_new_line").css({
+            left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+            top: 40
+         });
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->nuevo_albaran_url}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_articulos]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_articulos.query.value )
+               {
+                  $("#search_results").html(datos);
+                  $("#popup_new_line").css({
+                     left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+                     top: 40
+                  });
+               }
+            }
+         });
+      }
+   }
    $(document).ready(function() {
       recalcular();
       $("#b_remove_albaran").click(function(event) {
@@ -166,49 +187,17 @@
       });
       $("#b_new_line").click(function(event) {
          event.preventDefault();
-         $("#shadow").show();
-         $("#popup_new_line").css({
-            left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-            top: 40
-         });
-         $("#popup_new_line").show();
-         document.f_buscar_articulos.query.focus();
-         document.f_buscar_articulos.query.value = '';
          $("#search_results").html('');
+         document.f_buscar_articulos.query.value = '';
+         fs_show_popup('popup_new_line', 40);
+         document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
-         if(document.f_buscar_articulos.query.value == '')
-         {
-            $("#search_results").html('');
-            $("#popup_new_line").css({
-               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-               top: 40
-            });
-         }
-         else
-         {
-            $.ajax({
-               type: 'POST',
-               url: '{$fsc->nuevo_albaran_url}',
-               dataType: 'html',
-               data: 'query='+document.f_buscar_articulos.query.value,
-               success: function(datos) {
-                  var re = /<!--(.*?)-->/g;
-                  var m = re.exec( datos );
-                  if( m[1] == document.f_buscar_articulos.query.value )
-                  {
-                     $("#search_results").html(datos);
-                     $("#popup_new_line").css({
-                        left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                        top: 40
-                     });
-                  }
-               }
-            });
-         }
+         buscar_articulos();
       });
       $("#f_buscar_articulos").submit(function(event) {
          event.preventDefault();
+         buscar_articulos();
       });
    });
 </script>
@@ -218,6 +207,13 @@
       <h1>Buscar artículos</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
+         <select name="codfamilia" onchange="buscar_articulos()">
+            <option value="">Todas las familias</option>
+            <option value="">------</option>
+         {loop="$fsc->familia->all()"}
+            <option value="{$value->codfamilia}">{$value->descripcion}</option>
+         {/loop}
+         </select>
          <input type="submit" value="buscar"/>
       </div>
    </form>
@@ -227,9 +223,7 @@
 <div class="popup" id="popup_eliminar">
    <h1>Eliminar albarán</h1>
    {if condition="$fsc->albaran->idfactura"}
-      <ul>
-         <li>Hay una factura asociada que será eliminada junto con este albarán.</li>
-      </ul>
+      <ul><li>Hay una factura asociada que será eliminada junto con este albarán.</li></ul>
    {/if}
    <table width="100%">
       <tr>

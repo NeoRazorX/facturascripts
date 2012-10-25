@@ -1,13 +1,5 @@
    <script type="text/javascript">
       var numlineas = 0;
-      function number_format(number, decimals, dec_point, thousands_sep)
-      {
-         var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-         var d = dec_point == undefined ? "," : dec_point;
-         var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-         var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-         return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-      }
       function recalcular()
       {
          var tpv_total = 0;
@@ -96,11 +88,40 @@
                <td align='center'><input type='hidden' id='total_"+numlineas+"' name='total_"+numlineas+"'/>\n\
                <input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
                   "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/> €</td></tr>");
-         $('div.popup').each(function() {
-            $(this).hide();
-         });
-         $("#shadow").hide();
+         fs_hide_popups();
          recalcular();
+      }
+      function buscar_articulos()
+      {
+         if(document.f_search_recambios.query.value == '')
+         {
+            $("#search_results").html('');
+            $("#popup_new_line").css({
+               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+               top: 40
+            });
+         }
+         else
+         {
+            $.ajax({
+               type: 'POST',
+               url: '{$fsc->url()}',
+               dataType: 'html',
+               data: $("form[name=f_search_recambios]").serialize(),
+               success: function(datos) {
+                  var re = /<!--(.*?)-->/g;
+                  var m = re.exec( datos );
+                  if( m[1] == document.f_search_recambios.query.value )
+                  {
+                     $("#search_results").html(datos);
+                     $("#popup_new_line").css({
+                        left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+                        top: 40
+                     });
+                  }
+               }
+            });
+         }
       }
       $(document).ready(function() {
          $("#b_borrar_ticket").click(function() {
@@ -112,49 +133,17 @@
          });
          $("#b_new_line").click(function(event) {
             event.preventDefault();
-            $("#shadow").show();
-            $("#popup_new_line").css({
-               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-               top: 40
-            });
-            $("#popup_new_line").show();
-            document.f_search_recambios.query.focus();
-            document.f_search_recambios.query.value = '';
             $("#search_results").html('');
+            document.f_search_recambios.query.value = '';
+            fs_show_popup('popup_new_line', 40);
+            document.f_search_recambios.query.focus();
          });
          $("#f_search_recambios").keyup(function() {
-            if(document.f_search_recambios.query.value == '')
-            {
-               $("#search_results").html('');
-               $("#popup_new_line").css({
-                  left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                  top: 40
-               });
-            }
-            else
-            {
-               $.ajax({
-                  type: 'POST',
-                  url: '{$fsc->url()}',
-                  dataType: 'html',
-                  data: 'query='+document.f_search_recambios.query.value,
-                  success: function(datos) {
-                     var re = /<!--(.*?)-->/g;
-                     var m = re.exec( datos );
-                     if( m[1] == document.f_search_recambios.query.value )
-                     {
-                        $("#search_results").html(datos);
-                        $("#popup_new_line").css({
-                           left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                           top: 40
-                        });
-                     }
-                  }
-               });
-            }
+            buscar_articulos();
          });
          $("#f_search_recambios").submit(function(event) {
             event.preventDefault();
+            buscar_articulos();
          });
          $("#b_nuevo_albaran_cliente").click(function() {
             fs_show_popup('popup_tpv_opciones');
@@ -167,6 +156,13 @@
          <h1>Buscar artículos</h1>
          <div style="text-align: center;">
             <input type="text" name="query" size="40" autocomplete="off"/>
+            <select name="codfamilia" onchange="buscar_articulos()">
+               <option value="">Todas las familias</option>
+               <option value="">------</option>
+            {loop="$fsc->familia->all()"}
+               <option value="{$value->codfamilia}">{$value->descripcion}</option>
+            {/loop}
+            </select>
             <input type="submit" value="buscar"/>
          </div>
          <div id="search_results"></div>

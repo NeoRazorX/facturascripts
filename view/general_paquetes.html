@@ -1,57 +1,57 @@
 {include="header"}
 
 <script type="text/javascript">
+   function buscar_articulos()
+   {
+      if(document.f_buscar_articulos.query.value == '')
+      {
+         $("#search_results").html('');
+         $("#popup_buscar_articulos").css({
+            left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+            top: 40
+         });
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_articulos]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_articulos.query.value )
+               {
+                  $("#search_results").html(datos);
+                  $("#popup_buscar_articulos").css({
+                     left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
+                     top: 40
+                  });
+               }
+            }
+         });
+      }
+   }
    $(document).ready(function() {
-         $("#b_nuevo_paquete").click(function(event) {
-            event.preventDefault();
-            fs_show_popup('popup_nuevo_paquete');
-         });
-         $("#b_buscar_articulos").click(function(event) {
-            event.preventDefault();
-            $("#shadow").show();
-            $("#popup_buscar_articulos").css({
-               left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-               top: 40
-            });
-            $("#popup_buscar_articulos").show();
-            document.f_buscar_articulos.query.focus();
-            document.f_buscar_articulos.query.value = '';
-            $("#search_results").html('');
-         });
-         $("#f_buscar_articulos").keyup(function() {
-            if(document.f_buscar_articulos.query.value == '')
-            {
-               $("#search_results").html('');
-               $("#popup_buscar_articulos").css({
-                  left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-                  top: 40
-               });
-            }
-            else
-            {
-               $.ajax({
-                  type: 'POST',
-                  url: '{$fsc->url()}',
-                  dataType: 'html',
-                  data: 'query='+document.f_buscar_articulos.query.value,
-                  success: function(datos) {
-                     var re = /<!--(.*?)-->/g;
-                     var m = re.exec( datos );
-                     if( m[1] == document.f_buscar_articulos.query.value )
-                     {
-                        $("#search_results").html(datos);
-                        $("#popup_buscar_articulos").css({
-                           left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-                           top: 40
-                        });
-                     }
-                  }
-               });
-            }
-         });
-         $("#f_buscar_articulos").submit(function(event) {
-            event.preventDefault();
-         });
+      $("#b_nuevo_paquete").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_paquete');
+      });
+      $("#b_buscar_articulos").click(function(event) {
+         event.preventDefault();
+         $("#search_results").html('');
+         document.f_buscar_articulos.query.value = '';
+         fs_show_popup('popup_buscar_articulos', 40);
+         document.f_buscar_articulos.query.focus();
+      });
+      $("#f_buscar_articulos").keyup(function() {
+         buscar_articulos();
+      });
+      $("#f_buscar_articulos").submit(function(event) {
+         event.preventDefault();
+         buscar_articulos();
+      });
    });
 </script>
 

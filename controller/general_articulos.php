@@ -24,6 +24,7 @@ require_once 'model/tarifa.php';
 
 class general_articulos extends fs_controller
 {
+   public $codfamilia;
    public $familia;
    public $impuesto;
    public $offset;
@@ -37,6 +38,7 @@ class general_articulos extends fs_controller
    
    protected function process()
    {
+      $this->codfamilia = '';
       $this->familia = new familia();
       $this->impuesto = new impuesto();
       $this->tarifa = new tarifa();
@@ -115,7 +117,11 @@ class general_articulos extends fs_controller
          $this->offset = 0;
       
       if($this->query != '')
-         $this->resultados = $articulo->search($this->query, $this->offset);
+      {
+         if( isset($_POST['codfamilia']) )
+            $this->codfamilia = $_POST['codfamilia'];
+         $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia);
+      }
       else
          $this->resultados = $articulo->all($this->offset);
    }

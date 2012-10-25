@@ -197,8 +197,7 @@ class paquete extends fs_model
 
    protected function install()
    {
-      $this->clean_cache();
-      return "";
+      return '';
    }
    
    public function url()
@@ -282,7 +281,6 @@ class paquete extends fs_model
    
    public function save()
    {
-      $this->clean_cache();
       if( $this->exists() )
          return TRUE;
       else
@@ -292,28 +290,18 @@ class paquete extends fs_model
    
    public function delete()
    {
-      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name."
          WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
-   private function clean_cache()
-   {
-      $this->cache->delete('m_paquete_all');
-   }
-   
    public function all()
    {
-      $paqlist = $this->cache->get_array('m_paquete_all');
-      if( !$paqlist )
+      $paqlist = array();
+      $paqs = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC;");
+      if($paqs)
       {
-         $paqs = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC;");
-         if($paqs)
-         {
-            foreach($paqs as $p)
-               $paqlist[] = new paquete($p);
-         }
-         $this->cache->set('m_paquete_all', $paqlist);
+         foreach($paqs as $p)
+            $paqlist[] = new paquete($p);
       }
       return $paqlist;
    }

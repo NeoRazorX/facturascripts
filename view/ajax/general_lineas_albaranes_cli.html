@@ -1,0 +1,22 @@
+<!--{$fsc->buscar_lineas}-->
+
+{if condition="$fsc->lineas"}
+<table class="list">
+   <tr>
+      <th>Albarán</th>
+      <th>Artículo</th>
+      <th align="right">Cantidad</th>
+      <th align="right">Total+IVA</th>
+      <th align="right">Fecha</th>
+   </tr>
+   {loop="$fsc->lineas"}
+   <tr>
+      <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+      <td><a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+      <td align="right">{$value->cantidad}</td>
+      <td align="right">{$value->show_total_iva()} €</td>
+      <td align="right">{$value->show_fecha()}</td>
+   </tr>
+   {/loop}
+</table>
+{/if}

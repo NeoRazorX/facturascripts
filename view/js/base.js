@@ -16,6 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+function number_format(number, decimals, dec_point, thousands_sep)
+{
+   var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+   var d = dec_point == undefined ? "," : dec_point;
+   var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
+   var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+}
+
 function fs_select_folder(folder)
 {
    if( folder == '' )
@@ -45,14 +54,32 @@ function fs_select_folder(folder)
    }
 }
 
-function fs_show_popup(id)
+function fs_show_popup(id, top)
 {
    $("#shadow").show();
-   $("#"+id).css({
-      left: ($(window).width() - $("#"+id).outerWidth())/2,
-      top: ($(window).height() - $("#"+id).outerHeight())/2
-   });
+   if( typeof(top) == 'undefined' )
+   {
+      $("#"+id).css({
+         left: ($(window).width() - $("#"+id).outerWidth())/2,
+         top: ($(window).height() - $("#"+id).outerHeight())/2
+      });
+   }
+   else
+   {
+      $("#"+id).css({
+         left: ($(window).width() - $("#"+id).outerWidth())/2,
+         top: top
+      });
+   }
    $("#"+id).show();
+}
+
+function fs_hide_popups()
+{
+   $('div.popup').each(function() {
+      $(this).hide();
+   });
+   $("#shadow").hide();
 }
 
 $(document).ready(function() {
@@ -80,9 +107,6 @@ $(document).ready(function() {
       fs_select_folder('');
    });
    $("#shadow").click(function() {
-      $('div.popup').each(function() {
-         $(this).hide();
-      });
-      $("#shadow").hide();
+      fs_hide_popups();
    });
 });

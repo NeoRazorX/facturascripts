@@ -138,7 +138,24 @@
 
 <div class="rounded">
    {if condition="$fsc->query!=''"}
-   <h1>Resultados de la búsqueda "{$fsc->query}":</h1>
+      <h1>
+         <form name="custom_search2" action="{$fsc->url()}" method="post">
+            <input type="hidden" name="query" value="{$fsc->query}"/>
+            Resultados de la búsqueda "{$fsc->query}".
+            Filtrar por familia:
+            <select name="codfamilia" onchange="document.custom_search2.submit()">
+               <option value="">Todas</option>
+               <option value="">-----</option>
+               {loop="$fsc->familia->all()"}
+                  {if condition="$value->codfamilia==$fsc->codfamilia"}
+                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </form>
+      </h1>
    {/if}
    <table class="list">
       <tr>

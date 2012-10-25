@@ -786,23 +786,28 @@ class articulo extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
-   public function search($query, $offset=0)
+   public function search($query, $offset=0, $codfamilia='')
    {
       $artilist = array();
       $query = $this->escape_string( strtolower( trim($query) ) );
       
-      $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      if($codfamilia == '')
+         $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      else
+         $sql = "SELECT * FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($codfamilia)." AND ";
+      
       if( is_numeric($query) )
       {
-         $sql .= "referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
-            OR codbarras = '".$query."'";
+         $sql .= "(referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
+            OR codbarras = '".$query."')";
       }
       else
       {
          $buscar = str_replace(' ', '%', $query);
-         $sql .= "lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
-            OR lower(descripcion) ~~ '%".$buscar."%'";
+         $sql .= "(lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
+            OR lower(descripcion) ~~ '%".$buscar."%')";
       }
+      
       $sql .= " ORDER BY referencia ASC";
       
       $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);

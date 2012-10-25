@@ -2,81 +2,73 @@
    
 <script type="text/javascript">
    var numlineas = 0;
-   function number_format(number, decimals, dec_point, thousands_sep)
-   {
-      var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-      var d = dec_point == undefined ? "," : dec_point;
-      var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-      var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-      return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-   }
    function recalcular()
    {
-         var tpv_total = 0;
-         var uds = 0;
-         var pvp = 0;
-         var dto = 0;
-         var iva = 0;
-         for(var i=1; i<=numlineas; i++)
+      var tpv_total = 0;
+      var uds = 0;
+      var pvp = 0;
+      var dto = 0;
+      var iva = 0;
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
          {
-            if($("#linea_"+i).length > 0)
-            {
-               uds = parseFloat( $("#cantidad_"+i).val() );
-               pvp = parseFloat( $("#pvp_"+i).val() );
-               dto = parseFloat( $("#dto_"+i).val() );
-               iva = parseFloat( $("#iva_"+i).val() );
-               $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
-               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
-            }
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            pvp = parseFloat( $("#pvp_"+i).val() );
+            dto = parseFloat( $("#dto_"+i).val() );
+            iva = parseFloat( $("#iva_"+i).val() );
+            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
+            $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
+            tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
          }
-         $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
+      }
+      $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
    }
    function ajustar_totiva()
    {
-         var totiva = 0;
-         var uds = 0;
-         var pvp = 0;
-         var iva = 0;
-         var dto = 0;
-         var tpv_total = 0;
-         for(var i=1; i<=numlineas; i++)
+      var totiva = 0;
+      var uds = 0;
+      var pvp = 0;
+      var iva = 0;
+      var dto = 0;
+      var tpv_total = 0;
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
          {
-            if($("#linea_"+i).length > 0)
+            totiva = parseFloat( $("#totiva_"+i).val() );
+            uds = parseFloat( $("#cantidad_"+i).val() );
+            
+            if( $("#pvp_"+i).val() == 0 )
             {
-               totiva = parseFloat( $("#totiva_"+i).val() );
-               uds = parseFloat( $("#cantidad_"+i).val() );
-               
-               if( $("#pvp_"+i).val() == 0 )
-               {
-                  pvp = 1;
-                  $("#pvp_"+i).val(1);
-               }
-               else
-                  pvp = parseFloat( $("#pvp_"+i).val() );
-               
-               iva = parseFloat( $("#iva_"+i).val() );
-               dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
-               
-               if( isNaN(dto) )
-                  $("#dto_"+i).val(0);
-               else
-                  $("#dto_"+i).val(dto);
-               
-               $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               tpv_total += totiva;
+               pvp = 1;
+               $("#pvp_"+i).val(1);
             }
+            else
+               pvp = parseFloat( $("#pvp_"+i).val() );
+               
+            iva = parseFloat( $("#iva_"+i).val() );
+            dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
+               
+            if( isNaN(dto) )
+               $("#dto_"+i).val(0);
+            else
+               $("#dto_"+i).val(dto);
+               
+            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
+            tpv_total += totiva;
          }
-         $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
+      }
+      $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
    }
    function linea_sum_ud(num,value)
    {
-         var udl = parseFloat($("#cantidad_"+num).val()) + value;
-         if(udl < 1)
-            $("#linea_"+num).remove();
-         else
-            $("#cantidad_"+num).val(udl);
-         recalcular();
+      var udl = parseFloat($("#cantidad_"+num).val()) + value;
+      if(udl < 1)
+         $("#linea_"+num).remove();
+      else
+         $("#cantidad_"+num).val(udl);
+      recalcular();
    }
    function add_articulo(ref,desc,pvp,dto,iva)
    {
@@ -99,10 +91,7 @@
          <td align='center'>"+iva+"</td>\n\
          <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
             "' size='6' onkeyup='ajustar_totiva()' onclick='this.select()' autocomplete='off'/></td></tr>");
-      $('div.popup').each(function() {
-         $(this).hide();
-      });
-      $("#shadow").hide();
+      fs_hide_popups();
       recalcular();
    }
    function new_articulo()
@@ -121,75 +110,65 @@
          }
       });
    }
+   function buscar_articulos()
+   {
+      if(document.f_buscar_articulos.query.value == '')
+      {
+         $("#search_results").html('');
+         $("#popup_new_line").css({
+            left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+            top: 40
+         });
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_articulos]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_articulos.query.value )
+               {
+                  $("#search_results").html(datos);
+                  $("#popup_new_line").css({
+                     left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+                     top: 40
+                  });
+               }
+            }
+         });
+      }
+   }
    $(document).ready(function() {
-         $("#b_new_line").click(function(event) {
-            event.preventDefault();
-            $("#shadow").show();
-            $("#popup_new_line").css({
-               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-               top: 40
-            });
-            $("#popup_new_line").show();
-            document.f_buscar_articulos.query.focus();
-            document.f_buscar_articulos.query.value = '';
-            $("#search_results").html('');
-         });
-         $("#f_buscar_articulos").keyup(function() {
-            if(document.f_buscar_articulos.query.value == '')
-            {
-               $("#search_results").html('');
-               $("#popup_new_line").css({
-                  left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                  top: 40
-               });
-            }
-            else
-            {
-               $.ajax({
-                  type: 'POST',
-                  url: '{$fsc->url()}',
-                  dataType: 'html',
-                  data: 'query='+document.f_buscar_articulos.query.value,
-                  success: function(datos) {
-                     var re = /<!--(.*?)-->/g;
-                     var m = re.exec( datos );
-                     if( m[1] == document.f_buscar_articulos.query.value )
-                     {
-                        $("#search_results").html(datos);
-                        $("#popup_new_line").css({
-                           left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                           top: 40
-                        });
-                     }
-                  }
-               });
-            }
-         });
-         $("#f_buscar_articulos").submit(function(event) {
-            event.preventDefault();
-         });
-         $("#b_nuevo_albaran_proveedor").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'proveedor';
-            $("#shadow").show();
-            $("#popup_tpv_opciones").css({
-               left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
-               top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
-            });
-            $("#tr_clientes").hide();
-            $("#tr_proveedores").show();
-            $("#popup_tpv_opciones").show();
-         });
-         $("#b_nuevo_albaran_cliente").click(function() {
-            document.f_new_albaran.tipoalbaran.value = 'cliente';
-            $("#shadow").show();
-            $("#popup_tpv_opciones").css({
-               left: ($(window).width() - $('#popup_tpv_opciones').outerWidth())/2,
-               top: ($(window).height() - $('#popup_tpv_opciones').outerHeight())/2
-            });
-            $("#tr_proveedores").hide();
-            $("#tr_clientes").show();
-            $("#popup_tpv_opciones").show();
-         });
+      $("#b_new_line").click(function(event) {
+         event.preventDefault();
+         $("#search_results").html('');
+         document.f_buscar_articulos.query.value = '';
+         fs_show_popup('popup_new_line', 40);
+         document.f_buscar_articulos.query.focus();
+      });
+      $("#f_buscar_articulos").keyup(function() {
+         buscar_articulos();
+      });
+      $("#f_buscar_articulos").submit(function(event) {
+         event.preventDefault();
+         buscar_articulos();
+      });
+      $("#b_nuevo_albaran_proveedor").click(function() {
+         document.f_new_albaran.tipoalbaran.value = 'proveedor';
+         $("#tr_clientes").hide();
+         $("#tr_proveedores").show();
+         fs_show_popup('popup_tpv_opciones');
+      });
+      $("#b_nuevo_albaran_cliente").click(function() {
+         document.f_new_albaran.tipoalbaran.value = 'cliente';
+         $("#tr_proveedores").hide();
+         $("#tr_clientes").show();
+         fs_show_popup('popup_tpv_opciones');
+      });
    });
 </script>
 
@@ -198,6 +177,13 @@
       <h1>Buscar artículos</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
+         <select name="codfamilia" onchange="buscar_articulos()">
+            <option value="">Todas las familias</option>
+            <option value="">------</option>
+         {loop="$fsc->familia->all()"}
+            <option value="{$value->codfamilia}">{$value->descripcion}</option>
+         {/loop}
+         </select>
          <input type="submit" value="buscar"/>
       </div>
    </form>

@@ -54,6 +54,7 @@ class general_nuevo_albaran extends fs_controller
    protected function process()
    {
       $this->articulo = new articulo();
+      $this->familia = new familia();
       $this->results = array();
       
       if( isset($_GET['new_articulo']) )
@@ -87,7 +88,6 @@ class general_nuevo_albaran extends fs_controller
    
    private function new_articulo()
    {
-      $this->familia = new familia();
       $this->impuesto = new impuesto();
       
       $art0 = new articulo();
@@ -109,7 +109,11 @@ class general_nuevo_albaran extends fs_controller
       
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran';
-      $this->results = $this->articulo->search($this->query);
+      
+      if( isset($_POST['codfamilia']) )
+         $this->results = $this->articulo->search($this->query, 0, $_POST['codfamilia']);
+      else
+         $this->results = $this->articulo->search($this->query);
    }
    
    private function nuevo_albaran_cliente()

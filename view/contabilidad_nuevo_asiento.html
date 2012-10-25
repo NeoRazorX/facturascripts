@@ -2,25 +2,102 @@
 
 <script type="text/javascript">
    var numlineas = 0;
-   function buscar_subcuenta(num, tipo)
+   function add_partida()
    {
-      $("#shadow").show();
+      numlineas++;
+      $("#partidas").append("<div class='rounded'>\n\
+         <div class='bloque'>\n\
+            <input type='hidden' id='idsubcuenta_"+numlineas+"' name='idsubcuenta_"+numlineas+"'/>\n\
+            Subcuenta:\n\
+            <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
+               onclick='show_buscar_subcuentas(\""+numlineas+"\",\"subcuenta\")'/>\n\
+            <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='60' disabled='disabled'/>\n\
+         </div>\n\
+         <div class='bloque'>\n\
+            debe: <input type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='6'\n\
+               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+            haber: <input type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='6' value='0'\n\
+               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+         </div>\n\
+         <div class='bloque'>\n\
+            ID concepto:\n\
+            <select name='idconceptopar_"+numlineas+"'>\n\
+               <option value=''>---</option>\n\
+               {loop="$fsc->concepto->all()"}<option value='{$value->idconceptopar}'>{$value->concepto}</option>{/loop}\n\
+            </select>\n\
+            Concepto: <input name='concepto_"+numlineas+"' type='text' size='30'/>\n\
+         </div>\n\
+         <div class='bloque'>\n\
+            Documento: <input name='documento_"+numlineas+"' type='text' size='30'/>\n\
+            Tipo documento:\n\
+            <select name='tipodocumento_"+numlineas+"'>\n\
+               <option>---</option>\n\
+               <option>Recibo</option>\n\
+               <option>Factura de cliente</option>\n\
+               <option>Factura de proveedor</option>\n\
+            </select>\n\
+         </div>\n\
+         <div class='bloque'>\n\
+            <input type='hidden' id='idcontrapartida_"+numlineas+"' name='idcontrapartida_"+numlineas+"'/>\n\
+            Contrapartida:\n\
+            <input id='codcontrapartida_"+numlineas+"' name='codcontrapartida_"+numlineas+"' type='text' size='10'\n\
+               onclick='show_buscar_subcuentas(\""+numlineas+"\",\"contrapartida\")'/>\n\
+            <input type='text' id='descontrapartida_"+numlineas+"' name='descontrapartida_"+numlineas+"' size='60' disabled='disabled'/>\n\
+            cif/nif: <input type='text' name='cifnif_"+numlineas+"' size='10'/>\n\
+         </div>\n\
+         </div>");
+      document.f_asiento['idconceptopar_'+numlineas].selectedIndex = document.f_asiento['idconceptopar'].selectedIndex;
+      document.f_asiento['concepto_'+numlineas].value = document.f_asiento['concepto'].value;
+      document.f_asiento['tipodocumento_'+numlineas].selectedIndex = document.f_asiento['tipodocumento'].selectedIndex;
+      document.f_asiento['documento_'+numlineas].value = document.f_asiento['documento'].value;
+   }
+   function show_buscar_subcuentas(num, tipo)
+   {
       $("#subcuentas").html('');
       document.f_buscar_subcuentas.ejercicio.value = document.f_asiento.codejercicio.options[document.f_asiento.codejercicio.selectedIndex].value;
       document.f_buscar_subcuentas.tipo.value = tipo;
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
-      $("#popup_subcuentas").css({
-         left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-         top: 40
-      });
-      $("#popup_subcuentas").show();
+      fs_show_popup('popup_subcuentas', 40);
       document.f_buscar_subcuentas.query.focus();
+   }
+   function buscar_subcuentas()
+   {
+      if(document.f_buscar_subcuentas.query.value == '')
+      {
+         $("#subcuentas").html('');
+         $("#popup_subcuentas").css({
+            left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
+            top: 40
+         });
+      }
+      else
+      {
+         var datos = 'query='+document.f_buscar_subcuentas.query.value;
+         datos += "&tipo="+document.f_buscar_subcuentas.tipo.value;
+         datos += "&ejercicio="+document.f_buscar_subcuentas.ejercicio.value;
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: datos,
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_subcuentas.query.value )
+               {
+                  $("#subcuentas").html(datos);
+                  $("#popup_subcuentas").css({
+                     left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
+                     top: 40
+                  });
+               }
+            }
+         });
+      }
    }
    function select_subcuenta(idsubcuenta, codsubcuenta, descripcion)
    {
-      $("#popup_subcuentas").hide();
-      $("#shadow").hide();
       var num = document.f_buscar_subcuentas.numlinea.value;
       if(document.f_buscar_subcuentas.tipo.value == 'subcuenta')
       {
@@ -34,6 +111,7 @@
          $("#codcontrapartida_"+num).val(codsubcuenta);
          $("#descontrapartida_"+num).val(descripcion);
       }
+      fs_hide_popups();
    }
    function recalcular()
    {
@@ -53,101 +131,20 @@
    {
       document.f_asiento.concepto.value = document.f_asiento.idconceptopar.options[document.f_asiento.idconceptopar.selectedIndex].text;
    }
-   function guardar_asiento()
-   {
-      document.f_asiento.numlineas.value = numlineas;
-      document.f_asiento.importe.disabled = false;
-      document.f_asiento.submit();
-   }
    $(document).ready(function() {
-      $("#b_add_partida").click(function(event) {
-         event.preventDefault();
-         numlineas++;
-         $("#partidas").append("<div class='rounded'>\n\
-            <div class='bloque'>\n\
-               <input type='hidden' id='idsubcuenta_"+numlineas+"' name='idsubcuenta_"+numlineas+"'/>\n\
-               Subcuenta:\n\
-               <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
-                  onclick='buscar_subcuenta(\""+numlineas+"\",\"subcuenta\")'/>\n\
-               <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='60' disabled='disabled'/>\n\
-            </div>\n\
-            <div class='bloque'>\n\
-               debe: <input type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='6'\n\
-                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
-               haber: <input type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='6' value='0'\n\
-                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
-            </div>\n\
-            <div class='bloque'>\n\
-               ID concepto:\n\
-               <select name='idconceptopar_"+numlineas+"'>\n\
-                  <option value=''>---</option>\n\
-                  {loop="$fsc->concepto->all()"}<option value='{$value->idconceptopar}'>{$value->concepto}</option>{/loop}\n\
-               </select>\n\
-               Concepto: <input name='concepto_"+numlineas+"' type='text' size='30'/>\n\
-            </div>\n\
-            <div class='bloque'>\n\
-               Documento: <input name='documento_"+numlineas+"' type='text' size='30'/>\n\
-               Tipo documento:\n\
-               <select name='tipodocumento_"+numlineas+"'>\n\
-                  <option>---</option>\n\
-                  <option>Recibo</option>\n\
-                  <option>Factura de cliente</option>\n\
-                  <option>Factura de proveedor</option>\n\
-               </select>\n\
-            </div>\n\
-            <div class='bloque'>\n\
-               <input type='hidden' id='idcontrapartida_"+numlineas+"' name='idcontrapartida_"+numlineas+"'/>\n\
-               Contrapartida:\n\
-               <input id='codcontrapartida_"+numlineas+"' name='codcontrapartida_"+numlineas+"' type='text' size='10' onclick='buscar_subcuenta(\""+numlineas+"\",\"contrapartida\")'/>\n\
-               <input type='text' id='descontrapartida_"+numlineas+"' name='descontrapartida_"+numlineas+"' size='60' disabled='disabled'/>\n\
-               cif/nif: <input type='text' name='cifnif_"+numlineas+"' size='10'/>\n\
-            </div>\n\
-            </div>");
-         document.f_asiento['idconceptopar_'+numlineas].selectedIndex = document.f_asiento['idconceptopar'].selectedIndex;
-         document.f_asiento['concepto_'+numlineas].value = document.f_asiento['concepto'].value;
-         document.f_asiento['tipodocumento_'+numlineas].selectedIndex = document.f_asiento['tipodocumento'].selectedIndex;
-         document.f_asiento['documento_'+numlineas].value = document.f_asiento['documento'].value;
-      });
       $("#f_buscar_subcuentas").keyup(function() {
-            if(document.f_buscar_subcuentas.query.value == '')
-            {
-               $("#subcuentas").html('');
-               $("#popup_subcuentas").css({
-                  left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-                  top: 40
-               });
-            }
-            else
-            {
-               var datos = 'query='+document.f_buscar_subcuentas.query.value;
-               datos += "&tipo="+document.f_buscar_subcuentas.tipo.value;
-               datos += "&ejercicio="+document.f_buscar_subcuentas.ejercicio.value;
-               $.ajax({
-                  type: 'POST',
-                  url: '{$fsc->url()}',
-                  dataType: 'html',
-                  data: datos,
-                  success: function(datos) {
-                     var re = /<!--(.*?)-->/g;
-                     var m = re.exec( datos );
-                     if( m[1] == document.f_buscar_subcuentas.query.value )
-                     {
-                        $("#subcuentas").html(datos);
-                        $("#popup_subcuentas").css({
-                           left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-                           top: 40
-                        });
-                     }
-                  }
-               });
-            }
-         });
-         $("#f_buscar_subcuentas").submit(function(event) {
-            event.preventDefault();
-         });
-         $("#f_asiento").submit(function(event) {
-            event.preventDefault();
-         });
+         buscar_subcuentas();
+      });
+      $("#f_buscar_subcuentas").submit(function(event) {
+         event.preventDefault();
+         buscar_subcuentas();
+      });
+      $("#f_asiento").submit(function(event) {
+         event.preventDefault();
+         document.f_asiento.numlineas.value = numlineas;
+         document.f_asiento.importe.disabled = false;
+         document.f_asiento.submit();
+      });
    });
 </script>
 
@@ -156,7 +153,7 @@
    <div class="rounded">
       <h1>
          Datos del asiento:
-         <span><input type="submit" value="nuevo" onclick="guardar_asiento()"/></span>
+         <span><input type="submit" value="nuevo"/></span>
       </h1>
       <div class="bloque">
          <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
@@ -213,12 +210,12 @@
    <div id="partidas"></div>
    <div class="rounded">
       <div class="new_line">
-         <a href="#" id="b_add_partida">Añadir partida...</a>
+         <a href="#" onclick="add_partida(); return false;">Añadir partida...</a>
       </div>
    </div>
 </form>
 
-<div class="popup" id="popup_subcuentas">
+<div class="popup" id="popup_subcuentas" style="min-width: 60%">
    <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
       <input type="hidden" name="ejercicio"/>
       <input type="hidden" name="tipo"/>

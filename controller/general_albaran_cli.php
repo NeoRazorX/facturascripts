@@ -22,6 +22,7 @@ require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
 require_once 'model/factura_cliente.php';
+require_once 'model/familia.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
 
@@ -29,6 +30,7 @@ class general_albaran_cli extends fs_controller
 {
    public $albaran;
    public $agente;
+   public $familia;
    public $nuevo_albaran_url;
    
    public function __construct()
@@ -39,6 +41,7 @@ class general_albaran_cli extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_albaranes_cli');
+      $this->familia = new familia();
       
       /*
        * buscamos la url del script general_nuevo_albaran,

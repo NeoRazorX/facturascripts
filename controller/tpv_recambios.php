@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/almacen.php';
@@ -26,6 +25,7 @@ require_once 'model/caja.php';
 require_once 'model/cliente.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
+require_once 'model/familia.php';
 require_once 'model/forma_pago.php';
 require_once 'model/serie.php';
 
@@ -38,6 +38,7 @@ class tpv_recambios extends fs_controller
    public $cliente;
    public $divisa;
    public $ejercicio;
+   public $familia;
    public $forma_pago;
    public $impresora;
    public $results;
@@ -51,6 +52,7 @@ class tpv_recambios extends fs_controller
    protected function process()
    {
       $this->articulo = new articulo();
+      $this->familia = new familia();
       $this->results = array();
       
       if( $this->query != '' )
@@ -135,13 +137,10 @@ class tpv_recambios extends fs_controller
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/tpv_recambios';
       
-      $cache = new fs_cache();
-      $this->results = $cache->get_array('search_articulo_'.$this->query, 600);
-      if( count($this->results) < 1 )
-      {
+      if( isset($_POST['codfamilia']) )
+         $this->results = $this->articulo->search($this->query, 0, $_POST['codfamilia']);
+      else
          $this->results = $this->articulo->search($this->query);
-         $cache->set('search_articulo_'.$this->query, $this->results);
-      }
    }
    
    private function nuevo_albaran_cliente()

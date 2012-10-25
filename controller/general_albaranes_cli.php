@@ -21,6 +21,8 @@ require_once 'model/albaran_cliente.php';
 
 class general_albaranes_cli extends fs_controller
 {
+   public $buscar_lineas;
+   public $lineas;
    public $resultados;
    public $offset;
 
@@ -31,44 +33,52 @@ class general_albaranes_cli extends fs_controller
    
    protected function process()
    {
-      $albaran = new albaran_cliente();
-      $this->custom_search = TRUE;
-      
-      $npage = $this->page->get('general_nuevo_albaran');
-      if($npage)
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo', $npage->url());
-      
-      $agpage = $this->page->get('general_agrupar_albaranes_cli');
-      if($agpage)
-         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
-      
-      if( isset($_GET['delete']) )
+      if( isset($_POST['buscar_lineas']) )
+         $this->buscar_lineas();
+      else
       {
-         $alb1 = $albaran->get($_GET['delete']);
-         if($alb1)
+         $albaran = new albaran_cliente();
+         $this->custom_search = TRUE;
+         
+         $npage = $this->page->get('general_nuevo_albaran');
+         if($npage)
+            $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo', $npage->url());
+         
+         $agpage = $this->page->get('general_agrupar_albaranes_cli');
+         if($agpage)
+            $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
+         
+         $this->buttons[] = new fs_button('b_buscar_lineas', 'lineas', '#', '', 'img/zoom.png');
+         
+         if( isset($_GET['delete']) )
          {
-            if( $alb1->delete() )
-               $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
+            $alb1 = $albaran->get($_GET['delete']);
+            if($alb1)
+            {
+               if( $alb1->delete() )
+                  $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible borrar el albarán!");
+            }
             else
-               $this->new_error_msg("¡Imposible borrar el albarán!");
+               $this->new_error_msg("¡Albarán no encontrado!");
          }
+         
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
          else
-            $this->new_error_msg("¡Albarán no encontrado!");
+            $this->offset = 0;
+         
+         if($this->query)
+            $this->resultados = $albaran->search($this->query, $this->offset);
+         else
+            $this->resultados = $albaran->all($this->offset);
       }
-      
-      if( isset($_GET['offset']) )
-         $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
-      
-      if($this->query)
-         $this->resultados = $albaran->search($this->query, $this->offset);
-      else
-         $this->resultados = $albaran->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
    
    public function anterior_url()
@@ -89,6 +99,16 @@ class general_albaranes_cli extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
+   }
+   
+   public function buscar_lineas()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_lineas_albaranes_cli';
+      
+      $this->buscar_lineas = $_POST['buscar_lineas'];
+      $linea = new linea_albaran_cliente();
+      $this->lineas = $linea->search($this->buscar_lineas);
    }
 }
 

@@ -70,9 +70,7 @@
 </div>
 
 <div class="rounded">
-   {if condition="$fsc->query!=''"}
-   <h1>Resultados de la búsqueda "{$fsc->query}":</h1>
-   {/if}
+   {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda "{$fsc->query}":</h1>{/if}
    <table class="list">
       <tr>
          <th>código</th>

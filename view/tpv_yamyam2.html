@@ -1,18 +1,5 @@
 <script type="text/javascript">
    var numlineas = 0;
-   function number_format(number, decimals, dec_point, thousands_sep)
-   {
-      var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-      var d = dec_point == undefined ? "," : dec_point;
-      var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-      var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-      return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-   }
-   function close_articulos()
-   {
-      $("div.popup").hide();
-      $("#shadow").hide();
-   }
    function mostrar_paquete(paq)
    {
       fs_show_popup('paquete_'+paq);
@@ -123,7 +110,7 @@
             </td>\n\
             </tr>");
       recalcular();
-      close_articulos();
+      fs_hide_popups();
    }
    function add_paquete(ref)
    {
@@ -147,7 +134,6 @@
          }
          add_articulo(ref2,0,0,paqid,'');
       }
-      close_articulos();
    }
    $(document).ready(function() {
       $("div.popup label").hover(function(event) {
@@ -340,7 +326,7 @@
          <td><textarea name="observaciones"></textarea></td>
       </tr>
       <tr>
-         <td><input type="button" class="cancel" value="cancelar" onclick="close_articulos()"/></td>
+         <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
          <td align="right"><input type="submit" class="comfirm" value="finalizar"/></td>
       </tr>
    </table>
@@ -388,7 +374,7 @@
          <input type="radio" name="grupo_{$value2}" value="" style="display:none;"/>
       </div>
       {/loop}
-      <input type="button" class="cancel" value="cancelar" onclick="close_articulos()"/>
+      <input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/>
       <div class="right">
          <input type="button" class="comfirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/>
       </div>
