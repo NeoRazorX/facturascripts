@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_cache.php';
 require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/almacen.php';
@@ -37,6 +38,7 @@ class tpv_yamyam extends fs_controller
    public $almacen;
    public $articulo;
    public $articulos;
+   private $cache;
    public $caja;
    public $cliente;
    public $desactivar_imagenes;
@@ -62,6 +64,7 @@ class tpv_yamyam extends fs_controller
       $this->agente = $this->user->get_agente();
       $this->almacen = new almacen();
       $this->articulo = new articulo();
+      $this->cache = new fs_cache();
       $this->caja = new caja();
       $this->cliente = new cliente();
       $this->desactivar_imagenes = FALSE;
@@ -150,8 +153,9 @@ class tpv_yamyam extends fs_controller
          $this->new_error_msg("¡No tienes un agente asociado a tu usuario!");
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
    
    private function cargar_datos_tpv()
@@ -160,7 +164,7 @@ class tpv_yamyam extends fs_controller
       $this->paquetes = $this->paquete->all();
       /// cargamos los articulos que no sean paquetes
       $this->articulos = array();
-      foreach($this->articulo->all(0, 100) as $a)
+      foreach($this->get_first_articulos() as $a)
       {
          $encontrado = FALSE;
          foreach($this->paquetes as $p)
@@ -190,6 +194,17 @@ class tpv_yamyam extends fs_controller
          if( $encontrado )
             $this->familias[] = $f;
       }
+   }
+   
+   private function get_first_articulos()
+   {
+      $articulos = $this->cache->get_array('tpv_yamyam_articulos');
+      if( !$articulos )
+      {
+         $articulos = $this->articulo->all(0, 150);
+         $this->cache->set('tpv_yamyam_articulos', $articulos, 1800);
+      }
+      return $articulos;
    }
    
    private function guardar_ticket()

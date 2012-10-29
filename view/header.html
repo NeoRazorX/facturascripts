@@ -75,7 +75,7 @@
          <div id="header_search">
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
-               <input type="text" name="query" value="{$fsc->query}" autocomplete="off"/>
+               <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off"/>
                <input type="submit" value="buscar"/>
             </form>
             {/if}
@@ -123,16 +123,20 @@
 {/if}
 {if condition="$fsc->get_errors()"}
    <div class="error">
+      <ul>
       {loop="$fsc->get_errors()"}
          <li>{$value}</li>
       {/loop}
+      </ul>
    </div>
 {/if}
 {if condition="$fsc->get_messages()"}
    <div class="message">
+      <ul>
       {loop="$fsc->get_messages()"}
          <li>{$value}</li>
       {/loop}
+      </ul>
    </div>
 {/if}
    <div class="main_div">

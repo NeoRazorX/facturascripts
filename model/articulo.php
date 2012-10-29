@@ -332,7 +332,9 @@ class articulo extends fs_model
    public $controlstock; /// permitir ventas sin stock
    public $codbarras;
    public $observaciones;
-   public $imagen;
+   
+   private $imagen;
+   private $has_imagen;
    
    private static $impuestos;
    
@@ -362,8 +364,13 @@ class articulo extends fs_model
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $a['observaciones'];
-         /// no cargamos la imágen al principio por cuestiones de rendiemiento
-         ///$this->imagen = $this->str2bin($a['imagen']);
+         
+         /// no cargamos la imágen directamente por cuestión de rendimiento
+         $this->imagen = NULL;
+         if( isset($a['imagen']) )
+            $this->has_imagen = TRUE;
+         else
+            $this->has_imagen = FALSE;
       }
       else
       {
@@ -384,7 +391,9 @@ class articulo extends fs_model
          $this->equivalencia = NULL;
          $this->codbarras = '';
          $this->observaciones = '';
+         
          $this->imagen = NULL;
+         $this->has_imagen = FALSE;
       }
       $this->pvp_ant = 0;
       $this->iva = NULL;
@@ -563,34 +572,47 @@ class articulo extends fs_model
    
    public function imagen_url()
    {
-      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
-         return '../tmp/articulos/'.$this->referencia.'.png';
-      else
+      if( $this->has_imagen )
       {
-         if( !isset($this->imagen) )
-         {
-            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
-               WHERE referencia = ".$this->var2str($this->referencia).";");
-            if($imagen)
-               $this->imagen = $this->str2bin($imagen[0]['imagen']);
-            else
-               $this->imagen = NULL;
-            unset($imagen);
-         }
-         
-         if( is_null($this->imagen) )
-            return FALSE;
+         if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+            return '../tmp/articulos/'.$this->referencia.'.png';
          else
          {
-            if( !file_exists('tmp/articulos') )
-               mkdir('tmp/articulos');
+            if( is_null($this->imagen) )
+            {
+               $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
+                  WHERE referencia = ".$this->var2str($this->referencia).";");
+               if($imagen)
+                  $this->imagen = $this->str2bin($imagen[0]['imagen']);
+               else
+               {
+                  $this->imagen = NULL;
+                  $this->has_imagen = FALSE;
+               }
+            }
             
-            $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
-            fwrite($f, $this->imagen);
-            fclose($f);
-            return '../tmp/articulos/'.$this->referencia.'.png';
+            if( !is_null($this->imagen) )
+            {
+               if( !file_exists('tmp/articulos') )
+                  mkdir('tmp/articulos');
+               
+               $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
+               fwrite($f, $this->imagen);
+               fclose($f);
+               return '../tmp/articulos/'.$this->referencia.'.png';
+            }
+            else
+               return FALSE;
          }
       }
+      else
+         return FALSE;
+   }
+   
+   public function set_imagen($img)
+   {
+      $this->imagen = $img;
+      $this->has_imagen = TRUE;
    }
    
    public function set_pvp($p)
@@ -702,14 +724,20 @@ class articulo extends fs_model
       $status = FALSE;
       
       /// cargamos la imágen si todavía no lo habíamos hecho
-      if( !isset($this->imagen) )
+      if( $this->has_imagen )
       {
-         $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
-            WHERE referencia = ".$this->var2str($this->referencia).";");
-         if($imagen)
-            $this->imagen = $this->str2bin($imagen[0]['imagen']);
-         else
-            $this->imagen = NULL;
+         if( is_null($this->imagen) )
+         {
+            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
+               WHERE referencia = ".$this->var2str($this->referencia).";");
+            if($imagen)
+               $this->imagen = $this->str2bin($imagen[0]['imagen']);
+            else
+            {
+               $this->imagen = NULL;
+               $this->has_imagen = FALSE;
+            }
+         }
       }
       /// eliminamos la imágen del directorio para actualizarla
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )

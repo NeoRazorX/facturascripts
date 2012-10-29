@@ -17,6 +17,15 @@
    <ul class="horizontal">
       <li>Impuesto: {$fsc->family_data->codimpuesto}</li>
       <li>Sufijo: {$fsc->family_data->sufijo}</li>
+      {if condition="$fsc->family_data->con_iva"}
+         <li>precios con IVA incluido.</li>
+      {/if}
+      {if condition="$fsc->family_data->pvp_max"}
+         <li>Asignar el precio máximo.</li>
+      {/if}
+      {if condition="$fsc->family_data->bloquear"}
+         <li>Bloquear artículos no actualizados.</li>
+      {/if}
       <li>Líneas: {$fsc->family_data->lineas}</li>
    </ul>
    <ul class="horizontal">

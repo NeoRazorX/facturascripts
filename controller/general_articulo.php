@@ -105,7 +105,7 @@ class general_articulo extends fs_controller
          $this->articulo = $this->articulo->get($_POST['referencia']);
          if(is_uploaded_file($_FILES['fimagen']['tmp_name']) AND $_FILES['fimagen']['size'] <= 1024000)
          {
-            $this->articulo->imagen = file_get_contents($_FILES['fimagen']['tmp_name']);
+            $this->articulo->set_imagen( file_get_contents($_FILES['fimagen']['tmp_name']) );
             if( $this->articulo->save() )
                $this->new_message("Imagen del articulo modificada correctamente");
             else

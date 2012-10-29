@@ -20,12 +20,17 @@
 require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 
 class family_data
 {
    public $codfamilia;
    public $codimpuesto;
+   public $iva;
+   public $con_iva;
    public $sufijo;
+   public $pvp_max;
+   public $bloquear;
    public $action;
    public $num_articulos;
    public $lineas;
@@ -39,13 +44,17 @@ class family_data
    public $pvp_diferencia;
    public $pvp_sum_diferencias;
    
-   public function __construct($codfamilia, $codimpuesto=NULL, $sufijo='', $num_articulos=0)
+   public function __construct($codfamilia)
    {
       $this->codfamilia = $codfamilia;
-      $this->codimpuesto = $codimpuesto;
-      $this->sufijo = $sufijo;
+      $this->codimpuesto = NULL;
+      $this->iva = 0;
+      $this->con_iva = FALSE;
+      $this->sufijo = '';
+      $this->pvp_max = FALSE;
+      $this->bloquear = FALSE;
       $this->action = 'test';
-      $this->num_articulos = $num_articulos;
+      $this->num_articulos = 0;
       $this->lineas = -1;
       $this->lineas_procesadas = 0;
       $this->articulos_nuevos = 0;
@@ -56,6 +65,22 @@ class family_data
       $this->pvp_igual = 0;
       $this->pvp_diferencia = 0;
       $this->pvp_sum_diferencias = 0;
+   }
+   
+   public function set_impuesto($cod)
+   {
+      $impuesto = new impuesto();
+      $imp0 = $impuesto->get($cod);
+      if( $imp0 )
+      {
+         $this->codimpuesto = $imp0->codimpuesto;
+         $this->iva = $imp0->iva;
+      }
+      else
+      {
+         $this->codimpuesto = NULL;
+         $this->iva = 0;
+      }
    }
    
    public function set_action($action)
@@ -105,7 +130,8 @@ class general_importar_familia extends fs_controller
    public $familia;
    public $ready;
    
-   public function __construct() {
+   public function __construct()
+   {
       parent::__construct('general_importar_familia', 'importar familia', 'general', FALSE, FALSE);
    }
    
@@ -141,8 +167,22 @@ class general_importar_familia extends fs_controller
                
                /// limpiamos la cache
                $this->cache->delete('family_data_'.$this->familia->codfamilia);
-               $this->family_data = new family_data($this->familia->codfamilia, $_POST['impuesto'],
-                    $_POST['sufijo'], $this->articulo->count($this->familia->codfamilia));
+               
+               /// nos guardamos la configuración
+               $this->family_data = new family_data($this->familia->codfamilia);
+               $this->family_data->set_impuesto($_POST['impuesto']);
+               $this->family_data->sufijo = $_POST['sufijo'];
+               $this->family_data->num_articulos = $this->articulo->count($this->familia->codfamilia);
+               
+               if( isset($_POST['con_iva']) )
+                  $this->family_data->con_iva = TRUE;
+               
+               if( isset($_POST['pvp_max']) )
+                  $this->family_data->pvp_max = TRUE;
+               
+               if( isset($_POST['bloquear']) )
+                  $this->family_data->bloquear = TRUE;
+               
                $this->save_family_data();
             }
             else
@@ -208,7 +248,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-3';
    }
    
    private function get_family_data()
@@ -282,30 +322,72 @@ class general_importar_familia extends fs_controller
    {
       if(count($tarifa) >= 4)
       {
+         // sustituimos las comas por puntos en el pvp
+         $tarifa[1] = floatval( str_replace(',', '.', $tarifa[1]) );
+         
          $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
-            $this->family_data->articulos_actualizados += 1;
+            $articulo->descripcion = $tarifa[2];
+            $articulo->codbarras = $tarifa[3];
             
-            // sustituimos las comas por puntos en el pvp
-            $tarifa[1] = str_replace(',', '.', $tarifa[1]);
-            $pvp = floatval($tarifa[1]);
-            if($pvp > $articulo->pvp)
-               $this->family_data->pvp_suben += 1;
-            else if($pvp < $articulo->pvp)
-               $this->family_data->pvp_bajan += 1;
-            else
-               $this->family_data->pvp_igual += 1;
-            
-            $diff = $pvp - $articulo->pvp;
-            if($diff != 0 AND $articulo->pvp != 0)
+            if( $this->family_data->pvp_max )
             {
-               $diff = $diff*100/$articulo->pvp;
-               $this->family_data->pvp_sum_diferencias += $diff;
+               if( $this->family_data->con_iva )
+                  $pvp = max( array($tarifa[1], $articulo->show_pvp_iva(FALSE)) );
+               else
+                  $pvp = max( array($tarifa[1], $articulo->pvp) );
             }
+            else
+               $pvp = $tarifa[1];
+            
+            if( $this->family_data->con_iva )
+               $articulo->set_pvp_iva($pvp);
+            else
+               $articulo->set_pvp($pvp);
+            
+            if( $articulo->test() )
+            {
+               $this->family_data->articulos_actualizados += 1;
+               
+               $diff = $articulo->pvp - $articulo->pvp_ant;
+               if( abs($diff) > .01 )
+               {
+                  if($articulo->pvp > $articulo->pvp_ant)
+                     $this->family_data->pvp_suben += 1;
+                  else
+                     $this->family_data->pvp_bajan += 1;
+                  
+                  if($diff != 0 AND $articulo->pvp != 0)
+                  {
+                     $diff = $diff*100/$articulo->pvp;
+                     $this->family_data->pvp_sum_diferencias += $diff;
+                  }
+               }
+               else
+                  $this->family_data->pvp_igual += 1;
+            }
+            else
+               $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
          }
          else
-            $this->family_data->articulos_nuevos += 1;
+         {
+            $articulo = new articulo();
+            $articulo->referencia = $tarifa[0] . $this->family_data->sufijo;
+            $articulo->descripcion = $tarifa[2];
+            $articulo->codbarras = $tarifa[3];
+            $articulo->codfamilia = $this->familia->codfamilia;
+            $articulo->codimpuesto = $this->family_data->codimpuesto;
+            if( $this->family_data->con_iva )
+               $articulo->set_pvp_iva($tarifa[1]);
+            else
+               $articulo->set_pvp($tarifa[1]);
+            
+            if( $articulo->test() )
+               $this->family_data->articulos_nuevos += 1;
+            else
+               $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
+         }
       }
    }
    
@@ -367,49 +449,75 @@ class general_importar_familia extends fs_controller
       
       if(count($tarifa) >= 4)
       {
+         // sustituimos las comas por puntos en el pvp
+         $tarifa[1] = floatval( str_replace(',', '.', $tarifa[1]) );
+         
          $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
-            // sustituimos las comas por puntos en el pvp
-            $tarifa[1] = str_replace(',', '.', $tarifa[1]);
-            $articulo->set_pvp($tarifa[1]);
             $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
+            
+            if( $this->family_data->pvp_max )
+            {
+               if( $this->family_data->con_iva )
+                  $pvp = max( array($tarifa[1], $articulo->show_pvp_iva(FALSE)) );
+               else
+                  $pvp = max( array($tarifa[1], $articulo->pvp) );
+            }
+            else
+               $pvp = $tarifa[1];
+            
+            if( $this->family_data->con_iva )
+               $articulo->set_pvp_iva($pvp);
+            else
+               $articulo->set_pvp($pvp);
+            
             if( $articulo->save() )
             {
                $retorno = TRUE;
                $this->family_data->articulos_actualizados += 1;
-               $pvp = floatval($tarifa[1]);
-               if($pvp > $articulo->pvp)
-                  $this->family_data->pvp_suben += 1;
-               else if($pvp < $articulo->pvp)
-                  $this->family_data->pvp_bajan += 1;
+               
+               $diff = $articulo->pvp - $articulo->pvp_ant;
+               if( abs($diff) > .01 )
+               {
+                  if($articulo->pvp > $articulo->pvp_ant)
+                     $this->family_data->pvp_suben += 1;
+                  else
+                     $this->family_data->pvp_bajan += 1;
+                  
+                  if($diff != 0 AND $articulo->pvp != 0)
+                  {
+                     $diff = $diff*100/$articulo->pvp;
+                     $this->family_data->pvp_sum_diferencias += $diff;
+                  }
+               }
                else
                   $this->family_data->pvp_igual += 1;
-               $diff = $pvp - $articulo->pvp;
-               if($diff != 0 AND $articulo->pvp != 0)
-               {
-                  $diff = $diff*100/$articulo->pvp;
-                  $this->family_data->pvp_sum_diferencias += $diff;
-               }
             }
+            else
+               $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
          }
          else
          {
             $articulo = new articulo();
             $articulo->referencia = $tarifa[0] . $this->family_data->sufijo;
-            // sustituimos las comas por puntos en el pvp
-            $tarifa[1] = str_replace(',', '.', $tarifa[1]);
-            $articulo->set_pvp($tarifa[1]);
             $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
             $articulo->codfamilia = $this->familia->codfamilia;
             $articulo->codimpuesto = $this->family_data->codimpuesto;
+            if( $this->family_data->con_iva )
+               $articulo->set_pvp_iva($tarifa[1]);
+            else
+               $articulo->set_pvp($tarifa[1]);
+            
             if( $articulo->save() )
             {
                $retorno = TRUE;
                $this->family_data->articulos_nuevos += 1;
             }
+            else
+               $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
          }
       }
       else

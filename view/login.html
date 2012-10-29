@@ -31,11 +31,12 @@
       <table width="100%">
          <tr>
             <td>
-               <a id="fs_logo" href="index.php">
+               <a id="fs_logo2" href="index.php">
                   {if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}
                </a>
             </td>
             <td align="right">
+               <div id="login_box">
                Usuario:
                <select name="user">
                {loop name="$fsc->user->all()"}
@@ -46,9 +47,10 @@
                   {/if}
                {/loop}
                </select>
-               &nbsp; contraseña:
-               <input type="password" name="password" size="8" maxlength="20"/>
+               &nbsp; Contraseña:
+               <input type="password" name="password" size="4" maxlength="20"/>
                &nbsp; <input type="submit" value="entrar"/>
+               </div>
             </td>
          </tr>
       </table>
@@ -57,16 +59,20 @@
    <div class="main_div">
       {if condition="$fsc->get_errors()"}
          <div class="error">
+            <ul>
             {loop="$fsc->get_errors()"}
                <li>{$value}</li>
             {/loop}
+            </ul>
          </div>
       {/if}
       {if condition="$fsc->get_messages()"}
          <div class="message">
+            <ul>
             {loop="$fsc->get_messages()"}
                <li>{$value}</li>
             {/loop}
+            </ul>
          </div>
       {/if}
       {if condition="$demo"}
@@ -74,30 +80,70 @@
       {/if}
       <div class="rounded">
          <h1>Información importante:</h1>
-         <ul>
-            <li>
-               <a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
-               es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a>.
-            </li>
-            <li>
-               Si tienes cualquier problema o sugerencia no dudes en
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">reportar un error</a>.
-            </li>
-            <li>
-               Si quieres instalarlo en tu servidor lee este
-               <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
-               tutorial de instalación</a>.
-            </li>
-            <li>
-               Puedes seguir el desarrollo de FacturaScripts a través de mi
-               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
-               o mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a>.
-            </li>
-         </ul>
+         <table width="100%">
+            <tr>
+               <td>
+                  <ul>
+                     <li>
+                        <a target="_blank" href='http://code.google.com/p/facturascripts/'>FacturaScripts</a>
+                        es un software libre bajo licencia <a href='COPYING'>GNU/AGPL</a>.
+                     </li>
+                     <li>
+                        Si tienes cualquier problema o sugerencia no dudes en
+                        <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">reportar un error</a>.
+                     </li>
+                     <li>
+                        Si quieres instalarlo en tu servidor lee este
+                        <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">
+                        tutorial de instalación</a>.
+                     </li>
+                     <li>
+                        Puedes seguir el desarrollo de FacturaScripts a través de mi
+                        <a target="_blank" href="http://www.neorazorx.com">mi blog</a>
+                        o mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a>.
+                     </li>
+                  </ul>
+               </td>
+               {if condition="$demo"}
+               <td valign="top" align="right">
+                  <div id="fb-root"></div>
+                  <div class="fb-like" data-send="true" data-layout="box_count" data-width="90" data-show-faces="false"></div>
+                  <script>(function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
+                    fjs.parentNode.insertBefore(js, fjs);
+                  }(document, 'script', 'facebook-jssdk'));</script>
+               </td>
+               <td valign="top" align="right">
+                  <a href="https://twitter.com/share" class="twitter-share-button" data-lang="es" data-count="vertical" data-related="neorazorx">Tweet</a>
+                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+               </td>
+               <td valign="top" align="right">
+                  <div class="g-plusone" data-size="tall"></div>
+                  <script type="text/javascript">
+                    window.___gcfg = {lang: 'es'};
+                    (function() {
+                      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                      po.src = 'https://apis.google.com/js/plusone.js';
+                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                    })();
+                  </script>
+               </td>
+               {/if}
+            </tr>
+         </table>
       </div>
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>Mejorada la hoja de estilos para mayor legibilidad de los textos.</li>
+            <li>Nuevas opciones de importación de artículos de una familia.</li>
+            <li>Ya se pueden actualizar los precios de los artículos a partir de un albarán de proveedor.</li>
+            <li>Mejorado el renidmiento con artículos con imágenes.</li>
+            <li>Nueva busqueda de artículos en las líneas de los albaranes.</li>
+            <li>Los diálogos de buscar artículos ahora incluyen el filtro de familias.</li>
             <li>Mejorados los tests de integridad de los asientos.</li>
             <li>
                Solucionado el bug que impedía guardar el teléfono, web, etc de los clientes
@@ -117,10 +163,6 @@
                linea_albaran_proveedor, linea_factura_cliente y linea_factura_proveedor.
             </li>
             <li>Añadidas comprobaciones para impedir guardar modelos vacíos.</li>
-            <li>
-               Eliminadas las faltas ortográficas del formulario de nuevo asiento
-               (<a target="_blank" href="http://code.google.com/p/facturascripts/issues/detail?id=14">issue #14</a>).
-            </li>
          </ul>
       </div>
       {if condition="$db_history"}

@@ -2,14 +2,16 @@
 @import url('tcal.css');
 
 body {
-   background-color: #4C769E;
    margin: 0;
    padding: 0;
+   background-color: #4C769E;
+   color: white;
    font-family: Verdana, sans-serif;
+   text-rendering: optimizeLegibility;
+   -webkit-font-smoothing: antialiased;
    font-size: 13px;
    font-style: normal;
    font-weight: normal;
-   color: white;
 }
 
 a {
@@ -20,8 +22,8 @@ div.advice, div.message, div.error {
    margin: 10px;
    padding: 10px;
    border: 1px solid #333333;
-   font-size: 16px;
    color: black;
+   font-size: 16px;
 }
 
 div.advice {
@@ -41,6 +43,11 @@ div.error {
    background-color: #E47575;
 }
 
+div.message ul, div.error ul {
+   margin-top: 0px;
+   margin-bottom: 0px;
+}
+
 div.header {
    display: table;
    width: 100%;
@@ -54,8 +61,8 @@ div.header_box {
 div#header_folders, div#header_logo, div#header_user,
 div#header_buttons, div#header_search {
    display: table-cell;
-   vertical-align: top;
    padding: 5px;
+   vertical-align: top;
 }
 
 div#header_folders a.selected {
@@ -81,11 +88,11 @@ div#header_folders a, div#header_user a.button {
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
+   color: white;
    text-transform: capitalize;
    text-decoration: none;
    font-variant: small-caps;
    font-weight: bold;
-   color: white;
 }
 
 a#fs_exit {
@@ -139,11 +146,11 @@ div#header_buttons a.button, div#header_buttons a.remove {
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
+   color: white;
    text-transform: capitalize;
    text-decoration: none;
    font-variant: small-caps;
    font-weight: bold;
-   color: white;
 }
 
 div#header_buttons a.remove {
@@ -159,8 +166,8 @@ div#header_search {
 }
 
 div.pages img {
-   vertical-align: bottom;
    padding-left: 15px;
+   vertical-align: bottom;
 }
 
 div.pages div {
@@ -168,14 +175,14 @@ div.pages div {
 }
 
 div.pages ul {
+   margin: 0px;
+   padding: 2px;
    background-color: #333333;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
    color: white;
-   margin: 0px;
-   padding: 2px;
    list-style-type: none;
    text-align: left;
    font-size: 15px;
@@ -238,29 +245,30 @@ div.main_div div.popup {
    position: fixed;
    top: 50px;
    left: 50px;
+   padding: 5px;
    max-width: 90%;
    max-height: 90%;
    overflow: auto;
    background-color: white;
-   color: black;
    border: 5px solid #666666;
    border-top-left-radius: 5px 5px;
    border-top-right-radius: 5px 5px;
    border-bottom-left-radius: 5px 5px;
    border-bottom-right-radius: 5px 5px;
-   padding: 5px;
+   color: black;
 }
 
 div.main_div div.popup h1 {
    margin: 0px;
    margin-bottom: 10px;
-   padding: 5px;
+   padding: 2px;
    background-color: #3768B8;
    color: white;
    text-align: center;
    text-transform: capitalize;
-   font-family: 'Oleo Script';
+   font-family: 'Oleo Script', cursive;
    font-size: 30px;
+   font-weight: normal;
 }
 
 div.main_div div.popup h2 {
@@ -286,12 +294,12 @@ div.main_div div.rounded {
    padding: 5px;
    padding-bottom: 8px;
    background-color: white;
-   color: black;
    border: 1px solid #333333;
    border-top-left-radius: 5px 5px;
    border-top-right-radius: 5px 5px;
    border-bottom-left-radius: 5px 5px;
    border-bottom-right-radius: 5px 5px;
+   color: black;
 }
 
 div.main_div div.rounded h1 {
@@ -299,8 +307,8 @@ div.main_div div.rounded h1 {
    margin-bottom: 5px;
    padding: 5px;
    min-height: 25px;
-   font-size: 18px;
    background-color: #e1e1e1;
+   font-size: 18px;
 }
 
 div.main_div div.rounded h1 span {
@@ -322,8 +330,8 @@ div.main_div table.list {
 }
 
 div.main_div table.list th {
-   text-transform: capitalize;
    border-bottom: 1px solid #666666;
+   text-transform: capitalize;
 }
 
 div.main_div table.list tr:hover {
@@ -343,6 +351,7 @@ div.main_div ul.horizontal {
 
 div.main_div ul.horizontal li {
    display: inline-block;
+   padding: 2px;
    min-width: 225px;
 }
 
@@ -353,11 +362,11 @@ div.main_div a.next {
    padding-left: 5px;
    padding-right: 5px;
    background-color: #333333;
-   color: white;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
+   color: white;
    font-size: 16px;
    text-transform: capitalize;
    text-decoration: none;
@@ -365,15 +374,15 @@ div.main_div a.next {
 
 div.main_div div.tpv_total {
    float: right;
-   min-width: 150px;
-   font-size: 25px;
-   font-weight: bold;
-   text-align: right;
-   background-color: #333333;
-   color: white;
    padding: 3px;
    padding-left: 6px;
    padding-right: 6px;
+   min-width: 150px;
+   background-color: #333333;
+   color: white;
+   font-size: 25px;
+   font-weight: bold;
+   text-align: right;
 }
 
 div.main_div div.new_line {
@@ -431,15 +440,11 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
+   color: white;
    text-transform: capitalize;
    font-variant: small-caps;
    font-weight: bold;
    font-size: 16px;
-   color: white;
-}
-
-input[type='submit'], input[type='button'] {
-   background-color: #55BA42;
 }
 
 div.main_div a.remove {
@@ -447,42 +452,81 @@ div.main_div a.remove {
    text-decoration: none;
 }
 
+input[type='submit'], input[type='button'] {
+   background-color: #55BA42;
+}
+
 input[type='submit']:hover, input[type='button']:hover {
    background-color: #333333;
    cursor: pointer;
 }
 
-input[type='text'], input[type='password'] {
-   border: 1px solid #333333;
+input[type='text'], input[type='password'], select {
    vertical-align: middle;
 }
 
-div#login_header {
-   margin-top: 0px;
-   margin-left: 6px;
-   margin-right: 6px;
-   margin-bottom: 10px;
-   padding: 5px;
-   color: white;
-   font-size: 18px;
-   font-weight: bold;
-   text-transform: capitalize;
+textarea {
+   display: block;
+   width: 100%;
+   box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   -ms-box-sizing: border-box;
 }
 
-a#fs_logo {
-   margin-right: 20px;
+div#login_header {
+   margin: 5px;
+   padding: 0px;
+   font-size: 16px;
+}
+
+a#fs_logo, a#fs_logo2 {
    color: white;
-   font-family: 'Oleo Script';
-   font-size: 30px;
-   font-weight: bold;
    text-transform: capitalize;
    text-decoration: none;
+   font-weight: normal;
+   font-family: 'Oleo Script', cursive;
+   font-size: 30px;
 }
 
-div#login_header input[type='submit'],
-div#login_header input[type='password'],
-div#login_header select {
-   padding: 5px;
+a#fs_logo2 {
+   margin-right: 20px;
+   font-size: 40px;
+}
+
+div#login_box {
+   display: inline-block;
+   padding: 3px;
+   padding-left: 8px;
+   padding-right: 5px;
+   background-color: #424242;
+   border: 1px solid #333333;
+   border-top-left-radius: 5px 5px;
+   border-top-right-radius: 5px 5px;
+   border-bottom-left-radius: 5px 5px;
+   border-bottom-right-radius: 5px 5px;
+}
+
+div#login_box input[type='password'],
+div#login_box select {
+   vertical-align: baseline;
+   padding: 3px;
+   background-color: #bbbbbb;
+   border: 1px solid black;
+   font-weight: bold;
+   font-size: 16px;
+}
+
+div#login_box select option {
+   background-color: #bbbbbb;
+}
+
+div#login_box input[type='submit'] {
+   vertical-align: baseline;
+   padding-top: 4px;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-bottom: 2px;
 }
 
 div#sql_history {

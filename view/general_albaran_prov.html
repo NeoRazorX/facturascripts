@@ -3,6 +3,10 @@
 {if condition="$fsc->albaran"}
 <script type="text/javascript">
    $(document).ready(function() {
+      $("#b_precios").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_precios');
+      });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_eliminar');
@@ -23,6 +27,39 @@
          </td>
       </tr>
    </table>
+</div>
+
+<div class="popup" id="popup_precios" style="min-width: 70%;">
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="actualizar_precios" value="TRUE"/>
+      <h1>Actualizar precios de los artículos</h1>
+      <table class="list">
+      <tr>
+         <th>Artículo</th>
+         <th align="right">PVP</th>
+         <th align="right">PVP+IVA</th>
+         <th>Actualizar</th>
+      </tr>
+      {loop="$fsc->albaran->get_lineas()"}
+      <tr>
+         <td>
+            <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
+            {$value->descripcion}
+         </td>
+         <td align="right">{$value->show_pvp()} €</td>
+         <td align="right">{$value->show_pvp_iva()} €</td>
+         <td align="center">
+            <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
+            <input type="checkbox" name="pvp_{$counter}" value="{$value->pvpunitario}" checked="checked"/>
+         </td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="3"></td>
+         <td align="center"><input type="submit" value="actualizar"/></td>
+      </tr>
+   </table>
+   </form>
 </div>
 
 <div class="rounded">

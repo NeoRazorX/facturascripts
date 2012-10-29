@@ -65,6 +65,8 @@ class general_albaran_prov extends fs_controller
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
          else
             $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         
+         $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
          $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
          
          /// comprobamos el albarán
@@ -72,13 +74,17 @@ class general_albaran_prov extends fs_controller
          
          if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
             $this->generar_factura();
+         
+         if( isset($_POST['actualizar_precios']) )
+            $this->actualizar_precios();
       }
       else
          $this->new_error_msg("¡Albarán de proveedor no encontrado!");
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    public function url()
@@ -284,6 +290,28 @@ class general_albaran_prov extends fs_controller
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
       }
+   }
+   
+   private function actualizar_precios()
+   {
+      $articulo = new articulo();
+      $num_lineas = count($this->albaran->get_lineas());
+      
+      for($i=0; $i<$num_lineas; $i++)
+      {
+         if( isset($_POST['pvp_'.$i]) )
+         {
+            $art0 = $articulo->get($_POST['referencia_'.$i]);
+            if( $art0 )
+            {
+               $art0->set_pvp($_POST['pvp_'.$i]);
+               if( !$art0->save() )
+                  $this->new_error_msg('Imposible actualizar el artículo '.$art0->referencia);
+            }
+         }
+      }
+      
+      $this->new_message('Precios actualizados.');
    }
 }
 
