@@ -328,8 +328,10 @@ class general_importar_familia extends fs_controller
          $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
-            $articulo->descripcion = $tarifa[2];
-            $articulo->codbarras = $tarifa[3];
+            if(strlen($tarifa[2]) > 0)
+               $articulo->descripcion = $tarifa[2];
+            if(strlen($tarifa[3]) > 0)
+               $articulo->codbarras = $tarifa[3];
             
             if( $this->family_data->pvp_max )
             {
@@ -455,8 +457,10 @@ class general_importar_familia extends fs_controller
          $articulo = $this->articulo->get( $tarifa[0] . $this->family_data->sufijo );
          if($articulo)
          {
-            $articulo->descripcion = $tarifa[2];
-            $articulo->codbarras = $tarifa[3];
+            if(strlen($tarifa[2]) > 0)
+               $articulo->descripcion = $tarifa[2];
+            if(strlen($tarifa[3]) > 0)
+               $articulo->codbarras = $tarifa[3];
             
             if( $this->family_data->pvp_max )
             {

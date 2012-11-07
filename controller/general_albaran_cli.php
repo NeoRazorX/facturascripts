@@ -86,8 +86,9 @@ class general_albaran_cli extends fs_controller
          $this->new_error_msg("¡Albarán de cliente no encontrado!");
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    public function url()

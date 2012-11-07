@@ -814,7 +814,7 @@ class articulo extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
-   public function search($query, $offset=0, $codfamilia='')
+   public function search($query, $offset=0, $codfamilia='', $con_stock=FALSE)
    {
       $artilist = array();
       $query = $this->escape_string( strtolower( trim($query) ) );
@@ -823,6 +823,9 @@ class articulo extends fs_model
          $sql = "SELECT * FROM ".$this->table_name." WHERE ";
       else
          $sql = "SELECT * FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($codfamilia)." AND ";
+      
+      if($con_stock)
+         $sql .= "stockfis > 0 AND ";
       
       if( is_numeric($query) )
       {

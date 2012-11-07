@@ -158,7 +158,7 @@
       <div class="bloque">
          <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
          <select name="codejercicio">
-            {loop="$fsc->ejercicio->all()"}
+            {loop="$fsc->ejercicio->all_abiertos()"}
                {if condition="$value->is_default()"}
                <option value="{$value->codejercicio}" selected="selected">{$value->nombre}</option>
                {else}

@@ -186,7 +186,7 @@
       </td>
       <td valign="top">
          <div class="popup" id="popup_opciones_tpv">
-            <h1>Opciones:</h1>
+            <h1>Opciones</h1>
             <table>
                <tr>
                   <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
@@ -216,7 +216,7 @@
                   <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
                   <td>
                      <select name="ejercicio">
-                        {loop="$fsc->ejercicio->all()"}
+                        {loop="$fsc->ejercicio->all_abiertos()"}
                            {if condition="$value->is_default()"}
                            <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
                            {else}
@@ -374,10 +374,12 @@
          <input type="radio" name="grupo_{$value2}" value="" style="display:none;"/>
       </div>
       {/loop}
-      <input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/>
-      <div class="right">
-         <input type="button" class="comfirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/>
-      </div>
+      <table width="100%">
+         <tr>
+            <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
+            <td align="right"><input type="button" class="comfirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/></td>
+         </tr>
+      </table>
    </form>
 </div>
 {/loop}

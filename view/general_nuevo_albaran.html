@@ -184,6 +184,8 @@
             <option value="{$value->codfamilia}">{$value->descripcion}</option>
          {/loop}
          </select>
+         <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+         <label for="cb_con_stock">sólo con stock</label>
          <input type="submit" value="buscar"/>
       </div>
    </form>
@@ -239,7 +241,7 @@
             <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
             <td>
                <select name="ejercicio">
-                  {loop="$fsc->ejercicio->all()"}
+                  {loop="$fsc->ejercicio->all_abiertos()"}
                      {if condition="$value->is_default()"}
                      <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
                      {else}

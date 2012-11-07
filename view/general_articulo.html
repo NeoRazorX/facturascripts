@@ -283,8 +283,12 @@
    <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
       <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
       <input type="hidden" name="imagen" value="TRUE"/>
-      <input type="file" name="fimagen" accept="image/png"/>
-      <input type="submit" value="guardar"/>
+      <table width="100%">
+         <tr>
+            <td><input type="file" name="fimagen" accept="image/png"/></td>
+            <td align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+      </table>
    </form>
 </div>
 {/if}

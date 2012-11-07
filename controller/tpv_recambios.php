@@ -128,8 +128,9 @@ class tpv_recambios extends fs_controller
       }
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    private function new_search()
@@ -138,9 +139,11 @@ class tpv_recambios extends fs_controller
       $this->template = 'ajax/tpv_recambios';
       
       if( isset($_POST['codfamilia']) )
-         $this->results = $this->articulo->search($this->query, 0, $_POST['codfamilia']);
+         $codfamilia = $_POST['codfamilia'];
       else
-         $this->results = $this->articulo->search($this->query);
+         $codfamilia = '';
+      $con_stock = isset($_POST['con_stock']);
+      $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
    }
    
    private function nuevo_albaran_cliente()

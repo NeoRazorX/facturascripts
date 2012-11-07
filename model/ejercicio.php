@@ -73,6 +73,11 @@ class ejercicio extends fs_model
             '".Date('01-01-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";
    }
    
+   public function abierto()
+   {
+      return ($this->estado == 'ABIERTO');
+   }
+   
    public function get_new_codigo()
    {
       $cod = $this->db->select("SELECT MAX(codejercicio::integer) as cod FROM ".$this->table_name.";");
@@ -179,6 +184,7 @@ class ejercicio extends fs_model
    private function clean_cache()
    {
       $this->cache->delete('m_ejercicio_all');
+      $this->cache->delete('m_ejercicio_all_abiertos');
    }
    
    public function all()
@@ -193,6 +199,23 @@ class ejercicio extends fs_model
                $listae[] = new ejercicio($e);
          }
          $this->cache->set('m_ejercicio_all', $listae);
+      }
+      return $listae;
+   }
+   
+   public function all_abiertos()
+   {
+      $listae = $this->cache->get_array('m_ejercicio_all_abiertos');
+      if( !$listae )
+      {
+         $ejercicios = $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;");
+         if($ejercicios)
+         {
+            foreach($ejercicios as $e)
+               $listae[] = new ejercicio($e);
+         }
+         $this->cache->set('m_ejercicio_all_abiertos', $listae);
       }
       return $listae;
    }

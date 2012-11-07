@@ -25,12 +25,13 @@ require_once 'model/tarifa.php';
 class general_articulos extends fs_controller
 {
    public $codfamilia;
+   public $con_stock;
    public $familia;
    public $impuesto;
    public $offset;
    public $resultados;
    public $tarifa;
-
+   
    public function __construct()
    {
       parent::__construct('general_articulos', 'Artículos', 'general', FALSE, TRUE);
@@ -38,7 +39,15 @@ class general_articulos extends fs_controller
    
    protected function process()
    {
-      $this->codfamilia = '';
+      if( isset($_POST['codfamilia']) )
+         $this->codfamilia = $_POST['codfamilia'];
+      else if( isset($_GET['codfamilia']) )
+         $this->codfamilia = $_GET['codfamilia'];
+      else
+         $this->codfamilia = '';
+      
+      $this->con_stock = ( isset($_POST['con_stock']) OR isset($_GET['con_stock']) );
+      
       $this->familia = new familia();
       $this->impuesto = new impuesto();
       $this->tarifa = new tarifa();
@@ -117,24 +126,26 @@ class general_articulos extends fs_controller
          $this->offset = 0;
       
       if($this->query != '')
-      {
-         if( isset($_POST['codfamilia']) )
-            $this->codfamilia = $_POST['codfamilia'];
-         $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia);
-      }
+         $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia, $this->con_stock);
       else
          $this->resultados = $articulo->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-6';
    }
    
    public function anterior_url()
    {
       $url = '';
       if($this->query!='' AND $this->offset>'0')
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      {
+         if( $this->con_stock )
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset-FS_ITEM_LIMIT);
+         else
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND $this->offset>'0')
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
       return $url;
@@ -144,7 +155,12 @@ class general_articulos extends fs_controller
    {
       $url = '';
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      {
+         if( $this->con_stock )
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset+FS_ITEM_LIMIT);
+         else
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;

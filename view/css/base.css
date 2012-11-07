@@ -265,7 +265,6 @@ div.main_div div.popup h1 {
    background-color: #3768B8;
    color: white;
    text-align: center;
-   text-transform: capitalize;
    font-family: 'Oleo Script', cursive;
    font-size: 30px;
    font-weight: normal;
@@ -314,15 +313,12 @@ div.main_div div.rounded h1 {
 div.main_div div.rounded h1 span {
    float: right;
    font-size: 15px;
+   font-weight: normal;
 }
 
 div.main_div div.bloque {
    display: inline-block;
    padding: 5px;
-}
-
-div.main_div div.right {
-   text-align: right;
 }
 
 div.main_div table.list {
@@ -461,7 +457,7 @@ input[type='submit']:hover, input[type='button']:hover {
    cursor: pointer;
 }
 
-input[type='text'], input[type='password'], select {
+input[type='text'], input[type='password'], input[type='checkbox'], select {
    vertical-align: middle;
 }
 
@@ -490,7 +486,6 @@ a#fs_logo, a#fs_logo2 {
 }
 
 a#fs_logo2 {
-   margin-right: 20px;
    font-size: 40px;
 }
 
