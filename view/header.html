@@ -63,14 +63,7 @@
                <img src="img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
                {/if}
             </div>
-            {loop="$fsc->buttons"}
-               {if condition="$value->class==''"}
-               <a id="{$value->id}" class="button" href="{$value->href}"><img src="{$value->img}" alt="{$value->alt}"/> {$value->value}</a>
-               {else}
-               <a id="{$value->id}" class="{$value->class}" href="{$value->href}"><img src="{$value->img}" alt="{$value->alt}"/>
-                  {$value->value}</a>
-               {/if}
-            {/loop}
+            {loop="$fsc->buttons"}{$value->HTML()}{/loop}
          </div>
          <div id="header_search">
             {if condition="$fsc->custom_search"}

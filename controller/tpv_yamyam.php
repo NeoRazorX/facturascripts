@@ -155,7 +155,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function cargar_datos_tpv()
@@ -298,8 +298,18 @@ class tpv_yamyam extends fs_controller
                         $linea->idalbaran = $this->albaran->idalbaran;
                         $linea->referencia = $articulo->referencia;
                         $linea->descripcion = $articulo->descripcion;
-                        $linea->codimpuesto = $articulo->codimpuesto;
-                        $linea->iva = floatval($_POST['iva_'.$i]);
+                        
+                        if( $serie->siniva )
+                        {
+                           $linea->codimpuesto = NULL;
+                           $linea->iva = 0;
+                        }
+                        else
+                        {
+                           $linea->codimpuesto = $articulo->codimpuesto;
+                           $linea->iva = floatval($_POST['iva_'.$i]);
+                        }
+                        
                         $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                         $linea->cantidad = floatval($_POST['cantidad_'.$i]);
                         $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);

@@ -24,6 +24,7 @@ require_once 'model/cliente.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/familia.php';
 require_once 'model/partida.php';
+require_once 'model/serie.php';
 require_once 'model/subcuenta.php';
 
 class general_albaran_cli extends fs_controller
@@ -51,7 +52,7 @@ class general_albaran_cli extends fs_controller
       if($nuevoalbp)
          $this->nuevo_albaran_url = $nuevoalbp->url();
       else
-         $this->nuevo_albaran_url = $this->url();
+         $this->nuevo_albaran_url = FALSE;
       
       if( isset($_POST['idalbaran']) )
       {
@@ -73,7 +74,7 @@ class general_albaran_cli extends fs_controller
          if( $this->albaran->ptefactura )
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
          else
-            $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
          
          /// comprobamos el albarán
@@ -88,7 +89,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-7';
    }
    
    public function url()
@@ -101,6 +102,9 @@ class general_albaran_cli extends fs_controller
    
    private function modificar()
    {
+      $serie = new serie();
+      $serie = $serie->get($this->albaran->codserie);
+      
       $this->albaran->numero2 = $_POST['numero2'];
       $this->albaran->fecha = $_POST['fecha'];
       $this->albaran->hora = $_POST['hora'];
@@ -113,7 +117,7 @@ class general_albaran_cli extends fs_controller
          foreach($lineas as $l)
          {
             $encontrada = FALSE;
-            for($num = 0; $num <= 100; $num++)
+            for($num = 0; $num <= 200; $num++)
             {
                if( isset($_POST['idlinea_'.$num]) )
                {
@@ -136,7 +140,7 @@ class general_albaran_cli extends fs_controller
          $iva = 0;
          $total = 0;
          /// modificamos y/o añadimos las demás líneas
-         for($num = 0; $num <= 100; $num++)
+         for($num = 0; $num <= 200; $num++)
          {
             $encontrada = FALSE;
             if( isset($_POST['idlinea_'.$num]) )
@@ -152,6 +156,13 @@ class general_albaran_cli extends fs_controller
                      $lineas[$k]->dtolineal = 0;
                      $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
                      $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     
+                     if( $serie->siniva )
+                     {
+                        $lineas[$k]->codimpuesto = NULL;
+                        $lineas[$k]->iva = 0;
+                     }
+                     
                      $neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
                      $total += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * (100 + $value->iva)/100);
                      $iva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
@@ -168,8 +179,18 @@ class general_albaran_cli extends fs_controller
                      $linea = new linea_albaran_cliente();
                      $linea->referencia = $art0->referencia;
                      $linea->descripcion = $art0->descripcion;
-                     $linea->codimpuesto = $art0->codimpuesto;
-                     $linea->iva = $art0->get_iva();
+                     
+                     if( $serie->siniva )
+                     {
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = 0;
+                     }
+                     else
+                     {
+                        $linea->codimpuesto = $art0->codimpuesto;
+                        $linea->iva = $art0->get_iva();
+                     }
+                     
                      $linea->idalbaran = $this->albaran->idalbaran;
                      $linea->cantidad = floatval($_POST['cantidad_'.$num]);
                      $linea->pvpunitario = floatval($_POST['pvp_'.$num]);

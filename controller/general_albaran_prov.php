@@ -18,16 +18,21 @@
  */
 
 require_once 'model/albaran_proveedor.php';
+require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/factura_proveedor.php';
+require_once 'model/familia.php';
 require_once 'model/partida.php';
 require_once 'model/proveedor.php';
+require_once 'model/serie.php';
 require_once 'model/subcuenta.php';
 
 class general_albaran_prov extends fs_controller
 {
-   public $albaran;
    public $agente;
+   public $albaran;
+   public $familia;
+   public $nuevo_albaran_url;
    
    public function __construct()
    {
@@ -37,18 +42,23 @@ class general_albaran_prov extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_albaranes_prov');
+      $this->familia = new familia();
+      
+      /*
+       * buscamos la url del script general_nuevo_albaran,
+       * imprescindible para buscar nuevo artículos.
+       */
+      $nuevoalbp = $this->page->get('general_nuevo_albaran');
+      if($nuevoalbp)
+         $this->nuevo_albaran_url = $nuevoalbp->url();
+      else
+         $this->nuevo_albaran_url = FALSE;
       
       if( isset($_POST['idalbaran']) )
       {
          $this->albaran = new albaran_proveedor();
          $this->albaran = $this->albaran->get($_POST['idalbaran']);
-         $this->albaran->numproveedor = $_POST['numproveedor'];
-         $this->albaran->fecha = $_POST['fecha'];
-         $this->albaran->observaciones = $_POST['observaciones'];
-         if( $this->albaran->save() )
-            $this->new_message("Albarán modificado correctamente.");
-         else
-            $this->new_error_msg("¡Imposible modificar el albarán!");
+         $this->modificar();
       }
       else if( isset($_GET['id']) )
       {
@@ -64,7 +74,7 @@ class general_albaran_prov extends fs_controller
          if( $this->albaran->ptefactura )
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
          else
-            $this->buttons[] = new fs_button('b_ver_factura', 'ver factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
          
          $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
          $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
@@ -84,7 +94,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-7';
    }
    
    public function url()
@@ -93,6 +103,123 @@ class general_albaran_prov extends fs_controller
          return $this->albaran->url();
       else
          return $this->page->url();
+   }
+   
+   private function modificar()
+   {
+      $serie = new serie();
+      $serie = $serie->get($this->albaran->codserie);
+      
+      $this->albaran->numproveedor = $_POST['numproveedor'];
+      $this->albaran->fecha = $_POST['fecha'];
+      $this->albaran->observaciones = $_POST['observaciones'];
+      
+      if( isset($_POST['lineas']) AND $this->albaran->ptefactura )
+      {
+         $lineas = $this->albaran->get_lineas();
+         /// eliminamos las líneas que no encontremos en el $_POST
+         foreach($lineas as $l)
+         {
+            $encontrada = FALSE;
+            for($num = 0; $num <= 200; $num++)
+            {
+               if( isset($_POST['idlinea_'.$num]) )
+               {
+                  if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                  {
+                     $encontrada = TRUE;
+                     break;
+                  }
+               }
+            }
+            if( !$encontrada )
+            {
+               if( !$l->delete() )
+                  $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
+            }
+         }
+         
+         $articulo = new articulo();
+         $neto = 0;
+         $iva = 0;
+         $total = 0;
+         /// modificamos y/o añadimos las demás líneas
+         for($num = 0; $num <= 200; $num++)
+         {
+            $encontrada = FALSE;
+            if( isset($_POST['idlinea_'.$num]) )
+            {
+               foreach($lineas as $k => $value)
+               {
+                  if($value->idlinea == intval($_POST['idlinea_'.$num]))
+                  {
+                     $encontrada = TRUE;
+                     $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
+                     $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
+                     $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
+                     $lineas[$k]->dtolineal = 0;
+                     $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
+                     $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     
+                     if( $serie->siniva )
+                     {
+                        $lineas[$k]->codimpuesto = NULL;
+                        $lineas[$k]->iva = 0;
+                     }
+                     
+                     $neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     $total += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * (100 + $value->iva)/100);
+                     $iva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
+                     if( !$lineas[$k]->save() )
+                        $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
+                     break;
+                  }
+               }
+               if(!$encontrada AND intval($_POST['idlinea_'.$num]) == -1 AND isset($_POST['referencia_'.$num]))
+               {
+                  $art0 = $articulo->get( $_POST['referencia_'.$num] );
+                  if($art0)
+                  {
+                     $linea = new linea_albaran_proveedor();
+                     $linea->referencia = $art0->referencia;
+                     $linea->descripcion = $art0->descripcion;
+                     
+                     if( $serie->siniva )
+                     {
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = 0;
+                     }
+                     else
+                     {
+                        $linea->codimpuesto = $art0->codimpuesto;
+                        $linea->iva = $art0->get_iva();
+                     }
+                     
+                     $linea->idalbaran = $this->albaran->idalbaran;
+                     $linea->cantidad = floatval($_POST['cantidad_'.$num]);
+                     $linea->pvpunitario = floatval($_POST['pvp_'.$num]);
+                     $linea->dtopor = floatval($_POST['dto_'.$num]);
+                     $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
+                     $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     $neto += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     $total += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * (100 + $linea->iva)/100);
+                     $iva += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * $linea->iva/100);
+                     if( !$linea->save() )
+                        $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
+                  }
+               }
+            }
+         }
+         $this->albaran->neto = $neto;
+         $this->albaran->totaliva = $iva;
+         $this->albaran->total = $total;
+         $this->albaran->totaleuros = $total;
+      }
+      
+      if( $this->albaran->save() )
+         $this->new_message("Albarán modificado correctamente.");
+      else
+         $this->new_error_msg("¡Imposible modificar el albarán!");
    }
    
    private function generar_factura()

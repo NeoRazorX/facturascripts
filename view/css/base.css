@@ -383,14 +383,18 @@ div.main_div div.tpv_total {
 
 div.main_div div.new_line {
    margin: 2px;
-   padding: 5px;
+   padding: 0px;
+   background-color: #deecfb;
    border: 1px dashed #333333;
 }
 
 div.main_div div.new_line a {
    display: block;
+   padding: 5px;
    color: black;
    font-size: 15px;
+   text-align: center;
+   text-decoration: none;
 }
 
 div.footer {

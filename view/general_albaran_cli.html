@@ -244,18 +244,12 @@
          <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
          <span><input type="submit" value="modificar"/></span>
       </h1>
-      <div class="bloque">
-         Número: {$fsc->albaran->numero}
-      </div>
+      <div class="bloque">Número: {$fsc->albaran->numero}</div>
       <div class="bloque">
          Número2: <input type="text" name="numero2" value="{$fsc->albaran->numero2}"/>
       </div>
-      <div class="bloque">
-         Serie: {$fsc->albaran->codserie}
-      </div>
-      <div class="bloque">
-         Ejercicio: {$fsc->albaran->codejercicio}
-      </div>
+      <div class="bloque">Serie: {$fsc->albaran->codserie}</div>
+      <div class="bloque">Ejercicio: {$fsc->albaran->codejercicio}</div>
       <div class="bloque">
          Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
          Hora: <input type="text" name="hora" value="{$fsc->albaran->hora}" size="8"/>
@@ -324,9 +318,9 @@
          </tr>
          {/loop}
       </table>
-      <div class="new_line">
-         <a name="new_line" href="#" id="b_new_line">Añadir artículo...</a>
-      </div>
+      {if condition="$fsc->nuevo_albaran_url"}
+         <div class="new_line"><a name="new_line" href="#" id="b_new_line">Añadir artículo...</a></div>
+      {/if}
    </div>
 {else}
    <div class="rounded">

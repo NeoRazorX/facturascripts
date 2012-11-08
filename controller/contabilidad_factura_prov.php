@@ -55,9 +55,9 @@ class contabilidad_factura_prov extends fs_controller
       {
          $this->page->title = $this->factura->codigo;
          
-         $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png');
+         $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
          if($this->factura->idasiento)
-            $this->buttons[] = new fs_button('b_ver_asiento', 'ver asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_asiento', 'asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
          
          /// comprobamos la factura
@@ -70,8 +70,9 @@ class contabilidad_factura_prov extends fs_controller
          $this->new_error_msg("¡Factura de proveedor no encontrada!");
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
    
    public function url()

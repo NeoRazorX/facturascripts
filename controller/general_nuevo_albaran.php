@@ -210,8 +210,18 @@ class general_nuevo_albaran extends fs_controller
                         $linea->idalbaran = $albaran->idalbaran;
                         $linea->referencia = $articulo->referencia;
                         $linea->descripcion = $articulo->descripcion;
-                        $linea->codimpuesto = $articulo->codimpuesto;
-                        $linea->iva = floatval($_POST['iva_'.$i]);
+                        
+                        if( $serie->siniva )
+                        {
+                           $linea->codimpuesto = NULL;
+                           $linea->iva = 0;
+                        }
+                        else
+                        {
+                           $linea->codimpuesto = $articulo->codimpuesto;
+                           $linea->iva = floatval($_POST['iva_'.$i]);
+                        }
+                        
                         $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                         $linea->cantidad = floatval($_POST['cantidad_'.$i]);
                         $linea->dtopor = floatval($_POST['dto_'.$i]);
@@ -312,8 +322,18 @@ class general_nuevo_albaran extends fs_controller
                      $linea->idalbaran = $albaran->idalbaran;
                      $linea->referencia = $articulo->referencia;
                      $linea->descripcion = $articulo->descripcion;
-                     $linea->codimpuesto = $articulo->codimpuesto;
-                     $linea->iva = floatval($_POST['iva_'.$i]);
+                     
+                     if( $serie->siniva )
+                     {
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = 0;
+                     }
+                     else
+                     {
+                        $linea->codimpuesto = $articulo->codimpuesto;
+                        $linea->iva = floatval($_POST['iva_'.$i]);
+                     }
+                     
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
                      $linea->dtopor = floatval($_POST['dto_'.$i]);

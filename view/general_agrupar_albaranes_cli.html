@@ -15,6 +15,18 @@
          </select>
       </div>
       <div class="bloque">
+         Serie:
+         <select name="serie">
+            {loop="$fsc->serie->all()"}
+               {if condition="$value->codserie==$_POST.serie"}
+               <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+               {else}
+               <option value="{$value->codserie}">{$value->descripcion}</option>
+               {/if}
+            {/loop}
+         </select>
+      </div>
+      <div class="bloque">
          Desde: <input type="text" name="desde" class="tcal" value="{$fsc->desde}" size="10" maxlength="10"/>
       </div>
       <div class="bloque">
@@ -27,15 +39,11 @@
 {if condition="$fsc->resultados"}
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
-      <h1>
-         Albaranes:
-         <span><input type="submit" value="agrupar"/></span>
-      </h1>
+      <h1>Albaranes:</h1>
       <table class="list">
          <tr>
             <th width="95">seleccionar</th>
-            <th>código</th>
-            <th>número 2</th>
+            <th>código + número 2</th>
             <th>observaciones</th>
             <th align="right">total</th>
             <th align="right">fecha</th>
@@ -43,13 +51,15 @@
          {loop="$fsc->resultados"}
          <tr>
             <td align="center"><input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}"/></td>
-            <td><a href="{$value->url()}">{$value->codigo}</a></td>
-            <td>{$value->numero2}</td>
+            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
+         <tr>
+            <td align="center"><input type="submit" value="agrupar"/></td>
+         </tr>
       </table>
    </form>
 </div>

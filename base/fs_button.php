@@ -25,8 +25,9 @@ class fs_button
    public $class;
    public $img;
    public $alt;
+   public $newpage;
    
-   public function __construct($id, $value, $href='#', $class='', $img='img/add.png', $alt='+')
+   public function __construct($id, $value, $href='#', $class='button', $img='img/add.png', $alt='+', $np=FALSE)
    {
       $this->id = $id;
       $this->value = $value;
@@ -34,6 +35,23 @@ class fs_button
       $this->class = $class;
       $this->img = $img;
       $this->alt = $alt;
+      $this->newpage = $np;
+   }
+   
+   public function HTML()
+   {
+      if($this->class != '')
+         $class = " class='".$this->class."'";
+      else
+         $class = " class='button'";
+      
+      if($this->newpage)
+         $target = " target='_blank'";
+      else
+         $target = '';
+      
+      return "<a id='".$this->id."'".$class.$target." href='".$this->href.
+         "'><img src='view/".$this->img."' alt='".$this->alt."'/> ".$this->value."</a>";
    }
 }
 

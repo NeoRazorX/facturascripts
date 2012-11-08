@@ -22,6 +22,7 @@ require_once 'model/asiento.php';
 require_once 'model/cliente.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/partida.php';
+require_once 'model/serie.php';
 require_once 'model/subcuenta.php';
 
 class general_agrupar_albaranes_cli extends fs_controller
@@ -31,8 +32,10 @@ class general_agrupar_albaranes_cli extends fs_controller
    public $desde;
    public $hasta;
    public $resultados;
+   public $serie;
    
-   public function __construct() {
+   public function __construct()
+   {
       parent::__construct('general_agrupar_albaranes_cli', 'Agrupar albaranes', 'general', FALSE, FALSE);
    }
    
@@ -41,6 +44,7 @@ class general_agrupar_albaranes_cli extends fs_controller
       $this->ppage = $this->page->get('general_albaranes_cli');
       $this->albaran = new albaran_cliente();
       $this->cliente = new cliente();
+      $this->serie = new serie();
       
       if( isset($_POST['desde']) )
          $this->desde = $_POST['desde'];
@@ -58,7 +62,8 @@ class general_agrupar_albaranes_cli extends fs_controller
       {
          $this->set_default_elements();
          
-         $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'], $_POST['desde'], $_POST['hasta']);
+         $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'],
+                 $_POST['desde'], $_POST['hasta'], $_POST['serie']);
          if( !$this->resultados )
             $this->new_message("Sin resultados.");
       }
@@ -303,8 +308,9 @@ class general_agrupar_albaranes_cli extends fs_controller
       }
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
 }
 
