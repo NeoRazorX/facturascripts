@@ -268,7 +268,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.10';
+      return '0.9.11';
    }
    
    public function select_default_page()

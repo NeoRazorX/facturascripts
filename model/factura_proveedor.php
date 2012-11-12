@@ -272,29 +272,34 @@ class linea_factura_proveedor extends fs_model
    
    public function save()
    {
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET pvptotal = ".$this->var2str($this->pvptotal).",
-            dtopor = ".$this->var2str($this->dtopor).", recargo = ".$this->var2str($this->recargo).",
-            irpf = ".$this->var2str($this->irpf).", pvpsindto = ".$this->var2str($this->pvpsindto).",
-            cantidad = ".$this->var2str($this->cantidad).", codimpuesto = ".$this->var2str($this->codimpuesto).",
-            pvpunitario = ".$this->var2str($this->pvpunitario).", idfactura = ".$this->var2str($this->idfactura).",
-            idalbaran = ".$this->var2str($this->idalbaran).", descripcion = ".$this->var2str($this->descripcion).",
-            dtolineal = ".$this->var2str($this->dtolineal).", referencia = ".$this->var2str($this->referencia).",
-            iva = ".$this->var2str($this->iva)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET pvptotal = ".$this->var2str($this->pvptotal).",
+               dtopor = ".$this->var2str($this->dtopor).", recargo = ".$this->var2str($this->recargo).",
+               irpf = ".$this->var2str($this->irpf).", pvpsindto = ".$this->var2str($this->pvpsindto).",
+               cantidad = ".$this->var2str($this->cantidad).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               pvpunitario = ".$this->var2str($this->pvpunitario).", idfactura = ".$this->var2str($this->idfactura).",
+               idalbaran = ".$this->var2str($this->idalbaran).", descripcion = ".$this->var2str($this->descripcion).",
+               dtolineal = ".$this->var2str($this->dtolineal).", referencia = ".$this->var2str($this->referencia).",
+               iva = ".$this->var2str($this->iva)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
+         }
+         else
+         {
+            $this->new_idlinea();
+            $sql = "INSERT INTO ".$this->table_name." (pvptotal,dtopor,recargo,irpf,pvpsindto,cantidad,
+               codimpuesto,pvpunitario,idlinea,idfactura,idalbaran,descripcion,dtolineal,referencia,iva)
+               VALUES (".$this->var2str($this->pvptotal).",".$this->var2str($this->dtopor).",".$this->var2str($this->recargo).",
+               ".$this->var2str($this->irpf).",".$this->var2str($this->pvpsindto).",".$this->var2str($this->cantidad).",
+               ".$this->var2str($this->codimpuesto).",".$this->var2str($this->pvpunitario).",".$this->var2str($this->idlinea).",
+               ".$this->var2str($this->idfactura).",".$this->var2str($this->idalbaran).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->dtolineal).",".$this->var2str($this->referencia).",".$this->var2str($this->iva).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $this->new_idlinea();
-         $sql = "INSERT INTO ".$this->table_name." (pvptotal,dtopor,recargo,irpf,pvpsindto,cantidad,
-            codimpuesto,pvpunitario,idlinea,idfactura,idalbaran,descripcion,dtolineal,referencia,iva)
-            VALUES (".$this->var2str($this->pvptotal).",".$this->var2str($this->dtopor).",".$this->var2str($this->recargo).",
-            ".$this->var2str($this->irpf).",".$this->var2str($this->pvpsindto).",".$this->var2str($this->cantidad).",
-            ".$this->var2str($this->codimpuesto).",".$this->var2str($this->pvpunitario).",".$this->var2str($this->idlinea).",
-            ".$this->var2str($this->idfactura).",".$this->var2str($this->idalbaran).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->dtolineal).",".$this->var2str($this->referencia).",".$this->var2str($this->iva).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()
@@ -306,8 +311,10 @@ class linea_factura_proveedor extends fs_model
    {
       $status = TRUE;
       
+      $this->descripcion = $this->no_html($this->descripcion);
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
+      
       if( abs($this->pvptotal - $total) > .01 )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
@@ -328,7 +335,7 @@ class linea_factura_proveedor extends fs_model
    {
       $linlist = array();
       $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idfactura = ".$this->var2str($id)." ORDER BY referencia ASC;");
+         WHERE idfactura = ".$this->var2str($id)." ORDER BY idlinea ASC;");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -340,8 +347,8 @@ class linea_factura_proveedor extends fs_model
    public function all_from_articulo($ref, $offset=0)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref)."
-         ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -561,7 +568,7 @@ class factura_proveedor extends fs_model
          $this->nombre = $f['nombre'];
          $this->numero = $f['numero'];
          $this->numproveedor = $f['numproveedor'];
-         $this->observaciones = $f['observaciones'];
+         $this->observaciones = $this->no_html($f['observaciones']);
          $this->recfinanciero = floatval($f['recfinanciero']);
          $this->tasaconv = floatval($f['tasaconv']);
          $this->total = floatval($f['total']);
@@ -773,7 +780,7 @@ class factura_proveedor extends fs_model
    
    public function test()
    {
-      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      $this->observaciones = $this->no_html($this->observaciones);
       return TRUE;
    }
    
@@ -944,7 +951,7 @@ class factura_proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $faclist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

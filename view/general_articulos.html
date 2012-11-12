@@ -2,6 +2,7 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      document.f_custom_search.query.focus();
       $("#b_nuevo_articulo").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nuevo_articulo');
@@ -131,10 +132,10 @@
       </select>
       <br/>
       <input type="checkbox" id="cb_mantener" name="mantener" value="TRUE"/>
-      <label for="cb_mantener">Mentener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
+      <label for="cb_mantener">Mantener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
       <table width="100%">
          <tr>
-            <td colspan="2" align="right"><input type="submit" value="nuevo"/></td>
+            <td colspan="2" align="right"><input type="submit" value="mover"/></td>
          </tr>
       </table>
    </form>

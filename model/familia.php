@@ -102,7 +102,7 @@ class familia extends fs_model
       $status = FALSE;
       
       $this->codfamilia = trim($this->codfamilia);
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       
       if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codfamilia) )
          $this->new_error_msg("Código de familia no válido. Deben ser entre 1 y 4 caracteres alfanuméricos.");

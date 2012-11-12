@@ -174,8 +174,8 @@ class asiento extends fs_model
    {
       $status = FALSE;
       
-      $this->concepto = $this->no_html( trim($this->concepto) );
-      $this->documento = $this->no_html( trim($this->documento) );
+      $this->concepto = $this->no_html($this->concepto);
+      $this->documento = $this->no_html($this->documento);
       
       if( strlen($this->concepto) < 1 OR strlen($this->concepto) > 255 )
          $this->new_error_msg("Concepto del asiento no válido.");
@@ -307,7 +307,7 @@ class asiento extends fs_model
    public function search($query, $offset=0)
    {
       $alist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

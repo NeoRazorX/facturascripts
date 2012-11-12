@@ -168,12 +168,12 @@ class direccion_proveedor extends fs_model
    
    public function test()
    {
-      $this->apartado = $this->no_html( trim($this->apartado) );
-      $this->ciudad = $this->no_html( trim($this->ciudad) );
-      $this->codpostal = $this->no_html( trim($this->codpostal) );
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
-      $this->direccion = $this->no_html( trim($this->direccion) );
-      $this->provincia = $this->no_html( trim($this->provincia) );
+      $this->apartado = $this->no_html($this->apartado);
+      $this->ciudad = $this->no_html($this->ciudad);
+      $this->codpostal = $this->no_html($this->codpostal);
+      $this->descripcion = $this->no_html($this->descripcion);
+      $this->direccion = $this->no_html($this->direccion);
+      $this->provincia = $this->no_html($this->provincia);
       return TRUE;
    }
    
@@ -258,7 +258,7 @@ class proveedor extends fs_model
          $this->codserie = $p['codserie'];
          $this->coddivisa = $p['coddivisa'];
          $this->codpago = $p['codpago'];
-         $this->observaciones = $p['observaciones'];
+         $this->observaciones = $this->no_html($p['observaciones']);
       }
       else
       {
@@ -383,8 +383,8 @@ class proveedor extends fs_model
       $status = FALSE;
       
       $this->codproveedor = trim($this->codproveedor);
-      $this->nombre = $this->no_html( trim($this->nombre) );
-      $this->nombrecomercial = $this->no_html( trim($this->nombrecomercial) );
+      $this->nombre = $this->no_html($this->nombre);
+      $this->nombrecomercial = $this->no_html($this->nombrecomercial);
       
       if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codproveedor) )
          $this->new_error_msg("Código de proveedor no válido.");
@@ -473,7 +473,7 @@ class proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $prolist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

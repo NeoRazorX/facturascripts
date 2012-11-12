@@ -1,4 +1,17 @@
 <!--{$fsc->query}-->
+
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
+{if condition="$fsc->results"}
 <table class="list">
    <tr>
       <th>Referencia</th>
@@ -15,3 +28,4 @@
    </tr>
    {/loop}
 </table>
+{/if}

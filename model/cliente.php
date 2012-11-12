@@ -177,12 +177,12 @@ class direccion_cliente extends fs_model
    
    public function test()
    {
-      $this->apartado = $this->no_html( trim($this->apartado) );
-      $this->ciudad = $this->no_html( trim($this->ciudad) );
-      $this->codpostal = $this->no_html( trim($this->codpostal) );
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
-      $this->direccion = $this->no_html( trim($this->direccion) );
-      $this->provincia = $this->no_html( trim($this->provincia) );
+      $this->apartado = $this->no_html($this->apartado);
+      $this->ciudad = $this->no_html($this->ciudad);
+      $this->codpostal = $this->no_html($this->codpostal);
+      $this->descripcion = $this->no_html($this->descripcion);
+      $this->direccion = $this->no_html($this->direccion);
+      $this->provincia = $this->no_html($this->provincia);
       return TRUE;
    }
    
@@ -270,7 +270,7 @@ class cliente extends fs_model
          $this->codpago = $c['codpago'];
          $this->debaja = ($c['debaja'] == 't');
          $this->fechabaja = $c['fechabaja'];
-         $this->observaciones = $c['observaciones'];
+         $this->observaciones = $this->no_html($c['observaciones']);
       }
       else
       {
@@ -396,10 +396,10 @@ class cliente extends fs_model
       $status = FALSE;
       
       $this->codcliente = trim($this->codcliente);
-      $this->nombre = $this->no_html( trim($this->nombre) );
-      $this->nombrecomercial = $this->no_html( trim($this->nombrecomercial) );
-      $this->cifnif = $this->no_html( trim($this->cifnif) );
-      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      $this->nombre = $this->no_html($this->nombre);
+      $this->nombrecomercial = $this->no_html($this->nombrecomercial);
+      $this->cifnif = $this->no_html($this->cifnif);
+      $this->observaciones = $this->no_html($this->observaciones);
       
       if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcliente) )
          $this->new_error_msg("Código de cliente no válido.");
@@ -491,7 +491,7 @@ class cliente extends fs_model
    public function search($query, $offset=0)
    {
       $clilist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

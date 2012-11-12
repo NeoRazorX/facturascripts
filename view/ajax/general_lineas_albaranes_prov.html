@@ -1,5 +1,16 @@
 <!--{$fsc->buscar_lineas}-->
 
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
 {if condition="$fsc->lineas"}
 <table class="list">
    <tr>

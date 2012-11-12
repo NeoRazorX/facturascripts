@@ -124,13 +124,13 @@ class almacen extends fs_model
       $status = FALSE;
       
       $this->codalmacen = trim($this->codalmacen);
-      $this->nombre = $this->no_html( trim($this->nombre) );
-      $this->poblacion = $this->no_html( trim($this->poblacion) );
-      $this->direccion = $this->no_html( trim($this->direccion) );
-      $this->codpostal = $this->no_html( trim($this->codpostal) );
-      $this->telefono = $this->no_html( trim($this->telefono) );
-      $this->fax = $this->no_html( trim($this->fax) );
-      $this->contacto = $this->no_html( trim($this->contacto) );
+      $this->nombre = $this->no_html($this->nombre);
+      $this->poblacion = $this->no_html($this->poblacion);
+      $this->direccion = $this->no_html($this->direccion);
+      $this->codpostal = $this->no_html($this->codpostal);
+      $this->telefono = $this->no_html($this->telefono);
+      $this->fax = $this->no_html($this->fax);
+      $this->contacto = $this->no_html($this->contacto);
       
       if( !preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen) )
          $this->new_error_msg("Código de almacén no válido.");

@@ -34,6 +34,7 @@
       }
    }
    $(document).ready(function() {
+      document.f_custom_search.query.focus();
       $("#b_buscar_lineas").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_buscar_lineas', 40);

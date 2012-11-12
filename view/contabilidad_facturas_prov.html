@@ -1,5 +1,11 @@
 {include="header"}
 
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+   });
+</script>
+
 <div class="rounded">
    {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
    <table class="list">

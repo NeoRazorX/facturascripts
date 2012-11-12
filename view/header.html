@@ -116,20 +116,12 @@
 {/if}
 {if condition="$fsc->get_errors()"}
    <div class="error">
-      <ul>
-      {loop="$fsc->get_errors()"}
-         <li>{$value}</li>
-      {/loop}
-      </ul>
+      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
 {if condition="$fsc->get_messages()"}
    <div class="message">
-      <ul>
-      {loop="$fsc->get_messages()"}
-         <li>{$value}</li>
-      {/loop}
-      </ul>
+      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
    <div class="main_div">

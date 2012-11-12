@@ -465,6 +465,10 @@ input[type='text'], input[type='password'], input[type='checkbox'], select {
    vertical-align: middle;
 }
 
+input.full {
+   width: 100%;
+}
+
 textarea {
    display: block;
    width: 100%;

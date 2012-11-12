@@ -199,6 +199,7 @@ abstract class fs_model
     * < en &lt;
     * > en &gt;
     * " en &quot;
+    * ' en &#39;
     * 
     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
     * porque te encontrarás con muchas sorpresas desagradables.
@@ -208,7 +209,8 @@ abstract class fs_model
       $newt  = preg_replace('/</', '&lt;', $t);
       $newt  = preg_replace('/>/', '&gt;', $newt);
       $newt  = preg_replace('/"/', '&quot;', $newt);
-      return $newt;
+      $newt  = preg_replace("/'/", '&#39;', $newt);
+      return trim($newt);
    }
    
    /// obtiene las columnas y restricciones del fichero xml para una tabla

@@ -214,29 +214,34 @@ class linea_albaran_proveedor extends fs_model
    
    public function save()
    {
-      if( $this->exists() )
+      if( $this->test() )
       {
-         $sql = "UPDATE ".$this->table_name." SET idalbaran = ".$this->var2str($this->idalbaran).",
-            referencia = ".$this->var2str($this->referencia).", descripcion = ".$this->var2str($this->descripcion).",
-            cantidad = ".$this->var2str($this->cantidad).", dtopor = ".$this->var2str($this->dtopor).",
-            dtolineal = ".$this->var2str($this->dtolineal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
-            iva = ".$this->var2str($this->iva).", pvptotal = ".$this->var2str($this->pvptotal).",
-            pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario).",
-            irpf = ".$this->var2str($this->irpf).", recargo = ".$this->var2str($this->recargo)."
-            WHERE idlinea = ".$this->var2str($this->idlinea).";";
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET idalbaran = ".$this->var2str($this->idalbaran).",
+               referencia = ".$this->var2str($this->referencia).", descripcion = ".$this->var2str($this->descripcion).",
+               cantidad = ".$this->var2str($this->cantidad).", dtopor = ".$this->var2str($this->dtopor).",
+               dtolineal = ".$this->var2str($this->dtolineal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               iva = ".$this->var2str($this->iva).", pvptotal = ".$this->var2str($this->pvptotal).",
+               pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario).",
+               irpf = ".$this->var2str($this->irpf).", recargo = ".$this->var2str($this->recargo)."
+               WHERE idlinea = ".$this->var2str($this->idlinea).";";
+         }
+         else
+         {
+            $this->new_idlinea();
+            $sql = "INSERT INTO ".$this->table_name." (idlinea,idalbaran,referencia,descripcion,cantidad,dtopor,
+               dtolineal,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo) VALUES (".$this->var2str($this->idlinea).",
+               ".$this->var2str($this->idalbaran).",".$this->var2str($this->referencia).",
+               ".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",
+               ".$this->var2str($this->dtopor).",".$this->var2str($this->dtolineal).",".$this->var2str($this->codimpuesto).",
+               ".$this->var2str($this->iva).",".$this->var2str($this->pvptotal).",".$this->var2str($this->pvpsindto).",
+               ".$this->var2str($this->pvpunitario).",".$this->var2str($this->irpf).",".$this->var2str($this->recargo).");";
+         }
+         return $this->db->exec($sql);
       }
       else
-      {
-         $this->new_idlinea();
-         $sql = "INSERT INTO ".$this->table_name." (idlinea,idalbaran,referencia,descripcion,cantidad,dtopor,
-            dtolineal,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo) VALUES (".$this->var2str($this->idlinea).",
-            ".$this->var2str($this->idalbaran).",".$this->var2str($this->referencia).",
-            ".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",
-            ".$this->var2str($this->dtopor).",".$this->var2str($this->dtolineal).",".$this->var2str($this->codimpuesto).",
-            ".$this->var2str($this->iva).",".$this->var2str($this->pvptotal).",".$this->var2str($this->pvpsindto).",
-            ".$this->var2str($this->pvpunitario).",".$this->var2str($this->irpf).",".$this->var2str($this->recargo).");";
-      }
-      return $this->db->exec($sql);
+         return FALSE;
    }
    
    public function delete()
@@ -248,6 +253,7 @@ class linea_albaran_proveedor extends fs_model
    {
       $status = TRUE;
       
+      $this->descripcion = $this->no_html($this->descripcion);
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
@@ -271,7 +277,7 @@ class linea_albaran_proveedor extends fs_model
    {
       $linealist = array();
       $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idalbaran = ".$this->var2str($id)." ORDER BY referencia ASC;");
+         WHERE idalbaran = ".$this->var2str($id)." ORDER BY idlinea ASC;");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -283,8 +289,8 @@ class linea_albaran_proveedor extends fs_model
    public function all_from_articulo($ref, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref)."
-         ORDER BY idalbaran DESC", $limit, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", $limit, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -296,7 +302,7 @@ class linea_albaran_proveedor extends fs_model
    public function search($query='', $offset=0)
    {
       $linealist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $sql = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
@@ -308,7 +314,7 @@ class linea_albaran_proveedor extends fs_model
          $buscar = str_replace(' ', '%', $query);
          $sql .= "lower(referencia) ~~ '%".$buscar."%' OR lower(descripcion) ~~ '%".$buscar."%'";
       }
-      $sql .= " ORDER BY idalbaran DESC, idlinea DESC";
+      $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
       
       $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
       if( $lineas )
@@ -410,7 +416,7 @@ class albaran_proveedor extends fs_model
          $this->tasaconv = floatval($a['tasaconv']);
          $this->recfinanciero = floatval($a['recfinanciero']);
          $this->totalrecargo = floatval($a['totalrecargo']);
-         $this->observaciones = $a['observaciones'];
+         $this->observaciones = $this->no_html($a['observaciones']);
       }
       else
       {
@@ -578,7 +584,7 @@ class albaran_proveedor extends fs_model
    
    public function test()
    {
-      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      $this->observaciones = $this->no_html($this->observaciones);
       return TRUE;
    }
    
@@ -734,7 +740,7 @@ class albaran_proveedor extends fs_model
    public function search($query, $offset=0)
    {
       $alblist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )

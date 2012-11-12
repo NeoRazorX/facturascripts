@@ -47,7 +47,7 @@ class concepto_partida extends fs_model
    
    public function test()
    {
-      $this->concepto = $this->no_html( trim($this->concepto) );
+      $this->concepto = $this->no_html($this->concepto);
       return TRUE;
    }
    

@@ -59,20 +59,12 @@
    <div class="main_div">
       {if condition="$fsc->get_errors()"}
          <div class="error">
-            <ul>
-            {loop="$fsc->get_errors()"}
-               <li>{$value}</li>
-            {/loop}
-            </ul>
+            <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
          </div>
       {/if}
       {if condition="$fsc->get_messages()"}
          <div class="message">
-            <ul>
-            {loop="$fsc->get_messages()"}
-               <li>{$value}</li>
-            {/loop}
-            </ul>
+            <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
          </div>
       {/if}
       {if condition="$demo"}
@@ -138,6 +130,9 @@
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>General > nuevo albarán: añadido un botón para establecer descuentos adicionales al actual.</li>
+            <li>Ya se puede modificar la descripción de las líneas de los albaranes.</li>
+            <li>Corregidos los problemas de crear albaranes con artículos con comillas en la descripción.</li>
             <li>Al crear un albarán con una serie sin IVA se modifican las lineas para asegurarse que el IVA es del 0%.</li>
             <li>fs_button ya permite abrir enlaces en una nueva pestaña.</li>
             <li>Nuevo filtro de búsqueda de artículos: sólo artículos con stock.</li>
@@ -171,11 +166,7 @@
       {if condition="$db_history"}
       <div id="sql_history">
          <h1>Consultas SQL:</h1>
-         <ol>
-         {loop="$fsc->get_db_history()"}
-            <li>{$value}</li>
-         {/loop}
-         </ol>
+         <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
       </div>
       {/if}
    </div>

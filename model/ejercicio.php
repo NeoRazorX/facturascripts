@@ -134,7 +134,7 @@ class ejercicio extends fs_model
       $status = FALSE;
       
       $this->codejercicio = trim($this->codejercicio);
-      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio) )
          $this->new_error_msg("Código de cliente no válido.");

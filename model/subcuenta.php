@@ -136,7 +136,7 @@ class subcuenta extends fs_model
    {
       $status = TRUE;
       
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       
       $partida = new partida();
       $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
@@ -215,7 +215,7 @@ class subcuenta extends fs_model
    public function search($query)
    {
       $sublist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)

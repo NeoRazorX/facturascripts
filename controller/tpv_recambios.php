@@ -130,7 +130,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    private function new_search()
@@ -236,7 +236,11 @@ class tpv_recambios extends fs_controller
                         $linea = new linea_albaran_cliente();
                         $linea->idalbaran = $albaran->idalbaran;
                         $linea->referencia = $articulo->referencia;
-                        $linea->descripcion = $articulo->descripcion;
+                        
+                        if( isset($_POST['desc_'.$i]) )
+                           $linea->descripcion = $_POST['desc_'.$i];
+                        else
+                           $linea->descripcion = $articulo->descripcion;
                         
                         if( $serie->siniva )
                         {

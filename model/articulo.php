@@ -349,7 +349,7 @@ class articulo extends fs_model
       {
          $this->referencia = $a['referencia'];
          $this->codfamilia = $a['codfamilia'];
-         $this->descripcion = $a['descripcion'];
+         $this->descripcion = $this->no_html($a['descripcion']);
          $this->pvp = floatval($a['pvp']);
          $this->factualizado = Date('d-m-Y', strtotime($a['factualizado']));
          $this->codimpuesto = $a['codimpuesto'];
@@ -363,7 +363,7 @@ class articulo extends fs_model
          $this->sevende = ($a['sevende'] == 't');
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
-         $this->observaciones = $a['observaciones'];
+         $this->observaciones = $this->no_html($a['observaciones']);
          
          /// no cargamos la imágen directamente por cuestión de rendimiento
          $this->imagen = NULL;
@@ -406,9 +406,9 @@ class articulo extends fs_model
       return '';
    }
    
-   public function get_descripcion_esc()
+   public function get_descripcion_64()
    {
-      return addslashes( $this->no_html($this->descripcion) );
+      return base64_encode($this->descripcion);
    }
    
    public function show_pvp()
@@ -744,10 +744,10 @@ class articulo extends fs_model
          unlink('tmp/articulos/'.$this->referencia.'.png');
       
       $this->referencia = str_replace(' ', '_', trim($this->referencia));
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       $this->equivalencia = str_replace(' ', '_', trim($this->equivalencia));
-      $this->codbarras = $this->no_html( trim($this->codbarras) );
-      $this->observaciones = $this->no_html( trim($this->observaciones) );
+      $this->codbarras = $this->no_html($this->codbarras);
+      $this->observaciones = $this->no_html($this->observaciones);
       
       if($this->equivalencia == '')
       {
@@ -817,7 +817,7 @@ class articulo extends fs_model
    public function search($query, $offset=0, $codfamilia='', $con_stock=FALSE)
    {
       $artilist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = $this->no_html( strtolower($query) );
       
       if($codfamilia == '')
          $sql = "SELECT * FROM ".$this->table_name." WHERE ";

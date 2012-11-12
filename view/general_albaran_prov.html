@@ -111,23 +111,25 @@
    function add_articulo(ref,desc,pvp,dto,iva)
    {
       numlineas += 1;
-      $("#lineas_albaran").append("<tr id='linea_"+numlineas+"'>\n\
-         <td><input type='hidden' name='idlinea_"+numlineas+"' value='-1'/>\n\
-            <input type='hidden' name='referencia_"+numlineas+"' value='"+ref+"'/>\n\
-            <a target='_blank' href='index.php?page=general_articulo&ref="+ref+"'>"+ref+"</a> "+desc+"</td>\n\
-         <td align='center'><input type='button' value='-' onclick='linea_sum_ud("+numlineas+",-1)'/>\n\
-            <input type='text' id='cantidad_"+numlineas+"' name='cantidad_"+numlineas+"' value='1' size='3'/>\n\
-            <input type='button' value='+' onclick='linea_sum_ud("+numlineas+",1)'/></td>\n\
-         <td align='center'>\n\
-            <input type='text' id='pvp_"+numlineas+"' name='pvp_"+numlineas+"' value='"+pvp+
-               "' size='6' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> €</td>\n\
-         <td align='center'><input type='text' id='dto_"+numlineas+"' name='dto_"+numlineas+"' value='"+dto+
-            "' size='4' onkeyup='recalcular()' onclick='this.select()' autocomplete='off'/> %</td>\n\
-         <td align='center'><input type='text' id='total_"+numlineas+"' name='total_"+numlineas+
-            "' size='6' onkeyup='ajustar_total("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td>\n\
-         <td align='center'><input type='hidden' id='iva_"+numlineas+"' name='iva_"+numlineas+"' value='"+iva+"'/>"+iva+" %</td>\n\
-         <td align='center'><input type='text' id='totiva_"+numlineas+"' name='totiva_"+numlineas+
-            "' size='6' onkeyup='ajustar_totiva("+numlineas+")' onclick='this.select()' autocomplete='off'/> €</td></tr>");
+      desc = Base64.decode(desc);
+      $("#lineas_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
+         <td><input type=\"hidden\" name=\"idlinea_"+numlineas+"\" value=\"-1\"/>\n\
+            <input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
+            <a target=\"_blank\" href=\"index.php?page=general_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
+         <td><input type=\"text\" class=\"full\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
+         <td align=\"center\"><input type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/>\n\
+            <input type=\"text\" id=\"cantidad_"+numlineas+"\" name=\"cantidad_"+numlineas+"\" value=\"1\" size=\"3\"/>\n\
+            <input type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
+         <td align=\"center\">\n\
+            <input type=\"text\" id=\"pvp_"+numlineas+"\" name=\"pvp_"+numlineas+"\" value=\""+pvp+
+               "\" size=\"6\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td align=\"center\"><input type=\"text\" id=\"dto_"+numlineas+"\" name=\"dto_"+numlineas+"\" value=\""+dto+
+            "\" size=\"4\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td align=\"center\"><input type=\"text\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
+            "\" size=\"6\" onkeyup=\"ajustar_total("+numlineas+")\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td align=\"center\"><input type=\"hidden\" id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" value=\""+iva+"\"/>"+iva+" %</td>\n\
+         <td align=\"center\"><input type=\"text\" id=\"totiva_"+numlineas+"\" name=\"totiva_"+numlineas+
+            "\" size=\"6\" onkeyup=\"ajustar_totiva("+numlineas+")\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
       fs_hide_popups();
       recalcular();
    }
@@ -305,7 +307,8 @@
    <div class="rounded">
       <table class="list" id="lineas_albaran">
          <tr>
-            <th>Artículo</th>
+            <th align="left">Referencia</th>
+            <th>Descripción</th>
             <th>Cantidad</th>
             <th>PVP</th>
             <th>dto.</th>
@@ -317,8 +320,10 @@
          <tr id="linea_{$counter}">
             <td>
                <a href="{$value->articulo_url()}">{$value->referencia}</a>
-               {$value->descripcion}
                <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
+            </td>
+            <td>
+               <input type="text" class="full" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
             </td>
             <td align="center">
                <input type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
@@ -328,15 +333,15 @@
             </td>
             <td align="center">
                <input type="text" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
-                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/> €
+                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
             </td>
             <td align="center">
                <input type="text" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
-                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/> %
+                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
             </td>
             <td align="center">
                <input type="text" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
-                      onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/> €
+                      onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/>
             </td>
             <td align="center">
                <input type="hidden" name="iva_{$counter}" id="iva_{$counter}" value="{$value->iva}"/>
@@ -344,7 +349,7 @@
             </td>
             <td align="center">
                <input type="text" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
-                      onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/> €
+                      onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/>
             </td>
          </tr>
          {/loop}

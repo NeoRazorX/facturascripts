@@ -80,7 +80,7 @@ class tarifa extends fs_model
       $status = FALSE;
       
       $this->codtarifa = trim($this->codtarifa);
-      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codtarifa) )
          $this->new_error_msg("Código de tarifa no válido.");

@@ -104,7 +104,7 @@ class serie extends fs_model
       $status = FALSE;
       
       $this->codserie = trim($this->codserie);
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       
       if( !preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie) )
          $this->new_error_msg("Código de serie no válido.");

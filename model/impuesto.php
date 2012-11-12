@@ -143,7 +143,7 @@ class impuesto extends fs_model
       $status = FALSE;
       
       $this->codimpuesto = trim($this->codimpuesto);
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       
       if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codimpuesto) )
          $this->new_error_msg("Código del impuesto no válido. Debe tener entre 1 y 10 caracteres alfanuméricos.");

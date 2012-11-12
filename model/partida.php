@@ -162,8 +162,8 @@ class partida extends fs_model
    {
       $status = TRUE;
       
-      $this->concepto = $this->no_html( trim($this->concepto) );
-      $this->documento = $this->no_html( trim($this->documento) );
+      $this->concepto = $this->no_html($this->concepto);
+      $this->documento = $this->no_html($this->documento);
       
       if( $this->iva > 0 )
       {

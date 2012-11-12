@@ -100,7 +100,7 @@ class pais extends fs_model
       $status = FALSE;
       
       $this->codpais = trim($this->codpais);
-      $this->nombre = $this->no_html( trim($this->nombre) );
+      $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais) )
          $this->new_error_msg("Código del país no válido.");

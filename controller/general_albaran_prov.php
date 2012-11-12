@@ -94,7 +94,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    public function url()
@@ -161,6 +161,9 @@ class general_albaran_prov extends fs_controller
                      $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
                      $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
                      
+                     if( isset($_POST['desc_'.$num]) )
+                        $lineas[$k]->descripcion = $_POST['desc_'.$num];
+                     
                      if( $serie->siniva )
                      {
                         $lineas[$k]->codimpuesto = NULL;
@@ -182,7 +185,11 @@ class general_albaran_prov extends fs_controller
                   {
                      $linea = new linea_albaran_proveedor();
                      $linea->referencia = $art0->referencia;
-                     $linea->descripcion = $art0->descripcion;
+                     
+                     if( isset($_POST['desc_'.$num]) )
+                        $linea->descripcion = $_POST['desc_'.$num];
+                     else
+                        $linea->descripcion = $art0->descripcion;
                      
                      if( $serie->siniva )
                      {

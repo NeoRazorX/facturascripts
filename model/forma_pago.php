@@ -93,7 +93,7 @@ class forma_pago extends fs_model
    
    public function test()
    {
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       return preg_match("/^[A-Z0-9_]{1,10}$/i", $this->codpago);
    }
    

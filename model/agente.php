@@ -128,11 +128,11 @@ class agente extends fs_model
       $status = FALSE;
       
       $this->codagente = trim($this->codagente);
-      $this->nombre = $this->no_html( trim($this->nombre) );
-      $this->apellidos = $this->no_html( trim($this->apellidos) );
-      $this->dnicif = $this->no_html( trim($this->dnicif) );
-      $this->telefono = $this->no_html( trim($this->telefono) );
-      $this->email = $this->no_html( trim($this->email) );
+      $this->nombre = $this->no_html($this->nombre);
+      $this->apellidos = $this->no_html($this->apellidos);
+      $this->dnicif = $this->no_html($this->dnicif);
+      $this->telefono = $this->no_html($this->telefono);
+      $this->email = $this->no_html($this->email);
       
       if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codagente) )
          $this->new_error_msg("Código de agente no válido.");

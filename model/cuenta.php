@@ -85,7 +85,7 @@ class cuenta extends fs_model
    
    public function test()
    {
-      $this->descripcion = $this->no_html( trim($this->descripcion) );
+      $this->descripcion = $this->no_html($this->descripcion);
       return TRUE;
    }
    
@@ -148,7 +148,7 @@ class cuenta extends fs_model
    public function search($query, $offset=0)
    {
       $cuenlist = array();
-      $query = $this->escape_string( strtolower( trim($query) ) );
+      $query = strtolower( $this->no_html($query) );
       $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)

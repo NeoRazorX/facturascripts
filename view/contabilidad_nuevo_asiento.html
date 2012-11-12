@@ -5,45 +5,45 @@
    function add_partida()
    {
       numlineas++;
-      $("#partidas").append("<div class='rounded'>\n\
-         <div class='bloque'>\n\
-            <input type='hidden' id='idsubcuenta_"+numlineas+"' name='idsubcuenta_"+numlineas+"'/>\n\
+      $("#partidas").append("<div class=\"rounded\">\n\
+         <div class=\"bloque\">\n\
+            <input type=\"hidden\" id=\"idsubcuenta_"+numlineas+"\" name=\"idsubcuenta_"+numlineas+"\"/>\n\
             Subcuenta:\n\
-            <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
-               onclick='show_buscar_subcuentas(\""+numlineas+"\",\"subcuenta\")'/>\n\
-            <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='60' disabled='disabled'/>\n\
+            <input id=\"codsubcuenta_"+numlineas+"\" name=\"codsubcuenta_"+numlineas+"\" type=\"text\" size=\"10\"\n\
+               onclick=\"show_buscar_subcuentas(\""+numlineas+"\",\"subcuenta\")\"/>\n\
+            <input type=\"text\" id=\"dessubcuenta_"+numlineas+"\" name=\"dessubcuenta_"+numlineas+"\" size=\"60\" disabled=\"disabled\"/>\n\
          </div>\n\
-         <div class='bloque'>\n\
-            debe: <input type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='6'\n\
-               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
-            haber: <input type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='6' value='0'\n\
-               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+         <div class=\"bloque\">\n\
+            debe: <input type=\"text\" id=\"debe_"+numlineas+"\" name=\"debe_"+numlineas+"\" value=\"0\" size=\"6\"\n\
+               onclick=\"this-select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/>\n\
+            haber: <input type=\"text\" id=\"haber_"+numlineas+"\" name=\"haber_"+numlineas+"\" size=\"6\" value=\"0\"\n\
+               onclick=\"this-select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/>\n\
          </div>\n\
-         <div class='bloque'>\n\
+         <div class=\"bloque\">\n\
             ID concepto:\n\
-            <select name='idconceptopar_"+numlineas+"'>\n\
-               <option value=''>---</option>\n\
-               {loop="$fsc->concepto->all()"}<option value='{$value->idconceptopar}'>{$value->concepto}</option>{/loop}\n\
+            <select name=\"idconceptopar_"+numlineas+"\">\n\
+               <option value=\"\">---</option>\n\
+               {loop="$fsc->concepto->all()"}<option value=\"{$value->idconceptopar}\">{$value->concepto}</option>{/loop}\n\
             </select>\n\
-            Concepto: <input name='concepto_"+numlineas+"' type='text' size='30'/>\n\
+            Concepto: <input name=\"concepto_"+numlineas+"\" type=\"text\" size=\"30\"/>\n\
          </div>\n\
-         <div class='bloque'>\n\
-            Documento: <input name='documento_"+numlineas+"' type='text' size='30'/>\n\
+         <div class=\"bloque\">\n\
+            Documento: <input name=\"documento_"+numlineas+"\" type=\"text\" size=\"30\"/>\n\
             Tipo documento:\n\
-            <select name='tipodocumento_"+numlineas+"'>\n\
+            <select name=\"tipodocumento_"+numlineas+"\">\n\
                <option>---</option>\n\
                <option>Recibo</option>\n\
                <option>Factura de cliente</option>\n\
                <option>Factura de proveedor</option>\n\
             </select>\n\
          </div>\n\
-         <div class='bloque'>\n\
-            <input type='hidden' id='idcontrapartida_"+numlineas+"' name='idcontrapartida_"+numlineas+"'/>\n\
+         <div class=\"bloque\">\n\
+            <input type=\"hidden\" id=\"idcontrapartida_"+numlineas+"\" name=\"idcontrapartida_"+numlineas+"\"/>\n\
             Contrapartida:\n\
-            <input id='codcontrapartida_"+numlineas+"' name='codcontrapartida_"+numlineas+"' type='text' size='10'\n\
-               onclick='show_buscar_subcuentas(\""+numlineas+"\",\"contrapartida\")'/>\n\
-            <input type='text' id='descontrapartida_"+numlineas+"' name='descontrapartida_"+numlineas+"' size='60' disabled='disabled'/>\n\
-            cif/nif: <input type='text' name='cifnif_"+numlineas+"' size='10'/>\n\
+            <input id=\"codcontrapartida_"+numlineas+"\" name=\"codcontrapartida_"+numlineas+"\" type=\"text\" size=\"10\"\n\
+               onclick=\"show_buscar_subcuentas(\""+numlineas+"\",\"contrapartida\")\"/>\n\
+            <input type=\"text\" id=\"descontrapartida_"+numlineas+"\" name=\"descontrapartida_"+numlineas+"\" size=\"60\" disabled=\"disabled\"/>\n\
+            cif/nif: <input type=\"text\" name=\"cifnif_"+numlineas+"\" size=\"10\"/>\n\
          </div>\n\
          </div>");
       document.f_asiento['idconceptopar_'+numlineas].selectedIndex = document.f_asiento['idconceptopar'].selectedIndex;

@@ -143,20 +143,20 @@ class empresa extends fs_model
    {
       $status = FALSE;
       
-      $this->nombre = $this->no_html( trim($this->nombre) );
-      $this->administrador = $this->no_html( trim($this->administrador) );
-      $this->apartado = $this->no_html( trim($this->apartado) );
-      $this->cifnif = $this->no_html( trim($this->cifnif) );
-      $this->ciudad = $this->no_html( trim($this->ciudad) );
-      $this->codpostal = $this->no_html( trim($this->codpostal) );
-      $this->direccion = $this->no_html( trim($this->direccion) );
-      $this->email = $this->no_html( trim($this->email) );
-      $this->fax = $this->no_html( trim($this->fax) );
-      $this->horario = $this->no_html( trim($this->horario) );
-      $this->lema = $this->no_html( trim($this->lema) );
-      $this->provincia = $this->no_html( trim($this->provincia) );
-      $this->telefono = $this->no_html( trim($this->telefono) );
-      $this->web = $this->no_html( trim($this->web) );
+      $this->nombre = $this->no_html($this->nombre);
+      $this->administrador = $this->no_html($this->administrador);
+      $this->apartado = $this->no_html($this->apartado);
+      $this->cifnif = $this->no_html($this->cifnif);
+      $this->ciudad = $this->no_html($this->ciudad);
+      $this->codpostal = $this->no_html($this->codpostal);
+      $this->direccion = $this->no_html($this->direccion);
+      $this->email = $this->no_html($this->email);
+      $this->fax = $this->no_html($this->fax);
+      $this->horario = $this->no_html($this->horario);
+      $this->lema = $this->no_html($this->lema);
+      $this->provincia = $this->no_html($this->provincia);
+      $this->telefono = $this->no_html($this->telefono);
+      $this->web = $this->no_html($this->web);
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
          $this->new_error_msg("Nombre de empresa no válido.");
