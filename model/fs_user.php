@@ -289,7 +289,7 @@ class fs_user extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
-   private function clean_cache()
+   public function clean_cache()
    {
       $this->cache->delete('m_fs_user_all');
    }

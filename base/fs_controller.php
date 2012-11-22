@@ -170,7 +170,10 @@ class fs_controller
                $this->new_error_msg('Contraseña incorrecta!');
          }
          else
+         {
             $this->new_error_msg('El usuario no existe!');
+            $this->user->clean_cache();
+         }
       }
       else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -193,6 +196,7 @@ class fs_controller
          {
             $this->new_message('¡El usuario no existe!');
             $this->log_out();
+            $this->user->clean_cache();
          }
       }
       return $this->user->logged_on;
@@ -268,7 +272,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.11';
+      return '0.9.12';
    }
    
    public function select_default_page()

@@ -27,7 +27,7 @@
    function linea_sum_ud(num,value)
    {
       var paqid = $("#paquete_"+num).val();
-      var udl = parseFloat( $("#cantidad_"+num).val() );
+      var udl = parseInt( $("#cantidad_"+num).val() );
       udl += value;
       if(udl < 1)
       {
@@ -135,6 +135,14 @@
          add_articulo(ref2,0,0,paqid,'');
       }
    }
+   function more_tickets(value)
+   {
+      var num = parseInt($("#num_tickets").val()) + parseInt(value);
+      if(num < 0)
+         $("#num_tickets").val(0);
+      else
+         $("#num_tickets").val(num);
+   }
    $(document).ready(function() {
       $("div.popup label").hover(function(event) {
          $('#' + $(this).attr('for')).attr('checked', 'checked');
@@ -176,12 +184,8 @@
    <tr>
       <td valign="top" width="180">
          <ul class="tpv_familias">
-            {if condition="$fsc->paquetes"}
-            <li id="paquetes">PAQUETES</li>
-            {/if}
-            {loop="$fsc->familias"}
-            <li id="fam_{$value->codfamilia}">{$value->descripcion}</li>
-            {/loop}
+         {if condition="$fsc->paquetes"}<li id="paquetes">PAQUETES</li>{/if}
+         {loop="$fsc->familias"}<li id="fam_{$value->codfamilia}">{$value->descripcion}</li>{/loop}
          </ul>
       </td>
       <td valign="top">
@@ -270,17 +274,7 @@
                </tr>
                <tr>
                   <td align="right">Impresora: </td>
-                  <td><input type="text" name="impresora" value="{$fsc->impresora}" size="4"/></td>
-               </tr>
-               <tr>
-                  <td align="right">Mostrar imágenes:</td>
-                  <td>
-                     {if condition="$fsc->desactivar_imagenes"}
-                        <a href="{$fsc->url()}&desactivar_imagenes=FALSE">activar</a>.
-                     {else}
-                        <a href="{$fsc->url()}&desactivar_imagenes=TRUE">desactivar</a>.
-                     {/if}
-                  </td>
+                  <td><input type="text" name="impresora" value="{$fsc->impresora}" size="12"/></td>
                </tr>
             </table>
          </div>
@@ -300,7 +294,9 @@
             </table>
             <table width="100%">
                <tr>
-                  <td align="right"><input type="button" value="guardar ticket" id="b_guardar_ticket"/></td>
+                  <td align="right">
+                     <input type="button" value="guardar ticket" id="b_guardar_ticket"/>
+                  </td>
                </tr>
             </table>
          </div>
@@ -326,6 +322,14 @@
          <td><textarea name="observaciones"></textarea></td>
       </tr>
       <tr>
+         <td align="right">Nº de tickets:</td>
+         <td>
+            <input type="button" value=" - " onclick="more_tickets('-1')"/>
+            <input type="text" id="num_tickets" name="num_tickets" value="2" size="2"/>
+            <input type="button" value=" + " onclick="more_tickets('1')"/>
+         </td>
+      </tr>
+      <tr>
          <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
          <td align="right"><input type="submit" class="comfirm" value="finalizar"/></td>
       </tr>
@@ -339,14 +343,10 @@
    {loop="$fsc->paquetes"}
       <li onclick="mostrar_paquete('{$value->referencia}')">
          {$value->articulo->referencia}
-         {if condition="$fsc->desactivar_imagenes"}
-            {$value->articulo->descripcion}<br/>
-         {else}
-            {if condition="$value->articulo->imagen_url()"}
+         {if condition="$value->articulo->imagen_url()"}
             <br/><img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
-            {else}
+         {else}
             <br/><img src="img/unknown.png" alt="{$value->referencia}"/><br/>
-            {/if}
          {/if}
          {$value->articulo->show_pvp_iva()} €
       </li>
@@ -392,14 +392,10 @@
       {if condition="$value2->codfamilia==$value1->codfamilia"}
       <li onclick="add_articulo('{$value2->referencia}','{$value2->pvp}','{$value2->get_iva()}','','{$value2->descripcion}')">
          {$value2->referencia}
-         {if condition="$fsc->desactivar_imagenes"}
-            {$value2->descripcion}<br/>
-         {else}
-            {if condition="$value2->imagen_url()"}
+         {if condition="$value2->imagen_url()"}
             <br/><img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
-            {else}
+         {else}
             <br/><img src="img/unknown.png" alt="{$value2->referencia}"/><br/>
-            {/if}
          {/if}
          {$value2->show_pvp_iva()} €
       </li>

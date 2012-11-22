@@ -50,6 +50,7 @@ class general_articulo extends fs_controller
          if($this->articulo)
          {
             $continuar = TRUE;
+            $this->articulo->codimpuesto = $_POST['codimpuesto'];
             $this->articulo->set_pvp_iva( $_POST['pvpiva'] );
             if( !$this->articulo->save() )
             {
@@ -84,7 +85,7 @@ class general_articulo extends fs_controller
                   break;
             }
             if( $continuar )
-               $this->new_message("Tarifas modificadas correctamente.");
+               $this->new_message("Precios modificadas correctamente.");
          }
       }
       else if( isset($_POST['almacen']) )
@@ -125,8 +126,6 @@ class general_articulo extends fs_controller
          $this->articulo->controlstock = isset($_POST['controlstock']);
          $this->articulo->secompra = isset($_POST['secompra']);
          $this->articulo->sevende = isset($_POST['sevende']);
-         $this->articulo->set_pvp($_POST['pvp']);
-         $this->articulo->codimpuesto = $_POST['codimpuesto'];
          $this->articulo->observaciones = $_POST['observaciones'];
          $this->articulo->stockmin = $_POST['stockmin'];
          $this->articulo->stockmax = $_POST['stockmax'];
@@ -176,8 +175,9 @@ class general_articulo extends fs_controller
          $this->new_error_msg("Artículo no encontrado.");
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
    
    public function url()

@@ -234,7 +234,15 @@ class tarifa_articulo extends fs_model
    
    public function show_descuento()
    {
-      return number_format($this->descuento, 2, '.', ' ');
+      return number_format($this->descuento, 2, '.', '');
+   }
+   
+   public function show_pvp($coma=TRUE)
+   {
+      if( $coma )
+         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', ' ');
+      else
+         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', '');
    }
    
    public function show_pvp_iva($coma=TRUE)

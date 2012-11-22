@@ -149,6 +149,15 @@ class partida extends fs_model
          return '#';
    }
    
+   public function get($id)
+   {
+      $partida = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpartida = ".$id.";");
+      if( $partida )
+         return new partida($partida[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idpartida) )
@@ -290,6 +299,18 @@ class partida extends fs_model
       $totales['saldo'] = $totales['debe'] - $totales['haber'];
       
       return $totales;
+   }
+   
+   public function erroneas()
+   {
+      $errolist = array();
+      $partidas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE lower(codsubcuenta) ~~ '%factura%';");
+      if( $partidas )
+      {
+         foreach($partidas as $p)
+            $errolist[] = new partida($p['idpartida']);
+      }
+      return $errolist;
    }
 }
 

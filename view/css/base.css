@@ -18,6 +18,17 @@ a {
    color: #2F33AB;
 }
 
+a.hidden_black {
+   display: block;
+   background-color: #333333;
+   color: #333333;
+}
+
+a.hidden_black:hover {
+   background-color: transparent;
+   color: #2F33AB;
+}
+
 div.advice, div.message, div.error {
    margin: 10px;
    padding: 10px;
@@ -69,6 +80,8 @@ div#header_folders a.selected {
    text-decoration: underline;
 }
 
+
+
 div#header_logo {
    text-align: center;
 }
@@ -79,15 +92,18 @@ div#header_user {
 
 div#header_folders a, div#header_user a.button {
    display: inline-block;
-   margin-left: 5px;
-   margin-right: 5px;
-   padding: 5px;
+   margin-left: 3px;
+   margin-right: 3px;
+   padding-top: 5px;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-bottom: 3px;
    background-color: #333333;
-   border: 1px solid #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border: 1px solid #999999;
+   border-top-left-radius: 3px 3px;
+   border-top-right-radius: 3px 3px;
+   border-bottom-left-radius: 3px 3px;
+   border-bottom-right-radius: 3px 3px;
    color: white;
    text-transform: capitalize;
    text-decoration: none;
@@ -100,7 +116,7 @@ a#fs_exit {
    margin-left: 15px;
    padding: 2px;
    background-color: #333333;
-   border: 1px solid #333333;
+   border: 1px solid #999999;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
@@ -110,6 +126,11 @@ a#fs_exit {
 
 a#fs_exit img {
    vertical-align: bottom;
+}
+
+div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
+   background-color: #252525;
+   border-color: #aaaaaa;
 }
 
 div#header_buttons {
@@ -137,9 +158,10 @@ div#header_buttons a.button, div#header_buttons a.remove {
    display: inline-block;
    margin-left: 5px;
    margin-right: 5px;
-   padding: 2px;
+   padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
+   padding-bottom: 1px;
    background-color: #3768B8;
    border: 1px solid #333333;
    border-top-left-radius: 2px 2px;
@@ -312,7 +334,8 @@ div.main_div div.rounded h1 {
 
 div.main_div div.rounded h1 span {
    float: right;
-   font-size: 15px;
+   clear: both;
+   font-size: 14px;
    font-weight: normal;
 }
 
@@ -354,15 +377,17 @@ div.main_div ul.horizontal li {
 div.main_div a.next {
    display: inline-block;
    margin-top: 10px;
-   padding: 2px;
+   padding-top: 3px;
    padding-left: 5px;
    padding-right: 5px;
-   background-color: #333333;
+   padding-bottom: 1px;
+   background-color: #bbbbbb;
+   border: 1px solid #424242;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
    border-bottom-left-radius: 2px 2px;
    border-bottom-right-radius: 2px 2px;
-   color: white;
+   color: black;
    font-size: 16px;
    text-transform: capitalize;
    text-decoration: none;
@@ -432,9 +457,10 @@ div.footer img {
 div.main_div a.remove, input[type='submit'], input[type='button'] {
    display: inline-block;
    vertical-align: middle;
-   padding: 1px;
+   padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
+   padding-bottom: 1px;
    border: 1px solid #333333;
    border-top-left-radius: 2px 2px;
    border-top-right-radius: 2px 2px;
@@ -465,11 +491,7 @@ input[type='text'], input[type='password'], input[type='checkbox'], select {
    vertical-align: middle;
 }
 
-input.full {
-   width: 100%;
-}
-
-textarea {
+input.full, textarea {
    display: block;
    width: 100%;
    box-sizing: border-box;

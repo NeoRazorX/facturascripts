@@ -10,11 +10,11 @@
    {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda '{$fsc->query}':</h1>{/if}
    <table class="list">
       <tr>
-         <th>Ejercicio</th>
-         <th>Número</th>
-         <th>Concepto</th>
-         <th>Importe</th>
-         <th>Fecha</th>
+         <th align="left">Ejercicio</th>
+         <th align="left">Número</th>
+         <th align="left">Concepto</th>
+         <th align="right">Importe</th>
+         <th align="right">Fecha</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>

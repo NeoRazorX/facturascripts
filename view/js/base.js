@@ -183,7 +183,7 @@ function fs_select_folder(folder)
          display: 'inline-block',
          position: 'fixed',
          left: $("#b_folder_"+folder).position().left+5,
-         top: $("#b_folder_"+folder).position().top+32
+         top: $("#b_folder_"+folder).position().top+28
       });
       $('#folder_'+folder).show();
    }
@@ -233,7 +233,7 @@ $(document).ready(function() {
             display: 'inline-block',
             position: 'fixed',
             left: $("#b_user_list").position().left,
-            top: $("#b_user_list").position().top+32
+            top: $("#b_user_list").position().top+28
          });
          $('#user_list').show();
       }

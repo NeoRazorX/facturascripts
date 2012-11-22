@@ -14,8 +14,8 @@
 {if condition="$fsc->results"}
 <table class="list">
    <tr>
-      <th>Referencia + Descripción</th>
-      <th>Cod. equivalencia</th>
+      <th align="left">Referencia + Descripción</th>
+      <th align="left">Cod. equivalencia</th>
       <th align="right">PVP</th>
       <th align="right">PVP+IVA</th>
       <th align="right">Stock</th>
@@ -23,8 +23,7 @@
    {loop="$fsc->results"}
    <tr>
       {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
-         <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
-            {$value->referencia}</a> {$value->descripcion}
+         <a href="#new_line" onclick="get_precios('{$value->referencia}')">{$value->referencia}</a> {$value->descripcion}
       </td>
       <td>{$value->equivalencia}</td>
       <td align="right">

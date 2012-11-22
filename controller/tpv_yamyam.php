@@ -41,7 +41,6 @@ class tpv_yamyam extends fs_controller
    private $cache;
    public $caja;
    public $cliente;
-   public $desactivar_imagenes;
    public $divisa;
    public $ejercicio;
    public $familia;
@@ -67,7 +66,6 @@ class tpv_yamyam extends fs_controller
       $this->cache = new fs_cache();
       $this->caja = new caja();
       $this->cliente = new cliente();
-      $this->desactivar_imagenes = FALSE;
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
@@ -83,23 +81,6 @@ class tpv_yamyam extends fs_controller
       }
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
-      
-      /// gestionamos la desactivación de las imágenes
-      if( isset($_GET['desactivar_imagenes']) )
-      {
-         if($_GET['desactivar_imagenes'] == 'TRUE')
-         {
-            $this->desactivar_imagenes = TRUE;
-            setcookie('desactivar_imagenes', 'TRUE', time()+FS_COOKIES_EXPIRE);
-         }
-         else if($_GET['desactivar_imagenes'] == 'FALSE')
-         {
-            $this->desactivar_imagenes = FALSE;
-            setcookie('desactivar_imagenes', '', time()-FS_COOKIES_EXPIRE);
-         }
-      }
-      else if( isset($_COOKIE['desactivar_imagenes']) )
-         $this->desactivar_imagenes = TRUE;
       
       if($this->agente)
       {
@@ -332,7 +313,9 @@ class tpv_yamyam extends fs_controller
                if( $this->albaran->save() )
                {
                   $this->new_message("<a href='".$this->albaran->url()."'>Albarán</a> guardado correctamente.");
-                  $this->imprimir_ticket();
+                  
+                  if( isset($_POST['num_tickets']) )
+                     $this->imprimir_ticket( floatval($_POST['num_tickets']) );
                   
                   /// actualizamos la caja
                   $this->caja->dinero_fin += $this->albaran->totaleuros;
@@ -441,7 +424,7 @@ class tpv_yamyam extends fs_controller
          $this->new_error_msg("¡Imposible cerrar la caja!");
    }
 
-   private function imprimir_ticket()
+   private function imprimir_ticket($num_tickets=2)
    {
       /// abrimos el archivo temporal
       $file = fopen("/tmp/ticket.txt", "w");
@@ -501,8 +484,12 @@ class tpv_yamyam extends fs_controller
          else
             $imp = "";
          
-         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+         while($num_tickets > 0)
+         {
+            shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+            $num_tickets--;
+         }
+         
          shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
          unlink("/tmp/ticket.txt"); /// borra el ticket
       }

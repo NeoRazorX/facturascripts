@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+date_default_timezone_set('Europe/Madrid');
+
 require_once 'config.php';
 require_once 'base/fs_controller.php';
 require_once 'raintpl/rain.tpl.class.php';

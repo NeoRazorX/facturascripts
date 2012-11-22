@@ -28,6 +28,8 @@ class admin_info extends fs_controller
    
    protected function process()
    {
+      $this->buttons[] = new fs_button('b_errores', 'errores', 'index.php?page=admin_errores',
+              '', 'img/zoom.png', '[]', TRUE);
       $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',
               $this->url()."&clean_cache=TRUE", 'remove', 'img/remove.png', '-');
       
@@ -72,8 +74,9 @@ class admin_info extends fs_controller
       return system('free -m');
    }
    
-   public function version() {
-      return parent::version().'-1';
+   public function version()
+   {
+      return parent::version().'-2';
    }
    
    public function fs_version()

@@ -2,6 +2,85 @@
 
 {if condition="$fsc->articulo"}
 <script type="text/javascript">
+   function recalcular()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      var dto = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#dto_"+i) )
+         {
+            dto = parseFloat( $("#dto_"+i).val() );
+            if( isNaN(dto) )
+               dto = 0;
+            
+            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
+            $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+         }
+      }
+   }
+   function cambiar_pvp()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      $("#pvpi").val( pvp * (100 + iva)/100 );
+      recalcular();
+   }
+   function cambiar_pvpi()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvpi = parseFloat( $("#pvpi").val() );
+      $("#pvp").val( (100 * pvpi) / (100 + iva) );
+      recalcular();
+   }
+   function ajustar_dto()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var dto = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#dto_"+i) )
+         {
+            dto = parseFloat( $("#dto_"+i).val() );
+            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
+            $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+         }
+      }
+   }
+   function ajustar_pvp()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var npvp = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#pvp_"+i) )
+         {
+            npvp = parseFloat( $("#pvp_"+i).val() );
+            $("#dto_"+i).val( 100 - (100*npvp)/pvp );
+            $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
+         }
+      }
+   }
+   function ajustar_pvpi()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var npvp = 0;
+      var npvpi = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#pvp_"+i) )
+         {
+            npvpi = parseFloat( $("#pvpi_"+i).val() );
+            npvp = (100*npvpi)/(100+iva);
+            $("#pvp_"+i).val( npvp );
+            $("#dto_"+i).val( 100 - (100*npvp)/pvp );
+         }
+      }
+   }
    function sum_stock(id, value)
    {
       var uds = parseFloat($("#stock_cantidad_"+id).val()) + value;
@@ -76,20 +155,6 @@
          </div>
          <div>
             <div class="bloque">
-               IVA:
-               <select name="codimpuesto">
-               {loop="$fsc->impuesto->all()"}
-                  {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
-                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                  {/if}
-               {/loop}
-               </select>
-            </div>
-         <div class="bloque">PVP: <input type="text" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off"/></div>
-            <div class="bloque">Actualizado: {$fsc->articulo->factualizado}</div>
-            <div class="bloque">
                {if condition="$fsc->articulo->secompra"}
                <input type="checkbox" name="secompra" value="TRUE" checked="checked" id="articulo_secompra"/>
                {else}
@@ -106,7 +171,11 @@
                <label for="articulo_sevende">Se vende</label>
             </div>
          </div>
-         <div>Observaciones:<br/><textarea name="observaciones" cols="60">{$fsc->articulo->observaciones}</textarea></div>
+         <div>
+            Observaciones:
+            <br/>
+            <textarea name="observaciones" cols="60" rows="3">{$fsc->articulo->observaciones}</textarea>
+         </div>
          <div>
             <div class="bloque">
                Stock:
@@ -185,91 +254,138 @@
       <div class="rounded">
          <form action="{$fsc->url()}" method="post">
             <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+            <h1>
+               Precios:
+               <span><input type="submit" value="modificar"/></span>
+            </h1>
             <table class="list">
                <tr>
-                  <th>Tarifa</th>
+                  <th align="left">IVA</th>
+                  <th align="right">Última actualización de precio</th>
+               </tr>
+               <tr>
+                  <td>
+                     <select name="codimpuesto">
+                     {loop="$fsc->impuesto->all()"}
+                        {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
+                        <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </td>
+                  <td align="right">{$fsc->articulo->factualizado}</td>
+               </tr>
+            </table>
+            <br/>
+            <table class="list">
+               <tr>
+                  <th align="left">Tarifa</th>
                   <th>Descuento</th>
+                  <th>PVP</th>
                   <th>PVP+IVA</th>
                </tr>
                <tr>
                   <td>General</td>
                   <td align="center">0.00 %</td>
+                  <td align="right">
+                     <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
+                     <input type="text" class="full" id="pvp" name="pvp" value="{$fsc->articulo->show_pvp(FALSE)}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+                  </td>
                   <td align="center">
-                     <input type="text" name="pvpiva" value="{$fsc->articulo->show_pvp_iva(FALSE)}" size="5" autocomplete="off"/>
+                     <input type="text" class="full" id="pvpi" name="pvpiva" value="{$fsc->articulo->show_pvp_iva(FALSE)}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
                   </td>
                </tr>
                {loop="$fsc->articulo->get_tarifas(TRUE)"}
                <tr>
                   <td>{$value->nombre}</td>
-                  <td align="center">{$value->show_descuento()} %</td>
                   <td align="center">
                      <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                      <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
-                     <input type="text" name="pvpiva_{$counter}" value="{$value->show_pvp_iva(FALSE)}" size="5" autocomplete="off"/>
+                     <input type="text" class="full" id="dto_{$counter}" name="dto_{$counter}" value="{$value->show_descuento()}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+                  </td>
+                  <td align="right">
+                     <input type="text" class="full" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->show_pvp(FALSE)}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+                  </td>
+                  <td align="center">
+                     <input type="text" class="full" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->show_pvp_iva(FALSE)}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
                   </td>
                </tr>
                {/loop}
-               <tr><td colspan="3" align="right"><input type="submit" value="modificar"/></td></tr>
             </table>
          </form>
       </div>
-      {if condition="$fsc->ultimas_ventas"}
+      
       <div class="rounded">
          <h1>Últimas ventas:</h1>
+         {if condition="$fsc->ultimas_ventas"}
          <table class="list">
             <tr>
-               <th>Fecha</th>
+               <th align="left">Fecha</th>
                <th>Albarán</th>
-               <th>PVP+IVA</th>
+               <th align="right">PVP+IVA</th>
+               <th align="right">dto.</th>
             </tr>
             {loop="$fsc->ultimas_ventas"}
             <tr>
                <td>{$value->show_fecha()}</td>
-               <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
-               <td align="right">{$value->show_pvp_iva()} &euro;</td>
+               <td align="center"><a href="{$value->url()}">{$value->show_codigo()}</a></td>
+               <td align="right">{$value->show_pvp_iva()} €</td>
+               <td align="right"><a class="hidden_black">{$value->dtopor} %</a></td>
             </tr>
             {/loop}
          </table>
+         {else}
+            Nunca se ha vendido este artículo.
+         {/if}
       </div>
-      {/if}
-      {if condition="$fsc->ultimas_compras"}
+      
       <div class="rounded">
          <h1>Últimas compras:</h1>
+         {if condition="$fsc->ultimas_compras"}
          <table class="list">
             <tr>
-               <th>Fecha</th>
+               <th align="left">Fecha</th>
                <th>Albarán</th>
-               <th>PVP+IVA</th>
+               <th align="right">PVP+IVA</th>
+               <th align="right">dto.</th>
             </tr>
             {loop="$fsc->ultimas_compras"}
             <tr>
                <td>{$value->show_fecha()}</td>
-               <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
-               <td align="right">{$value->show_pvp_iva()} &euro;</td>
+               <td align="center"><a href="{$value->url()}">{$value->show_codigo()}</a></td>
+               <td align="right">{$value->show_pvp_iva()} €</td>
+               <td align="right"><a class="hidden_black">{$value->dtopor} %</a></td>
             </tr>
             {/loop}
          </table>
+         {else}
+            Nunca se ha comprado este artículo.
+         {/if}
       </div>
-      {/if}
-      {if condition="$fsc->equivalentes"}
+      
       <div class="rounded">
          <h1>Artículos equivalentes:</h1>
+         {if condition="$fsc->equivalentes"}
          <table class="list">
             <tr>
-               <th>artículo</th>
-               <th>PVP+IVA</th>
-               <th>stock</th>
+               <th align="left">artículo</th>
+               <th align="right">PVP+IVA</th>
+               <th align="right">stock</th>
             </tr>
             {loop="$fsc->equivalentes"}
             <tr>
                <td><a href="{$value->url()}">{$value->referencia}</a></td>
-               <td align="right">{$value->show_pvp_iva()} &euro;</td>
+               <td align="right">{$value->show_pvp_iva()} €</td>
                <td align="right">{$value->stockfis}</td>
             </tr>
             {/loop}
          </table>
+         {else}
+            No hay artículos equivalentes.
+         {/if}
       </div>
-      {/if}
    </td>
 </tr>
 </table>

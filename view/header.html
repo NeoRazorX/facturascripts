@@ -48,6 +48,9 @@
       <div class="header_box">
          <div id="header_buttons">
             <div id="header_location">
+               {if condition="$fsc->is_admin_page()"}
+               <img src="img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
+               {/if}
                <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
                {if condition="$fsc->page->show_on_menu"}
                   {if condition="$fsc->default_page"}
@@ -59,9 +62,6 @@
                {$fsc->page->folder} »
                {if condition="$fsc->ppage"}<a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »{/if}
                {$fsc->page->title}
-               {if condition="$fsc->is_admin_page()"}
-               <img src="img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
-               {/if}
             </div>
             {loop="$fsc->buttons"}{$value->HTML()}{/loop}
          </div>

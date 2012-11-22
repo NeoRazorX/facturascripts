@@ -38,11 +38,15 @@ class tpv_recambios extends fs_controller
    public $cliente;
    public $divisa;
    public $ejercicio;
+   public $equivalentes;
    public $familia;
    public $forma_pago;
    public $impresora;
    public $results;
    public $serie;
+   public $tarifas;
+   public $ultimas_compras;
+   public $ultimas_ventas;
    
    public function __construct()
    {
@@ -57,6 +61,8 @@ class tpv_recambios extends fs_controller
       
       if( $this->query != '' )
          $this->new_search();
+      else if( isset($_POST['referencia4precios']) )
+         $this->get_precios_articulo();
       else
       {
          $this->agente = $this->user->get_agente();
@@ -130,7 +136,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    private function new_search()
@@ -144,6 +150,24 @@ class tpv_recambios extends fs_controller
          $codfamilia = '';
       $con_stock = isset($_POST['con_stock']);
       $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
+   }
+   
+   private function get_precios_articulo()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/tpv_recambios_precios';
+      
+      if( isset($_POST['referencia4precios']) )
+      {
+         $this->articulo = $this->articulo->get($_POST['referencia4precios']);
+         if( $this->articulo )
+         {
+            $this->tarifas = $this->articulo->get_tarifas();
+            $this->equivalentes = $this->articulo->get_equivalentes();
+            $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 6);
+            $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 6);
+         }
+      }
    }
    
    private function nuevo_albaran_cliente()
@@ -276,7 +300,9 @@ class tpv_recambios extends fs_controller
                if( $albaran->save() )
                {
                   $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
-                  $this->imprimir_ticket( $albaran );
+                  
+                  if( isset($_POST['num_tickets']) )
+                     $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
                   
                   /// actualizamos la caja
                   $this->caja->dinero_fin += $albaran->totaleuros;
@@ -385,7 +411,7 @@ class tpv_recambios extends fs_controller
          $this->new_error_msg("Ticket no encontrado.");
    }
 
-   private function imprimir_ticket($albaran)
+   private function imprimir_ticket($albaran, $num_tickets=1)
    {
       /// abrimos el archivo temporal
       $file = fopen("/tmp/ticket.txt", "w");
@@ -445,8 +471,12 @@ class tpv_recambios extends fs_controller
          else
             $imp = "";
          
-         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-         shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+         while($num_tickets > 0)
+         {
+            shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
+            $num_tickets--;
+         }
+         
          shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
          unlink("/tmp/ticket.txt"); /// borra el ticket
       }

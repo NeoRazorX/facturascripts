@@ -1,0 +1,25 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Errores en las partidas:</h1>
+   <table class="list">
+      <tr>
+         <th align="left">Asiento</th>
+         <th>Concepto</th>
+         <th>Subcuenta</th>
+      </tr>
+      {loop="$fsc->partida->erroneas()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->idasiento}</a></td>
+         <td>{$value->concepto}</td>
+         <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3">Ningún error detectado.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}
