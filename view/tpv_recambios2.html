@@ -112,6 +112,10 @@
          if(document.f_search_recambios.query.value == '')
          {
             $("#search_results").html('');
+            $("#popup_new_line").css({
+               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+               top: 40
+            });
          }
          else
          {
@@ -126,6 +130,10 @@
                   if( m[1] == document.f_search_recambios.query.value )
                   {
                      $("#search_results").html(datos);
+                     $("#popup_new_line").css({
+                        left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+                        top: 40
+                     });
                   }
                }
             });
@@ -167,7 +175,7 @@
       });
    </script>
    
-   <div class="popup" id="popup_new_line" style="min-width: 75%">
+   <div class="popup" id="popup_new_line" style="min-width: 80%">
       <form id="f_search_recambios" name="f_search_recambios" action="{$fsc->url()}" method="post">
          <h1>Buscar artículos</h1>
          <div style="text-align: center;">

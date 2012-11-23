@@ -153,9 +153,10 @@ class fs_controller
       if( isset($_POST['user']) AND isset($_POST['password']) )
       {
          $user = $this->user->get($_POST['user']);
+         $password = strtolower($_POST['password']);
          if($user)
          {
-            if($user->password == sha1($_POST['password']) OR (FS_DEMO AND $_POST['password'] == 'demo'))
+            if($user->password == sha1($password) OR (FS_DEMO AND $password == 'demo') )
             {
                $user->new_logkey();
                if( $user->save() )

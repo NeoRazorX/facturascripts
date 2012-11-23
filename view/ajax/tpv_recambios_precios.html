@@ -70,6 +70,7 @@
             <table class="list">
                <tr>
                   <th align="left">artículo</th>
+                  <th align="right">PVP</th>
                   <th align="right">PVP+IVA</th>
                   <th align="right">stock</th>
                </tr>
@@ -80,6 +81,7 @@
                         {$value->referencia}
                      </a>
                   </td>
+                  <td align="right">{$value->show_pvp()} €</td>
                   <td align="right">
                      <a href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvp}','0','{$fsc->articulo->get_iva()}')">
                         {$value->show_pvp_iva()} €
@@ -104,6 +106,7 @@
                <tr>
                   <th align="left">Fecha</th>
                   <th>Albarán</th>
+                  <th align="right">PVP</th>
                   <th align="right">PVP+IVA</th>
                   <th align="right">dto.</th>
                </tr>
@@ -111,6 +114,7 @@
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+                  <td align="right">{$value->show_pvp()} €</td>
                   <td align="right">{$value->show_pvp_iva()} €</td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
@@ -133,6 +137,7 @@
                <tr>
                   <th align="left">Fecha</th>
                   <th>Albarán</th>
+                  <th align="right">PVP</th>
                   <th align="right">PVP+IVA</th>
                   <th align="right">dto.</th>
                </tr>
@@ -140,6 +145,7 @@
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+                  <td align="right">{$value->show_pvp()} €</td>
                   <td align="right">{$value->show_pvp_iva()} €</td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
