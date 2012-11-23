@@ -114,8 +114,16 @@
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
-                  <td align="right">{$value->show_pvp()} €</td>
-                  <td align="right">{$value->show_pvp_iva()} €</td>
+                  <td align="right">
+                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                        {$value->show_pvp()} €
+                     </a>
+                  </td>
+                  <td align="right">
+                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                        {$value->show_pvp_iva()} €
+                     </a>
+                  </td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->dtopor} %
@@ -145,8 +153,16 @@
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
-                  <td align="right">{$value->show_pvp()} €</td>
-                  <td align="right">{$value->show_pvp_iva()} €</td>
+                  <td align="right">
+                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                        {$value->show_pvp()} €
+                     </a>
+                  </td>
+                  <td align="right">
+                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                        {$value->show_pvp_iva()} €
+                     </a>
+                  </td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->dtopor} %
