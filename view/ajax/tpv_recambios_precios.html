@@ -37,6 +37,7 @@
                   <th align="right">dto.</th>
                   <th align="right">PVP</th>
                   <th align="right">PVP+IVA</th>
+                  <th></th>
                </tr>
                <tr>
                   <td>General</td>
@@ -45,6 +46,11 @@
                   <td align="right">
                      <a href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','0','{$fsc->articulo->get_iva()}')">
                         {$fsc->articulo->show_pvp_iva()} €
+                     </a>
+                  </td>
+                  <td align="right">
+                     <a href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','0','{$fsc->articulo->get_iva()}')">
+                        <img src="../img/carrito.png" alt="carrito" title="seleccionar"/>
                      </a>
                   </td>
                </tr>
@@ -56,6 +62,11 @@
                   <td align="right">
                      <a href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','{$value->descuento}','{$fsc->articulo->get_iva()}')">
                         {$value->show_pvp_iva()} €
+                     </a>
+                  </td>
+                  <td align="right">
+                     <a href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','{$value->descuento}','{$fsc->articulo->get_iva()}')">
+                        <img src="../img/carrito.png" alt="carrito" title="seleccionar"/>
                      </a>
                   </td>
                </tr>

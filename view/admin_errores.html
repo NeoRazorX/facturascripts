@@ -1,6 +1,32 @@
 {include="header"}
 
 <div class="rounded">
+   <h1>Errores en los asientos:</h1>
+   <table class="list">
+      <tr>
+         <th align="left">Ejercicio</th>
+         <th align="left">Número</th>
+         <th align="left">Concepto</th>
+         <th align="right">Importe</th>
+         <th align="right">Fecha</th>
+      </tr>
+      {loop="$fsc->asiento->descuadrados()"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td><a href="{$value->url()}">{$value->numero}</a></td>
+         <td><a href="{$value->url()}">{$value->concepto}</a></td>
+         <td align="right">{$value->show_importe()} €</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="5">No hay asientos descuadrados.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<div class="rounded">
    <h1>Errores en las partidas:</h1>
    <table class="list">
       <tr>

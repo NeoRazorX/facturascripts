@@ -18,9 +18,12 @@
  */
 
 require_once 'base/fs_cache.php';
+require_once 'model/articulo.php';
 
 class admin_info extends fs_controller
 {
+   public $articulo;
+   
    public function __construct()
    {
       parent::__construct('admin_info', 'Información del sistema', 'admin', TRUE, TRUE);
@@ -28,6 +31,8 @@ class admin_info extends fs_controller
    
    protected function process()
    {
+      $this->articulo = new articulo();
+      
       $this->buttons[] = new fs_button('b_errores', 'errores', 'index.php?page=admin_errores',
               '', 'img/zoom.png', '[]', TRUE);
       $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',

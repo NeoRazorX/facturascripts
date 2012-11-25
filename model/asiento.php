@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/ejercicio.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/partida.php';
@@ -363,46 +364,49 @@ class asiento extends fs_model
    /// renumera todos los asientos. Devuelve FALSE en caso de error
    public function renumerar()
    {
-      $posicion = 0;
-      $numero = 1;
-      $codejercicio = FALSE;
-      $sql = '';
-      $continuar = TRUE;
-      $consulta = "SELECT idasiento,codejercicio,numero,fecha FROM co_asientos
-         ORDER BY codejercicio ASC, fecha ASC, idasiento ASC";
-      
-      $asientos = $this->db->select_limit($consulta, 1000, $posicion);
-      while($asientos AND $continuar)
+      $ejercicio = new ejercicio();
+      foreach($ejercicio->all_abiertos() as $eje)
       {
-         foreach($asientos as $col)
-         {
-            /// reseteamos en cada ejercicio
-            if($col['codejercicio'] != $codejercicio)
-            {
-               $codejercicio = $col['codejercicio'];
-               $numero = 1;
-            }
-            
-            if($col['numero'] != $numero)
-               $sql .= "UPDATE co_asientos SET numero = '$numero' WHERE idasiento = '" . $col['idasiento'] . "'; ";
-            
-            $numero++;
-         }
-         $posicion += 1000;
-         
-         if($sql != '')
-         {
-            if( !$this->db->exec($sql) )
-            {
-               $this->new_error_msg("Se ha producido un error mientras se renumeraban los asientos del ejercicio ".$codejercicio);
-               $continuar = FALSE;
-            }
-         }
+         $posicion = 0;
+         $numero = 1;
+         $sql = '';
+         $continuar = TRUE;
+         $consulta = "SELECT idasiento,numero,fecha FROM co_asientos
+            WHERE codejercicio = '".$eje->codejercicio."'
+            ORDER BY codejercicio ASC, fecha ASC, idasiento ASC";
          
          $asientos = $this->db->select_limit($consulta, 1000, $posicion);
+         while($asientos AND $continuar)
+         {
+            foreach($asientos as $col)
+            {
+               if($col['numero'] != $numero)
+                  $sql .= "UPDATE co_asientos SET numero = '".$numero."' WHERE idasiento = '".$col['idasiento']."'; ";
+               
+               $numero++;
+            }
+            $posicion += 1000;
+            
+            if($sql != '')
+            {
+               if( !$this->db->exec($sql) )
+               {
+                  $this->new_error_msg("Se ha producido un error mientras se renumeraban los asientos del ejercicio ".$eje->codejercicio);
+                  $continuar = FALSE;
+               }
+               $sql = '';
+            }
+            
+            $asientos = $this->db->select_limit($consulta, 1000, $posicion);
+         }
       }
       
       return $continuar;
+   }
+   
+   public function cron_job()
+   {
+      $this->renumerar();
    }
 }
 

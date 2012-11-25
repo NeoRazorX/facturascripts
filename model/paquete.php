@@ -175,7 +175,7 @@ class paquete extends fs_model
       parent::__construct('paquetes');
       if($p)
       {
-         $this->referencia = $p['referencia'];
+         $this->set_articulo( $p['referencia'] );
          $subpaqs = $this->get_subpaquetes();
          $this->grupos = 1;
          foreach($subpaqs as $s)
@@ -184,8 +184,6 @@ class paquete extends fs_model
                $this->grupos = $s->grupo;
          }
          $this->subpaquetes = $subpaqs;
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($this->referencia);
       }
       else
       {
@@ -256,6 +254,13 @@ class paquete extends fs_model
    public function get_grupos()
    {
       return range(1, $this->grupos);
+   }
+   
+   public function set_articulo($ref)
+   {
+      $art = new articulo();
+      $this->articulo = $art->get($ref);
+      $this->referencia = $ref;
    }
    
    public function set_grupos($g)

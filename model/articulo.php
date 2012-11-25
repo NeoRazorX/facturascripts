@@ -345,6 +345,7 @@ class articulo extends fs_model
    private $has_imagen;
    
    private static $impuestos;
+   private static $search_tags;
    
    public function __construct($a=FALSE)
    {
@@ -411,6 +412,7 @@ class articulo extends fs_model
    {
       $fam = new familia();
       $imp = new impuesto();
+      $this->clean_cache();
       return '';
    }
    
@@ -785,6 +787,8 @@ class articulo extends fs_model
    {
       if( $this->test() )
       {
+         $this->clean_cache();
+         
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
@@ -817,9 +821,72 @@ class articulo extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
+      
+      /// eliminamos la imagen asociada
       if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
          unlink('tmp/articulos/'.$this->referencia.'.png');
+      
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
+   }
+   
+   private function new_search_tag($tag='')
+   {
+      $encontrado = FALSE;
+      
+      if( strlen($tag) > 0 )
+      {
+         /// obtenemos los datos de memcache
+         $this->get_search_tags();
+         
+         foreach(self::$search_tags as $i => $value)
+         {
+            if( $value['tag'] == $tag )
+            {
+               self::$search_tags[$i]['count']++;
+               $encontrado = TRUE;
+            }
+         }
+         if( !$encontrado )
+            self::$search_tags[] = array('tag' => $tag, 'count' => 1);
+         $this->cache->set('articulos_search_tags', self::$search_tags, 86400);
+      }
+      
+      return $encontrado;
+   }
+   
+   public function get_search_tags()
+   {
+      if( !isset(self::$search_tags) )
+         self::$search_tags = $this->cache->get_array('articulos_search_tags');
+      return self::$search_tags;
+   }
+   
+   public function cron_job()
+   {
+      /// obtenemos los datos de memcache
+      $this->get_search_tags();
+      
+      if( self::$search_tags )
+      {
+         foreach(self::$search_tags as $i => $value)
+            $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+      }
+   }
+   
+   private function clean_cache()
+   {
+      /// obtenemos los datos de memcache
+      $this->get_search_tags();
+      
+      if( self::$search_tags )
+      {
+         foreach(self::$search_tags as $i => $value)
+            $this->cache->delete('articulos_search_'.$value['tag']);
+      }
+      
+      /// eliminamos también la cache de tpv_yamyam
+      $this->cache->delete('tpv_yamyam_articulos');
    }
    
    public function search($query, $offset=0, $codfamilia='', $con_stock=FALSE)
@@ -827,42 +894,57 @@ class articulo extends fs_model
       $artilist = array();
       $query = $this->no_html( strtolower($query) );
       
-      if($codfamilia == '')
-         $sql = "SELECT * FROM ".$this->table_name." WHERE ";
-      else
-         $sql = "SELECT * FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($codfamilia)." AND ";
-      
-      if($con_stock)
-         $sql .= "stockfis > 0 AND ";
-      
-      if( is_numeric($query) )
+      if($offset == 0 AND $codfamilia == '' AND !$con_stock)
       {
-         $sql .= "(referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
-            OR codbarras = '".$query."')";
-      }
-      else
-      {
-         $buscar = str_replace(' ', '%', $query);
-         $sql .= "(lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
-            OR lower(descripcion) ~~ '%".$buscar."%')";
+         /// intentamos obtener los datos de memcache
+         if( $this->new_search_tag($query) )
+            $artilist = $this->cache->get_array('articulos_search_'.$query);
       }
       
-      $sql .= " ORDER BY referencia ASC";
-      
-      $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-      if($articulos)
+      if( count($artilist) == 0 )
       {
-         foreach($articulos as $a)
-            $artilist[] = new articulo($a);
+         if($codfamilia == '')
+            $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+         else
+            $sql = "SELECT * FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($codfamilia)." AND ";
+         
+         if($con_stock)
+            $sql .= "stockfis > 0 AND ";
+         
+         if( is_numeric($query) )
+         {
+            $sql .= "(referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
+               OR codbarras = '".$query."')";
+         }
+         else
+         {
+            $buscar = str_replace(' ', '%', $query);
+            $sql .= "(lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
+               OR lower(descripcion) ~~ '%".$buscar."%')";
+         }
+         
+         $sql .= " ORDER BY referencia ASC";
+         
+         $articulos = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+         if($articulos)
+         {
+            foreach($articulos as $a)
+               $artilist[] = new articulo($a);
+         }
       }
+      
       return $artilist;
    }
    
    public function multiplicar_precios($codfam, $m=1)
    {
       if(isset($codfam) AND $m != 1)
+      {
+         $this->clean_cache();
+         
          return $this->db->exec("UPDATE ".$this->table_name." SET pvp = (pvp*".floatval($m).")
             WHERE codfamilia = ".$this->var2str($codfam).";");
+      }
       else
          return TRUE;
    }
@@ -909,6 +991,8 @@ class articulo extends fs_model
    {
       if($mantener)
       {
+         $this->clean_cache();
+         
          $impuesto = new impuesto();
          $impuesto0 = $impuesto->get($cod0);
          $impuesto1 = $impuesto->get($cod1);

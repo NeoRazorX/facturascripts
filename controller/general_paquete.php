@@ -77,7 +77,7 @@ class general_paquete extends fs_controller
          else
          {
             $this->paquete = new paquete();
-            $this->paquete->referencia = $_POST['referenciapaq'];
+            $this->paquete->set_articulo($_POST['referenciapaq']);
             $this->paquete->set_grupos($_POST['grupos']);
             if( !$this->paquete->save() )
                $this->new_error_msg("¡Imposible guardar los datos del paquete!");

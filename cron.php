@@ -17,30 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
-require_once 'model/asiento.php';
-require_once 'model/partida.php';
+date_default_timezone_set('Europe/Madrid');
 
-class admin_errores extends fs_controller
+require_once 'config.php';
+require_once 'base/fs_db.php';
+require_once 'model/articulo.php';
+require_once 'model/asiento.php';
+
+$db = new fs_db();
+if( $db->connect() )
 {
-   public $asiento;
-   public $partida;
+   $articulo = new articulo();
+   echo "Ejecutando tareas para los artículos...\n";
+   $articulo->cron_job();
    
-   public function __construct()
-   {
-      parent::__construct('admin_errores', 'Errores en la base de datos', 'admin', TRUE, FALSE);
-   }
+   $asiento = new asiento();
+   echo "Ejecutando tareas para los asientos...\n";
+   $asiento->cron_job();
    
-   protected function process()
-   {
-      $this->asiento = new asiento();
-      $this->partida = new partida();
-   }
-   
-   public function version()
-   {
-      return parent::version().'-2';
-   }
+   $db->close();
 }
+else
+   echo "¡Imposible conectar a la base de datos!\n";
 
 ?>
