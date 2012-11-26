@@ -19,6 +19,7 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/albaran_proveedor.php';
+require_once 'model/factura_proveedor.php';
 require_once 'model/subcuenta.php';
 
 class subcuenta_proveedor extends fs_model
@@ -340,6 +341,12 @@ class proveedor extends fs_model
    {
       $alb = new albaran_proveedor();
       return $alb->all_from_proveedor($this->codproveedor, $offset);
+   }
+   
+   public function get_facturas($offset=0)
+   {
+      $fac = new factura_proveedor();
+      return $fac->all_from_proveedor($this->codproveedor, $offset);
    }
    
    public function get_subcuentas()

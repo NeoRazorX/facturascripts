@@ -80,8 +80,6 @@ div#header_folders a.selected {
    text-decoration: underline;
 }
 
-
-
 div#header_logo {
    text-align: center;
 }
@@ -420,6 +418,29 @@ div.main_div div.new_line a {
    font-size: 15px;
    text-align: center;
    text-decoration: none;
+}
+
+div.select {
+   display: inline-block;
+   padding: 2px;
+   background-color: #bbbbbb;
+   border: 1px inset #555555;
+}
+
+div.select a {
+   display: inline-block;
+   padding-top: 2px;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-bottom: 1px;
+   text-decoration: none;
+   color: black;
+   font-size: 14px;
+}
+
+div.select a.selected {
+   background-color: #3768B8;
+   color: white;
 }
 
 div.footer {

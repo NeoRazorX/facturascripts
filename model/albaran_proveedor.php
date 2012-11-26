@@ -727,7 +727,8 @@ class albaran_proveedor extends fs_model
    public function all_from_proveedor($codproveedor, $offset=0)
    {
       $alblist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."  WHERE codproveedor = ".$this->var2str($codproveedor)."
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codproveedor = ".$this->var2str($codproveedor)."
          ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {

@@ -308,7 +308,7 @@ class partida extends fs_model
       if( $partidas )
       {
          foreach($partidas as $p)
-            $errolist[] = new partida($p['idpartida']);
+            $errolist[] = new partida($p);
       }
       return $errolist;
    }

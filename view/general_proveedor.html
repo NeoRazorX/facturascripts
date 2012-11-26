@@ -45,12 +45,10 @@
       <div class="bloque">
          Web: <input type="text" name="web" value="{$fsc->proveedor->web}" size="50"/>
       </div>
-      <table>
-         <tr>
-            <td>Observaciones:</td>
-            <td><textarea name="observaciones" rows="2" cols="60">{$fsc->proveedor->observaciones}</textarea></td>
-         </tr>
-      </table>
+      <div>
+         Observaciones:
+         <textarea name="observaciones" rows="3" cols="60">{$fsc->proveedor->observaciones}</textarea>
+      </div>
       <div>
          <div class="bloque">
             <a href="{$fsc->serie->url()}">Serie</a>:
@@ -145,7 +143,7 @@
             </div>
             <div class="bloque">
                Descripción:
-               <input type="text" name="descripcion" value="{$value->descripcion}" size="30"/>
+               <input type="text" name="descripcion" value="{$value->descripcion}" size="60"/>
             </div>
          </form>
       </div>
@@ -192,7 +190,7 @@
          </div>
          <div class="bloque">
             Descripción:
-            <input type="text" name="descripcion" size="30"/>
+            <input type="text" name="descripcion" size="60"/>
          </div>
       </form>
    </div>
@@ -223,39 +221,79 @@
 </div>
 
 <div class="rounded">
-   <h1>Albaranes:</h1>
+   <div class="select">
+      {if condition="$fsc->listar=='albaranes'"}
+         <a href="{$fsc->url()}&listar=albaranes" class="selected">Albaranes</a>
+         <a href="{$fsc->url()}&listar=facturas">Facturas</a>
+      {else}
+         <a href="{$fsc->url()}&listar=albaranes">Albaranes</a>
+         <a href="{$fsc->url()}&listar=facturas" class="selected">Facturas</a>
+      {/if}
+   </div>
    <table class="list">
-      <tr>
-         <th></th>
-         <th>código</th>
-         <th>num. proveedor</th>
-         <th>observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
-      </tr>
-      {loop="$fsc->albaranes"}
-      <tr>
-         <td>{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
-         <td>{$value->numproveedor}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
-         <td align="right">{$value->fecha}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
-         </td>
-         <td colspan="3"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
-      </tr>
+      {if condition="$fsc->listar=='albaranes'"}
+         <tr>
+            <th></th>
+            <th>código</th>
+            <th>num. proveedor</th>
+            <th>observaciones</th>
+            <th align="right">total</th>
+            <th align="right">fecha</th>
+         </tr>
+         {loop="$fsc->listado"}
+         <tr>
+            <td>{if condition="!$value->ptefactura"}F{/if}</td>
+            <td><a href="{$value->url()}">{$value->codigo}</a></td>
+            <td>{$value->numproveedor}</td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$value->show_total()} €</td>
+            <td align="right">{$value->fecha}</td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="2">
+            {if condition="$fsc->anterior_url()!=''"}
+            <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+            {/if}
+            </td>
+            <td colspan="3"></td>
+            <td align="right">
+            {if condition="$fsc->siguiente_url()!=''"}
+            <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+            {/if}
+            </td>
+         </tr>
+      {else}
+         <tr>
+            <th align="left">código</th>
+            <th>num. proveedor</th>
+            <th align="left">Observaciones</th>
+            <th align="right">total</th>
+            <th align="right">fecha</th>
+         </tr>
+         {loop="$fsc->listado"}
+         <tr>
+            <td><a href="{$value->url()}">{$value->codigo}</a></td>
+            <td>{$value->numproveedor}</td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$value->show_total()} €</td>
+            <td align="right">{$value->fecha}</td>
+         </tr>
+         {/loop}
+         <tr>
+            <td>
+            {if condition="$fsc->anterior_url()!=''"}
+               <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+            {/if}
+            </td>
+            <td colspan="3"></td>
+            <td align="right">
+            {if condition="$fsc->siguiente_url()!=''"}
+               <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+            {/if}
+            </td>
+         </tr>
+      {/if}
    </table>
 </div>
 {/if}

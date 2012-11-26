@@ -948,6 +948,20 @@ class factura_proveedor extends fs_model
       return $faclist;
    }
    
+   public function all_from_proveedor($codproveedor, $offset=0)
+   {
+      $faclist = array();
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codproveedor = ".$this->var2str($codproveedor)."
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_proveedor($f);
+      }
+      return $faclist;
+   }
+   
    public function search($query, $offset=0)
    {
       $faclist = array();

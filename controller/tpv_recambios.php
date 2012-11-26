@@ -426,7 +426,7 @@ class tpv_recambios extends fs_controller
          $linea = "Agente: " . $albaran->codagente . "\n\n";
          fwrite($file, $linea);
          
-         $linea = sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "P.U.") . "\n";
+         $linea = sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n";
          fwrite($file, $linea);
          $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
             sprintf("%10s", "----------") . "\n";
@@ -435,19 +435,13 @@ class tpv_recambios extends fs_controller
          foreach($albaran->get_lineas() as $col)
          {
             $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-               sprintf("%10s", $col->show_pvp_iva()) . "\n";
+               sprintf("%10s", $col->show_total_iva()) . "\n";
             fwrite($file, $linea);
          }
          
          $linea = "----------------------------------------\n".
             $this->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
             "Total: " . $albaran->show_total() . " Eur.") . "\n\n";
-         if( isset($_POST['efectivo']) )
-            $linea .= $this->center_text("Efectivo..........: ".
-                    sprintf("%12s",number_format($_POST['efectivo'],2,',','.')." Eur."))."\n";
-         if( isset($_POST['cambio']) )
-            $linea .= $this->center_text("Cambio............: ".
-                    sprintf("%12s",number_format($_POST['cambio'],2,',','.')." Eur."))."\n";
          $linea .= "\n\n\n";
          fwrite($file, $linea);
          
@@ -484,21 +478,50 @@ class tpv_recambios extends fs_controller
    
    private function center_text($word='', $tot_width=40)
    {
-      if(strlen($word) >= $tot_width)
+      if( strlen($word) == $tot_width )
          return $word;
+      else if( strlen($word) < $tot_width )
+         return $this->center_text2($word, $tot_width);
       else
       {
-         $symbol = " ";
-         $middle = round($tot_width / 2);
-         $length_word = strlen($word);
-         $middle_word = round($length_word / 2);
-         $last_position = $middle + $middle_word;
-         $number_of_spaces = $middle - $middle_word;
-         $result = sprintf("%'{$symbol}{$last_position}s", $word);
-         for ($i = 0; $i < $number_of_spaces; $i++)
-            $result .= "$symbol";
+         $result = '';
+         $nword = '';
+         foreach( split(' ', $word) as $aux )
+         {
+            if($nword == '')
+               $nword = $aux;
+            else if( strlen($nword) + strlen($aux) + 1 <= $tot_width )
+               $nword = $nword.' '.$aux;
+            else
+            {
+               if($result != '')
+                  $result .= "\n";
+               $result .= $this->center_text2($nword, $tot_width);
+               $nword = $aux;
+            }
+         }
+         if($nword != '')
+         {
+            if($result != '')
+               $result .= "\n";
+            $result .= $this->center_text2($nword, $tot_width);
+         }
          return $result;
       }
+   }
+   
+   private function center_text2($word='', $tot_width=40)
+   {
+      $symbol = " ";
+      $middle = round($tot_width / 2);
+      $length_word = strlen($word);
+      $middle_word = round($length_word / 2);
+      $last_position = $middle + $middle_word;
+      $number_of_spaces = $middle - $middle_word;
+      $result = sprintf("%'{$symbol}{$last_position}s", $word);
+      for($i = 0; $i < $number_of_spaces; $i++)
+         $result .= "$symbol";
+      return $result;
    }
 }
 

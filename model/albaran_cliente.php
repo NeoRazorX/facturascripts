@@ -812,7 +812,8 @@ class albaran_cliente extends fs_model
    public function all_from_cliente($codcliente, $offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente)."
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codcliente = ".$this->var2str($codcliente)."
          ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {

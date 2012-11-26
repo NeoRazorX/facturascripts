@@ -25,9 +25,10 @@ require_once 'model/serie.php';
 
 class general_proveedor extends fs_controller
 {
-   public $albaranes;
    public $divisa;
    public $forma_pago;
+   public $listado;
+   public $listar;
    public $offset;
    public $pais;
    public $proveedor;
@@ -111,14 +112,25 @@ class general_proveedor extends fs_controller
          else
             $this->offset = 0;
          
-         $this->albaranes = $this->proveedor->get_albaranes($this->offset);
+         $this->listar = 'albaranes';
+         if( isset($_GET['listar']) )
+         {
+            if($_GET['listar'] == 'facturas')
+               $this->listar = 'facturas';
+         }
+         
+         if($this->listar == 'albaranes')
+            $this->listado = $this->proveedor->get_albaranes($this->offset);
+         else
+            $this->listado = $this->proveedor->get_facturas($this->offset);
       }
       else
          $this->new_error_msg("¡Proveedor no encontrado!");
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
    
    public function url()
@@ -132,15 +144,15 @@ class general_proveedor extends fs_controller
    public function anterior_url()
    {
       if($this->offset > '0')
-         return $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+         return $this->url()."&listar=".$this->listar."&offset=".($this->offset-FS_ITEM_LIMIT);
       else
          return '';
    }
    
    public function siguiente_url()
    {
-      if(count($this->albaranes) == FS_ITEM_LIMIT)
-         return $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      if(count($this->listado) == FS_ITEM_LIMIT)
+         return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
       else
          return '';
    }

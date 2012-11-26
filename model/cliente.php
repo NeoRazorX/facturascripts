@@ -19,6 +19,7 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/albaran_cliente.php';
+require_once 'model/factura_cliente.php';
 require_once 'model/subcuenta.php';
 
 class subcuenta_cliente extends fs_model
@@ -345,6 +346,12 @@ class cliente extends fs_model
    {
       $alb = new albaran_cliente();
       return $alb->all_from_cliente($this->codcliente, $offset);
+   }
+   
+   public function get_facturas($offset=0)
+   {
+      $fac = new factura_cliente();
+      return $fac->all_from_cliente($this->codcliente, $offset);
    }
    
    public function get_direcciones()
