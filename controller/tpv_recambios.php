@@ -441,20 +441,27 @@ class tpv_recambios extends fs_controller
          
          $linea = "----------------------------------------\n".
             $this->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
-            "Total: " . $albaran->show_total() . " Eur.") . "\n\n";
-         $linea .= "\n\n\n";
+            "Total: " . $albaran->show_total() . " Eur.") . "\n\n\n\n";
          fwrite($file, $linea);
          
          $linea = chr(27).chr(33).chr(56).$this->center_text($this->empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
          fwrite($file, $linea);
-         $linea = $this->center_text($this->empresa->lema) . "\n\n";
-         fwrite($file, $linea);
+         if($this->empresa->lema != '')
+         {
+            $linea = $this->center_text($this->empresa->lema) . "\n\n";
+            fwrite($file, $linea);
+         }
+         else
+            fwrite($file, "\n");
          $linea = $this->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n";
          fwrite($file, $linea);
          $linea = $this->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
          fwrite($file, $linea);
-         $linea = $this->center_text($this->empresa->horario) . "\n";
-         fwrite($file, $linea);
+         if($this->empresa->horario != '')
+         {
+            $linea = $this->center_text($this->empresa->horario) . "\n";
+            fwrite($file, $linea);
+         }
          fclose($file);
       }
       
@@ -486,7 +493,7 @@ class tpv_recambios extends fs_controller
       {
          $result = '';
          $nword = '';
-         foreach( split(' ', $word) as $aux )
+         foreach( explode(' ', $word) as $aux )
          {
             if($nword == '')
                $nword = $aux;

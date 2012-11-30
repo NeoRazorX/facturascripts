@@ -497,21 +497,50 @@ class tpv_yamyam extends fs_controller
    
    private function center_text($word='', $tot_width=40)
    {
-      if(strlen($word) >= $tot_width)
+      if( strlen($word) == $tot_width )
          return $word;
+      else if( strlen($word) < $tot_width )
+         return $this->center_text2($word, $tot_width);
       else
       {
-         $symbol = " ";
-         $middle = round($tot_width / 2);
-         $length_word = strlen($word);
-         $middle_word = round($length_word / 2);
-         $last_position = $middle + $middle_word;
-         $number_of_spaces = $middle - $middle_word;
-         $result = sprintf("%'{$symbol}{$last_position}s", $word);
-         for ($i = 0; $i < $number_of_spaces; $i++)
-            $result .= "$symbol";
+         $result = '';
+         $nword = '';
+         foreach( explode(' ', $word) as $aux )
+         {
+            if($nword == '')
+               $nword = $aux;
+            else if( strlen($nword) + strlen($aux) + 1 <= $tot_width )
+               $nword = $nword.' '.$aux;
+            else
+            {
+               if($result != '')
+                  $result .= "\n";
+               $result .= $this->center_text2($nword, $tot_width);
+               $nword = $aux;
+            }
+         }
+         if($nword != '')
+         {
+            if($result != '')
+               $result .= "\n";
+            $result .= $this->center_text2($nword, $tot_width);
+         }
          return $result;
       }
+   }
+   
+   private function center_text2($word='', $tot_width=40)
+   {
+      $symbol = " ";
+      $middle = round($tot_width / 2);
+      $length_word = strlen($word);
+      $middle_word = round($length_word / 2);
+      $last_position = $middle + $middle_word;
+      $number_of_spaces = $middle - $middle_word;
+      $result = sprintf("%'{$symbol}{$last_position}s", $word);
+      for($i = 0; $i < $number_of_spaces; $i++)
+         $result .= "$symbol";
+      return $result;
    }
 }
 

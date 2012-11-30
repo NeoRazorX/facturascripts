@@ -737,7 +737,21 @@ class albaran_proveedor extends fs_model
       }
       return $alblist;
    }
-
+   
+   public function all_from_agente($codagente, $offset=0)
+   {
+      $alblist = array();
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codagente = ".$this->var2str($codagente)."
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $alblist[] = new albaran_proveedor($a);
+      }
+      return $alblist;
+   }
+   
    public function search($query, $offset=0)
    {
       $alblist = array();

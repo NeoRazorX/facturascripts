@@ -186,7 +186,6 @@ div#header_search {
 }
 
 div.pages img {
-   padding-left: 15px;
    vertical-align: bottom;
 }
 
@@ -196,12 +195,10 @@ div.pages div {
 
 div.pages ul {
    margin: 0px;
-   padding: 2px;
+   padding: 0px;
    background-color: #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border: 2px solid #333333;
+   box-shadow: 5px 5px rgba(0,0,0,0.5);
    color: white;
    list-style-type: none;
    text-align: left;
@@ -209,7 +206,7 @@ div.pages ul {
 }
 
 div.pages ul li.selected {
-   border: 1px dotted white;
+   background-color: #30538D;
 }
 
 div.pages ul li:hover {
@@ -221,8 +218,6 @@ div.pages ul li a {
    padding: 5px;
    color: white;
    text-decoration: none;
-   font-variant: small-caps;
-   font-weight: bold;
 }
 
 div.pages div#user_list ul li a {
@@ -389,6 +384,11 @@ div.main_div a.next {
    font-size: 16px;
    text-transform: capitalize;
    text-decoration: none;
+}
+
+div.main_div a.next:hover {
+   background-color: #3768B8;
+   color: white;
 }
 
 div.main_div div.tpv_total {

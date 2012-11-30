@@ -823,6 +823,20 @@ class albaran_cliente extends fs_model
       return $albalist;
    }
    
+   public function all_from_agente($codagente, $offset=0)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
+         WHERE codagente = ".$this->var2str($codagente)."
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $albalist[] = new albaran_cliente($a);
+      }
+      return $albalist;
+   }
+   
    public function search($query, $offset=0)
    {
       $alblist = array();

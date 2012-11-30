@@ -47,38 +47,25 @@
    </form>
 </div>
 
-{loop="$fsc->agente->all()"}
 <div class="rounded">
-   <form action ="{$fsc->url()}" method="POST">
-      <h1>
-         Código: <a name="{$value->codagente}">{$value->codagente}</a>
-         <span>
-            <a class="remove" href="{$fsc->url()}&delete={$value->codagente}">eliminar</a>
-            &nbsp;
-            <input type="submit" value="guardar"/>
-         </span>
-      </h1>
-      <input type="hidden" name="scodagente" value="{$value->codagente}"/>
-      <div class="bloque">
-         Nombre: <input type="text" name="snombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Apellidos: <input type="text" name="sapellidos" value="{$value->apellidos}" maxlength="100" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         DNI/CIF: <input type="text" name="sdnicif" value="{$value->dnicif}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Email: <input type="text" name="semail" value="{$value->email}" autocomplete="off"/>
-      </div>
-      <div class="right"></div>
-   </form>
+   <table class="list">
+      <tr>
+         <th align="left">código + nombre + apellidos</th>
+         <th>DNI/CIF</th>
+         <th align="right">teléfono</th>
+      </tr>
+      {loop="$fsc->agente->all()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codagente}</a> {$value->get_fullname()}</td>
+         <td align="center">{$value->dnicif}</td>
+         <td align="right">{$value->telefono}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
-{else}
-<div class="message">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</div>
-{/loop}
 
 {include="footer"}

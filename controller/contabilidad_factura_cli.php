@@ -89,7 +89,7 @@ class contabilidad_factura_cli extends fs_controller
       /// desactivamos la plantilla HTML
       $this->template = FALSE;
       
-      $pdf =& new Cezpdf('a4');
+      $pdf = new Cezpdf('a4');
       
       /// cambiamos ! por el simbolo del euro
       $euro_diff = array(33 => 'Euro');

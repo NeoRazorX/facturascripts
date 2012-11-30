@@ -833,6 +833,7 @@ class articulo extends fs_model
    private function new_search_tag($tag='')
    {
       $encontrado = FALSE;
+      $actualizar = FALSE;
       
       if( strlen($tag) > 0 )
       {
@@ -843,13 +844,24 @@ class articulo extends fs_model
          {
             if( $value['tag'] == $tag )
             {
-               self::$search_tags[$i]['count']++;
+               
                $encontrado = TRUE;
+               if(time() + 86400 - $value['expires'] > 300)
+               {
+                  self::$search_tags[$i]['expires'] = time()+86400;
+                  $actualizar = TRUE;
+               }
+               break;
             }
          }
          if( !$encontrado )
-            self::$search_tags[] = array('tag' => $tag, 'count' => 1);
-         $this->cache->set('articulos_search_tags', self::$search_tags, 86400);
+         {
+            self::$search_tags[] = array('tag' => $tag, 'expires' => time()+86400);
+            $actualizar = TRUE;
+         }
+         
+         if( $actualizar )
+            $this->cache->set('articulos_search_tags', self::$search_tags, 86400);
       }
       
       return $encontrado;
@@ -870,7 +882,12 @@ class articulo extends fs_model
       if( self::$search_tags )
       {
          foreach(self::$search_tags as $i => $value)
-            $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+         {
+            if( $value['expires'] < time() )
+               unset(self::$search_tags[$i]);
+            else
+               $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+         }
       }
    }
    

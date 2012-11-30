@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/albaran_cliente.php';
+require_once 'model/albaran_proveedor.php';
 
 class agente extends fs_model
 {
@@ -103,7 +105,7 @@ class agente extends fs_model
       if( is_null($this->codagente) )
          return "index.php?page=admin_agentes";
       else
-         return "index.php?page=admin_agentes#".$this->codagente;
+         return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
    public function get($cod)
@@ -113,6 +115,18 @@ class agente extends fs_model
          return new agente($a[0]);
       else
          return FALSE;
+   }
+   
+   public function get_albaranes_cli($offset=0)
+   {
+      $alb = new albaran_cliente();
+      return $alb->all_from_agente($this->codagente, $offset);
+   }
+   
+   public function get_albaranes_prov($offset=0)
+   {
+      $alb = new albaran_proveedor();
+      return $alb->all_from_agente($this->codagente, $offset);
    }
    
    public function exists()

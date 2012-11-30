@@ -170,13 +170,17 @@
       $("#b_nuevo_albaran_proveedor").click(function() {
          document.f_new_albaran.tipoalbaran.value = 'proveedor';
          $("#tr_clientes").hide();
+         $("#tr_numero2").hide();
          $("#tr_proveedores").show();
+         $("#tr_numproveedor").show();
          fs_show_popup('popup_tpv_opciones');
       });
       $("#b_nuevo_albaran_cliente").click(function() {
          document.f_new_albaran.tipoalbaran.value = 'cliente';
          $("#tr_proveedores").hide();
+         $("#tr_numproveedor").hide();
          $("#tr_clientes").show();
+         $("#tr_numero2").show();
          fs_show_popup('popup_tpv_opciones');
       });
    });
@@ -302,6 +306,14 @@
                   {/loop}
                </select>
             </td>
+         </tr>
+         <tr id="tr_numero2">
+            <td align="right">Número 2:</td>
+            <td><input type="text" name="numero2"/></td>
+         </tr>
+         <tr id="tr_numproveedor">
+            <td align="right">Num. proveedor:</td>
+            <td><input type="text" name="numproveedor"/></td>
          </tr>
          <tr>
             <td align="right">Observaciones:</td>

@@ -1,0 +1,121 @@
+{include="header"}
+
+{if condition="$fsc->agente"}
+<div class="rounded">
+   <form action="{$fsc->url()}" method="post">
+      <h1>
+         {$fsc->agente->get_fullname()}
+         <span><input type="submit" value="guardar"/></span>
+      </h1>
+      <div class="bloque">
+         Nombre: <input type="text" name="nombre" value="{$fsc->agente->nombre}" maxlength="50" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Apellidos: <input type="text" name="apellidos" value="{$fsc->agente->apellidos}" maxlength="100" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         DNI/CIF: <input type="text" name="dnicif" value="{$fsc->agente->dnicif}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Teléfono: <input type="text" name="telefono" value="{$fsc->agente->telefono}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Email: <input type="text" name="email" value="{$fsc->agente->email}" autocomplete="off"/>
+      </div>
+   </form>
+</div>
+
+<div class="rounded">
+   {if condition="$fsc->listar=='albaranes_cli'"}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=albaranes_cli" class="selected">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov">Albaranes de proveedor</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th></th>
+         <th align="left">código</th>
+         <th align="left">número 2</th>
+         <th align="left">cliente</th>
+         <th align="left">observaciones</th>
+         <th align="right">total</th>
+         <th align="right">fecha</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td>{$value->numero2}</td>
+         <td>{$value->nombrecliente}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="7">Ningún albarán encontrado.</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="4"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+   {else}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=albaranes_cli">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov" class="selected">Albaranes de proveedor</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th></th>
+         <th align="left">código</th>
+         <th align="left">num. proveedor</th>
+         <th align="left">proveedor</th>
+         <th align="left">observaciones</th>
+         <th align="right">total</th>
+         <th align="right">fecha</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td>{$value->numproveedor}</td>
+         <td>{$value->nombre}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="7">Ningún albarán encontrado.</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="4"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+   {/if}
+</div>
+{/if}
+
+{include="footer"}
