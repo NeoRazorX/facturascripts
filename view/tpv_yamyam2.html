@@ -106,7 +106,7 @@
             <input type=\"button\" value=\"  +  \" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
          <td align=\"right\">\n\
             <input type=\""+pvpt_itype+"\" id=\"pvpt_"+numlineas+"\" name=\"pvpt_"+numlineas+"\" value=\""+(pvp*(100+iva)/100)+
-               "\" autocomplete=\"off\" size=\"6\" onclick=\"this.select()\" onkeyup=\"ajustar_pvpt(\""+numlineas+"\")\"/>\n\
+               "\" autocomplete=\"off\" size=\"6\" onclick=\"this.select()\" onkeyup=\"ajustar_pvpt('"+numlineas+"')\"/>\n\
          </td>\n\
          </tr>");
       recalcular();

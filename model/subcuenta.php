@@ -104,6 +104,12 @@ class subcuenta extends fs_model
       return $part->all_from_subcuenta($this->idsubcuenta, $offset);
    }
    
+   public function get_partidas_full()
+   {
+      $part = new partida();
+      return $part->full_from_subcuenta($this->idsubcuenta);
+   }
+   
    public function get($id)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
@@ -203,7 +209,7 @@ class subcuenta extends fs_model
    {
       $sublist = array();
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta DESC;");
+         WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
