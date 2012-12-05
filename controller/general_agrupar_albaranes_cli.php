@@ -103,7 +103,6 @@ class general_agrupar_albaranes_cli extends fs_controller
          $factura->codserie = $albaranes[0]->codserie;
          $factura->direccion = $albaranes[0]->direccion;
          $factura->editable = FALSE;
-         $factura->fecha = $albaranes[0]->fecha;
          $factura->nombrecliente = $albaranes[0]->nombrecliente;
          $factura->provincia = $albaranes[0]->provincia;
          foreach($albaranes as $alb)
@@ -310,7 +309,7 @@ class general_agrupar_albaranes_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
 }
 

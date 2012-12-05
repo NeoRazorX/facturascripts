@@ -1,0 +1,22 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Entidad</th>
+         <th align="left">Nombre</th>
+      </tr>
+      {loop="$fsc->banco->all()"}
+      <tr>
+         <td width="80"><a href="{$value->url()}">{$value->entidad}</a></td>
+         <td>{$value->nombre}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="2">No hay datos.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

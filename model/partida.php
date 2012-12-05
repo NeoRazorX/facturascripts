@@ -279,32 +279,36 @@ class partida extends fs_model
          WHERE idsubcuenta = ".$this->var2str($id)." ORDER BY idpartida ASC;");
       if($partidas)
       {
-         $aux = array();
-         foreach($partidas as $p)
-            $aux[] = new partida($p);
-         /// ordenamos
          $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
             WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id)."
             ORDER BY a.numero ASC, p.idpartida ASC;");
+         $k = 0;
+         $max = count($partidas) - 1;
+         $saldo = 0;
          foreach($ordenadas as $po)
          {
-            foreach($aux as $a)
+            $encontrada = FALSE;
+            while( !$encontrada )
             {
-               if($po['idpartida'] == $a->idpartida)
+               if($po['idpartida'] == $partidas[$k]['idpartida'])
                {
-                  $a->numero = intval($po['numero']);
-                  $a->fecha = Date('d-m-Y', strtotime($po['fecha']));
-                  $plist[] = $a;
-                  break;
+                  $aux = new partida($partidas[$k]);
+                  $aux->numero = intval($po['numero']);
+                  $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
+                  $saldo += $aux->debe - $aux->haber;
+                  $aux->saldo = $saldo;
+                  $plist[] = $aux;
+                  $encontrada = TRUE;
                }
+               else if($k <= 0)
+                  $k = 1;
+               else if($k >= $max)
+                  $k = 0;
+               else if( intval($po['idpartida']) > intval($partidas[$k]['idpartida']) )
+                  $k++;
+               else
+                  $k--;
             }
-         }
-         /// completamos
-         $saldo = 0;
-         foreach($plist as $i => $value)
-         {
-            $saldo += $value->debe - $value->haber;
-            $plist[$i]->saldo = $saldo;
          }
       }
       return $plist;

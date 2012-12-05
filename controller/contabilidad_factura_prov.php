@@ -72,7 +72,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()
@@ -105,7 +105,7 @@ class contabilidad_factura_prov extends fs_controller
       {
          $lineasfact = count($lineas);
          $linea_actual = 0;
-         $lppag = 35;
+         $lppag = 40;
          $pagina = 1;
          
          // Imprimimos las páginas necesarias
@@ -115,12 +115,30 @@ class contabilidad_factura_prov extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
-            $pdf->ezText("\n\n\n\n", 12);
+            $pdf->ezText("\n\n", 10);
             
-            /// La cabecera
-            $pdf->ezText("<b>Factura de proveedor:</b> ".$this->factura->codigo."   <b>Fecha:</b> ".
-                    $this->factura->fecha."\n<b>Proveedor:</b> ".$this->factura->nombre."   <b>CIF/NIF:</b> ".
-                    $this->factura->cifnif."\n", 10);
+            /// Creamos la tabla del encabezado
+            $filas = array(
+                array(
+                    'campos' => "<b>Factura de proveedor:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
+                    'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
+                    'proveedor' => $this->factura->nombre."\n"
+                )
+            );
+            $pdf->ezTable($filas,
+                    array('campos' => '', 'factura' => '', 'proveedor' => ''),
+                    '',
+                    array(
+                        'cols' => array(
+                            'campos' => array('justification' => 'right', 'width' => 120),
+                            'factura' => array('justification' => 'left'),
+                            'proveedor' => array('justification' => 'right')
+                        ),
+                        'showLines' => 0,
+                        'width' => 540
+                    )
+            );
+            $pdf->ezText("\n\n\n", 14);
             
             /// Creamos la tabla con las lineas de la factura
             $saltos = 0;
@@ -178,12 +196,12 @@ class contabilidad_factura_prov extends fs_controller
             {
                for(;$saltos < $lppag; $saltos++)
                   $salto .= "\n";
-               $pdf->ezText($salto, 10);
+               $pdf->ezText($salto, 11);
             }
             else if($linea_actual >= $lineasfact)
-               $pdf->ezText($salto, 10);
+               $pdf->ezText($salto, 11);
             else
-               $pdf->ezText("\n", 10);
+               $pdf->ezText("\n", 11);
             
             /// Rellenamos la última tabla
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);

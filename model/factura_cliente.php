@@ -798,28 +798,47 @@ class factura_cliente extends fs_model
    
    public function new_codigo()
    {
-      $sec = new secuencia();
-      $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'nfacturacli');
-      if($sec)
+      /// buscamos un hueco
+      $encontrado = FALSE;
+      $num = 1;
+      $fecha = $this->fecha;
+      $numeros = $this->db->select("SELECT numero::integer,fecha FROM ".$this->table_name."
+         WHERE codejercicio = ".$this->var2str($this->codejercicio).
+         " AND codserie = ".$this->var2str($this->codserie)." ORDER BY numero ASC;");
+      if( $numeros )
       {
-         $this->numero = $sec->valorout;
-         $sec->valorout++;
-         $sec->save();
+         foreach($numeros as $n)
+         {
+            if( intval($n['numero']) != $num )
+            {
+               $encontrado = TRUE;
+               $fecha = Date('d-m-Y', strtotime($n['fecha']));
+               break;
+            }
+            else
+               $num++;
+         }
       }
       
-      if(!$sec OR $this->numero <= 1)
+      if( $encontrado )
       {
-         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-            WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
-         if($numero)
-            $this->numero = 1 + intval($numero[0]['num']);
-         else
-            $this->numero = 1;
+         $this->numero = $num;
+         $this->fecha = $fecha;
+      }
+      else
+      {
+         $this->numero = $num;
          
+         /// nos guardamos la secuencia para abanq/eneboo
+         $sec = new secuencia();
+         $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'nfacturacli');
          if($sec)
          {
-            $sec->valorout = 1 + $this->numero;
-            $sec->save();
+            if($sec->valorout <= $this->numero)
+            {
+               $sec->valorout = 1 + $this->numero;
+               $sec->save();
+            }
          }
       }
       
@@ -912,6 +931,35 @@ class factura_cliente extends fs_model
       $neto = 0;
       $iva = 0;
       $total = 0;
+      
+      /// comprobamos la fecha de la factura
+      $numero0 = intval($this->numero)-1;
+      if( $numero0 > 0 )
+      {
+         $codigo0 = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $numero0);
+         $fac0 = $this->get_by_codigo($codigo0);
+         if($fac0)
+         {
+            if( strtotime($fac0->fecha) > strtotime($this->fecha) )
+            {
+               $status = FALSE;
+               $this->new_error_msg("La fecha de esta factura es anterior a la fecha de <a href='".
+                       $fac0->url()."'>la factura anterior</a>.");
+            }
+         }
+      }
+      $numero2 = intval($this->numero)+1;
+      $codigo2 = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $numero2);
+      $fac2 = $this->get_by_codigo($codigo2);
+      if($fac2)
+      {
+         if( strtotime($fac2->fecha) < strtotime($this->fecha) )
+         {
+            $status = FALSE;
+            $this->new_error_msg("La fecha de esta factura es posterior a la fecha de <a href='".
+                    $fac2->url()."'>la factura siguiente</a>.");
+         }
+      }
       
       /// comprobamos las líneas
       foreach($this->get_lineas() as $l)

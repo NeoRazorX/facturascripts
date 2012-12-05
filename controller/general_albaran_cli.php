@@ -89,7 +89,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()
@@ -244,7 +244,6 @@ class general_albaran_cli extends fs_controller
       $factura->codserie = $this->albaran->codserie;
       $factura->direccion = $this->albaran->direccion;
       $factura->editable = FALSE;
-      $factura->fecha = $this->albaran->fecha;
       $factura->neto = $this->albaran->neto;
       $factura->nombrecliente = $this->albaran->nombrecliente;
       $factura->observaciones = $this->albaran->observaciones;

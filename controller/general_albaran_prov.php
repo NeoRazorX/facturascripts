@@ -94,7 +94,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()
@@ -240,7 +240,6 @@ class general_albaran_prov extends fs_controller
       $factura->codpago = $this->albaran->codpago;
       $factura->codproveedor = $this->albaran->codproveedor;
       $factura->codserie = $this->albaran->codserie;
-      $factura->fecha = $this->albaran->fecha;
       $factura->irpf = $this->albaran->irpf;
       $factura->neto = $this->albaran->neto;
       $factura->nombre = $this->albaran->nombre;

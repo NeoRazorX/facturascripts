@@ -104,7 +104,8 @@ class almacen extends fs_model
    
    public function get($cod)
    {
-      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($cod).";");
+      $almacen = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codalmacen = ".$this->var2str($cod).";");
       if($almacen)
          return new almacen($almacen[0]);
       else
@@ -116,7 +117,8 @@ class almacen extends fs_model
       if( is_null($this->codalmacen) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
    public function test()

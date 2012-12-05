@@ -47,7 +47,10 @@ class admin_agentes extends fs_controller
          $age0->telefono = $_POST['stelefono'];
          $age0->email = $_POST['semail'];
          if( $age0->save() )
+         {
             $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
+            header('location: '.$age0->url());
+         }
          else
             $this->new_error_msg("¡Imposible guardar el agente!");
       }
@@ -68,7 +71,7 @@ class admin_agentes extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
 }
 

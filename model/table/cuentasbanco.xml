@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cuentasbanco.xml
+    Description:
+        Estructura de la tabla cuentasbanco.
+-->
+<tabla>
+   <columna>
+      <nombre>sufijo</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>ctaagencia</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idsubcuentaecgc</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>ctaentidad</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>entidad</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>agencia</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuenta</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>cuenta</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuentaecgc</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>iban</nombre>
+      <tipo>character varying(34)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idsubcuenta</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>swift</nombre>
+      <tipo>character varying(11)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>cuentasbanco_pkey</nombre>
+      <consulta>PRIMARY KEY (codcuenta)</consulta>
+   </restriccion>
+</tabla>

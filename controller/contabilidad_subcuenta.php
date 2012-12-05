@@ -73,7 +73,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()
@@ -119,6 +119,7 @@ class contabilidad_subcuenta extends fs_controller
       $pdf->addInfo('Title', 'Libro mayor de ' . $this->subcuenta->codsubcuenta);
       $pdf->addInfo('Subject', 'Libro mayor de ' . $this->subcuenta->codsubcuenta);
       $pdf->addInfo('Author', $this->empresa->nombre);
+      $pdf->ezStartPageNumbers(590, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
       
       $partidas = $this->subcuenta->get_partidas_full();
       if( $partidas )
@@ -138,7 +139,7 @@ class contabilidad_subcuenta extends fs_controller
             /// Creamos la tabla del encabezado
             $filas = array(
                 array(
-                    'campos' => "<b>Empresa:</b>\n<b>Libro mayor de:</b>\n<b>Fecha:</b>",
+                    'campos' => "<b>Empresa:</b>\n<b>Subcuenta:</b>\n<b>Fecha:</b>",
                     'factura' => $this->empresa->nombre."\n".$this->subcuenta->codsubcuenta."\n".Date('d-m-Y')
                 )
             );
@@ -147,17 +148,16 @@ class contabilidad_subcuenta extends fs_controller
                     '',
                     array(
                         'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 100),
+                            'campos' => array('justification' => 'right', 'width' => 70),
                             'factura' => array('justification' => 'left')
                         ),
                         'showLines' => 0,
                         'width' => 540
                     )
             );
-            $pdf->ezText("\n", 12);
+            $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas
-            $saltos = 0;
             $filas = array();
             for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < $lineasfact));)
             {
@@ -167,7 +167,6 @@ class contabilidad_subcuenta extends fs_controller
                $filas[$linea_actual]['debe'] = number_format($partidas[$linea_actual]->debe, 2, '.', ' ');
                $filas[$linea_actual]['haber'] = number_format($partidas[$linea_actual]->haber, 2, '.', ' ');
                $filas[$linea_actual]['saldo'] = number_format($partidas[$linea_actual]->saldo, 2, '.', ' ');
-               $saltos++;
                $linea_actual++;
             }
             $pdf->ezTable($filas,
@@ -191,6 +190,7 @@ class contabilidad_subcuenta extends fs_controller
                         'shaded' => 0
                     )
             );
+            
             $pagina++;
          }
       }

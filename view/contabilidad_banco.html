@@ -1,0 +1,57 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Entidad</th>
+         <th align="left">Nombre</th>
+         <th align="right">Cod. Proveedor</th>
+      </tr>
+      <tr>
+         <td>{$fsc->banco->entidad}</td>
+         <td>{$fsc->banco->nombre}</td>
+         <td align="right">{$fsc->banco->codproveedor}</td>
+      </tr>
+   </table>
+</div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th>Agencia</th>
+         <th>Nombre</th>
+         <th>Dirección</th>
+         <th>Cod. Postal</th>
+         <th>Apartado</th>
+         <th>Población</th>
+         <th>Provincia</th>
+         <th>Cod. Pais</th>
+         <th>Teléfono</th>
+         <th>Fax</th>
+         <th>Contaco</th>
+         <th>Observaciones</th>
+      </tr>
+      {loop="$fsc->banco->get_sucursales()"}
+      <tr>
+         <td>{$value->agencia}</td>
+         <td>{$value->nombre}</td>
+         <td>{$value->direccion}</td>
+         <td>{$value->codpostal}</td>
+         <td>{$value->apartado}</td>
+         <td>{$value->poblacion}</td>
+         <td>{$value->provincia}</td>
+         <td>{$value->codpais}</td>
+         <td>{$value->telefono}</td>
+         <td>{$value->fax}</td>
+         <td>{$value->contacto}</td>
+         <td>{$value->observaciones}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="12">No hay datos.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}
