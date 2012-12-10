@@ -56,10 +56,22 @@
          <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
-         <td align="right">{$value->iva} %</td>
-         <td align="right">{$value->show_baseimponible()} €</td>
-         <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
-         <td align="center">{$value->cifnif}</td>
+         <td align="right">
+            {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
+         </td>
+         <td align="right">
+            {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} €{else}-{/if}
+         </td>
+         <td align="center">
+            {if condition="$value->codcontrapartida"}
+            <a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+            {else}
+            -
+            {/if}
+         </td>
+         <td align="center">
+            {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
+         </td>
       </tr>
       {/loop}
    </table>

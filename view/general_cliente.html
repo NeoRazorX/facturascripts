@@ -246,17 +246,15 @@
       {if condition="$fsc->listar=='albaranes'"}
          <tr>
             <th></th>
-            <th>código</th>
-            <th>número 2</th>
-            <th>observaciones</th>
+            <th align="left">código + número 2</th>
+            <th align="left">observaciones</th>
             <th align="right">total</th>
             <th align="right">fecha</th>
          </tr>
          {loop="$fsc->listado"}
          <tr>
             <td>{if condition="!$value->ptefactura"}F{/if}</td>
-            <td><a href="{$value->url()}">{$value->codigo}</a></td>
-            <td>{$value->numero2}</td>
+            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
@@ -268,7 +266,7 @@
                <a class="next" href="{$fsc->anterior_url()}">anterior</a>
             {/if}
             </td>
-            <td colspan="3"></td>
+            <td colspan="2"></td>
             <td align="right">
             {if condition="$fsc->siguiente_url()!=''"}
                <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

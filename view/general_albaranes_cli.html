@@ -66,8 +66,7 @@
    <table class="list">
       <tr>
          <th></th>
-         <th align="left">código</th>
-         <th align="left">número 2</th>
+         <th align="left">código + número 2</th>
          <th align="left">cliente</th>
          <th align="left">observaciones</th>
          <th align="right">total</th>
@@ -76,8 +75,7 @@
       {loop="$fsc->resultados"}
       <tr>
          <td>{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
-         <td>{$value->numero2}</td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>
@@ -94,7 +92,7 @@
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="4"></td>
+         <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

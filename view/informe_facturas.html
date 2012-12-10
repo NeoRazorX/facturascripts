@@ -1,0 +1,38 @@
+{include="header"}
+
+<table width="100%">
+   <tr>
+      <td>
+         <div class="rounded">
+            <h1>Facturas emitidas de cliente:</h1>
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="listado" value="facturascli"/>
+               Fecha:
+               <select name="mes">
+                  {loop="$fsc->factura_cli->meses()"}
+                  <option value="{$value}">{$value}</option>
+                  {/loop}
+               </select>
+               <input type="submit" value="mostrar"/>
+            </form>
+         </div>
+      </td>
+      <td>
+         <div class="rounded">
+            <h1>Facturas recibidad de proveedor:</h1>
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="listado" value="facturasprov"/>
+               Fecha:
+               <select name="mes">
+                  {loop="$fsc->factura_pro->meses()"}
+                  <option value="{$value}">{$value}</option>
+                  {/loop}
+               </select>
+               <input type="submit" value="mostrar"/>
+            </form>
+         </div>
+      </td>
+   </tr>
+</table>
+
+{include="footer"}

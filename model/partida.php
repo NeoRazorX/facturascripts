@@ -89,6 +89,7 @@ class partida extends fs_model
          $this->debe = 0;
          $this->haber = 0;
       }
+      
       $this->numero = 0;
       $this->fecha = Date('d-m-Y');
       $this->saldo = 0;
@@ -107,6 +108,11 @@ class partida extends fs_model
    public function show_haber()
    {
       return number_format($this->haber, 2, '.', ' ');
+   }
+   
+   public function show_saldo()
+   {
+      return number_format($this->saldo, 2, '.', ' ');
    }
    
    public function show_baseimponible()
@@ -262,52 +268,66 @@ class partida extends fs_model
    public function all_from_subcuenta($id, $offset=0)
    {
       $plist = array();
-      $partidas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE idsubcuenta = ".$this->var2str($id)." ORDER BY idpartida DESC", FS_ITEM_LIMIT, $offset);
-      if($partidas)
+      $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida,p.debe,p.haber
+         FROM co_asientos a, co_partidas p
+         WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id).
+         " ORDER BY a.numero ASC, p.idpartida ASC;");
+      if( $ordenadas )
       {
-         foreach($partidas as $p)
-            $plist[] = new partida($p);
+         $partida = new partida();
+         $i = 0;
+         $saldo = 0;
+         foreach($ordenadas as $po)
+         {
+            $saldo += floatval($po['debe']) - floatval($po['haber']);
+            if( $i >= $offset AND $i < ($offset+FS_ITEM_LIMIT) )
+            {
+               $aux = $partida->get($po['idpartida']);
+               if( $aux )
+               {
+                  $aux->numero = intval($po['numero']);
+                  $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
+                  $aux->saldo = $saldo;
+                  $plist[] = $aux;
+               }
+            }
+            $i++;
+         }
       }
       return $plist;
+   }
+   
+   public function count_from_subcuenta($id)
+   {
+      $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
+         WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id).
+         " ORDER BY a.numero ASC, p.idpartida ASC;");
+      if($ordenadas)
+         return count($ordenadas);
+      else
+         return 0;
    }
    
    public function full_from_subcuenta($id)
    {
       $plist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idsubcuenta = ".$this->var2str($id)." ORDER BY idpartida ASC;");
-      if($partidas)
+      $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
+         WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id).
+         " ORDER BY a.numero ASC, p.idpartida ASC;");
+      if($ordenadas)
       {
-         $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
-            WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id)."
-            ORDER BY a.numero ASC, p.idpartida ASC;");
-         $k = 0;
-         $max = count($partidas) - 1;
+         $partida = new partida();
          $saldo = 0;
          foreach($ordenadas as $po)
          {
-            $encontrada = FALSE;
-            while( !$encontrada )
+            $aux = $partida->get($po['idpartida']);
+            if( $aux )
             {
-               if($po['idpartida'] == $partidas[$k]['idpartida'])
-               {
-                  $aux = new partida($partidas[$k]);
-                  $aux->numero = intval($po['numero']);
-                  $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
-                  $saldo += $aux->debe - $aux->haber;
-                  $aux->saldo = $saldo;
-                  $plist[] = $aux;
-                  $encontrada = TRUE;
-               }
-               else if($k <= 0)
-                  $k = 1;
-               else if($k >= $max)
-                  $k = 0;
-               else if( intval($po['idpartida']) > intval($partidas[$k]['idpartida']) )
-                  $k++;
-               else
-                  $k--;
+               $aux->numero = intval($po['numero']);
+               $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
+               $saldo += $aux->debe - $aux->haber;
+               $aux->saldo = $saldo;
+               $plist[] = $aux;
             }
          }
       }

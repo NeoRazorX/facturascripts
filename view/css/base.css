@@ -369,8 +369,7 @@ div.main_div ul.horizontal li {
 
 div.main_div a.next {
    display: inline-block;
-   margin-top: 10px;
-   padding-top: 3px;
+   padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
    padding-bottom: 1px;
@@ -387,6 +386,41 @@ div.main_div a.next {
 }
 
 div.main_div a.next:hover {
+   background-color: #3768B8;
+   color: white;
+}
+
+div.main_div div.paginas {
+   margin-top: 10px;
+   text-align: center;
+}
+
+div.main_div div.paginas a {
+   display: inline-block;
+   margin-top: 8px;
+   margin-right: 5px;
+   padding-top: 1px;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-bottom: 1px;
+   background-color: #bbbbbb;
+   border: 1px solid #424242;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   color: black;
+   font-size: 13px;
+   text-transform: capitalize;
+   text-decoration: none;
+}
+
+div.main_div div.paginas a.actual {
+   background-color: #424242;
+   color: white;
+}
+
+div.main_div div.paginas a:hover {
    background-color: #3768B8;
    color: white;
 }
@@ -421,26 +455,24 @@ div.main_div div.new_line a {
 }
 
 div.select {
-   display: inline-block;
-   padding: 2px;
-   background-color: #bbbbbb;
-   border: 1px inset #555555;
+   display: block;
+   margin-bottom: 10px;
+   font-size: 15px;
 }
 
 div.select a {
    display: inline-block;
-   padding-top: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 1px;
+   padding-top: 3px;
+   padding-left: 6px;
+   padding-right: 6px;
+   padding-bottom: 2px;
+   border-bottom: 3px solid silver;
    text-decoration: none;
    color: black;
-   font-size: 14px;
 }
 
 div.select a.selected {
-   background-color: #3768B8;
-   color: white;
+   border-bottom: 3px solid #3768B8;
 }
 
 div.footer {

@@ -21,8 +21,9 @@ require_once 'model/factura_cliente.php';
 
 class contabilidad_facturas_cli extends fs_controller
 {
-   public $resultados;
+   public $factura;
    public $offset;
+   public $resultados;
    
    public function __construct()
    {
@@ -32,11 +33,11 @@ class contabilidad_facturas_cli extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $factura = new factura_cliente();
+      $this->factura = new factura_cliente();
       
       if( isset($_GET['delete']) )
       {
-         $fact = $factura->get($_GET['delete']);
+         $fact = $this->factura->get($_GET['delete']);
          if($fact)
          {
             if( $fact->delete() )
@@ -48,19 +49,22 @@ class contabilidad_facturas_cli extends fs_controller
             $this->new_error_msg("¡Factura no encontrada!");
       }
       
+      $this->buttons[] = new fs_button('b_huecos', 'huecos', '#', '', 'img/zoom.png');
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
          $this->offset = 0;
       
       if($this->query != '')
-         $this->resultados = $factura->search($this->query, $this->offset);
+         $this->resultados = $this->factura->search($this->query, $this->offset);
       else
-         $this->resultados = $factura->all($this->offset);
+         $this->resultados = $this->factura->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
    
    public function anterior_url()

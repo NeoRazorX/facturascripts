@@ -4,12 +4,12 @@
    <form action="{$fsc->url()}" method="post">
       <div class="bloque">
          Cliente:
-         <select name="cliente">
-         {loop="$fsc->cliente->all_full()"}
-            {if condition="$value->codcliente==$_POST.cliente"}
-               <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+         <select name="proveedor">
+         {loop="$fsc->proveedor->all_full()"}
+            {if condition="$value->codproveedor==$_POST.proveedor"}
+               <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
             {else}
-               <option value="{$value->codcliente}">{$value->nombre}</option>
+               <option value="{$value->codproveedor}">{$value->nombre}</option>
             {/if}
          {/loop}
          </select>
@@ -43,7 +43,7 @@
       <table class="list">
          <tr>
             <th width="95">seleccionar</th>
-            <th align="left">código + número 2</th>
+            <th align="left">código + num. proveedor</th>
             <th align="left">observaciones</th>
             <th align="right">total</th>
             <th align="right">fecha</th>
@@ -51,7 +51,7 @@
          {loop="$fsc->resultados"}
          <tr>
             <td align="center"><input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/></td>
-            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>

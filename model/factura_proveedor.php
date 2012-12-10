@@ -22,6 +22,7 @@ require_once 'model/agente.php';
 require_once 'model/albaran_proveedor.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
+require_once 'model/ejercicio.php';
 require_once 'model/proveedor.php';
 require_once 'model/secuencia.php';
 
@@ -732,6 +733,12 @@ class factura_proveedor extends fs_model
       return $lineasi;
    }
    
+   public function get_asiento()
+   {
+      $asiento = new asiento();
+      return $asiento->get($this->idasiento);
+   }
+   
    public function exists()
    {
       if( is_null($this->idfactura) )
@@ -807,6 +814,7 @@ class factura_proveedor extends fs_model
    {
       if( $this->test() )
       {
+         $this->clean_cache();
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET deabono = ".$this->var2str($this->deabono).",
@@ -854,6 +862,7 @@ class factura_proveedor extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       if( $this->idasiento )
       {
          $asiento = new asiento();
@@ -867,6 +876,11 @@ class factura_proveedor extends fs_model
       /// eliminamos
       return $this->db->exec("DELETE FROM ".$this->table_name."
          WHERE idfactura = ".$this->var2str($this->idfactura).";");
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->delete('factura_proveedor_huecos');
    }
    
    public function full_test()
@@ -986,8 +1000,8 @@ class factura_proveedor extends fs_model
    public function all($offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+         " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)
@@ -999,9 +1013,9 @@ class factura_proveedor extends fs_model
    public function all_from_proveedor($codproveedor, $offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE codproveedor = ".$this->var2str($codproveedor)."
-         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+         " WHERE codproveedor = ".$this->var2str($codproveedor).
+         " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)
@@ -1017,8 +1031,8 @@ class factura_proveedor extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codigo ~~ '%".$query."%' OR numproveedor ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'
-            OR total BETWEEN ".($query-.01)." AND ".($query+.01);
+         $consulta .= "codigo ~~ '%".$query."%' OR numproveedor ~~ '%".$query."%' OR observaciones ~~ '%".
+            $query."%' OR total BETWEEN ".($query-.01)." AND ".($query+.01);
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
          $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
       else
@@ -1026,6 +1040,73 @@ class factura_proveedor extends fs_model
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $facturas = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_proveedor($f);
+      }
+      return $faclist;
+   }
+   
+   public function huecos()
+   {
+      $error = TRUE;
+      $huecolist = $this->cache->get_array2('factura_proveedor_huecos', $error);
+      if( $error )
+      {
+         $ejercicio = new ejercicio();
+         foreach($ejercicio->all_abiertos() as $eje)
+         {
+            $codserie = '';
+            $num = 1;
+            $numeros = $this->db->select("SELECT codserie,numero::integer,fecha FROM ".$this->table_name.
+               " WHERE codejercicio = ".$this->var2str($eje->codejercicio).
+               " ORDER BY codserie ASC, numero ASC;");
+            if( $numeros )
+            {
+               foreach($numeros as $n)
+               {
+                  if( $n['codserie'] != $codserie )
+                  {
+                     $codserie = $n['codserie'];
+                     $num = 1;
+                  }
+                  
+                  if( intval($n['numero']) != $num )
+                  {
+                     $huecolist[] = array(
+                         'codigo' => $eje->codejercicio . sprintf('%02s', $codserie) . sprintf('%06s', $num),
+                         'fecha' => Date('d-m-Y', strtotime($n['fecha']))
+                     );
+                  }
+                  $num++;
+               }
+            }
+         }
+         $this->cache->set('factura_proveedor_huecos', $huecolist, 86400);
+      }
+      return $huecolist;
+   }
+   
+   public function meses()
+   {
+      $listam = array();
+      $meses = $this->db->select("SELECT DISTINCT to_char(fecha,'yyyy-mm') as mes
+         FROM ".$this->table_name." ORDER BY mes DESC;");
+      if($meses)
+      {
+         foreach($meses as $m)
+            $listam[] = $m['mes'];
+      }
+      return $listam;
+   }
+   
+   public function all_from_mes($mes)
+   {
+      $faclist = array();
+      $facturas = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE to_char(fecha,'yyyy-mm') = ".$this->var2str($mes).
+         " ORDER BY codigo ASC;");
       if($facturas)
       {
          foreach($facturas as $f)

@@ -44,6 +44,10 @@ class general_albaranes_prov extends fs_controller
          if($npage)
             $this->buttons[] = new fs_button('b_nuevo_albaran', 'nuevo', $npage->url());
          
+         $agpage = $this->page->get('general_agrupar_albaranes_pro');
+         if($agpage)
+            $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
+         
          $this->buttons[] = new fs_button('b_buscar_lineas', 'lineas', '#', '', 'img/zoom.png');
          
          if( isset($_GET['delete']) )

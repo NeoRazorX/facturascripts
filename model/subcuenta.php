@@ -104,6 +104,12 @@ class subcuenta extends fs_model
       return $part->all_from_subcuenta($this->idsubcuenta, $offset);
    }
    
+   public function count_partidas()
+   {
+      $part = new partida();
+      return $part->count_from_subcuenta($this->idsubcuenta);
+   }
+   
    public function get_partidas_full()
    {
       $part = new partida();
@@ -173,6 +179,7 @@ class subcuenta extends fs_model
    {
       if( $this->test() )
       {
+         $this->clean_cache();
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
@@ -201,8 +208,15 @@ class subcuenta extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name."
          WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
+   }
+   
+   public function clean_cache()
+   {
+      if( file_exists('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf') )
+         unlink('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf');
    }
    
    public function all_from_cuenta($idcuenta)
@@ -239,6 +253,18 @@ class subcuenta extends fs_model
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($ejercicio)." AND (codsubcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%') ORDER BY codcuenta ASC;");
+      if($subcuentas)
+      {
+         foreach($subcuentas as $s)
+            $sublist[] = new subcuenta($s);
+      }
+      return $sublist;
+   }
+   
+   public function all()
+   {
+      $sublist = array();
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.";");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

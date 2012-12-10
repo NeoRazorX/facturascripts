@@ -3,14 +3,37 @@
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
+      $("#b_huecos").click(function() {
+         fs_show_popup('popup_huecos');
+      });
    });
 </script>
+
+<div class="popup" id="popup_huecos" style="min-width: 500px;">
+   <h1>Huecos</h1>
+   <table class="list">
+      <tr>
+         <th>Código</th>
+         <th>Fecha</th>
+      </tr>
+      {loop="$fsc->factura->huecos()"}
+      <tr>
+         <td align="center">{$value.codigo}</td>
+         <td align="center">{$value.fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="2">No hay huecos.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
 
 <div class="rounded">
    {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
    <table class="list">
       <tr>
-         <th align="left">código</th>
+         <th align="left">código + num. proveedor</th>
          <th align="left">cliente</th>
          <th align="left">Observaciones</th>
          <th align="right">total</th>
@@ -18,7 +41,7 @@
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>

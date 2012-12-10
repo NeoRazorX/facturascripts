@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/subcuenta.php';
 
 class banco extends fs_model
 {
@@ -68,6 +69,12 @@ class banco extends fs_model
    {
       $suc = new sucursal();
       return $suc->all_from_entidad($this->entidad);
+   }
+   
+   public function get_cuentas()
+   {
+      $cb = new cuenta_banco();
+      return $cb->all_from_entidad($this->entidad);
    }
    
    public function exists()
@@ -255,7 +262,8 @@ class sucursal extends fs_model
    public function all_from_entidad($en)
    {
       $listasuc = array();
-      $sucursales = $this->db->select("SELECT * FROM ".$this->table_name." WHERE entidad = ".$this->var2str($en).";");
+      $sucursales = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE entidad = ".$this->var2str($en).";");
       if($sucursales)
       {
          foreach($sucursales as $s)
@@ -326,6 +334,11 @@ class cuenta_banco extends fs_model
       return '';
    }
    
+   public function url()
+   {
+      return 'index.php?page=contabilidad_cuentas&query='.$this->codsubcuenta;
+   }
+   
    public function exists()
    {
       if( is_null($this->codcuenta) )
@@ -362,6 +375,19 @@ class cuenta_banco extends fs_model
    {
       return $this->db->exec("DELETE FROM ".$this->table_name.
                  " WHERE ".$this->var2str($this->codcuenta).";");
+   }
+   
+   public function all_from_entidad($entidad)
+   {
+      $clist = array();
+      $cuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE entidad = ".$this->var2str($entidad).";");
+      if( $cuentas )
+      {
+         foreach($cuentas as $c)
+            $clist[] = new cuenta_banco($c);
+      }
+      return $clist;
    }
 }
 

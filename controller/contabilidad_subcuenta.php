@@ -18,14 +18,15 @@
  */
 
 require_once 'ezpdf/class.ezpdf.php';
+require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
 
 class contabilidad_subcuenta extends fs_controller
 {
-   public $subcuenta;
    public $cuenta;
    public $ejercicio;
    public $resultados;
+   public $subcuenta;
    public $offset;
    
    public function __construct()
@@ -49,23 +50,25 @@ class contabilidad_subcuenta extends fs_controller
          $this->cuenta = $this->subcuenta->get_cuenta();
          $this->ejercicio = $this->subcuenta->get_ejercicio();
          
-         if( isset($_GET['libro_mayor']) )
-            $this->libro_mayor();
-         else
+         /// comprobamos la subcuenta
+         $this->subcuenta->test();
+         
+         if( file_exists('tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf') )
          {
-            /// comprobamos la subcuenta
-            $this->subcuenta->test();
-            
             $this->buttons[] = new fs_button('b_libro_mayor', 'libro mayor',
-               $this->url().'&libro_mayor=TRUE','', 'img/print.png', 'imprimir', TRUE);
-            
-            if( isset($_GET['offset']) )
-               $this->offset = intval($_GET['offset']);
-            else
-               $this->offset = 0;
-            
-            $this->resultados = $this->subcuenta->get_partidas($this->offset);
+               'tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf','',
+               'img/print.png', 'imprimir', TRUE);
          }
+         
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
+         else
+            $this->offset = 0;
+         
+         $this->resultados = $this->subcuenta->get_partidas($this->offset);
+         
+         if( isset($_POST['puntear']) )
+            $this->puntear();
       }
       else
          $this->new_error_msg("Subcuenta no encontrada.");
@@ -73,7 +76,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-6';
    }
    
    public function url()
@@ -83,119 +86,52 @@ class contabilidad_subcuenta extends fs_controller
       else
          return $this->ppage->url();
    }
-
-   public function anterior_url()
-   {
-      $url = '';
-      if($this->query!='' AND $this->offset>'0')
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
-      else if($this->query=='' AND $this->offset>'0')
-         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
-      return $url;
-   }
    
-   public function siguiente_url()
+   public function paginas()
    {
-      $url = '';
-      if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
-      else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
-      return $url;
-   }
-   
-   private function libro_mayor()
-   {
-      /// desactivamos la plantilla HTML
-      $this->template = FALSE;
-      
-      $pdf = new Cezpdf('a4');
-      
-      /// cambiamos ! por el simbolo del euro
-      $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("ezpdf/fonts/Helvetica.afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
-      
-      $pdf->addInfo('Title', 'Libro mayor de ' . $this->subcuenta->codsubcuenta);
-      $pdf->addInfo('Subject', 'Libro mayor de ' . $this->subcuenta->codsubcuenta);
-      $pdf->addInfo('Author', $this->empresa->nombre);
-      $pdf->ezStartPageNumbers(590, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
-      
-      $partidas = $this->subcuenta->get_partidas_full();
-      if( $partidas )
+      $paginas = array();
+      $i = 1;
+      $num = 0;
+      $actual = 1;
+      $total = $this->subcuenta->count_partidas();
+      /// añadimos todas la página
+      while($num < $total)
       {
-         $lineasfact = count($partidas);
-         $linea_actual = 0;
-         $lppag = 50;
-         $pagina = 1;
+         $paginas[$i] = array(
+             'url' => $this->url().'&offset='.$num,
+             'num' => $i,
+             'actual' => ($num == $this->offset)
+         );
+         if( $num == $this->offset )
+            $actual = $i;
+         $i++;
+         $num += FS_ITEM_LIMIT;
+      }
+      /// ahora descartamos
+      foreach($paginas as $j => $value)
+      {
+         if( ($j>1 AND $j<$actual-3 AND $j%10) OR ($j>$actual+3 AND $j<$i-1 AND $j%10) )
+            unset($paginas[$j]);
+      }
+      return $paginas;
+   }
+   
+   private function puntear()
+   {
+      $partida = new partida();
+      foreach($this->resultados as $pa)
+      {
+         if( isset($_POST['punteada']) )
+            $valor = in_array($pa->idpartida, $_POST['punteada']);
+         else
+            $valor = FALSE;
          
-         // Imprimimos las páginas necesarias
-         while($linea_actual < $lineasfact)
+         if($pa->punteada != $valor)
          {
-            /// salto de página
-            if($linea_actual > 0)
-               $pdf->ezNewPage();
-            
-            /// Creamos la tabla del encabezado
-            $filas = array(
-                array(
-                    'campos' => "<b>Empresa:</b>\n<b>Subcuenta:</b>\n<b>Fecha:</b>",
-                    'factura' => $this->empresa->nombre."\n".$this->subcuenta->codsubcuenta."\n".Date('d-m-Y')
-                )
-            );
-            $pdf->ezTable($filas,
-                    array('campos' => '', 'factura' => ''),
-                    '',
-                    array(
-                        'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 70),
-                            'factura' => array('justification' => 'left')
-                        ),
-                        'showLines' => 0,
-                        'width' => 540
-                    )
-            );
-            $pdf->ezText("\n", 10);
-            
-            /// Creamos la tabla con las lineas
-            $filas = array();
-            for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < $lineasfact));)
-            {
-               $filas[$linea_actual]['asiento'] = $partidas[$linea_actual]->numero;
-               $filas[$linea_actual]['fecha'] = $partidas[$linea_actual]->fecha;
-               $filas[$linea_actual]['concepto'] = $partidas[$linea_actual]->concepto;
-               $filas[$linea_actual]['debe'] = number_format($partidas[$linea_actual]->debe, 2, '.', ' ');
-               $filas[$linea_actual]['haber'] = number_format($partidas[$linea_actual]->haber, 2, '.', ' ');
-               $filas[$linea_actual]['saldo'] = number_format($partidas[$linea_actual]->saldo, 2, '.', ' ');
-               $linea_actual++;
-            }
-            $pdf->ezTable($filas,
-                    array(
-                        'asiento' => '<b>Asiento</b>',
-                        'fecha' => '<b>Fecha</b>',
-                        'concepto' => '<b>Concepto</b>',
-                        'debe' => '<b>Debe</b>',
-                        'haber' => '<b>Haber</b>',
-                        'saldo' => '<b>Saldo</b>'
-                    ),
-                    '',
-                    array(
-                        'fontSize' => 8,
-                        'cols' => array(
-                            'debe' => array('justification' => 'right'),
-                            'haber' => array('justification' => 'right'),
-                            'saldo' => array('justification' => 'right')
-                        ),
-                        'width' => 540,
-                        'shaded' => 0
-                    )
-            );
-            
-            $pagina++;
+            $pa->punteada = $valor;
+            $pa->save();
          }
       }
-      
-      $pdf->ezStream();
    }
 }
 

@@ -23,6 +23,7 @@ require_once 'config.php';
 require_once 'base/fs_db.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
+require_once 'extras/libromayor.php';
 
 $db = new fs_db();
 if( $db->connect() )
@@ -34,6 +35,10 @@ if( $db->connect() )
    $asiento = new asiento();
    echo "Ejecutando tareas para los asientos...\n";
    $asiento->cron_job();
+   
+   $libro = new libro_mayor();
+   echo "Generamos el libro mayor para cada subcuenta...\n";
+   $libro->cron_job();
    
    $db->close();
 }

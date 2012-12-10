@@ -41,7 +41,16 @@ class contabilidad_factura_cli extends fs_controller
          $this->factura->fecha = $_POST['fecha'];
          $this->factura->observaciones = $_POST['observaciones'];
          if( $this->factura->save() )
+         {
+            $asiento = $this->factura->get_asiento();
+            if($asiento)
+            {
+               $asiento->fecha = $_POST['fecha'];
+               if( !$asiento->save() )
+                  $this->new_error_msg("Imposible modificar la fecha del asiento.");
+            }
             $this->new_message("Factura modificada correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible modificar la factura!");
       }

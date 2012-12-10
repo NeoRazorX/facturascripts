@@ -16,11 +16,12 @@
 </div>
 
 <div class="rounded">
+   <h1>Sucursales:</h1>
    <table class="list">
       <tr>
-         <th>Agencia</th>
-         <th>Nombre</th>
-         <th>Dirección</th>
+         <th align="left">Agencia</th>
+         <th align="left">Nombre</th>
+         <th align="left">Dirección</th>
          <th>Cod. Postal</th>
          <th>Apartado</th>
          <th>Población</th>
@@ -28,27 +29,61 @@
          <th>Cod. Pais</th>
          <th>Teléfono</th>
          <th>Fax</th>
-         <th>Contaco</th>
-         <th>Observaciones</th>
+         <th align="left">Contaco</th>
+         <th align="left">Observaciones</th>
       </tr>
       {loop="$fsc->banco->get_sucursales()"}
       <tr>
          <td>{$value->agencia}</td>
          <td>{$value->nombre}</td>
          <td>{$value->direccion}</td>
-         <td>{$value->codpostal}</td>
-         <td>{$value->apartado}</td>
-         <td>{$value->poblacion}</td>
-         <td>{$value->provincia}</td>
-         <td>{$value->codpais}</td>
-         <td>{$value->telefono}</td>
-         <td>{$value->fax}</td>
+         <td align="center">{$value->codpostal}</td>
+         <td align="center">{$value->apartado}</td>
+         <td align="center">{$value->poblacion}</td>
+         <td align="center">{$value->provincia}</td>
+         <td align="center">{$value->codpais}</td>
+         <td align="center">{$value->telefono}</td>
+         <td align="center">{$value->fax}</td>
          <td>{$value->contacto}</td>
          <td>{$value->observaciones}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="12">No hay datos.</td>
+         <td colspan="12">No hay sucursales asociadas.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<div class="rounded">
+   <h1>Cuentas:</h1>
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Subcuenta</th>
+         <th align="left">Descripción</th>
+         <th>Entidad</th>
+         <th>Oficina</th>
+         <th>Cuenta</th>
+         <th>Sufijo</th>
+         <th>IBAN</th>
+         <th>SWIFT</th>
+      </tr>
+      {loop="$fsc->banco->get_cuentas()"}
+      <tr>
+         <td>{$value->codcuenta}</td>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td align="center">{$value->entidad}</td>
+         <td align="center">{$value->agencia}</td>
+         <td align="center">{$value->cuenta}</td>
+         <td align="center">{$value->sufijo}</td>
+         <td align="center">{$value->iban}</td>
+         <td align="center">{$value->swift}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="9">No hay cuentas asociadas.</td>
       </tr>
       {/loop}
    </table>

@@ -2,54 +2,94 @@
 
 {if condition="$fsc->subcuenta"}
 <div class="rounded">
-   <div class="bloque">Descripción: {$fsc->subcuenta->descripcion}</div>
-   <div class="bloque">
-      Ejercicio:
-      <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
-   </div>
-   <div class="bloque">
-      Pertenece a la cuenta: <a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a>
-   </div>
-   <br/>
-   <div class="bloque">Debe: {$fsc->subcuenta->show_debe()} €</div>
-   <div class="bloque">Haber: {$fsc->subcuenta->show_haber()} €</div>
-   <div class="bloque">Saldo: {$fsc->subcuenta->show_saldo()} €</div>
-   <br/>
    <table class="list">
       <tr>
-         <th>Concepto</th>
+         <th align="left">Descripción</th>
+         <th>Ejercicio</th>
+         <th>Pertenece a la cuenta</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
-         <th align="right">IVA</th>
-         <th align="right">Base imponible</th>
-         <th>Contrapartida</th>
-         <th>CIF/NIF</th>
+         <th align="right">Saldo</th>
       </tr>
-      {loop="$fsc->resultados"}
       <tr>
-         <td><a href="{$value->url()}">{$value->concepto}</a></td>
-         <td align="right">{$value->show_debe()} €</td>
-         <td align="right">{$value->show_haber()} €</td>
-         <td align="right">{$value->iva} %</td>
-         <td align="right">{$value->show_baseimponible()} €</td>
-         <td align="center"><a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a></td>
-         <td align="center">{$value->cifnif}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td>
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
+         <td>{$fsc->subcuenta->descripcion}</td>
+         <td align="center">
+            <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
          </td>
-         <td colspan="5"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
+         <td align="center"><a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a></td>
+         <td align="right">{$fsc->subcuenta->show_debe()} €</td>
+         <td align="right">{$fsc->subcuenta->show_haber()} €</td>
+         <td align="right">{$fsc->subcuenta->show_saldo()} €</td>
       </tr>
    </table>
+</div>
+
+<div class="rounded">
+   <form action="{$fsc->url()}&offset={$fsc->offset}" method="post">
+      <input type="hidden" name="puntear" value="TRUE"/>
+      <table class="list">
+         <tr>
+            <th title="puntear">P</th>
+            <th align="left">Asiento</th>
+            <th>Fecha</th>
+            <th align="left">Concepto</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+            <th align="right">IVA</th>
+            <th align="right">Base imponible</th>
+            <th>Contrapartida</th>
+            <th>CIF/NIF</th>
+         </tr>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td align="center">
+               {if condition="$value->punteada"}
+               <input type="checkbox" name="punteada[]" value="{$value->idpartida}" checked="checked"/>
+               {else}
+               <input type="checkbox" name="punteada[]" value="{$value->idpartida}"/>
+               {/if}
+            </td>
+            <td><a href="{$value->url()}">{$value->numero}</a></td>
+            <td align="center">{$value->fecha}</td>
+            <td><a href="{$value->url()}">{$value->concepto}</a></td>
+            <td align="right">{$value->show_debe()} €</td>
+            <td align="right">{$value->show_haber()} €</td>
+            <td align="right">{$value->show_saldo()} €</td>
+            <td align="right">
+               {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
+            </td>
+            <td align="right">
+               {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} €{else}-{/if}
+            </td>
+            <td align="center">
+               {if condition="$value->codcontrapartida"}
+               <a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+               {else}
+               -
+               {/if}
+            </td>
+            <td align="center">
+               {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
+            </td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="2" valign="bottom"><input type="submit" value="guardar"/></td>
+            <td colspan="9">
+               <div class="paginas">
+               {loop="$fsc->paginas()"}
+                  {if condition="$value.actual"}
+                     <a class="actual" href="{$value.url}">{$value.num}</a>
+                  {else}
+                     <a href="{$value.url}">{$value.num}</a>
+                  {/if}
+               {/loop}
+               </div>
+            </td>
+         </tr>
+      </table>
+   </form>
 </div>
 {/if}
 

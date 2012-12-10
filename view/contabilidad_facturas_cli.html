@@ -3,8 +3,31 @@
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
+      $("#b_huecos").click(function() {
+         fs_show_popup('popup_huecos');
+      });
    });
 </script>
+
+<div class="popup" id="popup_huecos" style="min-width: 500px;">
+   <h1>Huecos</h1>
+   <table class="list">
+      <tr>
+         <th>Código</th>
+         <th>Fecha</th>
+      </tr>
+      {loop="$fsc->factura->huecos()"}
+      <tr>
+         <td align="center">{$value.codigo}</td>
+         <td align="center">{$value.fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="2">No hay huecos.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
 
 <div class="rounded">
    {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}

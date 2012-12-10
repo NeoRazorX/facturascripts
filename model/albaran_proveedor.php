@@ -777,6 +777,22 @@ class albaran_proveedor extends fs_model
       }
       return $alblist;
    }
+   
+   public function search_from_proveedor($codproveedor, $desde, $hasta, $serie)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codproveedor = ".$this->var2str($codproveedor)."
+         AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta)."
+         AND codserie = ".$this->var2str($serie)."
+         ORDER BY fecha DESC, codigo DESC");
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $albalist[] = new albaran_proveedor($a);
+      }
+      return $albalist;
+   }
 }
 
 ?>
