@@ -66,20 +66,20 @@ class fs_user extends fs_model
          $this->last_browser = $a['last_browser'];
          
          if( isset($a['fs_page']) )
-         {
             $this->fs_page = $a['fs_page'];
+         else
+         {
+            $this->fs_page = NULL;
             $this->clean_cache();
          }
-         else
-            $this->fs_page = NULL;
          
          if( isset($a['codejercicio']) )
-         {
             $this->codejercicio = $a['codejercicio'];
+         else
+         {
+            $this->codejercicio = NULL;
             $this->clean_cache();
          }
-         else
-            $this->codejercicio = NULL;
       }
       else
       {
