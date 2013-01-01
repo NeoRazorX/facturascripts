@@ -152,7 +152,7 @@ class fs_db
    {
       if($table != '')
       {
-         $sql = "SELECT * FROM pg_indexes WHERE tablename = '".$tabla."';";
+         $sql = "SELECT * FROM pg_indexes WHERE tablename = '".$table."';";
          return $this->select($sql);
       }
       else
@@ -229,7 +229,8 @@ class fs_db
    
    public function get_locks()
    {
-      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks WHERE relfilenode=relation AND NOT granted;");
+      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks
+         WHERE relfilenode=relation AND NOT granted;");
    }
 }
 

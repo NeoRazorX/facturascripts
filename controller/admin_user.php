@@ -19,11 +19,13 @@
 
 require_once 'model/agente.php';
 require_once 'model/fs_access.php';
+require_once 'model/ejercicio.php';
 
 class admin_user extends fs_controller
 {
-   public $suser;
    public $agente;
+   public $ejercicio;
+   public $suser;
 
    public function __construct()
    {
@@ -34,6 +36,7 @@ class admin_user extends fs_controller
    {
       $this->ppage = $this->page->get('admin_users');
       $this->agente = new agente();
+      $this->ejercicio = new ejercicio();
       
       if( isset($_GET['snick']) )
          $this->suser = $this->user->get($_GET['snick']);
@@ -60,6 +63,16 @@ class admin_user extends fs_controller
                else
                   $this->suser->admin = FALSE;
                
+               if( isset($_POST['udpage']) )
+                  $this->suser->fs_page = $_POST['udpage'];
+               else
+                  $this->suser->fs_page = NULL;
+               
+               if( isset($_POST['ejercicio']) )
+                  $this->suser->codejercicio = $_POST['ejercicio'];
+               else
+                  $this->suser->codejercicio = NULL;
+               
                if( $this->suser->save() )
                   $this->new_message("Datos modificados correctamente.");
                else
@@ -82,8 +95,9 @@ class admin_user extends fs_controller
          $this->new_error_msg("Usuario no encontrado.");
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
    
    public function all()

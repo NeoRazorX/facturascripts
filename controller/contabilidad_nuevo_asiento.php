@@ -22,6 +22,7 @@ require_once 'model/asiento.php';
 require_once 'model/concepto_partida.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
+require_once 'model/impuesto.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
 
@@ -30,6 +31,7 @@ class contabilidad_nuevo_asiento extends fs_controller
    public $asiento;
    public $concepto;
    public $divisa;
+   public $impuesto;
    public $ejercicio;
    public $resultados;
 
@@ -43,6 +45,7 @@ class contabilidad_nuevo_asiento extends fs_controller
       $this->asiento = new asiento();
       $this->concepto = new concepto_partida();
       $this->divisa = new divisa();
+      $this->impuesto = new impuesto();
       $this->ejercicio = new ejercicio();
       $this->ppage = $this->page->get('contabilidad_asientos');
       
@@ -74,16 +77,18 @@ class contabilidad_nuevo_asiento extends fs_controller
                   $partida->codsubcuenta = $_POST['codsubcuenta_'.$i];
                   $partida->debe = $_POST['debe_'.$i];
                   $partida->haber = $_POST['haber_'.$i];
-                  $partida->idconcepto = $_POST['idconceptopar_'.$i];
-                  $partida->concepto = $_POST['concepto_'.$i];
-                  $partida->documento = $_POST['documento_'.$i];
-                  $partida->tipodocumento = $_POST['tipodocumento_'.$i];
+                  $partida->idconcepto = $this->asiento->idconcepto;
+                  $partida->concepto = $this->asiento->concepto;
+                  $partida->documento = $this->asiento->documento;
+                  $partida->tipodocumento = $this->asiento->tipodocumento;
                   if($_POST['idcontrapartida_'.$i] != '')
                   {
                      $partida->idcontrapartida = $_POST['idcontrapartida_'.$i];
                      $partida->codcontrapartida = $_POST['codcontrapartida_'.$i];
+                     $partida->cifnif = $_POST['cifnif_'.$i];
+                     $partida->iva = $_POST['iva_'.$i];
+                     $partida->baseimponible = $_POST['baseimp_'.$i];
                   }
-                  $partida->cifnif = $_POST['cifnif_'.$i];
                   if( !$partida->save() )
                      $partidas_correctas = FALSE;
                }
@@ -103,7 +108,8 @@ class contabilidad_nuevo_asiento extends fs_controller
       }
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-5';
    }
    

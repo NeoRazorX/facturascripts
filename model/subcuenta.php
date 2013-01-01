@@ -219,11 +219,36 @@ class subcuenta extends fs_model
          unlink('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf');
    }
    
+   public function all()
+   {
+      $sublist = array();
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      if($subcuentas)
+      {
+         foreach($subcuentas as $s)
+            $sublist[] = new subcuenta($s);
+      }
+      return $sublist;
+   }
+   
    public function all_from_cuenta($idcuenta)
    {
       $sublist = array();
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
          WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta ASC;");
+      if($subcuentas)
+      {
+         foreach($subcuentas as $s)
+            $sublist[] = new subcuenta($s);
+      }
+      return $sublist;
+   }
+   
+   public function all_from_ejercicio($codejercicio)
+   {
+      $sublist = array();
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE codejercicio = ".$this->var2str($codejercicio)." ORDER BY codsubcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -253,18 +278,6 @@ class subcuenta extends fs_model
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($ejercicio)." AND (codsubcuenta ~~ '".$query."%'
          OR lower(descripcion) ~~ '%".$query."%') ORDER BY codcuenta ASC;");
-      if($subcuentas)
-      {
-         foreach($subcuentas as $s)
-            $sublist[] = new subcuenta($s);
-      }
-      return $sublist;
-   }
-   
-   public function all()
-   {
-      $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.";");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

@@ -754,7 +754,11 @@ class articulo extends fs_model
          unlink('tmp/articulos/'.$this->referencia.'.png');
       
       $this->referencia = str_replace(' ', '_', trim($this->referencia));
+      
       $this->descripcion = $this->no_html($this->descripcion);
+      if( strlen($this->descripcion) > 100 )
+         $this->descripcion = substr($this->descripcion, 0, 99);
+      
       $this->equivalencia = str_replace(' ', '_', trim($this->equivalencia));
       $this->codbarras = $this->no_html($this->codbarras);
       $this->observaciones = $this->no_html($this->observaciones);
@@ -770,8 +774,6 @@ class articulo extends fs_model
          $this->new_error_msg("¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.
             Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
       }
-      else if( strlen($this->descripcion) > 100 )
-         $this->descripcion = substr($this->descripcion, 0, 99);
       else if( !is_null($this->equivalencia) AND !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $this->equivalencia) )
       {
          $this->new_error_msg("¡Código de equivalencia del artículos no válido! Debe tener entre 1 y 18 caracteres.

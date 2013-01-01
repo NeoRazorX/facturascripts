@@ -457,6 +457,7 @@ div.main_div div.new_line a {
 div.select {
    display: block;
    margin-bottom: 10px;
+   border-bottom: 1px solid #dddddd;
    font-size: 15px;
 }
 
@@ -529,6 +530,10 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
 div.main_div a.remove {
    background-color: #D74937;
    text-decoration: none;
+}
+
+div.hidden {
+   display: none;
 }
 
 input[type='submit'], input[type='button'] {

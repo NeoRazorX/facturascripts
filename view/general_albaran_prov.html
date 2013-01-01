@@ -389,10 +389,11 @@
    <div class="rounded">
       <table class="list">
          <tr>
-            <th>Artículo</th>
+            <th align="left">Artículo</th>
             <th align="right">Cantidad</th>
             <th align="right">PVP</th>
             <th align="right">dto</th>
+            <th align="right">Total</th>
             <th align="right">IVA</th>
             <th align="right">Total+IVA</th>
          </tr>
@@ -402,6 +403,7 @@
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$value->show_pvp()} €</td>
             <td align="right">{$value->dtopor} %</td>
+            <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->iva} %</td>
             <td align="right">{$value->show_total_iva()} €</td>
          </tr>

@@ -21,6 +21,7 @@ require_once 'base/fs_model.php';
 require_once 'model/agente.php';
 require_once 'model/fs_access.php';
 require_once 'model/fs_page.php';
+require_once 'model/ejercicio.php';
 
 class fs_user extends fs_model
 {
@@ -35,6 +36,8 @@ class fs_user extends fs_model
    public $last_login_time;
    public $last_ip;
    public $last_browser;
+   public $fs_page;
+   public $codejercicio;
    
    private $menu;
    
@@ -61,6 +64,8 @@ class fs_user extends fs_model
          
          $this->last_ip = $a['last_ip'];
          $this->last_browser = $a['last_browser'];
+         $this->fs_page = $a['fs_page'];
+         $this->codejercicio = $a['codejercicio'];
       }
       else
       {
@@ -73,6 +78,8 @@ class fs_user extends fs_model
          $this->last_login_time = NULL;
          $this->last_ip = NULL;
          $this->last_browser = NULL;
+         $this->fs_page = NULL;
+         $this->codejercicio = NULL;
       }
       $this->logged_on = FALSE;
       $this->agente = NULL;
@@ -82,6 +89,8 @@ class fs_user extends fs_model
    {
       $this->clean_cache();
       $agente = new agente();
+      $page = new fs_page();
+      $ejercicio = new ejercicio();
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
          VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
    }
@@ -268,14 +277,18 @@ class fs_user extends fs_model
                log_key = ".$this->var2str($this->log_key).", codagente = ".$this->var2str($this->codagente).",
                admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
                last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
-               last_login_time = ".$this->var2str($this->last_login_time)." WHERE nick = ".$this->var2str($this->nick).";";
+               last_login_time = ".$this->var2str($this->last_login_time).",
+               fs_page = ".$this->var2str($this->fs_page).", codejercicio = ".$this->var2str($this->codejercicio)."
+               WHERE nick = ".$this->var2str($this->nick).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,last_browser)
-               VALUES (".$this->var2str($this->nick).",".$this->var2str($this->password).",".$this->var2str($this->log_key).",
+            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,
+               last_browser,fs_page,codejercicio) VALUES (".$this->var2str($this->nick).",
+               ".$this->var2str($this->password).",".$this->var2str($this->log_key).",
                ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
-               ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",".$this->var2str($this->last_browser).");";
+               ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",
+               ".$this->var2str($this->last_browser).",".$this->var2str($this->fs_page).",".$this->var2str($this->codejercicio).");";
          }
          return $this->db->exec($sql);
       }

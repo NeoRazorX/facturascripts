@@ -41,6 +41,33 @@
          {/if}
          <label for="usuario_admin">Administrador</label>
       </div>
+      <br/>
+      <div class="bloque">
+         Página de inicio:
+         <select name="udpage">
+            {loop="$fsc->user->get_menu()"}
+               {if condition="$value->show_on_menu"}
+                  {if condition="$value->name==$fsc->suser->fs_page"}
+                     <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
+                  {else}
+                     <option value="{$value->name}">{$value->folder} - {$value->title}</option>
+                  {/if}
+               {/if}
+            {/loop}
+         </select>
+      </div>
+      <div class="bloque">
+         Ejercicio:
+         <select name="ejercicio">
+            {loop="$fsc->ejercicio->all_abiertos()"}
+               {if condition="$value->codejercicio==$fsc->suser->codejercicio"}
+                  <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
+               {else}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+               {/if}
+            {/loop}
+         </select>
+      </div>
       </form>
    </div>
    

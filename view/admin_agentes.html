@@ -50,19 +50,21 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th align="left">código + nombre + apellidos</th>
+         <th align="left">código</th>
+         <th align="left">nombre + apellidos</th>
          <th>DNI/CIF</th>
          <th align="right">teléfono</th>
       </tr>
       {loop="$fsc->agente->all()"}
       <tr>
-         <td>{$value->codagente} <a href="{$value->url()}">{$value->get_fullname()}</a></td>
+         <td><a href="{$value->url()}">{$value->codagente}</a></td>
+         <td><a href="{$value->url()}">{$value->get_fullname()}</a></td>
          <td align="center">{$value->dnicif}</td>
          <td align="right">{$value->telefono}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="3">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="4">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

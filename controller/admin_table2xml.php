@@ -36,7 +36,8 @@ class admin_table2xml extends fs_controller
       }
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-1';
    }
    
@@ -98,7 +99,7 @@ class admin_table2xml extends fs_controller
             }
          }
       }
-      header( "content-type: application/xml; charset=UTF-8" );
+      header("content-type: application/xml; charset=UTF-8");
       echo $this->archivo_xml->asXML();
    }
 }

@@ -50,7 +50,8 @@
          <th align="left">agente</th>
          <th>administrador</th>
          <th>IP</th>
-         <th>Navegador</th>
+         <th align="left">Página de inicio</th>
+         <th>Ejercicio</th>
          <th align="right">último login</th>
       </tr>
       {loop="$fsc->user->all()"}
@@ -63,7 +64,8 @@
             <td align="center">-</td>
          {/if}
          <td align="center">{$value->last_ip}</td>
-         <td align="center">{$value->last_browser}</td>
+         <td>{$value->fs_page}</td>
+         <td align="center">{$value->codejercicio}</td>
          <td align="right">{$value->show_last_login()}</td>
       </tr>
       {/loop}

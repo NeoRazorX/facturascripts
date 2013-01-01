@@ -35,25 +35,25 @@ class contabilidad_ejercicios extends fs_controller
       
       if( isset($_POST['codejercicio']) )
       {
-         $eje0 = $this->ejercicio->get($_POST['codejercicio']);
-         if( !$eje0 )
-         {
-            $eje0 = new ejercicio();
-            $eje0->codejercicio = $_POST['codejercicio'];
-         }
+         $eje0 = new ejercicio();
+         $eje0->codejercicio = $_POST['codejercicio'];
          $eje0->nombre = $_POST['nombre'];
          $eje0->fechainicio = $_POST['fechainicio'];
          $eje0->fechafin = $_POST['fechafin'];
          $eje0->estado = $_POST['estado'];
          if( $eje0->save() )
+         {
             $this->new_message("Ejercicio ".$eje0->codejercicio." guardado correctamente.");
+            header('location: '.$eje0->url());
+         }
          else
             $this->new_error_msg("¡Imposible guardar el ejercicio!");
       }
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
 }
 

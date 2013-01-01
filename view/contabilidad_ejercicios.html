@@ -48,37 +48,23 @@
    </form>
 </div>
 
-{loop="$fsc->ejercicio->all()"}
 <div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="codejercicio" value="{$value->codejercicio}"/>
-      <h1>
-         {$value->codejercicio}
-         <span><input type="submit" value="guardar"/></span>
-      </h1>
-      <div class="bloque">
-         Nombre: <input type="text" name="nombre" value="{$value->nombre}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Fecha de inicio: <input class="tcal" type="text" name="fechainicio" value="{$value->fechainicio}" size="12"/>
-      </div>
-      <div class="bloque">
-         Fecha fin: <input class="tcal" type="text" name="fechafin" value="{$value->fechafin}" size="12"/>
-      </div>
-      <div class="bloque">
-         Estado:
-         <select name="estado">
-            {if condition="$value->estado == 'ABIERTO'"}
-               <option value="ABIERTO" selected="selected">ABIERTO</option>
-               <option value="CERRADO">CERRADO</option>
-            {else}
-               <option value="ABIERTO">ABIERTO</option>
-               <option value="CERRADO" selected="selected">CERRADO</option>
-            {/if}
-         </select>
-      </div>
-   </form>
+   <table class="list">
+      <tr>
+         <th align="left">Código + nombre</th>
+         <th>Fecha de inicio</th>
+         <th>Fecha fin</th>
+         <th align="right">Estado</th>
+      </tr>
+      {loop="$fsc->ejercicio->all()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
+         <td align="center">{$value->fechainicio}</td>
+         <td align="center">{$value->fechafin}</td>
+         <td align="right">{$value->estado}</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
-{/loop}
 
 {include="footer"}

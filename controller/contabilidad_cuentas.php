@@ -61,16 +61,17 @@ class contabilidad_cuentas extends fs_controller
          $this->resultados = $this->cuenta->all($this->offset);
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-2';
    }
    
    public function anterior_url()
    {
       $url = '';
-      if($this->query!='' AND $this->offset>'0')
+      if($this->query!='' AND $this->offset>0)
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
-      else if($this->query=='' AND $this->offset>'0')
+      else if($this->query=='' AND $this->offset>0)
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
       return $url;
    }

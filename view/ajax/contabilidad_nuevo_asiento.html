@@ -14,8 +14,8 @@
 {if condition="$fsc->resultados"}
 <table class="list">
    <tr>
-      <th>Código</th>
-      <th>Descripción</th>
+      <th align="left">Código</th>
+      <th align="left">Descripción</th>
       <th align="right">debe</th>
       <th align="right">haber</th>
       <th align="right">saldo</th>
@@ -23,12 +23,12 @@
    {loop="$fsc->resultados"}
    <tr>
       <td>
-         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
+         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}','{$value->saldo}')">
             {$value->codsubcuenta}
          </a>
       </td>
       <td>
-         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}')">
+         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codsubcuenta}','{$value->descripcion}','{$value->saldo}')">
             {$value->descripcion}
          </a>
       </td>

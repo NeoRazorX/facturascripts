@@ -92,7 +92,7 @@ class ejercicio extends fs_model
       if( is_null($this->codejercicio) )
          return 'index.php?page=contabilidad_ejercicios';
       else
-         return 'index.php?page=contabilidad_ejercicios#'.$this->codejercicio;
+         return 'index.php?page=contabilidad_ejercicio&cod='.$this->codejercicio;
    }
    
    public function is_default()

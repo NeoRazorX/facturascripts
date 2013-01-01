@@ -2,9 +2,19 @@
 
 {if condition="$fsc->cuenta"}
 <div class="rounded">
-   <div class="bloque">Descripción: {$fsc->cuenta->descripcion}</div>
-   <div class="bloque">Ejercicio: <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></div>
-   <br/>
+   <table class="list">
+      <tr>
+         <th align="left">Descripción</th>
+         <th>Ejercicio</th>
+      </tr>
+      <tr>
+         <td>{$fsc->cuenta->descripcion}</td>
+         <td align="center"><a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
+      </tr>
+   </table>
+</div>
+
+<div class="rounded">
    <table class="list">
       <tr>
          <th align="left">Código</th>

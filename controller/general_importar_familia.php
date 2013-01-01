@@ -299,7 +299,14 @@ class general_importar_familia extends fs_controller
                   }
                }
                else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
-                  $this->test_articulo( explode(';', $linea) );
+               {
+                  if( !$this->test_articulo( explode(';', $linea) ) )
+                  {
+                     $retorno = TRUE;
+                     $this->new_error_msg("¡Error al procesar la línea ".($i+1)."!");
+                     break;
+                  }
+               }
                else if($i >= ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
                   break;
                $i++;
@@ -317,9 +324,11 @@ class general_importar_familia extends fs_controller
       return $retorno;
    }
    
-   /// comprobamos la línea y el artículo
+   /// comprobamos la línea y el artículo, devuelve False en caso de fallo
    private function test_articulo($tarifa)
    {
+      $retorno = TRUE;
+      
       if(count($tarifa) >= 4)
       {
          // sustituimos las comas por puntos en el pvp
@@ -370,7 +379,10 @@ class general_importar_familia extends fs_controller
                   $this->family_data->pvp_igual += 1;
             }
             else
+            {
+               $retorno = FALSE;
                $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
+            }
          }
          else
          {
@@ -388,9 +400,14 @@ class general_importar_familia extends fs_controller
             if( $articulo->test() )
                $this->family_data->articulos_nuevos += 1;
             else
+            {
+               $retorno = FALSE;
                $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
+            }
          }
       }
+      
+      return $retorno;
    }
    
    /*

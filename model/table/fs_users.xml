@@ -52,6 +52,16 @@
       <tipo>character varying(255)</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>fs_page</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codejercicio</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>fs_users_pkey</nombre>
       <consulta>PRIMARY KEY (nick)</consulta>
@@ -59,5 +69,13 @@
    <restriccion>
       <nombre>ca_fs_users_agentes</nombre>
       <consulta>FOREIGN KEY (codagente) REFERENCES agentes (codagente) MATCH SIMPLE ON UPDATE CASCADE ON DELETE SET NULL</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_pages</nombre>
+      <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) MATCH SIMPLE ON UPDATE CASCADE ON DELETE SET NULL</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_ejercicios</nombre>
+      <consulta>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) MATCH SIMPLE ON UPDATE CASCADE ON DELETE SET NULL</consulta>
    </restriccion>
 </tabla>

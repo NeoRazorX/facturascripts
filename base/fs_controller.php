@@ -72,19 +72,21 @@ class fs_controller
          else if( $this->user->have_access_to($this->page->name, $this->admin_page) )
          {
             if($name == '')
-            {
                $this->new_error_msg('¡Página no encontrada!');
-               $this->prevent_default_page();
-            }
             else
             {
                /// ¿Quieres que sea tu página de inicio? ¿O ya lo es?
                if( isset($_GET['default_page']) )
-                  $this->set_default_page();
-               else if( !isset($_COOKIE['default_page']) )
-                  $this->default_page = FALSE;
-               else if($_COOKIE['default_page'] == $this->page->name)
+               {
+                  $this->user->fs_page = $this->page->name;
+                  $this->user->save();
                   $this->default_page = TRUE;
+               }
+               else
+                  $this->default_page = ($this->user->fs_page == $this->page->name);
+               
+               /// establecemos el ejercicio por defecto
+               $this->default_ejercicio();
                
                $this->buttons = array();
                
@@ -101,10 +103,7 @@ class fs_controller
             }
          }
          else
-         {
             $this->new_error_msg("Acceso denegado.");
-            $this->prevent_default_page();
-         }
       }
       else
       {
@@ -273,7 +272,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.13';
+      return '0.9.14';
    }
    
    public function select_default_page()
@@ -282,16 +281,7 @@ class fs_controller
       {
          $url = FALSE;
          
-         if( isset($_COOKIE['default_page']) )
-         {
-            $page = $this->page->get($_COOKIE['default_page']);
-            if($page)
-               $url = 'index.php?page=' . $_COOKIE['default_page'];
-            else
-               setcookie('default_page', '', time()-FS_COOKIES_EXPIRE);
-         }
-         
-         if( !$url )
+         if( is_null($this->user->fs_page) )
          {
             $url = 'index.php?page=admin_pages';
             foreach($this->menu as $p)
@@ -303,31 +293,10 @@ class fs_controller
                }
             }
          }
+         else
+            $url = 'index.php?page=' . $this->user->fs_page;
          
          Header('location: '.$url);
-      }
-   }
-   
-   private function set_default_page()
-   {
-      if($_GET['default_page'] == 'TRUE')
-      {
-         setcookie('default_page', $this->page->name, time()+FS_COOKIES_EXPIRE);
-         $this->default_page = TRUE;
-      }
-      else
-      {
-         setcookie('default_page', '', time()-FS_COOKIES_EXPIRE);
-         $this->default_page = FALSE;
-      }
-   }
-   
-   private function prevent_default_page()
-   {
-      if( isset($_COOKIE['default_page']) )
-      {
-         if($_COOKIE['default_page'] == $this->page->name)
-            setcookie('default_page', '', time()-FS_COOKIES_EXPIRE);
       }
    }
    
@@ -369,6 +338,21 @@ class fs_controller
    public function is_admin_page()
    {
       return $this->admin_page;
+   }
+   
+   /*
+    * Esto es una pequeña chapuza para que un administrador pueda cambiar
+    * el ejercicio por defecto de otros usuarios
+    */
+   private function default_ejercicio()
+   {
+      if( !is_null($this->user->codejercicio) )
+      {
+         if( !isset($_COOKIE['default_ejercicio']) )
+            setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
+         else if($_COOKIE['default_ejercicio'] != $this->user->codejercicio)
+            setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
+      }
    }
 }
 

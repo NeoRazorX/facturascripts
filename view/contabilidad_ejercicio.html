@@ -1,0 +1,66 @@
+{include="header"}
+
+{if condition="$fsc->ejercicio"}
+<div class="rounded">
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codejercicio" value="{$fsc->ejercicio->codejercicio}"/>
+      <table class="list">
+         <tr>
+            <th align="left">Nombre</th>
+            <th align="left">Fecha inicio</th>
+            <th align="left">Fecha fin</th>
+            <th align="left">Estado</th>
+         </tr>
+         <tr>
+            <td><input type="text" name="nombre" value="{$fsc->ejercicio->nombre}" autocomplete="off"/></td>
+            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="12"/></td>
+            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="12"/></td>
+            <td>
+               <select name="estado">
+               {if condition="$fsc->ejercicio->estado == 'ABIERTO'"}
+                  <option value="ABIERTO" selected="selected">ABIERTO</option>
+                  <option value="CERRADO">CERRADO</option>
+               {else}
+                  <option value="ABIERTO">ABIERTO</option>
+                  <option value="CERRADO" selected="selected">CERRADO</option>
+               {/if}
+               </select>
+            </td>
+            <td align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="rounded">
+   <h1>Cuentas:</h1>
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->cuentas"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {else}
+      <tr><td colspan="2">Sin resultados.</td></tr>
+      {/loop}
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+            <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+            <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+{/if}
+
+{include="footer"}
