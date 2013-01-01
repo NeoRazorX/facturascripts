@@ -58,8 +58,7 @@ abstract class fs_model
                }
                if( !$found )
                {
-                  self::$checked_tables = array();
-                  $this->cache->delete('fs_checked_tables');
+                  $this->clean_checked_tables();
                   break;
                }
             }
@@ -75,6 +74,12 @@ abstract class fs_model
             $this->cache->set('fs_checked_tables', self::$checked_tables);
          }
       }
+   }
+   
+   protected function clean_checked_tables()
+   {
+      self::$checked_tables = array();
+      $this->cache->delete('fs_checked_tables');
    }
    
    protected function new_error_msg($msg = FALSE)

@@ -70,7 +70,7 @@ class fs_user extends fs_model
          else
          {
             $this->fs_page = NULL;
-            $this->clean_cache();
+            $this->clean_checked_tables();
          }
          
          if( isset($a['codejercicio']) )
@@ -78,7 +78,7 @@ class fs_user extends fs_model
          else
          {
             $this->codejercicio = NULL;
-            $this->clean_cache();
+            $this->clean_checked_tables();
          }
       }
       else
