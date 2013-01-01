@@ -352,6 +352,7 @@ class fs_controller
             setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
          else if($_COOKIE['default_ejercicio'] != $this->user->codejercicio)
             setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
+         $_COOKIE['default_ejercicio'] = $this->user->codejercicio;
       }
    }
 }

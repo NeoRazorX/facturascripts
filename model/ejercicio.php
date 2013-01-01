@@ -107,8 +107,12 @@ class ejercicio extends fs_model
    
    public function set_default()
    {
+      /*
+       * Ahora se establece desde fs_controller
+       * 
       setcookie('default_ejercicio', $this->codejercicio, time()+FS_COOKIES_EXPIRE);
       self::$default_ejercicio = $this->codejercicio;
+       */
    }
    
    public function get($cod)
