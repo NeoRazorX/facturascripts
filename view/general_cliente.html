@@ -228,6 +228,10 @@
          <td align="right">{$value->show_haber()} €</td>
          <td align="right">{$value->show_saldo()} €</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="6">Sin resultados.</td>
+      </tr>
       {/loop}
    </table>
 </div>

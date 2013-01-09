@@ -44,15 +44,14 @@ class general_albaran_cli extends fs_controller
       $this->ppage = $this->page->get('general_albaranes_cli');
       $this->familia = new familia();
       
-      /*
-       * buscamos la url del script general_nuevo_albaran,
-       * imprescindible para buscar nuevo artículos.
-       */
-      $nuevoalbp = $this->page->get('general_nuevo_albaran');
-      if($nuevoalbp)
-         $this->nuevo_albaran_url = $nuevoalbp->url();
-      else
-         $this->nuevo_albaran_url = FALSE;
+      /// Comprobamos si el usuario tiene acceso a general_nuevo_albaran
+      $this->nuevo_albaran_url = FALSE;
+      if( $this->user->have_access_to('general_nuevo_albaran', FALSE) )
+      {
+         $nuevoalbp = $this->page->get('general_nuevo_albaran');
+         if($nuevoalbp)
+            $this->nuevo_albaran_url = $nuevoalbp->url();
+      }
       
       if( isset($_POST['idalbaran']) )
       {
@@ -71,17 +70,17 @@ class general_albaran_cli extends fs_controller
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
          
-         if( $this->albaran->ptefactura )
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
-         else
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
-         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
-         
          /// comprobamos el albarán
          $this->albaran->full_test();
          
          if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
             $this->generar_factura();
+         
+         if( $this->albaran->ptefactura )
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
+         else
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
       }
       else
          $this->new_error_msg("¡Albarán de cliente no encontrado!");
@@ -89,7 +88,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    public function url()
@@ -282,7 +281,6 @@ class general_albaran_cli extends fs_controller
          if($continuar)
          {
             $this->albaran->idfactura = $factura->idfactura;
-            $this->albaran->editable = FALSE;
             $this->albaran->ptefactura = FALSE;
             if( $this->albaran->save() )
                $this->generar_asiento($factura);

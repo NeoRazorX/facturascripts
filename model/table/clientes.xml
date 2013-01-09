@@ -18,6 +18,12 @@
    <columna><nombre>copiasfactura</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>
    <columna><nombre>capitalimpagado</nombre><tipo>double precision</tipo><nulo>YES</nulo></columna>
    <columna><nombre>riesgoalcanzado</nombre><tipo>double precision</tipo><nulo>YES</nulo></columna>
+   <columna>
+      <nombre>tipoidfiscal</nombre>
+      <tipo>character varying(25)</tipo>
+      <nulo>NO</nulo>
+      <defecto>'NIF'::character varying</defecto>
+   </columna>
    <columna><nombre>riesgomax</nombre><tipo>double precision</tipo><nulo>YES</nulo></columna>
    <columna><nombre>ivaincluido</nombre><tipo>boolean</tipo><nulo>YES</nulo></columna>
    <columna><nombre>recargo</nombre><tipo>boolean</tipo><nulo>YES</nulo></columna>

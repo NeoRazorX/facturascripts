@@ -27,8 +27,6 @@ class divisa extends fs_model
    public $bandera;
    public $fecha;
    public $codiso;
-   
-   private static $default_divisa;
 
    public function __construct($d=FALSE)
    {
@@ -62,18 +60,7 @@ class divisa extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_divisa) )
-         return (self::$default_divisa == $this->coddivisa);
-      else if( !isset($_COOKIE['default_divisa']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_divisa'] == $this->coddivisa);
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_divisa', $this->coddivisa, time()+FS_COOKIES_EXPIRE);
-      self::$default_divisa = $this->coddivisa;
+      return ( $this->coddivisa == $this->default_items->coddivisa() );
    }
    
    public function get($cod)

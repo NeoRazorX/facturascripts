@@ -37,10 +37,12 @@ class fs_page extends fs_model
          $this->name = $p['name'];
          $this->title = $p['title'];
          $this->folder = $p['folder'];
+         
          if( isset($p['version']) )
             $this->version = $p['version'];
          else
             $this->version = NULL;
+         
          $this->show_on_menu = ($p['show_on_menu'] == 't');
       }
       else
@@ -59,7 +61,7 @@ class fs_page extends fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
-              VALUES ('admin_pages','páginas','admin',NULL,TRUE);";
+         VALUES ('admin_pages','páginas','admin',NULL,TRUE);";
    }
    
    public function url()
@@ -68,6 +70,16 @@ class fs_page extends fs_model
          return 'index.php?page=admin_pages';
       else
          return 'index.php?page='.$this->name;
+   }
+   
+   public function is_default()
+   {
+      return ( $this->name == $this->default_items->default_page() );
+   }
+   
+   public function showing()
+   {
+      return ( $this->name == $this->default_items->showing_page() );
    }
    
    public function exists()

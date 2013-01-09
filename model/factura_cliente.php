@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -261,14 +261,15 @@ class linea_factura_cliente extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idlinea_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idlinea_seq');
       if($newid)
-         $this->idlinea = intval($newid[0]['nextval']);
+         $this->idlinea = intval($newid);
    }
    
    public function save()
@@ -524,6 +525,7 @@ class factura_cliente extends fs_model
    public $codpago;
    public $coddivisa;
    public $fecha;
+   public $hora;
    public $codcliente;
    public $nombrecliente;
    public $cifnif;
@@ -569,6 +571,10 @@ class factura_cliente extends fs_model
          $this->codpago = $f['codpago'];
          $this->coddivisa = $f['coddivisa'];
          $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
+         if( is_null($f['hora']) )
+            $this->hora = '00:00:00';
+         else
+            $this->hora = $f['hora'];
          $this->codcliente = $f['codcliente'];
          $this->nombrecliente = $f['nombrecliente'];
          $this->cifnif = $f['cifnif'];
@@ -611,6 +617,7 @@ class factura_cliente extends fs_model
          $this->codpago = NULL;
          $this->coddivisa = NULL;
          $this->fecha = Date('d-m-Y');
+         $this->hora = Date('H:i:s');
          $this->codcliente = NULL;
          $this->nombrecliente = NULL;
          $this->cifnif = NULL;
@@ -798,9 +805,9 @@ class factura_cliente extends fs_model
    
    public function new_idfactura()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idfactura_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
       if($newid)
-         $this->idfactura = intval($newid[0]['nextval']);
+         $this->idfactura = intval($newid);
    }
    
    public function new_codigo()
@@ -884,8 +891,8 @@ class factura_cliente extends fs_model
                tasaconv = ".$this->var2str($this->tasaconv).", recfinanciero = ".$this->var2str($this->recfinanciero).",
                totalrecargo = ".$this->var2str($this->totalrecargo).", observaciones = ".$this->var2str($this->observaciones).",
                deabono = ".$this->var2str($this->deabono).", automatica = ".$this->var2str($this->automatica).",
-               editable = ".$this->var2str($this->editable).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento)."
-               WHERE idfactura = ".$this->var2str($this->idfactura).";";
+               editable = ".$this->var2str($this->editable).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento).",
+               hora = ".$this->var2str($this->hora)." WHERE idfactura = ".$this->var2str($this->idfactura).";";
          }
          else
          {
@@ -895,7 +902,7 @@ class factura_cliente extends fs_model
                codigorect,codejercicio,codserie,codalmacen,codpago,coddivisa,fecha,codcliente,nombrecliente,
                cifnif,direccion,ciudad,provincia,apartado,coddir,codpostal,codpais,codagente,neto,totaliva,total,totaleuros,
                irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,deabono,automatica,editable,
-               nogenerarasiento) VALUES (".$this->var2str($this->idfactura).",".$this->var2str($this->idasiento).",
+               nogenerarasiento,hora) VALUES (".$this->var2str($this->idfactura).",".$this->var2str($this->idasiento).",
                ".$this->var2str($this->idpagodevol).",".$this->var2str($this->idfacturarect).",".$this->var2str($this->codigo).",
                ".$this->var2str($this->numero).",".$this->var2str($this->codigorect).",".$this->var2str($this->codejercicio).",
                ".$this->var2str($this->codserie).",".$this->var2str($this->codalmacen).",".$this->var2str($this->codpago).",
@@ -909,7 +916,7 @@ class factura_cliente extends fs_model
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->porcomision).",".$this->var2str($this->tasaconv).",
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
                ".$this->var2str($this->deabono).",".$this->var2str($this->automatica).",".$this->var2str($this->editable).",
-               ".$this->var2str($this->nogenerarasiento).");";
+               ".$this->var2str($this->nogenerarasiento).",".$this->var2str($this->hora).");";
          }
          return $this->db->exec($sql);
       }

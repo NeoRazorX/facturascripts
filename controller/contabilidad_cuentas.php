@@ -23,6 +23,7 @@ require_once 'model/ejercicio.php';
 class contabilidad_cuentas extends fs_controller
 {
    public $cuenta;
+   public $cuentas_especiales;
    public $ejercicio;
    public $resultados;
    public $resultados2;
@@ -39,6 +40,12 @@ class contabilidad_cuentas extends fs_controller
       $this->ejercicio = new ejercicio();
       $this->custom_search = TRUE;
       
+      $ce = new cuenta_especial();
+      $this->cuentas_especiales = $ce->all();
+      
+      $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales',
+         '#', '', 'img/tools.png');
+      
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       else
@@ -52,18 +59,20 @@ class contabilidad_cuentas extends fs_controller
       }
       else if( isset($_POST['ejercicio']) )
       {
-         $eje = $this->ejercicio->get($_POST['ejercicio']);
-         if($eje)
-            $eje->set_default();
+         $this->save_codejercicio( $_POST['ejercicio'] );
          $this->resultados = $this->cuenta->all_from_ejercicio($_POST['ejercicio'], $this->offset);
+         $this->resultados2 = array();
       }
       else
+      {
          $this->resultados = $this->cuenta->all($this->offset);
+         $this->resultados2 = array();
+      }
    }
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-4';
    }
    
    public function anterior_url()

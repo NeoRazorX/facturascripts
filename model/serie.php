@@ -26,8 +26,6 @@ class serie extends fs_model
    public $siniva;
    public $irpf;
    public $idcuenta;
-   
-   private static $default_serie;
 
    public function __construct($s=FALSE)
    {
@@ -67,18 +65,7 @@ class serie extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_serie) )
-         return (self::$default_serie == $this->codserie);
-      else if( !isset($_COOKIE['default_serie']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_serie'] == $this->codserie);
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_serie', $this->codserie, time()+FS_COOKIES_EXPIRE);
-      self::$default_serie = $this->codserie;
+      return ( $this->codserie == $this->default_items->codserie() );
    }
    
    public function get($cod)

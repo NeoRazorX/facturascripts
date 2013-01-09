@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -159,6 +159,11 @@ class linea_albaran_proveedor extends fs_model
       return number_format($this->pvpunitario*(100+$this->iva)/100, 2, '.', ' ');
    }
    
+   public function show_dto()
+   {
+      return number_format($this->dtopor, 2, '.', ' ');
+   }
+   
    public function show_total()
    {
       return number_format($this->pvptotal, 2, '.', ' ');
@@ -207,9 +212,9 @@ class linea_albaran_proveedor extends fs_model
    
    public function new_idlinea()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idlinea_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idlinea_seq');
       if($newid)
-         $this->idlinea = intval($newid[0]['nextval']);
+         $this->idlinea = intval($newid);
    }
    
    public function save()
@@ -363,6 +368,7 @@ class albaran_proveedor extends fs_model
    public $codagente;
    public $codalmacen;
    public $fecha;
+   public $hora;
    public $codproveedor;
    public $nombre;
    public $cifnif;
@@ -404,6 +410,10 @@ class albaran_proveedor extends fs_model
          $this->codagente = $a['codagente'];
          $this->codalmacen = $a['codalmacen'];
          $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
+         if( is_null($a['hora']) )
+            $this->hora = '00:00:00';
+         else
+            $this->hora = $a['hora'];
          $this->codproveedor = $a['codproveedor'];
          $this->nombre = $a['nombre'];
          $this->cifnif = $a['cifnif'];
@@ -432,6 +442,7 @@ class albaran_proveedor extends fs_model
          $this->codagente = NULL;
          $this->codalmacen = NULL;
          $this->fecha = Date('d-m-Y');
+         $this->hora = Date('H:i:s');
          $this->codproveedor = NULL;
          $this->nombre = '';
          $this->cifnif = '';
@@ -547,9 +558,9 @@ class albaran_proveedor extends fs_model
    
    public function new_idalbaran()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idalbaran_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idalbaran_seq');
       if($newid)
-         $this->idalbaran = intval($newid[0]['nextval']);
+         $this->idalbaran = intval($newid);
    }
    
    public function new_codigo()
@@ -606,7 +617,7 @@ class albaran_proveedor extends fs_model
                totaleuros = ".$this->var2str($this->totaleuros).", irpf = ".$this->var2str($this->irpf).",
                totalirpf = ".$this->var2str($this->totalirpf).", tasaconv = ".$this->var2str($this->tasaconv).",
                recfinanciero = ".$this->var2str($this->recfinanciero).", totalrecargo = ".$this->var2str($this->totalrecargo).",
-               observaciones = ".$this->var2str($this->observaciones).",
+               observaciones = ".$this->var2str($this->observaciones).", hora = ".$this->var2str($this->hora).",
                ptefactura = ".$this->var2str($this->ptefactura)." WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
          }
          else
@@ -615,7 +626,7 @@ class albaran_proveedor extends fs_model
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (idalbaran,codigo,numero,numproveedor,codejercicio,codserie,coddivisa,
                codpago,codagente,codalmacen,fecha,codproveedor,nombre,cifnif,neto,total,totaliva,totaleuros,irpf,totalirpf,
-               tasaconv,recfinanciero,totalrecargo,observaciones,ptefactura) VALUES (".$this->var2str($this->idalbaran).",
+               tasaconv,recfinanciero,totalrecargo,observaciones,ptefactura,hora) VALUES (".$this->var2str($this->idalbaran).",
                ".$this->var2str($this->codigo).",".$this->var2str($this->numero).",".$this->var2str($this->numproveedor).",
                ".$this->var2str($this->codejercicio).",".$this->var2str($this->codserie).",".$this->var2str($this->coddivisa).",
                ".$this->var2str($this->codpago).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
@@ -623,7 +634,8 @@ class albaran_proveedor extends fs_model
                ".$this->var2str($this->cifnif).",".$this->var2str($this->neto).",".$this->var2str($this->total).",
                ".$this->var2str($this->totaliva).",".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
-               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).");";
+               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
+               ".$this->var2str($this->ptefactura).",".$this->var2str($this->hora).");";
          }
          return $this->db->exec($sql);
       }

@@ -53,7 +53,7 @@
                {/if}
                <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
                {if condition="$fsc->page->show_on_menu"}
-                  {if condition="$fsc->default_page"}
+                  {if condition="$fsc->page->is_default()"}
                   <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
                   {else}
                   <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
@@ -82,7 +82,7 @@
             <img id="folder_{$value}_img" src="img/flecha_submenu.png" alt="*"/>
             <ul>
             {loop="$fsc->pages($value)"}
-               {if condition="$value->name == $fsc->page->name"}
+               {if condition="$value->showing()"}
                   <li class="selected"><a href="{$value->url()}">{$value->title}</a></li>
                {else}
                   <li><a href="{$value->url()}">{$value->title}</a></li>

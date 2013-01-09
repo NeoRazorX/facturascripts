@@ -18,12 +18,14 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/articulo.php';
 
 class tarifa extends fs_model
 {
    public $codtarifa;
    public $nombre;
    public $incporcentual;
+   public $inclineal;
    
    public function __construct($t = FALSE)
    {
@@ -33,12 +35,14 @@ class tarifa extends fs_model
          $this->codtarifa = $t['codtarifa'];
          $this->nombre = $t['nombre'];
          $this->incporcentual = floatval( $t['incporcentual'] );
+         $this->inclineal = floatval( $t['inclineal'] );
       }
       else
       {
          $this->codtarifa = NULL;
          $this->nombre = NULL;
          $this->incporcentual = 0;
+         $this->inclineal = 0;
       }
    }
    
@@ -100,14 +104,15 @@ class tarifa extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-               incporcentual = ".$this->var2str($this->incporcentual)."
+               incporcentual = ".$this->var2str($this->incporcentual).",
+               inclineal = ".$this->var2str($this->inclineal)."
                WHERE codtarifa = ".$this->var2str($this->codtarifa).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual) VALUES
-               (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
-               ".$this->var2str($this->incporcentual).");";
+            $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual,inclineal)
+               VALUES (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->incporcentual).",".$this->var2str($this->inclineal).");";
          }
          return $this->db->exec($sql);
       }
@@ -139,6 +144,131 @@ class tarifa extends fs_model
                $tarlist[] = new tarifa($t);
          }
          $this->cache->set('m_tarifa_all', $tarlist);
+      }
+      return $tarlist;
+   }
+}
+
+class tarifa_articulo extends fs_model
+{
+   public $id;
+   public $referencia;
+   public $codtarifa;
+   public $nombre;
+   public $pvp;
+   public $descuento;
+   public $iva;
+   
+   public function __construct($t = FALSE)
+   {
+      parent::__construct('articulostarifas');
+      if( $t )
+      {
+         $this->id = $this->intval( $t['id'] );
+         $this->referencia = $t['referencia'];
+         $this->codtarifa = $t['codtarifa'];
+         $this->descuento = floatval($t['descuento']);
+      }
+      else
+      {
+         $this->id = NULL;
+         $this->referencia = NULL;
+         $this->codtarifa = NULL;
+         $this->descuento = 0;
+      }
+      $this->nombre = NULL;
+      $this->pvp = 0;
+      $this->iva = 0;
+   }
+   
+   protected function install()
+   {
+      $a = new articulo();
+      $t = new tarifa();
+      return '';
+   }
+   
+   public function show_descuento()
+   {
+      return number_format($this->descuento, 2, '.', '');
+   }
+   
+   public function show_pvp($coma=TRUE)
+   {
+      if( $coma )
+         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', ' ');
+      else
+         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', '');
+   }
+   
+   public function show_pvp_iva($coma=TRUE)
+   {
+      if( $coma )
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', ' ');
+      else
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', '');
+   }
+   
+   public function set_pvp_iva($p)
+   {
+      $pvpi = floatval($p);
+      if($this->pvp > 0)
+         $this->descuento = 100 - 10000*$pvpi/($this->pvp*(100+$this->iva));
+      else
+         $this->descuento = 0;
+   }
+   
+   public function get($id)
+   {
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      if( $tarifa )
+         return new tarifa_articulo($tarifa[0]);
+      else
+         return FALSE;
+   }
+   
+   public function exists()
+   {
+      if( is_null($this->id) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
+   public function save()
+   {
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET referencia = ".$this->var2str($this->referencia).",
+            codtarifa = ".$this->var2str($this->codtarifa).", descuento = ".$this->var2str($this->descuento)."
+            WHERE id = ".$this->var2str($this->id).";";
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (referencia,codtarifa,descuento) VALUES
+            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",".$this->var2str($this->descuento).");";
+      }
+      return $this->db->exec($sql);
+   }
+   
+   public function delete()
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function all_from_articulo($ref)
+   {
+      $tarlist = array();
+      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
+      if( $tarifas )
+      {
+         foreach($tarifas as $t)
+            $tarlist[] = new tarifa_articulo($t);
       }
       return $tarlist;
    }

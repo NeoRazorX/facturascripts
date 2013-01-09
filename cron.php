@@ -21,13 +21,25 @@ date_default_timezone_set('Europe/Madrid');
 
 require_once 'config.php';
 require_once 'base/fs_db.php';
+require_once 'base/fs_default_items.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
+require_once 'model/empresa.php';
 require_once 'extras/libromayor.php';
 
 $db = new fs_db();
 if( $db->connect() )
 {
+   /// establecemos los elementos por defecto
+   $fs_default_items = new fs_default_items();
+   $empresa = new empresa();
+   $fs_default_items->set_codalmacen( $empresa->codalmacen );
+   $fs_default_items->set_coddivisa( $empresa->coddivisa );
+   $fs_default_items->set_codejercicio( $empresa->codejercicio );
+   $fs_default_items->set_codpago( $empresa->codpago );
+   $fs_default_items->set_codpais( $empresa->codpais );
+   $fs_default_items->set_codserie( $empresa->codserie );
+   
    $articulo = new articulo();
    echo "Ejecutando tareas para los artículos...\n";
    $articulo->cron_job();

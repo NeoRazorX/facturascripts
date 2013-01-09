@@ -118,7 +118,7 @@ class fs_db
             break;
          }
       }
-      return($resultado);
+      return $resultado;
    }
    
    /// devuelve un array con las columnas de una tabla dada
@@ -182,7 +182,7 @@ class fs_db
          }
          self::$t_selects++;
       }
-      return($resultado);
+      return $resultado;
    }
    
    /// ejecuta un select parcial
@@ -201,7 +201,7 @@ class fs_db
          }
          self::$t_selects++;
       }
-      return($resultado);
+      return $resultado;
    }
    
    /// ejecuta una consulta sobre la base de datos
@@ -212,14 +212,58 @@ class fs_db
       {
          self::$history[] = $sql;
          pg_query(self::$link, 'BEGIN TRANSACTION;');
-         $resultado = pg_query(self::$link, $sql);
-         if($resultado)
+         $aux = pg_query(self::$link, $sql);
+         if($aux)
+         {
+            pg_free_result($aux);
             pg_query(self::$link, 'COMMIT;');
+            $resultado = TRUE;
+         }
          else
             pg_query(self::$link, 'ROLLBACK;');
          self::$t_transactions++;
       }
-      return($resultado);
+      return $resultado;
+   }
+   
+   /// devuleve el siguiente valor de una secuencia
+   public function nextval($seq)
+   {
+      $resultado = FALSE;
+      if(self::$link)
+      {
+         $sql = "SELECT nextval('".$seq."');";
+         self::$history[] = $sql;
+         $aux = pg_query(self::$link, $sql);
+         if($aux)
+         {
+            $aux2 = pg_fetch_row($aux);
+            $resultado = $aux2[0];
+            pg_free_result($aux);
+         }
+         self::$t_selects++;
+      }
+      return $resultado;
+   }
+   
+   /// devuleve el último ID asignado
+   public function lastval()
+   {
+      $resultado = FALSE;
+      if(self::$link)
+      {
+         $sql = 'SELECT lastval();';
+         self::$history[] = $sql;
+         $aux = pg_query(self::$link, $sql);
+         if($aux)
+         {
+            $aux2 = pg_fetch_row($aux);
+            $resultado = $aux2[0];
+            pg_free_result($aux);
+         }
+         self::$t_selects++;
+      }
+      return $resultado;
    }
    
    public function escape_string($s='')

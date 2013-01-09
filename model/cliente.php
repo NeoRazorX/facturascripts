@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,6 +19,7 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/albaran_cliente.php';
+require_once 'model/cuenta.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/subcuenta.php';
 
@@ -67,7 +68,8 @@ class subcuenta_cliente extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -79,13 +81,27 @@ class subcuenta_cliente extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "";
+         $sql = "UPDATE ".$this->table_name." SET codcliente = ".$this->var2str($this->codcliente).",
+            codsubcuenta = ".$this->var2str($this->codsubcuenta).",
+            codejercicio = ".$this->var2str($this->codejercicio).",
+            idsubcuenta = ".$this->var2str($this->idsubcuenta)."
+            WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
-         $sql = "";
+         $sql = "INSERT INTO ".$this->table_name." (codcliente,codsubcuenta,codejercicio,idsubcuenta)
+            VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->codsubcuenta).",
+            ".$this->var2str($this->codejercicio).",".$this->var2str($this->idsubcuenta).");";
+         $resultado = $this->db->exec($sql);
+         if($resultado)
+         {
+            $newid = $this->db->lastval();
+            if($newid)
+               $this->id = intval($newid);
+         }
+         return $resultado;
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -96,8 +112,8 @@ class subcuenta_cliente extends fs_model
    public function all_from_cliente($cod)
    {
       $sublist = array();
-      $subcs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod)."
-         ORDER BY codejercicio DESC;");
+      $subcs = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codcliente = ".$this->var2str($cod)." ORDER BY codejercicio DESC;");
       if($subcs)
       {
          foreach($subcs as $s)
@@ -199,6 +215,7 @@ class direccion_cliente extends fs_model
                codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
                domenvio = ".$this->var2str($this->domenvio).", domfacturacion = ".$this->var2str($this->domfacturacion).",
                descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
+            return $this->db->exec($sql);
          }
          else
          {
@@ -207,8 +224,15 @@ class direccion_cliente extends fs_model
                ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
                ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->domenvio).",
                ".$this->var2str($this->domfacturacion).",".$this->var2str($this->descripcion).");";
+            $resultado = $this->db->exec($sql);
+            if($resultado)
+            {
+               $newid = $this->db->lastval();
+               if($newid)
+                  $this->id = intval($newid);
+            }
+            return $resultado;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -222,7 +246,8 @@ class direccion_cliente extends fs_model
    public function all_from_cliente($cod)
    {
       $dirlist = array();
-      $dirs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod).";");
+      $dirs = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codcliente = ".$this->var2str($cod).";");
       if($dirs)
       {
          foreach($dirs as $d)
@@ -249,8 +274,7 @@ class cliente extends fs_model
    public $debaja;
    public $fechabaja;
    public $observaciones;
-   
-   private static $default_cliente;
+   public $tipoidfiscal;
 
    public function __construct($c=FALSE)
    {
@@ -272,6 +296,7 @@ class cliente extends fs_model
          $this->debaja = ($c['debaja'] == 't');
          $this->fechabaja = $c['fechabaja'];
          $this->observaciones = $this->no_html($c['observaciones']);
+         $this->tipoidfiscal = $c['tipoidfiscal'];
       }
       else
       {
@@ -290,6 +315,7 @@ class cliente extends fs_model
          $this->debaja = FALSE;
          $this->fechabaja = NULL;
          $this->observaciones = NULL;
+         $this->tipoidfiscal = 'NIF';
       }
    }
    
@@ -319,18 +345,7 @@ class cliente extends fs_model
 
    public function is_default()
    {
-      if( isset(self::$default_cliente) )
-         return (self::$default_cliente == $this->codcliente);
-      else if( !isset($_COOKIE['default_cliente']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_cliente'] == $this->codcliente);
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_cliente', $this->codcliente, time()+FS_COOKIES_EXPIRE);
-      self::$default_cliente = $this->codcliente;
+      return ( $this->codcliente == $this->default_items->codcliente() );
    }
    
    public function get($cod)
@@ -371,16 +386,61 @@ class cliente extends fs_model
    
    public function get_subcuenta($ejercicio)
    {
-      $retorno = FALSE;
-      $subcs = $this->get_subcuentas();
-      foreach($subcs as $s)
+      $subcuenta = FALSE;
+      
+      foreach($this->get_subcuentas() as $s)
       {
          if($s->codejercicio == $ejercicio)
-            $retorno = $s;
+         {
+            $subcuenta = $s;
+            break;
+         }
       }
-      return $retorno;
+      if( !$subcuenta )
+      {
+         /// intentamos crear la subcuenta y asociarla
+         $continuar = TRUE;
+         
+         $cuenta = new cuenta();
+         $ccli = $cuenta->get_by_codigo('430', $ejercicio);
+         if( $ccli )
+         {
+            $codsubcuenta = 4300000000 + $this->codcliente;
+            $subcuenta = new subcuenta();
+            $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $ejercicio);
+            if( !$subc0 )
+            {
+               $subc0 = new subcuenta();
+               $subc0->codcuenta = $ccli->codcuenta;
+               $subc0->idcuenta = $ccli->idcuenta;
+               $subc0->codejercicio = $ejercicio;
+               $subc0->codsubcuenta = $codsubcuenta;
+               $subc0->descripcion = $this->nombre;
+               if( !$subc0->save() )
+               {
+                  $this->new_error_msg('Imposible crear la subcuenta para el cliente '.$this->codcliente);
+                  $continuar = FALSE;
+               }
+            }
+            
+            if( $continuar )
+            {
+               $sccli = new subcuenta_cliente();
+               $sccli->codcliente = $this->codcliente;
+               $sccli->codejercicio = $ejercicio;
+               $sccli->codsubcuenta = $subc0->codsubcuenta;
+               $sccli->idsubcuenta = $subc0->idsubcuenta;
+               if( $sccli->save() )
+                  $subcuenta = $subc0;
+               else
+                  $this->new_error_msg('Imposible asociar la subcuenta para el cliente '.$this->codcliente);
+            }
+         }
+      }
+      
+      return $subcuenta;
    }
-
+   
    public function exists()
    {
       if( is_null($this->codcliente) )
@@ -434,21 +494,22 @@ class cliente extends fs_model
                web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
                coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
                debaja = ".$this->var2str($this->debaja).", fechabaja = ".$this->var2str($this->fechabaja).",
-               observaciones = ".$this->var2str($this->observaciones)."
+               observaciones = ".$this->var2str($this->observaciones).",
+               tipoidfiscal = ".$this->var2str($this->tipoidfiscal)."
                WHERE codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,telefono1,
-               telefono2,fax,email,web,codserie,coddivisa,codpago,debaja,fechabaja,observaciones) VALUES
-               (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
+               telefono2,fax,email,web,codserie,coddivisa,codpago,debaja,fechabaja,observaciones,tipoidfiscal)
+               VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",
                ".$this->var2str($this->fax).",".$this->var2str($this->email).",
                ".$this->var2str($this->web).",".$this->var2str($this->codserie).",
                ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
                ".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",
-               ".$this->var2str($this->observaciones).");";
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).");";
          }
          return $this->db->exec($sql);
       }

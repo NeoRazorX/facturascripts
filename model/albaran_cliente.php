@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -159,6 +159,11 @@ class linea_albaran_cliente extends fs_model
       return number_format($this->pvpunitario*(100+$this->iva)/100, 2, '.', ' ');
    }
    
+   public function show_dto()
+   {
+      return number_format($this->dtopor, 2, '.', ' ');
+   }
+   
    public function show_total()
    {
       return number_format($this->pvptotal, 2, '.', ' ');
@@ -207,9 +212,9 @@ class linea_albaran_cliente extends fs_model
    
    public function new_idlinea()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idlinea_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idlinea_seq');
       if($newid)
-         $this->idlinea = intval($newid[0]['nextval']);
+         $this->idlinea = intval($newid);
    }
    
    public function save()
@@ -601,9 +606,9 @@ class albaran_cliente extends fs_model
    
    public function new_idalbaran()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idalbaran_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idalbaran_seq');
       if($newid)
-         $this->idalbaran = intval($newid[0]['nextval']);
+         $this->idalbaran = intval($newid);
    }
    
    public function new_codigo()
@@ -798,12 +803,12 @@ class albaran_cliente extends fs_model
          foreach($albaranes as $a)
          {
             $albalist[] = array(
-                           'fecha' => Date('j-n-Y', strtotime($a['fecha'])),
-                           'agente' => $agente->get($a['codagente']),
-                           'albaranes' => number_format($a['num'], 0, ',', '.'),
-                           'media' => number_format($a['media'], 2, ',', '.'),
-                           'total' => number_format($a['total'], 2, ',', '.')
-                        );
+                'fecha' => Date('j-n-Y', strtotime($a['fecha'])),
+                'agente' => $agente->get($a['codagente']),
+                'albaranes' => number_format($a['num'], 0, ',', '.'),
+                'media' => number_format($a['media'], 2, ',', '.'),
+                'total' => number_format($a['total'], 2, ',', '.')
+            );
          }
       }
       return $albalist;

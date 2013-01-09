@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -266,9 +266,9 @@ class linea_factura_proveedor extends fs_model
    
    public function new_idlinea()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idlinea_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idlinea_seq');
       if($newid)
-         $this->idlinea = intval($newid[0]['nextval']);
+         $this->idlinea = intval($newid);
    }
    
    public function save()
@@ -522,7 +522,9 @@ class factura_proveedor extends fs_model
    public $codproveedor;
    public $codserie;
    public $deabono;
+   public $editable;
    public $fecha;
+   public $hora;
    public $idasiento;
    public $idfactura;
    public $idfacturarect;
@@ -547,6 +549,7 @@ class factura_proveedor extends fs_model
       parent::__construct('facturasprov');
       if($f)
       {
+         $this->editable = ($f['editable'] == 't');
          $this->automatica = ($f['automatica'] == 't');
          $this->cifnif = $f['cifnif'];
          $this->codalmacen = $f['codalmacen'];
@@ -559,6 +562,10 @@ class factura_proveedor extends fs_model
          $this->codserie = $f['codserie'];
          $this->deabono = ($f['deabono'] == 't');
          $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
+         if( is_null($f['hora']) )
+            $this->hora = '00:00:00';
+         else
+            $this->hora = $f['hora'];
          $this->idasiento = $this->intval($f['idasiento']);
          $this->idfactura = $this->intval($f['idfactura']);
          $this->idfacturarect = $this->intval($f['idfacturarect']);
@@ -580,6 +587,7 @@ class factura_proveedor extends fs_model
       }
       else
       {
+         $this->editable = TRUE;
          $this->automatica = FALSE;
          $this->cifnif = NULL;
          $this->codalmacen = NULL;
@@ -592,6 +600,7 @@ class factura_proveedor extends fs_model
          $this->codserie = NULL;
          $this->deabono = FALSE;
          $this->fecha = Date('d-m-Y');
+         $this->hora = Date('H:i:s');
          $this->idasiento = NULL;
          $this->idfactura = NULL;
          $this->idfacturarect = NULL;
@@ -750,9 +759,9 @@ class factura_proveedor extends fs_model
    
    public function new_idfactura()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idfactura_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
       if($newid)
-         $this->idfactura = intval($newid[0]['nextval']);
+         $this->idfactura = intval($newid);
    }
    
    public function new_codigo()
@@ -831,7 +840,8 @@ class factura_proveedor extends fs_model
                coddivisa = ".$this->var2str($this->coddivisa).", numero = ".$this->var2str($this->numero).",
                codejercicio = ".$this->var2str($this->codejercicio).", tasaconv = ".$this->var2str($this->tasaconv).",
                recfinanciero = ".$this->var2str($this->recfinanciero).", nogenerarasiento = ".$this->var2str($this->nogenerarasiento).",
-               totalrecargo = ".$this->var2str($this->totalrecargo).", fecha = ".$this->var2str($this->fecha)."
+               totalrecargo = ".$this->var2str($this->totalrecargo).", fecha = ".$this->var2str($this->fecha).",
+               hora = ".$this->var2str($this->hora).", editable = ".$this->var2str($this->editable)."
                WHERE idfactura = ".$this->var2str($this->idfactura).";";
          }
          else
@@ -841,18 +851,20 @@ class factura_proveedor extends fs_model
             $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,observaciones,
                idpagodevol,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
                idfactura,codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
-               recfinanciero,nogenerarasiento,totalrecargo,fecha) VALUES (".$this->var2str($this->deabono).",
+               recfinanciero,nogenerarasiento,totalrecargo,fecha,hora,editable) VALUES (".$this->var2str($this->deabono).",
                ".$this->var2str($this->codigo).",".$this->var2str($this->automatica).",".$this->var2str($this->total).",
                ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",
                ".$this->var2str($this->codalmacen).",".$this->var2str($this->irpf).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->nombre).",".$this->var2str($this->codpago).",".$this->var2str($this->codproveedor).",
-               ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",".$this->var2str($this->idfactura).",
-               ".$this->var2str($this->codigorect).",".$this->var2str($this->codserie).",".$this->var2str($this->idasiento).",
+               ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",
+               ".$this->var2str($this->idfactura).",".$this->var2str($this->codigorect).",
+               ".$this->var2str($this->codserie).",".$this->var2str($this->idasiento).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->coddivisa).",
                ".$this->var2str($this->numero).",".$this->var2str($this->codejercicio).",".$this->var2str($this->tasaconv).",
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->nogenerarasiento).",
-               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->fecha).");";
+               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->fecha).",
+               ".$this->var2str($this->hora).",".$this->var2str($this->editable).");";
          }
          return $this->db->exec($sql);
       }

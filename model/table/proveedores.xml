@@ -5,6 +5,12 @@
         Estructura de la tabla proveedores.
 -->
 <tabla>
+   <columna>
+      <nombre>tipoidfiscal</nombre>
+      <tipo>character varying(25)</tipo>
+      <nulo>NO</nulo>
+      <defecto>'NIF'::character varying</defecto>
+   </columna>
    <columna><nombre>codcontacto</nombre><tipo>character varying(6)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>codcuentapago</nombre><tipo>character varying(6)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>idsubcuenta</nombre><tipo>integer</tipo><nulo>YES</nulo></columna>

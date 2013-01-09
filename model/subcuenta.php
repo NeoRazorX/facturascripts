@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
 require_once 'model/cuenta.php';
@@ -47,7 +64,7 @@ class subcuenta extends fs_model
          $this->idcuenta = NULL;
          $this->codcuenta = NULL;
          $this->codejercicio = NULL;
-         $this->coddivisa = NULL;
+         $this->coddivisa = $this->default_items->coddivisa();
          $this->codimpuesto = NULL;
          $this->descripcion = '';
          $this->debe = 0;
@@ -185,7 +202,8 @@ class subcuenta extends fs_model
             $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
                idcuenta = ".$this->var2str($this->idcuenta).", codcuenta = ".$this->var2str($this->codcuenta).",
                codejercicio = ".$this->var2str($this->codejercicio).",
-               coddivisa = ".$this->var2str($this->coddivisa).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               coddivisa = ".$this->var2str($this->coddivisa).",
+               codimpuesto = ".$this->var2str($this->codimpuesto).",
                descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
                haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
                recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
@@ -193,12 +211,20 @@ class subcuenta extends fs_model
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codsubcuenta,idcuenta,codcuenta,codejercicio,coddivisa,codimpuesto,descripcion,
-               debe,haber,saldo,recargo,iva) VALUES (".$this->var2str($this->codsubcuenta).",".$this->var2str($this->idcuenta).",
-               ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
-               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
-               ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",".$this->var2str($this->haber).",
-               ".$this->var2str($this->saldo).",".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
+            $newid = $this->db->nextval($this->table_name.'_idsubcuenta_seq');
+            if($newid)
+            {
+               $this->idsubcuenta = intval($newid);
+               $sql = "INSERT INTO ".$this->table_name." (idsubcuenta,codsubcuenta,idcuenta,codcuenta,
+                  codejercicio,coddivisa,codimpuesto,descripcion,debe,haber,saldo,recargo,iva) VALUES
+                  (".$this->var2str($this->idsubcuenta).",".$this->var2str($this->codsubcuenta).",
+                  ".$this->var2str($this->idcuenta).",
+                  ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
+                  ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
+                  ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",
+                  ".$this->var2str($this->haber).",".$this->var2str($this->saldo).",
+                  ".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
+            }
          }
          return $this->db->exec($sql);
       }
@@ -262,7 +288,8 @@ class subcuenta extends fs_model
       $sublist = array();
       $query = strtolower( $this->no_html($query) );
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '".$query."%'
-         OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC;");
+         OR codsubcuenta ~~ '%".$query."' OR lower(descripcion) ~~ '%".$query."%'
+         ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -277,7 +304,8 @@ class subcuenta extends fs_model
       $query = $this->escape_string( strtolower( trim($query) ) );
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
          WHERE codejercicio = ".$this->var2str($ejercicio)." AND (codsubcuenta ~~ '".$query."%'
-         OR lower(descripcion) ~~ '%".$query."%') ORDER BY codcuenta ASC;");
+         OR codsubcuenta ~~ '%".$query."' OR lower(descripcion) ~~ '%".$query."%')
+         ORDER BY codcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

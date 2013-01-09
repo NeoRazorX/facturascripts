@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -43,7 +43,7 @@ class balance extends fs_model
          $this->naturaleza = $b['naturaleza'];
          $this->nivel1 = $b['nivel1'];
          $this->descripcion1 = $b['descripcion1'];
-         $this->nivel2 = $b['nivel2'];
+         $this->nivel2 = $this->intval($b['nivel2']);
          $this->descripcion2 = $b['descripcion2'];
          $this->nivel3 = $b['nivel3'];
          $this->descripcion3 = $b['descripcion3'];
@@ -74,6 +74,24 @@ class balance extends fs_model
       return '';
    }
    
+   public function url()
+   {
+      if( is_null($this->codbalance) )
+         return 'index.php?page=contabilidad_balances';
+      else
+         return 'index.php?page=contabilidad_balance&cod='.$this->codbalance;
+   }
+   
+   public function get($cod)
+   {
+      $balance = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codbalance = ".$this->var2str($cod).";");
+      if($balance)
+         return new balance($balance[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->codbalance) )
@@ -94,11 +112,25 @@ class balance extends fs_model
       {
          if( $this->exists() )
          {
-            $sql = "";
+            $sql = "UPDATE ".$this->table_name." SET naturaleza = ".$this->var2str($this->naturaleza).",
+               nivel1 = ".$this->var2str($this->nivel1).", descripcion1 = ".$this->var2str($this->descripcion1).",
+               nivel2 = ".$this->var2str($this->nivel2).", descripcion2 = ".$this->var2str($this->descripcion2).",
+               nivel3 = ".$this->var2str($this->nivel3).", descripcion3 = ".$this->var2str($this->descripcion3).",
+               orden3 = ".$this->var2str($this->orden3).", nivel4 = ".$this->var2str($this->nivel4).",
+               descripcion4 = ".$this->var2str($this->descripcion4).",
+               descripcion4ba = ".$this->var2str($this->descripcion4ba).",
+               WHERE codbalance = ".$this->var2str($this->codbalance).";";
          }
          else
          {
-            $sql = "";
+            $sql = "INSERT INTO ".$this->table_name." (codbalance,naturaleza,nivel1,descripcion1,
+               nivel2,descripcion2,nivel3,descripcion3,orden3,nivel4,descripcion4,descripcion4ba)
+               VALUES (".$this->var2str($this->codbalance).",".$this->var2str($this->naturaleza).",
+               ".$this->var2str($this->nivel1).",".$this->var2str($this->descripcion1).",
+               ".$this->var2str($this->nivel2).",".$this->var2str($this->descripcion2).",
+               ".$this->var2str($this->nivel3).",".$this->var2str($this->descripcion3).",
+               ".$this->var2str($this->orden3).",".$this->var2str($this->nivel4).",
+               ".$this->var2str($this->descripcion4).",".$this->var2str($this->descripcion4ba).");";
          }
          return $this->db->exec($sql);
       }
@@ -110,6 +142,241 @@ class balance extends fs_model
    {
       return $this->db->select("DELETE FROM ".$this->table_name.
          " WHERE codbalance = ".$this->var2str($this->codbalance).";");
+   }
+   
+   public function all()
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.
+         " ORDER BY codbalance ASC;");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance($b);
+      }
+      return $balist;
+   }
+}
+
+
+class balance_cuenta extends fs_model
+{
+   public $id; /// pkey
+   public $codbalance;
+   public $codcuenta;
+   public $desccuenta;
+   
+   public function __construct($b = FALSE)
+   {
+      parent::__construct('co_cuentascb');
+      if($b)
+      {
+         $this->id = $this->intval($b['id']);
+         $this->codbalance = $b['codbalance'];
+         $this->codcuenta = $b['codcuenta'];
+         $this->desccuenta = $b['desccuenta'];
+      }
+      else
+      {
+         $this->id = NULL;
+         $this->codbalance = NULL;
+         $this->codcuenta = NULL;
+         $this->desccuenta = NULL;
+      }
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function get($id)
+   {
+      $bc = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE id = ".$this->var2str($id).";");
+      if($bc)
+         return new balance_cuenta($bc[0]);
+      else
+         return FALSE;
+   }
+   
+   public function exists()
+   {
+      if( is_null($this->id) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
+   public function save()
+   {
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET codbalance = ".$this->var2str($this->codbalance).",
+            codcuenta = ".$this->var2str($this->codcuenta).",
+            desccuenta = ".$this->var2str($this->desccuenta)."
+            WHERE id = ".$this->var2str($this->id).";";
+      }
+      else
+      {
+         $newid = $this->db->nextval($this->table_name.'_id_seq');
+         if($newid)
+         {
+            $this->id = intval($newid);
+            $sql = "INSERT INTO ".$this->table_name." (id,codbalance,codcuenta,desccuenta)
+               VALUES (".$this->var2str($this->id).",".$this->var2str($this->codbalance).",
+               ".$this->var2str($this->codcuenta).",".$this->var2str($this->desccuenta).");";
+         }
+      }
+      return $this->db->exec($sql);
+   }
+   
+   public function delete()
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".
+              $this->var2str($this->id).";");
+   }
+   
+   public function all()
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance_cuenta($b);
+      }
+      return $balist;
+   }
+   
+   public function all_from_codbalance($cod)
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codbalance = ".$this->var2str($cod)." ORDER BY codcuenta ASC;");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance_cuenta($b);
+      }
+      return $balist;
+   }
+}
+
+
+class balance_cuenta_a extends fs_model
+{
+   public $id; /// pkey
+   public $codbalance;
+   public $codcuenta;
+   public $desccuenta;
+   
+   public function __construct($b = FALSE)
+   {
+      parent::__construct('co_cuentascbba');
+      if($b)
+      {
+         $this->id = $this->intval($b['id']);
+         $this->codbalance = $b['codbalance'];
+         $this->codcuenta = $b['codcuenta'];
+         $this->desccuenta = $b['desccuenta'];
+      }
+      else
+      {
+         $this->id = NULL;
+         $this->codbalance = NULL;
+         $this->codcuenta = NULL;
+         $this->desccuenta = NULL;
+      }
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function get($id)
+   {
+      $bca = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE id = ".$this->var2str($id).";");
+      if($bca)
+         return new balance_cuenta_a($bca[0]);
+      else
+         return FALSE;
+   }
+   
+   public function exists()
+   {
+      if( is_null($this->id) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function test()
+   {
+      return TRUE;
+   }
+   
+   public function save()
+   {
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET codbalance = ".$this->var2str($this->codbalance).",
+            codcuenta = ".$this->var2str($this->codcuenta).",
+            desccuenta = ".$this->var2str($this->desccuenta)."
+            WHERE id = ".$this->var2str($this->id).";";
+      }
+      else
+      {
+         $newid = $this->db->nextval($this->table_name.'_id_seq');
+         if($newid)
+         {
+            $this->id = intval($newid);
+            $sql = "INSERT INTO ".$this->table_name." (id,codbalance,codcuenta,desccuenta)
+               VALUES (".$this->var2str($this->id).",".$this->var2str($this->codbalance).",
+               ".$this->var2str($this->codcuenta).",".$this->var2str($this->desccuenta).");";
+         }
+      }
+      return $this->db->exec($sql);
+   }
+   
+   public function delete()
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".
+              $this->var2str($this->id).";");
+   }
+   
+   public function all()
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance_cuenta_a($b);
+      }
+      return $balist;
+   }
+   
+   public function all_from_codbalance($cod)
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codbalance = ".$this->var2str($cod)." ORDER BY codcuenta ASC;");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance_cuenta_a($b);
+      }
+      return $balist;
    }
 }
 

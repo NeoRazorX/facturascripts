@@ -45,7 +45,7 @@
       <div class="bloque">
          Página de inicio:
          <select name="udpage">
-            {loop="$fsc->user->get_menu()"}
+            {loop="$fsc->suser->get_menu()"}
                {if condition="$value->show_on_menu"}
                   {if condition="$value->name==$fsc->suser->fs_page"}
                      <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>

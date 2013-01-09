@@ -41,7 +41,7 @@ class general_proveedores extends fs_controller
       
       if( isset($_POST['codproveedor']) )
       {
-         $this->set_default_elements();
+         $this->save_codpais( $_POST['pais'] );
          
          $proveedor = new proveedor();
          $proveedor->codproveedor = $_POST['codproveedor'];
@@ -78,8 +78,9 @@ class general_proveedores extends fs_controller
          $this->resultados = $this->proveedor->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    public function anterior_url()
@@ -100,16 +101,6 @@ class general_proveedores extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
-   }
-   
-   private function set_default_elements()
-   {
-      if( isset($_POST['pais']) )
-      {
-         $pais = $this->pais->get($_POST['pais']);
-         if( $pais )
-            $pais->set_default();
-      }
    }
 }
 

@@ -44,7 +44,8 @@ class general_clientes extends fs_controller
       
       if( isset($_POST['codcliente']) )
       {
-         $this->set_default_elements();
+         $this->save_codpais( $_POST['pais'] );
+         $this->save_codserie( $_POST['codserie'] );
          
          $cliente = new cliente();
          $cliente->codcliente = $_POST['codcliente'];
@@ -82,8 +83,9 @@ class general_clientes extends fs_controller
          $this->resultados = $this->cliente->all($this->offset);
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    public function anterior_url()
@@ -104,23 +106,6 @@ class general_clientes extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
-   }
-   
-   private function set_default_elements()
-   {
-      if( isset($_POST['pais']) )
-      {
-         $pais = $this->pais->get($_POST['pais']);
-         if( $pais )
-            $pais->set_default();
-      }
-      
-      if( isset($_POST['codserie']) )
-      {
-         $serie = $this->serie->get($_POST['codserie']);
-         if( $serie )
-            $serie->set_default();
-      }
    }
 }
 

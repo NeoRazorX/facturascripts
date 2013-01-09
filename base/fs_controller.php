@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_db.php';
+require_once 'base/fs_default_items.php';
 require_once 'base/fs_button.php';
 require_once 'model/fs_user.php';
 require_once 'model/fs_page.php';
@@ -34,7 +35,6 @@ class fs_controller
    public $page;
    public $ppage;
    private $admin_page;
-   public $default_page;
    protected $menu;
    public $template;
    public $css_file;
@@ -42,6 +42,7 @@ class fs_controller
    public $query;
    public $buttons;
    public $empresa;
+   public $default_items;
    
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
@@ -51,6 +52,7 @@ class fs_controller
       $this->errors = array();
       $this->messages = array();
       $this->db = new fs_db();
+      
       $this->set_css_file();
       
       if( $this->db->connect() )
@@ -60,6 +62,7 @@ class fs_controller
              'version'=>$this->version(), 'show_on_menu'=>$shmenu) );
          $this->ppage = FALSE;
          $this->empresa = new empresa();
+         $this->default_items = new fs_default_items();
          
          $this->template = 'index';
          if( isset($_GET['logout']) )
@@ -75,19 +78,9 @@ class fs_controller
                $this->new_error_msg('¡Página no encontrada!');
             else
             {
-               /// ¿Quieres que sea tu página de inicio? ¿O ya lo es?
-               if( isset($_GET['default_page']) )
-               {
-                  $this->user->fs_page = $this->page->name;
-                  $this->user->save();
-                  $this->default_page = TRUE;
-               }
-               else
-                  $this->default_page = ($this->user->fs_page == $this->page->name);
+               $this->set_default_items();
                
-               /// establecemos el ejercicio por defecto
-               $this->default_ejercicio();
-               
+               $this->template = $name;
                $this->buttons = array();
                
                $this->custom_search = FALSE;
@@ -98,12 +91,15 @@ class fs_controller
                else
                   $this->query = '';
                
-               $this->template = $name;
                $this->process();
             }
          }
          else
+         {
             $this->new_error_msg("Acceso denegado.");
+            $this->user->clean_cache(TRUE);
+            $this->empresa->clean_cache();
+         }
       }
       else
       {
@@ -172,7 +168,8 @@ class fs_controller
          else
          {
             $this->new_error_msg('El usuario no existe!');
-            $this->user->clean_cache();
+            $this->user->clean_cache(TRUE);
+            $this->empresa->clean_cache();
          }
       }
       else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
@@ -196,7 +193,8 @@ class fs_controller
          {
             $this->new_message('¡El usuario no existe!');
             $this->log_out();
-            $this->user->clean_cache();
+            $this->user->clean_cache(TRUE);
+            $this->empresa->clean_cache();
          }
       }
       return $this->user->logged_on;
@@ -272,7 +270,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.14';
+      return '0.9.15';
    }
    
    public function select_default_page()
@@ -340,20 +338,133 @@ class fs_controller
       return $this->admin_page;
    }
    
-   /*
-    * Esto es una pequeña chapuza para que un administrador pueda cambiar
-    * el ejercicio por defecto de otros usuarios
-    */
-   private function default_ejercicio()
+   private function set_default_items()
    {
-      if( !is_null($this->user->codejercicio) )
+      /// gestionamos la página de inicio
+      if( isset($_GET['default_page']) )
       {
-         if( !isset($_COOKIE['default_ejercicio']) )
-            setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
-         else if($_COOKIE['default_ejercicio'] != $this->user->codejercicio)
-            setcookie('default_ejercicio', $this->user->codejercicio, time()+FS_COOKIES_EXPIRE);
-         $_COOKIE['default_ejercicio'] = $this->user->codejercicio;
+         $this->default_items->set_default_page( $this->page->name );
+         $this->user->fs_page = $this->page->name;
+         $this->user->save();
       }
+      else if( is_null($this->default_items->default_page()) )
+         $this->default_items->set_default_page( $this->user->fs_page );
+      
+      if( is_null($this->default_items->showing_page()) )
+         $this->default_items->set_showing_page( $this->page->name );
+      
+      /*
+       * Establecemos los elementos por defecto, pero no se guardan.
+       * Para guardarlos hay que usar las funciones fs_controller::save_lo_que_sea().
+       * La clase fs_default_items sólo se usa para indicar valores
+       * por defecto a los modelos.
+       */
+      $this->default_items->set_codejercicio( $this->user->codejercicio );
+      
+      if( isset($_COOKIE['default_almacen']) )
+         $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );
+      else
+         $this->default_items->set_codalmacen( $this->empresa->codalmacen );
+      
+      if( isset($_COOKIE['default_cliente']) )
+         $this->default_items->set_codcliente( $_COOKIE['default_cliente'] );
+      
+      if( isset($_COOKIE['default_divisa']) )
+         $this->default_items->set_coddivisa( $_COOKIE['default_divisa'] );
+      else
+         $this->default_items->set_coddivisa( $this->empresa->coddivisa );
+      
+      if( isset($_COOKIE['default_familia']) )
+         $this->default_items->set_codfamilia( $_COOKIE['default_familia'] );
+      
+      if( isset($_COOKIE['default_formapago']) )
+         $this->default_items->set_codpago( $_COOKIE['default_formapago'] );
+      else
+         $this->default_items->set_codpago( $this->empresa->codpago );
+      
+      if( isset($_COOKIE['default_impuesto']) )
+         $this->default_items->set_codimpuesto( $_COOKIE['default_impuesto'] );
+      
+      if( isset($_COOKIE['default_pais']) )
+         $this->default_items->set_codpais( $_COOKIE['default_pais'] );
+      else
+         $this->default_items->set_codpais( $this->empresa->codpais );
+      
+      if( isset($_COOKIE['default_proveedor']) )
+         $this->default_items->set_codproveedor( $_COOKIE['default_proveedor'] );
+      
+      if( isset($_COOKIE['default_serie']) )
+         $this->default_items->set_codserie( $_COOKIE['default_serie'] );
+      else
+         $this->default_items->set_codserie( $this->empresa->codserie );
+   }
+   
+   protected function save_codejercicio($cod)
+   {
+      if($cod != $this->user->codejercicio)
+      {
+         $this->default_items->set_codejercicio($cod);
+         $this->user->codejercicio = $cod;
+         if( !$this->user->save() )
+         {
+            $this->new_error_msg('Error al establecer el ejercicio '.$cod.
+               ' como ejercicio predeterminado para este usuario.');
+         }
+      }
+   }
+   
+   protected function save_codalmacen($cod)
+   {
+      setcookie('default_almacen', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codalmacen($cod);
+   }
+   
+   protected function save_codcliente($cod)
+   {
+      setcookie('default_cliente', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codcliente($cod);
+   }
+   
+   protected function save_coddivisa($cod)
+   {
+      setcookie('default_divisa', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_coddivisa($cod);
+   }
+   
+   protected function save_codfamilia($cod)
+   {
+      setcookie('default_familia', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codfamilia($cod);
+   }
+   
+   protected function save_codpago($cod)
+   {
+      setcookie('default_formapago', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codpago($cod);
+   }
+   
+   protected function save_codimpuesto($cod)
+   {
+      setcookie('default_impuesto', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codimpuesto($cod);
+   }
+   
+   protected function save_codpais($cod)
+   {
+      setcookie('default_pais', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codpais($cod);
+   }
+   
+   protected function save_codproveedor($cod)
+   {
+      setcookie('default_proveedor', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codproveedor($cod);
+   }
+   
+   protected function save_codserie($cod)
+   {
+      setcookie('default_serie', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codserie($cod);
    }
 }
 

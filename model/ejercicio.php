@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,8 +31,6 @@ class ejercicio extends fs_model
    public $fechainicio;
    public $nombre;
    public $codejercicio;
-   
-   private static $default_ejercicio;
 
    public function __construct($e = FALSE)
    {
@@ -56,7 +54,7 @@ class ejercicio extends fs_model
          $this->idasientopyg = NULL;
          $this->idasientoapertura = NULL;
          $this->plancontable = '08';
-         $this->longsubcuenta = NULL;
+         $this->longsubcuenta = 10;
          $this->estado = 'ABIERTO';
          $this->fechafin = Date('31-12-Y');
          $this->fechainicio = Date('01-01-Y');
@@ -70,7 +68,7 @@ class ejercicio extends fs_model
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
             idasientoapertura,idasientopyg,idasientocierre) VALUES ('0001','".Date('Y')."',
-            '".Date('01-01-Y')."','".Date('31-12-Y')."','ABIERTO',NULL,'08',NULL,NULL,NULL);";
+            '".Date('01-01-Y')."','".Date('31-12-Y')."','ABIERTO',10,'08',NULL,NULL,NULL);";
    }
    
    public function abierto()
@@ -97,22 +95,7 @@ class ejercicio extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_ejercicio) )
-         return (self::$default_ejercicio == $this->codejercicio);
-      else if( !isset($_COOKIE['default_ejercicio']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_ejercicio'] == $this->codejercicio);
-   }
-   
-   public function set_default()
-   {
-      /*
-       * Ahora se establece desde fs_controller
-       * 
-      setcookie('default_ejercicio', $this->codejercicio, time()+FS_COOKIES_EXPIRE);
-      self::$default_ejercicio = $this->codejercicio;
-       */
+      return ( $this->codejercicio == $this->default_items->codejercicio() );
    }
    
    public function get($cod)

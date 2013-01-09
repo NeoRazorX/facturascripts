@@ -2,9 +2,7 @@
       <div id="sql_history">
          <h1>Consultas SQL:</h1>
          <ol>
-         {loop="$fsc->get_db_history()"}
-            <li>{$value}</li>
-         {/loop}
+         {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
          </ol>
       </div>
    {/if}

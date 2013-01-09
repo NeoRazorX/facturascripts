@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,12 +19,14 @@
 
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db.php';
+require_once 'base/fs_default_items.php';
 
 abstract class fs_model
 {
    protected $db;
    protected $table_name;
    protected $cache;
+   protected $default_items;
    
    private static $checked_tables;
    private static $errors;
@@ -34,6 +36,7 @@ abstract class fs_model
       $this->db = new fs_db();
       $this->table_name = $name;
       $this->cache = new fs_cache();
+      $this->default_items = new fs_default_items();
       
       if( !self::$errors )
          self::$errors = array();
@@ -69,9 +72,11 @@ abstract class fs_model
       {
          if( !in_array($name, self::$checked_tables) )
          {
-            $this->check_table($name);
-            self::$checked_tables[] = $name;
-            $this->cache->set('fs_checked_tables', self::$checked_tables);
+            if( $this->check_table($name) )
+            {
+               self::$checked_tables[] = $name;
+               $this->cache->set('fs_checked_tables', self::$checked_tables);
+            }
          }
       }
    }
@@ -396,11 +401,13 @@ abstract class fs_model
    /// comprueba y actualiza la estructura de la tabla si es necesario
    private function check_table()
    {
+      $done = TRUE;
       $consulta = "";
       $columnas = FALSE;
       $restricciones = FALSE;
       $xml_columnas = FALSE;
       $xml_restricciones = FALSE;
+      
       if( $this->get_xml_table($xml_columnas, $xml_restricciones) )
       {
          if( $this->db->table_exists($this->table_name) )
@@ -419,14 +426,23 @@ abstract class fs_model
             $consulta .= $this->generate_table($xml_columnas, $xml_restricciones);
             $consulta .= $this->install();
          }
+         
          if($consulta != '')
          {
             if( !$this->db->exec($consulta) )
+            {
                $this->new_error_msg("Error. " . $consulta);
+               $done = FALSE;
+            }
          }
       }
       else
+      {
          $this->new_error_msg("Error con el xml");
+         $done = FALSE;
+      }
+      
+      return $done;
    }
 }
 

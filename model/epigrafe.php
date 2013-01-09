@@ -50,6 +50,16 @@ class grupo_epigrafes extends fs_model
       return '';
    }
    
+   public function get_by_codigo($cod, $eje)
+   {
+      $grupo = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codgrupo = ".$this->var2str($cod)." AND codejercicio = ".$this->var2str($eje).";");
+      if($grupo)
+         return new grupo_epigrafes($grupo[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idgrupo) )
@@ -69,17 +79,23 @@ class grupo_epigrafes extends fs_model
    {
       if( $this->test() )
       {
-         if( $this->save() )
+         if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET codgrupo = ".$this->var2str($this->codgrupo).",
-               descripcion = ".$this->var2str($this->descripcion).", codejercicio = ".$this->var2str($this->codejercicio)."
+               descripcion = ".$this->var2str($this->descripcion).",
+               codejercicio = ".$this->var2str($this->codejercicio)."
                WHERE idgrupo = ".$this->var2str($this->idgrupo).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codgrupo,descripcion,codejercicio) VALUES
-               (".$this->var2str($this->codgrupo).",".$this->var2str($this->descripcion).",
-                ".$this->var2str($this->codejercicio).");";
+            $newid = $this->db->nextval($this->table_name.'_idgrupo_seq');
+            if($newid)
+            {
+               $this->idgrupo = intval($newid);
+               $sql = "INSERT INTO ".$this->table_name." (idgrupo,codgrupo,descripcion,codejercicio)
+                  VALUES (".$this->var2str($this->idgrupo).",".$this->var2str($this->codgrupo).",
+                  ".$this->var2str($this->descripcion).",".$this->var2str($this->codejercicio).");";
+            }
          }
          return $this->db->exec($sql);
       }
@@ -110,12 +126,14 @@ class grupo_epigrafes extends fs_model
 
 class epigrafe extends fs_model
 {
+   public $idepigrafe; /// pkey
+   public $codepigrafe;
+   public $idgrupo;
+   public $codgrupo;
    public $codejercicio;
    public $descripcion;
-   public $codgrupo;
-   public $idgrupo;
-   public $codepigrafe;
-   public $idepigrafe; /// pkey
+   
+   private static $grupos;
    
    public function __construct($e = FALSE)
    {
@@ -127,21 +145,47 @@ class epigrafe extends fs_model
          $this->idgrupo = $this->intval($e['idgrupo']);
          $this->descripcion = $e['descripcion'];
          $this->codejercicio = $e['codejercicio'];
+         
+         if( !isset(self::$grupos) )
+         {
+            $ge = new grupo_epigrafes();
+            self::$grupos = $ge->all_from_ejercicio( $this->codejercicio );
+         }
+         
+         foreach(self::$grupos as $g)
+         {
+            if($g->idgrupo == $this->idgrupo)
+            {
+               $this->codgrupo = $g->codgrupo;
+               break;
+            }
+         }
       }
       else
       {
          $this->idepigrafe = NULL;
          $this->codepigrafe = NULL;
          $this->idgrupo = NULL;
+         $this->codgrupo = NULL;
          $this->descripcion = NULL;
          $this->codejercicio = NULL;
       }
-      $this->codgrupo = NULL;
    }
    
    protected function install()
    {
+      $ge = new grupo_epigrafes();
       return '';
+   }
+   
+   public function get_by_codigo($cod, $eje)
+   {
+      $epis = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codepigrafe = ".$this->var2str($cod)." AND codejercicio = ".$this->var2str($eje).";");
+      if($epis)
+         return new epigrafe($epis[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -172,9 +216,15 @@ class epigrafe extends fs_model
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codepigrafe,idgrupo,descripcion,codejercicio)
-               VALUES (".$this->var2str($this->codepigrafe).",".$this->var2str($this->idgrupo).",
-               ".$this->var2str($this->descripcion).",".$this->var2str($this->codejercicio).");";
+            $newid = $this->db->nextval($this->table_name.'_idepigrafe_seq');
+            if($newid)
+            {
+               $this->idepigrafe = intval($newid);
+               $sql = "INSERT INTO ".$this->table_name." (idepigrafe,codepigrafe,idgrupo,descripcion,codejercicio)
+                  VALUES (".$this->var2str($this->idepigrafe).",".$this->var2str($this->codepigrafe).",
+                  ".$this->var2str($this->idgrupo).",".$this->var2str($this->descripcion).",
+                  ".$this->var2str($this->codejercicio).");";
+            }
          }
          return $this->db->exec($sql);
       }

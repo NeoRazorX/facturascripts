@@ -60,7 +60,7 @@ class general_agrupar_albaranes_pro extends fs_controller
          $this->agrupar();
       else if( isset($_POST['proveedor']) )
       {
-         $this->set_default_elements();
+         $this->save_codproveedor( $_POST['proveedor'] );
          
          $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
@@ -89,6 +89,7 @@ class general_agrupar_albaranes_pro extends fs_controller
       {
          $factura = new factura_proveedor();
          $factura->automatica = TRUE;
+         $factura->editable = FALSE;
          $factura->cifnif = $albaranes[0]->cifnif;
          $factura->codalmacen = $albaranes[0]->codalmacen;
          $factura->coddivisa = $albaranes[0]->coddivisa;
@@ -295,19 +296,9 @@ class general_agrupar_albaranes_pro extends fs_controller
       }
    }
    
-   private function set_default_elements()
-   {
-      if( isset($_POST['proveedor']) )
-      {
-         $proveedor = $this->proveedor->get($_POST['proveedor']);
-         if( $proveedor )
-            $proveedor->set_default();
-      }
-   }
-   
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

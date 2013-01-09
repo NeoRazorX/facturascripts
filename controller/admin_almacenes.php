@@ -68,7 +68,8 @@ class admin_almacenes extends fs_controller
       }
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-3';
    }
 }

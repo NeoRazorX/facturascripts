@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_cuentascb.xml
+    Description:
+        Estructura de la tabla co_cuentascb.
+-->
+<tabla>
+   <columna>
+      <nombre>desccuenta</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codbalance</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>id</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('co_cuentascb_id_seq'::regclass)</defecto>
+   </columna>
+   <restriccion>
+      <nombre>co_cuentascb_pkey</nombre>
+      <consulta>PRIMARY KEY (id)</consulta>
+   </restriccion>
+</tabla>

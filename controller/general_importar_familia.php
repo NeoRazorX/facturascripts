@@ -248,7 +248,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function get_family_data()

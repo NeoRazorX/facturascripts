@@ -9,7 +9,12 @@
    <columna><nombre>tipodocumento</nombre><tipo>character varying(25)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>concepto</nombre><tipo>character varying(255)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>documento</nombre><tipo>character varying(30)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>idasiento</nombre><tipo>serial</tipo><nulo>NO</nulo><defecto>nextval('co_asientos_idasiento_seq'::regclass)</defecto></columna>
+   <columna>
+      <nombre>idasiento</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('co_asientos_idasiento_seq'::regclass)</defecto>
+   </columna>
    <columna><nombre>editable</nombre><tipo>boolean</tipo><nulo>NO</nulo></columna>
    <columna><nombre>codplanasiento</nombre><tipo>character varying(6)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>idconcepto</nombre><tipo>character varying(4)</tipo><nulo>YES</nulo></columna>

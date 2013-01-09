@@ -44,15 +44,14 @@ class general_albaran_prov extends fs_controller
       $this->ppage = $this->page->get('general_albaranes_prov');
       $this->familia = new familia();
       
-      /*
-       * buscamos la url del script general_nuevo_albaran,
-       * imprescindible para buscar nuevo artículos.
-       */
-      $nuevoalbp = $this->page->get('general_nuevo_albaran');
-      if($nuevoalbp)
-         $this->nuevo_albaran_url = $nuevoalbp->url();
-      else
-         $this->nuevo_albaran_url = FALSE;
+      /// comprobamos si el usuario tiene acceso a general_nuevo_albaran
+      $this->nuevo_albaran_url = FALSE;
+      if( $this->user->have_access_to('general_nuevo_albaran', FALSE) )
+      {
+         $nuevoalbp = $this->page->get('general_nuevo_albaran');
+         if($nuevoalbp)
+            $this->nuevo_albaran_url = $nuevoalbp->url();
+      }
       
       if( isset($_POST['idalbaran']) )
       {
@@ -71,14 +70,6 @@ class general_albaran_prov extends fs_controller
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
          
-         if( $this->albaran->ptefactura )
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
-         else
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
-         
-         $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
-         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
-         
          /// comprobamos el albarán
          $this->albaran->full_test();
          
@@ -87,6 +78,13 @@ class general_albaran_prov extends fs_controller
          
          if( isset($_POST['actualizar_precios']) )
             $this->actualizar_precios();
+         
+         if( $this->albaran->ptefactura )
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
+         else
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
+         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
       }
       else
          $this->new_error_msg("¡Albarán de proveedor no encontrado!");
@@ -94,7 +92,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    public function url()
@@ -233,6 +231,7 @@ class general_albaran_prov extends fs_controller
    {
       $factura = new factura_proveedor();
       $factura->automatica = TRUE;
+      $factura->editable = FALSE;
       $factura->cifnif = $this->albaran->cifnif;
       $factura->codalmacen = $this->albaran->codalmacen;
       $factura->coddivisa = $this->albaran->coddivisa;

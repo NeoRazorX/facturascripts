@@ -84,7 +84,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-10';
    }
    
    private function new_articulo()
@@ -126,7 +126,7 @@ class general_nuevo_albaran extends fs_controller
       $cliente = $this->cliente->get($_POST['cliente']);
       if( $cliente )
       {
-         $cliente->set_default();
+         $this->save_codcliente( $cliente->codcliente );
          $dirscliente = $cliente->get_direcciones();
       }
       else
@@ -134,31 +134,31 @@ class general_nuevo_albaran extends fs_controller
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
-         $almacen->set_default();
+         $this->save_codalmacen( $almacen->codalmacen );
       else
          $continuar = FALSE;
       
       $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
       if( $ejercicio )
-         $ejercicio->set_default();
+         $this->save_codejercicio( $ejercicio->codejercicio );
       else
          $continuar = FALSE;
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
-         $serie->set_default();
+         $this->save_codserie( $serie->codserie );
       else
          $continuar = FALSE;
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
-         $forma_pago->set_default();
+         $this->save_codpago( $forma_pago->codpago );
       else
          $continuar = FALSE;
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
-         $divisa->set_default();
+         $this->save_coddivisa( $divisa->coddivisa );
       else
          $continuar = FALSE;
       
@@ -267,37 +267,37 @@ class general_nuevo_albaran extends fs_controller
       
       $proveedor = $this->proveedor->get($_POST['proveedor']);
       if( $proveedor )
-         $proveedor->set_default();
+         $this->save_codproveedor( $proveedor->codproveedor );
       else
          $continuar = FALSE;
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
-         $almacen->set_default();
+         $this->save_codalmacen( $almacen->codalmacen );
       else
          $continuar = FALSE;
       
       $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
       if( $ejercicio )
-         $ejercicio->set_default();
+         $this->save_codejercicio( $ejercicio->codejercicio );
       else
          $continuar = FALSE;
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
-         $serie->set_default();
+         $this->save_codserie( $serie->codserie );
       else
          $continuar = FALSE;
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
-         $forma_pago->set_default();
+         $this->save_codpago( $forma_pago->codpago );
       else
          $continuar = FALSE;
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
-         $divisa->set_default();
+         $this->save_coddivisa( $divisa->coddivisa );
       else
          $continuar = FALSE;
       

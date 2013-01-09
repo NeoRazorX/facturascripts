@@ -55,7 +55,7 @@ class general_articulos extends fs_controller
       
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button('b_nuevo_articulo','nuevo');
-      $this->buttons[] = new fs_button('b_tarifas','tarifas', '#', 'button', 'img/zoom.png');
+      $this->buttons[] = new fs_button('b_tarifas','tarifas', '#', 'button', 'img/tools.png');
       $this->buttons[] = new fs_button('b_modificar_iva','modificar iva', '#', 'button', 'img/tools.png');
       
       if( isset($_POST['codtarifa']) )
@@ -97,7 +97,8 @@ class general_articulos extends fs_controller
       }
       else if(isset($_POST['referencia']) AND isset($_POST['codfamilia']) AND isset($_POST['codimpuesto']))
       {
-         $this->set_default_elements();
+         $this->save_codfamilia( $_POST['codfamilia'] );
+         $this->save_codimpuesto( $_POST['codimpuesto'] );
          
          $articulo->referencia = $_POST['referencia'];
          $articulo->descripcion = $_POST['referencia'];
@@ -133,7 +134,7 @@ class general_articulos extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function anterior_url()
@@ -164,23 +165,6 @@ class general_articulos extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
-   }
-   
-   private function set_default_elements()
-   {
-      if( isset($_POST['codfamilia']) )
-      {
-         $fam0 = $this->familia->get($_POST['codfamilia']);
-         if( $fam0 )
-            $fam0->set_default();
-      }
-      
-      if( isset($_POST['codimpuesto']) )
-      {
-         $imp0 = $this->impuesto->get($_POST['codimpuesto']);
-         if( $imp0 )
-            $imp0->set_default();
-      }
    }
 }
 

@@ -30,9 +30,13 @@ a.hidden_black:hover {
 }
 
 div.advice, div.message, div.error {
-   margin: 10px;
+   margin: 5px;
    padding: 10px;
    border: 1px solid #333333;
+   border-top-left-radius: 3px 3px;
+   border-top-right-radius: 3px 3px;
+   border-bottom-left-radius: 3px 3px;
+   border-bottom-right-radius: 3px 3px;
    color: black;
    font-size: 16px;
 }
@@ -159,22 +163,27 @@ div#header_buttons a.button, div#header_buttons a.remove {
    padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
-   padding-bottom: 1px;
-   background-color: #3768B8;
-   border: 1px solid #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
-   color: white;
+   padding-bottom: 2px;
+   background-color: white;
+   border: 1px solid #424242;
+   border-top-left-radius: 3px 3px;
+   border-top-right-radius: 3px 3px;
+   border-bottom-left-radius: 3px 3px;
+   border-bottom-right-radius: 3px 3px;
+   color: #424242;
    text-transform: capitalize;
    text-decoration: none;
    font-variant: small-caps;
    font-weight: bold;
 }
 
+div#header_buttons a.button:hover {
+   background-color: #FFFAA6;
+}
+
 div#header_buttons a.remove {
    background-color: #D74937;
+   color: white;
 }
 
 div#header_buttons img {
@@ -457,7 +466,6 @@ div.main_div div.new_line a {
 div.select {
    display: block;
    margin-bottom: 10px;
-   border-bottom: 1px solid #dddddd;
    font-size: 15px;
 }
 
@@ -467,13 +475,17 @@ div.select a {
    padding-left: 6px;
    padding-right: 6px;
    padding-bottom: 2px;
-   border-bottom: 3px solid silver;
+   background-color: #888888;
+   border-top-left-radius: 2px 2px;
+   border-top-right-radius: 2px 2px;
+   border-bottom-left-radius: 2px 2px;
+   border-bottom-right-radius: 2px 2px;
+   color: white;
    text-decoration: none;
-   color: black;
 }
 
 div.select a.selected {
-   border-bottom: 3px solid #3768B8;
+   background-color: #424242;
 }
 
 div.footer {

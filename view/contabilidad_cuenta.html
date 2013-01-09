@@ -6,10 +6,12 @@
       <tr>
          <th align="left">Descripción</th>
          <th>Ejercicio</th>
+         <th align="right">Cuenta especial</th>
       </tr>
       <tr>
          <td>{$fsc->cuenta->descripcion}</td>
          <td align="center"><a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
+         <td align="right">{$fsc->cuenta->idcuentaesp}</td>
       </tr>
    </table>
 </div>

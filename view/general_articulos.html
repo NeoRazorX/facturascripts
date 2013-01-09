@@ -11,6 +11,7 @@
       $("#b_tarifas").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_tarifas');
+         document.f_nueva_tarifa.nombre.focus();
       });
       $("#b_modificar_iva").click(function(event) {
          event.preventDefault();
@@ -70,6 +71,26 @@
 
 <div class="popup" id="popup_tarifas">
    <h1>Tarifas</h1>
+   <div class="grupo">
+      <form name="f_nueva_tarifa" action="{$fsc->url()}" method="post">
+         <h2>
+            Nueva:
+            <span><input type="submit" value="guardar"/></span>
+         </h2>
+         <div class="bloque">
+            Código:
+            <input type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" size="6" maxlength="6" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            Nombre:
+            <input type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            Incremento porcentual:
+            <input type="text" name="incporcentual" value="0" size="4" autocomplete="off"/> %
+         </div>
+      </form>
+   </div>
    {loop="$fsc->tarifa->all()"}
       <div class="grupo">
          <form action="{$fsc->url()}" method="post">
@@ -92,26 +113,6 @@
          </form>
       </div>
    {/loop}
-   <div class="grupo">
-      <form action="{$fsc->url()}" method="post">
-         <h2>
-            Nueva:
-            <span><input type="submit" value="guardar"/></span>
-         </h2>
-         <div class="bloque">
-            Código:
-            <input type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" size="6" maxlength="6" autocomplete="off"/>
-         </div>
-         <div class="bloque">
-            Nombre:
-            <input type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
-         </div>
-         <div class="bloque">
-            Incremento porcentual:
-            <input type="text" name="incporcentual" value="0" size="4" autocomplete="off"/> %
-         </div>
-      </form>
-   </div>
 </div>
 
 <div class="popup" id="popup_modificar_iva">

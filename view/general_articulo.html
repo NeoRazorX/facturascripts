@@ -332,7 +332,7 @@
                <td>{$value->show_fecha()}</td>
                <td align="center"><a href="{$value->url()}">{$value->show_codigo()}</a></td>
                <td align="right">{$value->show_pvp_iva()} €</td>
-               <td align="right"><a class="hidden_black">{$value->dtopor} %</a></td>
+               <td align="right"><a class="hidden_black">{$value->show_dto()} %</a></td>
             </tr>
             {/loop}
          </table>
@@ -356,7 +356,7 @@
                <td>{$value->show_fecha()}</td>
                <td align="center"><a href="{$value->url()}">{$value->show_codigo()}</a></td>
                <td align="right">{$value->show_pvp_iva()} €</td>
-               <td align="right"><a class="hidden_black">{$value->dtopor} %</a></td>
+               <td align="right"><a class="hidden_black">{$value->show_dto()} %</a></td>
             </tr>
             {/loop}
          </table>

@@ -2,6 +2,9 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      $("#b_cuentas_especiales").click(function() {
+         fs_show_popup('popup_cuentas_especiales');
+      });
       $("#b_show_cuentas").click(function() {
          $("#resultados_subcuentas").hide();
          $("#resultados_cuentas").show('slow');
@@ -22,6 +25,26 @@
       document.f_custom_search.query.focus();
    });
 </script>
+
+<div class="popup" id="popup_cuentas_especiales">
+   <h1>Cuentas especiales</h1>
+   <table class="list">
+      <tr>
+         <th align="left" width="100">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->cuentas_especiales"}
+      <tr>
+         <td>{$value->idcuentaesp}</td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="2">Sin resultados.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
 
 {if condition="$fsc->query==''"}
 <div class="rounded">

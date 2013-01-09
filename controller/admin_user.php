@@ -97,7 +97,7 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function all()

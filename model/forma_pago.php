@@ -26,8 +26,6 @@ class forma_pago extends fs_model
    public $genrecibos;
    public $codcuenta;
    public $domiciliado;
-   
-   private static $default_formapago;
 
    public function __construct($f=FALSE)
    {
@@ -59,18 +57,7 @@ class forma_pago extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_formapago) )
-         return (self::$default_formapago == $this->codpago);
-      else if( !isset($_COOKIE['default_formapago']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_formapago'] == $this->codpago);
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_formapago', $this->codpago, time()+FS_COOKIES_EXPIRE);
-      self::$default_formapago = $this->codpago;
+      return ( $this->codpago == $this->default_items->codpago() );
    }
    
    public function get($cod)

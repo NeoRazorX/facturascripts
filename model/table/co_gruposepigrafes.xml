@@ -22,7 +22,7 @@
    </columna>
    <columna>
       <nombre>idgrupo</nombre>
-      <tipo>integer</tipo>
+      <tipo>serial</tipo>
       <nulo>NO</nulo>
       <defecto>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</defecto>
    </columna>

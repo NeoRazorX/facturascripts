@@ -179,7 +179,7 @@ function fs_select_folder(folder)
       $('div.pages div').each(function() {
          $(this).hide();
       });
-      var left2 = $("#b_folder_"+folder).position().left+$("#b_folder_"+folder).outerWidth()/2-$("#folder_"+folder).outerWidth()/2;
+      var left2 = $("#b_folder_"+folder).position().left+$("#b_folder_"+folder).outerWidth()/2-($("#folder_"+folder).outerWidth()-5)/2;
       if( left2 > 0 )
       {
          $('#folder_'+folder+'_img').css({

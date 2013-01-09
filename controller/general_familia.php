@@ -37,7 +37,11 @@ class general_familia extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_familias');
-      $this->pag_importar = $this->page->get('general_importar_familia');
+      
+      /// comprobamos si el usuario tiene acceso a la página de importar familia
+      $this->pag_importar = FALSE;
+      if( $this->user->have_access_to('general_importar_familia', FALSE) )
+         $this->pag_importar = $this->page->get('general_importar_familia');
       
       if( isset($_POST['cod']) )
       {

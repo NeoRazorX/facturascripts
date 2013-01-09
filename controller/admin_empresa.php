@@ -49,7 +49,15 @@ class admin_empresa extends fs_controller
       
       if( isset($_POST['nombre']) )
       {
-         $this->set_default_elements();
+         /*
+          * Guardamos los elementos por defecto
+          */
+         $this->save_codalmacen( $_POST['codalmacen'] );
+         $this->save_coddivisa( $_POST['coddivisa'] );
+         $this->save_codejercicio( $_POST['codejercicio'] );
+         $this->save_codpago( $_POST['codpago'] );
+         $this->save_codserie( $_POST['codserie'] );
+         $this->save_codpais( $_POST['codpais'] );
          
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->cifnif = $_POST['cifnif'];
@@ -81,53 +89,9 @@ class admin_empresa extends fs_controller
       }
    }
    
-   public function version() {
-      return parent::version().'-4';
-   }
-   
-   private function set_default_elements()
+   public function version()
    {
-      if( isset($_POST['codalmacen']) )
-      {
-         $almacen = $this->almacen->get($_POST['codalmacen']);
-         if( $almacen )
-            $almacen->set_default();
-      }
-      
-      if( isset($_POST['coddivisa']) )
-      {
-         $divisa = $this->divisa->get($_POST['coddivisa']);
-         if( $divisa )
-            $divisa->set_default();
-      }
-      
-      if( isset($_POST['codejercicio']) )
-      {
-         $ejercicio = $this->ejercicio->get($_POST['codejercicio']);
-         if( $ejercicio )
-            $ejercicio->set_default();
-      }
-      
-      if( isset($_POST['codpago']) )
-      {
-         $fpago = $this->forma_pago->get($_POST['codpago']);
-         if( $fpago )
-            $fpago->set_default();
-      }
-      
-      if( isset($_POST['codserie']) )
-      {
-         $serie = $this->serie->get($_POST['codserie']);
-         if( $serie )
-            $serie->set_default();
-      }
-      
-      if( isset($_POST['codpais']) )
-      {
-         $pais = $this->pais->get($_POST['codpais']);
-         if( $pais )
-            $pais->set_default();
-      }
+      return parent::version().'-5';
    }
 }
 

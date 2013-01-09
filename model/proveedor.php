@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -75,11 +75,32 @@ class subcuenta_proveedor extends fs_model
    {
       return TRUE;
    }
-
-
+   
    public function save()
    {
-      return FALSE;
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET codproveedor = ".$this->var2str($this->codproveedor).",
+            codsubcuenta = ".$this->var2str($this->codsubcuenta).",
+            codejercicio = ".$this->var2str($this->codejercicio).",
+            idsubcuenta = ".$this->var2str($this->idsubcuenta)."
+            WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codproveedor,codsubcuenta,codejercicio,idsubcuenta)
+            VALUES (".$this->var2str($this->codproveedor).",".$this->var2str($this->codsubcuenta).",
+            ".$this->var2str($this->codejercicio).",".$this->var2str($this->idsubcuenta).");";
+         $resultado = $this->db->exec($sql);
+         if($resultado)
+         {
+            $newid = $this->db->lastval();
+            if($newid)
+               $this->id = intval($newid);
+         }
+         return $resultado;
+      }
    }
    
    public function delete()
@@ -147,12 +168,13 @@ class direccion_proveedor extends fs_model
    
    protected function install()
    {
-      return "";
+      return '';
    }
    
    public function get($id)
    {
-      $dir = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      $dir = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($id).";");
       if($dir)
          return new direccion_proveedor($dir[0]);
       else
@@ -164,7 +186,8 @@ class direccion_proveedor extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -188,8 +211,9 @@ class direccion_proveedor extends fs_model
                codpais = ".$this->var2str($this->codpais).", apartado = ".$this->var2str($this->apartado).",
                provincia = ".$this->var2str($this->provincia).", ciudad = ".$this->var2str($this->ciudad).",
                codpostal = ".$this->var2str($this->codpostal).", direccion = ".$this->var2str($this->direccion).",
-               direccionppal = ".$this->var2str($this->direccionppal).", descripcion = ".$this->var2str($this->descripcion)."
-               WHERE id = ".$this->var2str($this->id).";";
+               direccionppal = ".$this->var2str($this->direccionppal).",
+               descripcion = ".$this->var2str($this->descripcion)." WHERE id = ".$this->var2str($this->id).";";
+            return $this->db->exec($sql);
          }
          else
          {
@@ -198,8 +222,15 @@ class direccion_proveedor extends fs_model
                ".$this->var2str($this->apartado).",".$this->var2str($this->provincia).",".$this->var2str($this->ciudad).",
                ".$this->var2str($this->codpostal).",".$this->var2str($this->direccion).",".$this->var2str($this->direccionppal).",
                ".$this->var2str($this->descripcion).");";
+            $resultado = $this->db->exec($sql);
+            if($resultado)
+            {
+               $newid = $this->db->lastval();
+               if($newid)
+                  $this->id = intval($newid);
+            }
+            return $resultado;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -207,7 +238,8 @@ class direccion_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_proveedor($codprov)
@@ -239,8 +271,7 @@ class proveedor extends fs_model
    public $coddivisa;
    public $codpago;
    public $observaciones;
-   
-   private static $default_proveedor;
+   public $tipoidfiscal;
 
    public function __construct($p=FALSE)
    {
@@ -260,6 +291,7 @@ class proveedor extends fs_model
          $this->coddivisa = $p['coddivisa'];
          $this->codpago = $p['codpago'];
          $this->observaciones = $this->no_html($p['observaciones']);
+         $this->tipoidfiscal = $p['tipoidfiscal'];
       }
       else
       {
@@ -276,6 +308,7 @@ class proveedor extends fs_model
          $this->coddivisa = NULL;
          $this->codpago = NULL;
          $this->observaciones = '';
+         $this->tipoidfiscal = 'NIF';
       }
    }
    
@@ -305,23 +338,13 @@ class proveedor extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_proveedor) )
-         return (self::$default_proveedor == $this->codproveedor);
-      else if( !isset($_COOKIE['default_proveedor']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_proveedor'] == $this->codproveedor);
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_proveedor', $this->codproveedor, time()+FS_COOKIES_EXPIRE);
-      self::$default_proveedor = $this->codproveedor;
+      return ( $this->codproveedor == $this->default_items->codproveedor() );
    }
    
    public function get($cod)
    {
-      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($cod).";");
+      $prov = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codproveedor = ".$this->var2str($cod).";");
       if($prov)
          return new proveedor($prov[0]);
       else
@@ -360,14 +383,59 @@ class proveedor extends fs_model
    
    public function get_subcuenta($eje)
    {
-      $retorno = FALSE;
-      $subcs = $this->get_subcuentas();
-      foreach($subcs as $s)
+      $subcuenta = FALSE;
+      
+      foreach($this->get_subcuentas() as $s)
       {
          if($s->codejercicio == $eje)
-            $retorno = $s;
+         {
+            $subcuenta = $s;
+            break;
+         }
       }
-      return $retorno;
+      if( !$subcuenta )
+      {
+         /// intentamos crear la subcuenta y asociarla
+         $continuar = TRUE;
+         
+         $cuenta = new cuenta();
+         $cpro = $cuenta->get_by_codigo('400', $eje);
+         if($cpro)
+         {
+            $codsubcuenta = 4000000000 + $this->codproveedor;
+            $subcuenta = new subcuenta();
+            $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $eje);
+            if( !$subc0 )
+            {
+               $subc0 = new subcuenta();
+               $subc0->codcuenta = $cpro->codcuenta;
+               $subc0->idcuenta = $cpro->idcuenta;
+               $subc0->codejercicio = $eje;
+               $subc0->codsubcuenta = $codsubcuenta;
+               $subc0->descripcion = $this->nombre;
+               if( !$subc0->save() )
+               {
+                  $this->new_error_msg('Imposible crear la subcuenta para el proveedor '.$this->codproveedor);
+                  $continuar = FALSE;
+               }
+            }
+            
+            if( $continuar )
+            {
+               $scpro = new subcuenta_proveedor();
+               $scpro->codejercicio = $eje;
+               $scpro->codproveedor = $this->codproveedor;
+               $scpro->codsubcuenta = $subc0->codsubcuenta;
+               $scpro->idsubcuenta = $subc0->idsubcuenta;
+               if( $scpro->save() )
+                  $subcuenta = $subc0;
+               else
+                  $this->new_error_msg('Imposible asociar la subcuenta para el proveedor '.$this->codproveedor);
+            }
+         }
+      }
+      
+      return $subcuenta;
    }
    
    public function get_direcciones()
@@ -418,17 +486,20 @@ class proveedor extends fs_model
                fax = ".$this->var2str($this->fax).", email = ".$this->var2str($this->email).",
                web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
                coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
-               observaciones = ".$this->var2str($this->observaciones)."
+               observaciones = ".$this->var2str($this->observaciones).",
+               tipoidfiscal = ".$this->var2str($this->tipoidfiscal)."
                WHERE codproveedor = ".$this->var2str($this->codproveedor).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codproveedor,nombre,nombrecomercial,cifnif,telefono1,telefono2,
-               fax,email,web,codserie,coddivisa,codpago,observaciones) VALUES (".$this->var2str($this->codproveedor).",
-               ".$this->var2str($this->nombre).",".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
+               fax,email,web,codserie,coddivisa,codpago,observaciones,tipoidfiscal) VALUES
+               (".$this->var2str($this->codproveedor).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",".$this->var2str($this->fax).",
                ".$this->var2str($this->email).",".$this->var2str($this->web).",".$this->var2str($this->codserie).",
-               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->observaciones).");";
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).");";
          }
          return $this->db->exec($sql);
       }

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -64,22 +64,8 @@ class fs_user extends fs_model
          
          $this->last_ip = $a['last_ip'];
          $this->last_browser = $a['last_browser'];
-         
-         if( isset($a['fs_page']) )
-            $this->fs_page = $a['fs_page'];
-         else
-         {
-            $this->fs_page = NULL;
-            $this->clean_checked_tables();
-         }
-         
-         if( isset($a['codejercicio']) )
-            $this->codejercicio = $a['codejercicio'];
-         else
-         {
-            $this->codejercicio = NULL;
-            $this->clean_checked_tables();
-         }
+         $this->fs_page = $a['fs_page'];
+         $this->codejercicio = $a['codejercicio'];
       }
       else
       {
@@ -105,6 +91,8 @@ class fs_user extends fs_model
       $agente = new agente();
       $page = new fs_page();
       $ejercicio = new ejercicio();
+      
+      $this->new_error_msg('Se ha creado el usuario admin con la contraseña admin.');
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
          VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
    }
@@ -316,9 +304,12 @@ class fs_user extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
-   public function clean_cache()
+   public function clean_cache($full=FALSE)
    {
       $this->cache->delete('m_fs_user_all');
+      
+      if( $full )
+         $this->clean_checked_tables();
    }
    
    public function all()

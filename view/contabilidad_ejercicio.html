@@ -1,6 +1,42 @@
 {include="header"}
 
 {if condition="$fsc->ejercicio"}
+
+{if condition="$fsc->importar_url"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      setTimeout("location.href = '{$fsc->importar_url}';", 1500);
+   });
+</script>
+{/if}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_importar").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_importar');
+      });
+   });
+</script>
+
+<div class="popup" id="popup_importar">
+   <h1>Importar datos del ejercicio</h1>
+   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+      <input name='archivo' type='hidden' value='TRUE'/>
+      Se importarán balances, grupos, epígrafes, cuentas, cuentas especiales y subcuentas.
+      <br/><br/>
+      <table width="100%">
+         <tr>
+            <td align="right">Archivo:</td>
+            <td><input name='farchivo' type='file'/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right"><input type="submit" value="importar"/></td>
+         </tr>
+      </table>
+   </form>
+</div>
+
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="codejercicio" value="{$fsc->ejercicio->codejercicio}"/>
@@ -33,33 +69,103 @@
 </div>
 
 <div class="rounded">
-   <h1>Cuentas:</h1>
+   {if condition="$fsc->listar=='grupos'"}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=grupos" class="selected">Grupos</a>
+      <a href="{$fsc->url()}&listar=epigrafes">Epígrafes</a>
+      <a href="{$fsc->url()}&listar=cuentas">Cuentas</a>
+      <a href="{$fsc->url()}&listar=subcuentas">Subcuentas</a>
+   </div>
    <table class="list">
       <tr>
          <th align="left">Código</th>
          <th align="left">Descripción</th>
       </tr>
-      {loop="$fsc->cuentas"}
+      {loop="$fsc->listado"}
       <tr>
+         <td>{$value->codgrupo}</td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {else}
+      <tr><td colspan="2">Sin resultados.</td></tr>
+      {/loop}
+   </table>
+   {/if}
+   
+   {if condition="$fsc->listar=='epigrafes'"}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=grupos">Grupos</a>
+      <a href="{$fsc->url()}&listar=epigrafes" class="selected">Epígrafes</a>
+      <a href="{$fsc->url()}&listar=cuentas">Cuentas</a>
+      <a href="{$fsc->url()}&listar=subcuentas">Subcuentas</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th align="left">Grupo</th>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td>{$value->codgrupo}</td>
+         <td>{$value->codepigrafe}</td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {else}
+      <tr><td colspan="3">Sin resultados.</td></tr>
+      {/loop}
+   </table>
+   {/if}
+   
+   {if condition="$fsc->listar=='cuentas'"}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=grupos">Grupos</a>
+      <a href="{$fsc->url()}&listar=epigrafes">Epígrafes</a>
+      <a href="{$fsc->url()}&listar=cuentas" class="selected">Cuentas</a>
+      <a href="{$fsc->url()}&listar=subcuentas">Subcuentas</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th align="left">Epígrafe</th>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td>{$value->codepigrafe}</td>
          <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
          <td><a href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
       <tr><td colspan="2">Sin resultados.</td></tr>
       {/loop}
-      <tr>
-         <td>
-         {if condition="$fsc->anterior_url()!=''"}
-            <a class="next" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
-         </td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-            <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
-      </tr>
    </table>
+   {/if}
+   
+   {if condition="$fsc->listar=='subcuentas'"}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=grupos">Grupos</a>
+      <a href="{$fsc->url()}&listar=epigrafes">Epígrafes</a>
+      <a href="{$fsc->url()}&listar=cuentas">Cuentas</a>
+      <a href="{$fsc->url()}&listar=subcuentas" class="selected">Subcuentas</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th align="left">Cuenta</th>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {else}
+      <tr><td colspan="3">Sin resultados.</td></tr>
+      {/loop}
+   </table>
+   {/if}
 </div>
 {/if}
 

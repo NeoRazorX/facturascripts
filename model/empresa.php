@@ -91,7 +91,7 @@ class empresa extends fs_model
       {
          $this->id = NULL;
          $this->stockpedidos = FALSE;
-         $this->contintegrada = FALSE;
+         $this->contintegrada = TRUE;
          $this->recequivalencia = FALSE;
          $this->codserie = NULL;
          $this->codalmacen = NULL;
@@ -196,7 +196,7 @@ class empresa extends fs_model
       return FALSE;
    }
    
-   private function clean_cache()
+   public function clean_cache()
    {
       $this->cache->delete('empresa');
    }

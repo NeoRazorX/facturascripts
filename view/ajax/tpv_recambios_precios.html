@@ -137,7 +137,7 @@
                   </td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->dtopor} %
+                        {$value->show_dto()} %
                      </a>
                   </td>
                </tr>
@@ -176,7 +176,7 @@
                   </td>
                   <td align="right">
                      <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->dtopor} %
+                        {$value->show_dto()} %
                      </a>
                   </td>
                </tr>

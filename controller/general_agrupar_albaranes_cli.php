@@ -60,7 +60,7 @@ class general_agrupar_albaranes_cli extends fs_controller
          $this->agrupar();
       else if( isset($_POST['cliente']) )
       {
-         $this->set_default_elements();
+         $this->save_codcliente( $_POST['cliente'] );
          
          $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
@@ -147,7 +147,6 @@ class general_agrupar_albaranes_cli extends fs_controller
                foreach($albaranes as $alb)
                {
                   $alb->idfactura = $factura->idfactura;
-                  $alb->editable = FALSE;
                   $alb->ptefactura = FALSE;
                   if( !$alb->save() )
                   {
@@ -297,19 +296,9 @@ class general_agrupar_albaranes_cli extends fs_controller
       }
    }
    
-   private function set_default_elements()
-   {
-      if( isset($_POST['cliente']) )
-      {
-         $cliente = $this->cliente->get($_POST['cliente']);
-         if( $cliente )
-            $cliente->set_default();
-      }
-   }
-   
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
 }
 

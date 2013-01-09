@@ -39,8 +39,6 @@ class impuesto extends fs_model
    public $descripcion;
    public $iva;
    public $recargo;
-   
-   private static $default_impuesto;
 
    public function __construct($i=FALSE)
    {
@@ -106,18 +104,7 @@ class impuesto extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_impuesto) )
-         return (self::$default_impuesto == $this->codimpuesto);
-      else if( !isset($_COOKIE['default_impuesto']) )
-         return FALSE;
-      else
-         return ($_COOKIE['default_impuesto'] == $this->codimpuesto);
-   }
-
-   public function set_default()
-   {
-      setcookie('default_impuesto', $this->codimpuesto, time()+FS_COOKIES_EXPIRE);
-      self::$default_impuesto = $this->codimpuesto;
+      return ( $this->codimpuesto == $this->default_items->codimpuesto() );
    }
    
    public function get($cod)

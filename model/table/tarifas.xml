@@ -11,6 +11,12 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>inclineal</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
       <nombre>nombre</nombre>
       <tipo>character varying(50)</tipo>
       <nulo>NO</nulo>

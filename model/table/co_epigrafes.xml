@@ -32,7 +32,7 @@
    </columna>
    <columna>
       <nombre>idepigrafe</nombre>
-      <tipo>integer</tipo>
+      <tipo>serial</tipo>
       <nulo>NO</nulo>
       <defecto>nextval('co_epigrafes_idepigrafe_seq'::regclass)</defecto>
    </columna>

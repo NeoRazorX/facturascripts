@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -133,14 +133,15 @@ class asiento extends fs_model
       if( is_null($this->idasiento) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
    public function new_idasiento()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idasiento_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idasiento_seq');
       if($newid)
-         $this->idasiento = intval($newid[0]['nextval']);
+         $this->idasiento = intval($newid);
    }
    
    public function new_numero()

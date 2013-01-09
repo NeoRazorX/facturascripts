@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -33,8 +33,6 @@ class almacen extends fs_model
    public $direccion;
    public $nombre;
    public $codalmacen; /// pkey
-   
-   private static $default_almacen;
    
    public function __construct($a = FALSE)
    {
@@ -88,18 +86,7 @@ class almacen extends fs_model
    
    public function is_default()
    {
-      if( isset(self::$default_almacen) )
-         return (self::$default_almacen == $this->codalmacen);
-      else if( !isset($_COOKIE['default_almacen']) )
-         return FALSE;
-      else
-         return ( $_COOKIE['default_almacen'] == $this->codalmacen );
-   }
-   
-   public function set_default()
-   {
-      setcookie('default_almacen', $this->codalmacen, time()+FS_COOKIES_EXPIRE);
-      self::$default_almacen = $this->codalmacen;
+      return ( $this->codalmacen == $this->default_items->codalmacen() );
    }
    
    public function get($cod)
