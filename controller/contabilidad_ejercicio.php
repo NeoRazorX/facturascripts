@@ -17,14 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/asiento.php';
 require_once 'model/balance.php';
+require_once 'model/cliente.php';
 require_once 'model/cuenta.php';
 require_once 'model/ejercicio.php';
 require_once 'model/epigrafe.php';
+require_once 'model/proveedor.php';
 require_once 'model/subcuenta.php';
 
 class contabilidad_ejercicio extends fs_controller
 {
+   public $asiento_apertura_url;
+   public $asiento_cierre_url;
+   public $asiento_pyg_url;
    public $ejercicio;
    public $importar_url;
    public $listado;
@@ -47,6 +53,7 @@ class contabilidad_ejercicio extends fs_controller
             $this->ejercicio->nombre = $_POST['nombre'];
             $this->ejercicio->fechainicio = $_POST['fechainicio'];
             $this->ejercicio->fechafin = $_POST['fechafin'];
+            $this->ejercicio->longsubcuenta = intval($_POST['longsubcuenta']);
             $this->ejercicio->estado = $_POST['estado'];
             if( $this->ejercicio->save() )
                $this->new_message('Datos guardados correctamente.');
@@ -73,6 +80,32 @@ class contabilidad_ejercicio extends fs_controller
             $this->buttons[] = new fs_button('b_importar', 'importar');
             $this->buttons[] = new fs_button('b_exportar', 'exportar',
                     $this->url().'&export=TRUE', '', 'img/tools.png', '*', TRUE);
+            
+            $asiento = new asiento();
+            
+            $this->asiento_apertura_url = FALSE;
+            if( $this->ejercicio->idasientoapertura )
+            {
+               $asiento_a = $asiento->get( $this->ejercicio->idasientoapertura );
+               if($asiento_a)
+                  $this->asiento_apertura_url = $asiento_a->url();
+            }
+            
+            $this->asiento_cierre_url = FALSE;
+            if( $this->ejercicio->idasientocierre )
+            {
+               $asiento_c = $asiento->get( $this->ejercicio->idasientocierre );
+               if($asiento_c)
+                  $this->asiento_cierre_url = $asiento_c->url();
+            }
+            
+            $this->asiento_pyg_url = FALSE;
+            if( $this->ejercicio->idasientopyg )
+            {
+               $asiento_pyg = $asiento->get( $this->ejercicio->idasientopyg );
+               if($asiento_pyg)
+                  $this->asiento_pyg_url = $asiento_pyg->url();
+            }
             
             /// comprobamos el proceso de importación
             $this->importar_xml();
@@ -266,7 +299,7 @@ class contabilidad_ejercicio extends fs_controller
       else if( isset($_GET['importar']) )
       {
          $import_step = intval($_GET['importar']);
-         if( $import_step < 5 )
+         if( $import_step < 7 )
             $this->importar_url = $this->url().'&importar='.(1 + $import_step);
          else
             $import_step = 0;
@@ -274,7 +307,7 @@ class contabilidad_ejercicio extends fs_controller
       
       if( file_exists('tmp/ejercicio.xml') AND $import_step > 0 )
       {
-         $this->new_message('Importando ejercicio: paso '.$import_step.' de 4 ...');
+         $this->new_message('Importando ejercicio: paso '.$import_step.' de 6 ...');
          
          $xml = simplexml_load_file('tmp/ejercicio.xml');
          if( $xml )
@@ -452,6 +485,26 @@ class contabilidad_ejercicio extends fs_controller
                         $subcuenta->save();
                      }
                   }
+               }
+            }
+            
+            if( $import_step == 5 )
+            {
+               $cliente = new cliente();
+               foreach($cliente->all_full() as $cli)
+               {
+                  /// forzamos la generación y asociación de una subcuenta para el cliente
+                  $cli->get_subcuenta( $this->ejercicio->codejercicio );
+               }
+            }
+            
+            if( $import_step == 6 )
+            {
+               $proveedor = new proveedor();
+               foreach($proveedor->all_full() as $pro)
+               {
+                  /// forzamos la generación y asociación de una subcuenta para cada proveedor
+                  $pro->get_subcuenta( $this->ejercicio->codejercicio );
                }
             }
          }

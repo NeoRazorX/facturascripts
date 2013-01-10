@@ -45,12 +45,17 @@
             <th align="left">Nombre</th>
             <th align="left">Fecha inicio</th>
             <th align="left">Fecha fin</th>
+            <th align="left">Longitud subcuenta</th>
             <th align="left">Estado</th>
+            <td align="right"><input type="submit" value="guardar"/></td>
          </tr>
          <tr>
             <td><input type="text" name="nombre" value="{$fsc->ejercicio->nombre}" autocomplete="off"/></td>
-            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="12"/></td>
-            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="12"/></td>
+            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="10"/></td>
+            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="10"/></td>
+            <td>
+               <input type="text" name="longsubcuenta" value="{$fsc->ejercicio->longsubcuenta}" size="2" autocomplete="off"/>
+            </td>
             <td>
                <select name="estado">
                {if condition="$fsc->ejercicio->estado == 'ABIERTO'"}
@@ -62,9 +67,17 @@
                {/if}
                </select>
             </td>
-            <td align="right"><input type="submit" value="guardar"/></td>
          </tr>
       </table>
+      {if condition="$fsc->asiento_apertura_url"}
+         <div class="bloque"><a href="{$fsc->asiento_apertura_url}">Asiento de apertura</a></div>
+      {/if}
+      {if condition="$fsc->asiento_cierre_url"}
+         <div class="bloque"><a href="{$fsc->asiento_cierre_url}">Asiento de cierre</a></div>
+      {/if}
+      {if condition="$fsc->asiento_pyg_url"}
+         <div class="bloque"><a href="{$fsc->asiento_pyg_url}">Asiento de pérdidas y ganancias</a></div>
+      {/if}
    </form>
 </div>
 
@@ -154,15 +167,17 @@
          <th align="left">Cuenta</th>
          <th align="left">Código</th>
          <th align="left">Descripción</th>
+         <th align="right">Saldo</th>
       </tr>
       {loop="$fsc->listado"}
       <tr>
          <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
          <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td align="right">{$value->show_saldo()}</td>
       </tr>
       {else}
-      <tr><td colspan="3">Sin resultados.</td></tr>
+      <tr><td colspan="4">Sin resultados.</td></tr>
       {/loop}
    </table>
    {/if}
