@@ -34,27 +34,32 @@
          {
             if($("#linea_"+i).length > 0)
             {
-               totiva = parseFloat( $("#totiva_"+i).val() );
                uds = parseFloat( $("#cantidad_"+i).val() );
+               pvp = parseFloat( $("#pvp_"+i).val() );
+               dto = parseFloat( $("#dto_"+i).val() );
+               iva = parseFloat( $("#iva_"+i).val() );
+               totiva = parseFloat( $("#totiva_"+i).val() );
+               if( isNaN(totiva) )
+                  totiva = 0;
                
-               if( $("#pvp_"+i).val() == 0 )
+               if( totiva <= pvp*uds*(100+iva)/100 )
                {
-                  pvp = 1;
-                  $("#pvp_"+i).val(1);
+                  dto = 100 - 100*totiva/(pvp*uds*(100+iva)/100);
+                  if( isNaN(dto) )
+                     dto = 0;
                }
                else
-                  pvp = parseFloat( $("#pvp_"+i).val() );
+               {
+                  dto = 0;
+                  pvp = 10000*totiva/(uds*(100-dto)*(100+iva));
+                  if( isNaN(pvp) )
+                     pvp = 0;
+               }
                
-               iva = parseFloat( $("#iva_"+i).val() );
-               dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
-               
-               if( isNaN(dto) )
-                  $("#dto_"+i).val(0);
-               else
-                  $("#dto_"+i).val(dto);
-               
+               $("#pvp_"+i).val(pvp);
+               $("#dto_"+i).val(dto);
                $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-               tpv_total += uds*pvp*(100-dto)/100*(100+iva)/100;
+               tpv_total += totiva;
             }
          }
          $("#tpv_total").html( number_format(tpv_total,2,',',' ') +" €");
@@ -317,7 +322,7 @@
                <th>Descripción</th>
                <th>Cantidad</th>
                <th>PVP</th>
-               <th>Dto.</th>
+               <th>Dto. %</th>
                <th>IVA</th>
                <th>Total+IVA</th>
             </tr>

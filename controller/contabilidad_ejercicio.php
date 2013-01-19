@@ -156,7 +156,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function url()
@@ -287,11 +287,18 @@ class contabilidad_ejercicio extends fs_controller
       $import_step = 0;
       $this->importar_url = FALSE;
       
-      if( isset($_POST['archivo']) )
+      if( isset($_POST['fuente']) )
       {
          if( file_exists('tmp/ejercicio.xml') )
             unlink('tmp/ejercicio.xml');
-         copy($_FILES['farchivo']['tmp_name'], 'tmp/ejercicio.xml');
+         
+         if($_POST['fuente'] == 'generico')
+            copy('extras/ejercicio.xml', 'tmp/ejercicio.xml');
+         else if( $_POST['fuente'] == 'archivo' AND isset($_POST['archivo']) )
+            copy($_FILES['farchivo']['tmp_name'], 'tmp/ejercicio.xml');
+         else
+            $this->new_error_msg('Has seleccionado importar desde un archivo externo,
+               pero no has seleccionado ningún archivo.');
          
          $import_step = 1;
          $this->importar_url = $this->url().'&importar='.(1 + $import_step);

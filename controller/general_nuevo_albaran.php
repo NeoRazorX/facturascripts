@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -55,6 +55,7 @@ class general_nuevo_albaran extends fs_controller
    {
       $this->articulo = new articulo();
       $this->familia = new familia();
+      $this->impuesto = new impuesto();
       $this->results = array();
       
       if( isset($_GET['new_articulo']) )
@@ -84,13 +85,11 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    private function new_articulo()
    {
-      $this->impuesto = new impuesto();
-      
       $art0 = new articulo();
       $art0->referencia = $_POST['referencia'];
       $art0->descripcion = $_POST['referencia'];
@@ -105,9 +104,6 @@ class general_nuevo_albaran extends fs_controller
    
    private function new_search()
    {
-      $this->familia = new familia();
-      $this->impuesto = new impuesto();
-      
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran';
       
@@ -222,10 +218,24 @@ class general_nuevo_albaran extends fs_controller
                            $linea->codimpuesto = NULL;
                            $linea->iva = 0;
                         }
-                        else
+                        else if( floatval($_POST['iva_'.$i]) == $articulo->get_iva() )
                         {
                            $linea->codimpuesto = $articulo->codimpuesto;
-                           $linea->iva = floatval($_POST['iva_'.$i]);
+                           $linea->iva = $articulo->iva;
+                        }
+                        else
+                        {
+                           $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
+                           if($imp0)
+                           {
+                              $linea->codimpuesto = $imp0->codimpuesto;
+                              $linea->iva = $imp0->iva;
+                           }
+                           else
+                           {
+                              $linea->codimpuesto = NULL;
+                              $linea->iva = floatval($_POST['iva_'.$i]);
+                           }
                         }
                         
                         $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
@@ -340,10 +350,24 @@ class general_nuevo_albaran extends fs_controller
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
                      }
-                     else
+                     else if( floatval($_POST['iva_'.$i]) == $articulo->get_iva() )
                      {
                         $linea->codimpuesto = $articulo->codimpuesto;
-                        $linea->iva = floatval($_POST['iva_'.$i]);
+                        $linea->iva = $articulo->iva;
+                     }
+                     else
+                     {
+                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
+                        if($imp0)
+                        {
+                           $linea->codimpuesto = $imp0->codimpuesto;
+                           $linea->iva = $imp0->iva;
+                        }
+                        else
+                        {
+                           $linea->codimpuesto = NULL;
+                           $linea->iva = floatval($_POST['iva_'.$i]);
+                        }
                      }
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);

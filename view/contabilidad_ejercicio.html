@@ -23,15 +23,25 @@
    <h1>Importar datos del ejercicio</h1>
    <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
       <input name='archivo' type='hidden' value='TRUE'/>
-      Se importarán balances, grupos, epígrafes, cuentas, cuentas especiales y subcuentas.
+      Se importarán balances, grupos, epígrafes, cuentas, cuentas especiales y subcuentas
+      desde...
       <br/><br/>
       <table width="100%">
          <tr>
-            <td align="right">Archivo:</td>
-            <td><input name='farchivo' type='file'/></td>
+            <td colspan="2">
+               <input type="radio" id="rb_generico" name="fuente" value="generico" checked="checked"/>
+               <label for="rb_generico">El archivo interno de FacturaScripts (recomendado).</label>
+            </td>
          </tr>
          <tr>
-            <td colspan="2" align="right"><input type="submit" value="importar"/></td>
+            <td>
+               <input type="radio" id="rb_archivo" name="fuente" value="archivo"/>
+               <label for="rb_archivo">Un archivo externo:</label>
+               <input name='farchivo' type='file'/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><input type="submit" value="importar"/></td>
          </tr>
       </table>
    </form>

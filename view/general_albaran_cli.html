@@ -56,15 +56,30 @@
       {
          if($("#linea_"+i).length > 0)
          {
-            total = parseFloat( $("#total_"+i).val() );
             uds = parseFloat( $("#cantidad_"+i).val() );
             pvp = parseFloat( $("#pvp_"+i).val() );
-            dto = 100 - (100*total)/(pvp*uds);
-            if( isNaN(dto) )
-               $("#dto_"+i).val(0);
-            else
-               $("#dto_"+i).val(dto);
+            dto = parseFloat( $("#dto_"+i).val() );
             iva = parseFloat( $("#iva_"+i).val() );
+            total = parseFloat( $("#total_"+i).val() );
+            if( isNaN(total) )
+               total = 0;
+            
+            if( total <= pvp*uds )
+            {
+               dto = 100 - 100*total/(pvp*uds);
+               if( isNaN(dto) )
+                  dto = 0;
+            }
+            else
+            {
+               dto = 0;
+               pvp = 100*total/uds*(100-dto);
+               if( isNaN(pvp) )
+                  pvp = 0;
+            }
+            
+            $("#pvp_"+i).val(pvp);
+            $("#dto_"+i).val(dto);
             $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
             aneto += uds*pvp*(100-dto)/100;
             aiva += uds*pvp*(100-dto)/100*(iva/100);
@@ -89,15 +104,30 @@
       {
          if($("#linea_"+i).length > 0)
          {
-            totiva = parseFloat( $("#totiva_"+i).val() );
             uds = parseFloat( $("#cantidad_"+i).val() );
             pvp = parseFloat( $("#pvp_"+i).val() );
+            dto = parseFloat( $("#dto_"+i).val() );
             iva = parseFloat( $("#iva_"+i).val() );
-            dto = 100 - (100*totiva)/(pvp*uds*(100+iva)/100);
-            if( isNaN(dto) )
-               $("#dto_"+i).val(0);
+            totiva = parseFloat( $("#totiva_"+i).val() );
+            if( isNaN(totiva) )
+               totiva = 0;
+            
+            if( totiva <= pvp*uds*(100+iva)/100 )
+            {
+               dto = 100 - 100*totiva/(pvp*uds*(100+iva)/100);
+               if( isNaN(dto) )
+                  dto = 0;
+            }
             else
-               $("#dto_"+i).val(dto);
+            {
+               dto = 0;
+               pvp = 10000*totiva/(uds*(100-dto)*(100+iva));
+               if( isNaN(pvp) )
+                  pvp = 0;
+            }
+            
+            $("#pvp_"+i).val(pvp);
+            $("#dto_"+i).val(dto);
             $("#total_"+i).val( uds*pvp*(100-dto)/100 );
             aneto += uds*pvp*(100-dto)/100;
             aiva += uds*pvp*(100-dto)/100*(iva/100);
@@ -107,6 +137,23 @@
       $("#aneto").html( number_format(aneto,2,',',' ') );
       $("#aiva").html( number_format(aiva,2,',',' ') );
       $("#atotal").html( number_format(atotal,2,',',' ') );
+   }
+   function aux_all_impuestos(numlinea,iva)
+   {
+      var all_impuestos = [];
+      {loop="$fsc->impuesto->all()"}
+      all_impuestos[{$counter}] = '{$value->iva}';
+      {/loop}
+      
+      var html = "<select id=\"iva_"+numlinea+"\" name=\"iva_"+numlinea+"\" onchange=\"recalcular()\">";
+      for(var i=0; i<all_impuestos.length; i++)
+      {
+         if(iva == all_impuestos[i])
+            html += "<option value=\""+all_impuestos[i]+"\" selected=\"selected\">"+all_impuestos[i]+" %</option>";
+         else
+            html += "<option value=\""+all_impuestos[i]+"\">"+all_impuestos[i]+" %</option>";
+      }
+      return html+"</select>";
    }
    function add_articulo(ref,desc,pvp,dto,iva)
    {
@@ -127,7 +174,7 @@
             "\" size=\"4\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
          <td align=\"center\"><input type=\"text\" class=\"full\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
             "\" size=\"6\" onkeyup=\"ajustar_total("+numlineas+")\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
-         <td align=\"center\"><input type=\"hidden\" id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" value=\""+iva+"\"/>"+iva+" %</td>\n\
+         <td align=\"center\">"+aux_all_impuestos(numlineas,iva)+"</td>\n\
          <td align=\"center\"><input type=\"text\" class=\"full\" id=\"totiva_"+numlineas+"\" name=\"totiva_"+numlineas+
             "\" size=\"6\" onkeyup=\"ajustar_totiva("+numlineas+")\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
       fs_hide_popups();
@@ -280,9 +327,9 @@
             <th>Descripción</th>
             <th>Cantidad</th>
             <th>PVP</th>
-            <th>dto.</th>
+            <th>dto. %</th>
             <th>Total</th>
-            <th>IVA</th>
+            <th>IVA %</th>
             <th>Total+IVA</th>
          </tr>
          {loop="$fsc->albaran->get_lineas()"}
@@ -313,8 +360,15 @@
                       onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/>
             </td>
             <td align="center">
-               <input type="hidden" name="iva_{$counter}" id="iva_{$counter}" value="{$value->iva}"/>
-               {$value->iva} %
+               <select id="iva_{$counter}" name="iva_{$counter}" onchange="recalcular()">
+                  {loop="$fsc->impuesto->all()"}
+                     {if condition="$value1->codimpuesto==$value2->codimpuesto"}
+                     <option value="{$value2->iva}" selected="selected">{$value2->iva} %</option>
+                     {else}
+                     <option value="{$value2->iva}">{$value2->iva} %</option>
+                     {/if}
+                  {/loop}
+               </select>
             </td>
             <td align="center">
                <input type="text" class="full" name="totiva_{$counter}" id="totiva_{$counter}" size="6"

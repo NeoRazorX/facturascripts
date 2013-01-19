@@ -552,7 +552,6 @@ class articulo extends fs_model
          {
             if( $value['tag'] == $tag )
             {
-               
                $encontrado = TRUE;
                if(time() + 86400 - $value['expires'] > 300)
                {
@@ -569,7 +568,7 @@ class articulo extends fs_model
          }
          
          if( $actualizar )
-            $this->cache->set('articulos_search_tags', self::$search_tags, 86400);
+            $this->cache->set('articulos_searches', self::$search_tags, 86400);
       }
       
       return $encontrado;
@@ -578,7 +577,7 @@ class articulo extends fs_model
    public function get_search_tags()
    {
       if( !isset(self::$search_tags) )
-         self::$search_tags = $this->cache->get_array('articulos_search_tags');
+         self::$search_tags = $this->cache->get_array('articulos_searches');
       return self::$search_tags;
    }
    
@@ -592,10 +591,18 @@ class articulo extends fs_model
          foreach(self::$search_tags as $i => $value)
          {
             if( $value['expires'] < time() )
+            {
+               /// eliminamos las búsquedas antiguas
                unset(self::$search_tags[$i]);
+            }
             else
+            {
+               /// guardamos los resultados de la búsqueda en memcache
                $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+            }
          }
+         
+         $this->cache->set('articulos_searches', self::$search_tags, 86400);
       }
    }
    
@@ -606,8 +613,11 @@ class articulo extends fs_model
       
       if( self::$search_tags )
       {
-         foreach(self::$search_tags as $i => $value)
+         foreach(self::$search_tags as $value)
             $this->cache->delete('articulos_search_'.$value['tag']);
+         
+         $this->cache->delete('articulos_searches');
+         self::$search_tags = array();
       }
       
       /// eliminamos también la cache de tpv_yamyam

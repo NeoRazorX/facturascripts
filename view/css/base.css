@@ -76,8 +76,13 @@ div.header_box {
 div#header_folders, div#header_logo, div#header_user,
 div#header_buttons, div#header_search {
    display: table-cell;
-   padding: 5px;
+   padding: 0px;
+}
+
+div#header_folders {
    vertical-align: top;
+   padding-left: 5px;
+   padding-top: 5px;
 }
 
 div#header_folders a.selected {
@@ -85,10 +90,14 @@ div#header_folders a.selected {
 }
 
 div#header_logo {
+   vertical-align: top;
    text-align: center;
 }
 
 div#header_user {
+   vertical-align: top;
+   padding-right: 5px;
+   padding-top: 5px;
    text-align: right;
 }
 
@@ -136,34 +145,24 @@ div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
 }
 
 div#header_buttons {
+   vertical-align: bottom;
+   padding-top: 5px;
    text-align: left;
-}
-
-div#header_location {
-   display: inline-block;
-   padding-left: 15px;
-   padding-right: 15px;
    text-transform: capitalize;
-   font-variant: small-caps;
 }
 
-div#header_location a {
-   color: white;
-   font-weight: bold;
-}
-
-div#header_location img {
-   vertical-align: middle;
+div#header_buttons img {
+   vertical-align: text-bottom;
 }
 
 div#header_buttons a.button, div#header_buttons a.remove {
    display: inline-block;
    margin-left: 5px;
    margin-right: 5px;
-   padding-top: 2px;
+   padding-top: 1px;
    padding-left: 5px;
    padding-right: 5px;
-   padding-bottom: 2px;
+   padding-bottom: 1px;
    background-color: white;
    border: 1px solid #424242;
    border-top-left-radius: 3px 3px;
@@ -171,10 +170,7 @@ div#header_buttons a.button, div#header_buttons a.remove {
    border-bottom-left-radius: 3px 3px;
    border-bottom-right-radius: 3px 3px;
    color: #424242;
-   text-transform: capitalize;
    text-decoration: none;
-   font-variant: small-caps;
-   font-weight: bold;
 }
 
 div#header_buttons a.button:hover {
@@ -186,11 +182,21 @@ div#header_buttons a.remove {
    color: white;
 }
 
-div#header_buttons img {
-   vertical-align: bottom;
+div#header_location {
+   display: inline-block;
+   padding-left: 15px;
+   padding-right: 15px;
+}
+
+div#header_location a {
+   color: white;
+   font-weight: bold;
 }
 
 div#header_search {
+   vertical-align: bottom;
+   padding-top: 5px;
+   padding-right: 5px;
    text-align: right;
 }
 

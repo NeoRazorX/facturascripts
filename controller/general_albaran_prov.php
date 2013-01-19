@@ -22,6 +22,7 @@ require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/familia.php';
+require_once 'model/impuesto.php';
 require_once 'model/partida.php';
 require_once 'model/proveedor.php';
 require_once 'model/serie.php';
@@ -32,6 +33,7 @@ class general_albaran_prov extends fs_controller
    public $agente;
    public $albaran;
    public $familia;
+   public $impuesto;
    public $nuevo_albaran_url;
    
    public function __construct()
@@ -43,6 +45,7 @@ class general_albaran_prov extends fs_controller
    {
       $this->ppage = $this->page->get('general_albaranes_prov');
       $this->familia = new familia();
+      $this->impuesto = new impuesto();
       
       /// comprobamos si el usuario tiene acceso a general_nuevo_albaran
       $this->nuevo_albaran_url = FALSE;
@@ -92,7 +95,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    public function url()
@@ -167,6 +170,20 @@ class general_albaran_prov extends fs_controller
                         $lineas[$k]->codimpuesto = NULL;
                         $lineas[$k]->iva = 0;
                      }
+                     else if( floatval($_POST['iva_'.$num]) != $lineas[$k]->iva )
+                     {
+                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
+                        if($imp0)
+                        {
+                           $lineas[$k]->codimpuesto = $imp0->codimpuesto;
+                           $lineas[$k]->iva = $imp0->iva;
+                        }
+                        else
+                        {
+                           $lineas[$k]->codimpuesto = NULL;
+                           $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
+                        }
+                     }
                      
                      $neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
                      $total += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * (100 + $value->iva)/100);
@@ -194,10 +211,24 @@ class general_albaran_prov extends fs_controller
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
                      }
-                     else
+                     else if( floatval($_POST['iva_'.$num]) == $art0->get_iva() )
                      {
                         $linea->codimpuesto = $art0->codimpuesto;
-                        $linea->iva = $art0->get_iva();
+                        $linea->iva = $art0->iva;
+                     }
+                     else
+                     {
+                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
+                        if($imp0)
+                        {
+                           $linea->codimpuesto = $imp0->codimpuesto;
+                           $linea->iva = $imp0->iva;
+                        }
+                        else
+                        {
+                           $linea->codimpuesto = NULL;
+                           $linea->iva = floatval($_POST['iva_'.$num]);
+                        }
                      }
                      
                      $linea->idalbaran = $this->albaran->idalbaran;
