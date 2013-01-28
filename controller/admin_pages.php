@@ -26,87 +26,89 @@ class admin_pages extends fs_controller
    
    protected function process()
    {
-      $this->buttons[] = new fs_button('b_activar_todos', 'Activar todas', $this->url()."&enable_all=TRUE");
-      
-      if( isset($_GET['enable_all']) )
+      if( isset($_POST['modpages']) )
       {
          foreach($this->all() as $p)
          {
-            if( !$p->enabled )
+            if( !isset($_POST['enabled']) )
+            {
+               if($p->name == $this->page->name)
+                  $this->new_error_msg("No puedes desactivar esta página (".$p->name.")");
+               else
+               {
+                  $pag = $this->page->get($p->name);
+                  if($pag)
+                     $pag->delete();
+               }
+            }
+            else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
             {
                require_once 'controller/'.$p->name.'.php';
                $new_fsc = new $p->name();
                $new_fsc->page->save();
                unset($new_fsc);
             }
-         }
-      }
-      else if( isset($_GET['enable']) )
-      {
-         if( file_exists('controller/'.$_GET['enable'].'.php') )
-         {
-            if($_GET['enable'] != $this->page->name)
+            else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) )
             {
-               require_once 'controller/'.$_GET['enable'].'.php';
-               $new_fsc = new $_GET['enable']();
-               $new_fsc->page->save();
-               unset($new_fsc);
+               if($p->name == $this->page->name)
+                  $this->new_error_msg("No puedes desactivar esta página");
+               else
+               {
+                  $pag = $this->page->get($p->name);
+                  if($pag)
+                     $pag->delete();
+                  else
+                     $this->new_error_msg("Error al desactivar la página ".$p->name);
+               }
             }
          }
-         else
-            $this->new_error_msg("La página no existe");
+         
+         $this->new_message('Datos guardados correctamente.');
       }
-      else if( isset($_GET['disable']) )
-      {
-         if($_GET['disable'] == $this->page->name)
-            $this->new_error_msg("No puedes desactivar esta página");
-         else
-         {
-            $p = new fs_page( array('name'=>$_GET['disable'], 'title'=>'',
-                'folder'=>'', 'show_on_menu'=>TRUE) );
-            $p->delete();
-         }
-      }
+      
       $this->load_menu(TRUE);
    }
 
    public function all()
    {
       $pages = array();
-      foreach($this->page->all() as $p)
-      {
-         $p->enabled = TRUE;
-         $pages[] = $p;
-      }
       foreach(scandir('controller') as $f)
       {
          if(is_string($f) AND strlen($f) > 0 AND !is_dir($f))
          {
-            $found = FALSE;
-            foreach($pages as $p)
+            $p = new fs_page();
+            $p->name = substr($f, 0, -4);
+            $p->exists = TRUE;
+            $p->show_on_menu = FALSE;
+            $pages[] = $p;
+         }
+      }
+      foreach($this->page->all() as $p)
+      {
+         $encontrada = FALSE;
+         foreach($pages as $i => $value)
+         {
+            if($p->name == $value->name)
             {
-               if($p->name == substr($f, 0, -4))
-               {
-                  $p->exists = TRUE;
-                  $found = TRUE;
-                  break;
-               }
+               $pages[$i] = $p;
+               $pages[$i]->enabled = TRUE;
+               $pages[$i]->exists = TRUE;
+               $encontrada = TRUE;
+               break;
             }
-            if( !$found )
-            {
-               $p = new fs_page();
-               $p->name = substr($f, 0, -4);
-               $p->exists = TRUE;
-               $p->show_on_menu = FALSE;
-               $pages[] = $p;
-            }
+         }
+         if( !$encontrada )
+         {
+            $p->enabled = TRUE;
+            $pages[] = $p;
          }
       }
       return $pages;
    }
    
-   public function version() {
-      return parent::version().'-2';
+   public function version()
+   {
+      return parent::version().'-3';
    }
 }
 

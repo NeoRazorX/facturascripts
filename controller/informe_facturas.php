@@ -23,8 +23,10 @@ require_once 'model/factura_proveedor.php';
 
 class informe_facturas extends fs_controller
 {
+   public $desde;
    public $factura_cli;
    public $factura_pro;
+   public $hasta;
    
    public function __construct()
    {
@@ -33,8 +35,10 @@ class informe_facturas extends fs_controller
    
    protected function process()
    {
+      $this->desde = Date('1-m-Y');
       $this->factura_cli = new factura_cliente();
       $this->factura_pro = new factura_proveedor();
+      $this->hasta = Date('d-m-Y', mktime(0, 0, 0, date("m")+1, date("1")-1, date("Y")));
       
       if( isset($_POST['listado']) )
       {
@@ -47,7 +51,7 @@ class informe_facturas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    private function listar_facturas_cli()
@@ -62,11 +66,11 @@ class informe_facturas extends fs_controller
       $pdf->selectFont("ezpdf/fonts/Courier.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
-      $pdf->addInfo('Title', 'Facturas emitidas de ' . $this->fecha2texto($_POST['mes']) );
-      $pdf->addInfo('Subject', 'Facturas emitidas de ' . $this->fecha2texto($_POST['mes']) );
+      $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
       $pdf->addInfo('Author', $this->empresa->nombre);
       
-      $facturas = $this->factura_cli->all_from_mes($_POST['mes']);
+      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
       if($facturas)
       {
          $total_lineas = count( $facturas );
@@ -84,7 +88,7 @@ class informe_facturas extends fs_controller
                $pagina++;
             }
             
-            $pdf->ezText($this->empresa->nombre." - Facturas emitidas de ".$this->fecha2texto($_POST['mes']).":\n\n", 14);
+            $pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
             
             $lineas = Array();
             for($i = 0; $i < $lppag AND $linea_actual < $total_lineas; $i++)
@@ -193,6 +197,11 @@ class informe_facturas extends fs_controller
             $pdf->ezTable($filas, $titulo, '', $opciones);
          }
       }
+      else
+      {
+         $pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+         $pdf->ezText("Ninguna.\n\n", 14);
+      }
       
       $pdf->ezStream();
    }
@@ -209,11 +218,11 @@ class informe_facturas extends fs_controller
       $pdf->selectFont("ezpdf/fonts/Courier.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
-      $pdf->addInfo('Title', 'Facturas recibidas de ' . $this->fecha2texto($_POST['mes']) );
-      $pdf->addInfo('Subject', 'Facturas recibidas de ' . $this->fecha2texto($_POST['mes']) );
+      $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
       $pdf->addInfo('Author', $this->empresa->nombre);
       
-      $facturas = $this->factura_pro->all_from_mes($_POST['mes']);
+      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
       if($facturas)
       {
          $total_lineas = count( $facturas );
@@ -231,7 +240,7 @@ class informe_facturas extends fs_controller
                $pagina++;
             }
             
-            $pdf->ezText($this->empresa->nombre." - Facturas recibidas de ".$this->fecha2texto($_POST['mes']).":\n\n", 14);
+            $pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
             
             $lineas = Array();
             for($i = 0; $i < $lppag AND $linea_actual < $total_lineas; $i++)
@@ -340,28 +349,13 @@ class informe_facturas extends fs_controller
             $pdf->ezTable($filas, $titulo, '', $opciones);
          }
       }
+      else
+      {
+         $pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+         $pdf->ezText("Ninguna.\n\n", 14);
+      }
       
       $pdf->ezStream();
-   }
-   
-   private function fecha2texto($fecha)
-   {
-      $meses = Array(
-          '01' => 'Enero',
-          '02' => 'Febrero',
-          '03' => 'Marzo',
-          '04' => 'Abril',
-          '05' => 'Mayo',
-          '06' => 'Junio',
-          '07' => 'Julio',
-          '08' => 'Agosto',
-          '09' => 'Septiembre',
-          '10' => 'Octubre',
-          '11' => 'Noviembre',
-          '12' => 'Diciembre'
-      );
-      $aux = explode('-', $fecha);
-      return $meses[ $aux[1] ] . ' de ' . $aux[0];
    }
 }
 

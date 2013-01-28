@@ -7,12 +7,10 @@
             <h1>Facturas emitidas de cliente:</h1>
             <form action="{$fsc->url()}" method="post">
                <input type="hidden" name="listado" value="facturascli"/>
-               Fecha:
-               <select name="mes">
-                  {loop="$fsc->factura_cli->meses()"}
-                  <option value="{$value}">{$value}</option>
-                  {/loop}
-               </select>
+               Desde:
+               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+               Hasta:
+               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
                <input type="submit" value="mostrar"/>
             </form>
          </div>
@@ -22,12 +20,10 @@
             <h1>Facturas recibidad de proveedor:</h1>
             <form action="{$fsc->url()}" method="post">
                <input type="hidden" name="listado" value="facturasprov"/>
-               Fecha:
-               <select name="mes">
-                  {loop="$fsc->factura_pro->meses()"}
-                  <option value="{$value}">{$value}</option>
-                  {/loop}
-               </select>
+               Desde:
+               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+               Hasta:
+               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
                <input type="submit" value="mostrar"/>
             </form>
          </div>

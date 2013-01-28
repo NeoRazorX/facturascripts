@@ -45,50 +45,50 @@ class admin_user extends fs_controller
       {
          $this->page->title = $this->suser->nick;
          
-         if( $this->suser->exists() )
+         if($this->user->nick != $this->suser->nick)
+            $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         
+         if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
          {
-            if($this->user->nick != $this->suser->nick)
-               $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+            if($_POST['spassword'] != '')
+               $this->suser->set_password($_POST['spassword']);
             
-            if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
+            if( isset($_POST['scodagente']) )
+               $this->suser->codagente = $_POST['scodagente'];
+            
+            $this->suser->admin = isset($_POST['sadmin']);
+            
+            if( isset($_POST['udpage']) )
+               $this->suser->fs_page = $_POST['udpage'];
+            else
+               $this->suser->fs_page = NULL;
+            
+            if( isset($_POST['ejercicio']) )
+               $this->suser->codejercicio = $_POST['ejercicio'];
+            else
+               $this->suser->codejercicio = NULL;
+            
+            if( $this->suser->save() )
             {
-               if($_POST['spassword'] != '')
-                  $this->suser->set_password($_POST['spassword']);
+               if( !$this->suser->admin )
+               {
+                  foreach($this->all() as $p)
+                  {
+                     $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name) );
+                     
+                     if( !isset($_POST['enabled']) )
+                        $a->delete();
+                     else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
+                        $a->save();
+                     else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) )
+                        $a->delete();
+                  }
+               }
                
-               if( isset($_POST['scodagente']) )
-                  $this->suser->codagente = $_POST['scodagente'];
-               
-               if( isset($_POST['sadmin']) )
-                  $this->suser->admin = TRUE;
-               else
-                  $this->suser->admin = FALSE;
-               
-               if( isset($_POST['udpage']) )
-                  $this->suser->fs_page = $_POST['udpage'];
-               else
-                  $this->suser->fs_page = NULL;
-               
-               if( isset($_POST['ejercicio']) )
-                  $this->suser->codejercicio = $_POST['ejercicio'];
-               else
-                  $this->suser->codejercicio = NULL;
-               
-               if( $this->suser->save() )
-                  $this->new_message("Datos modificados correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible modificar los datos!");
+               $this->new_message("Datos modificados correctamente.");
             }
-            else if( isset($_GET['enable']) )
-            {
-               $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$_GET['enable']) );
-               $a->save();
-            }
-            else if( isset($_GET['disable']) )
-            {
-               $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$_GET['disable']) );
-               if( $a->exists() )
-                  $a->delete();
-            }
+            else
+               $this->new_error_msg("¡Imposible modificar los datos!");
          }
       }
       else
@@ -97,21 +97,29 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function all()
    {
       $returnlist = array();
-      $access = $this->suser->get_accesses();
       foreach($this->menu as $m)
+      {
+         $m->enabled = FALSE;
+         $returnlist[] = $m;
+      }
+      
+      $access = $this->suser->get_accesses();
+      foreach($returnlist as $i => $value)
       {
          foreach($access as $a)
          {
-            if($m->name == $a->fs_page)
-               $m->enabled = TRUE;
+            if($value->name == $a->fs_page)
+            {
+               $returnlist[$i]->enabled = TRUE;
+               break;
+            }
          }
-         $returnlist[] = $m;
       }
       return $returnlist;
    }

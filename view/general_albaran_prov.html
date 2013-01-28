@@ -228,6 +228,14 @@
          });
       }
    }
+   function fs_marcar_todo()
+   {
+      $('#f_precios input:checkbox').attr('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_precios input:checkbox').attr('checked', false);
+   }
    $(document).ready(function() {
       recalcular();
       $("#b_precios").click(function(event) {
@@ -271,35 +279,54 @@
 </div>
 
 <div class="popup" id="popup_precios" style="min-width: 70%;">
-   <form action="{$fsc->url()}" method="post">
+   <form id="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
       <h1>Actualizar precios de los artículos</h1>
+      
+      <table width="100%">
+         <tr>
+            <td align="right">
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+               <input type="submit" value="Actualizar"/>
+            </td>
+         </tr>
+      </table>
+      
+      <br/>
+      
       <table class="list">
-      <tr>
-         <th>Artículo</th>
-         <th align="right">PVP</th>
-         <th align="right">PVP+IVA</th>
-         <th>Actualizar</th>
-      </tr>
-      {loop="$fsc->albaran->get_lineas()"}
-      <tr>
-         <td>
-            <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
-            {$value->descripcion}
-         </td>
-         <td align="right">{$value->show_pvp()} €</td>
-         <td align="right">{$value->show_pvp_iva()} €</td>
-         <td align="center">
-            <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
-            <input type="checkbox" name="pvp_{$counter}" value="{$value->pvpunitario}" checked="checked"/>
-         </td>
-      </tr>
-      {/loop}
-      <tr>
-         <td colspan="3"></td>
-         <td align="center"><input type="submit" value="actualizar"/></td>
-      </tr>
-   </table>
+         <tr>
+            <th>Artículo</th>
+            <th align="right">PVP</th>
+            <th align="right">PVP+IVA</th>
+            <th>Actualizar</th>
+         </tr>
+         {loop="$fsc->albaran->get_lineas()"}
+         <tr>
+            <td>
+               <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
+               {$value->descripcion}
+            </td>
+            <td align="right">{$value->show_pvp()} €</td>
+            <td align="right">{$value->show_pvp_iva()} €</td>
+            <td align="center">
+               <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
+               <input type="checkbox" name="pvp_{$counter}" value="{$value->pvpunitario}" checked="checked"/>
+            </td>
+         </tr>
+         {/loop}
+      </table>
+      
+      <table width="100%">
+         <tr>
+            <td align="right">
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+               <input type="submit" value="Actualizar"/>
+            </td>
+         </tr>
+      </table>
    </form>
 </div>
 
@@ -425,6 +452,7 @@
             <td></td>
             <th>Anterior</th>
             <th>Nuevo</th>
+            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
          </tr>
          <tr>
             <td align="right"><b>Neto:</b></td>
@@ -471,6 +499,7 @@
             <th>Neto:</th>
             <th>IVA:</th>
             <th>Total:</th>
+            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
          </tr>
          <tr>
             <td align="center">{$fsc->albaran->show_neto()} €</td>

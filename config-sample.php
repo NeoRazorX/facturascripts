@@ -2,7 +2,7 @@
 /*
  * Copia o renombra este archivo a config.php, y rellena los campos
  * para el correcto funcionamiendo de facturascripts.
- * Si tienes alguna duda consulta -> http://www.kelinux.net/community/facturascripts
+ * Si tienes alguna duda consulta -> http://code.google.com/p/facturascripts/issues/list
  */
 
 /*

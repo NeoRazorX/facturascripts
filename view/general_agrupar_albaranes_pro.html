@@ -1,5 +1,16 @@
 {include="header"}
 
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_agrupar_pro input:checkbox').attr('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_agrupar_pro input:checkbox').attr('checked', false);
+   }
+</script>
+
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <div class="bloque">
@@ -38,11 +49,21 @@
 
 {if condition="$fsc->resultados"}
 <div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <h1>Albaranes:</h1>
+   <form id="f_agrupar_pro" action="{$fsc->url()}" method="post">
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
+         </tr>
+      </table>
+      
+      <br/>
+      
       <table class="list">
          <tr>
-            <th width="95">seleccionar</th>
             <th align="left">código + num. proveedor</th>
             <th align="left">observaciones</th>
             <th align="right">total</th>
@@ -50,15 +71,26 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td align="center"><input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/></td>
-            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+            <td>
+               <input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/>
+               <a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}
+            </td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
+      </table>
+      
+      <br/>
+      
+      <table width="100%">
          <tr>
-            <td align="center"><input type="submit" value="agrupar"/></td>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
          </tr>
       </table>
    </form>

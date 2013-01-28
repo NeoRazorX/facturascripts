@@ -1,43 +1,72 @@
 {include="header"}
 
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_enable_pages input:checkbox').attr('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_enable_pages input:checkbox').attr('checked', false);
+   }
+</script>
+
 <div class="rounded">
-<table class="list">
-   <tr>
-      <th align="left">página</th>
-      <th align="left">carpeta</th>
-      <th align="left">titulo</th>
-      <th align="left">versión</th>
-      <th>en menú</th>
-      <th>existe</th>
-      <th>inactiva</th>
-      <th>activa</th>
-   </tr>
-   {loop="$fsc->all()"}
-   <tr>
-      <td><a href="{$value->url()}">{$value->name}</a></td>
-      <td>{$value->folder}</td>
-      <td>{$value->title}</td>
-      <td>{$value->version}</td>
-      {if condition="$value->show_on_menu"}
-      <td align="center">Si</td>
-      {else}
-      <td align="center">-</td>
-      {/if}
-      {if condition="$value->exists"}
-      <td align="center">Si</td>
-      {else}
-      <td align="center">-</td>
-      {/if}
-      {if condition="$value->enabled"}
-      <td align="center">-</td>
-      <td align="center"><a href="{$fsc->page->url()}&AMP;disable={$value->name}">desactivar</a></td>
-      {else}
-      <td align="center"><a href="{$fsc->page->url()}&AMP;enable={$value->name}">activar</a></td>
-      <td align="center">-</td>
-      {/if}
-   </tr>
-   {/loop}
-</table>
+   <form id="f_enable_pages" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="modpages" value="TRUE"/>
+      
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
+         </tr>
+      </table>
+      
+      <br/>
+      
+      <table class="list">
+         <tr>
+            <th align="left">página</th>
+            <th align="left">carpeta</th>
+            <th align="left">titulo</th>
+            <th align="left">versión</th>
+            <th>en menú</th>
+            <th>existe</th>
+         </tr>
+         {loop="$fsc->all()"}
+         <tr>
+            <td>
+               {if condition="$value->enabled"}
+               <input type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
+               {else}
+               <input type="checkbox" name="enabled[]" value="{$value->name}"/>
+               {/if}
+               <a target="_blank" href="{$value->url()}">{$value->name}</a>
+            </td>
+            <td>{$value->folder}</td>
+            <td>{$value->title}</td>
+            <td>{$value->version}</td>
+            <td align="center">{if condition="$value->show_on_menu"}Si{else}-{/if}</td>
+            <td align="center">{if condition="$value->exists"}Si{else}-{/if}</td>
+         </tr>
+         {/loop}
+      </table>
+      
+      <br/>
+      
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
+         </tr>
+      </table>
+   </form>
 </div>
 
 {include="footer"}

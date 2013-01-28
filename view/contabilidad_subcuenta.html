@@ -1,32 +1,67 @@
 {include="header"}
 
 {if condition="$fsc->subcuenta"}
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Descripción</th>
-         <th>Ejercicio</th>
-         <th>Pertenece a la cuenta</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-         <th align="right">Saldo</th>
-      </tr>
-      <tr>
-         <td>{$fsc->subcuenta->descripcion}</td>
-         <td align="center">
-            <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
-         </td>
-         <td align="center"><a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a></td>
-         <td align="right">{$fsc->subcuenta->show_debe()} €</td>
-         <td align="right">{$fsc->subcuenta->show_haber()} €</td>
-         <td align="right">{$fsc->subcuenta->show_saldo()} €</td>
-      </tr>
-   </table>
-</div>
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_subcuenta input:checkbox').attr('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_subcuenta input:checkbox').attr('checked', false);
+   }
+</script>
 
-<div class="rounded">
-   <form action="{$fsc->url()}&offset={$fsc->offset}" method="post">
-      <input type="hidden" name="puntear" value="TRUE"/>
+<form id="f_subcuenta" action="{$fsc->url()}&offset={$fsc->offset}" method="post">
+   <input type="hidden" name="puntear" value="TRUE"/>
+   
+   <div class="rounded">
+      <table class="list">
+         <tr>
+            <th align="left">Descripción</th>
+            <th>Ejercicio</th>
+            <th>Pertenece a la cuenta</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         <tr>
+            <td>{$fsc->subcuenta->descripcion}</td>
+            <td align="center">
+               <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+            </td>
+            <td align="center"><a href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a></td>
+            <td align="right">{$fsc->subcuenta->show_debe()} €</td>
+            <td align="right">{$fsc->subcuenta->show_haber()} €</td>
+            <td align="right">{$fsc->subcuenta->show_saldo()} €</td>
+         </tr>
+      </table>
+   </div>
+   
+   <div class="rounded">
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td>
+               <div class="paginas">
+               {loop="$fsc->paginas()"}
+                  {if condition="$value.actual"}
+                     <a class="actual" href="{$value.url}">{$value.num}</a>
+                  {else}
+                     <a href="{$value.url}">{$value.num}</a>
+                  {/if}
+               {/loop}
+               </div>
+            </td>
+            <td align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+      </table>
+      
+      <br/>
+      
       <table class="list">
          <tr>
             <th title="puntear">P</th>
@@ -74,9 +109,17 @@
             </td>
          </tr>
          {/loop}
+      </table>
+      
+      <br/>
+      
+      <table width="100%">
          <tr>
-            <td colspan="2" valign="bottom"><input type="submit" value="guardar"/></td>
-            <td colspan="9">
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td>
                <div class="paginas">
                {loop="$fsc->paginas()"}
                   {if condition="$value.actual"}
@@ -87,10 +130,11 @@
                {/loop}
                </div>
             </td>
+            <td align="right"><input type="submit" value="guardar"/></td>
          </tr>
       </table>
-   </form>
-</div>
+   </div>
+</form>
 {/if}
 
 {include="footer"}

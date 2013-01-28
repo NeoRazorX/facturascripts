@@ -408,45 +408,47 @@
    </div>
 {/if}
 
-<div class="rounded">
-   <table class="list">
-      {if condition="$fsc->albaran->ptefactura"}
-      <tr>
-         <td></td>
-         <th>Anterior</th>
-         <th>Nuevo</th>
-         <td></td>
-         <th>Anterior</th>
-         <th>Nuevo</th>
-         <td></td>
-         <th>Anterior</th>
-         <th>Nuevo</th>
-      </tr>
-      <tr>
-         <td align="right"><b>Neto:</b></td>
-         <td align="center">{$fsc->albaran->show_neto()} €</td>
-         <td align="center"><span id="aneto"></span> €</td>
-         <td align="right"><b>IVA:</b></td>
-         <td align="center">{$fsc->albaran->show_iva()} €</td>
-         <td align="center"><span id="aiva"></span> €</td>
-         <td align="right"><b>Total:</b></td>
-         <td align="center">{$fsc->albaran->show_total()} €</td>
-         <td align="center"><span id="atotal"></span> €</td>
-      </tr>
-      {else}
-      <tr>
-         <th>Neto</th>
-         <th>IVA</th>
-         <th>Total</th>
-      </tr>
-      <tr>
-         <td align="center">{$fsc->albaran->show_neto()} €</td>
-         <td align="center">{$fsc->albaran->show_iva()} €</td>
-         <td align="center">{$fsc->albaran->show_total()} €</td>
-      </tr>
-      {/if}
-   </table>
-</div>
+   <div class="rounded">
+      <table class="list">
+         {if condition="$fsc->albaran->ptefactura"}
+         <tr>
+            <td></td>
+            <th>Anterior</th>
+            <th>Nuevo</th>
+            <td></td>
+            <th>Anterior</th>
+            <th>Nuevo</th>
+            <td></td>
+            <th>Anterior</th>
+            <th>Nuevo</th>
+            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+         <tr>
+            <td align="right"><b>Neto:</b></td>
+            <td align="center">{$fsc->albaran->show_neto()} €</td>
+            <td align="center"><span id="aneto"></span> €</td>
+            <td align="right"><b>IVA:</b></td>
+            <td align="center">{$fsc->albaran->show_iva()} €</td>
+            <td align="center"><span id="aiva"></span> €</td>
+            <td align="right"><b>Total:</b></td>
+            <td align="center">{$fsc->albaran->show_total()} €</td>
+            <td align="center"><span id="atotal"></span> €</td>
+         </tr>
+         {else}
+         <tr>
+            <th>Neto</th>
+            <th>IVA</th>
+            <th>Total</th>
+            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+         <tr>
+            <td align="center">{$fsc->albaran->show_neto()} €</td>
+            <td align="center">{$fsc->albaran->show_iva()} €</td>
+            <td align="center">{$fsc->albaran->show_total()} €</td>
+         </tr>
+         {/if}
+      </table>
+   </div>
 </form>
 {/if}
 

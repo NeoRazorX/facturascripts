@@ -76,7 +76,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function url()
@@ -119,6 +119,7 @@ class contabilidad_subcuenta extends fs_controller
    private function puntear()
    {
       $partida = new partida();
+      
       foreach($this->resultados as $pa)
       {
          if( isset($_POST['punteada']) )
@@ -132,6 +133,8 @@ class contabilidad_subcuenta extends fs_controller
             $pa->save();
          }
       }
+      
+      $this->new_message('Datos guardados correctamente.');
    }
 }
 
