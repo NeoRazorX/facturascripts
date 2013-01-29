@@ -3,6 +3,7 @@ Allow: /
 Disallow: /base/
 Disallow: /controller/
 Disallow: /ezpdf/
+Disallow: /extras/
 Disallow: /model/
 Disallow: /nbproject/
 Disallow: /raintpl/

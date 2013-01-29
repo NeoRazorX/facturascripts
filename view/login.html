@@ -3,6 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->empresa->nombre}</title>
+   <meta name="description" content="FacturaScripts es un software libre bajo licencia GNU/AGPL." />
    <link rel="shortcut icon" href="img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
    <script type="text/javascript" src="js/jquery.js"></script>
@@ -12,17 +13,17 @@
       });
    </script>
    {if condition="$demo"}
-      <script type="text/javascript">
-         var _gaq = _gaq || [];
-         _gaq.push(['_setAccount', 'UA-417932-8']);
-         _gaq.push(['_setDomainName', 'facturascripts.com']);
-         _gaq.push(['_trackPageview']);
-         (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-         })();
-      </script>
+   <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-417932-8']);
+      _gaq.push(['_setDomainName', 'facturascripts.com']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+   </script>
    {/if}
 </head>
 <body>
@@ -130,6 +131,29 @@
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>
+               29/01/2013:
+               <ul>
+                  <li>
+                     Añadida comprobación para que el fallo en Memcache muestre un error.
+                     Ahora FacturaScripts puede funcionar sin Memcache, excepto para las operaciones
+                     donde sea imprescindible.
+                  </li>
+                  <li>
+                     Ahora se muestra un error y finaliza si se comprueba que no se pueda escribir
+                     en el directorio temporal.
+                  </li>
+                  <li>
+                     Con estos cambios será más sencillo desplegar FacturaScripts sobre entornos
+                     poco amigables para los desarrolladores web como Windows.
+                  </li>
+                  <li>
+                     Las páginas de agrupar albaranes ahora también permiten generar facturas
+                     individuales para cada albarán ¿Para qué? Pues para poder facturar un montón
+                     de albaranes de una sola pasada.
+                  </li>
+               </ul>
+            </li>
             <li>
                28/01/2013:
                <ul>

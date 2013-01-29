@@ -98,6 +98,29 @@ class ejercicio extends fs_model
       return ( $this->codejercicio == $this->default_items->codejercicio() );
    }
    
+   /*
+    * Devuelve TRUE si la fecha indicada está dentro del intervalo del ejercicio.
+    * Si $corregir es TRUE elige una fecha más apropiada
+    */
+   public function test_fecha(&$fecha, $corregir=FALSE)
+   {
+      $fecha2 = strtotime( $fecha );
+      
+      if( $fecha2 >= strtotime( $this->fechainicio ) AND $fecha2 <= strtotime( $this->fechafin ) )
+         return TRUE;
+      else if($corregir)
+      {
+         if( $fecha2 > strtotime( $this->fechainicio ) )
+            $fecha = $this->fechafin;
+         else
+            $fecha = $this->fechainicio;
+         
+         return TRUE;
+      }
+      else
+         return FALSE;
+   }
+   
    public function get($cod)
    {
       $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($cod).";");
@@ -105,6 +128,29 @@ class ejercicio extends fs_model
          return new ejercicio($ejercicio[0]);
       else
          return FALSE;
+   }
+   
+   /*
+    * Devuelve el ejercicio para la fecha indicada.
+    * Si no existe, lo crea.
+    */
+   public function get_by_fecha($fecha)
+   {
+      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE fechainicio <= ".$this->var2str($fecha)." AND fechafin >= ".$this->var2str($fecha).";");
+      if($ejercicio)
+         return new ejercicio($ejercicio[0]);
+      else
+      {
+         $eje = new ejercicio();
+         $eje->nombre = Date('Y', strtotime($fecha));
+         $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
+         $eje->fechafin = Date('31-12-Y', strtotime($fecha));
+         if( $eje->save() )
+            return $eje;
+         else
+            return FALSE;
+      }
    }
    
    public function exists()

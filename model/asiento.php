@@ -264,14 +264,14 @@ class asiento extends fs_model
       
       $importe = max( array($debe, $haber) );
       $total = $debe - $haber;
-      if( abs($this->importe - $importe) > .01 )
-      {
-         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
-         $status = FALSE;
-      }
-      else if( abs($total) > .01 )
+      if( abs($total) > .01 )
       {
          $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->importe - $importe) > .01 )
+      {
+         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
          $status = FALSE;
       }
       

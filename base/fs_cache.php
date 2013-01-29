@@ -21,27 +21,44 @@ class fs_cache
 {
    private static $memcache;
    private static $connected;
+   private static $error;
    
    public function __construct()
    {
       if( !isset(self::$memcache) )
       {
-         try
+         if( class_exists('Memcache') )
          {
-            self::$memcache = new Memcache();
-            self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
-            self::$connected = TRUE;
+            try
+            {
+               self::$memcache = new Memcache();
+               self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
+               self::$connected = TRUE;
+               self::$error = FALSE;
+            }
+            catch(Exception $e)
+            {
+               self::$memcache = NULL;
+               self::$connected = FALSE;
+               self::$error = TRUE;
+            }
          }
-         catch(Exception $e)
+         else
          {
             self::$connected = FALSE;
+            self::$error = TRUE;
          }
       }
    }
    
-   public function __destruct()
+   public function error()
    {
-      if( !isset(self::$memcache) )
+      return self::$error;
+   }
+   
+   public function close()
+   {
+      if( isset(self::$memcache) AND self::$connected )
          self::$memcache->close();
    }
    

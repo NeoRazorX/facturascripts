@@ -56,7 +56,11 @@
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
             </td>
-            <td align="right"><input type="submit" value="Guardar"/></td>
+            <td>
+               <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
+               <label for="cb_f_individuales">Generar facturas individuales</label>
+            </td>
+            <td align="right"><input type="submit" value="Generar factura"/></td>
          </tr>
       </table>
       
@@ -90,7 +94,7 @@
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
             </td>
-            <td align="right"><input type="submit" value="Guardar"/></td>
+            <td align="right"><input type="submit" value="Generar factura"/></td>
          </tr>
       </table>
    </form>

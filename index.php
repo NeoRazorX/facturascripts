@@ -43,11 +43,21 @@ else
 if( $fsc->template )
 {
    /// configuramos rain.tpl
-   raintpl::configure("base_url", null );
-   raintpl::configure("tpl_dir", "view/" );
-   raintpl::configure("cache_dir", "tmp/" );
+   raintpl::configure('base_url', NULL);
+   raintpl::configure('tpl_dir', 'view/');
+   
+   /// ¿Se puede escribir sobre la carpeta temporal?
+   if( file_exists('tmp/test') )
+      raintpl::configure('cache_dir', 'tmp/');
+   else if( mkdir('tmp/test') )
+      raintpl::configure('cache_dir', 'tmp/');
+   else
+      die('No se puede escribir sobre la carpeta temporal (la carpeta tmp de FacturaScripts). Consulta la
+         <a target="_blank" href="http://code.google.com/p/facturascripts">documentaci&oacute;n</a>.');
+   
    $tpl = new RainTPL();
    $tpl->assign('fsc', $fsc);
+   
    if( isset($_POST['user']) )
       $tpl->assign('nlogin', $_POST['user']);
    else if( isset($_GET['nlogin']) )
@@ -56,8 +66,10 @@ if( $fsc->template )
       $tpl->assign('nlogin', $_COOKIE['user']);
    else
       $tpl->assign('nlogin', '');
+   
    $tpl->assign('db_history', FS_DB_HISTORY);
    $tpl->assign('demo', FS_DEMO);
+   
    $tpl->draw( $fsc->template );
 }
 

@@ -60,8 +60,6 @@ class general_agrupar_albaranes_pro extends fs_controller
          $this->agrupar();
       else if( isset($_POST['proveedor']) )
       {
-         $this->save_codproveedor( $_POST['proveedor'] );
-         
          $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
          if( !$this->resultados )
@@ -69,13 +67,19 @@ class general_agrupar_albaranes_pro extends fs_controller
       }
    }
    
+   public function version()
+   {
+      return parent::version().'-3';
+   }
+   
    private function agrupar()
    {
+      $continuar = TRUE;
       $albaranes = array();
+      
       foreach($_POST['idalbaran'] as $id)
          $albaranes[] = $this->albaran->get($id);
       
-      $continuar = TRUE;
       foreach($albaranes as $alb)
       {
          if( !$alb->ptefactura )
@@ -85,86 +89,98 @@ class general_agrupar_albaranes_pro extends fs_controller
             break;
          }
       }
+      
       if($continuar)
       {
-         $factura = new factura_proveedor();
-         $factura->automatica = TRUE;
-         $factura->editable = FALSE;
-         $factura->cifnif = $albaranes[0]->cifnif;
-         $factura->codalmacen = $albaranes[0]->codalmacen;
-         $factura->coddivisa = $albaranes[0]->coddivisa;
-         $factura->codejercicio = $albaranes[0]->codejercicio;
-         $factura->codpago = $albaranes[0]->codpago;
-         $factura->codproveedor = $albaranes[0]->codproveedor;
-         $factura->codserie = $albaranes[0]->codserie;
-         $factura->irpf = $albaranes[0]->irpf;
-         $factura->nombre = $albaranes[0]->nombre;
-         $factura->numproveedor = $albaranes[0]->numproveedor;
-         $factura->observaciones = $albaranes[0]->observaciones;
-         $factura->recfinanciero = $albaranes[0]->recfinanciero;
-         $factura->tasaconv = $albaranes[0]->tasaconv;
-         $factura->totalirpf = $albaranes[0]->totalirpf;
-         $factura->totalrecargo = $albaranes[0]->totalrecargo;
+         if( isset($_POST['individuales']) )
+         {
+            foreach($albaranes as $alb)
+               $this->generar_factura( array($alb) );
+         }
+         else
+            $this->generar_factura($albaranes);
+      }
+   }
+   
+   private function generar_factura($albaranes)
+   {
+      $continuar = TRUE;
+      
+      $factura = new factura_proveedor();
+      $factura->automatica = TRUE;
+      $factura->editable = FALSE;
+      $factura->cifnif = $albaranes[0]->cifnif;
+      $factura->codalmacen = $albaranes[0]->codalmacen;
+      $factura->coddivisa = $albaranes[0]->coddivisa;
+      $factura->codejercicio = $albaranes[0]->codejercicio;
+      $factura->codpago = $albaranes[0]->codpago;
+      $factura->codproveedor = $albaranes[0]->codproveedor;
+      $factura->codserie = $albaranes[0]->codserie;
+      $factura->irpf = $albaranes[0]->irpf;
+      $factura->nombre = $albaranes[0]->nombre;
+      $factura->numproveedor = $albaranes[0]->numproveedor;
+      $factura->observaciones = $albaranes[0]->observaciones;
+      $factura->recfinanciero = $albaranes[0]->recfinanciero;
+      $factura->tasaconv = $albaranes[0]->tasaconv;
+      $factura->totalirpf = $albaranes[0]->totalirpf;
+      $factura->totalrecargo = $albaranes[0]->totalrecargo;
+      
+      foreach($albaranes as $alb)
+      {
+         $factura->neto += $alb->neto;
+         $factura->total += $alb->total;
+         $factura->totaleuros += $alb->totaleuros;
+         $factura->totaliva += $alb->totaliva;
+      }
+      
+      if( $factura->save() )
+      {
          foreach($albaranes as $alb)
          {
-            $factura->neto += $alb->neto;
-            $factura->total += $alb->total;
-            $factura->totaleuros += $alb->totaleuros;
-            $factura->totaliva += $alb->totaliva;
+            foreach($alb->get_lineas() as $l)
+            {
+               $n = new linea_factura_proveedor();
+               $n->idalbaran = $alb->idalbaran;
+               $n->idfactura = $factura->idfactura;
+               $n->cantidad = $l->cantidad;
+               $n->codimpuesto = $l->codimpuesto;
+               $n->descripcion = $l->descripcion;
+               $n->dtolineal = $l->dtolineal;
+               $n->dtopor = $l->dtopor;
+               $n->irpf = $l->irpf;
+               $n->iva = $l->iva;
+               $n->pvpsindto = $l->pvpsindto;
+               $n->pvptotal = $l->pvptotal;
+               $n->pvpunitario = $l->pvpunitario;
+               $n->recargo = $l->recargo;
+               $n->referencia = $l->referencia;
+               
+               if( !$n->save() )
+               {
+                  $continuar = FALSE;
+                  $this->new_error_msg("¡Imposible guardar la línea el artículo ".$n->referencia."! ");
+                  break;
+               }
+            }
          }
-         if( $factura->save() )
+         
+         if($continuar)
          {
             foreach($albaranes as $alb)
             {
-               foreach($alb->get_lineas() as $l)
+               $alb->idfactura = $factura->idfactura;
+               $alb->ptefactura = FALSE;
+               
+               if( !$alb->save() )
                {
-                  $n = new linea_factura_proveedor();
-                  $n->idalbaran = $alb->idalbaran;
-                  $n->idfactura = $factura->idfactura;
-                  $n->cantidad = $l->cantidad;
-                  $n->codimpuesto = $l->codimpuesto;
-                  $n->descripcion = $l->descripcion;
-                  $n->dtolineal = $l->dtolineal;
-                  $n->dtopor = $l->dtopor;
-                  $n->irpf = $l->irpf;
-                  $n->iva = $l->iva;
-                  $n->pvpsindto = $l->pvpsindto;
-                  $n->pvptotal = $l->pvptotal;
-                  $n->pvpunitario = $l->pvpunitario;
-                  $n->recargo = $l->recargo;
-                  $n->referencia = $l->referencia;
-                  if( !$n->save() )
-                  {
-                     $continuar = FALSE;
-                     $this->new_error_msg("¡Imposible guardar la línea el artículo ".$n->referencia."! ");
-                     break;
-                  }
+                  $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+                  $continuar = FALSE;
+                  break;
                }
             }
             
-            if($continuar)
-            {
-               foreach($albaranes as $alb)
-               {
-                  $alb->idfactura = $factura->idfactura;
-                  $alb->ptefactura = FALSE;
-                  if( !$alb->save() )
-                  {
-                     $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
-                     $continuar = FALSE;
-                     break;
-                  }
-               }
-               if( $continuar )
-                  $this->generar_asiento($factura);
-               else
-               {
-                  if( $factura->delete() )
-                     $this->new_error_msg("La factura se ha borrado.");
-                  else
-                     $this->new_error_msg("¡Imposible borrar la factura!");
-               }
-            }
+            if( $continuar )
+               $this->generar_asiento($factura);
             else
             {
                if( $factura->delete() )
@@ -174,8 +190,15 @@ class general_agrupar_albaranes_pro extends fs_controller
             }
          }
          else
-            $this->new_error_msg("¡Imposible guardar la factura!");
+         {
+            if( $factura->delete() )
+               $this->new_error_msg("La factura se ha borrado.");
+            else
+               $this->new_error_msg("¡Imposible borrar la factura!");
+         }
       }
+      else
+         $this->new_error_msg("¡Imposible guardar la factura!");
    }
    
    private function generar_asiento($factura)
@@ -294,11 +317,6 @@ class general_agrupar_albaranes_pro extends fs_controller
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-2';
    }
 }
 

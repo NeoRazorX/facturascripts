@@ -43,26 +43,34 @@ abstract class fs_model
       
       if( !self::$checked_tables )
       {
-         self::$checked_tables = $this->cache->get_array('fs_checked_tables');
-         if( self::$checked_tables )
+         if( $this->cache->error() )
          {
-            /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
-            $tables = $this->db->list_tables();
-            foreach(self::$checked_tables as $ct)
+            $this->new_error_msg('Memcache está deshabilitada.');
+            self::$checked_tables = array();
+         }
+         else
+         {
+            self::$checked_tables = $this->cache->get_array('fs_checked_tables');
+            if( self::$checked_tables )
             {
-               $found = FALSE;
-               foreach($tables as $t)
+               /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
+               $tables = $this->db->list_tables();
+               foreach(self::$checked_tables as $ct)
                {
-                  if($ct == $t['name'])
+                  $found = FALSE;
+                  foreach($tables as $t)
                   {
-                     $found = TRUE;
+                     if($ct == $t['name'])
+                     {
+                        $found = TRUE;
+                        break;
+                     }
+                  }
+                  if( !$found )
+                  {
+                     $this->clean_checked_tables();
                      break;
                   }
-               }
-               if( !$found )
-               {
-                  $this->clean_checked_tables();
-                  break;
                }
             }
          }
