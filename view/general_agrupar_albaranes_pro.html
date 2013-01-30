@@ -3,11 +3,11 @@
 <script type="text/javascript">
    function fs_marcar_todo()
    {
-      $('#f_agrupar_pro input:checkbox').attr('checked', true);
+      $("#f_agrupar_pro input[name='idalbaran[]']").attr('checked', true);
    }
    function fs_marcar_nada()
    {
-      $('#f_agrupar_pro input:checkbox').attr('checked', false);
+      $("#f_agrupar_pro input[name='idalbaran[]']").attr('checked', false);
    }
 </script>
 
@@ -17,7 +17,7 @@
          Cliente:
          <select name="proveedor">
          {loop="$fsc->proveedor->all_full()"}
-            {if condition="$value->codproveedor==$_POST.proveedor"}
+            {if condition="$value->is_default()"}
                <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
             {else}
                <option value="{$value->codproveedor}">{$value->nombre}</option>

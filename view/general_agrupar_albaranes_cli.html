@@ -3,11 +3,11 @@
 <script type="text/javascript">
    function fs_marcar_todo()
    {
-      $('#f_agrupar_cli input:checkbox').attr('checked', true);
+      $("#f_agrupar_cli input[name='idalbaran[]']").attr('checked', true);
    }
    function fs_marcar_nada()
    {
-      $('#f_agrupar_cli input:checkbox').attr('checked', false);
+      $("#f_agrupar_cli input[name='idalbaran[]']").attr('checked', false);
    }
 </script>
 
@@ -17,7 +17,7 @@
          Cliente:
          <select name="cliente">
          {loop="$fsc->cliente->all_full()"}
-            {if condition="$value->codcliente==$_POST.cliente"}
+            {if condition="$value->is_default()"}
                <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
             {else}
                <option value="{$value->codcliente}">{$value->nombre}</option>

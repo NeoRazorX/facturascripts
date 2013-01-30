@@ -60,6 +60,8 @@ class general_agrupar_albaranes_pro extends fs_controller
          $this->agrupar();
       else if( isset($_POST['proveedor']) )
       {
+         $this->save_codproveedor($_POST['proveedor']);
+         
          $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
          if( !$this->resultados )
@@ -69,7 +71,7 @@ class general_agrupar_albaranes_pro extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function agrupar()

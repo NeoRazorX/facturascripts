@@ -60,6 +60,8 @@ class general_agrupar_albaranes_cli extends fs_controller
          $this->agrupar();
       else if( isset($_POST['cliente']) )
       {
+         $this->save_codcliente($_POST['cliente']);
+         
          $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
          if( !$this->resultados )
@@ -69,7 +71,7 @@ class general_agrupar_albaranes_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    private function agrupar()
