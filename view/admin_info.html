@@ -7,12 +7,14 @@
          <th><b>FacturaScripts</b></th>
          <th><b>PHP</b></th>
          <th><b>PostgreSQL</b></th>
+         <th><b>Memcache</b></th>
       </tr>
       <tr>
          <td align="center">{$fsc->fs_db_name()}</td>
          <td align="center">{$fsc->fs_version()}</td>
          <td align="center">{$fsc->php_version()}</td>
          <td align="center">{$fsc->pg_version()}</td>
+         <td align="center">{$fsc->cache_version()}</td>
       </tr>
    </table>
 </div>
@@ -23,6 +25,7 @@
          <td align="right"><b>Sistema Operativo:</b></td>
          <td>{$fsc->uname()}</td>
       </tr>
+      {if condition="$fsc->linux()"}
       <tr>
          <td align="right"><b>Uptime:</b></td>
          <td>{$fsc->sys_uptime()}</td>
@@ -35,6 +38,7 @@
          <td align="right"><b>Disco duro:</b></td>
          <td><pre>{$fsc->sys_df()}</pre></td>
       </tr>
+      {/if}
    </table>
 </div>
 

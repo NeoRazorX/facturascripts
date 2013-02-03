@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -82,7 +82,18 @@ class tpv_yamyam extends fs_controller
       else if( isset($_COOKIE['impresora']) )
          $this->impresora = $_COOKIE['impresora'];
       
-      if($this->agente)
+      if( isset($_POST['saldo']) )
+      {
+         $this->template = FALSE;
+         
+         if(FS_LCD != '')
+         {
+            shell_exec('echo "                    '.'TOTAL               '.
+                    substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20).
+                    '" | lp -d '.FS_LCD);
+         }
+      }
+      else if($this->agente)
       {
          /// obtenemos el bloqueo de caja, sin esto no se puede continuar
          $this->caja = $this->caja->get_last_from_this_server();
@@ -136,7 +147,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    private function cargar_datos_tpv()

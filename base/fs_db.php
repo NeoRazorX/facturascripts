@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -59,7 +59,8 @@ class fs_db
          $connected = TRUE;
       else
       {
-         self::$link = pg_pconnect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
+         self::$link = pg_pconnect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
+                 ' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
          if(self::$link)
          {
             $connected = TRUE;
@@ -88,9 +89,11 @@ class fs_db
    {
       if(self::$link)
       {
-         $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
-                 AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname))
-                 ORDER BY a.relname ASC;";
+         $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b
+            WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
+             AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
+             AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname))
+            ORDER BY a.relname ASC;";
          self::$history[] = $sql;
          $filas = pg_query(self::$link, $sql);
          if($filas)
@@ -126,8 +129,10 @@ class fs_db
    {
       if($table != '')
       {
-         $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable FROM information_schema.columns
-                 WHERE table_catalog = '".FS_DB_NAME."' AND table_name = '".$table."';";
+         $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable
+            FROM information_schema.columns
+            WHERE table_catalog = '".FS_DB_NAME."' AND table_name = '".$table."'
+            ORDER BY column_name ASC;";
          return $this->select($sql);
       }
       else
@@ -139,8 +144,10 @@ class fs_db
    {
       if($table != '')
       {
-         $sql = "SELECT c.conname as \"restriccion\" FROM pg_class r, pg_constraint c
-                 WHERE r.oid = c.conrelid AND relname = '".$table."';";
+         $sql = "SELECT c.conname as \"restriccion\", c.contype as \"tipo\"
+            FROM pg_class r, pg_constraint c
+            WHERE r.oid = c.conrelid AND relname = '".$table."'
+            ORDER BY restriccion ASC;";
          return $this->select($sql);
       }
       else

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,6 +21,8 @@ require_once 'base/fs_cache.php';
 
 class admin_info extends fs_controller
 {
+   public $cache;
+   
    public function __construct()
    {
       parent::__construct('admin_info', 'Información del sistema', 'admin', TRUE, TRUE);
@@ -28,19 +30,24 @@ class admin_info extends fs_controller
    
    protected function process()
    {
-      $this->buttons[] = new fs_button('b_errores', 'errores', 'index.php?page=admin_errores',
-              '', 'img/zoom.png', '[]', TRUE);
+      $this->cache = new fs_cache();
+      $this->buttons[] = new fs_button('b_errores', 'errores',
+              'index.php?page=admin_errores', '', 'img/zoom.png', '[]', TRUE);
       $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',
               $this->url()."&clean_cache=TRUE", 'remove', 'img/remove.png', '-');
       
       if( isset($_GET['clean_cache']) )
       {
-         $cache = new fs_cache();
-         if( $cache->clean() )
+         if( $this->cache->clean() )
             $this->new_message("Cache limpiada correctamente.");
          else
             $this->new_error_msg("¡Imposible limpiar la cache!");
       }
+   }
+   
+   public function linux()
+   {
+      return (php_uname('s') == 'Linux');
    }
    
    public function uname()
@@ -57,6 +64,11 @@ class admin_info extends fs_controller
    {
       $v = $this->db->version();
       return $v['server'];
+   }
+   
+   public function cache_version()
+   {
+      return $this->cache->version();
    }
    
    public function sys_uptime()

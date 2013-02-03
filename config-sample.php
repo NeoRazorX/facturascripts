@@ -55,4 +55,16 @@ define('FS_ITEM_LIMIT', 50);
  */
 define('FS_ID', 1);
 
+/*
+ * Nombre de la impresora que representa el dispositivo LCD del terminal POS
+ * Esta función sólo está disponible en Linux, y sólo funciona
+ * en la página TPV > TPVyamyam. Además el LCD tiene que ser
+ * de dos líneas de 20 caracteres cada una (GLANCETRON 8035).
+ * Si tienes alguna duda, escríbela
+ * aquí -> http://code.google.com/p/facturascripts/issues/list
+ * 
+ * Ejemplo: Generic-text-only
+ */
+define('FS_LCD', '');
+
 ?>

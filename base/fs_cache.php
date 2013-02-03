@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,6 +22,7 @@ class fs_cache
    private static $memcache;
    private static $connected;
    private static $error;
+   private static $error_msg;
    
    public function __construct()
    {
@@ -35,18 +36,23 @@ class fs_cache
                self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
                self::$connected = TRUE;
                self::$error = FALSE;
+               self::$error_msg = '';
             }
             catch(Exception $e)
             {
                self::$memcache = NULL;
                self::$connected = FALSE;
                self::$error = TRUE;
+               self::$error_msg = 'Error al conectar al servidor Memcache: '.$e;
             }
          }
          else
          {
+            self::$memcache = NULL;
             self::$connected = FALSE;
             self::$error = TRUE;
+            self::$error_msg = 'Clase Memcache no encontrada. Debes instalar
+               Memcache y activarlo en el php.ini';
          }
       }
    }
@@ -54,6 +60,11 @@ class fs_cache
    public function error()
    {
       return self::$error;
+   }
+   
+   public function error_msg()
+   {
+      return self::$error_msg;
    }
    
    public function close()
@@ -118,6 +129,14 @@ class fs_cache
          return self::$memcache->flush();
       else
          return FALSE;
+   }
+   
+   public function version()
+   {
+      if( self::$connected )
+         return self::$memcache->getVersion();
+      else
+         return '-';
    }
 }
 

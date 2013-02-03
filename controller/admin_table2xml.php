@@ -38,7 +38,7 @@ class admin_table2xml extends fs_controller
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    public function all()
@@ -71,21 +71,34 @@ class admin_table2xml extends fs_controller
          {
             foreach($columnas as $col)
             {
-               $aux = $this->archivo_xml->addChild("columna");
-               $aux->addChild("nombre", $col['column_name']);
+               $aux = $this->archivo_xml->addChild('columna');
+               $aux->addChild('nombre', $col['column_name']);
                
-               if( isset($col['character_maximum_length']) )
-                  $aux->addChild("tipo", $col['data_type'] . "(" . $col['character_maximum_length'] . ")");
+               /// comprobamos si es tipo serial
+               if($col['data_type'] == 'integer' AND $col['column_default'] == "nextval('".$table.'_'.$col['column_name']."_seq'::regclass)")
+               {
+                  $aux->addChild('tipo', 'serial');
+                  
+                  if( $col['is_nullable'] == 'YES')
+                     $aux->addChild('nulo', 'YES');
+                  else
+                     $aux->addChild('nulo', 'NO');
+               }
                else
-                  $aux->addChild("tipo", $col['data_type']);
-               
-               if( $col['is_nullable'] == "YES")
-                  $aux->addChild("nulo", "YES");
-               else
-                  $aux->addChild("nulo", "NO");
-               
-               if( isset($col['column_default']) )
-                  $aux->addChild("defecto", $col['column_default']);
+               {
+                  if( isset($col['character_maximum_length']) )
+                     $aux->addChild('tipo', $col['data_type'] . '(' . $col['character_maximum_length'] . ')');
+                  else
+                     $aux->addChild('tipo', $col['data_type']);
+                  
+                  if( $col['is_nullable'] == 'YES')
+                     $aux->addChild('nulo', 'YES');
+                  else
+                     $aux->addChild('nulo', 'NO');
+                  
+                  if( isset($col['column_default']) )
+                     $aux->addChild('defecto', $col['column_default']);
+               }
             }
          }
          
@@ -93,9 +106,27 @@ class admin_table2xml extends fs_controller
          {
             foreach($restricciones as $col)
             {
-               $aux = $this->archivo_xml->addChild("restriccion");
-               $aux->addChild("nombre", $col['restriccion']);
-               $aux->addChild("consulta", "");
+               $aux = $this->archivo_xml->addChild('restriccion');
+               $aux->addChild('nombre', $col['restriccion']);
+               
+               switch($col['tipo'])
+               {
+                  default:
+                     $aux->addChild('consulta', '...');
+                     break;
+                  
+                  case 'p':
+                     $aux->addChild('consulta', 'PRIMARY KEY (...)');
+                     break;
+                  
+                  case 'f':
+                     $aux->addChild('consulta', 'FOREIGN KEY (...) REFERENCES ...');
+                     break;
+                  
+                  case 'u':
+                     $aux->addChild('consulta', 'UNIQUE (...)');
+                     break;
+               }
             }
          }
       }

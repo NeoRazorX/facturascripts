@@ -4,6 +4,15 @@
    {
       fs_show_popup('paquete_'+paq);
    }
+   function update_lcd(saldo)
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: 'saldo='+saldo
+      });
+   }
    function recalcular()
    {
       var tpv_total = 0;
@@ -23,6 +32,7 @@
       }
       $("#tpv_total").html( number_format(tpv_total,2,',','.') +" €");
       $("#tpv_total2").val( number_format(tpv_total,2,'.','') );
+      update_lcd(tpv_total);
    }
    function linea_sum_ud(num,value)
    {
@@ -82,6 +92,7 @@
             }
             $("#tpv_total").html( number_format(tpv_total,2,',','.') +" €");
             $("#tpv_total2").val( number_format(tpv_total,2,'.','') );
+            update_lcd(tpv_total);
          }
       }
    }
@@ -175,6 +186,7 @@
          event.preventDefault();
          fs_show_popup('popup_opciones_tpv');
       });
+      update_lcd(0);
    });
 </script>
 

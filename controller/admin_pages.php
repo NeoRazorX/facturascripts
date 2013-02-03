@@ -72,6 +72,8 @@ class admin_pages extends fs_controller
    public function all()
    {
       $pages = array();
+      
+      /// añadimos las páginas que están en el directorio
       foreach(scandir('controller') as $f)
       {
          if(is_string($f) AND strlen($f) > 0 AND !is_dir($f))
@@ -83,6 +85,8 @@ class admin_pages extends fs_controller
             $pages[] = $p;
          }
       }
+      
+      /// completamos los datos de las páginas con los datos de la base de datos
       foreach($this->page->all() as $p)
       {
          $encontrada = FALSE;
@@ -103,6 +107,7 @@ class admin_pages extends fs_controller
             $pages[] = $p;
          }
       }
+      
       return $pages;
    }
    
