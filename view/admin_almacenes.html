@@ -59,7 +59,9 @@
       <h1>
          Código: {$value->codalmacen}
          <span>
+            {if condition="$counter>0"}
             <a class="remove" href="{$fsc->url()}&amp;delete={$value->codalmacen}">eliminar</a>
+            {/if}
             &nbsp;
             <input type="submit" value="guardar"/>
          </span>

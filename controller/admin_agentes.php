@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,30 +36,37 @@ class admin_agentes extends fs_controller
       if( isset($_POST['scodagente']) )
       {
          $age0 = $this->agente->get($_POST['scodagente']);
-         if( !$age0 )
+         if( $age0 )
+            header('location: '.$age0->url());
+         else
          {
             $age0 = new agente();
             $age0->codagente = $_POST['scodagente'];
+            $age0->nombre = $_POST['snombre'];
+            $age0->apellidos = $_POST['sapellidos'];
+            $age0->dnicif = $_POST['sdnicif'];
+            $age0->telefono = $_POST['stelefono'];
+            $age0->email = $_POST['semail'];
+            if( $age0->save() )
+            {
+               $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
+               header('location: '.$age0->url());
+            }
+            else
+               $this->new_error_msg("¡Imposible guardar el agente!");
          }
-         $age0->nombre = $_POST['snombre'];
-         $age0->apellidos = $_POST['sapellidos'];
-         $age0->dnicif = $_POST['sdnicif'];
-         $age0->telefono = $_POST['stelefono'];
-         $age0->email = $_POST['semail'];
-         if( $age0->save() )
-         {
-            $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
-            header('location: '.$age0->url());
-         }
-         else
-            $this->new_error_msg("¡Imposible guardar el agente!");
       }
       else if( isset($_GET['delete']) )
       {
          $age0 = $this->agente->get($_GET['delete']);
          if($age0)
          {
-            if( $age0->delete() )
+            if( FS_DEMO )
+            {
+               $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar agentes.
+                  Otro usuario podría estar usándolo.');
+            }
+            else if( $age0->delete() )
                $this->new_message("Agente ".$age0->codagente." eliminado correctamente.");
             else
                $this->new_error_msg("¡Imposible eliminar el agente!");
@@ -71,7 +78,7 @@ class admin_agentes extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
 }
 

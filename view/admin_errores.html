@@ -1,51 +1,83 @@
+{if condition="$fsc->full_page"}
 {include="header"}
 
-<div class="rounded">
-   <h1>Errores en los asientos:</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Número</th>
-         <th align="left">Concepto</th>
-         <th align="right">Importe</th>
-         <th align="right">Fecha</th>
-      </tr>
-      {loop="$fsc->asiento->descuadrados()"}
-      <tr>
-         <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->numero}</a></td>
-         <td><a href="{$value->url()}">{$value->concepto}</a></td>
-         <td align="right">{$value->show_importe()} €</td>
-         <td align="right">{$value->fecha}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="5">No hay asientos descuadrados.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
+<script type="text/javascript">
+   var show_page = '{$fsc->informe['show_page']}';
+   function load_errors(page)
+   {
+      show_page = page;
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: 'process=TRUE&show_page='+show_page,
+         success: function(datos) {
+            $("#admin_errors").html(datos);
+            var re = /<!--FIN_PROCESO-->/g;
+            if( !re.test(datos) )
+               setTimeout("load_errors(show_page);", 1000);
+         }
+      });
+   }
+   $(document).ready(function() {
+      setTimeout("load_errors(show_page);", 1000);
+   });
+</script>
 
-<div class="rounded">
-   <h1>Errores en las partidas:</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Asiento</th>
-         <th>Concepto</th>
-         <th>Subcuenta</th>
-      </tr>
-      {loop="$fsc->partida->erroneas()"}
-      <tr>
-         <td><a href="{$value->url()}">{$value->idasiento}</a></td>
-         <td>{$value->concepto}</td>
-         <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="3">Ningún error detectado.</td>
-      </tr>
-      {/loop}
-   </table>
+<div id="admin_errors">
+   <div class="advice">Cargando...</div>
 </div>
 
 {include="footer"}
+{else}
+
+{if condition="$fsc->informe['model']=='caca'"}
+<!--FIN_PROCESO-->
+<div class="advice">Comprobación finalizada.</div>
+{else}
+<div class="advice">Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...</div>
+{/if}
+
+<div class="rounded">
+   <div class="paginas">
+      {loop="$fsc->all_pages()"}
+         {if condition="$value.selected"}
+         <a class="actual" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+         {else}
+            <a href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+         {/if}
+      {/loop}
+   </div>
+   <br/>
+   <table class="list">
+      <tr>
+         <th align="left"></th>
+         <th align="left">Modelo</th>
+         <th align="left">Ejercicio</th>
+         <th align="left">Identificador</th>
+         <th align="right">Fecha</th>
+      </tr>
+      {loop="$fsc->errores"}
+      <tr>
+         <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
+         <td>{$value.model}</td>
+         <td>{$value.ejercicio}</td>
+         <td><a href="{$value.url}">{$value.id}</a></td>
+         <td align="right">{$value.fecha}</td>
+      </tr>
+      {else}
+      <tr><td colspan="5">Nada que mostrar.</td></tr>
+      {/loop}
+   </table>
+   <br/>
+   <div class="paginas">
+      {loop="$fsc->all_pages()"}
+         {if condition="$value.selected"}
+         <a class="actual" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+         {else}
+            <a href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+         {/if}
+      {/loop}
+   </div>
+</div>
+{/if}

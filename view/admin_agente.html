@@ -1,6 +1,16 @@
 {include="header"}
 
 {if condition="$fsc->agente"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_delete_agente").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar el agente?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->agente->codagente}';
+      });
+   });
+</script>
+
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <h1>
@@ -30,6 +40,7 @@
    <div class="select">
       <a href="{$fsc->url()}&listar=albaranes_cli" class="selected">Albaranes de cliente</a>
       <a href="{$fsc->url()}&listar=albaranes_prov">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja">Caja</a>
    </div>
    <table class="list">
       <tr>
@@ -50,9 +61,7 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="7">Ningún albarán encontrado.</td>
-      </tr>
+      <tr><td colspan="7">Ningún albarán encontrado.</td></tr>
       {/loop}
       <tr>
          <td colspan="2">
@@ -68,10 +77,11 @@
          </td>
       </tr>
    </table>
-   {else}
+   {elseif condition="$fsc->listar=='albaranes_prov'"}
    <div class="select">
       <a href="{$fsc->url()}&listar=albaranes_cli">Albaranes de cliente</a>
       <a href="{$fsc->url()}&listar=albaranes_prov" class="selected">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja">Caja</a>
    </div>
    <table class="list">
       <tr>
@@ -92,9 +102,7 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="7">Ningún albarán encontrado.</td>
-      </tr>
+      <tr><td colspan="7">Ningún albarán encontrado.</td></tr>
       {/loop}
       <tr>
          <td colspan="2">
@@ -104,6 +112,47 @@
          </td>
          <td colspan="3"></td>
          <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+   {else}
+   <div class="select">
+      <a href="{$fsc->url()}&listar=albaranes_cli">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja" class="selected">Caja</a>
+   </div>
+   <table class="list">
+      <tr>
+         <th>Caja</th>
+         <th>Fecha inicial</th>
+         <th align="right">Dinero inicial</th>
+         <th>Fecha fin</th>
+         <th align="right">Diferencia</th>
+         <th align="right">Tickets</th>
+      </tr>
+      {loop="$fsc->listado"}
+      <tr>
+         <td align="center">{$value->fs_id}</td>
+         <td align="center">{$value->fecha_inicial}</td>
+         <td align="right">{$value->show_dinero_inicial()} €</td>
+         <td align="center">{$value->show_fecha_fin()}</td>
+         <td align="right">{$value->show_diferencia()} €</td>
+         <td align="right">{$value->tickets}</td>
+      </tr>
+      {else}
+      <tr><td colspan="6">No hay datos.</td></tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="2"></td>
+         <td colspan="2" align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}

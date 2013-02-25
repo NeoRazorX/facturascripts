@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -39,7 +39,10 @@ class contabilidad_asientos extends fs_controller
       if($naurl)
          $this->buttons[] = new fs_button ('b_nuevo_asiento', 'Nuevo', $naurl->url());
       
-      $this->buttons[] = new fs_button('b_renumerar', 'renumerar', $this->url().'&renumerar=TRUE', '', 'img/tools.png');
+      $this->buttons[] = new fs_button('b_renumerar', 'renumerar',
+              $this->url().'&renumerar=TRUE', '', 'img/tools.png');
+      $this->buttons[] = new fs_button('b_descuadrados', 'descuadrados',
+              $this->url().'&descuadrados=TRUE', '', 'img/zoom.png');
       
       if( isset($_GET['delete']) )
       {
@@ -65,7 +68,9 @@ class contabilidad_asientos extends fs_controller
       else
          $this->offset = 0;
       
-      if($this->query)
+      if( isset($_GET['descuadrados']) )
+         $this->resultados = $this->asiento->descuadrados();
+      else if($this->query)
          $this->resultados = $this->asiento->search($this->query, $this->offset);
       else
          $this->resultados = $this->asiento->all($this->offset);

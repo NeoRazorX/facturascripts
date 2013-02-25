@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -79,7 +79,7 @@ class agente extends fs_model
          $this->codagente = NULL;
       }
    }
-
+   
    protected function install()
    {
       $this->clean_cache();
@@ -108,15 +108,6 @@ class agente extends fs_model
          return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
-   public function get($cod)
-   {
-      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente=".$this->var2str($cod).";");
-      if($a)
-         return new agente($a[0]);
-      else
-         return FALSE;
-   }
-   
    public function get_albaranes_cli($offset=0)
    {
       $alb = new albaran_cliente();
@@ -129,12 +120,23 @@ class agente extends fs_model
       return $alb->all_from_agente($this->codagente, $offset);
    }
    
+   public function get($cod)
+   {
+      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".
+              $this->var2str($cod).";");
+      if($a)
+         return new agente($a[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->codagente) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente=".$this->var2str($this->codagente).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".
+                 $this->var2str($this->codagente).";");
    }
    
    public function test()
@@ -187,7 +189,8 @@ class agente extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".
+              $this->var2str($this->codagente).";");
    }
    
    private function clean_cache()

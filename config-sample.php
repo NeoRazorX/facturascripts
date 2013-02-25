@@ -51,19 +51,27 @@ define('FS_ITEM_LIMIT', 50);
 
 /*
  * Un número identificador para esta instancia de FacturaScripts.
- * Necesario para identificar cada caja en el TPV_yamyam.
+ * Necesario para identificar cada caja en el TPV.
  */
 define('FS_ID', 1);
 
 /*
- * Nombre de la impresora que representa el dispositivo LCD del terminal POS
- * Esta función sólo está disponible en Linux, y sólo funciona
- * en la página TPV > TPVyamyam. Además el LCD tiene que ser
+ * Nombre o dirección de la impresora de tickets.
+ * Sólo disponible en Linux.
+ * 
+ * Ejemplo: 'Generic-text-only' ó '/dev/usb/lp0'
+ */
+define('FS_PRINTER', '');
+
+/*
+ * Nombre o dirección de la impresora que representa el dispositivo
+ * LCD del terminal POS.
+ * Sólo disponible en Linux. Además el LCD tiene que ser
  * de dos líneas de 20 caracteres cada una (GLANCETRON 8035).
  * Si tienes alguna duda, escríbela
  * aquí -> http://code.google.com/p/facturascripts/issues/list
  * 
- * Ejemplo: Generic-text-only
+ * Ejemplo: 'Generic-text-only' ó '/dev/ttyUSB0'
  */
 define('FS_LCD', '');
 

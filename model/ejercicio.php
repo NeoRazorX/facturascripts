@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/asiento.php';
+require_once 'model/subcuenta.php';
 
 class ejercicio extends fs_model
 {
@@ -99,26 +101,30 @@ class ejercicio extends fs_model
    }
    
    /*
-    * Devuelve TRUE si la fecha indicada está dentro del intervalo del ejercicio.
-    * Si $corregir es TRUE elige una fecha más apropiada
+    * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
     */
-   public function test_fecha(&$fecha, $corregir=FALSE)
+   public function get_best_fecha($fecha, $show_error=FALSE)
    {
       $fecha2 = strtotime( $fecha );
       
       if( $fecha2 >= strtotime( $this->fechainicio ) AND $fecha2 <= strtotime( $this->fechafin ) )
-         return TRUE;
-      else if($corregir)
+         return $fecha;
+      else if( $fecha2 > strtotime( $this->fechainicio ) )
       {
-         if( $fecha2 > strtotime( $this->fechainicio ) )
-            $fecha = $this->fechafin;
-         else
-            $fecha = $this->fechainicio;
+         if($show_error)
+            $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+               Se ha seleccionado una mejor.');
          
-         return TRUE;
+         return $this->fechafin;
       }
       else
-         return FALSE;
+      {
+         if($show_error)
+            $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+               Se ha seleccionado una mejor.');
+         
+         return $this->fechainicio;
+      }
    }
    
    public function get($cod)
@@ -143,6 +149,7 @@ class ejercicio extends fs_model
       else
       {
          $eje = new ejercicio();
+         $eje->codejercicio = $this->get_new_codigo();
          $eje->nombre = Date('Y', strtotime($fecha));
          $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
          $eje->fechafin = Date('31-12-Y', strtotime($fecha));
@@ -170,11 +177,47 @@ class ejercicio extends fs_model
       $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio) )
-         $this->new_error_msg("Código de cliente no válido.");
+         $this->new_error_msg("Código de ejercicio no válido.");
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
          $this->new_error_msg("Nombre de cliente no válido.");
       else
          $status = TRUE;
+      
+      $asiento = new asiento();
+      if( !$asiento->get( $this->idasientoapertura ) )
+         $this->idasientoapertura = NULL;
+      if( !$asiento->get( $this->idasientocierre ) )
+         $this->idasientocierre = NULL;
+      if( !$asiento->get( $this->idasientopyg ) )
+         $this->idasientopyg = NULL;
+      
+      return $status;
+   }
+   
+   public function full_test()
+   {
+      $status = TRUE;
+      
+      /// comprobamos el balance de todas las subcuentas
+      $debe = 0;
+      $haber = 0;
+      $subcuenta = new subcuenta();
+      foreach($subcuenta->all_from_ejercicio($this->codejercicio) as $sc)
+      {
+         $debe += $sc->debe;
+         $haber += $sc->haber;
+      }
+      
+      if( ($debe-$haber) > .01 )
+      {
+         $this->new_error_msg('El debe es mayor que el haber. La diferencia es '.($debe-$haber));
+         $status = FALSE;
+      }
+      else if( ($haber-$debe) > .01 )
+      {
+         $this->new_error_msg('El haber es mayor que el debe. La diferencia es '.($haber-$debe));
+         $status = FALSE;
+      }
       
       return $status;
    }

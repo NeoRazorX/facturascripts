@@ -142,6 +142,20 @@
       }
       return html+"</select>";
    }
+   function get_precios(ref)
+   {
+      fs_hide_popups();
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: "referencia4precios="+ref,
+         success: function(datos) {
+            $("#precios_articulo").html(datos);
+            fs_show_popup('popup_precios', 40);
+         }
+      });
+   }
    function add_articulo(ref,desc,pvp,dto,iva)
    {
       numlineas += 1;
@@ -271,6 +285,10 @@
    <div id="search_results"></div>
 </div>
 
+<div class="popup" id="popup_precios" style="min-width: 60%">
+   <div id="precios_articulo"></div>
+</div>
+
 {if condition="$fsc->agente"}
 <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
@@ -278,9 +296,13 @@
    <div class="popup" id="popup_tpv_opciones"/>
       <h1>Guardar como...</h1>
       <table>
+         <tr>
+            <td align="right">Fecha:</td>
+            <td colspan="3"><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/></td>
+         </tr>
          <tr id="tr_clientes">
             <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
-            <td>
+            <td colspan="3">
                <select name="cliente">
                   {loop="$fsc->cliente->all_full()"}
                      {if condition="$value->is_default()"}
@@ -294,7 +316,7 @@
          </tr>
          <tr id="tr_proveedores">
             <td align="right"><a href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
-            <td>
+            <td colspan="3">
                <select name="proveedor">
                   {loop="$fsc->proveedor->all_full()"}
                      {if condition="$value->is_default()"}
@@ -308,7 +330,7 @@
          </tr>
          <tr>
             <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
-            <td>
+            <td colspan="3">
                <select name="almacen">
                   {loop="$fsc->almacen->all()"}
                      <option value="{$value->codalmacen}">{$value->nombre}</option>
@@ -317,22 +339,8 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
-            <td>
-               <select name="ejercicio">
-                  {loop="$fsc->ejercicio->all_abiertos()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
-                     {else}
-                     <option value="{$value->codejercicio}">{$value->nombre}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
             <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
-            <td>
+            <td colspan="3">
                <select name="serie">
                   {loop="$fsc->serie->all()"}
                      {if condition="$value->is_default()"}
@@ -357,8 +365,6 @@
                   {/loop}
                </select>
             </td>
-         </tr>
-         <tr>
             <td align="right">Divisa:</td>
             <td>
                <select name="divisa">
@@ -374,18 +380,18 @@
          </tr>
          <tr id="tr_numero2">
             <td align="right">Número 2:</td>
-            <td><input type="text" name="numero2"/></td>
+            <td colspan="3"><input type="text" name="numero2"/></td>
          </tr>
          <tr id="tr_numproveedor">
             <td align="right">Num. proveedor:</td>
-            <td><input type="text" name="numproveedor"/></td>
+            <td colspan="3"><input type="text" name="numproveedor"/></td>
          </tr>
          <tr>
             <td align="right">Observaciones:</td>
-            <td><textarea name="observaciones" cols="50"></textarea></td>
+            <td colspan="3"><textarea name="observaciones" cols="50"></textarea></td>
          </tr>
          <tr>
-            <td colspan="2" align="right"><input type="submit" value="guardar"/></td>
+            <td colspan="4" align="right"><input type="submit" value="guardar"/></td>
          </tr>
       </table>
    </div>

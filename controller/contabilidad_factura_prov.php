@@ -18,10 +18,16 @@
  */
 
 require_once 'ezpdf/class.ezpdf.php';
+require_once 'model/asiento.php';
+require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';
+require_once 'model/partida.php';
+require_once 'model/proveedor.php';
+require_once 'model/subcuenta.php';
 
 class contabilidad_factura_prov extends fs_controller
 {
+   public $ejercicio;
    public $factura;
    
    public function __construct()
@@ -32,14 +38,22 @@ class contabilidad_factura_prov extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('contabilidad_facturas_prov');
+      $this->ejercicio = new ejercicio();
       
       if( isset($_POST['idfactura']) )
       {
          $this->factura = new factura_proveedor();
          $this->factura = $this->factura->get($_POST['idfactura']);
          $this->factura->numproveedor = $_POST['numproveedor'];
-         $this->factura->fecha = $_POST['fecha'];
          $this->factura->observaciones = $_POST['observaciones'];
+         
+         /// obtenemos el ejercicio para poder acotar la fecha
+         $eje0 = $this->ejercicio->get( $this->factura->codejercicio );
+         if( $eje0 )
+            $this->factura->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+         else
+            $this->new_error_msg('No se encuentra el ejercicio asociado a la factura.');
+         
          if( $this->factura->save() )
          {
             $asiento = $this->factura->get_asiento();
@@ -62,18 +76,28 @@ class contabilidad_factura_prov extends fs_controller
       
       if($this->factura)
       {
-         $this->page->title = $this->factura->codigo;
-         
-         $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
-         if($this->factura->idasiento)
-            $this->buttons[] = new fs_button('b_ver_asiento', 'asiento', $this->factura->asiento_url(), 'button', 'img/zoom.png');
-         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
-         
-         /// comprobamos la factura
-         $this->factura->full_test();
-         
          if( isset($_GET['imprimir']) )
             $this->generar_pdf();
+         else
+         {
+            if( isset($_GET['gen_asiento']) )
+               $this->generar_asiento();
+            
+            /// comprobamos la factura
+            $this->factura->full_test();
+            
+            $this->page->title = $this->factura->codigo;
+            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
+            
+            if($this->factura->idasiento)
+               $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
+                       $this->factura->asiento_url(), 'button', 'img/zoom.png');
+            else
+               $this->buttons[] = new fs_button('b_gen_asiento', 'generar asiento',
+                       $this->url().'&gen_asiento=TRUE', 'button', 'img/tools.png');
+            
+            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+         }
       }
       else
          $this->new_error_msg("¡Factura de proveedor no encontrada!");
@@ -81,7 +105,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function url()
@@ -242,6 +266,117 @@ class contabilidad_factura_prov extends fs_controller
       }
       
       $pdf->ezStream();
+   }
+   
+   private function generar_asiento()
+   {
+      if( $this->factura->get_asiento() )
+         $this->new_error_msg('Ya hay un asiento asociado a esta factura.');
+      else
+      {
+         $proveedor = new proveedor();
+         $proveedor = $proveedor->get($this->factura->codproveedor);
+         $subcuenta_prov = $proveedor->get_subcuenta($this->factura->codejercicio);
+         
+         if( !$subcuenta_prov )
+         {
+            $this->new_message("El proveedor no tiene asociada una subcuenta
+               y por tanto no se generará un asiento.");
+         }
+         else
+         {
+            $asiento = new asiento();
+            $asiento->codejercicio = $this->factura->codejercicio;
+            $asiento->concepto = "Su factura ".$this->factura->codigo." - ".$this->factura->nombre;
+            $asiento->documento = $this->factura->codigo;
+            $asiento->editable = FALSE;
+            $asiento->fecha = $this->factura->fecha;
+            $asiento->importe = $this->factura->totaleuros;
+            $asiento->tipodocumento = "Factura de proveedor";
+            if( $asiento->save() )
+            {
+               $asiento_correcto = TRUE;
+               $subcuenta = new subcuenta();
+               $partida0 = new partida();
+               $partida0->idasiento = $asiento->idasiento;
+               $partida0->concepto = $asiento->concepto;
+               $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
+               $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
+               $partida0->haber = $this->factura->totaleuros;
+               $partida0->coddivisa = $this->factura->coddivisa;
+               if( !$partida0->save() )
+               {
+                  $asiento_correcto = FALSE;
+                  $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida0->codsubcuenta."!");
+               }
+               
+               /// generamos una partida por cada impuesto
+               $subcuenta_iva = $subcuenta->get_by_codigo('4720000000', $asiento->codejercicio);
+               foreach($this->factura->get_lineas_iva() as $li)
+               {
+                  if($subcuenta_iva AND $asiento_correcto)
+                  {
+                     $partida1 = new partida();
+                     $partida1->idasiento = $asiento->idasiento;
+                     $partida1->concepto = $asiento->concepto;
+                     $partida1->idsubcuenta = $subcuenta_iva->idsubcuenta;
+                     $partida1->codsubcuenta = $subcuenta_iva->codsubcuenta;
+                     $partida1->debe = $li->totaliva;
+                     $partida1->idcontrapartida = $subcuenta_prov->idsubcuenta;
+                     $partida1->codcontrapartida = $subcuenta_prov->codsubcuenta;
+                     $partida1->cifnif = $proveedor->cifnif;
+                     $partida1->documento = $asiento->documento;
+                     $partida1->tipodocumento = $asiento->tipodocumento;
+                     $partida1->codserie = $this->factura->codserie;
+                     $partida1->factura = $this->factura->numero;
+                     $partida1->baseimponible = $li->neto;
+                     $partida1->iva = $li->iva;
+                     $partida1->coddivisa = $this->factura->coddivisa;
+                     if( !$partida1->save() )
+                     {
+                        $asiento_correcto = FALSE;
+                        $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida1->codsubcuenta."!");
+                     }
+                  }
+               }
+               
+               $subcuenta_compras = $subcuenta->get_by_codigo('6000000000', $asiento->codejercicio);
+               if($subcuenta_compras AND $asiento_correcto)
+               {
+                  $partida2 = new partida();
+                  $partida2->idasiento = $asiento->idasiento;
+                  $partida2->concepto = $asiento->concepto;
+                  $partida2->idsubcuenta = $subcuenta_compras->idsubcuenta;
+                  $partida2->codsubcuenta = $subcuenta_compras->codsubcuenta;
+                  $partida2->debe = $this->factura->neto;
+                  $partida2->coddivisa = $this->factura->coddivisa;
+                  if( !$partida2->save() )
+                  {
+                     $asiento_correcto = FALSE;
+                     $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida2->codsubcuenta."!");
+                  }
+               }
+               
+               if( $asiento_correcto )
+               {
+                  $this->factura->idasiento = $asiento->idasiento;
+                  if( $this->factura->save() )
+                     $this->new_message("<a href='".$asiento->url()."'>Asiento</a> generado correctamente.");
+                  else
+                     $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
+               }
+               else
+               {
+                  if( $asiento->delete() )
+                     $this->new_message("El asiento se ha borrado.");
+                  else
+                     $this->new_error_msg("¡Imposible borrar el asiento!");
+               }
+            }
+            else
+               $this->new_error_msg("¡Imposible guardar el asiento!");
+         }
+      }
    }
 }
 

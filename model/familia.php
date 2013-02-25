@@ -144,6 +144,22 @@ class familia extends fs_model
       }
       return $famlist;
    }
+   
+   public function search($query)
+   {
+      $famlist = array();
+      $query = $this->no_html( strtolower($query) );
+      
+      $familias = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE lower(descripcion) ~~ '%".$query."%' ORDER BY descripcion ASC;");
+      if($familias)
+      {
+         foreach($familias as $f)
+            $famlist[] = new familia($f);
+      }
+      
+      return $famlist;
+   }
 }
 
 ?>

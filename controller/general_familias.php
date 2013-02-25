@@ -22,6 +22,7 @@ require_once 'model/familia.php';
 class general_familias extends fs_controller
 {
    public $familia;
+   public $resultados;
    
    public function __construct()
    {
@@ -32,6 +33,7 @@ class general_familias extends fs_controller
    {
       $this->familia = new familia();
       $this->buttons[] = new fs_button('b_nueva_familia', 'nueva');
+      $this->custom_search = TRUE;
       
       if( isset($_POST['ncodfamilia']) )
       {
@@ -52,10 +54,16 @@ class general_familias extends fs_controller
          else
             $this->new_error_msg("¡Imposible eliminar la familia ".$_GET['delete']."!");
       }
+      
+      if($this->query != '')
+         $this->resultados = $this->familia->search($this->query);
+      else
+         $this->resultados = $this->familia->all();
    }
    
-   public function version() {
-      return parent::version().'-4';
+   public function version()
+   {
+      return parent::version().'-5';
    }
 }
 

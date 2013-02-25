@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -335,21 +335,14 @@ class articulo extends fs_model
    {
       $this->pvp_ant = $this->pvp;
       $this->factualizado = Date('d-m-Y');
-      
-      $iva = $this->get_iva();
-      /// redondeamos el pvp+iva para a continuación recalcular el pvp
-      $pvpi = round(floatval($p)*(100+$iva)/100, 2);
-      $this->pvp = (100*$pvpi)/(100+$iva);
+      $this->pvp = round($p, 2);
    }
    
    public function set_pvp_iva($p)
    {
       $this->pvp_ant = $this->pvp;
       $this->factualizado = Date('d-m-Y');
-      
-      $pvpi = round(floatval($p), 2);
-      $iva = $this->get_iva();
-      $this->pvp = (100*$pvpi)/(100+$iva);
+      $this->pvp = round((100*$p)/(100+$this->get_iva()), 2);
    }
    
    public function set_stock($almacen, $cantidad=1)

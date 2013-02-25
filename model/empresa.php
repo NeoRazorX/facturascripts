@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -87,34 +87,6 @@ class empresa extends fs_model
          $this->lema = $e[0]['lema'];
          $this->horario = $e[0]['horario'];
       }
-      else
-      {
-         $this->id = NULL;
-         $this->stockpedidos = FALSE;
-         $this->contintegrada = TRUE;
-         $this->recequivalencia = FALSE;
-         $this->codserie = NULL;
-         $this->codalmacen = NULL;
-         $this->codpago = NULL;
-         $this->coddivisa = NULL;
-         $this->codejercicio = NULL;
-         $this->web = "http://code.google.com/p/facturascripts/";
-         $this->email = '';
-         $this->fax = '';
-         $this->telefono = '';
-         $this->codpais = NULL;
-         $this->apartado = '';
-         $this->provincia = NULL;
-         $this->ciudad = NULL;
-         $this->codpostal = NULL;
-         $this->direccion = '';
-         $this->administrador = '';
-         $this->codedi = NULL;
-         $this->cifnif = '';
-         $this->nombre = '';
-         $this->lema = '';
-         $this->horario = '';
-      }
    }
    
    public function url()
@@ -125,10 +97,11 @@ class empresa extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,codalmacen,
-         codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,ciudad,codpostal,
-         direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES (NULL,FALSE,NULL,NULL,NULL,NULL,NULL,NULL,
-         'http://code.google.com/p/facturascripts/',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa S.L.','','');";
+      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
+         codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,
+         ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES
+         (NULL,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,'http://code.google.com/p/facturascripts/',NULL,NULL,
+         NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa S.L.','','');";
    }
    
    public function exists()

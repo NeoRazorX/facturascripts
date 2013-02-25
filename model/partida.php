@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
 require_once 'model/asiento.php';
@@ -189,22 +206,32 @@ class partida extends fs_model
       $this->documento = $this->no_html($this->documento);
       $this->cifnif = $this->no_html($this->cifnif);
       
-      if( $this->iva > 0 )
+      if($this->iva == 0)
+         $base = 0;
+      else if($this->debe != 0)
+         $base = 100*$this->debe/$this->iva;
+      else
+         $base = 100*$this->haber/$this->iva;
+      
+      if( abs($this->baseimponible - $base) > .1 )
       {
-         $totaliva = $this->baseimponible * $this->iva / 100;
-         if( $this->debe != 0 AND  abs($this->debe - $totaliva) > .01 )
-         {
-            $this->new_error_msg("Valor debe de la partida incorrecto. Valor correcto ".$totaliva);
-            $status = FALSE;
-         }
-         else if( $this->haber != 0 AND abs($this->haber - $totaliva) > .01 )
-         {
-            $this->new_error_msg("Valor haber de la partida incorrecto. Valor correcto ".$totaliva);
-            $status = FALSE;
-         }
+         $this->new_error_msg("Valor base imponible de la partida incorrecto. Valor correcto ".$base);
+         $status = FALSE;
       }
       
       return $status;
+   }
+   
+   public function fix()
+   {
+      if($this->iva == 0)
+         $this->baseimponible = 0;
+      else if($this->debe != 0)
+         $this->baseimponible = 100*$this->debe/$this->iva;
+      else
+         $this->baseimponible = 100*$this->haber/$this->iva;
+      
+      return $this->save();
    }
    
    public function save()
@@ -259,7 +286,8 @@ class partida extends fs_model
       if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = ".$this->var2str($this->idpartida).";") )
       {
          $subc = $this->get_subcuenta();
-         $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+         if($subc)
+            $subc->save(); /// guardamos la subcuenta para actualizar su saldo
          return TRUE;
       }
       else
@@ -370,18 +398,6 @@ class partida extends fs_model
       $totales['saldo'] = $totales['debe'] - $totales['haber'];
       
       return $totales;
-   }
-   
-   public function erroneas()
-   {
-      $errolist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE lower(codsubcuenta) ~~ '%factura%';");
-      if( $partidas )
-      {
-         foreach($partidas as $p)
-            $errolist[] = new partida($p);
-      }
-      return $errolist;
    }
 }
 

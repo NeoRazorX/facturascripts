@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,15 +18,15 @@
  */
 
 require_once 'model/agente.php';
-require_once 'model/fs_access.php';
 require_once 'model/ejercicio.php';
+require_once 'model/fs_access.php';
 
 class admin_user extends fs_controller
 {
    public $agente;
    public $ejercicio;
    public $suser;
-
+   
    public function __construct()
    {
       parent::__construct('admin_user', 'Usuario', 'admin', TRUE, FALSE);
@@ -37,6 +37,7 @@ class admin_user extends fs_controller
       $this->ppage = $this->page->get('admin_users');
       $this->agente = new agente();
       $this->ejercicio = new ejercicio();
+      $user_no_more_admin = FALSE;
       
       if( isset($_GET['snick']) )
          $this->suser = $this->user->get($_GET['snick']);
@@ -54,9 +55,27 @@ class admin_user extends fs_controller
                $this->suser->set_password($_POST['spassword']);
             
             if( isset($_POST['scodagente']) )
-               $this->suser->codagente = $_POST['scodagente'];
+            {
+               if($_POST['scodagente'] == '')
+                  $this->suser->codagente = NULL;
+               else
+                  $this->suser->codagente = $_POST['scodagente'];
+            }
             
-            $this->suser->admin = isset($_POST['sadmin']);
+            /*
+             * El propio usuario no puede decidir dejar de ser administrador.
+             */
+            if($this->user->nick != $this->suser->nick)
+            {
+               /*
+                * Si un usuario es administrador y deja de serlo, hay que darle acceso
+                * a algunas páginas, en caso contrario no podrá continuar
+                */
+               if($this->suser->admin AND !isset($_POST['sadmin']))
+                  $user_no_more_admin = TRUE;
+               
+               $this->suser->admin = isset($_POST['sadmin']);
+            }
             
             if( isset($_POST['udpage']) )
                $this->suser->fs_page = $_POST['udpage'];
@@ -68,15 +87,23 @@ class admin_user extends fs_controller
             else
                $this->suser->codejercicio = NULL;
             
-            if( $this->suser->save() )
+            if(FS_DEMO AND $this->user->nick != $this->suser->nick)
+            {
+               $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
+                  Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+               $this->suser = $this->user->get($_GET['snick']);
+            }
+            else if( $this->suser->save() )
             {
                if( !$this->suser->admin )
                {
-                  foreach($this->all() as $p)
+                  foreach($this->all_pages() as $p)
                   {
                      $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name) );
                      
-                     if( !isset($_POST['enabled']) )
+                     if( $user_no_more_admin )
+                        $a->save();
+                     else if( !isset($_POST['enabled']) )
                         $a->delete();
                      else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
                         $a->save();
@@ -97,10 +124,10 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
-   public function all()
+   public function all_pages()
    {
       $returnlist = array();
       foreach($this->menu as $m)

@@ -95,13 +95,19 @@
       <div id="user_list">
          <img id="user_list_img" src="img/flecha_submenu.png" alt="*"/>
          <ul>
-         {loop name="$fsc->user->all()"}
-            {if condition="$value->nick != $fsc->user->nick"}
-               <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+            <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
+            <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
+            <li><hr/></li>
+            {if condition="$demo"}
+            <li><a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a></li>
+            <li><a target="_blank" href="http://code.google.com/p/facturascripts/">Web oficial</a></li>
             {else}
-               <li class='selected'><a hre="#">{$value->nick}</a></li>
+               {loop name="$fsc->user->all()"}
+                  {if condition="$value->nick != $fsc->user->nick"}
+                  <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+                  {/if}
+               {/loop}
             {/if}
-         {/loop}
          </ul>
       </div>
    </div>

@@ -210,8 +210,14 @@
          <h1>Guardar como...</h1>
          <table>
             <tr>
+               <td align="right">Fecha:</td>
+               <td colspan="3">
+                  <input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+               </td>
+            </tr>
+            <tr>
                <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
-               <td colspan="2">
+               <td colspan="3">
                   <select name="cliente">
                      {loop="$fsc->cliente->all_full()"}
                         {if condition="$value->is_default()"}
@@ -225,7 +231,7 @@
             </tr>
             <tr>
                <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
-               <td colspan="2">
+               <td colspan="3">
                   <select name="almacen">
                      {loop="$fsc->almacen->all()"}
                         <option value="{$value->codalmacen}">{$value->nombre}</option>
@@ -234,22 +240,8 @@
                </td>
             </tr>
             <tr>
-               <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
-               <td colspan="2">
-                  <select name="ejercicio">
-                     {loop="$fsc->ejercicio->all_abiertos()"}
-                        {if condition="$value->is_default()"}
-                        <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
-                        {else}
-                        <option value="{$value->codejercicio}">{$value->nombre}</option>
-                        {/if}
-                     {/loop}
-                  </select>
-               </td>
-            </tr>
-            <tr>
                <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
-               <td colspan="2">
+               <td colspan="3">
                   <select name="serie">
                      {loop="$fsc->serie->all()"}
                         {if condition="$value->is_default()"}
@@ -263,7 +255,7 @@
             </tr>
             <tr>
                <td align="right">Forma de pago:</td>
-               <td colspan="2">
+               <td>
                   <select name="forma_pago">
                      {loop="$fsc->forma_pago->all()"}
                         {if condition="$value->is_default()"}
@@ -274,10 +266,8 @@
                      {/loop}
                   </select>
                </td>
-            </tr>
-            <tr>
                <td align="right">Divisa:</td>
-               <td colspan="2">
+               <td>
                   <select name="divisa">
                      {loop="$fsc->divisa->all()"}
                         {if condition="$value->is_default()"}
@@ -290,18 +280,12 @@
                </td>
             </tr>
             <tr>
-               <td align="right">Impresora:</td>
-               <td>
-                  <input type="text" name="impresora" value="{$fsc->impresora}" size="20"/>
-               </td>
-            </tr>
-            <tr>
                <td align="right">Observaciones:</td>
-               <td colspan="2"><textarea name="observaciones" cols="50"></textarea></td>
+               <td colspan="3"><textarea name="observaciones" cols="40" rows="3"></textarea></td>
             </tr>
             <tr>
+               <td align="right">Nº de tickets:</td>
                <td colspan="2">
-                  Nº de tickets:
                   <input type="button" value="-" onclick="more_tickets('-1')"/>
                   <input type="text" id="num_tickets" name="num_tickets" value="1" size="2"/>
                   <input type="button" value="+" onclick="more_tickets('1')"/>

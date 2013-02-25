@@ -118,7 +118,6 @@ div#header_folders a, div#header_user a.button {
    color: white;
    text-transform: capitalize;
    text-decoration: none;
-   font-variant: small-caps;
    font-weight: bold;
 }
 
@@ -239,7 +238,6 @@ div.pages div#user_list ul li a {
    padding-left: 10px;
    padding-right: 10px;
    font-size: 16px;
-   text-transform: capitalize;
 }
 
 div#shadow {
@@ -540,7 +538,6 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    border-bottom-right-radius: 2px 2px;
    color: #333333;
    text-transform: capitalize;
-   font-variant: small-caps;
    font-weight: bold;
    font-size: 16px;
 }

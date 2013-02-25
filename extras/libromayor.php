@@ -35,7 +35,18 @@ class libro_mayor
    public function cron_job()
    {
       foreach($this->subcuenta->all() as $subc)
+      {
+         /// comprobamos si hay que actualizar la subcuenta
+         $totales = $subc->get_totales();
+         if( abs($subc->debe - $totales['debe']) > .001 )
+            $subc->save();
+         else if( abs($subc->haber - $totales['haber']) > .001 )
+            $subc->save();
+         else if( abs($subc->saldo - $totales['saldo']) > .001 )
+            $subc->save();
+         
          $this->libro_mayor($subc);
+      }
    }
    
    private function libro_mayor($subc=FALSE)

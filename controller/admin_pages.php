@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,6 +19,8 @@
 
 class admin_pages extends fs_controller
 {
+   public $paginas;
+   
    public function __construct()
    {
       parent::__construct('admin_pages', 'Páginas', 'admin', TRUE, TRUE);
@@ -26,50 +28,65 @@ class admin_pages extends fs_controller
    
    protected function process()
    {
+      $show_error_demo = TRUE;
+      
       if( isset($_POST['modpages']) )
       {
-         foreach($this->all() as $p)
+         foreach($this->all_pages() as $p)
          {
-            if( !isset($_POST['enabled']) )
+            if( !$p->exists ) /// la está en la base de datos pero ya no existe el controlador
+            {
+               if( $p->delete() )
+                  $this->new_message('Se ha eliminado automáticamnte la página '.$p->name.
+                          ' ya que no tiene un controlador asociado en la carpeta controller.');
+            }
+            else if( !isset($_POST['enabled']) ) /// ninguna página marcada
             {
                if($p->name == $this->page->name)
-                  $this->new_error_msg("No puedes desactivar esta página (".$p->name.")");
-               else
+                  $this->new_error_msg("No puedes desactivar esta página (".$p->name.").");
+               else if( FS_DEMO )
                {
-                  $pag = $this->page->get($p->name);
-                  if($pag)
-                     $pag->delete();
+                  if($show_error_demo)
+                  {
+                     $this->new_error_msg('En el modo <b>demo</b> no se pueden desactivar páginas.');
+                     $show_error_demo = FALSE;
+                  }
                }
+               else if( !$p->delete() )
+                  $this->new_error_msg('Imposible eliminar la página '.$p->name.'.');
             }
-            else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
+            else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) ) /// página no activa marcada para activar
             {
                require_once 'controller/'.$p->name.'.php';
-               $new_fsc = new $p->name();
+               $new_fsc = new $p->name(); /// cargamos el controlador asociado
                $new_fsc->page->save();
                unset($new_fsc);
             }
-            else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) )
+            else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) ) /// págine activa no marcada (desactivar)
             {
                if($p->name == $this->page->name)
-                  $this->new_error_msg("No puedes desactivar esta página");
-               else
+                  $this->new_error_msg("No puedes desactivar esta página.");
+               else if( FS_DEMO )
                {
-                  $pag = $this->page->get($p->name);
-                  if($pag)
-                     $pag->delete();
-                  else
-                     $this->new_error_msg("Error al desactivar la página ".$p->name);
+                  if($show_error_demo)
+                  {
+                     $this->new_error_msg('En el modo <b>demo</b> no se pueden desactivar páginas.');
+                     $show_error_demo = FALSE;
+                  }
                }
+               else if( !$p->delete() )
+                  $this->new_error_msg('Imposible eliminar la página '.$p->name.'.');
             }
          }
          
          $this->new_message('Datos guardados correctamente.');
       }
       
+      $this->paginas = $this->all_pages();
       $this->load_menu(TRUE);
    }
-
-   public function all()
+   
+   private function all_pages()
    {
       $pages = array();
       
@@ -113,7 +130,7 @@ class admin_pages extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
 }
 

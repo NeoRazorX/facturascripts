@@ -205,6 +205,12 @@
             <h1>Opciones</h1>
             <table>
                <tr>
+                  <td align="right">Fecha:</td>
+                  <td>
+                     <input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+                  </td>
+               </tr>
+               <tr>
                   <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
                   <td>
                      <select name="cliente">
@@ -224,20 +230,6 @@
                      <select name="almacen">
                         {loop="$fsc->almacen->all()"}
                         <option value="{$value->codalmacen}">{$value->nombre}</option>
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-               <tr>
-                  <td align="right"><a href="{$fsc->ejercicio->url()}">Ejercicio</a>:</td>
-                  <td>
-                     <select name="ejercicio">
-                        {loop="$fsc->ejercicio->all_abiertos()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
-                           {else}
-                           <option value="{$value->codejercicio}">{$value->nombre}</option>
-                           {/if}
                         {/loop}
                      </select>
                   </td>
@@ -283,10 +275,6 @@
                         {/loop}
                      </select>
                   </td>
-               </tr>
-               <tr>
-                  <td align="right">Impresora: </td>
-                  <td><input type="text" name="impresora" value="{$fsc->impresora}" size="12"/></td>
                </tr>
             </table>
          </div>

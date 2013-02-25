@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,23 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/caja.php';
 require_once 'model/agente.php';
 
 class admin_agente extends fs_controller
 {
    public $agente;
+   public $caja;
    public $listado;
    public $listar;
    public $offset;
    
+   /*
+    * Esta página está en la carpeta admin, pero no se necesita ser admin para usarla.
+    * Está en la carpeta admin porque su antecesora también lo está (y debe estarlo).
+    */
    public function __construct()
    {
-      parent::__construct('admin_agente', 'Agente', 'admin', TRUE, FALSE);
+      parent::__construct('admin_agente', 'Agente', 'admin', FALSE, FALSE);
    }
    
    protected function process()
    {
       $this->ppage = $this->page->get('admin_agentes');
+      $this->caja = new caja();
       
       if( isset($_GET['cod']) )
       {
@@ -47,20 +54,26 @@ class admin_agente extends fs_controller
       {
          if( isset($_POST['nombre']) )
          {
-            $this->agente->nombre = $_POST['nombre'];
-            $this->agente->apellidos = $_POST['apellidos'];
-            $this->agente->dnicif = $_POST['dnicif'];
-            $this->agente->email = $_POST['email'];
-            $this->agente->telefono = $_POST['telefono'];
-            if( $this->agente->save() )
-               $this->new_message("Datos del agente guardados correctamente.");
+            if( $this->user_can_edit() )
+            {
+               $this->agente->nombre = $_POST['nombre'];
+               $this->agente->apellidos = $_POST['apellidos'];
+               $this->agente->dnicif = $_POST['dnicif'];
+               $this->agente->email = $_POST['email'];
+               $this->agente->telefono = $_POST['telefono'];
+               if( $this->agente->save() )
+                  $this->new_message("Datos del agente guardados correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible guardar los datos del agente!");
+            }
             else
-               $this->new_error_msg("¡Imposible guardar los datos del agente!");
+               $this->new_error_msg('No tienes permiso para modificar estos datos.');
          }
          
          $this->page->title .= ' ' . $this->agente->codagente;
-         $this->buttons[] = new fs_button('b_delete_agente', 'eliminar',
-                 $this->ppage->url().'&delete='.$this->agente->codagente, 'remove', 'img/remove.png');
+         
+         if($this->user->codagente != $this->agente->codagente)
+            $this->buttons[] = new fs_button('b_delete_agente', 'eliminar', '#', 'remove', 'img/remove.png');
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
@@ -72,15 +85,45 @@ class admin_agente extends fs_controller
          {
             if($_GET['listar'] == 'albaranes_prov')
                $this->listar = 'albaranes_prov';
+            else if($_GET['listar'] == 'caja')
+               $this->listar = 'caja';
          }
          
-         if($this->listar == 'albaranes_prov')
-            $this->listado = $this->agente->get_albaranes_prov($this->offset);
-         else
-            $this->listado = $this->agente->get_albaranes_cli($this->offset);
+         switch($this->listar)
+         {
+            default:
+               $this->listado = $this->caja->all_by_agente($this->agente->codagente, $this->offset);
+               break;
+            
+            case 'albaranes_cli':
+               $this->listado = $this->agente->get_albaranes_cli($this->offset);
+               break;
+            
+            case 'albaranes_prov':
+               $this->listado = $this->agente->get_albaranes_prov($this->offset);
+               break;
+            
+         }
       }
       else
          $this->new_error_msg("Agente no encontrado.");
+   }
+   
+   private function user_can_edit()
+   {
+      if( FS_DEMO AND $this->user->codagente == $this->agente->codagente )
+         return TRUE;
+      else if( $this->user->admin )
+         return TRUE;
+      else if($this->user->codagente == $this->agente->codagente)
+         return TRUE;
+      else
+         FALSE;
+   }
+   
+   public function version()
+   {
+      return parent::version().'-5';
    }
    
    public function url()

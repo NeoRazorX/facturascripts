@@ -20,6 +20,7 @@
 require_once 'model/albaran_proveedor.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
+require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
@@ -32,6 +33,7 @@ class general_albaran_prov extends fs_controller
 {
    public $agente;
    public $albaran;
+   public $ejercicio;
    public $familia;
    public $impuesto;
    public $nuevo_albaran_url;
@@ -44,6 +46,7 @@ class general_albaran_prov extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_albaranes_prov');
+      $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
       
@@ -95,7 +98,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-11';
+      return parent::version().'-12';
    }
    
    public function url()
@@ -112,8 +115,14 @@ class general_albaran_prov extends fs_controller
       $serie = $serie->get($this->albaran->codserie);
       
       $this->albaran->numproveedor = $_POST['numproveedor'];
-      $this->albaran->fecha = $_POST['fecha'];
       $this->albaran->observaciones = $_POST['observaciones'];
+      
+      /// obtenemos los datos del ejercicio para acotar la fecha
+      $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
+      if($eje0)
+         $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+      else
+         $this->new_error_msg('No se encuentra el ejercicio asociado al albarán.');
       
       if( isset($_POST['lineas']) AND $this->albaran->ptefactura )
       {

@@ -23,6 +23,7 @@ require_once 'model/cliente.php';
 require_once 'model/cuenta.php';
 require_once 'model/ejercicio.php';
 require_once 'model/epigrafe.php';
+require_once 'model/partida.php';
 require_once 'model/proveedor.php';
 require_once 'model/subcuenta.php';
 
@@ -81,8 +82,12 @@ class contabilidad_ejercicio extends fs_controller
             $this->buttons[] = new fs_button('b_exportar', 'exportar',
                     $this->url().'&export=TRUE', '', 'img/tools.png', '*', TRUE);
             
-            $asiento = new asiento();
+            if( isset($_GET['cerrar']) )
+               $this->cerrar_ejercicio();
+            else
+               $this->ejercicio->full_test();
             
+            $asiento = new asiento();
             $this->asiento_apertura_url = FALSE;
             if( $this->ejercicio->idasientoapertura )
             {
@@ -90,7 +95,6 @@ class contabilidad_ejercicio extends fs_controller
                if($asiento_a)
                   $this->asiento_apertura_url = $asiento_a->url();
             }
-            
             $this->asiento_cierre_url = FALSE;
             if( $this->ejercicio->idasientocierre )
             {
@@ -98,7 +102,6 @@ class contabilidad_ejercicio extends fs_controller
                if($asiento_c)
                   $this->asiento_cierre_url = $asiento_c->url();
             }
-            
             $this->asiento_pyg_url = FALSE;
             if( $this->ejercicio->idasientopyg )
             {
@@ -156,7 +159,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()
@@ -517,6 +520,158 @@ class contabilidad_ejercicio extends fs_controller
          }
          else
             $this->new_error("Imposible leer el archivo.");
+      }
+   }
+   
+   private function cerrar_ejercicio()
+   {
+      $this->new_message('Cerrando ejercicio...');
+      $asiento = new asiento();
+      
+      $continuar = TRUE;
+      
+      if( isset($this->ejercicio->idasientocierre) )
+      {
+         $asc = $asiento->get( $this->ejercicio->idasientocierre );
+         if( $asc )
+         {
+            if( !$asc->delete() )
+            {
+               $this->new_error_msg('Imposible eliminar el asiento de cierre.');
+               $continuar = FALSE;
+            }
+         }
+         else
+            $this->ejercicio->save(); /// al guardar ya comprueba los asientos especiales
+      }
+      
+      if( isset($this->ejercicio->idasientopyg) )
+      {
+         $aspyg = $asiento->get( $this->ejercicio->idasientopyg );
+         if( $aspyg )
+         {
+            if( !$aspyg->delete() )
+            {
+               $this->new_error_msg('Imposible eliminar el asiento de pérdidas y ganancias.');
+               $continuar = FALSE;
+            }
+         }
+         else
+            $this->ejercicio->save(); /// al guardar ya comprueba los asientos especiales
+      }
+      
+      $siguiente_ejercicio = $this->ejercicio->get_by_fecha( Date('d-m-Y', strtotime($this->ejercicio->fechafin)+24*3600) );
+      
+      if( isset($siguiente_ejercicio->idasientoapertura) )
+      {
+         $asap = $asiento->get( $siguiente_ejercicio->idasientoapertura );
+         if( $asap )
+         {
+            if( !$asap->delete() )
+            {
+               $this->new_error_msg('Imposible eliminar el asiento de apertura.');
+               $continuar = FALSE;
+            }
+         }
+         else
+            $this->ejercicio->save(); /// al guardar ya comprueba los asientos especiales
+      }
+      
+      if( $continuar )
+      {
+         $asiento_cierre = new asiento();
+         $asiento_cierre->codejercicio = $this->ejercicio->codejercicio;
+         $asiento_cierre->concepto = 'Asiento de cierre del ejercicio '.$this->ejercicio->nombre;
+         $asiento_cierre->editable = FALSE;
+         $asiento_cierre->fecha = $this->ejercicio->fechafin;
+         if( !$asiento_cierre->save() )
+            $continuar = FALSE;
+      }
+      
+      if( $continuar )
+      {
+         
+         $asiento_apertura = new asiento();
+         $asiento_apertura->codejercicio = $siguiente_ejercicio->codejercicio;
+         $asiento_apertura->concepto = 'Asiento de apertura del ejercicio '.$siguiente_ejercicio->nombre;
+         $asiento_apertura->editable = FALSE;
+         $asiento_apertura->fecha = $siguiente_ejercicio->fechainicio;
+         if( !$asiento_apertura->save() )
+            $continuar = FALSE;
+      }
+      
+      if( $continuar )
+      {
+         $subcuenta = new subcuenta();
+         foreach($subcuenta->all_from_ejercicio( $this->ejercicio->codejercicio ) as $sc)
+         {
+            if($sc->saldo != 0)
+            {
+               $pac = new partida();
+               $pac->idasiento = $asiento_cierre->idasiento;
+               $pac->concepto = $asiento_cierre->concepto;
+               $pac->idsubcuenta = $sc->idsubcuenta;
+               $pac->codsubcuenta = $sc->codsubcuenta;
+               
+               if($sc->saldo < 0)
+                  $pac->debe = abs($sc->saldo);
+               else
+                  $pac->haber = $sc->saldo;
+               
+               $pac->coddivisa = $sc->coddivisa;
+               if( !$pac->save() )
+                  $continuar = FALSE;
+               
+               $nsc = $subcuenta->get_by_codigo($sc->codsubcuenta, $siguiente_ejercicio->codejercicio, TRUE);
+               if( $nsc )
+               {
+                  $paa = new partida();
+                  $paa->idasiento = $asiento_apertura->idasiento;
+                  $paa->concepto = $asiento_apertura->concepto;
+                  $paa->idsubcuenta = $nsc->idsubcuenta;
+                  $paa->codsubcuenta = $nsc->codsubcuenta;
+                  
+                  if($sc->saldo > 0)
+                     $paa->debe = $sc->saldo;
+                  else
+                     $paa->haber = abs($sc->saldo);
+                  
+                  $paa->coddivisa = $nsc->coddivisa;
+                  if( !$paa->save() )
+                     $continuar = FALSE;
+               }
+               else
+                  $continuar = FALSE;
+            }
+         }
+         
+         if( $continuar )
+         {
+            $this->ejercicio->estado = 'CERRADO';
+            $this->ejercicio->idasientocierre = $asiento_cierre->idasiento;
+            if( $this->ejercicio->save() )
+               $this->new_message('Ejercicio cerrado correctamente.');
+            else
+               $this->new_error_msg('Error al cerrar el ejercicio.');
+            
+            $siguiente_ejercicio->idasientoapertura = $asiento_apertura->idasiento;
+            if( !$siguiente_ejercicio->save() )
+               $this->new_error_msg('Error al modificar el siguiente ejercicio.');
+         }
+         else
+         {
+            $this->new_error_msg('Error al generar los asientos.');
+            
+            if( $asiento_cierre->delete() )
+               $this->new_message('Asiento de cierre eliminado.');
+            else
+               $this->new_error_msg('Imposible eliminar el asiento de cierre.');
+            
+            if( $asiento_apertura->delete() )
+               $this->new_message('Asiento de apertura eliminado.');
+            else
+               $this->new_error_msg('Imposible eliminar el asiento de apertura.');
+         }
       }
    }
 }

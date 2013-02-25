@@ -11,6 +11,10 @@
 {/if}
 
 <script type="text/javascript">
+   function cerrar_ejercicio()
+   {
+      location.href = '{$fsc->url()}&cerrar=TRUE';
+   }
    $(document).ready(function() {
       $("#b_importar").click(function(event) {
          event.preventDefault();
@@ -68,7 +72,7 @@
             </td>
             <td>
                <select name="estado">
-               {if condition="$fsc->ejercicio->estado == 'ABIERTO'"}
+               {if condition="$fsc->ejercicio->abierto()"}
                   <option value="ABIERTO" selected="selected">ABIERTO</option>
                   <option value="CERRADO">CERRADO</option>
                {else}
@@ -76,6 +80,9 @@
                   <option value="CERRADO" selected="selected">CERRADO</option>
                {/if}
                </select>
+               {if condition="$fsc->ejercicio->abierto()"}
+               <input type="button" value="cerrar" onclick="cerrar_ejercicio()"/>
+               {/if}
             </td>
          </tr>
       </table>

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -172,6 +172,19 @@ class caja extends fs_model
    {
       $cajalist = array();
       $cajas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY id DESC", $limit, $offset);
+      if($cajas)
+      {
+         foreach($cajas as $c)
+            $cajalist[] = new caja($c);
+      }
+      return $cajalist;
+   }
+   
+   public function all_by_agente($codagente, $offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $cajalist = array();
+      $cajas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codagente = ".
+              $this->var2str($codagente)." ORDER BY id DESC", $limit, $offset);
       if($cajas)
       {
          foreach($cajas as $c)

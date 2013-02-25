@@ -133,6 +133,12 @@ class subcuenta extends fs_model
       return $part->full_from_subcuenta($this->idsubcuenta);
    }
    
+   public function get_totales()
+   {
+      $part = new partida();
+      return $part->totales_from_subcuenta( $this->idsubcuenta );
+   }
+   
    public function get($id)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
@@ -142,12 +148,55 @@ class subcuenta extends fs_model
          return FALSE;
    }
    
-   public function get_by_codigo($cod, $ejercicio)
+   public function get_by_codigo($cod, $ejercicio, $crear=FALSE)
    {
       $subc = $this->db->select("SELECT * FROM ".$this->table_name."
          WHERE codsubcuenta = ".$this->var2str($cod)." AND codejercicio = ".$this->var2str($ejercicio).";");
       if($subc)
          return new subcuenta($subc[0]);
+      else if($crear)
+      {
+         /// buscamos la subcuenta equivalente en otro ejercicio
+         $subc = $this->db->select("SELECT * FROM ".$this->table_name."
+            WHERE codsubcuenta = ".$this->var2str($cod).";");
+         if($subc)
+         {
+            $old_sc = new subcuenta($subc[0]);
+            
+            /// buscamos la cuenta equivalente es ESTE ejercicio
+            $cuenta = new cuenta();
+            $new_c = $cuenta->get_by_codigo($old_sc->codcuenta, $ejercicio);
+            if($new_c)
+            {
+               $new_sc = new subcuenta();
+               $new_sc->codcuenta = $new_c->codcuenta;
+               $new_sc->coddivisa = $old_sc->coddivisa;
+               $new_sc->codejercicio = $ejercicio;
+               $new_sc->codimpuesto = $old_sc->codimpuesto;
+               $new_sc->codsubcuenta = $old_sc->codsubcuenta;
+               $new_sc->descripcion = $old_sc->descripcion;
+               $new_sc->idcuenta = $new_c->idcuenta;
+               $new_sc->iva = $old_sc->iva;
+               $new_sc->recargo = $old_sc->recargo;
+               if( $new_sc->save() )
+                  return $new_sc;
+               else
+                  return FALSE;
+            }
+            else
+            {
+               $this->new_error_msg('No se ha encontrado la cuenta equivalente a '.
+                       $old_sc->codcuenta.' en el ejercicio '.$ejercicio.'.');
+               return FALSE;
+            }
+         }
+         else
+         {
+            $this->new_error_msg('No se ha encontrado ninguna subcuenta equivalente a '.
+                    $cod.' para copiar.');
+            return FALSE;
+         }
+      }
       else
          return FALSE;
    }
@@ -163,33 +212,14 @@ class subcuenta extends fs_model
    
    public function test()
    {
-      $status = TRUE;
-      
       $this->descripcion = $this->no_html($this->descripcion);
       
-      $partida = new partida();
-      $totales = $partida->totales_from_subcuenta( $this->idsubcuenta );
+      $totales = $this->get_totales();
       $this->debe = $totales['debe'];
       $this->haber = $totales['haber'];
       $this->saldo = $totales['saldo'];
       
-      if( abs($this->debe - $totales['debe']) > .01 )
-      {
-         $this->new_error_msg("Valor debe de la subcuenta incorrecto. Valor correcto: ".$totales['debe']);
-         $status = FALSE;
-      }
-      else if( abs($this->haber - $totales['haber']) > .01 )
-      {
-         $this->new_error_msg("Valor haber de la subcuenta incorrecto. Valor correcto: ".$totales['haber']);
-         $status = FALSE;
-      }
-      else if( abs($this->saldo - $totales['saldo']) > .01 )
-      {
-         $this->new_error_msg("Valor saldo de la subcuenta incorrecto. Valor correcto: ".$totales['saldo']);
-         $status = FALSE;
-      }
-      
-      return $status;
+      return TRUE;
    }
    
    public function save()

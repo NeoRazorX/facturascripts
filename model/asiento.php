@@ -89,35 +89,51 @@ class asiento extends fs_model
          return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
-   public function factura_url()
+   public function get_factura()
    {
       if($this->tipodocumento == 'Factura de cliente')
       {
          $fac = new factura_cliente();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
-            return $fac->url();
-         else
-            return '';
+         return $fac->get_by_codigo($this->documento);
       }
       else if($this->tipodocumento == 'Factura de proveedor')
       {
          $fac = new factura_proveedor();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
-            return $fac->url();
-         else
-            return '';
+         return $fac->get_by_codigo($this->documento);
       }
       else
-         return '';
+         return FALSE;
    }
-
+   
+   public function factura_url()
+   {
+      $fac = $this->get_factura();
+      if($fac)
+         return $fac->url();
+      else
+         return '#';
+   }
+   
+   public function ejercicio_url()
+   {
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($this->codejercicio);
+      if($eje0)
+         return $eje0->url();
+      else
+         return '#';
+   }
+   
    public function get($id)
    {
-      $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($id).";");
-      if($asiento)
-         return new asiento($asiento[0]);
+      if( isset($id) )
+      {
+         $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($id).";");
+         if($asiento)
+            return new asiento($asiento[0]);
+         else
+            return FALSE;
+      }
       else
          return FALSE;
    }
@@ -179,12 +195,151 @@ class asiento extends fs_model
       $this->concepto = $this->no_html($this->concepto);
       $this->documento = $this->no_html($this->documento);
       
-      if( strlen($this->concepto) < 1 OR strlen($this->concepto) > 255 )
-         $this->new_error_msg("Concepto del asiento no válido.");
+      if( strlen($this->concepto) > 255 )
+         $this->new_error_msg("Concepto del asiento demasiado largo.");
       else
          $status = TRUE;
       
       return $status;
+   }
+   
+   public function full_test()
+   {
+      $status = TRUE;
+      
+      $debe = 0;
+      $haber = 0;
+      $partidas = $this->get_partidas();
+      if($partidas)
+      {
+         foreach($partidas as $p)
+         {
+            if( !$p->test() )
+               $status = FALSE;
+            
+            $debe += $p->debe;
+            $haber += $p->haber;
+         }
+      }
+      else
+      {
+         $this->new_error_msg('Asiento vacío.');
+         $status = FALSE;
+      }
+      
+      $total = $debe - $haber;
+      $importe = max( array($debe, $haber) );
+      if( abs($total) > .001 )
+      {
+         $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
+         $status = FALSE;
+      }
+      else if( abs($this->importe - $importe) > .01 )
+      {
+         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
+         $status = FALSE;
+      }
+      
+      /// comprobamos la factura asociada
+      $fac = $this->get_factura();
+      if($fac)
+      {
+         if($fac->idasiento != $this->idasiento)
+         {
+            $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
+            $status = FALSE;
+         }
+      }
+      
+      return $status;
+   }
+   
+   public function fix()
+   {
+      $debe = 0;
+      $haber = 0;
+      foreach($this->get_partidas() as $p)
+      {
+         $p->fix();
+         $debe += $p->debe;
+         $haber += $p->haber;
+      }
+      $total = $debe - $haber;
+      $this->importe = max( array($debe, $haber) );
+      
+      /// corregimos descuadres de menos de 0.01
+      if( abs($total) > .001 AND abs($total) < .01 )
+      {
+         $debe = 0;
+         $haber = 0;
+         $partidas = $this->get_partidas();
+         foreach($partidas as $p)
+         {
+            $p->debe = round($p->debe, 2);
+            $debe += $p->debe;
+            $p->haber = round($p->haber, 2);
+            $haber += $p->haber;
+         }
+         /// si con el redondeo se soluciona el problema, pues genial!
+         if( abs($debe - $haber) <= .001 )
+         {
+            $this->importe = max( array($debe, $haber) );
+            foreach($partidas as $p)
+               $p->save();
+         }
+         else
+         {
+            /// si no ha funcionado, intentamos arreglarlo
+            $total = 0;
+            $partidas = $this->get_partidas();
+            foreach($partidas as $p)
+               $total += ($p->debe - $p->haber);
+            
+            if($partidas[0]->debe != 0)
+               $partidas[0]->debe = ($partidas[0]->debe - $total);
+            else if($partidas[0]->haber != 0)
+               $partidas[0]->haber += $total;
+            
+            $debe = 0;
+            $haber = 0;
+            foreach($partidas as $p)
+            {
+               $debe += $p->debe;
+               $haber += $p->haber;
+            }
+            
+            /// si hemos resuelto el problema grabamos
+            if( abs($debe - $haber) <= .001 )
+            {
+               $this->importe = max( array($debe, $haber) );
+               foreach($partidas as $p)
+                  $p->save();
+            }
+         }
+      }
+      
+      if( $this->save() )
+      {
+         $status = TRUE;
+         
+         /// comprobamos la factura asociada
+         $fac = $this->get_factura();
+         if($fac)
+         {
+            if( is_null($fac->idasiento) )
+            {
+               $fac->idasiento = $this->idasiento;
+               $status = $fac->save();
+            }
+         }
+         
+         if($status)
+            return $this->full_test();
+         else
+            return FALSE;
+      }
+      else
+         return FALSE;
    }
    
    public function save()
@@ -221,22 +376,11 @@ class asiento extends fs_model
    
    public function delete()
    {
-      if($this->tipodocumento == 'Factura de cliente')
+      /// desvinculamos la factura
+      $fac = $this->get_factura();
+      if($fac)
       {
-         $fac = new factura_cliente();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
-         {
-            $fac->editable = TRUE;
-            $fac->idasiento = NULL;
-            $fac->save();
-         }
-      }
-      else if($this->tipodocumento == 'Factura de proveedor')
-      {
-         $fac = new factura_proveedor();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
+         if($fac->idasiento == $this->idasiento)
          {
             $fac->idasiento = NULL;
             $fac->save();
@@ -246,64 +390,6 @@ class asiento extends fs_model
       foreach($this->get_partidas() as $p)
          $p->delete();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
-   }
-   
-   public function full_test()
-   {
-      $status = TRUE;
-      $debe = 0;
-      $haber = 0;
-      foreach($this->get_partidas() as $p)
-      {
-         if( !$p->test() )
-            $status = FALSE;
-         
-         $debe += $p->debe;
-         $haber += $p->haber;
-      }
-      
-      $importe = max( array($debe, $haber) );
-      $total = $debe - $haber;
-      if( abs($total) > .01 )
-      {
-         $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
-         $status = FALSE;
-      }
-      else if( abs($this->importe - $importe) > .01 )
-      {
-         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
-         $status = FALSE;
-      }
-      
-      /// comprobamos la factura asociada
-      if($this->tipodocumento == 'Factura de cliente')
-      {
-         $fac = new factura_cliente();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
-         {
-            if($fac->idasiento != $this->idasiento)
-            {
-               $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
-               $status = FALSE;
-            }
-         }
-      }
-      else if($this->tipodocumento == 'Factura de proveedor')
-      {
-         $fac = new factura_proveedor();
-         $fac = $fac->get_by_codigo($this->documento);
-         if($fac)
-         {
-            if($fac->idasiento != $this->idasiento)
-            {
-               $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
-               $status = FALSE;
-            }
-         }
-      }
-      
-      return $status;
    }
    
    public function search($query, $offset=0)
@@ -330,10 +416,11 @@ class asiento extends fs_model
       return $alist;
    }
    
-   public function all($offset=0)
+   public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $alist = array();
-      $asientos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      $asientos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " ORDER BY fecha DESC", $limit, $offset);
       if($asientos)
       {
          foreach($asientos as $a)
@@ -344,20 +431,17 @@ class asiento extends fs_model
    
    public function descuadrados()
    {
-      /// creamos un objeto partida para asegurarnos de que existe la tabla co_partidas
-      $partida = new partida();
-      
       $alist = array();
-      $descuadrados = $this->db->select("SELECT p.idasiento,a.numero,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
+      $asientos = $this->db->select("SELECT p.idasiento,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
          FROM co_partidas p, co_asientos a
-         WHERE p.idasiento = a.idasiento
-         GROUP BY p.idasiento,a.numero
-         HAVING (SUM(p.haber) - SUM(p.debe) > 0.01)
-         ORDER BY p.idasiento ASC;");
-      if( $descuadrados )
+          WHERE p.idasiento = a.idasiento
+           GROUP BY p.idasiento
+            HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
+             ORDER BY p.idasiento DESC;");
+      if($asientos)
       {
-         foreach($descuadrados as $d)
-            $alist[] = $this->get($d['idasiento']);
+         foreach($asientos as $a)
+            $alist[] = $this->get($a['idasiento']);
       }
       return $alist;
    }

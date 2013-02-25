@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/fs_user.php';
 require_once 'model/agente.php';
+require_once 'model/fs_user.php';
 
 class admin_users extends fs_controller
 {
@@ -47,8 +47,13 @@ class admin_users extends fs_controller
             {
                if( isset($_POST['nadmin']) )
                   $nu->admin = TRUE;
+               
                if( isset($_POST['ncodagente']) )
-                  $nu->codagente = $_POST['ncodagente'];
+               {
+                  if($_POST['ncodagente'] != '')
+                     $nu->codagente = $_POST['ncodagente'];
+               }
+               
                if( $nu->save() )
                   Header('location: index.php?page=admin_user&snick=' . $nu->nick);
                else
@@ -61,7 +66,12 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_GET['delete']);
          if( $nu )
          {
-            if( $nu->delete() )
+            if( FS_DEMO )
+            {
+               $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
+                  Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+            }
+            else if( $nu->delete() )
                $this->new_message("Usuario ".$nu->nick." eliminado correctamente.");
             else
                $this->new_error_msg("¡Imposible eliminar al usuario!");
@@ -73,7 +83,7 @@ class admin_users extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
 }
 

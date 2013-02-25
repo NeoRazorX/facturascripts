@@ -7,4 +7,5 @@ Disallow: /extras/
 Disallow: /model/
 Disallow: /nbproject/
 Disallow: /raintpl/
+Disallow: /tmp/
 Disallow: /view/

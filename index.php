@@ -19,7 +19,15 @@
 
 date_default_timezone_set('Europe/Madrid');
 
+/// cargamos las constantes de configuración
 require_once 'config.php';
+if( !defined('FS_DEMO') )
+   define('FS_DEMO', FALSE);
+if( !defined('FS_PRINTER') )
+   define('FS_PRINTER', '');
+if( !defined('FS_LCD') )
+   define('FS_LCD', '');
+
 require_once 'base/fs_controller.php';
 require_once 'raintpl/rain.tpl.class.php';
 

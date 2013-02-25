@@ -118,7 +118,7 @@
                   <th align="left">Fecha</th>
                   <th>Albarán</th>
                   <th align="right">PVP</th>
-                  <th align="right">Dto.</th>
+                  <th align="right">dto.</th>
                   <th align="right">Total+IVA</th>
                </tr>
                {loop="$fsc->ultimas_compras"}
@@ -126,17 +126,17 @@
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_pvp()} €
                      </a>
                   </td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_dto()} %
                      </a>
                   </td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_total_iva2()} €
                      </a>
                   </td>
@@ -157,25 +157,25 @@
                   <th align="left">Fecha</th>
                   <th>Albarán</th>
                   <th align="right">PVP</th>
-                  <th align="right">Dto.</th>
-                  <th align="right">TOTAL+IVA</th>
+                  <th align="right">dto.</th>
+                  <th align="right">Total+IVA</th>
                </tr>
                {loop="$fsc->ultimas_ventas"}
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_pvp()} €
                      </a>
                   </td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_dto()} %
                      </a>
                   </td>
                   <td align="right">
-                     <a class="hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+                     <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                         {$value->show_total_iva2()} €
                      </a>
                   </td>

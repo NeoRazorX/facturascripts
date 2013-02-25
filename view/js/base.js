@@ -266,13 +266,13 @@ $(document).ready(function() {
          else
          {
             $('#user_list_img').css({
-               'padding-right': ( $("#b_user_list").outerWidth()/2 ) - 10
+               'padding-right': ( $("#b_user_list").outerWidth()/2 ) + 30
             });
             $('#user_list').css({
                display: 'inline-block',
                position: 'absolute',
                'text-align': 'right',
-               right: $(window).width() - $("#b_user_list").position().left - $("#b_user_list").outerWidth() - 5,
+               right: 15,
                top: $("#b_user_list").position().top+25
             });
          }

@@ -36,9 +36,13 @@
             <th>en menú</th>
             <th>existe</th>
          </tr>
-         {loop="$fsc->all()"}
+         {loop="$fsc->paginas"}
          <tr>
+            {if condition="$value->exists"}
             <td>
+            {else}
+            <td class="locked">
+            {/if}
                {if condition="$value->enabled"}
                <input type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
                {else}

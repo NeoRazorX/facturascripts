@@ -35,7 +35,9 @@
       <h1>
          Código: {$value->codpais}
          <span>
+            {if condition="$counter>0"}
             <a class="remove" href="{$fsc->url()}&amp;delete={$value->codpais}">eliminar</a>
+            {/if}
             &nbsp;
             <input type="submit" value="guardar"/>
          </span>

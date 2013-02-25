@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_printer.php';
 require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/almacen.php';
@@ -41,7 +42,6 @@ class tpv_recambios extends fs_controller
    public $equivalentes;
    public $familia;
    public $forma_pago;
-   public $impresora;
    public $results;
    public $serie;
    public $tarifas;
@@ -50,7 +50,7 @@ class tpv_recambios extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('tpv_recambios', 'TPV recambios', 'TPV', FALSE, TRUE);
+      parent::__construct('tpv_recambios', 'Genérico', 'TPV', FALSE, TRUE);
    }
    
    protected function process()
@@ -59,7 +59,20 @@ class tpv_recambios extends fs_controller
       $this->familia = new familia();
       $this->results = array();
       
-      if( $this->query != '' )
+      if( isset($_POST['saldo']) )
+      {
+         $this->template = FALSE;
+         
+         if(FS_LCD != '')
+         {
+            $fpt = new fs_printer(FS_LCD);
+            $fpt->add('                    ');
+            $fpt->add('TOTAL               ');
+            $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20) );
+            $fpt->imprimir();
+         }
+      }
+      else if( $this->query != '' )
          $this->new_search();
       else if( isset($_POST['referencia4precios']) )
          $this->get_precios_articulo();
@@ -73,15 +86,6 @@ class tpv_recambios extends fs_controller
          $this->ejercicio = new ejercicio();
          $this->forma_pago = new forma_pago();
          $this->serie = new serie();
-         
-         /// seleccionamos impresora de tickets
-         if( isset($_POST['impresora']) )
-         {
-            $this->impresora = $_POST['impresora'];
-            setcookie('impresora', $this->impresora, time()+FS_COOKIES_EXPIRE);
-         }
-         else if( isset($_COOKIE['impresora']) )
-            $this->impresora = $_COOKIE['impresora'];
          
          if( $this->agente )
          {
@@ -122,11 +126,8 @@ class tpv_recambios extends fs_controller
             }
             else
             {
-               if($this->impresora)
-                  $imp = " -d ".$this->impresora;
-               else
-                  $imp = "";
-               shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
+               $fpt = new fs_printer(FS_PRINTER);
+               $fpt->abrir_cajon();
             }
          }
          else
@@ -136,7 +137,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    private function new_search()
@@ -157,16 +158,13 @@ class tpv_recambios extends fs_controller
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/tpv_recambios_precios';
       
-      if( isset($_POST['referencia4precios']) )
+      $this->articulo = $this->articulo->get($_POST['referencia4precios']);
+      if( $this->articulo )
       {
-         $this->articulo = $this->articulo->get($_POST['referencia4precios']);
-         if( $this->articulo )
-         {
-            $this->tarifas = $this->articulo->get_tarifas();
-            $this->equivalentes = $this->articulo->get_equivalentes();
-            $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 6);
-            $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 6);
-         }
+         $this->tarifas = $this->articulo->get_tarifas();
+         $this->equivalentes = $this->articulo->get_equivalentes();
+         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 6);
+         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 6);
       }
    }
    
@@ -189,7 +187,7 @@ class tpv_recambios extends fs_controller
       else
          $continuar = FALSE;
       
-      $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
+      $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
@@ -216,6 +214,7 @@ class tpv_recambios extends fs_controller
       if( $continuar )
       {
          $albaran = new albaran_cliente();
+         $albaran->fecha = $_POST['fecha'];
          $albaran->codcliente = $cliente->codcliente;
          $albaran->cifnif = $cliente->cifnif;
          $albaran->nombrecliente = $cliente->nombre;
@@ -288,9 +287,8 @@ class tpv_recambios extends fs_controller
                            $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
                            
                            $albaran->neto += $linea->pvptotal;
-                           $albaran->totaliva += ($linea->iva * $linea->pvptotal / 100);
+                           $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                            $albaran->total = ($albaran->neto + $albaran->totaliva);
-                           $albaran->totaleuros = ($albaran->neto + $albaran->totaliva);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
@@ -326,60 +324,29 @@ class tpv_recambios extends fs_controller
       $this->caja->fecha_fin = Date('Y-n-j H:i:s');
       if( $this->caja->save() )
       {
-         /// abrimos el archivo temporal
-         $file = fopen("/tmp/ticket.txt", "w");
-         if($file)
-         {
-            $linea = "\n".chr(27).chr(33).chr(56)."CIERRE DE CAJA:".chr(27).chr(33).chr(1)."\n"; /// letras grandes
-            fwrite($file, $linea);
-            $linea = "Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n";
-            fwrite($file, $linea);
-            $linea = "Caja: ".$this->caja->fs_id."\n";
-            fwrite($file, $linea);
-            $linea = "Fecha inicial: ".$this->caja->fecha_inicial."\n";
-            fwrite($file, $linea);
-            $linea = "Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n";
-            fwrite($file, $linea);
-            $linea = "Fecha fin: ".$this->caja->show_fecha_fin()."\n";
-            fwrite($file, $linea);
-            $linea = "Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n";
-            fwrite($file, $linea);
-            $linea = "Diferencia: ".$this->caja->show_diferencia()." Eur.\n";
-            fwrite($file, $linea);
-            $linea = "Tickets: ".$this->caja->tickets."\n\n";
-            fwrite($file, $linea);
-            $linea = "Dinero pesado:\n\n\n";
-            fwrite($file, $linea);
-            $linea = "Observaciones:\n\n\n\n";
-            fwrite($file, $linea);
-            $linea = "Firma:\n\n\n\n\n\n\n";
-            fwrite($file, $linea);
-            
-            /// encabezado común para los tickets
-            $linea = chr(27).chr(33).chr(56).$this->center_text($this->empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
-            fwrite($file, $linea);
-            $linea = $this->center_text($this->empresa->lema) . "\n\n";
-            fwrite($file, $linea);
-            $linea = $this->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n";
-            fwrite($file, $linea);
-            $linea = $this->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
-            fwrite($file, $linea);
-            $linea = $this->center_text($this->empresa->horario) . "\n";
-            fwrite($file, $linea);
-            fclose($file);
-         }
+         $fpt = new fs_printer(FS_PRINTER);
+         $fpt->add_big("\nCIERRE DE CAJA:\n");
+         $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
+         $fpt->add("Caja: ".$this->caja->fs_id."\n");
+         $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
+         $fpt->add("Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
+         $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
+         $fpt->add("Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n");
+         $fpt->add("Diferencia: ".$this->caja->show_diferencia()." Eur.\n");
+         $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
+         $fpt->add("Dinero pesado:\n\n\n");
+         $fpt->add("Observaciones:\n\n\n\n");
+         $fpt->add("Firma:\n\n\n\n\n\n\n");
          
-         if( file_exists("/tmp/ticket.txt") )
-         {
-            if($this->impresora)
-               $imp = " -d ".$this->impresora;
-            else
-               $imp = "";
-            
-            shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-            shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
-            unlink("/tmp/ticket.txt"); /// borra el ticket
-         }
+         /// encabezado común para los tickets
+         $fpt->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n");
+         $fpt->add( $fpt->center_text($this->empresa->lema) . "\n\n");
+         $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
+         $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
+         $fpt->add( $fpt->center_text($this->empresa->horario) . "\n");
+         
+         $fpt->imprimir();
+         $fpt->abrir_cajon();
          
          /// recargamos la página
          header('location: '.$this->url());
@@ -413,122 +380,52 @@ class tpv_recambios extends fs_controller
 
    private function imprimir_ticket($albaran, $num_tickets=1)
    {
-      /// abrimos el archivo temporal
-      $file = fopen("/tmp/ticket.txt", "w");
-      if($file)
+      $fpt = new fs_printer(FS_PRINTER);
+      
+      $linea = "\nTicket: " . $albaran->codigo;
+      $linea .= " " . $albaran->fecha;
+      $linea .= " " . $albaran->show_hora(FALSE) . "\n";
+      $fpt->add($linea);
+      $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
+      $fpt->add("Agente: " . $albaran->codagente . "\n\n");
+      
+      $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n");
+      $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
+              sprintf("%10s", "----------") . "\n";
+      $fpt->add($linea);
+      
+      foreach($albaran->get_lineas() as $col)
       {
-         $linea = "\nTicket: " . $albaran->codigo;
-         $linea .= " " . $albaran->fecha;
-         $linea .= " " . $albaran->show_hora(FALSE) . "\n";
-         fwrite($file, $linea);
-         $linea = "Cliente: " . $albaran->nombrecliente . "\n";
-         fwrite($file, $linea);
-         $linea = "Agente: " . $albaran->codagente . "\n\n";
-         fwrite($file, $linea);
-         
-         $linea = sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n";
-         fwrite($file, $linea);
-         $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
-            sprintf("%10s", "----------") . "\n";
-         fwrite($file, $linea);
-         
-         foreach($albaran->get_lineas() as $col)
-         {
-            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-               sprintf("%10s", $col->show_total_iva()) . "\n";
-            fwrite($file, $linea);
-         }
-         
-         $linea = "----------------------------------------\n".
-            $this->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
-            "Total: " . $albaran->show_total() . " Eur.") . "\n\n\n\n";
-         fwrite($file, $linea);
-         
-         $linea = chr(27).chr(33).chr(56).$this->center_text($this->empresa->nombre,16).chr(27).chr(33).chr(1)."\n"; /// letras grandes
-         fwrite($file, $linea);
-         if($this->empresa->lema != '')
-         {
-            $linea = $this->center_text($this->empresa->lema) . "\n\n";
-            fwrite($file, $linea);
-         }
-         else
-            fwrite($file, "\n");
-         $linea = $this->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n";
-         fwrite($file, $linea);
-         $linea = $this->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"; /// corta el papel
-         fwrite($file, $linea);
-         if($this->empresa->horario != '')
-         {
-            $linea = $this->center_text($this->empresa->horario) . "\n";
-            fwrite($file, $linea);
-         }
-         fclose($file);
+         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
+                 sprintf("%10s", $col->show_total_iva()) . "\n";
+         $fpt->add($linea);
       }
       
-      if( file_exists("/tmp/ticket.txt") )
-      {
-         if($this->impresora)
-            $imp = " -d ".$this->impresora;
-         else
-            $imp = "";
-         
-         while($num_tickets > 0)
-         {
-            shell_exec("cat /tmp/ticket.txt | lp".$imp); /// imprime
-            $num_tickets--;
-         }
-         
-         shell_exec("echo '".chr(27).chr(112).chr(48)."' | lp".$imp); /// abre el cajón
-         unlink("/tmp/ticket.txt"); /// borra el ticket
-      }
-   }
-   
-   private function center_text($word='', $tot_width=40)
-   {
-      if( strlen($word) == $tot_width )
-         return $word;
-      else if( strlen($word) < $tot_width )
-         return $this->center_text2($word, $tot_width);
+      $linea = "----------------------------------------\n".
+              $fpt->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
+                      "Total: " . $albaran->show_total() . " Eur.") . "\n\n\n\n";
+      $fpt->add($linea);
+      
+      $fpt->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n");
+      
+      if($this->empresa->lema != '')
+         $fpt->add( $fpt->center_text($this->empresa->lema) . "\n\n");
       else
+         $fpt->add("\n");
+      
+      $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
+      $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
+      
+      if($this->empresa->horario != '')
+         $fpt->add( $fpt->center_text($this->empresa->horario) . "\n");
+      
+      while($num_tickets > 0)
       {
-         $result = '';
-         $nword = '';
-         foreach( explode(' ', $word) as $aux )
-         {
-            if($nword == '')
-               $nword = $aux;
-            else if( strlen($nword) + strlen($aux) + 1 <= $tot_width )
-               $nword = $nword.' '.$aux;
-            else
-            {
-               if($result != '')
-                  $result .= "\n";
-               $result .= $this->center_text2($nword, $tot_width);
-               $nword = $aux;
-            }
-         }
-         if($nword != '')
-         {
-            if($result != '')
-               $result .= "\n";
-            $result .= $this->center_text2($nword, $tot_width);
-         }
-         return $result;
+         $fpt->imprimir();
+         $num_tickets--;
       }
-   }
-   
-   private function center_text2($word='', $tot_width=40)
-   {
-      $symbol = " ";
-      $middle = round($tot_width / 2);
-      $length_word = strlen($word);
-      $middle_word = round($length_word / 2);
-      $last_position = $middle + $middle_word;
-      $number_of_spaces = $middle - $middle_word;
-      $result = sprintf("%'{$symbol}{$last_position}s", $word);
-      for($i = 0; $i < $number_of_spaces; $i++)
-         $result .= "$symbol";
-      return $result;
+      
+      $fpt->abrir_cajon();
    }
 }
 

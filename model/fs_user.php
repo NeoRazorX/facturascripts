@@ -19,9 +19,9 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/agente.php';
+require_once 'model/ejercicio.php';
 require_once 'model/fs_access.php';
 require_once 'model/fs_page.php';
-require_once 'model/ejercicio.php';
 
 class fs_user extends fs_model
 {
@@ -105,19 +105,12 @@ class fs_user extends fs_model
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
    
-   public function get($n = '')
-   {
-      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
-      if($u)
-         return new fs_user($u[0]);
-      else
-         return FALSE;
-   }
-   
    public function get_agente()
    {
       if( isset($this->agente) )
          return $this->agente;
+      else if( is_null($this->codagente) )
+         return FALSE;
       else
       {
          $agente = new agente();
@@ -147,7 +140,7 @@ class fs_user extends fs_model
       if($agente)
          return $agente->url();
       else
-         return $this->url();
+         return '#';
    }
    
    public function get_menu($reload=FALSE)
@@ -225,6 +218,21 @@ class fs_user extends fs_model
       }
    }
    
+   /*
+    * Modifica y guarda la fecha de login si tiene una diferencia de más de una hora
+    * con la fecha guardada, así se evita guardar en cada consulta
+    */
+   public function update_login()
+   {
+      $ltime = strtotime($this->last_login.' '.$this->last_login_time);
+      if( time() - $ltime > 3600 )
+      {
+         $this->last_login = Date('d-m-Y');
+         $this->last_login_time = Date('H:i:s');
+         $this->save();
+      }
+   }
+   
    public function new_logkey()
    {
       if( is_null($this->log_key) OR !FS_DEMO )
@@ -241,6 +249,15 @@ class fs_user extends fs_model
       catch (Exception $e) {
          $this->last_browser = $e;
       }
+   }
+   
+   public function get($n = '')
+   {
+      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
+      if($u)
+         return new fs_user($u[0]);
+      else
+         return FALSE;
    }
    
    public function exists()

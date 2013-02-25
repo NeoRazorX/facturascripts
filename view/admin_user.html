@@ -36,15 +36,15 @@
          <div class="bloque">
             <a href="{$fsc->agente->url()}">Agente</a>:
             <select name="scodagente">
-            {loop="$fsc->agente->all()"}
-               {if condition="$fsc->suser->codagente == $value->codagente"}
-               <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
-               {else}
-               <option value="{$value->codagente}">{$value->get_fullname()}</option>
-               {/if}
-            {else}
-               <option value="">No hay agentes creados. Debes crear almenos uno.</option>
-            {/loop}
+               <option value="">- ninguno -</option>
+               <option value="">-----------</option>
+               {loop="$fsc->agente->all()"}
+                  {if condition="$fsc->suser->codagente == $value->codagente"}
+                  <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
+                  {else}
+                  <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                  {/if}
+               {/loop}
             </select>
          </div>
          <div class="bloque">
@@ -119,7 +119,7 @@
                <th align="left">titulo</th>
                <th>en menú</th>
             </tr>
-            {loop="$fsc->all()"}
+            {loop="$fsc->all_pages()"}
             <tr>
                <td>
                   {if condition="$value->enabled"}
@@ -149,7 +149,7 @@
          </table>
       </div>
       {else}
-      <div class="message">Los administradores tienen acceso a cualquier página.</div>
+      <div class="advice">Los administradores tienen acceso a cualquier página.</div>
       {/if}
    </form>
 {/if}

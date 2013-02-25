@@ -7,6 +7,7 @@
          fs_show_popup('popup_nueva_familia');
          document.f_nueva_familia.ncodfamilia.focus();
       });
+      document.f_custom_search.query.focus();
    });
 </script>
 
@@ -31,7 +32,7 @@
 
 <div class="rounded">
    <ul class="horizontal">
-   {loop="$fsc->familia->all()"}
+   {loop="$fsc->resultados"}
       <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
    {else}
       <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>

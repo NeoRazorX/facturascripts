@@ -62,6 +62,8 @@ class general_nuevo_albaran extends fs_controller
          $this->new_articulo();
       else if( $this->query != '' )
          $this->new_search();
+      else if( isset($_POST['referencia4precios']) )
+         $this->get_precios_articulo();
       else
       {
          $this->agente = $this->user->get_agente();
@@ -85,7 +87,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-11';
+      return parent::version().'-12';
    }
    
    private function new_articulo()
@@ -134,7 +136,7 @@ class general_nuevo_albaran extends fs_controller
       else
          $continuar = FALSE;
       
-      $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
+      $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
@@ -161,6 +163,7 @@ class general_nuevo_albaran extends fs_controller
       if( $continuar )
       {
          $albaran = new albaran_cliente();
+         $albaran->fecha = $_POST['fecha'];
          $albaran->codcliente = $cliente->codcliente;
          $albaran->cifnif = $cliente->cifnif;
          $albaran->nombrecliente = $cliente->nombre;
@@ -249,9 +252,8 @@ class general_nuevo_albaran extends fs_controller
                            $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
                            
                            $albaran->neto += $linea->pvptotal;
-                           $albaran->totaliva += ($linea->iva * $linea->pvptotal / 100);
+                           $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                            $albaran->total = ($albaran->neto + $albaran->totaliva);
-                           $albaran->totaleuros = ($albaran->neto + $albaran->totaliva);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
@@ -287,7 +289,7 @@ class general_nuevo_albaran extends fs_controller
       else
          $continuar = FALSE;
       
-      $ejercicio = $this->ejercicio->get($_POST['ejercicio']);
+      $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
@@ -314,6 +316,7 @@ class general_nuevo_albaran extends fs_controller
       if( $continuar )
       {
          $albaran = new albaran_proveedor();
+         $albaran->fecha = $_POST['fecha'];
          $albaran->codproveedor = $proveedor->codproveedor;
          $albaran->nombre = $proveedor->nombre;
          $albaran->cifnif = $proveedor->cifnif;
@@ -381,9 +384,8 @@ class general_nuevo_albaran extends fs_controller
                         $articulo->sum_stock($albaran->codalmacen, $linea->cantidad);
                         
                         $albaran->neto += $linea->pvptotal;
-                        $albaran->totaliva += ($linea->iva * $linea->pvptotal / 100);
+                        $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                         $albaran->total = ($albaran->neto + $albaran->totaliva);
-                        $albaran->totaleuros = ($albaran->neto + $albaran->totaliva);
                      }
                      else
                         $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
@@ -400,6 +402,21 @@ class general_nuevo_albaran extends fs_controller
       }
       else
          $this->new_error_msg("¡Faltan datos!");
+   }
+   
+   private function get_precios_articulo()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_nuevo_albaran_precios';
+      
+      $this->articulo = $this->articulo->get($_POST['referencia4precios']);
+      if( $this->articulo )
+      {
+         $this->tarifas = $this->articulo->get_tarifas();
+         $this->equivalentes = $this->articulo->get_equivalentes();
+         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 10);
+         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 10);
+      }
    }
 }
 

@@ -17,13 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_button.php';
 require_once 'base/fs_db.php';
 require_once 'base/fs_default_items.php';
-require_once 'base/fs_button.php';
+require_once 'model/agente.php';
+require_once 'model/empresa.php';
 require_once 'model/fs_user.php';
 require_once 'model/fs_page.php';
 require_once 'model/fs_access.php';
-require_once 'model/empresa.php';
 
 class fs_controller
 {
@@ -147,29 +148,60 @@ class fs_controller
    {
       if( isset($_POST['user']) AND isset($_POST['password']) )
       {
-         $user = $this->user->get($_POST['user']);
-         $password = strtolower($_POST['password']);
-         if($user)
+         if( FS_DEMO ) /// en el modo demo nos olvidamos de la contraseña
          {
-            if($user->password == sha1($password) OR (FS_DEMO AND $password == 'demo') )
+            $user = $this->user->get($_POST['user']);
+            if( !$user )
             {
-               $user->new_logkey();
-               if( $user->save() )
-               {
-                  setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
-                  setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
-                  $this->user = $user;
-                  $this->load_menu();
-               }
+               $user = new fs_user();
+               $user->nick = $_POST['user'];
+               $user->password = 'demo';
+               $user->admin = TRUE;
+               
+               /// creamos un agente para asociarlo
+               $agente = new agente();
+               $agente->codagente = $agente->get_new_codigo();
+               $agente->nombre = $_POST['user'];
+               $agente->apellidos = $_POST['user'];
+               if( $agente->save() )
+                  $user->codagente = $agente->codagente;
             }
-            else
-               $this->new_error_msg('Contraseña incorrecta!');
+            
+            $user->new_logkey();
+            if( $user->save() )
+            {
+               setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
+               setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
+               $this->user = $user;
+               $this->load_menu();
+            }
          }
          else
          {
-            $this->new_error_msg('El usuario no existe!');
-            $this->user->clean_cache(TRUE);
-            $this->empresa->clean_cache();
+            $user = $this->user->get($_POST['user']);
+            $password = strtolower($_POST['password']);
+            if($user)
+            {
+               if( $user->password == sha1($password) )
+               {
+                  $user->new_logkey();
+                  if( $user->save() )
+                  {
+                     setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
+                     setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
+                     $this->user = $user;
+                     $this->load_menu();
+                  }
+               }
+               else
+                  $this->new_error_msg('Contraseña incorrecta!');
+            }
+            else
+            {
+               $this->new_error_msg('El usuario no existe!');
+               $this->user->clean_cache(TRUE);
+               $this->empresa->clean_cache();
+            }
          }
       }
       else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
@@ -180,6 +212,7 @@ class fs_controller
             if($user->log_key == $_COOKIE['logkey'])
             {
                $user->logged_on = TRUE;
+               $user->update_login();
                $this->user = $user;
                $this->load_menu();
             }
@@ -270,7 +303,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.17';
+      return '0.9.18';
    }
    
    public function select_default_page()
@@ -465,6 +498,11 @@ class fs_controller
    {
       setcookie('default_serie', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codserie($cod);
+   }
+   
+   public function today()
+   {
+      return date('d-m-Y');
    }
 }
 
