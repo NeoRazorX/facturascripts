@@ -142,9 +142,33 @@
             </tr>
          </table>
       </div>
+      {if condition="$demo"}
+      <div class="advice">
+         FacturaScripts permite imprimir tickets, pero cada vez que quiero hacer un cambio en este apartado
+         me toca programar a ciegas y luego ir un cliente a comprobar que funciona.
+         Si te sobran 180€ podrías regalarme una
+         <a href="http://www.pcbox.com/comprar-impresora-tpv-termica-epson-tm-t20-usb_ep915.aspx">impresora de tickets</a>.
+         Y si te sobran 42€ podrías regalarme un
+         <a href="http://www.pcbox.com/comprar-cajon-portamonedas-automatico-de-41x41x10-5-negro-rj11_isi7.aspx">cajón portamonedas</a>.
+         También puedes enviarme una impresora o un cajón portamonedas con el que te hayas peleado.
+         Como recompensa tendrás un agradecimiento público en esta web y la satisfacción de haber colaborado con este
+         proyecto ... qué ingenuo que soy :(
+      </div>
+      {/if}
       <div class="rounded">
          <h1>Novedades:</h1>
          <ul>
+            <li>
+               26/02/2013:
+               <ul>
+                  <li>Solucionado el bug que permitía crear albaranes en ejercicios ya cerrados.</li>
+                  <li>
+                     Mejorado el asistente de creación de albaranes. Ahora cuando se hace una búsqueda
+                     se muestra para cada artículo un enlace [+] para ver los precios de compra/venta,
+                     y el enlace para añadir directamente el artículo a la lista.
+                  </li>
+               </ul>
+            </li>
             <li>
                25/02/2013:
                <ul>
@@ -337,66 +361,6 @@
                      Solucionado el fallo del script importar_familia que hacía que el script continuase
                      incluso aunque se produjeran errores.
                   </li>
-               </ul>
-            </li>
-            <li>
-               10/12/2012:
-               <ul>
-                  <li>
-                     Las páginas de agrupar albaranes muestran ahora todos los resultados
-                     marcados para su agrupación.
-                  </li>
-                  <li>Al modificar la fecha de una factura se modifica también la fecha de su asiento.</li>
-                  <li>
-                     Nueva página de informes de facturas. Permite generar los listados
-                     de facturas emitidas/recibidas por mes.
-                  </li>
-                  <li>
-                     Nuevo script para agrupar albaranes de proveedores desde General >
-                     albaranes de proveedor > agrupar.
-                  </li>
-                  <li>Mejorada la presentación de las búsquedas en Contabilidad > Cuentas.</li>
-                  <li>Las páginas de facturas ahora muestran la lista de huecos.</li>
-                  <li>Las páginas de bancos ahora muestran las cuentas bancarias asociadas.</li>
-                  <li>Las páginas de subcuentas ahora muestran todas las páginas disponibles.</li>
-                  <li>
-                     Las partidas de las subcuentas se ordenan ahora por número de asiento.
-                     Además ya se pueden puntear las partidas.
-                  </li>
-                  <li>
-                     Ahora el libro mayor de cada subcuenta se genera previamente via cron.
-                     Esta es la mejor solución que se me ha ocurrido para generar PDFs de cientos de páginas.
-                  </li>
-               </ul>
-            </li>
-            <li>
-               05/12/2012:
-               <ul>
-                  <li>
-                     Modificados los algoritmos para generar números de facturas. Ahora se usan los huecos,
-                     seleccionando la fecha apropiada para que la numeración de facturas sea continua,
-                     tanto en número como en fecha.
-                  </li>
-                  <li>Modificados los algoritmos para generar PDF de facturas. Ahora tienen 40 líneas por página.</li>
-                  <li>Nuevos modelos: balance, banco, sucursal, cuenta_banco y recibo_cliente.</li>
-                  <li>Optimizado el algoritomo para generar el libro mayor de una subcuenta.</li>
-               </ul>
-            </li>
-            <li>
-               01/12/2012:
-               <ul>
-                  <li>Añadido libro mayor a las subcuentas. Se genera un documento PDF.</li>
-                  <li>Solucionado bug al modifcar el precio de un artículo en TPV > TPV yamyam.</li>
-               </ul>
-            </li>
-            <li>
-               30/11/2012:
-               <ul>
-                  <li>Nueva página para cada agente, junto con un listado de sus albaranes.</li>
-                  <li>Mejoras en la aceleración de búsquedas de artículos.</li>
-                  <li>Nuevo estilo para los menús.</li>
-                  <li>Eliminado código deprecated: split y &=.</li>
-                  <li>Añadidos campos número2 y numproveedor al formulario para crear nuevos albaranes.</li>
                </ul>
             </li>
          </ul>

@@ -277,7 +277,7 @@ class fs_user extends fs_model
       if( !preg_match("/^[A-Z0-9_]{3,12}$/i", $this->nick) )
       {
          $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
-            valen número o letras, pero no la Ñ ni acentos.");
+            valen números o letras, pero no la Ñ ni acentos.");
       }
       else
          return TRUE;

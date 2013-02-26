@@ -162,7 +162,7 @@ class fs_controller
                $agente = new agente();
                $agente->codagente = $agente->get_new_codigo();
                $agente->nombre = $_POST['user'];
-               $agente->apellidos = $_POST['user'];
+               $agente->apellidos = 'Demo';
                if( $agente->save() )
                   $user->codagente = $agente->codagente;
             }
@@ -308,26 +308,29 @@ class fs_controller
    
    public function select_default_page()
    {
-      if( $this->user->logged_on )
+      if( $this->db->connected() )
       {
-         $url = FALSE;
-         
-         if( is_null($this->user->fs_page) )
+         if( $this->user->logged_on )
          {
-            $url = 'index.php?page=admin_pages';
-            foreach($this->menu as $p)
+            $url = FALSE;
+            
+            if( is_null($this->user->fs_page) )
             {
-               if($p->show_on_menu)
+               $url = 'index.php?page=admin_pages';
+               foreach($this->menu as $p)
                {
-                  $url = $p->url() . '&show_dpa=TRUE';
-                  break;
+                  if($p->show_on_menu)
+                  {
+                     $url = $p->url() . '&show_dpa=TRUE';
+                     break;
+                  }
                }
             }
+            else
+               $url = 'index.php?page=' . $this->user->fs_page;
+            
+            Header('location: '.$url);
          }
-         else
-            $url = 'index.php?page=' . $this->user->fs_page;
-         
-         Header('location: '.$url);
       }
    }
    

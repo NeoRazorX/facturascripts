@@ -26,7 +26,7 @@ class fs_db
    
    public function __construct()
    {
-      if(!self::$link)
+      if( !isset(self::$link) )
       {
          self::$t_selects = 0;
          self::$t_transactions = 0;
@@ -54,7 +54,6 @@ class fs_db
    /// conecta con la base de datos
    public function connect()
    {
-      $connected = FALSE;
       if(self::$link)
          $connected = TRUE;
       else
@@ -68,20 +67,29 @@ class fs_db
             /// establecemos el formato de fecha para la conexión
             pg_query(self::$link, "SET DATESTYLE TO ISO, DMY;");
          }
+         else
+            $connected = FALSE;
       }
       return $connected;
+   }
+   
+   public function connected()
+   {
+      if(self::$link)
+         return TRUE;
+      else
+         return FALSE;
    }
    
    /// desconecta de la base de datos
    public function close()
    {
-      $retorno = FALSE;
       if(self::$link)
       {
          $retorno = pg_close(self::$link);
          self::$link = NULL;
       }
-      return $retorno;
+      return TRUE;
    }
    
    /// devuelve un array con los nombres de las tablas de la base de datos

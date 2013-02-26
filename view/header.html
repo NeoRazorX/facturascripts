@@ -97,14 +97,15 @@
          <ul>
             <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
             <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
-            <li><hr/></li>
             {if condition="$demo"}
+            <li><hr/></li>
             <li><a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a></li>
             <li><a target="_blank" href="http://code.google.com/p/facturascripts/">Web oficial</a></li>
             {else}
                {loop name="$fsc->user->all()"}
                   {if condition="$value->nick != $fsc->user->nick"}
-                  <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+                     {if condition="$counter==0"}<li><hr/></li>{/if}
+                     <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
                   {/if}
                {/loop}
             {/if}
