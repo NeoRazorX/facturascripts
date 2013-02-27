@@ -200,38 +200,11 @@ class partida extends fs_model
    
    public function test()
    {
-      $status = TRUE;
-      
       $this->concepto = $this->no_html($this->concepto);
       $this->documento = $this->no_html($this->documento);
       $this->cifnif = $this->no_html($this->cifnif);
       
-      if($this->iva == 0)
-         $base = 0;
-      else if($this->debe != 0)
-         $base = 100*$this->debe/$this->iva;
-      else
-         $base = 100*$this->haber/$this->iva;
-      
-      if( abs($this->baseimponible - $base) > .1 )
-      {
-         $this->new_error_msg("Valor base imponible de la partida incorrecto. Valor correcto ".$base);
-         $status = FALSE;
-      }
-      
-      return $status;
-   }
-   
-   public function fix()
-   {
-      if($this->iva == 0)
-         $this->baseimponible = 0;
-      else if($this->debe != 0)
-         $this->baseimponible = 100*$this->debe/$this->iva;
-      else
-         $this->baseimponible = 100*$this->haber/$this->iva;
-      
-      return $this->save();
+      return TRUE;
    }
    
    public function save()

@@ -229,7 +229,7 @@ class asiento extends fs_model
       
       $total = $debe - $haber;
       $importe = max( array($debe, $haber) );
-      if( abs($total) > .001 )
+      if( abs($total) > .01 )
       {
          $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
          $status = FALSE;
@@ -256,88 +256,21 @@ class asiento extends fs_model
    
    public function fix()
    {
-      $debe = 0;
-      $haber = 0;
-      foreach($this->get_partidas() as $p)
-      {
-         $p->fix();
-         $debe += $p->debe;
-         $haber += $p->haber;
-      }
-      $total = $debe - $haber;
-      $this->importe = max( array($debe, $haber) );
+      $status = TRUE;
       
-      /// corregimos descuadres de menos de 0.01
-      if( abs($total) > .001 AND abs($total) < .01 )
+      /// comprobamos la factura asociada
+      $fac = $this->get_factura();
+      if($fac)
       {
-         $debe = 0;
-         $haber = 0;
-         $partidas = $this->get_partidas();
-         foreach($partidas as $p)
+         if( is_null($fac->idasiento) )
          {
-            $p->debe = round($p->debe, 2);
-            $debe += $p->debe;
-            $p->haber = round($p->haber, 2);
-            $haber += $p->haber;
-         }
-         /// si con el redondeo se soluciona el problema, pues genial!
-         if( abs($debe - $haber) <= .001 )
-         {
-            $this->importe = max( array($debe, $haber) );
-            foreach($partidas as $p)
-               $p->save();
-         }
-         else
-         {
-            /// si no ha funcionado, intentamos arreglarlo
-            $total = 0;
-            $partidas = $this->get_partidas();
-            foreach($partidas as $p)
-               $total += ($p->debe - $p->haber);
-            
-            if($partidas[0]->debe != 0)
-               $partidas[0]->debe = ($partidas[0]->debe - $total);
-            else if($partidas[0]->haber != 0)
-               $partidas[0]->haber += $total;
-            
-            $debe = 0;
-            $haber = 0;
-            foreach($partidas as $p)
-            {
-               $debe += $p->debe;
-               $haber += $p->haber;
-            }
-            
-            /// si hemos resuelto el problema grabamos
-            if( abs($debe - $haber) <= .001 )
-            {
-               $this->importe = max( array($debe, $haber) );
-               foreach($partidas as $p)
-                  $p->save();
-            }
+            $fac->idasiento = $this->idasiento;
+            $status = $fac->save();
          }
       }
       
-      if( $this->save() )
-      {
-         $status = TRUE;
-         
-         /// comprobamos la factura asociada
-         $fac = $this->get_factura();
-         if($fac)
-         {
-            if( is_null($fac->idasiento) )
-            {
-               $fac->idasiento = $this->idasiento;
-               $status = $fac->save();
-            }
-         }
-         
-         if($status)
-            return $this->full_test();
-         else
-            return FALSE;
-      }
+      if($status)
+         return $this->full_test();
       else
          return FALSE;
    }
