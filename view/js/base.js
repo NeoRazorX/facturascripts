@@ -16,6 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+function fs_round(num, digits)
+{
+   return( Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits) );
+}
+
 function number_format(number, decimals, dec_point, thousands_sep)
 {
    var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;

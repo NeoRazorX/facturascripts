@@ -214,9 +214,6 @@ class asiento extends fs_model
       {
          foreach($partidas as $p)
          {
-            if( !$p->test() )
-               $status = FALSE;
-            
             $debe += $p->debe;
             $haber += $p->haber;
          }
@@ -227,16 +224,10 @@ class asiento extends fs_model
          $status = FALSE;
       }
       
-      $total = $debe - $haber;
-      $importe = max( array($debe, $haber) );
-      if( abs($total) > .01 )
+      if( !$this->floatcmp($debe, $haber) )
       {
+         $total = $debe - $haber;
          $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
-         $status = FALSE;
-      }
-      else if( abs($this->importe - $importe) > .01 )
-      {
-         $this->new_error_msg("Importe del asiento incorrecto. Valor correcto: ".$importe);
          $status = FALSE;
       }
       
@@ -256,6 +247,66 @@ class asiento extends fs_model
    
    public function fix()
    {
+      $debe = 0;
+      $haber = 0;
+      foreach($this->get_partidas() as $p)
+      {
+         $debe += $p->debe;
+         $haber += $p->haber;
+      }
+      $total = $debe - $haber;
+      
+      /// corregimos descuadres de menos de 0.01
+      if( !$this->floatcmp($debe, $haber) AND abs($total) < .01 )
+      {
+         $debe = 0;
+         $haber = 0;
+         $partidas = $this->get_partidas();
+         foreach($partidas as $p)
+         {
+            $p->debe = round($p->debe, 2);
+            $debe += $p->debe;
+            $p->haber = round($p->haber, 2);
+            $haber += $p->haber;
+         }
+         /// si con el redondeo se soluciona el problema, pues genial!
+         if( $this->floatcmp($debe, $haber) )
+         {
+            $this->importe = max( array($debe, $haber) );
+            foreach($partidas as $p)
+               $p->save();
+         }
+         else
+         {
+            /// si no ha funcionado, intentamos arreglarlo
+            $total = 0;
+            $partidas = $this->get_partidas();
+            foreach($partidas as $p)
+               $total += ($p->debe - $p->haber);
+            
+            if($partidas[0]->debe != 0)
+               $partidas[0]->debe = ($partidas[0]->debe - $total);
+            else if($partidas[0]->haber != 0)
+               $partidas[0]->haber += $total;
+            
+            $debe = 0;
+            $haber = 0;
+            foreach($partidas as $p)
+            {
+               $debe += $p->debe;
+               $haber += $p->haber;
+            }
+            
+            /// si hemos resuelto el problema grabamos
+            if( $this->floatcmp($debe, $haber) )
+            {
+               $this->importe = max( array($debe, $haber) );
+               foreach($partidas as $p)
+                  $p->save();
+            }
+         }
+      }
+      
       $status = TRUE;
       
       /// comprobamos la factura asociada

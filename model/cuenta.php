@@ -148,6 +148,11 @@ class cuenta extends fs_model
       }
    }
    
+   protected function install()
+   {
+      return '';
+   }
+   
    public function url()
    {
       if( is_null($this->idcuenta) )
@@ -156,9 +161,16 @@ class cuenta extends fs_model
          return 'index.php?page=contabilidad_cuenta&id='.$this->idcuenta;
    }
    
-   protected function install()
+   public function get_subcuentas()
    {
-      return '';
+      $subcuenta = new subcuenta();
+      return $subcuenta->all_from_cuenta($this->idcuenta);
+   }
+   
+   public function get_ejercicio()
+   {
+      $eje = new ejercicio();
+      return $eje->get($this->codejercicio);
    }
    
    public function get($id)
@@ -179,18 +191,6 @@ class cuenta extends fs_model
          return new cuenta($cuenta[0]);
       else
          return FALSE;
-   }
-   
-   public function get_subcuentas()
-   {
-      $subcuenta = new subcuenta();
-      return $subcuenta->all_from_cuenta($this->idcuenta);
-   }
-   
-   public function get_ejercicio()
-   {
-      $eje = new ejercicio();
-      return $eje->get($this->codejercicio);
    }
    
    public function exists()
@@ -250,6 +250,19 @@ class cuenta extends fs_model
       $cuenlist = array();
       $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
               " ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
+      if($cuentas)
+      {
+         foreach($cuentas as $c)
+            $cuenlist[] = new cuenta($c);
+      }
+      return $cuenlist;
+   }
+   
+   public function full_from_epigrafe($id)
+   {
+      $cuenlist = array();
+      $cuentas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idepigrafe = ".$this->var2str($id)." ORDER BY codcuenta ASC;");
       if($cuentas)
       {
          foreach($cuentas as $c)

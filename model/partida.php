@@ -244,7 +244,8 @@ class partida extends fs_model
          if( $this->db->exec($sql) )
          {
             $subc = $this->get_subcuenta();
-            $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+            if($subc)
+               $subc->save(); /// guardamos la subcuenta para actualizar su saldo
             return TRUE;
          }
          else
@@ -299,15 +300,17 @@ class partida extends fs_model
       return $plist;
    }
    
-   public function count_from_subcuenta($id)
+   public function all_from_asiento($id)
    {
-      $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
-         WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id).
-         " ORDER BY a.numero ASC, p.idpartida ASC;");
-      if($ordenadas)
-         return count($ordenadas);
-      else
-         return 0;
+      $plist = array();
+      $partidas = $this->db->select("SELECT * FROM ".$this->table_name."
+         WHERE idasiento = ".$this->var2str($id)." ORDER BY codsubcuenta ASC;");
+      if($partidas)
+      {
+         foreach($partidas as $p)
+            $plist[] = new partida($p);
+      }
+      return $plist;
    }
    
    public function full_from_subcuenta($id)
@@ -336,39 +339,46 @@ class partida extends fs_model
       return $plist;
    }
    
-   public function all_from_asiento($id)
+   public function count_from_subcuenta($id)
    {
-      $plist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idasiento = ".$this->var2str($id)." ORDER BY codsubcuenta ASC;");
-      if($partidas)
-      {
-         foreach($partidas as $p)
-            $plist[] = new partida($p);
-      }
-      return $plist;
+      $ordenadas = $this->db->select("SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p
+         WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ".$this->var2str($id).
+         " ORDER BY a.numero ASC, p.idpartida ASC;");
+      if($ordenadas)
+         return count($ordenadas);
+      else
+         return 0;
    }
    
    public function totales_from_subcuenta($id)
    {
-      $totales = array(
-          'debe' => 0,
-          'haber' => 0,
-          'saldo' => 0
-      );
-      $resultados = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber
+      $totales = array( 'debe' => 0, 'haber' => 0, 'saldo' => 0 );
+      $resultados = $this->db->select("SELECT COALESCE(SUM(debe), 0) as debe,
+         COALESCE(SUM(haber), 0) as haber
          FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
       if( $resultados )
       {
-         $totales['debe'] = floatval( $resultados[0]['debe'] );
-         $totales['haber'] = floatval( $resultados[0]['haber'] );
+         $totales['debe'] = floatval($resultados[0]['debe']);
+         $totales['haber'] = floatval($resultados[0]['haber']);
+         $totales['saldo'] = floatval($resultados[0]['debe']) - floatval($resultados[0]['haber']);
       }
-      else
+      
+      return $totales;
+   }
+   
+   public function totales_from_ejercicio($cod)
+   {
+      $totales = array( 'debe' => 0, 'haber' => 0, 'saldo' => 0 );
+      $resultados = $this->db->select("SELECT COALESCE(SUM(p.debe), 0) as debe,
+         COALESCE(SUM(p.haber), 0) as haber
+         FROM co_partidas p, co_asientos a
+         WHERE p.idasiento = a.idasiento AND a.codejercicio = ".$this->var2str($cod).";");
+      if( $resultados )
       {
-         $totales['debe'] = 0;
-         $totales['haber'] = 0;
+         $totales['debe'] = floatval($resultados[0]['debe']);
+         $totales['haber'] = floatval($resultados[0]['haber']);
+         $totales['saldo'] = floatval($resultados[0]['debe']) - floatval($resultados[0]['haber']);
       }
-      $totales['saldo'] = $totales['debe'] - $totales['haber'];
       
       return $totales;
    }

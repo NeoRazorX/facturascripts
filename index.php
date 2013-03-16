@@ -20,67 +20,72 @@
 date_default_timezone_set('Europe/Madrid');
 
 /// cargamos las constantes de configuración
-require_once 'config.php';
-if( !defined('FS_DEMO') )
-   define('FS_DEMO', FALSE);
-if( !defined('FS_PRINTER') )
-   define('FS_PRINTER', '');
-if( !defined('FS_LCD') )
-   define('FS_LCD', '');
-
-require_once 'base/fs_controller.php';
-require_once 'raintpl/rain.tpl.class.php';
-
-/// ¿Qué controlador usar?
-if( isset($_GET['page']) )
+if( file_exists('config.php') )
 {
-   if( file_exists('controller/'.$_GET['page'].'.php') )
+   require_once 'config.php';
+   if( !defined('FS_DEMO') )
+      define('FS_DEMO', FALSE);
+   if( !defined('FS_PRINTER') )
+      define('FS_PRINTER', '');
+   if( !defined('FS_LCD') )
+      define('FS_LCD', '');
+   
+   require_once 'base/fs_controller.php';
+   require_once 'raintpl/rain.tpl.class.php';
+   
+   /// ¿Qué controlador usar?
+   if( isset($_GET['page']) )
    {
-      require_once 'controller/'.$_GET['page'].'.php';
-      $fsc = new $_GET['page']();
+      if( file_exists('controller/'.$_GET['page'].'.php') )
+      {
+         require_once 'controller/'.$_GET['page'].'.php';
+         $fsc = new $_GET['page']();
+      }
+      else
+         $fsc = new fs_controller();
    }
    else
+   {
       $fsc = new fs_controller();
+      $fsc->select_default_page();
+   }
+   
+   if( $fsc->template )
+   {
+      /// configuramos rain.tpl
+      raintpl::configure('base_url', NULL);
+      raintpl::configure('tpl_dir', 'view/');
+      
+      /// ¿Se puede escribir sobre la carpeta temporal?
+      if( file_exists('tmp/test') )
+         raintpl::configure('cache_dir', 'tmp/');
+      else if( mkdir('tmp/test') )
+         raintpl::configure('cache_dir', 'tmp/');
+      else
+         die('No se puede escribir sobre la carpeta temporal (la carpeta tmp de FacturaScripts). Consulta la
+            <a target="_blank" href="http://code.google.com/p/facturascripts">documentaci&oacute;n</a>.');
+      
+      $tpl = new RainTPL();
+      $tpl->assign('fsc', $fsc);
+      
+      if( isset($_POST['user']) )
+         $tpl->assign('nlogin', $_POST['user']);
+      else if( isset($_GET['nlogin']) )
+         $tpl->assign('nlogin', $_GET['nlogin']);
+      else if( isset($_COOKIE['user']) )
+         $tpl->assign('nlogin', $_COOKIE['user']);
+      else
+         $tpl->assign('nlogin', '');
+      
+      $tpl->assign('db_history', FS_DB_HISTORY);
+      $tpl->assign('demo', FS_DEMO);
+      
+      $tpl->draw( $fsc->template );
+   }
+   
+   $fsc->close();
 }
 else
-{
-   $fsc = new fs_controller();
-   $fsc->select_default_page();
-}
-
-if( $fsc->template )
-{
-   /// configuramos rain.tpl
-   raintpl::configure('base_url', NULL);
-   raintpl::configure('tpl_dir', 'view/');
-   
-   /// ¿Se puede escribir sobre la carpeta temporal?
-   if( file_exists('tmp/test') )
-      raintpl::configure('cache_dir', 'tmp/');
-   else if( mkdir('tmp/test') )
-      raintpl::configure('cache_dir', 'tmp/');
-   else
-      die('No se puede escribir sobre la carpeta temporal (la carpeta tmp de FacturaScripts). Consulta la
-         <a target="_blank" href="http://code.google.com/p/facturascripts">documentaci&oacute;n</a>.');
-   
-   $tpl = new RainTPL();
-   $tpl->assign('fsc', $fsc);
-   
-   if( isset($_POST['user']) )
-      $tpl->assign('nlogin', $_POST['user']);
-   else if( isset($_GET['nlogin']) )
-      $tpl->assign('nlogin', $_GET['nlogin']);
-   else if( isset($_COOKIE['user']) )
-      $tpl->assign('nlogin', $_COOKIE['user']);
-   else
-      $tpl->assign('nlogin', '');
-   
-   $tpl->assign('db_history', FS_DB_HISTORY);
-   $tpl->assign('demo', FS_DEMO);
-   
-   $tpl->draw( $fsc->template );
-}
-
-$fsc->close();
+   include('view/no_config.html');
 
 ?>

@@ -226,6 +226,30 @@ class linea_albaran_proveedor extends fs_model
          $this->idlinea = intval($newid);
    }
    
+   public function test()
+   {
+      $status = TRUE;
+      
+      $this->descripcion = $this->no_html($this->descripcion);
+      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+      $totalsindto = $this->pvpunitario * $this->cantidad;
+      
+      if( !$this->floatcmp($this->pvptotal, $total) )
+      {
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
+            " del albarán. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto) )
+      {
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
+            " del albarán. Valor correcto: ".$totalsindto);
+         $status = FALSE;
+      }
+      
+      return $status;
+   }
+   
    public function save()
    {
       if( $this->test() )
@@ -261,30 +285,6 @@ class linea_albaran_proveedor extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
-   }
-   
-   public function test()
-   {
-      $status = TRUE;
-      
-      $this->descripcion = $this->no_html($this->descripcion);
-      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-      $totalsindto = $this->pvpunitario * $this->cantidad;
-      
-      if( abs($this->pvptotal - $total) > .01 )
-      {
-         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
-            " del albarán. Valor correcto: ".$total);
-         $status = FALSE;
-      }
-      else if( abs($this->pvpsindto - $totalsindto) > .01 )
-      {
-         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
-            " del albarán. Valor correcto: ".$totalsindto);
-         $status = FALSE;
-      }
-      
-      return $status;
    }
    
    public function all_from_albaran($id)
@@ -615,7 +615,6 @@ class albaran_proveedor extends fs_model
       $status = TRUE;
       $neto = 0;
       $iva = 0;
-      $total = 0;
       
       /// comprobamos las líneas
       foreach($this->get_lineas() as $l)
@@ -625,26 +624,28 @@ class albaran_proveedor extends fs_model
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
-         $total += $l->pvptotal * (100 + $l->iva) / 100;
       }
+      $neto = round($neto, 2);
+      $iva = round($iva, 2);
+      $total = $neto + $iva;
       
       /// comprobamos los totales
-      if( abs($this->neto - $neto) > .01 )
+      if( !$this->floatcmp(round($this->neto, 2), $neto) )
       {
          $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( abs($this->totaliva - $iva) > .01 )
+      else if( !$this->floatcmp(round($this->totaliva, 2), $iva) )
       {
          $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( abs($this->total - $total) > .01 )
+      else if( !$this->floatcmp(round($this->total, 2), $total) )
       {
          $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
-      else if( abs($this->totaleuros - $total) > .01 )
+      else if( !$this->floatcmp(round($this->totaleuros, 2), $total) )
       {
          $this->new_error_msg("Valor totaleuros del albarán incorrecto. Valor correcto: ".$total);
          $status = FALSE;

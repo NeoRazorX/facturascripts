@@ -87,7 +87,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-12';
+      return parent::version().'-13';
    }
    
    private function new_articulo()
@@ -253,13 +253,16 @@ class general_nuevo_albaran extends fs_controller
                            
                            $albaran->neto += $linea->pvptotal;
                            $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                           $albaran->total = ($albaran->neto + $albaran->totaliva);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                      }
                   }
                }
+               /// redondeamos
+               $albaran->neto = round($albaran->neto, 2);
+               $albaran->totaliva = round($albaran->totaliva, 2);
+               $albaran->total = $albaran->neto + $albaran->totaliva;
                if( $albaran->save() )
                   $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
                else
@@ -385,13 +388,16 @@ class general_nuevo_albaran extends fs_controller
                         
                         $albaran->neto += $linea->pvptotal;
                         $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                        $albaran->total = ($albaran->neto + $albaran->totaliva);
                      }
                      else
                         $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                   }
                }
             }
+            /// redondeamos
+            $albaran->neto = round($albaran->neto, 2);
+            $albaran->totaliva = round($albaran->totaliva, 2);
+            $albaran->total = $albaran->neto + $albaran->totaliva;
             if( $albaran->save() )
                $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
             else

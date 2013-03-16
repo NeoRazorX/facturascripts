@@ -98,7 +98,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-12';
+      return parent::version().'-13';
    }
    
    public function url()
@@ -116,6 +116,8 @@ class general_albaran_prov extends fs_controller
       
       $this->albaran->numproveedor = $_POST['numproveedor'];
       $this->albaran->observaciones = $_POST['observaciones'];
+      $this->albaran->neto = 0;
+      $this->albaran->totaliva = 0;
       
       /// obtenemos los datos del ejercicio para acotar la fecha
       $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
@@ -150,9 +152,6 @@ class general_albaran_prov extends fs_controller
          }
          
          $articulo = new articulo();
-         $neto = 0;
-         $iva = 0;
-         $total = 0;
          /// modificamos y/o añadimos las demás líneas
          for($num = 0; $num <= 200; $num++)
          {
@@ -194,9 +193,8 @@ class general_albaran_prov extends fs_controller
                         }
                      }
                      
-                     $neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
-                     $total += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * (100 + $value->iva)/100);
-                     $iva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
+                     $this->albaran->neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                     $this->albaran->totaliva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
                      if( !$lineas[$k]->save() )
                         $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
                      break;
@@ -246,19 +244,19 @@ class general_albaran_prov extends fs_controller
                      $linea->dtopor = floatval($_POST['dto_'.$num]);
                      $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
                      $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
-                     $neto += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
-                     $total += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * (100 + $linea->iva)/100);
-                     $iva += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * $linea->iva/100);
+                     
+                     $this->albaran->neto += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                     $this->albaran->totaliva += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * $linea->iva/100);
                      if( !$linea->save() )
                         $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
                   }
                }
             }
          }
-         $this->albaran->neto = $neto;
-         $this->albaran->totaliva = $iva;
-         $this->albaran->total = $total;
-         $this->albaran->totaleuros = $total;
+         /// redondeamos
+         $this->albaran->neto = round($this->albaran->neto, 2);
+         $this->albaran->totaliva = round($this->albaran->totaliva, 2);
+         $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva;
       }
       
       if( $this->albaran->save() )

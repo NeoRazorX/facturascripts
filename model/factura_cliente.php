@@ -197,6 +197,11 @@ class linea_factura_cliente extends fs_model
       return number_format($this->pvpunitario, 2, '.', ' ');
    }
    
+   public function show_dto()
+   {
+      return number_format($this->dtopor, 2, '.', ' ');
+   }
+   
    public function show_total()
    {
       return number_format($this->pvptotal, 2, '.', ' ');
@@ -272,6 +277,30 @@ class linea_factura_cliente extends fs_model
          $this->idlinea = intval($newid);
    }
    
+   public function test()
+   {
+      $status = TRUE;
+      
+      $this->descripcion = $this->no_html($this->descripcion);
+      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+      $totalsindto = $this->pvpunitario * $this->cantidad;
+      
+      if( !$this->floatcmp($this->pvptotal, $total) )
+      {
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
+            " de la factura. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto) )
+      {
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
+            " de la factura. Valor correcto: ".$totalsindto);
+         $status = FALSE;
+      }
+      
+      return $status;
+   }
+   
    public function save()
    {
       if( $this->test() )
@@ -307,30 +336,6 @@ class linea_factura_cliente extends fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
-   }
-   
-   public function test()
-   {
-      $status = TRUE;
-      
-      $this->descripcion = $this->no_html($this->descripcion);
-      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-      $totalsindto = $this->pvpunitario * $this->cantidad;
-      
-      if( abs($this->pvptotal - $total) > .01 )
-      {
-         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
-            " de la factura. Valor correcto: ".$total);
-         $status = FALSE;
-      }
-      else if( abs($this->pvpsindto - $totalsindto) > .01 )
-      {
-         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
-            " de la factura. Valor correcto: ".$totalsindto);
-         $status = FALSE;
-      }
-      
-      return $status;
    }
    
    public function all_from_factura($id)
@@ -443,28 +448,29 @@ class linea_iva_factura_cliente extends fs_model
    
    public function exists()
    {
-      if( isset($this->idlinea) )
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
-      else
+      if( is_null($this->idfactura) )
          return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function test()
    {
       $status = TRUE;
+      $totaliva = round($this->neto * $this->iva / 100, 2);
+      $total = round($this->neto * (100 + $this->iva) / 100, 2);
       
-      $totaliva = $this->neto * $this->iva / 100;
-      $total = $this->neto * (100 + $this->iva) / 100;
-      if( abs($totaliva - $this->totaliva) > .01 )
+      if( !$this->floatcmp($totaliva, round($this->totaliva, 2)) )
       {
-         $this->new_error_msg("Error en el valor de totaliva de la línea de iva del impuesto ".$this->codimpuesto."
-            de la factura. Valor correcto: ".$totaliva);
+         $this->new_error_msg("Error en el valor de totaliva de la línea de iva del impuesto ".
+                 $this->codimpuesto." de la factura. Valor correcto: ".$totaliva);
          $status = FALSE;
       }
-      else if( abs($total - $this->totallinea) > .01 )
+      else if( !$this->floatcmp($total, round($this->totallinea, 2)) )
       {
-         $this->new_error_msg("Error en el valor de totallinea de la línea de iva del impuesto ".$this->codimpuesto."
-            de la factura. Valor correcto: ".$total);
+         $this->new_error_msg("Error en el valor de totallinea de la línea de iva del impuesto ".
+                 $this->codimpuesto." de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }
       
@@ -752,7 +758,6 @@ class factura_cliente extends fs_model
                      $encontrada = TRUE;
                      $lineasi[$i]->neto += $l->pvptotal;
                      $lineasi[$i]->totaliva += ($l->pvptotal*$l->iva)/100;
-                     $lineasi[$i]->totallinea = $lineasi[$i]->neto + $lineasi[$i]->totaliva;
                   }
                   $i++;
                }
@@ -764,12 +769,16 @@ class factura_cliente extends fs_model
                   $lineasi[$i]->iva = $l->iva;
                   $lineasi[$i]->neto = $l->pvptotal;
                   $lineasi[$i]->totaliva = ($l->pvptotal*$l->iva)/100;
-                  $lineasi[$i]->totallinea = $lineasi[$i]->neto + $lineasi[$i]->totaliva;
                }
             }
-            /// guardamos
+            /// redondeamos y guardamos
             foreach($lineasi as $li)
+            {
+               $li->neto = round($li->neto, 2);
+               $li->totaliva = round($li->totaliva, 2);
+               $li->totallinea = $li->neto + $li->totaliva;
                $li->save();
+            }
          }
       }
       return $lineasi;
@@ -868,9 +877,6 @@ class factura_cliente extends fs_model
    public function full_test()
    {
       $status = TRUE;
-      $neto = 0;
-      $iva = 0;
-      $total = 0;
       
       /// comprobamos la fecha de la factura
       $numero0 = intval($this->numero)-1;
@@ -902,6 +908,8 @@ class factura_cliente extends fs_model
       }
       
       /// comprobamos las líneas
+      $neto = 0;
+      $iva = 0;
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -909,24 +917,27 @@ class factura_cliente extends fs_model
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
-         $total += $l->pvptotal * (100 + $l->iva) / 100;
       }
-      if( abs($this->neto - $neto) > .01 )
+      $neto = round($neto, 2);
+      $iva = round($iva, 2);
+      $total = $neto + $iva;
+      
+      if( !$this->floatcmp(round($this->neto, 2), $neto) )
       {
          $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( abs($this->totaliva - $iva) > .01 )
+      else if( !$this->floatcmp(round($this->totaliva, 2), $iva) )
       {
          $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( abs($this->total - $total) > .01 )
+      else if( !$this->floatcmp(round($this->total, 2), $total) )
       {
          $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".$total);
          $status = FALSE;
       }
-      else if( abs($this->totaleuros - $total) > .01 )
+      else if( !$this->floatcmp(round($this->totaleuros, 2), $total) )
       {
          $this->new_error_msg("Valor totaleuros de la factura incorrecto. Valor correcto: ".$total);
          $status = FALSE;
@@ -935,7 +946,6 @@ class factura_cliente extends fs_model
       /// comprobamos las líneas de IVA
       $neto = 0;
       $iva = 0;
-      $total = 0;
       foreach($this->get_lineas_iva() as $li)
       {
          if( !$li->test() )
@@ -943,19 +953,22 @@ class factura_cliente extends fs_model
          
          $neto += $li->neto;
          $iva += $li->totaliva;
-         $total += $li->totallinea;
       }
-      if( abs($this->neto - $neto) > .01 )
+      $neto = round($neto, 2);
+      $iva = round($iva, 2);
+      $total = $neto + $iva;
+      
+      if( !$this->floatcmp(round($this->neto, 2), $neto) )
       {
          $this->new_error_msg("Valor neto incorrecto en las líneas de IVA. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( abs($this->totaliva - $iva) > .01 )
+      else if( !$this->floatcmp(round($this->totaliva, 2), $iva) )
       {
          $this->new_error_msg("Valor totaliva incorrecto en las líneas de IVA. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( abs($this->total - $total) > .01 )
+      else if( !$this->floatcmp(round($this->total, 2), $total) )
       {
          $this->new_error_msg("Valor total incorrecto en las líneas de IVA. Valor correcto: ".$total);
          $status = FALSE;

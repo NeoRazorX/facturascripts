@@ -5,33 +5,36 @@
    var numlineas = 0;
    function recalcular()
    {
-      var aneto = 0;
-      var aiva = 0;
-      var atotal = 0;
-      var uds = 0;
-      var pvp = 0;
-      var dto = 0;
-      var iva = 0;
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_dto = 0;
+      var l_iva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
       for(var i=0; i<=100; i++)
       {
          if($("#linea_"+i).length > 0)
          {
-            uds = parseFloat( $("#cantidad_"+i).val() );
-            pvp = parseFloat( $("#pvp_"+i).val() );
-            dto = parseFloat( $("#dto_"+i).val() );
-            iva = parseFloat( $("#iva_"+i).val() );
-            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-            $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
-            aneto += uds*pvp*(100-dto)/100;
-            aiva += uds*pvp*(100-dto)/100*(iva/100);
-            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+            
             if(i > numlineas)
                numlineas = i;
          }
       }
-      $("#aneto").html( number_format(aneto,2,',',' ') );
-      $("#aiva").html( number_format(aiva,2,',',' ') );
-      $("#atotal").html( number_format(atotal,2,',',' ') );
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( number_format(neto, 2, ',', ' ') );
+      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
+      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
    }
    function linea_sum_ud(num,value)
    {
@@ -44,99 +47,103 @@
    }
    function ajustar_total()
    {
-      var total = 0;
-      var uds = 0;
-      var pvp = 0;
-      var dto = 0;
-      var iva = 0;
-      var aneto = 0;
-      var aiva = 0;
-      var atotal = 0;
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_dto = 0;
+      var l_iva = 0;
+      var l_total = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
       for(var i=0; i<=100; i++)
       {
          if($("#linea_"+i).length > 0)
          {
-            uds = parseFloat( $("#cantidad_"+i).val() );
-            pvp = parseFloat( $("#pvp_"+i).val() );
-            dto = parseFloat( $("#dto_"+i).val() );
-            iva = parseFloat( $("#iva_"+i).val() );
-            total = parseFloat( $("#total_"+i).val() );
-            if( isNaN(total) )
-               total = 0;
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            l_total = parseFloat( $("#total_"+i).val() );
+            if( isNaN(l_total) )
+               l_total = 0;
             
-            if( total <= pvp*uds )
+            if( l_total <= l_pvp*l_uds )
             {
-               dto = 100 - 100*total/(pvp*uds);
-               if( isNaN(dto) )
-                  dto = 0;
+               l_dto = 100 - 100*l_total/(l_pvp*l_uds);
+               if( isNaN(l_dto) )
+                  l_dto = 0;
             }
             else
             {
-               dto = 0;
-               pvp = 100*total/uds*(100-dto);
-               if( isNaN(pvp) )
-                  pvp = 0;
+               l_dto = 0;
+               l_pvp = 100*l_total/l_uds*(100-l_dto);
+               if( isNaN(l_pvp) )
+                  l_pvp = 0;
             }
             
-            $("#pvp_"+i).val(pvp);
-            $("#dto_"+i).val(dto);
-            $("#totiva_"+i).val( uds*pvp*(100-dto)/100*(100+iva)/100 );
-            aneto += uds*pvp*(100-dto)/100;
-            aiva += uds*pvp*(100-dto)/100*(iva/100);
-            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+            $("#pvp_"+i).val(l_pvp);
+            $("#dto_"+i).val(l_dto);
+            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      $("#aneto").html( number_format(aneto,2,',',' ') );
-      $("#aiva").html( number_format(aiva,2,',',' ') );
-      $("#atotal").html( number_format(atotal,2,',',' ') );
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( number_format(neto, 2, ',', ' ') );
+      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
+      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
    }
    function ajustar_totiva()
    {
-      var totiva = 0;
-      var uds = 0;
-      var pvp = 0;
-      var iva = 0;
-      var dto = 0;
-      var aneto = 0;
-      var aiva = 0;
-      var atotal = 0;
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_dto = 0;
+      var l_iva = 0;
+      var l_totiva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
       for(var i=0; i<=100; i++)
       {
          if($("#linea_"+i).length > 0)
          {
-            uds = parseFloat( $("#cantidad_"+i).val() );
-            pvp = parseFloat( $("#pvp_"+i).val() );
-            dto = parseFloat( $("#dto_"+i).val() );
-            iva = parseFloat( $("#iva_"+i).val() );
-            totiva = parseFloat( $("#totiva_"+i).val() );
-            if( isNaN(totiva) )
-               totiva = 0;
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            l_totiva = parseFloat( $("#totiva_"+i).val() );
+            if( isNaN(l_totiva) )
+               l_totiva = 0;
             
-            if( totiva <= pvp*uds*(100+iva)/100 )
+            if( l_totiva <= l_pvp*l_uds*(100+l_iva)/100 )
             {
-               dto = 100 - 100*totiva/(pvp*uds*(100+iva)/100);
-               if( isNaN(dto) )
-                  dto = 0;
+               l_dto = 100 - 100*l_totiva/(l_pvp*l_uds*(100+l_iva)/100);
+               if( isNaN(l_dto) )
+                  l_dto = 0;
             }
             else
             {
-               dto = 0;
-               pvp = 10000*totiva/(uds*(100-dto)*(100+iva));
-               if( isNaN(pvp) )
-                  pvp = 0;
+               l_dto = 0;
+               l_pvp = 10000*l_totiva/(l_uds*(100-l_dto)*(100+l_iva));
+               if( isNaN(l_pvp) )
+                  l_pvp = 0;
             }
             
-            $("#pvp_"+i).val(pvp);
-            $("#dto_"+i).val(dto);
-            $("#total_"+i).val( uds*pvp*(100-dto)/100 );
-            aneto += uds*pvp*(100-dto)/100;
-            aiva += uds*pvp*(100-dto)/100*(iva/100);
-            atotal += uds*pvp*(100-dto)/100*(100+iva)/100;
+            $("#pvp_"+i).val(l_pvp);
+            $("#dto_"+i).val(l_dto);
+            $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      $("#aneto").html( number_format(aneto,2,',',' ') );
-      $("#aiva").html( number_format(aiva,2,',',' ') );
-      $("#atotal").html( number_format(atotal,2,',',' ') );
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( number_format(neto, 2, ',', ' ') );
+      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
+      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
    }
    function aux_all_impuestos(numlinea,iva)
    {

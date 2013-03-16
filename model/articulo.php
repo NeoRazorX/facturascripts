@@ -335,14 +335,14 @@ class articulo extends fs_model
    {
       $this->pvp_ant = $this->pvp;
       $this->factualizado = Date('d-m-Y');
-      $this->pvp = round($p, 2);
+      $this->pvp = round($p, 3);
    }
    
    public function set_pvp_iva($p)
    {
       $this->pvp_ant = $this->pvp;
       $this->factualizado = Date('d-m-Y');
-      $this->pvp = round((100*$p)/(100+$this->get_iva()), 2);
+      $this->pvp = round((100*$p)/(100+$this->get_iva()), 3);
    }
    
    public function set_stock($almacen, $cantidad=1)

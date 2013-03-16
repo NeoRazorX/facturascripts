@@ -138,7 +138,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    private function cargar_datos_tpv()
@@ -305,13 +305,16 @@ class tpv_yamyam extends fs_controller
                            
                            $this->albaran->neto += $linea->pvptotal;
                            $this->albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                           $this->albaran->total = ($this->albaran->neto + $this->albaran->totaliva);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la línea con referencia: ".$linea->referencia);
                      }
                   }
                }
+               /// redondeamos
+               $this->albaran->neto = round($this->albaran->neto, 2);
+               $this->albaran->totaliva = round($this->albaran->totaliva, 2);
+               $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva;
                if( $this->albaran->save() )
                {
                   $this->new_message("<a href='".$this->albaran->url()."'>Albarán</a> guardado correctamente.");
@@ -320,7 +323,7 @@ class tpv_yamyam extends fs_controller
                      $this->imprimir_ticket( floatval($_POST['num_tickets']) );
                   
                   /// actualizamos la caja
-                  $this->caja->dinero_fin += $this->albaran->totaleuros;
+                  $this->caja->dinero_fin += $this->albaran->total;
                   $this->caja->tickets += 1;
                   if( !$this->caja->save() )
                      $this->new_error_msg("¡Imposible actualizar la caja!");
@@ -347,7 +350,7 @@ class tpv_yamyam extends fs_controller
             $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
             
             /// actualizamos la caja
-            $this->caja->dinero_fin -= $alb->totaleuros;
+            $this->caja->dinero_fin -= $alb->total;
             $this->caja->tickets -= 1;
             if( !$this->caja->save() )
                $this->new_error_msg("¡Imposible actualizar la caja!");

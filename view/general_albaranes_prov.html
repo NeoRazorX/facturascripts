@@ -74,7 +74,7 @@
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
@@ -83,7 +83,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="7">Ningún albarán encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6">Ningún albarán encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr>
@@ -101,5 +101,7 @@
       </tr>
    </table>
 </div>
+
+<div class="advice"><b>F</b> significa que el albarán ha sido facturado.</div>
 
 {include="footer"}

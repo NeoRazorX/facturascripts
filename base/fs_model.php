@@ -185,6 +185,15 @@ abstract class fs_model
          return intval($s);
    }
    
+   /*
+    * Compara dos números en coma flotante con una precisión de $precision,
+    * devuelve TRUE si son iguales, FALSE en caso contrario.
+    */
+   public function floatcmp($f1, $f2, $precision = 10)
+   {
+      return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
+   }
+   
    /// functión auxiliar para facilitar el uso de fechas
    public function var2timesince($v)
    {

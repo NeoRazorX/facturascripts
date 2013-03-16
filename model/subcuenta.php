@@ -201,6 +201,29 @@ class subcuenta extends fs_model
          return FALSE;
    }
    
+   public function is_outdated()
+   {
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".
+              $this->var2str($this->idsubcuenta)." AND (
+                 debe != (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
+                   WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).")
+                 OR haber != (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
+                   WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).")
+                 OR saldo != (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
+                   FROM co_partidas WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).")
+              );";
+      
+      if( $this->db->select($sql) )
+         return TRUE;
+      else
+         return FALSE;
+   }
+   
+   public function tiene_saldo()
+   {
+      return !$this->floatcmp($this->debe, $this->haber);
+   }
+   
    public function exists()
    {
       if( is_null($this->idsubcuenta) )
@@ -234,10 +257,15 @@ class subcuenta extends fs_model
                codejercicio = ".$this->var2str($this->codejercicio).",
                coddivisa = ".$this->var2str($this->coddivisa).",
                codimpuesto = ".$this->var2str($this->codimpuesto).",
-               descripcion = ".$this->var2str($this->descripcion).", debe = ".$this->var2str($this->debe).",
-               haber = ".$this->var2str($this->haber).", saldo = ".$this->var2str($this->saldo).",
-               recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva)."
-               WHERE idsubcuenta = '".$this->idsubcuenta."';";
+               descripcion = ".$this->var2str($this->descripcion).",
+               recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva).",
+               debe = (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
+                 WHERE idsubcuenta=".$this->var2str($this->idsubcuenta)."),
+               haber = (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
+                 WHERE idsubcuenta=".$this->var2str($this->idsubcuenta)."),
+               saldo = (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
+                 FROM co_partidas WHERE idsubcuenta=".$this->var2str($this->idsubcuenta).")
+               WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";";
          }
          else
          {
@@ -251,8 +279,7 @@ class subcuenta extends fs_model
                   ".$this->var2str($this->idcuenta).",
                   ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
                   ".$this->var2str($this->coddivisa).",".$this->var2str($this->codimpuesto).",
-                  ".$this->var2str($this->descripcion).",".$this->var2str($this->debe).",
-                  ".$this->var2str($this->haber).",".$this->var2str($this->saldo).",
+                  ".$this->var2str($this->descripcion).",0,0,0,
                   ".$this->var2str($this->recargo).",".$this->var2str($this->iva).");";
             }
          }

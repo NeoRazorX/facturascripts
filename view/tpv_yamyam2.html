@@ -15,24 +15,30 @@
    }
    function recalcular()
    {
-      var tpv_total = 0;
-      var uds = 0;
-      var pvp = 0;
-      var iva = 0;
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_iva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
       for(var i=1; i<=numlineas; i++)
       {
          if($("#linea_"+i).length > 0)
          {
-            uds = parseFloat( $("#cantidad_"+i).val() );
-            pvp = parseFloat( $("#pvp_"+i).val() );
-            iva = parseFloat( $("#iva_"+i).val() );
-            $("#pvpt_"+i).val( uds*pvp*(100+iva)/100 );
-            tpv_total += Math.round( (uds*pvp*(100+iva)/100)*100 )/100;
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            $("#pvpt_"+i).val( l_uds*l_pvp*(100+l_iva)/100 );
+            
+            neto += l_uds*l_pvp;
+            total_iva += l_uds*l_pvp*l_iva/100;
          }
       }
-      $("#tpv_total").html( number_format(tpv_total,2,',','.') +" €");
-      $("#tpv_total2").val( number_format(tpv_total,2,'.','') );
-      update_lcd(tpv_total);
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+      $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
+      update_lcd(neto + total_iva);
    }
    function linea_sum_ud(num,value)
    {
@@ -71,28 +77,35 @@
    {
       if($("#linea_"+num).length > 0)
       {
-         var pvpt = parseFloat( $("#pvpt_"+num).val() );
-         if( !isNaN(pvpt) )
+         var l_uds = parseFloat( $("#cantidad_"+num).val() );
+         var l_pvp = 0;
+         var l_iva = parseFloat( $("#iva_"+num).val() );
+         var l_pvpt = parseFloat( $("#pvpt_"+num).val() );
+         var neto = 0;
+         var total_iva = 0;
+         
+         if( !isNaN(l_pvpt) )
          {
-            var uds = parseFloat( $("#cantidad_"+num).val() );
-            var iva = parseFloat( $("#iva_"+num).val() );
-            $("#pvp_"+num).val( 100*pvpt/(uds*(100+iva)) );
+            $("#pvp_"+num).val( 100*l_pvpt/(l_uds*(100+l_iva)) );
             
-            var tpv_total = 0;
-            var pvp = 0;
             for(var i=1; i<=numlineas; i++)
             {
                if($("#linea_"+i).length > 0)
                {
-                  uds = parseFloat( $("#cantidad_"+i).val() );
-                  pvp = parseFloat( $("#pvp_"+i).val() );
-                  iva = parseFloat( $("#iva_"+i).val() );
-                  tpv_total += Math.round( (uds*pvp*(100+iva)/100)*100 )/100;
+                  l_uds = parseFloat( $("#cantidad_"+i).val() );
+                  l_pvp = parseFloat( $("#pvp_"+i).val() );
+                  l_iva = parseFloat( $("#iva_"+i).val() );
+                  
+                  neto += l_uds*l_pvp;
+                  total_iva += l_uds*l_pvp*l_iva/100;
                }
             }
-            $("#tpv_total").html( number_format(tpv_total,2,',','.') +" €");
-            $("#tpv_total2").val( number_format(tpv_total,2,'.','') );
-            update_lcd(tpv_total);
+            
+            neto = fs_round(neto, 2);
+            total_iva = fs_round(total_iva, 2);
+            $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+            $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
+            update_lcd(neto + total_iva);
          }
       }
    }

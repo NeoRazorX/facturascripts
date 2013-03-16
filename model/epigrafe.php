@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/cuenta.php';
 
 class grupo_epigrafes extends fs_model
 {
@@ -48,6 +49,12 @@ class grupo_epigrafes extends fs_model
    protected function install()
    {
       return '';
+   }
+   
+   public function get_epigrafes()
+   {
+      $epigrafe = new epigrafe();
+      return $epigrafe->all_from_grupo($this->idgrupo);
    }
    
    public function get_by_codigo($cod, $eje)
@@ -178,6 +185,12 @@ class epigrafe extends fs_model
       return '';
    }
    
+   public function get_cuentas()
+   {
+      $cuenta = new cuenta();
+      return $cuenta->full_from_epigrafe($this->idepigrafe);
+   }
+   
    public function get_by_codigo($cod, $eje)
    {
       $epis = $this->db->select("SELECT * FROM ".$this->table_name.
@@ -243,6 +256,20 @@ class epigrafe extends fs_model
       $epilist = array();
       $epigrafes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
          " ORDER BY codejercicio DESC, codepigrafe ASC", FS_ITEM_LIMIT, $offset);
+      if($epigrafes)
+      {
+         foreach($epigrafes as $ep)
+            $epilist[] = new epigrafe($ep);
+      }
+      return $epilist;
+   }
+   
+   public function all_from_grupo($id)
+   {
+      $epilist = array();
+      $epigrafes = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE idgrupo = ".$this->var2str($id).
+         " ORDER BY codepigrafe ASC;");
       if($epigrafes)
       {
          foreach($epigrafes as $ep)

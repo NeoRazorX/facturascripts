@@ -214,14 +214,9 @@ class ejercicio extends fs_model
          $haber += $sc->haber;
       }
       
-      if( ($debe-$haber) > .01 )
+      if( !$this->floatcmp($debe, $haber, 5) )
       {
-         $this->new_error_msg('El debe es mayor que el haber. La diferencia es '.($debe-$haber));
-         $status = FALSE;
-      }
-      else if( ($haber-$debe) > .01 )
-      {
-         $this->new_error_msg('El haber es mayor que el debe. La diferencia es '.($haber-$debe));
+         $this->new_error_msg('El ejercicio está descuadrado. La diferencia es '.($debe-$haber));
          $status = FALSE;
       }
       

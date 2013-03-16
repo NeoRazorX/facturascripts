@@ -137,7 +137,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-11';
+      return parent::version().'-12';
    }
    
    private function new_search()
@@ -288,13 +288,16 @@ class tpv_recambios extends fs_controller
                            
                            $albaran->neto += $linea->pvptotal;
                            $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                           $albaran->total = ($albaran->neto + $albaran->totaliva);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                      }
                   }
                }
+               /// redondeamos
+               $albaran->neto = round($albaran->neto, 2);
+               $albaran->totaliva = round($albaran->totaliva, 2);
+               $albaran->total = $albaran->neto + $albaran->totaliva;
                if( $albaran->save() )
                {
                   $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
@@ -303,7 +306,7 @@ class tpv_recambios extends fs_controller
                      $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
                   
                   /// actualizamos la caja
-                  $this->caja->dinero_fin += $albaran->totaleuros;
+                  $this->caja->dinero_fin += $albaran->total;
                   $this->caja->tickets += 1;
                   if( !$this->caja->save() )
                      $this->new_error_msg("¡Imposible actualizar la caja!");
@@ -366,7 +369,7 @@ class tpv_recambios extends fs_controller
             $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
             
             /// actualizamos la caja
-            $this->caja->dinero_fin -= $alb->totaleuros;
+            $this->caja->dinero_fin -= $alb->total;
             $this->caja->tickets -= 1;
             if( !$this->caja->save() )
                $this->new_error_msg("¡Imposible actualizar la caja!");
