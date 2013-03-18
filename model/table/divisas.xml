@@ -6,8 +6,6 @@
 -->
 <tabla>
    <columna><nombre>codiso</nombre><tipo>character varying(3)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>fecha</nombre><tipo>date</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>bandera</nombre><tipo>text</tipo><nulo>YES</nulo></columna>
    <columna><nombre>tasaconv</nombre><tipo>double precision</tipo><nulo>NO</nulo></columna>
    <columna><nombre>descripcion</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>
    <columna><nombre>coddivisa</nombre><tipo>character varying(3)</tipo><nulo>NO</nulo></columna>

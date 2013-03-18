@@ -94,7 +94,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    public function url()
@@ -274,6 +274,7 @@ class general_albaran_cli extends fs_controller
       $factura->codcliente = $this->albaran->codcliente;
       $factura->coddir = $this->albaran->coddir;
       $factura->coddivisa = $this->albaran->coddivisa;
+      $factura->tasaconv = $this->albaran->tasaconv;
       $factura->codejercicio = $this->albaran->codejercicio;
       $factura->codpago = $this->albaran->codpago;
       $factura->codpais = $this->albaran->codpais;
@@ -361,7 +362,7 @@ class general_albaran_cli extends fs_controller
          $asiento->documento = $factura->codigo;
          $asiento->editable = FALSE;
          $asiento->fecha = $factura->fecha;
-         $asiento->importe = $factura->totaleuros;
+         $asiento->importe = $factura->total;
          $asiento->tipodocumento = 'Factura de cliente';
          if( $asiento->save() )
          {
@@ -372,7 +373,7 @@ class general_albaran_cli extends fs_controller
             $partida0->concepto = $asiento->concepto;
             $partida0->idsubcuenta = $subcuenta_cli->idsubcuenta;
             $partida0->codsubcuenta = $subcuenta_cli->codsubcuenta;
-            $partida0->debe = $factura->totaleuros;
+            $partida0->debe = $factura->total;
             $partida0->coddivisa = $factura->coddivisa;
             if( !$partida0->save() )
             {

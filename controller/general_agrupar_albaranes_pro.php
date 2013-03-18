@@ -71,7 +71,7 @@ class general_agrupar_albaranes_pro extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    private function agrupar()
@@ -114,6 +114,7 @@ class general_agrupar_albaranes_pro extends fs_controller
       $factura->cifnif = $albaranes[0]->cifnif;
       $factura->codalmacen = $albaranes[0]->codalmacen;
       $factura->coddivisa = $albaranes[0]->coddivisa;
+      $factura->tasaconv = $albaranes[0]->tasaconv;
       $factura->codejercicio = $albaranes[0]->codejercicio;
       $factura->codpago = $albaranes[0]->codpago;
       $factura->codproveedor = $albaranes[0]->codproveedor;
@@ -123,18 +124,16 @@ class general_agrupar_albaranes_pro extends fs_controller
       $factura->numproveedor = $albaranes[0]->numproveedor;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
-      $factura->tasaconv = $albaranes[0]->tasaconv;
       $factura->totalirpf = $albaranes[0]->totalirpf;
       $factura->totalrecargo = $albaranes[0]->totalrecargo;
       
       foreach($albaranes as $alb)
       {
          $factura->neto += $alb->neto;
-         $factura->total += $alb->total;
-         $factura->totaleuros += $alb->totaleuros;
          $factura->totaliva += $alb->totaliva;
       }
       
+      $factura->total = $factura->neto + $factura->totaliva;
       if( $factura->save() )
       {
          foreach($albaranes as $alb)
@@ -222,7 +221,7 @@ class general_agrupar_albaranes_pro extends fs_controller
          $asiento->documento = $factura->codigo;
          $asiento->editable = FALSE;
          $asiento->fecha = $factura->fecha;
-         $asiento->importe = $factura->totaleuros;
+         $asiento->importe = $factura->total;
          $asiento->tipodocumento = "Factura de proveedor";
          if( $asiento->save() )
          {
@@ -233,7 +232,7 @@ class general_agrupar_albaranes_pro extends fs_controller
             $partida0->concepto = $asiento->concepto;
             $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
             $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
-            $partida0->haber = $factura->totaleuros;
+            $partida0->haber = $factura->total;
             $partida0->coddivisa = $factura->coddivisa;
             if( !$partida0->save() )
             {

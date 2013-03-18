@@ -98,7 +98,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    public function url()
@@ -273,6 +273,7 @@ class general_albaran_prov extends fs_controller
       $factura->cifnif = $this->albaran->cifnif;
       $factura->codalmacen = $this->albaran->codalmacen;
       $factura->coddivisa = $this->albaran->coddivisa;
+      $factura->tasaconv = $this->albaran->tasaconv;
       $factura->codejercicio = $this->albaran->codejercicio;
       $factura->codpago = $this->albaran->codpago;
       $factura->codproveedor = $this->albaran->codproveedor;
@@ -283,9 +284,7 @@ class general_albaran_prov extends fs_controller
       $factura->numproveedor = $this->albaran->numproveedor;
       $factura->observaciones = $this->albaran->observaciones;
       $factura->recfinanciero = $this->albaran->recfinanciero;
-      $factura->tasaconv = $this->albaran->tasaconv;
       $factura->total = $this->albaran->total;
-      $factura->totaleuros = $this->albaran->totaleuros;
       $factura->totalirpf = $this->albaran->totalirpf;
       $factura->totaliva = $this->albaran->totaliva;
       $factura->totalrecargo = $this->albaran->totalrecargo;
@@ -363,7 +362,7 @@ class general_albaran_prov extends fs_controller
          $asiento->documento = $factura->codigo;
          $asiento->editable = FALSE;
          $asiento->fecha = $factura->fecha;
-         $asiento->importe = $factura->totaleuros;
+         $asiento->importe = $factura->total;
          $asiento->tipodocumento = "Factura de proveedor";
          if( $asiento->save() )
          {
@@ -374,7 +373,7 @@ class general_albaran_prov extends fs_controller
             $partida0->concepto = $asiento->concepto;
             $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
             $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
-            $partida0->haber = $factura->totaleuros;
+            $partida0->haber = $factura->total;
             $partida0->coddivisa = $factura->coddivisa;
             if( !$partida0->save() )
             {

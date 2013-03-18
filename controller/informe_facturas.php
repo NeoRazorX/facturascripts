@@ -133,7 +133,7 @@ class informe_facturas extends fs_controller
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
-               $total += $facturas[$linea_actual]->totaleuros;
+               $total += $facturas[$linea_actual]->total;
                $linea_actual++;
             }
             $titulo = array(
@@ -285,7 +285,7 @@ class informe_facturas extends fs_controller
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
-               $total += $facturas[$linea_actual]->totaleuros;
+               $total += $facturas[$linea_actual]->total;
                $linea_actual++;
             }
             $titulo = array(

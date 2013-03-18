@@ -229,7 +229,6 @@ class linea_albaran_proveedor extends fs_model
    public function test()
    {
       $status = TRUE;
-      
       $this->descripcion = $this->no_html($this->descripcion);
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
@@ -605,7 +604,7 @@ class albaran_proveedor extends fs_model
    public function test()
    {
       $this->observaciones = $this->no_html($this->observaciones);
-      $this->totaleuros = $this->total;
+      $this->totaleuros = $this->total * $this->tasaconv;
       
       return TRUE;
    }

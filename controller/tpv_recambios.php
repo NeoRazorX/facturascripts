@@ -137,7 +137,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-12';
+      return parent::version().'-13';
    }
    
    private function new_search()
@@ -244,6 +244,7 @@ class tpv_recambios extends fs_controller
             $albaran->codserie = $serie->codserie;
             $albaran->codpago = $forma_pago->codpago;
             $albaran->coddivisa = $divisa->coddivisa;
+            $albaran->tasaconv = $divisa->tasaconv;
             $albaran->codagente = $this->agente->codagente;
             $albaran->observaciones = $_POST['observaciones'];
             if( $albaran->save() )

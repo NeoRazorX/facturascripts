@@ -1,0 +1,118 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).attr('checked', true);
+         i++;
+      }
+   }
+   function fs_marcar_nada()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).attr('checked', false);
+         i++;
+      }
+   }
+   $(document).ready(function() {
+      $("#b_nueva_divisa").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nueva_divisa');
+         document.f_nueva_divisa.coddivisa.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nueva_divisa">
+   <h1>Nueva divisa</h1>
+   <form name="f_nueva_divisa" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="coddivisa" size="3" maxlength="3" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Código ISO:</td>
+            <td><input type="text" name="codiso" size="3" maxlength="3" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Tasa de conversión:</td>
+            <td><input type="text" name="tasaconv" size="5" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right"><input type="submit" value="guardar"/></td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="rounded">
+   <form action="{$fsc->url()}" method="POST">
+      
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
+         </tr>
+      </table>
+      
+      <br/>
+      
+      <table class="list">
+         <tr>
+            <th>Eliminar</th>
+            <th align="left">Código</th>
+            <th align="left">Descripción</th>
+            <th align="left">Código ISO</th>
+            <th align="left">Tasa de conversión</th>
+         </tr>
+         {loop="$fsc->divisa->all()"}
+         <tr>
+            <td align="center">
+               <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
+            </td>
+            <td>
+               {$value->coddivisa}
+               <input type="hidden" name="coddivisa_{$counter}" value="{$value->coddivisa}"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="codiso_{$counter}" value="{$value->codiso}" size="3" maxlength="3" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="tasaconv_{$counter}" value="{$value->tasaconv}" size="5" autocomplete="off"/>
+            </td>
+         </tr>
+         {/loop}
+      </table>
+      
+      <br/>
+      
+      <table width="100%">
+         <tr>
+            <td>
+               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="right"><input type="submit" value="Guardar"/></td>
+         </tr>
+      </table>
+      
+   </form>
+</div>
+
+{include="footer"}

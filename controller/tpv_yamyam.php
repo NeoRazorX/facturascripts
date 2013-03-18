@@ -138,7 +138,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    private function cargar_datos_tpv()
@@ -266,6 +266,7 @@ class tpv_yamyam extends fs_controller
             $this->albaran->codserie = $serie->codserie;
             $this->albaran->codpago = $forma_pago->codpago;
             $this->albaran->coddivisa = $divisa->coddivisa;
+            $this->albaran->tasaconv = $divisa->tasaconv;
             $this->albaran->codagente = $this->agente->codagente;
             $this->albaran->observaciones = $_POST['observaciones'];
             if( $this->albaran->save() )

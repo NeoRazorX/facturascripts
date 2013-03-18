@@ -87,7 +87,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    private function new_articulo()
@@ -193,6 +193,7 @@ class general_nuevo_albaran extends fs_controller
             $albaran->codserie = $serie->codserie;
             $albaran->codpago = $forma_pago->codpago;
             $albaran->coddivisa = $divisa->coddivisa;
+            $albaran->tasaconv = $divisa->tasaconv;
             $albaran->codagente = $this->agente->codagente;
             if( isset($_POST['numero2']) )
                $albaran->numero2 = $_POST['numero2'];
@@ -328,6 +329,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codserie = $serie->codserie;
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
+         $albaran->tasaconv = $divisa->tasaconv;
          $albaran->codagente = $this->agente->codagente;
          if( isset($_POST['numproveedor']) )
             $albaran->numproveedor = $_POST['numproveedor'];

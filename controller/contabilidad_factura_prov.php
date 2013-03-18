@@ -291,7 +291,7 @@ class contabilidad_factura_prov extends fs_controller
             $asiento->documento = $this->factura->codigo;
             $asiento->editable = FALSE;
             $asiento->fecha = $this->factura->fecha;
-            $asiento->importe = $this->factura->totaleuros;
+            $asiento->importe = $this->factura->total;
             $asiento->tipodocumento = "Factura de proveedor";
             if( $asiento->save() )
             {
@@ -302,7 +302,7 @@ class contabilidad_factura_prov extends fs_controller
                $partida0->concepto = $asiento->concepto;
                $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
                $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
-               $partida0->haber = $this->factura->totaleuros;
+               $partida0->haber = $this->factura->total;
                $partida0->coddivisa = $this->factura->coddivisa;
                if( !$partida0->save() )
                {

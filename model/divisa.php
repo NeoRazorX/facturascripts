@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,8 +24,6 @@ class divisa extends fs_model
    public $coddivisa;
    public $descripcion;
    public $tasaconv;
-   public $bandera;
-   public $fecha;
    public $codiso;
 
    public function __construct($d=FALSE)
@@ -36,8 +34,6 @@ class divisa extends fs_model
          $this->coddivisa = $d['coddivisa'];
          $this->descripcion = $d['descripcion'];
          $this->tasaconv = floatval($d['tasaconv']);
-         $this->bandera = $d['bandera'];
-         $this->fecha = $d['fecha'];
          $this->codiso = $d['codiso'];
       }
       else
@@ -45,8 +41,6 @@ class divisa extends fs_model
          $this->coddivisa = NULL;
          $this->descripcion = '';
          $this->tasaconv = 1;
-         $this->bandera = '';
-         $this->fecha = Date('d-m-Y');
          $this->codiso = NULL;
       }
    }
@@ -54,8 +48,13 @@ class divisa extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,bandera,fecha,codiso)
-         VALUES ('EUR','EUROS','1','','".Date('d-m-Y')."','978');";
+      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso)
+         VALUES ('EUR','EUROS','1','978');";
+   }
+   
+   public function show_tasa()
+   {
+      return number_format($this->tasaconv, 3);
    }
    
    public function is_default()
@@ -65,9 +64,12 @@ class divisa extends fs_model
    
    public function get($cod)
    {
-      $divisa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($cod).";");
+      $divisa = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE coddivisa = ".$this->var2str($cod).";");
       if($divisa)
          return new divisa($divisa[0]);
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -75,24 +77,55 @@ class divisa extends fs_model
       if( is_null($this->coddivisa) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    public function test()
    {
-      return TRUE;
+      $status = FALSE;
+      $this->descripcion = $this->no_html($this->descripcion);
+      
+      if( !preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa) )
+         $this->new_error_msg("Código de almacén no válido.");
+      else if( isset($this->codiso) AND !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso) )
+         $this->new_error_msg("Código ISO no válido.");
+      else
+         return TRUE;
+      
+      return $status;
    }
    
    public function save()
    {
-      $this->clean_cache();
-      return FALSE;
+      if( $this->test() )
+      {
+         $this->clean_cache();
+         
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+               tasaconv = ".$this->var2str($this->tasaconv).", codiso = ".$this->var2str($this->codiso)."
+               WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso) VALUES
+               (".$this->var2str($this->coddivisa).",".$this->var2str($this->descripcion).",
+                ".$this->var2str($this->tasaconv).",".$this->var2str($this->codiso).");";
+         }
+         
+         return $this->db->exec($sql);
+      }
+      else
+         return FALSE;
    }
    
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    private function clean_cache()
@@ -105,7 +138,8 @@ class divisa extends fs_model
       $listad = $this->cache->get_array('m_divisa_all');
       if( !$listad )
       {
-         $divisas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
+         $divisas = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " ORDER BY coddivisa ASC;");
          if($divisas)
          {
             foreach($divisas as $d)
