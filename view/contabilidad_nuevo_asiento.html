@@ -5,48 +5,76 @@
    function add_partida()
    {
       numlineas++;
-      $("#partidas").append("<div class=\"rounded\">\n\
-         <div>\n\
-            <input type=\"hidden\" id=\"idsubcuenta_"+numlineas+"\" name=\"idsubcuenta_"+numlineas+"\"/>\n\
-            Subcuenta:\n\
-            <input id=\"codsubcuenta_"+numlineas+"\" name=\"codsubcuenta_"+numlineas+"\" type=\"text\" size=\"10\"\n\
-               onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete=\"off\"/>\n\
-            <input type=\"text\" id=\"dessubcuenta_"+numlineas+"\" name=\"dessubcuenta_"+numlineas+"\" size=\"60\" disabled=\"disabled\"/>\n\
-            saldo: <input type=\"text\" id=\"saldo_"+numlineas+"\" name=\"saldo_"+numlineas+"\" value=\"0\" size=\"8\"\n\
-                disabled=\"disabled\"/>\n\
-         </div>\n\
-         <div id=\"datos_partida_"+numlineas+"\" class=\"hidden\">\n\
-         <div>\n\
-            debe: <input type=\"text\" id=\"debe_"+numlineas+"\" name=\"debe_"+numlineas+"\" value=\"0\" size=\"6\"\n\
-               onclick=\"this-select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/>\n\
-            haber: <input type=\"text\" id=\"haber_"+numlineas+"\" name=\"haber_"+numlineas+"\" size=\"6\" value=\"0\"\n\
-               onclick=\"this-select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/>\n\
-            <input type=\"button\" value=\"limpiar\" onclick=\"clean_partida('"+numlineas+"')\"/>\n\
-         </div>\n\
-         <div>\n\
-            <input type=\"hidden\" id=\"idcontrapartida_"+numlineas+"\" name=\"idcontrapartida_"+numlineas+"\"/>\n\
-            Contrapartida:\n\
-            <input id=\"codcontrapartida_"+numlineas+"\" name=\"codcontrapartida_"+numlineas+"\" type=\"text\" size=\"10\"\n\
-               onclick=\"show_buscar_subcuentas('"+numlineas+"','contrapartida')\" autocomplete=\"off\"/>\n\
-            <input type=\"text\" id=\"descontrapartida_"+numlineas+"\" name=\"descontrapartida_"+numlineas+"\" size=\"60\" disabled=\"disabled\"/>\n\
-            saldo: <input type=\"text\" id=\"saldoc_"+numlineas+"\" name=\"saldoc_"+numlineas+"\" value=\"0\" size=\"8\"\n\
-                disabled=\"disabled\"/>\n\
-         </div>\n\
-         <div id=\"datos_contrapartida_"+numlineas+"\" class=\"hidden\">\n\
-            cif/nif: <input type=\"text\" id=\"cifnif_"+numlineas+"\" name=\"cifnif_"+numlineas+"\" size=\"10\"/>\n\
-            IVA: <select id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" onchange=\"recalcular()\">\n\
-            {loop="$fsc->impuesto->all()"}<option value=\"{$value->iva}\">{$value->descripcion}</option>{/loop}\n\
-            </select>\n\
-            Base imponible: <input type=\"text\" id=\"baseimp_"+numlineas+"\" name=\"baseimp_"+numlineas+"\" value=\"0\" size=\"6\"\n\
-               autocomplete=\"off\"/>\n\
-         </div>\n\
-         </div>\n\
+      $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
+         <table width='100%'>\n\
+            <tr>\n\
+               <td>\n\
+               <table class='list'>\n\
+                  <tr>\n\
+                     <th align='left'>Subcuenta</th>\n\
+                     <th align='left'>Debe</th>\n\
+                     <th align='left'>Haber</th>\n\
+                  </tr>\n\
+                  <tr>\n\
+                     <td>\n\
+                        <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
+                           onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
+                        <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='30' disabled='disabled'/>\n\
+                        <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' size='8' disabled='disabled'/>\n\
+                     </td>\n\
+                     <td>\n\
+                        <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='5'\n\
+                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                     </td>\n\
+                     <td>\n\
+                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='5' value='0'\n\
+                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                     </td>\n\
+                  </tr>\n\
+               </table>\n\
+               </td>\n\
+               <td id='contrapartida_"+numlineas+"' align='center'>\n\
+                  <a href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
+               </td>\n\
+               <td align='right'><input type='button' value='x' onclick=\"clean_partida('"+numlineas+"')\"/></td>\n\
+            </tr>\n\
+         </table>\n\
          </div>");
+   }
+   function add_contrapartida(num)
+   {
+      $("#contrapartida_"+num).html("<table class='list'>\n\
+         <tr>\n\
+            <th align='left'>Contrapartida</th>\n\
+            <th align='left'>IVA</th>\n\
+            <th align='left'>Base Imp.</th>\n\
+            <th align='left'>CIF/NIF</th>\n\
+         </tr>\n\
+         <tr>\n\
+            <td>\n\
+               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text' size='10'\n\
+                  onclick=\"show_buscar_subcuentas('"+num+"','contrapartida')\" autocomplete='off' placeholder='Seleccionar'/>\n\
+               <input type='text' id='descontrapartida_"+num+"' name='descontrapartida_"+num+"' size='30' disabled='disabled'/>\n\
+               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' size='8' disabled='disabled'/>\n\
+            </td>\n\
+            <td>\n\
+               <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
+                  {loop="$fsc->impuesto->all()"}<option value='{$value->iva}'>{$value->descripcion}</option>{/loop}\n\
+               </select>\n\
+            </td>\n\
+            <td>\n\
+               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' size='5' autocomplete='off'/>\n\
+            </td>\n\
+            <td>\n\
+               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"' size='10'/>\n\
+            </td>\n\
+         </tr>\n\
+         </table>");
    }
    function show_buscar_subcuentas(num, tipo)
    {
       $("#subcuentas").html('');
-      document.f_buscar_subcuentas.ejercicio.value = document.f_asiento.codejercicio.options[document.f_asiento.codejercicio.selectedIndex].value;
+      document.f_buscar_subcuentas.fecha.value = document.f_asiento.fecha.value;
       document.f_buscar_subcuentas.tipo.value = tipo;
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
@@ -66,8 +94,7 @@
       else
       {
          var datos = 'query='+document.f_buscar_subcuentas.query.value;
-         datos += "&tipo="+document.f_buscar_subcuentas.tipo.value;
-         datos += "&ejercicio="+document.f_buscar_subcuentas.ejercicio.value;
+         datos += "&fecha="+document.f_buscar_subcuentas.fecha.value;
          $.ajax({
             type: 'POST',
             url: '{$fsc->url()}',
@@ -88,77 +115,69 @@
          });
       }
    }
-   function select_subcuenta(idsubcuenta, codsubcuenta, descripcion, saldo)
+   function select_subcuenta(codsubcuenta, descripcion, saldo)
    {
       var num = document.f_buscar_subcuentas.numlinea.value;
       if(document.f_buscar_subcuentas.tipo.value == 'subcuenta')
       {
-         $("#idsubcuenta_"+num).val(idsubcuenta);
          $("#codsubcuenta_"+num).val(codsubcuenta);
          $("#dessubcuenta_"+num).val(descripcion);
          $("#saldo_"+num).val(saldo);
-         $("#datos_partida_"+num).show();
       }
       else
       {
-         $("#idcontrapartida_"+num).val(idsubcuenta);
          $("#codcontrapartida_"+num).val(codsubcuenta);
          $("#descontrapartida_"+num).val(descripcion);
          $("#saldoc_"+num).val(saldo);
-         $("#datos_contrapartida_"+num).show();
       }
       fs_hide_popups();
    }
    function clean_partida(num)
    {
-      $("#idsubcuenta_"+num).val('');
-      $("#codsubcuenta_"+num).val('');
-      $("#dessubcuenta_"+num).val('');
-      $("#saldo_"+num).val('0');
-      $("#debe_"+num).val('0');
-      $("#haber_"+num).val('0');
-      $("#idcontrapartida_"+num).val('');
-      $("#codcontrapartida_"+num).val('');
-      $("#descontrapartida_"+num).val('');
-      $("#saldoc_"+num).val('0');
-      $("#cifnif_"+num).val('');
-      $("#baseimp_"+num).val('0');
-      $("#datos_contrapartida_"+num).hide();
-      $("#datos_partida_"+num).hide();
+      $("#partida_"+num).remove();
    }
    function recalcular()
    {
       var debe = 0;
       var haber = 0;
+      var iva = 0;
+      var t_debe = 0;
+      var t_haber = 0;
+      
       for(var i=1; i<=numlineas; i++)
       {
-         if( !isNaN( $("#idcontrapartida_"+i).val() ) )
+         if( $("#contrapartida_"+i).length > 0 )
          {
-            var iva = parseFloat( $("#iva_"+i).val() );
-            if(iva == 0)
-               $("#baseimp_"+i).val('0');
-            else
+            debe = parseFloat( $("#debe_"+i).val() );
+            haber = parseFloat( $("#haber_"+i).val() );
+            
+            if( $("#codcontrapartida_"+i).val() != '' )
             {
-               if( parseFloat( $("#debe_"+i).val() ) > 0 )
-                  $("#baseimp_"+i).val( parseFloat($("#debe_"+i).val())*100/iva );
-               else if( parseFloat( $("#haber_"+i).val() ) > 0 )
-                  $("#baseimp_"+i).val( parseFloat($("#haber_"+i).val())*100/iva );
+               iva = parseFloat( $("#iva_"+i).val() );
+               if(iva == 0)
+                  $("#baseimp_"+i).val('0');
                else
-                  $("#baseimp_"+i).val(0);
+               {
+                  if(haber == 0)
+                     $("#baseimp_"+i).val( debe*100/iva );
+                  else if(debe == 0)
+                     $("#baseimp_"+i).val( haber*100/iva );
+                  else
+                     $("#baseimp_"+i).val(0);
+               }
             }
+            
+            t_debe += debe;
+            t_haber += haber;
          }
-         
-         if( parseFloat( $("#debe_"+i).val() ) > 0 )
-            debe += parseFloat( $("#debe_"+i).val() );
-         else if( parseFloat( $("#haber_"+i).val() ) > 0 )
-            haber += parseFloat( $("#haber_"+i).val() );
       }
-      document.f_asiento.importe.value = Math.max(debe,haber);
-      document.f_asiento.descuadre.value = debe - haber;
+      document.f_asiento.importe.value = Math.max(t_debe, t_haber);
+      document.f_asiento.descuadre.value = t_debe - t_haber;
    }
    function asigna_concepto()
    {
-      document.f_asiento.concepto.value = document.f_asiento.idconceptopar.options[document.f_asiento.idconceptopar.selectedIndex].text;
+      document.f_asiento.concepto.value = $("#s_idconceptopar option:selected").text();
+      document.f_asiento.concepto.focus();
    }
    $(document).ready(function() {
       $("#f_buscar_subcuentas").keyup(function() {
@@ -170,9 +189,14 @@
       });
       $("#f_asiento").submit(function(event) {
          event.preventDefault();
-         document.f_asiento.numlineas.value = numlineas;
-         document.f_asiento.importe.disabled = false;
-         document.f_asiento.submit();
+         if(document.f_asiento.descuadre.value == 0)
+         {
+            document.f_asiento.numlineas.value = numlineas;
+            document.f_asiento.importe.disabled = false;
+            document.f_asiento.submit();
+         }
+         else
+            alert('¡Asiento descuadrado!');
       });
    });
 </script>
@@ -180,42 +204,24 @@
 <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
    <input type="hidden" name="numlineas" value="0"/>
    <div class="rounded">
-      <div class="bloque">
-         <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
-         <select name="codejercicio">
-            {loop="$fsc->ejercicio->all_abiertos()"}
-               {if condition="$value->is_default()"}
-               <option value="{$value->codejercicio}" selected="selected">{$value->nombre}</option>
-               {else}
-               <option value="{$value->codejercicio}">{$value->nombre}</option>
-               {/if}
-            {/loop}
-         </select>
-      </div>
-      <div class="bloque">
-         Fecha: <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
-      </div>
-      <div class="bloque">
-         ID concepto:
-         <select name="idconceptopar" onchange="asigna_concepto()">
-            <option value="">---</option>
-            {loop="$fsc->concepto->all()"}
-            <option value="{$value->idconceptopar}">{$value->concepto}</option>
-            {/loop}
-         </select>
-         Concepto: <input name="concepto" type="text" size="30"/>
-      </div>
-      <div class="bloque">
-         Documento: <input name="documento" type="text" size="30"/>
-         Tipo documento:
-         <select name="tipodocumento">
-            <option value="">---</option>
-            <option value="Recibo">Recibo</option>
-            <option value="Factura de cliente">Factura de cliente</option>
-            <option value="Factura de proveedor">Factura de proveedor</option>
-         </select>
-      </div>
       <table class="list">
+         <tr>
+            <td>
+               Fecha:
+               <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
+            </td>
+            <td>
+               Concepto:
+               <select id="s_idconceptopar" name="idconceptopar" onchange="asigna_concepto()">
+                  <option value="">---</option>
+                  {loop="$fsc->concepto->all()"}<option value="{$value->idconceptopar}">{$value->concepto}</option>{/loop}
+               </select>
+               <input name="concepto" type="text" size="60" maxlength="250" autocomplete="off"/>
+            </td>
+            <td align="right">
+               <input type="submit" value="guardar"/>
+            </td>
+         </tr>
          <tr>
             <td>
                Divisa:
@@ -229,27 +235,24 @@
                   {/loop}
                </select>
             </td>
-            <td align="right">
+            <td colspan="2" align="right">
                Importe:
                <input type="text" name="importe" value="0" size="6" disabled="disabled"/>
                Descuadre:
                <input type="text" name="descuadre" value="0" size="6" disabled="disabled"/>
-               <input type="submit" value="guardar"/>
             </td>
          </tr>
       </table>
    </div>
    <div id="partidas"></div>
    <div class="rounded">
-      <div class="new_line">
-         <a href="#" onclick="add_partida(); return false;">Añadir partida...</a>
-      </div>
+      <div class="new_line"><a href="#" onclick="add_partida(); return false;">Añadir línea...</a></div>
    </div>
 </form>
 
-<div class="popup" id="popup_subcuentas" style="min-width: 60%">
+<div class="popup" id="popup_subcuentas" style="min-width: 80%">
    <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input type="hidden" name="ejercicio"/>
+      <input type="hidden" name="fecha"/>
       <input type="hidden" name="tipo"/>
       <input type="hidden" name="numlinea"/>
       <h1>Buscar subcuentas</h1>

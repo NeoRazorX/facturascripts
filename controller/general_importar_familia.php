@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -137,6 +137,8 @@ class general_importar_familia extends fs_controller
    
    protected function process()
    {
+      $this->ppage = $this->page->get('general_familias');
+      
       $this->articulo = new articulo();
       $this->cache = new fs_cache();
       $this->ready = TRUE;
@@ -214,7 +216,8 @@ class general_importar_familia extends fs_controller
                else
                {
                   $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
-                  $this->buttons[] = new fs_button('b_start', 'procesar', $this->url().'&action=start');
+                  $this->buttons[] = new fs_button('b_start', 'procesar',
+                          $this->url().'&action=start', '', 'img/tools.png');
                }
             }
             else if($this->family_data->action == 'start')
@@ -248,7 +251,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    private function get_family_data()

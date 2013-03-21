@@ -10,16 +10,16 @@
    {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda '{$fsc->query}':</h1>{/if}
    <table class="list">
       <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Número</th>
+         <th></th>
+         <th align="left">Ejercicio + Número</th>
          <th align="left">Concepto</th>
          <th align="right">Importe</th>
          <th align="right">Fecha</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->numero}</a></td>
+         <td align="center">{if condition="$value->editable"}E{/if}</td>
+         <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
          <td><a href="{$value->url()}">{$value->concepto}</a></td>
          <td align="right">{$value->show_importe()} €</td>
          <td align="right">{$value->fecha}</td>
@@ -44,5 +44,7 @@
       </tr>
    </table>
 </div>
+
+<div class="advice"><b>E</b> significa que el asiento es editable.</div>
 
 {include="footer"}

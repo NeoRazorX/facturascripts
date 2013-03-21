@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -46,7 +46,8 @@ class general_albaranes_prov extends fs_controller
          
          $agpage = $this->page->get('general_agrupar_albaranes_pro');
          if($agpage)
-            $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
+            $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar',
+                    $agpage->url(), '', 'img/tools.png');
          
          $this->buttons[] = new fs_button('b_buscar_lineas', 'lineas', '#', '', 'img/zoom.png');
          
@@ -79,7 +80,7 @@ class general_albaranes_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function anterior_url()

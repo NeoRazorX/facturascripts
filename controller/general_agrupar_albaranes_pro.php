@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -71,7 +71,7 @@ class general_agrupar_albaranes_pro extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    private function agrupar()
@@ -234,6 +234,7 @@ class general_agrupar_albaranes_pro extends fs_controller
             $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
             $partida0->haber = $factura->total;
             $partida0->coddivisa = $factura->coddivisa;
+            $partida0->tasaconv = $factura->tasaconv;
             if( !$partida0->save() )
             {
                $asiento_correcto = FALSE;
@@ -262,6 +263,7 @@ class general_agrupar_albaranes_pro extends fs_controller
                   $partida1->baseimponible = $li->neto;
                   $partida1->iva = $li->iva;
                   $partida1->coddivisa = $factura->coddivisa;
+                  $partida1->tasaconv = $factura->tasaconv;
                   if( !$partida1->save() )
                   {
                      $asiento_correcto = FALSE;
@@ -280,6 +282,7 @@ class general_agrupar_albaranes_pro extends fs_controller
                $partida2->codsubcuenta = $subcuenta_compras->codsubcuenta;
                $partida2->debe = $factura->neto;
                $partida2->coddivisa = $factura->coddivisa;
+               $partida2->tasaconv = $factura->tasaconv;
                if( !$partida2->save() )
                {
                   $asiento_correcto = FALSE;
