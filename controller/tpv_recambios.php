@@ -95,13 +95,19 @@ class tpv_recambios extends fs_controller
             {
                if($this->caja->codagente == $this->user->codagente)
                {
+                  $this->buttons[] = new fs_button('b_reticket', 'reimprimir ticket', '#', '', 'img/tools.png');
                   $this->buttons[] = new fs_button('b_borrar_ticket', 'borrar ticket', '#', 'remove', 'img/remove.png');
+                  $this->buttons[] = new fs_button('b_abrir_caja', 'abrir caja', $this->url().'&abrir_caja=TRUE', '', 'img/tools.png');
                   $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', '#', 'remove', 'img/remove.png');
                   
-                  if( isset($_GET['cerrar_caja']) )
+                  if( isset($_GET['abrir_caja']) )
+                     $this->abrir_caja();
+                  else if( isset($_GET['cerrar_caja']) )
                      $this->cerrar_caja();
                   else if( isset($_POST['cliente']) )
                      $this->nuevo_albaran_cliente();
+                  else if( isset($_GET['reticket']) )
+                     $this->reimprimir_ticket();
                   else if( isset($_GET['delete']) )
                      $this->borrar_ticket();
                }
@@ -137,7 +143,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    private function new_search()
@@ -323,6 +329,17 @@ class tpv_recambios extends fs_controller
          $this->new_error_msg("¡Faltan datos!");
    }
    
+   private function abrir_caja()
+   {
+      if( $this->user->admin )
+      {
+         $fpt = new fs_printer(FS_PRINTER);
+         $fpt->abrir_cajon();
+      }
+      else
+         $this->new_error_msg('Sólo un administrador puede abrir la caja.');
+   }
+   
    private function cerrar_caja()
    {
       $this->caja->fecha_fin = Date('Y-n-j H:i:s');
@@ -359,6 +376,27 @@ class tpv_recambios extends fs_controller
          $this->new_error_msg("¡Imposible cerrar la caja!");
    }
    
+   private function reimprimir_ticket()
+   {
+      $albaran = new albaran_cliente();
+      
+      if($_GET['reticket'] == '')
+      {
+         foreach($albaran->all() as $alb)
+         {
+            $alb0 = $alb;
+            break;
+         }
+      }
+      else
+         $alb0 = $albaran->get_by_codigo($_GET['reticket']);
+      
+      if($alb0)
+         $this->imprimir_ticket($alb0, 1, FALSE);
+      else
+         $this->new_error_msg("Ticket no encontrado.");
+   }
+   
    private function borrar_ticket()
    {
       $albaran = new albaran_cliente();
@@ -381,8 +419,8 @@ class tpv_recambios extends fs_controller
       else
          $this->new_error_msg("Ticket no encontrado.");
    }
-
-   private function imprimir_ticket($albaran, $num_tickets=1)
+   
+   private function imprimir_ticket($albaran, $num_tickets=1, $cajon=TRUE)
    {
       $fpt = new fs_printer(FS_PRINTER);
       
@@ -429,7 +467,8 @@ class tpv_recambios extends fs_controller
          $num_tickets--;
       }
       
-      $fpt->abrir_cajon();
+      if($cajon)
+         $fpt->abrir_cajon();
    }
 }
 
