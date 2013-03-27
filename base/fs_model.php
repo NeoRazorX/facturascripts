@@ -45,7 +45,7 @@ abstract class fs_model
       {
          if( $this->cache->error() )
          {
-            $this->new_error_msg( 'Memcache está deshabilitado. ' . $this->cache->error_msg() );
+            $this->new_error_msg( 'Memcache está deshabilitado. '.$this->cache->error_msg() );
             self::$checked_tables = array();
          }
          else
@@ -233,10 +233,10 @@ abstract class fs_model
     */
    public function no_html($t)
    {
-      $newt  = preg_replace('/</', '&lt;', $t);
-      $newt  = preg_replace('/>/', '&gt;', $newt);
-      $newt  = preg_replace('/"/', '&quot;', $newt);
-      $newt  = preg_replace("/'/", '&#39;', $newt);
+      $newt = preg_replace('/</', '&lt;', $t);
+      $newt = preg_replace('/>/', '&gt;', $newt);
+      $newt = preg_replace('/"/', '&quot;', $newt);
+      $newt = preg_replace("/'/", '&#39;', $newt);
       return trim($newt);
    }
    
@@ -279,12 +279,40 @@ abstract class fs_model
    }
    
    /*
+    * A partir del campo default del xml de una tabla
+    * comprueba si se refiere a una secuencia, y si es así
+    * comprueba la existencia de la secuencia. Si no la encuentra
+    * la crea.
+    */
+   private function default2check_sequence($default, $colname)
+   {
+      /// ¿Se refiere a una secuencia?
+      if( strtolower(substr($default, 0, 9)) == "nextval('" )
+      {
+         $aux = explode("'", $default);
+         if( count($aux) == 3 )
+         {
+            /// ¿Existe esa secuencia?
+            if( !$this->db->sequence_exists($aux[1]) )
+            {
+               /// ¿En qué número debería empezar esta secuencia?
+               $num = 1;
+               $aux_num = $this->db->select("SELECT MAX(".$colname."::integer) as num FROM ".$this->table_name.";");
+               if($aux_num)
+                  $num += intval($aux_num[0]['num']);
+               $this->db->exec("CREATE SEQUENCE ".$aux[1]." START ".$num.";");
+            }
+         }
+      }
+   }
+   
+   /*
     * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.
     */
    private function compare_columns($xml_cols, $columnas)
    {
-      $consulta = "";
+      $consulta = '';
       foreach($xml_cols as $col)
       {
          $encontrada = FALSE;
@@ -294,21 +322,25 @@ abstract class fs_model
             {
                if($col2['column_name'] == $col['nombre'])
                {
-                  if($col['defecto'] == "")
+                  if($col['defecto'] == '')
                      $col['defecto'] = NULL;
                   if($col2['column_default'] != $col['defecto'])
                   {
-                     if($col['defecto'] != NULL)
-                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET DEFAULT ' . $col['defecto'] . ";";
+                     if( is_null($col['defecto']) )
+                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP DEFAULT;';
                      else
-                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" DROP DEFAULT;';
+                     {
+                        $this->default2check_sequence($col['defecto'], $col['nombre']);
+                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.
+                             $col['nombre'].'" SET DEFAULT '.$col['defecto'].";";
+                     }
                   }
                   if($col2['is_nullable'] != $col['nulo'])
                   {
                      if($col['nulo'] == "YES")
-                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" DROP NOT NULL;';
+                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP NOT NULL;';
                      else
-                        $consulta .= "ALTER TABLE " . $this->table_name . ' ALTER COLUMN "' . $col['nombre'] . '" SET NOT NULL;';
+                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" SET NOT NULL;';
                   }
                   $encontrada = TRUE;
                   break;
@@ -317,9 +349,9 @@ abstract class fs_model
          }
          if(!$encontrada)
          {
-            $consulta .= "ALTER TABLE " . $this->table_name . ' ADD COLUMN "' . $col['nombre'] . '" ' . $col['tipo'];
+            $consulta .= "ALTER TABLE ".$this->table_name.' ADD COLUMN "'.$col['nombre'].'" '.$col['tipo'];
             if($col['defecto'] != "")
-               $consulta .= " DEFAULT " . $col['defecto'];
+               $consulta .= " DEFAULT ".$col['defecto'];
             if($col['nulo'] == "NO")
                $consulta .= " NOT NULL";
             $consulta .= ";\n";

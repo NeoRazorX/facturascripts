@@ -23,16 +23,30 @@
             <td><input type="text" name="snombre" autocomplete="off"/></td>
          </tr>
          <tr>
+            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
+            <td>
+               <select name="scodpais">
+                  {loop="$fsc->pais->all()"}
+                     <option value="{$value->codpais}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Provincia:</td>
+            <td><input type="text" name="sprovincia" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Ciudad:</td>
+            <td><input type="text" name="spoblacion" autocomplete="off"/></td>
+         </tr>
+         <tr>
             <td align="right">Dirección:</td>
             <td><input type="text" name="sdireccion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Código postal:</td>
             <td><input type="text" name="scodpostal" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Localidad:</td>
-            <td><input type="text" name="spoblacion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Teléfono:</td>
@@ -56,6 +70,7 @@
 {loop="$fsc->almacen->all()"}
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
+      <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
       <h1>
          Código: {$value->codalmacen}
          <span>
@@ -66,24 +81,39 @@
             <input type="submit" value="guardar"/>
          </span>
       </h1>
-      <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
       <div class="bloque">
          Nombre: <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Dirección: <input type="text" name="sdireccion" value="{$value->direccion}" autocomplete="off"/>
+         <a href="{$fsc->pais->url()}">País</a>:
+         <select name="scodpais">
+         {loop="$fsc->pais->all()"}
+            {if condition="$value1->codpais == $value2->codpais"}
+               <option value="{$value2->codpais}" selected="selected">{$value2->nombre}</option>
+            {else}
+               <option value="{$value2->codpais}">{$value2->nombre}</option>
+            {/if}
+         {/loop}
+         </select>
       </div>
       <div class="bloque">
-         Código postal: <input type="text" name="scodpostal" value="{$value->codpostal}" autocomplete="off"/>
+         Provincia:
+         <input type="text" name="sprovincia" size="20" value="{$value->provincia}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Población: <input type="text" name="spoblacion" value="{$value->poblacion}" autocomplete="off"/>
+         Ciudad: <input type="text" name="spoblacion" size="20" value="{$value->poblacion}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}" autocomplete="off"/>
+         Dirección: <input type="text" name="sdireccion" size="60" value="{$value->direccion}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Fax: <input type="text" name="sfax" value="{$value->fax}" autocomplete="off"/>
+         Código postal: <input type="text" name="scodpostal" value="{$value->codpostal}" size="6" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Teléfono: <input type="text" name="stelefono" value="{$value->telefono}" size="9" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Fax: <input type="text" name="sfax" value="{$value->fax}" size="9" autocomplete="off"/>
       </div>
       <div class="bloque">
          Contacto: <input type="text" name="scontacto" value="{$value->contacto}" autocomplete="off"/>

@@ -143,7 +143,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-14';
+      return parent::version().'-15';
    }
    
    private function new_search()
@@ -151,10 +151,10 @@ class tpv_recambios extends fs_controller
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/tpv_recambios';
       
+      $codfamilia = '';
       if( isset($_POST['codfamilia']) )
          $codfamilia = $_POST['codfamilia'];
-      else
-         $codfamilia = '';
+      
       $con_stock = isset($_POST['con_stock']);
       $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
    }
@@ -224,6 +224,7 @@ class tpv_recambios extends fs_controller
          $albaran->codcliente = $cliente->codcliente;
          $albaran->cifnif = $cliente->cifnif;
          $albaran->nombrecliente = $cliente->nombre;
+         
          if($dirscliente)
          {
             foreach($dirscliente as $d)
@@ -253,6 +254,7 @@ class tpv_recambios extends fs_controller
             $albaran->tasaconv = $divisa->tasaconv;
             $albaran->codagente = $this->agente->codagente;
             $albaran->observaciones = $_POST['observaciones'];
+            
             if( $albaran->save() )
             {
                $n = floatval($_POST['numlineas']);
@@ -288,6 +290,7 @@ class tpv_recambios extends fs_controller
                         $linea->dtopor = floatval($_POST['dto_'.$i]);
                         $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
                         $linea->pvptotal = floatval($_POST['total_'.$i]);
+                        
                         if( $linea->save() )
                         {
                            /// descontamos del stock
@@ -297,29 +300,46 @@ class tpv_recambios extends fs_controller
                            $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                         }
                         else
+                        {
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
+                           $continuar = FALSE;
+                        }
+                     }
+                     else
+                     {
+                        $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                        $continuar = FALSE;
                      }
                   }
                }
-               /// redondeamos
-               $albaran->neto = round($albaran->neto, 2);
-               $albaran->totaliva = round($albaran->totaliva, 2);
-               $albaran->total = $albaran->neto + $albaran->totaliva;
-               if( $albaran->save() )
+               
+               if($continuar)
                {
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  /// redondeamos
+                  $albaran->neto = round($albaran->neto, 2);
+                  $albaran->totaliva = round($albaran->totaliva, 2);
+                  $albaran->total = $albaran->neto + $albaran->totaliva;
                   
-                  if( isset($_POST['num_tickets']) )
-                     $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
-                  
-                  /// actualizamos la caja
-                  $this->caja->dinero_fin += $albaran->total;
-                  $this->caja->tickets += 1;
-                  if( !$this->caja->save() )
-                     $this->new_error_msg("¡Imposible actualizar la caja!");
+                  if( $albaran->save() )
+                  {
+                     $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                     
+                     if( isset($_POST['num_tickets']) )
+                        $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
+                     
+                     /// actualizamos la caja
+                     $this->caja->dinero_fin += $albaran->total;
+                     $this->caja->tickets += 1;
+                     if( !$this->caja->save() )
+                        $this->new_error_msg("¡Imposible actualizar la caja!");
+                  }
+                  else
+                     $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
                }
+               else if( $albaran->delete() )
+                  $this->new_message("Albarán eliminado correctamente.");
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
+                  $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
             }
             else
                $this->new_error_msg("¡Imposible guardar el albarán!");

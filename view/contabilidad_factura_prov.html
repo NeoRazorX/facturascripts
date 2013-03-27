@@ -50,7 +50,9 @@
       <tr>
          <td>¿Realmente desea eliminar esta factura?</td>
          <td align="right">
-            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">eliminar</a>
+            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
+               eliminar
+            </a>
          </td>
       </tr>
    </table>
@@ -70,7 +72,10 @@
       </tr>
       {loop="$fsc->factura->get_lineas()"}
       <tr>
-         <td><a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a> {$value->albaran_numero()}</td>
+         <td>
+            <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+            {$value->albaran_numero()}
+         </td>
          <td>
             <a href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}
@@ -92,7 +97,7 @@
          <div class="rounded">
          <table class="list">
             <tr>
-               <th>Impuesto</th>
+               <th align="left">Impuesto</th>
                <th align="right">Neto</th>
                <th align="right">IVA</th>
                <th align="right">Total IVA</th>

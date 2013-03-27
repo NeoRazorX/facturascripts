@@ -87,10 +87,12 @@ class fs_user extends fs_model
    
    protected function install()
    {
+      /// Esta tabla tiene claves ajenas a agentes, fs_pages y ejercicios
+      new agente();
+      new fs_page();
+      new ejercicio();
+      
       $this->clean_cache();
-      $agente = new agente();
-      $page = new fs_page();
-      $ejercicio = new ejercicio();
       
       $this->new_error_msg('Se ha creado el usuario admin con la contraseña admin.');
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
@@ -114,10 +116,10 @@ class fs_user extends fs_model
       else
       {
          $agente = new agente();
-         $agente = $agente->get($this->codagente);
-         if($agente)
+         $agente0 = $agente->get($this->codagente);
+         if($agente0)
          {
-            $this->agente = $agente;
+            $this->agente = $agente0;
             return $this->agente;
          }
          else
@@ -253,7 +255,8 @@ class fs_user extends fs_model
    
    public function get($n = '')
    {
-      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
+      $u = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE nick = ".$this->var2str($n).";");
       if($u)
          return new fs_user($u[0]);
       else
@@ -265,24 +268,22 @@ class fs_user extends fs_model
       if( is_null($this->nick) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    public function test()
    {
-      $status = FALSE;
-      
       $this->nick = trim($this->nick);
       
       if( !preg_match("/^[A-Z0-9_]{3,12}$/i", $this->nick) )
       {
          $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
             valen números o letras, pero no la Ñ ni acentos.");
+         return FALSE;
       }
       else
          return TRUE;
-      
-      return $status;
    }
    
    public function save()
@@ -302,12 +303,14 @@ class fs_user extends fs_model
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,last_login,last_login_time,last_ip,
-               last_browser,fs_page,codejercicio) VALUES (".$this->var2str($this->nick).",
-               ".$this->var2str($this->password).",".$this->var2str($this->log_key).",
-               ".$this->var2str($this->codagente).",".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
+            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,
+               last_login,last_login_time,last_ip,last_browser,fs_page,codejercicio) VALUES
+               (".$this->var2str($this->nick).",".$this->var2str($this->password).",
+               ".$this->var2str($this->log_key).",".$this->var2str($this->codagente).",
+               ".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
                ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",
-               ".$this->var2str($this->last_browser).",".$this->var2str($this->fs_page).",".$this->var2str($this->codejercicio).");";
+               ".$this->var2str($this->last_browser).",".$this->var2str($this->fs_page).",
+               ".$this->var2str($this->codejercicio).");";
          }
          return $this->db->exec($sql);
       }
@@ -318,7 +321,8 @@ class fs_user extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    public function clean_cache($full=FALSE)

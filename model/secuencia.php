@@ -67,7 +67,8 @@ class secuencia extends fs_model
    
    public function get($idsec)
    {
-      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsec = ".$this->var2str($idsec).";");
+      $sec = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idsec = ".$this->var2str($idsec).";");
       if($sec)
          return new secuencia($sec[0]);
       else
@@ -76,8 +77,8 @@ class secuencia extends fs_model
    
    public function get_by_params($id, $nombre)
    {
-      $sec = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id)."
-         AND nombre = ".$this->var2str($nombre).";");
+      $sec = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($id)." AND nombre = ".$this->var2str($nombre).";");
       if($sec)
          return new secuencia($sec[0]);
       else
@@ -115,8 +116,8 @@ class secuencia extends fs_model
       if( is_null($this->idsec) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE idsec = ".$this->var2str($this->idsec).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idsec = ".$this->var2str($this->idsec).";");
    }
    
    public function new_idsec()
@@ -137,22 +138,24 @@ class secuencia extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET id = ".$this->var2str($this->id).",
             valorout = ".$this->var2str($this->valorout).", valor = ".$this->var2str($this->valor).",
-            descripcion = ".$this->var2str($this->descripcion).", nombre = ".$this->var2str($this->nombre)."
-            WHERE idsec = ".$this->var2str($this->idsec).";";
+            descripcion = ".$this->var2str($this->descripcion).",
+            nombre = ".$this->var2str($this->nombre)." WHERE idsec = ".$this->var2str($this->idsec).";";
       }
       else
       {
          $this->new_idsec();
          $sql = "INSERT INTO ".$this->table_name." (idsec,id,valorout,valor,descripcion,nombre) VALUES
             (".$this->var2str($this->idsec).",".$this->var2str($this->id).",".$this->var2str($this->valorout).",
-            ".$this->var2str($this->valor).",".$this->var2str($this->descripcion).",".$this->var2str($this->nombre).");";
+            ".$this->var2str($this->valor).",".$this->var2str($this->descripcion).",
+            ".$this->var2str($this->nombre).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsec = ".$this->var2str($this->idsec).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idsec = ".$this->var2str($this->idsec).";");
    }
 }
 
@@ -195,21 +198,37 @@ class secuencia_contabilidad extends fs_model
    
    public function get_by_params($eje, $nombre)
    {
-      $secuencias = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($eje)." AND nombre = ".$this->var2str($nombre).";");
+      $secuencias = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codejercicio = ".$this->var2str($eje).
+         " AND nombre = ".$this->var2str($nombre).";");
       if($secuencias)
          return new secuencia_contabilidad($secuencias[0]);
       else
          return FALSE;
    }
-
+   
+   public function get_by_params2($eje, $nombre)
+   {
+      $sec = $this->get_by_params($eje, $nombre);
+      if($sec)
+         return $sec;
+      else
+      {
+         $newsec = new secuencia_contabilidad();
+         $newsec->codejercicio = $eje;
+         $newsec->descripcion = 'Creado por FacturaScripts';
+         $newsec->nombre = $nombre;
+         return $newsec;
+      }
+   }
+   
    public function exists()
    {
       if( is_null($this->idsecuencia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
    }
    
    public function new_id()
@@ -236,16 +255,19 @@ class secuencia_contabilidad extends fs_model
       else
       {
          $this->new_id();
-         $sql = "INSERT INTO ".$this->table_name." (codejercicio,descripcion,nombre,valor,valorout) VALUES
-            (".$this->var2str($this->codejercicio).",".$this->var2str($this->descripcion).",".$this->var2str($this->nombre).",
-            ".$this->var2str($this->valor).",".$this->var2str($this->valorout).");";
+         $sql = "INSERT INTO ".$this->table_name." (idsecuencia,codejercicio,descripcion,
+            nombre,valor,valorout) VALUES (".$this->var2str($this->idsecuencia).",
+            ".$this->var2str($this->codejercicio).",".$this->var2str($this->descripcion).",
+            ".$this->var2str($this->nombre).",".$this->var2str($this->valor).",
+            ".$this->var2str($this->valorout).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
    }
 }
 
@@ -300,7 +322,8 @@ class secuencia_ejercicio extends fs_model
    
    public function get($id)
    {
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($id).";");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -309,8 +332,9 @@ class secuencia_ejercicio extends fs_model
    
    public function get_by_params($eje, $serie)
    {
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($eje)." AND codserie = ".$this->var2str($serie).";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codejercicio = ".$this->var2str($eje).
+         " AND codserie = ".$this->var2str($serie).";");
       if($secs)
          return new secuencia_ejercicio($secs[0]);
       else
@@ -339,8 +363,8 @@ class secuencia_ejercicio extends fs_model
                $aux->codserie = $serie->codserie;
                if( !$aux->save() )
                {
-                  $this->new_error_msg("¡Imposible crear la secuencia para el ejercicio ".$aux->codejercicio."
-                                          y la serie ".$aux->codserie."!");
+                  $this->new_error_msg("¡Imposible crear la secuencia para el ejercicio ".
+                          $aux->codejercicio." y la serie ".$aux->codserie."!");
                }
             }
          }
@@ -352,7 +376,8 @@ class secuencia_ejercicio extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function new_id()
@@ -372,33 +397,41 @@ class secuencia_ejercicio extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codejercicio = ".$this->var2str($this->codejercicio).",
-            codserie = ".$this->var2str($this->codserie).", nalbarancli = ".$this->var2str($this->nalbarancli).",
-            nalbaranprov = ".$this->var2str($this->nalbaranprov).", nfacturacli = ".$this->var2str($this->nfacturacli).",
-            nfacturaprov = ".$this->var2str($this->nfacturaprov).", npedidocli = ".$this->var2str($this->npedidocli).",
-            npedidoprov = ".$this->var2str($this->npedidoprov).", npresupuestocli =".$this->var2str($this->npresupuestocli)." 
+            codserie = ".$this->var2str($this->codserie).",
+            nalbarancli = ".$this->var2str($this->nalbarancli).",
+            nalbaranprov = ".$this->var2str($this->nalbaranprov).",
+            nfacturacli = ".$this->var2str($this->nfacturacli).",
+            nfacturaprov = ".$this->var2str($this->nfacturaprov).",
+            npedidocli = ".$this->var2str($this->npedidocli).",
+            npedidoprov = ".$this->var2str($this->npedidoprov).",
+            npresupuestocli =".$this->var2str($this->npresupuestocli)." 
             WHERE id = ".$this->var2str($this->id).";";
       }
       else
       {
          $this->new_id();
-         $sql = "INSERT INTO ".$this->table_name." (id,codejercicio,codserie,nalbarancli,nalbaranprov,nfacturacli,
-            nfacturaprov,npedidocli,npedidoprov,npresupuestocli) VALUES (".$this->var2str($this->id).",
-            ".$this->var2str($this->codejercicio).",".$this->var2str($this->codserie).",".$this->var2str($this->nalbarancli).",
-            ".$this->var2str($this->nalbaranprov).",".$this->var2str($this->nfacturacli).",".$this->var2str($this->nfacturaprov).",
-            ".$this->var2str($this->npedidocli).",".$this->var2str($this->npedidoprov).",".$this->var2str($this->npresupuestocli).");";
+         $sql = "INSERT INTO ".$this->table_name." (id,codejercicio,codserie,nalbarancli,
+            nalbaranprov,nfacturacli,nfacturaprov,npedidocli,npedidoprov,npresupuestocli)
+            VALUES (".$this->var2str($this->id).",".$this->var2str($this->codejercicio).",
+            ".$this->var2str($this->codserie).",".$this->var2str($this->nalbarancli).",
+            ".$this->var2str($this->nalbaranprov).",".$this->var2str($this->nfacturacli).",
+            ".$this->var2str($this->nfacturaprov).",".$this->var2str($this->npedidocli).",
+            ".$this->var2str($this->npedidoprov).",".$this->var2str($this->npresupuestocli).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_ejercicio($eje)
    {
       $seclist = array();
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($eje).";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codejercicio = ".$this->var2str($eje).";");
       if($secs)
       {
          foreach($secs as $s)

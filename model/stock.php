@@ -69,7 +69,7 @@ class stock extends fs_model
    
    protected function install()
    {
-      $a = new articulo();
+      new articulo();
       return '';
    }
    
@@ -94,7 +94,8 @@ class stock extends fs_model
    
    public function get($id)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($id).";");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idstock = ".$this->var2str($id).";");
       if($stock)
          return new stock($stock[0]);
       else
@@ -103,7 +104,8 @@ class stock extends fs_model
    
    public function get_by_referencia($ref)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref).";");
       if($stock)
          return new stock($stock[0]);
       else
@@ -115,7 +117,8 @@ class stock extends fs_model
       if( is_null($this->idstock) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function new_idstock()
@@ -158,13 +161,15 @@ class stock extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function all_from_articulo($ref)
    {
       $stocklist = array();
-      $stocks = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
+      $stocks = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref)." ORDER BY codalmacen ASC;");
       if($stocks)
       {
          foreach($stocks as $s)

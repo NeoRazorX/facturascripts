@@ -5,7 +5,7 @@
       <td>
          <div class="rounded">
             <h1>Facturas emitidas de cliente:</h1>
-            <form action="{$fsc->url()}" method="post">
+            <form action="{$fsc->url()}" method="post" target="_blank">
                <input type="hidden" name="listado" value="facturascli"/>
                Desde:
                <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
@@ -18,7 +18,7 @@
       <td>
          <div class="rounded">
             <h1>Facturas recibidad de proveedor:</h1>
-            <form action="{$fsc->url()}" method="post">
+            <form action="{$fsc->url()}" method="post" target="_blank">
                <input type="hidden" name="listado" value="facturasprov"/>
                Desde:
                <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>

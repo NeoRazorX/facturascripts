@@ -54,7 +54,8 @@ class tarifa extends fs_model
    
    public function get($cod)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = ".$this->var2str($cod).";");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codtarifa = ".$this->var2str($cod).";");
       if($tarifa)
          return new tarifa( $tarifa[0] );
       else
@@ -137,7 +138,8 @@ class tarifa extends fs_model
       $tarlist = $this->cache->get_array('m_tarifa_all');
       if( !$tarlist )
       {
-         $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codtarifa ASC;");
+         $tarifas = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " ORDER BY codtarifa ASC;");
          if($tarifas)
          {
             foreach($tarifas as $t)
@@ -183,8 +185,8 @@ class tarifa_articulo extends fs_model
    
    protected function install()
    {
-      $a = new articulo();
-      $t = new tarifa();
+      new articulo();
+      new tarifa();
       return '';
    }
    
@@ -220,7 +222,8 @@ class tarifa_articulo extends fs_model
    
    public function get($id)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($id).";");
       if( $tarifa )
          return new tarifa_articulo($tarifa[0]);
       else
@@ -232,7 +235,8 @@ class tarifa_articulo extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -245,26 +249,30 @@ class tarifa_articulo extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET referencia = ".$this->var2str($this->referencia).",
-            codtarifa = ".$this->var2str($this->codtarifa).", descuento = ".$this->var2str($this->descuento)."
+            codtarifa = ".$this->var2str($this->codtarifa).",
+            descuento = ".$this->var2str($this->descuento)."
             WHERE id = ".$this->var2str($this->id).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (referencia,codtarifa,descuento) VALUES
-            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",".$this->var2str($this->descuento).");";
+            (".$this->var2str($this->referencia).",".$this->var2str($this->codtarifa).",
+            ".$this->var2str($this->descuento).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_articulo($ref)
    {
       $tarlist = array();
-      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
+      $tarifas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref).";");
       if( $tarifas )
       {
          foreach($tarifas as $t)

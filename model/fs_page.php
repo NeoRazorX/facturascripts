@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -87,12 +87,14 @@ class fs_page extends fs_model
       if( is_null($this->name) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE name = ".$this->var2str($this->name).";");
    }
    
    public function get($name)
    {
-      $p = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
+      $p = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE name = ".$this->var2str($name).";");
       if($p)
          return new fs_page($p[0]);
       else
@@ -111,13 +113,15 @@ class fs_page extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET title = ".$this->var2str($this->title).",
             folder = ".$this->var2str($this->folder).", version = ".$this->var2str($this->version).",
-            show_on_menu = ".$this->var2str($this->show_on_menu)." WHERE name = ".$this->var2str($this->name).";";
+            show_on_menu = ".$this->var2str($this->show_on_menu)."
+            WHERE name = ".$this->var2str($this->name).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu) VALUES
-            (".$this->var2str($this->name).",".$this->var2str($this->title).",".$this->var2str($this->folder).",
-            ".$this->var2str($this->version).",".$this->var2str($this->show_on_menu).");";
+         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
+            VALUES (".$this->var2str($this->name).",".$this->var2str($this->title).",
+            ".$this->var2str($this->folder).",".$this->var2str($this->version).",
+            ".$this->var2str($this->show_on_menu).");";
       }
       return $this->db->exec($sql);
    }
@@ -125,7 +129,8 @@ class fs_page extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE name = ".$this->var2str($this->name).";");
    }
    
    private function clean_cache()

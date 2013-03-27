@@ -34,7 +34,7 @@ class admin_pages extends fs_controller
       {
          foreach($this->all_pages() as $p)
          {
-            if( !$p->exists ) /// la está en la base de datos pero ya no existe el controlador
+            if( !$p->exists ) /// la página está en la base de datos pero ya no existe el controlador
             {
                if( $p->delete() )
                   $this->new_message('Se ha eliminado automáticamnte la página '.$p->name.

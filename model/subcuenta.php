@@ -77,6 +77,18 @@ class subcuenta extends fs_model
    
    protected function install()
    {
+      $this->clean_cache();
+      
+      /// eliminamos todos los PDFs de las subcuentas
+      if( file_exists('tmp/libro_mayor') )
+      {
+         foreach(glob('tmp/libro_mayor/*') as $file)
+         {
+            if( is_file($file) )
+               unlink($file);
+         }
+      }
+      
       return '';
    }
    
@@ -141,7 +153,8 @@ class subcuenta extends fs_model
    
    public function get($id)
    {
-      $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idsubcuenta = ".$this->var2str($id).";");
       if($subc)
          return new subcuenta($subc[0]);
       else
@@ -150,15 +163,16 @@ class subcuenta extends fs_model
    
    public function get_by_codigo($cod, $ejercicio, $crear=FALSE)
    {
-      $subc = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codsubcuenta = ".$this->var2str($cod)." AND codejercicio = ".$this->var2str($ejercicio).";");
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codsubcuenta = ".$this->var2str($cod).
+              " AND codejercicio = ".$this->var2str($ejercicio).";");
       if($subc)
          return new subcuenta($subc[0]);
       else if($crear)
       {
          /// buscamos la subcuenta equivalente en otro ejercicio
-         $subc = $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE codsubcuenta = ".$this->var2str($cod).";");
+         $subc = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE codsubcuenta = ".$this->var2str($cod).";");
          if($subc)
          {
             $old_sc = new subcuenta($subc[0]);
@@ -229,8 +243,8 @@ class subcuenta extends fs_model
       if( is_null($this->idsubcuenta) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
    public function test()
@@ -317,8 +331,8 @@ class subcuenta extends fs_model
    public function all_from_cuenta($idcuenta)
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta ASC;");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idcuenta = ".$this->var2str($idcuenta)." ORDER BY codsubcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -330,8 +344,9 @@ class subcuenta extends fs_model
    public function all_from_ejercicio($codejercicio)
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($codejercicio)." ORDER BY codsubcuenta ASC;");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codejercicio = ".$this->var2str($codejercicio).
+              " ORDER BY codsubcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -344,9 +359,10 @@ class subcuenta extends fs_model
    {
       $sublist = array();
       $query = strtolower( $this->no_html($query) );
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta ~~ '".$query."%'
-         OR codsubcuenta ~~ '%".$query."' OR lower(descripcion) ~~ '%".$query."%'
-         ORDER BY codejercicio DESC, codcuenta ASC;");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codsubcuenta ~~ '".$query."%' OR codsubcuenta ~~ '%".$query."'
+               OR lower(descripcion) ~~ '%".$query."%'
+               ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)
@@ -359,10 +375,11 @@ class subcuenta extends fs_model
    {
       $sublist = array();
       $query = $this->escape_string( strtolower( trim($query) ) );
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($ejercicio)." AND (codsubcuenta ~~ '".$query."%'
-         OR codsubcuenta ~~ '%".$query."' OR lower(descripcion) ~~ '%".$query."%')
-         ORDER BY codcuenta ASC;");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codejercicio = ".$this->var2str($ejercicio).
+              " AND (codsubcuenta ~~ '".$query."%' OR codsubcuenta ~~ '%".$query."'
+               OR lower(descripcion) ~~ '%".$query."%')
+               ORDER BY codcuenta ASC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

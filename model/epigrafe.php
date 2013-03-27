@@ -181,7 +181,7 @@ class epigrafe extends fs_model
    
    protected function install()
    {
-      $ge = new grupo_epigrafes();
+      new grupo_epigrafes();
       return '';
    }
    

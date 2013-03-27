@@ -77,12 +77,24 @@
       <nulo>NO</nulo>
       <defecto>0</defecto>
    </columna>
-   <restriccion><nombre>ca_stocks_articulos</nombre><consulta>FOREIGN KEY (referencia)
+   <restriccion>
+      <nombre>ca_stocks_articulos</nombre>
+      <consulta>FOREIGN KEY (referencia)
       REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta></restriccion>
-   <restriccion><nombre>ca_stocks_almacenes</nombre><consulta>FOREIGN KEY (codalmacen)
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_stocks_almacenes</nombre>
+      <consulta>FOREIGN KEY (codalmacen)
       REFERENCES almacenes (codalmacen) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
-   <restriccion><nombre>uniq_stocks_almacen_referencia</nombre><consulta>UNIQUE (codalmacen, referencia)</consulta></restriccion>
-   <restriccion><nombre>stocks_pkey</nombre><consulta>PRIMARY KEY (idstock)</consulta></restriccion>
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>uniq_stocks_almacen_referencia</nombre>
+      <consulta>UNIQUE (codalmacen, referencia)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>stocks_pkey</nombre>
+      <consulta>PRIMARY KEY (idstock)</consulta>
+   </restriccion>
 </tabla>

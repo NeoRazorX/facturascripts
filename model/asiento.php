@@ -128,7 +128,8 @@ class asiento extends fs_model
    {
       if( isset($id) )
       {
-         $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($id).";");
+         $asiento = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idasiento = ".$this->var2str($id).";");
          if($asiento)
             return new asiento($asiento[0]);
          else
@@ -163,27 +164,27 @@ class asiento extends fs_model
    public function new_numero()
    {
       $secc = new secuencia_contabilidad();
-      $secc = $secc->get_by_params($this->codejercicio, 'nasiento');
-      if($secc)
+      $secc0 = $secc->get_by_params2($this->codejercicio, 'nasiento');
+      if($secc0)
       {
-         $this->numero = $secc->valorout;
-         $secc->valorout++;
-         $secc->save();
+         $this->numero = $secc0->valorout;
+         $secc0->valorout++;
+         $secc0->save();
       }
       
-      if(!$secc OR $this->numero <= 1)
+      if( !$secc0 OR $this->numero <= 1 )
       {
-         $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-                                   WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+         $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name.
+                 " WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
          if($num)
             $this->numero = 1 + intval($num[0]['num']);
          else
             $this->numero = 1;
          
-         if($secc)
+         if($secc0)
          {
-            $secc->valorout = 1 + $this->numero;
-            $secc->save();
+            $secc0->valorout = 1 + $this->numero;
+            $secc0->save();
          }
       }
    }
@@ -333,24 +334,28 @@ class asiento extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET numero = ".$this->var2str($this->numero).",
-               idconcepto = ".$this->var2str($this->idconcepto).", concepto = ".$this->var2str($this->concepto).",
-               fecha = ".$this->var2str($this->fecha).", codejercicio = ".$this->var2str($this->codejercicio).",
-               codplanasiento = ".$this->var2str($this->codplanasiento).", editable = ".$this->var2str($this->editable).",
-               documento = ".$this->var2str($this->documento).", tipodocumento = ".$this->var2str($this->tipodocumento).",
-               importe = ".$this->var2str($this->importe)." WHERE idasiento = ".$this->var2str($this->idasiento).";";
+               idconcepto = ".$this->var2str($this->idconcepto).",
+               concepto = ".$this->var2str($this->concepto).", fecha = ".$this->var2str($this->fecha).",
+               codejercicio = ".$this->var2str($this->codejercicio).",
+               codplanasiento = ".$this->var2str($this->codplanasiento).",
+               editable = ".$this->var2str($this->editable).",
+               documento = ".$this->var2str($this->documento).",
+               tipodocumento = ".$this->var2str($this->tipodocumento).",
+               importe = ".$this->var2str($this->importe)."
+               WHERE idasiento = ".$this->var2str($this->idasiento).";";
          }
          else
          {
             $this->new_idasiento();
-            if( is_null($this->numero) )
-               $this->new_numero();
-            
-            $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,fecha,codejercicio,codplanasiento,editable,
-               documento,tipodocumento,importe) VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
+            $this->new_numero();
+            $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,
+               fecha,codejercicio,codplanasiento,editable,documento,tipodocumento,importe)
+               VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
                ".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
                ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",
-               ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",".$this->var2str($this->documento).",
-               ".$this->var2str($this->tipodocumento).",".$this->var2str($this->importe).");";
+               ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",
+               ".$this->var2str($this->documento).",".$this->var2str($this->tipodocumento).",
+               ".$this->var2str($this->importe).");";
          }
          return $this->db->exec($sql);
       }
@@ -373,7 +378,8 @@ class asiento extends fs_model
       /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
       foreach($this->get_partidas() as $p)
          $p->delete();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
    public function search($query, $offset=0)
@@ -450,7 +456,10 @@ class asiento extends fs_model
             foreach($asientos as $col)
             {
                if($col['numero'] != $numero)
-                  $sql .= "UPDATE co_asientos SET numero = '".$numero."' WHERE idasiento = '".$col['idasiento']."'; ";
+               {
+                  $sql .= "UPDATE co_asientos SET numero = '".$numero.
+                       "' WHERE idasiento = '".$col['idasiento']."'; ";
+               }
                
                $numero++;
             }
@@ -460,7 +469,8 @@ class asiento extends fs_model
             {
                if( !$this->db->exec($sql) )
                {
-                  $this->new_error_msg("Se ha producido un error mientras se renumeraban los asientos del ejercicio ".$eje->codejercicio);
+                  $this->new_error_msg("Se ha producido un error mientras se
+                     renumeraban los asientos del ejercicio ".$eje->codejercicio);
                   $continuar = FALSE;
                }
                $sql = '';

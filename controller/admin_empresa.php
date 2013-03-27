@@ -62,10 +62,11 @@ class admin_empresa extends fs_controller
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->cifnif = $_POST['cifnif'];
          $this->empresa->administrador = $_POST['administrador'];
-         $this->empresa->direccion = $_POST['direccion'];
-         $this->empresa->ciudad = $_POST['ciudad'];
-         $this->empresa->codpostal = $_POST['codpostal'];
          $this->empresa->codpais = $_POST['codpais'];
+         $this->empresa->provincia = $_POST['provincia'];
+         $this->empresa->ciudad = $_POST['ciudad'];
+         $this->empresa->direccion = $_POST['direccion'];
+         $this->empresa->codpostal = $_POST['codpostal'];
          $this->empresa->telefono = $_POST['telefono'];
          $this->empresa->fax = $_POST['fax'];
          $this->empresa->web = $_POST['web'];
@@ -91,7 +92,7 @@ class admin_empresa extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
 }
 

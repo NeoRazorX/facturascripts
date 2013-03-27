@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -49,8 +49,9 @@ class fs_access extends fs_model
       if( is_null($this->fs_page) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE fs_user = ".$this->var2str($this->fs_user).
+                 " AND fs_page = ".$this->var2str($this->fs_page).";");
    }
    
    public function test()
@@ -61,7 +62,7 @@ class fs_access extends fs_model
    public function save()
    {
       if( $this->exists() )
-         return FALSE;
+         return TRUE;
       else
          return $this->db->exec("INSERT INTO ".$this->table_name." (fs_user,fs_page) VALUES
             (".$this->var2str($this->fs_user).",".$this->var2str($this->fs_page).");");
@@ -69,14 +70,16 @@ class fs_access extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE fs_user = ".$this->var2str($this->fs_user).
+              " AND fs_page = ".$this->var2str($this->fs_page).";");
    }
    
    public function all_from_nick($n='')
    {
       $accesslist = array();
-      $access = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($n).";");
+      $access = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE fs_user = ".$this->var2str($n).";");
       if($access)
       {
          foreach($access as $a)

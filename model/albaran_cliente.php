@@ -632,8 +632,9 @@ class albaran_cliente extends fs_model
       
       if(!$sec OR $this->numero <= 1)
       {
-         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-            WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
+         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name.
+            " WHERE codejercicio = ".$this->var2str($this->codejercicio).
+            " AND codserie = ".$this->var2str($this->codserie).";");
          if($numero)
             $this->numero = 1 + intval($numero[0]['num']);
          else

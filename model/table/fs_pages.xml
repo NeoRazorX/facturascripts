@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
     Document   : fs_pages.xml
     Created on : 24 de enero de 2012, 19:57
@@ -7,7 +6,6 @@
     Description:
         Estructura de la tabla fs_pages.
 -->
-
 <tabla>
    <columna>
       <nombre>name</nombre>

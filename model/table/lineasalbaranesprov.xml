@@ -5,27 +5,111 @@
         Estructura de la tabla lineasalbaranesprov.
 -->
 <tabla>
-   <columna><nombre>pvptotal</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>dtopor</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>idpedido</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>recargo</nombre><tipo>double precision</tipo><nulo>YES</nulo><defecto>0</defecto></columna>
-   <columna><nombre>irpf</nombre><tipo>double precision</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>pvpsindto</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>cantidad</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>codimpuesto</nombre><tipo>character varying(10)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>pvpunitario</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>idlinea</nombre><tipo>serial</tipo><nulo>NO</nulo><defecto>nextval('lineasalbaranesprov_idlinea_seq'::regclass)</defecto></columna>
-   <columna><nombre>idalbaran</nombre><tipo>integer</tipo><nulo>NO</nulo></columna>
-   <columna><nombre>idlineapedido</nombre><tipo>integer</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>descripcion</nombre><tipo>character varying(100)</tipo><nulo>YES</nulo></columna>
-   <columna><nombre>dtolineal</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <columna><nombre>referencia</nombre><tipo>character varying(18)</tipo><nulo>NO</nulo></columna>
-   <columna><nombre>iva</nombre><tipo>double precision</tipo><nulo>NO</nulo><defecto>0</defecto></columna>
-   <restriccion><nombre>ca_lineasalbaranesprov_articulos</nombre><consulta>FOREIGN KEY (referencia)
+   <columna>
+      <nombre>cantidad</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>codimpuesto</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>dtolineal</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>dtopor</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>idalbaran</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idlinea</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('lineasalbaranesprov_idlinea_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idlineapedido</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>idpedido</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>irpf</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>iva</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>pvpsindto</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>pvptotal</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>pvpunitario</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>recargo</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
+      <nombre>referencia</nombre>
+      <tipo>character varying(18)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>ca_lineasalbaranesprov_articulos</nombre>
+      <consulta>FOREIGN KEY (referencia)
       REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
-   <restriccion><nombre>ca_lineasalbaranesprov_albaranesprov</nombre><consulta>FOREIGN KEY (idalbaran)
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_lineasalbaranesprov_albaranesprov</nombre>
+      <consulta>FOREIGN KEY (idalbaran)
       REFERENCES albaranesprov (idalbaran) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta></restriccion>
-   <restriccion><nombre>lineasalbaranesprov_pkey</nombre><consulta>PRIMARY KEY (idlinea)</consulta></restriccion>
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>lineasalbaranesprov_pkey</nombre>
+      <consulta>PRIMARY KEY (idlinea)</consulta>
+   </restriccion>
 </tabla>

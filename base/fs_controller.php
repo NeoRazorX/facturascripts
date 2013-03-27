@@ -303,7 +303,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.19';
+      return '0.9.20';
    }
    
    public function select_default_page()

@@ -83,6 +83,8 @@ class admin_table2xml extends fs_controller
                      $aux->addChild('nulo', 'YES');
                   else
                      $aux->addChild('nulo', 'NO');
+                  
+                  $aux->addChild('defecto', $col['column_default']);
                }
                else
                {

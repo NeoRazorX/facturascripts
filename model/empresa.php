@@ -109,7 +109,8 @@ class empresa extends fs_model
       if(is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id=".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id=".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -144,17 +145,20 @@ class empresa extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).", cifnif = ".$this->var2str($this->cifnif).",
-            codedi = ".$this->var2str($this->codedi).", administrador = ".$this->var2str($this->administrador).",
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+            cifnif = ".$this->var2str($this->cifnif).", codedi = ".$this->var2str($this->codedi).",
+            administrador = ".$this->var2str($this->administrador).",
             direccion = ".$this->var2str($this->direccion).", codpostal = ".$this->var2str($this->codpostal).",
             ciudad = ".$this->var2str($this->ciudad).", provincia = ".$this->var2str($this->provincia).",
             apartado = ".$this->var2str($this->apartado).", codpais = ".$this->var2str($this->codpais).",
             telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
-            email = ".$this->var2str($this->email).", web = ".$this->var2str($this->web).", codejercicio = ".$this->var2str($this->codejercicio).",
+            email = ".$this->var2str($this->email).", web = ".$this->var2str($this->web).",
+            codejercicio = ".$this->var2str($this->codejercicio).",
             coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
             codalmacen = ".$this->var2str($this->codalmacen).", codserie = ".$this->var2str($this->codserie).",
             recequivalencia = ".$this->var2str($this->recequivalencia).",
-            contintegrada = ".$this->var2str($this->contintegrada).", stockpedidos = ".$this->var2str($this->stockpedidos).",
+            contintegrada = ".$this->var2str($this->contintegrada).",
+            stockpedidos = ".$this->var2str($this->stockpedidos).",
             lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario)."
             WHERE id = ".$this->var2str($this->id).";";
          return $this->db->exec($sql);

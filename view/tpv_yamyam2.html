@@ -242,7 +242,11 @@
                   <td>
                      <select name="almacen">
                         {loop="$fsc->almacen->all()"}
-                        <option value="{$value->codalmacen}">{$value->nombre}</option>
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codalmacen}">{$value->nombre}</option>
+                           {/if}
                         {/loop}
                      </select>
                   </td>

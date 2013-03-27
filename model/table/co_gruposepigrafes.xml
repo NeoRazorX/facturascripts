@@ -11,14 +11,14 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>descripcion</nombre>
-      <tipo>character varying(255)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
       <nombre>codgrupo</nombre>
       <tipo>character varying(6)</tipo>
       <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>idgrupo</nombre>
@@ -29,5 +29,11 @@
    <restriccion>
       <nombre>co_gruposepigrafes_pkey</nombre>
       <consulta>PRIMARY KEY (idgrupo)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_co_gruposepigrafes_ejercicios</nombre>
+      <consulta>FOREIGN KEY (codejercicio)
+      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
    </restriccion>
 </tabla>

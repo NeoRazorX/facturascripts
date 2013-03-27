@@ -173,6 +173,40 @@
          <h1>Novedades:</h1>
          <ul>
             <li>
+               26/03/2013:
+               <ul>
+                  <li>
+                     Grandes cambios en la clase fs_db. Ya no se usa una conexión persistente (con pg_pconnect),
+                     no tiene sentido usarla. Al iniciar el controlador se conecta a la base de datos y al terminar
+                     se desconecta, fin.
+                     Además he simplificado mucho el código de muchas funciones como lastval() y nextval().
+                     También he añadido la función sequence_exists($seq) para poder comprobar si
+                     una secuencia existe en la base de datos.
+                  </li>
+                  <li>
+                     Mejoras en la función fs_model: al comprobar la estructura de una tabla, si
+                     su campo default apunta a una secuencia, ahora se comprueba que existe esa
+                     secuencia, y si no, la crea. Con esto se solucionan los problemas derivados
+                     de instalar Eneboo sobre una base de datos creada por FacturaScripts.
+                  </li>
+                  <li>
+                     Se han actualizado todos los archivos xml con la estrutura de de las tablas
+                     para hacerlas compatibles con la última versión de los módulo oficial de
+                     eneboo.
+                  </li>
+                  <li>
+                     El modelo de artículos ya no borra la lista de búsquedas cuando se hace
+                     alguna modificación a un artículo.
+                  </li>
+                  <li>
+                     Ya se puede definir el páis del almacén.
+                  </li>
+                  <li>
+                     Los formularios de creación de albaranes ya recuerdan el último almacén seleccionado.
+                  </li>
+               </ul>
+            </li>
+            <li>
                21/03/2013:
                <ul>
                   <li>Modificado el formulario de nuevo asiento para hacerlo más sencillo.</li>

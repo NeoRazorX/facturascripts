@@ -6,13 +6,13 @@
 -->
 <tabla>
    <columna>
-      <nombre>codsubcuenta</nombre>
-      <tipo>character varying(15)</tipo>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codcuenta</nombre>
-      <tipo>character varying(6)</tipo>
+      <nombre>codsubcuenta</nombre>
+      <tipo>character varying(15)</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>

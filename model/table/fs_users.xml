@@ -4,7 +4,6 @@
     Description:
         Estructura de la tabla fs_users.
 -->
-
 <tabla>
    <columna>
       <nombre>nick</nombre>

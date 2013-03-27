@@ -20,18 +20,6 @@
       </div>
       <br/>
       <div class="bloque">
-         Dirección:
-         <input type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         ciudad:
-         <input type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         código postal:
-         <input type="text" name="codpostal" size="10" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
          <a href="{$fsc->pais->url()}">País</a>:
          <select name="codpais">
          {loop="$fsc->pais->all()"}
@@ -42,6 +30,22 @@
             {/if}
          {/loop}
          </select>
+      </div>
+      <div class="bloque">
+         provincia:
+         <input type="text" name="provincia" size="20" value="{$fsc->empresa->provincia}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         ciudad:
+         <input type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         dirección:
+         <input type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         código postal:
+         <input type="text" name="codpostal" size="6" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
       </div>
       <br/>
       <div class="bloque">

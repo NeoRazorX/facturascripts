@@ -26,6 +26,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>idprovincia</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>provincia</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
@@ -142,7 +147,7 @@
    </columna>
    <columna>
       <nombre>idrecibo</nombre>
-      <tipo>integer</tipo>
+      <tipo>serial</tipo>
       <nulo>NO</nulo>
       <defecto>nextval('reciboscli_idrecibo_seq'::regclass)</defecto>
    </columna>

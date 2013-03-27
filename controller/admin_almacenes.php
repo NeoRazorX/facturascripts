@@ -18,10 +18,12 @@
  */
 
 require_once 'model/almacen.php';
+require_once 'model/pais.php';
 
 class admin_almacenes extends fs_controller
 {
    public $almacen;
+   public $pais;
    
    public function __construct()
    {
@@ -31,6 +33,8 @@ class admin_almacenes extends fs_controller
    protected function process()
    {
       $this->almacen = new almacen();
+      $this->pais = new pais();
+      
       $this->buttons[] = new fs_button('b_nuevo_almacen', 'nuevo');
       
       if( isset($_POST['scodalmacen']) )
@@ -42,9 +46,11 @@ class admin_almacenes extends fs_controller
             $al0->codalmacen = $_POST['scodalmacen'];
          }
          $al0->nombre = $_POST['snombre'];
+         $al0->codpais = $_POST['scodpais'];
+         $al0->provincia = $_POST['sprovincia'];
+         $al0->poblacion = $_POST['spoblacion'];
          $al0->direccion = $_POST['sdireccion'];
          $al0->codpostal = $_POST['scodpostal'];
-         $al0->poblacion = $_POST['spoblacion'];
          $al0->telefono = $_POST['stelefono'];
          $al0->fax = $_POST['sfax'];
          $al0->contacto = $_POST['scontacto'];
@@ -70,7 +76,7 @@ class admin_almacenes extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
 }
 

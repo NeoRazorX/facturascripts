@@ -6,14 +6,28 @@
 -->
 <tabla>
    <columna>
-      <nombre>editable</nombre>
+      <nombre>automatica</nombre>
       <tipo>boolean</tipo>
       <nulo>NO</nulo>
-      <defecto>FALSE</defecto>
    </columna>
    <columna>
-      <nombre>deabono</nombre>
-      <tipo>boolean</tipo>
+      <nombre>cifnif</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codalmacen</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddivisa</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codejercicio</nombre>
+      <tipo>character varying(4)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
@@ -22,54 +36,9 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>automatica</nombre>
-      <tipo>boolean</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>total</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>neto</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>cifnif</nombre>
+      <nombre>codigorect</nombre>
       <tipo>character varying(12)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>observaciones</nombre>
-      <tipo>text</tipo>
       <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idpagodevol</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codalmacen</nombre>
-      <tipo>character varying(4)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>irpf</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>totaleuros</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>nombre</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>codpago</nombre>
@@ -82,13 +51,35 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>idfacturarect</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
+      <nombre>codserie</nombre>
+      <tipo>character varying(2)</tipo>
+      <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>numproveedor</nombre>
-      <tipo>character varying(20)</tipo>
+      <nombre>deabono</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>editable</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>hora</nombre>
+      <tipo>time without time zone</tipo>
+      <nulo>NO</nulo>
+      <defecto>now()</defecto>
+   </columna>
+   <columna>
+      <nombre>idasiento</nombre>
+      <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -98,18 +89,68 @@
       <defecto>nextval('facturasprov_idfactura_seq'::regclass)</defecto>
    </columna>
    <columna>
-      <nombre>codigorect</nombre>
-      <tipo>character varying(12)</tipo>
+      <nombre>idfacturarect</nombre>
+      <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codserie</nombre>
-      <tipo>character varying(2)</tipo>
+      <nombre>idpagodevol</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>irpf</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>neto</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>nogenerarasiento</nombre>
+      <tipo>boolean</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>idasiento</nombre>
-      <tipo>integer</tipo>
+      <nombre>nombre</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>numero</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>numproveedor</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>observaciones</nombre>
+      <tipo>text</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>recfinanciero</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>tasaconv</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>total</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>totaleuros</nombre>
+      <tipo>double precision</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -123,50 +164,9 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>coddivisa</nombre>
-      <tipo>character varying(3)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>numero</nombre>
-      <tipo>character varying(12)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>codejercicio</nombre>
-      <tipo>character varying(4)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>tasaconv</nombre>
-      <tipo>double precision</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>recfinanciero</nombre>
-      <tipo>double precision</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>nogenerarasiento</nombre>
-      <tipo>boolean</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
       <nombre>totalrecargo</nombre>
       <tipo>double precision</tipo>
       <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>fecha</nombre>
-      <tipo>date</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>hora</nombre>
-      <tipo>time without time zone</tipo>
-      <nulo>NO</nulo>
-      <defecto>CURRENT_TIMESTAMP</defecto>
    </columna>
    <restriccion><nombre>ca_facturasprov_series</nombre><consulta>FOREIGN KEY (codserie)
       REFERENCES series (codserie) MATCH SIMPLE

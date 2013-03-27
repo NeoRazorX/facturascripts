@@ -87,7 +87,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-14';
+      return parent::version().'-15';
    }
    
    private function new_articulo()
@@ -97,6 +97,7 @@ class general_nuevo_albaran extends fs_controller
       $art0->descripcion = $_POST['referencia'];
       $art0->codfamilia = $_POST['codfamilia'];
       $art0->codimpuesto = $_POST['codimpuesto'];
+      
       if( $art0->save() )
          $this->results[] = $art0;
       
@@ -109,10 +110,10 @@ class general_nuevo_albaran extends fs_controller
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran';
       
+      $codfamilia = '';
       if( isset($_POST['codfamilia']) )
          $codfamilia = $_POST['codfamilia'];
-      else
-         $codfamilia = '';
+      
       $con_stock = isset($_POST['con_stock']);
       $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
    }
@@ -167,6 +168,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codcliente = $cliente->codcliente;
          $albaran->cifnif = $cliente->cifnif;
          $albaran->nombrecliente = $cliente->nombre;
+         
          if($dirscliente)
          {
             foreach($dirscliente as $d)
@@ -198,6 +200,7 @@ class general_nuevo_albaran extends fs_controller
             if( isset($_POST['numero2']) )
                $albaran->numero2 = $_POST['numero2'];
             $albaran->observaciones = $_POST['observaciones'];
+            
             if( $albaran->save() )
             {
                $n = floatval($_POST['numlineas']);
@@ -247,6 +250,7 @@ class general_nuevo_albaran extends fs_controller
                         $linea->dtopor = floatval($_POST['dto_'.$i]);
                         $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
                         $linea->pvptotal = floatval($_POST['total_'.$i]);
+                        
                         if( $linea->save() )
                         {
                            /// descontamos del stock
@@ -256,21 +260,38 @@ class general_nuevo_albaran extends fs_controller
                            $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                         }
                         else
+                        {
                            $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
+                           $continuar = FALSE;
+                        }
+                     }
+                     else
+                     {
+                        $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                        $continuar = FALSE;
                      }
                   }
                }
-               /// redondeamos
-               $albaran->neto = round($albaran->neto, 2);
-               $albaran->totaliva = round($albaran->totaliva, 2);
-               $albaran->total = $albaran->neto + $albaran->totaliva;
-               if( $albaran->save() )
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+               
+               if( $continuar )
+               {
+                  /// redondeamos
+                  $albaran->neto = round($albaran->neto, 2);
+                  $albaran->totaliva = round($albaran->totaliva, 2);
+                  $albaran->total = $albaran->neto + $albaran->totaliva;
+                  
+                  if( $albaran->save() )
+                     $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  else
+                     $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+               }
+               else if( $albaran->delete() )
+                  $this->new_message("Albarán eliminado correctamente.");
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albaran</a>!");
+                  $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
             }
             else
-               $this->new_error_msg("¡Imposible guardar el albaran!");
+               $this->new_error_msg("¡Imposible guardar el albarán!");
          }
       }
       else
@@ -334,6 +355,7 @@ class general_nuevo_albaran extends fs_controller
          if( isset($_POST['numproveedor']) )
             $albaran->numproveedor = $_POST['numproveedor'];
          $albaran->observaciones = $_POST['observaciones'];
+         
          if( $albaran->save() )
          {
             $n = floatval($_POST['numlineas']);
@@ -383,6 +405,7 @@ class general_nuevo_albaran extends fs_controller
                      $linea->dtopor = floatval($_POST['dto_'.$i]);
                      $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
                      $linea->pvptotal = floatval($_POST['total_'.$i]);
+                     
                      if( $linea->save() )
                      {
                         /// sumamos al stock
@@ -392,18 +415,35 @@ class general_nuevo_albaran extends fs_controller
                         $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
                      }
                      else
+                     {
                         $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
+                        $continuar = FALSE;
+                     }
+                  }
+                  else
+                  {
+                     $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                     $continuar = FALSE;
                   }
                }
             }
-            /// redondeamos
-            $albaran->neto = round($albaran->neto, 2);
-            $albaran->totaliva = round($albaran->totaliva, 2);
-            $albaran->total = $albaran->neto + $albaran->totaliva;
-            if( $albaran->save() )
-               $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+            
+            if($continuar)
+            {
+               /// redondeamos
+               $albaran->neto = round($albaran->neto, 2);
+               $albaran->totaliva = round($albaran->totaliva, 2);
+               $albaran->total = $albaran->neto + $albaran->totaliva;
+               
+               if( $albaran->save() )
+                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+            }
+            else if( $albaran->delete() )
+               $this->new_message("Albarán eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
          }
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");

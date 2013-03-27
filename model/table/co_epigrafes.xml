@@ -11,9 +11,20 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>codepigrafe</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
       <nombre>descripcion</nombre>
       <tipo>character varying(255)</tipo>
       <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idepigrafe</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('co_epigrafes_idepigrafe_seq'::regclass)</defecto>
    </columna>
    <columna>
       <nombre>idgrupo</nombre>
@@ -25,19 +36,14 @@
       <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>
-   <columna>
-      <nombre>codepigrafe</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>idepigrafe</nombre>
-      <tipo>serial</tipo>
-      <nulo>NO</nulo>
-      <defecto>nextval('co_epigrafes_idepigrafe_seq'::regclass)</defecto>
-   </columna>
    <restriccion>
       <nombre>co_epigrafes_pkey</nombre>
       <consulta>PRIMARY KEY (idepigrafe)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_co_epigrafes_ejercicios</nombre>
+      <consulta>FOREIGN KEY (codejercicio)
+      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
    </restriccion>
 </tabla>

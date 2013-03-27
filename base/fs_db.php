@@ -58,7 +58,7 @@ class fs_db
          $connected = TRUE;
       else
       {
-         self::$link = pg_pconnect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
+         self::$link = pg_connect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
                  ' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
          if(self::$link)
          {
@@ -88,6 +88,7 @@ class fs_db
       {
          $retorno = pg_close(self::$link);
          self::$link = NULL;
+         return $retorno;
       }
       return TRUE;
    }
@@ -95,22 +96,12 @@ class fs_db
    /// devuelve un array con los nombres de las tablas de la base de datos
    public function list_tables()
    {
-      if(self::$link)
-      {
-         $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b
-            WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
-             AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
-             AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname))
-            ORDER BY a.relname ASC;";
-         self::$history[] = $sql;
-         $filas = pg_query(self::$link, $sql);
-         if($filas)
-         {
-            $resultado = pg_fetch_all($filas);
-            pg_free_result($filas);
-         }
-         self::$t_selects++;
-      }
+      $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b
+         WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
+          AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
+          AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname))
+         ORDER BY a.relname ASC;";
+      $resultado = $this->select($sql);
       if($resultado)
          return $resultado;
       else
@@ -118,7 +109,7 @@ class fs_db
    }
    
    /// devuelve TRUE si la tabla existe
-   public function table_exists($name='')
+   public function table_exists($name)
    {
       $resultado = FALSE;
       foreach($this->list_tables() as $tabla)
@@ -133,45 +124,36 @@ class fs_db
    }
    
    /// devuelve un array con las columnas de una tabla dada
-   public function get_columns($table='')
+   public function get_columns($table)
    {
-      if($table != '')
-      {
-         $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable
-            FROM information_schema.columns
-            WHERE table_catalog = '".FS_DB_NAME."' AND table_name = '".$table."'
-            ORDER BY column_name ASC;";
-         return $this->select($sql);
-      }
-      else
-         return FALSE;
+      $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable
+         FROM information_schema.columns
+         WHERE table_catalog = '".FS_DB_NAME."' AND table_name = '".$table."'
+         ORDER BY column_name ASC;";
+      return $this->select($sql);
    }
    
    /// devuelve una array con las restricciones de una tabla dada
-   public function get_constraints($table='')
+   public function get_constraints($table)
    {
-      if($table != '')
-      {
-         $sql = "SELECT c.conname as \"restriccion\", c.contype as \"tipo\"
-            FROM pg_class r, pg_constraint c
-            WHERE r.oid = c.conrelid AND relname = '".$table."'
-            ORDER BY restriccion ASC;";
-         return $this->select($sql);
-      }
-      else
-         return FALSE;
+      $sql = "SELECT c.conname as \"restriccion\", c.contype as \"tipo\"
+         FROM pg_class r, pg_constraint c
+         WHERE r.oid = c.conrelid AND relname = '".$table."'
+         ORDER BY restriccion ASC;";
+      return $this->select($sql);
    }
    
    /// devuelve una array con los indices de una tabla dada
-   public function get_indexes($table='')
+   public function get_indexes($table)
    {
-      if($table != '')
-      {
-         $sql = "SELECT * FROM pg_indexes WHERE tablename = '".$table."';";
-         return $this->select($sql);
-      }
-      else
-         return FALSE;
+      return $this->select("SELECT * FROM pg_indexes WHERE tablename = '".$table."';");
+   }
+   
+   /// devuelve un array con los datos de bloqueos
+   public function get_locks()
+   {
+      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks
+         WHERE relfilenode=relation AND NOT granted;");
    }
    
    public function version()
@@ -241,55 +223,34 @@ class fs_db
       return $resultado;
    }
    
+   public function sequence_exists($seq)
+   {
+      return $this->select("SELECT * FROM pg_class where relname = '".$seq."';");
+   }
+   
    /// devuleve el siguiente valor de una secuencia
    public function nextval($seq)
    {
-      $resultado = FALSE;
-      if(self::$link)
-      {
-         $sql = "SELECT nextval('".$seq."');";
-         self::$history[] = $sql;
-         $aux = pg_query(self::$link, $sql);
-         if($aux)
-         {
-            $aux2 = pg_fetch_row($aux);
-            $resultado = $aux2[0];
-            pg_free_result($aux);
-         }
-         self::$t_selects++;
-      }
-      return $resultado;
+      $aux = $this->select("SELECT nextval('".$seq."') as num;");
+      if($aux)
+         return $aux[0]['num'];
+      else
+         return FALSE;
    }
    
    /// devuleve el último ID asignado
    public function lastval()
    {
-      $resultado = FALSE;
-      if(self::$link)
-      {
-         $sql = 'SELECT lastval();';
-         self::$history[] = $sql;
-         $aux = pg_query(self::$link, $sql);
-         if($aux)
-         {
-            $aux2 = pg_fetch_row($aux);
-            $resultado = $aux2[0];
-            pg_free_result($aux);
-         }
-         self::$t_selects++;
-      }
-      return $resultado;
+      $aux = $this->select('SELECT lastval() as num;');
+      if($aux)
+         return $aux[0]['num'];
+      else
+         return FALSE;
    }
    
-   public function escape_string($s='')
+   public function escape_string($s)
    {
       return pg_escape_string(self::$link, $s);
-   }
-   
-   public function get_locks()
-   {
-      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks
-         WHERE relfilenode=relation AND NOT granted;");
    }
 }
 

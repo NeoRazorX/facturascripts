@@ -116,9 +116,22 @@ class articulo extends fs_model
    
    protected function install()
    {
-      $fam = new familia();
-      $imp = new impuesto();
+      /// la tabla articulos tiene claves ajeas a familias e impuestos
+      new familia();
+      new impuesto();
+      
       $this->clean_cache();
+      
+      /// borramos todas las imágenes de artículos
+      if( file_exists('tmp/articulos') )
+      {
+         foreach(glob('tmp/articulos/*') as $file)
+         {
+            if( is_file($file) )
+               unlink($file);
+         }
+      }
+      
       return '';
    }
    
@@ -135,9 +148,9 @@ class articulo extends fs_model
    public function show_pvp_iva($coma=TRUE)
    {
       if($coma)
-         return number_format($this->pvp * (100 + $this->get_iva()) / 100, 2, '.', ' ');
+         return number_format($this->pvp * (100+$this->get_iva()) / 100, 2, '.', ' ');
       else
-         return number_format($this->pvp * (100 + $this->get_iva()) / 100, 2, '.', '');
+         return number_format($this->pvp * (100+$this->get_iva()) / 100, 2, '.', '');
    }
    
    public function url()
@@ -150,7 +163,8 @@ class articulo extends fs_model
    
    public function get($ref)
    {
-      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
+      $art = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref).";");
       if($art)
          return new articulo($art[0]);
       else
@@ -177,9 +191,7 @@ class articulo extends fs_model
    
    public function get_iva()
    {
-      if( isset($this->iva) )
-         return $this->iva;
-      else
+      if( is_null($this->iva) )
       {
          $encontrado = FALSE;
          foreach(self::$impuestos as $i)
@@ -194,26 +206,27 @@ class articulo extends fs_model
          if( !$encontrado )
          {
             $imp = new impuesto();
-            $imp = $imp->get($this->codimpuesto);
-            if($imp)
+            $imp0 = $imp->get($this->codimpuesto);
+            if($imp0)
             {
-               $this->iva = floatval($imp->iva);
-               self::$impuestos[] = $imp;
+               $this->iva = floatval($imp0->iva);
+               self::$impuestos[] = $imp0;
             }
             else
                $this->iva = 0;
          }
-         return $this->iva;
       }
+      return $this->iva;
    }
    
    public function get_equivalentes()
    {
       $artilist = array();
-      if( !is_null($this->equivalencia) )
+      if( isset($this->equivalencia) )
       {
-         $articulos = $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE equivalencia = ".$this->var2str($this->equivalencia)." ORDER BY referencia ASC;");
+         $articulos = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE equivalencia = ".$this->var2str($this->equivalencia).
+                 " ORDER BY referencia ASC;");
          if($articulos)
          {
             foreach($articulos as $a)
@@ -296,18 +309,15 @@ class articulo extends fs_model
          {
             if( is_null($this->imagen) )
             {
-               $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
-                  WHERE referencia = ".$this->var2str($this->referencia).";");
+               $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name.
+                       " WHERE referencia = ".$this->var2str($this->referencia).";");
                if($imagen)
                   $this->imagen = $this->str2bin($imagen[0]['imagen']);
                else
-               {
-                  $this->imagen = NULL;
                   $this->has_imagen = FALSE;
-               }
             }
             
-            if( !is_null($this->imagen) )
+            if( isset($this->imagen) )
             {
                if( !file_exists('tmp/articulos') )
                   mkdir('tmp/articulos');
@@ -425,7 +435,8 @@ class articulo extends fs_model
       if( is_null($this->referencia) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    public function test()
@@ -448,9 +459,6 @@ class articulo extends fs_model
             }
          }
       }
-      /// eliminamos la imágen del directorio para actualizarla
-      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
-         unlink('tmp/articulos/'.$this->referencia.'.png');
       
       $this->referencia = str_replace(' ', '_', trim($this->referencia));
       
@@ -473,7 +481,7 @@ class articulo extends fs_model
          $this->new_error_msg("¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.
             Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
       }
-      else if( !is_null($this->equivalencia) AND !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $this->equivalencia) )
+      else if( isset($this->equivalencia) AND !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $this->equivalencia) )
       {
          $this->new_error_msg("¡Código de equivalencia del artículos no válido! Debe tener entre 1 y 18 caracteres.
             Se admiten letras (excepto Ñ), números, '_', '.', '*', '/' ó '-'.");
@@ -489,6 +497,7 @@ class articulo extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         $this->clean_image_cache();
          
          if( $this->exists() )
          {
@@ -523,15 +532,13 @@ class articulo extends fs_model
    public function delete()
    {
       $this->clean_cache();
+      $this->clean_image_cache();
       
-      /// eliminamos la imagen asociada
-      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
-         unlink('tmp/articulos/'.$this->referencia.'.png');
-      
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
-   private function new_search_tag($tag='')
+   private function new_search_tag($tag)
    {
       $encontrado = FALSE;
       $actualizar = FALSE;
@@ -546,7 +553,7 @@ class articulo extends fs_model
             if( $value['tag'] == $tag )
             {
                $encontrado = TRUE;
-               if(time() + 86400 - $value['expires'] > 300)
+               if( time()+86400 > $value['expires']+300 )
                {
                   self::$search_tags[$i]['expires'] = time()+86400;
                   $actualizar = TRUE;
@@ -599,6 +606,12 @@ class articulo extends fs_model
       }
    }
    
+   private function clean_image_cache()
+   {
+      if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         unlink('tmp/articulos/'.$this->referencia.'.png');
+   }
+   
    private function clean_cache()
    {
       /// obtenemos los datos de memcache
@@ -608,9 +621,6 @@ class articulo extends fs_model
       {
          foreach(self::$search_tags as $value)
             $this->cache->delete('articulos_search_'.$value['tag']);
-         
-         $this->cache->delete('articulos_searches');
-         self::$search_tags = array();
       }
       
       /// eliminamos también la cache de tpv_yamyam
@@ -666,7 +676,7 @@ class articulo extends fs_model
    
    public function multiplicar_precios($codfam, $m=1)
    {
-      if(isset($codfam) AND $m != 1)
+      if( isset($codfam) AND $m != 1 )
       {
          $this->clean_cache();
          
@@ -680,7 +690,8 @@ class articulo extends fs_model
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();
-      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY referencia ASC", $limit, $offset);
+      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " ORDER BY referencia ASC", $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)
@@ -692,8 +703,9 @@ class articulo extends fs_model
    public function all_from_familia($codfamilia, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $artilist = array();
-      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE codfamilia = ".$this->var2str($codfamilia)." ORDER BY referencia ASC", $limit, $offset);
+      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codfamilia = ".$this->var2str($codfamilia).
+              " ORDER BY referencia ASC", $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)
@@ -706,8 +718,10 @@ class articulo extends fs_model
    {
       $num = 0;
       if( $codfamilia )
-         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name."
-            WHERE codfamilia = ".$this->var2str($codfamilia).";");
+      {
+         $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.
+                 " WHERE codfamilia = ".$this->var2str($codfamilia).";");
+      }
       else
          $articulos = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
       if($articulos)
@@ -725,12 +739,12 @@ class articulo extends fs_model
          $impuesto0 = $impuesto->get($cod0);
          $impuesto1 = $impuesto->get($cod1);
          $multiplo = (100 + $impuesto0->iva) / (100 + $impuesto1->iva);
-         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).",
-            pvp = (pvp*".$multiplo.") WHERE codimpuesto = ".$this->var2str($cod0).";");
+         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).
+                 ", pvp = (pvp*".$multiplo.") WHERE codimpuesto = ".$this->var2str($cod0).";");
       }
       else
-         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1)."
-            WHERE codimpuesto = ".$this->var2str($cod0).";");
+         return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).
+                 " WHERE codimpuesto = ".$this->var2str($cod0).";");
    }
 }
 
