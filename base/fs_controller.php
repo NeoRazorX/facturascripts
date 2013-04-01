@@ -68,11 +68,20 @@ class fs_controller
          $this->template = 'index';
          if( isset($_GET['logout']) )
          {
-            $this->template = 'login';
+            if(FS_DEMO)
+               $this->template = 'login/demo';
+            else
+               $this->template = 'login/default';
+            
             $this->log_out();
          }
          else if( !$this->log_in() )
-            $this->template = 'login';
+         {
+            if(FS_DEMO)
+               $this->template = 'login/demo';
+            else
+               $this->template = 'login/default';
+         }
          else if( $this->user->have_access_to($this->page->name, $this->admin_page) )
          {
             if($name == '')
@@ -194,7 +203,7 @@ class fs_controller
                   }
                }
                else
-                  $this->new_error_msg('Contraseña incorrecta!');
+                  $this->new_error_msg('¡Contraseña incorrecta!');
             }
             else
             {
@@ -303,7 +312,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.20';
+      return '0.9.21';
    }
    
    public function select_default_page()

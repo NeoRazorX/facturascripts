@@ -60,6 +60,10 @@ define('FS_ID', 1);
  * Sólo disponible en Linux.
  * 
  * Ejemplo: 'Generic-text-only' ó '/dev/usb/lp0'
+ * 
+ * Nota: si escribes directamente sobre el puerto de la impresora,
+ * asegurate de añadir apache al grupo de impresoras:
+ * $ sudo usermod -a -G lp www-data
  */
 define('FS_PRINTER', '');
 

@@ -456,18 +456,11 @@ class linea_iva_factura_proveedor extends fs_model
    public function test()
    {
       $status = TRUE;
-      $totaliva = round($this->neto * $this->iva / 100, 2);
-      $total = round($this->neto * (100 + $this->iva) / 100, 2);
+      $total = round($this->neto + $this->totaliva, 2);
       
-      if( !$this->floatcmp($totaliva, round($this->totaliva, 2)) )
+      if( !$this->floatcmp($total, round($this->totallinea, 2)) )
       {
-         $this->new_error_msg("Error en el valor de totaliva de la línea de iva del impuesto ".
-                 $this->codimpuesto." de la factura. Valor correcto: ".$totaliva);
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($total, round($this->totallinea, 2)) )
-      {
-         $this->new_error_msg("Error en el valor de totallinea de la línea de iva del impuesto ".
+         $this->new_error_msg("Error en el valor de totallinea de la línea de IVA del impuesto ".
                  $this->codimpuesto." de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }

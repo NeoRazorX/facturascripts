@@ -2,8 +2,8 @@
 @import url('tcal.css');
 
 body {
-   margin: 0;
-   padding: 0;
+   margin: 0px;
+   padding: 0px;
    background-color: #4C769E;
    color: white;
    font-family: Verdana, sans-serif;
@@ -252,19 +252,10 @@ div#shadow {
    opacity: 0.7;
 }
 
-div#popup_message {
-   display: inline-block;
+a#b_close_popup {
+   display: none;
+   z-index: 4;
    position: fixed;
-   left: 0px;
-   right: 0px;
-   bottom: 0px;
-   z-index: 3;
-   padding: 5px;
-   opacity: 1;
-   color: white;
-   font-size: 18px;
-   font-weight: bold;
-   text-align: center;
 }
 
 div.main_div div.popup {
@@ -580,58 +571,13 @@ input.full, textarea {
    -ms-box-sizing: border-box;
 }
 
-div#login_header {
-   margin: 5px;
-   padding: 0px;
-   font-size: 16px;
-}
-
-a#fs_logo, a#fs_logo2 {
+a#fs_logo {
    color: white;
    text-transform: capitalize;
    text-decoration: none;
    font-weight: normal;
    font-family: 'Oleo Script', cursive;
    font-size: 30px;
-}
-
-a#fs_logo2 {
-   font-size: 40px;
-}
-
-div#login_box {
-   display: inline-block;
-   padding: 3px;
-   padding-left: 8px;
-   padding-right: 5px;
-   background-color: #424242;
-   border: 1px solid #333333;
-   border-top-left-radius: 5px 5px;
-   border-top-right-radius: 5px 5px;
-   border-bottom-left-radius: 5px 5px;
-   border-bottom-right-radius: 5px 5px;
-}
-
-div#login_box input[type='password'],
-div#login_box select {
-   vertical-align: baseline;
-   padding: 3px;
-   background-color: #bbbbbb;
-   border: 1px solid black;
-   font-weight: bold;
-   font-size: 16px;
-}
-
-div#login_box select option {
-   background-color: #bbbbbb;
-}
-
-div#login_box input[type='submit'] {
-   vertical-align: baseline;
-   padding-top: 4px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 2px;
 }
 
 div#sql_history {

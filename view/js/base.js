@@ -230,11 +230,17 @@ function fs_show_popup(id, top)
          top: top
       });
    }
-   $("#"+id).show();
+   $("#"+id).show('fast');
+   $("#b_close_popup").css({
+      left: $("#"+id).position().left - 15,
+      top: $("#"+id).position().top - 10,
+      display: 'block'
+   });
 }
 
 function fs_hide_popups()
 {
+   $("#b_close_popup").hide();
    $('div.popup').each(function() {
       $(this).hide();
    });

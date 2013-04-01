@@ -105,7 +105,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()
@@ -138,7 +138,7 @@ class contabilidad_factura_prov extends fs_controller
       {
          $lineasfact = count($lineas);
          $linea_actual = 0;
-         $lppag = 40;
+         $lppag = 42;
          $pagina = 1;
          
          // Imprimimos las páginas necesarias
@@ -148,7 +148,9 @@ class contabilidad_factura_prov extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
-            $pdf->ezText("\n\n", 10);
+            $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16);
+            $pdf->ezText("CIF: ".$this->empresa->cifnif." - ".$this->empresa->direccion.
+                    " - Teléfono: ".$this->empresa->telefono, 10);
             
             /// Creamos la tabla del encabezado
             $filas = array(
@@ -171,7 +173,7 @@ class contabilidad_factura_prov extends fs_controller
                         'width' => 540
                     )
             );
-            $pdf->ezText("\n\n\n", 14);
+            $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas de la factura
             $saltos = 0;

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>{$fsc->empresa->nombre}</title>
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes.
+         Es software libre bajo licencia GNU/AGPL." />
+   <meta name="keywords" content="facturascripts, facturación, contabilidad, abanq, eneboo, facturalux, facturaplus"/>
+   <link rel="shortcut icon" href="../img/favicon.ico" />
+   <link rel="stylesheet" type="text/css" href="../css/login.css" />
+   <script type="text/javascript" src="../js/jquery.js"></script>
+   <script type="text/javascript">
+      $(document).ready(function() {
+         document.f_login.password.focus();
+      });
+   </script>
+</head>
+<body>
+   
+   {if condition="$fsc->get_errors()"}
+      <div class="error">
+         <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+      </div>
+   {/if}
+   {if condition="$fsc->get_messages()"}
+      <div class="message">
+         <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+      </div>
+   {/if}
+   
+   <div class="header">
+      <h1><a href="index.php">{$fsc->empresa->nombre}</a></h1>
+      <h2>{$fsc->empresa->lema}</h2>
+      {$fsc->empresa->direccion}
+      <br/><br/>
+      <table>
+         <tr>
+            <td class="rounded">
+               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
+                  <select name="user" onchange="document.f_login.password.focus()">
+                  {loop name="$fsc->user->all()"}
+                     {if condition="$value->nick == $nlogin"}
+                     <option value="{$value->nick}" selected>{$value->nick}</option>
+                     {else}
+                     <option value="{$value->nick}">{$value->nick}</option>
+                     {/if}
+                  {/loop}
+                  </select>
+                  <input type="password" name="password" size="6" maxlength="20"  placeholder="contraseña"/>
+                  <br/>
+                  <input type="submit" value="entrar"/>
+               </form>
+            </td>
+         </tr>
+      </table>
+      <br/><br/>
+   </div>
+   
+   <div class="colaborar">
+      <table width="100%">
+         <tr>
+            <td><div class="colabora2">Colabora</div></td>
+            <td>
+               Si tienes cualquier problema o sugerencia no dudes en
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">reportar un error</a>.
+               Puedes seguir el desarrollo de FacturaScripts a través de mi
+               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>,
+               mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a> o la comunidad de
+               <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
+            </td>
+         </tr>
+      </table>
+   </div>
+   
+   <div class="changes">
+      <a name="changes"></a>
+      {include="login/changes"}
+   </div>
+   
+   {if condition="$db_history"}
+   <div id="sql_history">
+      <h1>Consultas SQL:</h1>
+      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   </div>
+   {/if}
+   
+   <div class="footer">
+      <table class="links">
+         <tr>
+            <td valign="top">
+               Páginas especiales:
+               <ul>
+                  <li>
+                     <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Informar de un error</a>
+                  </li>
+                  <li>
+                     <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Comunidad Google+</a>
+                  </li>
+               </ul>
+            </td>
+            <td valign="top">
+               Autor:
+               <ul>
+                  <li><a target="_blank" href="http://www.neorazorx.com">NeoRazorX.com</a></li>
+                  <li><a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a></li>
+               </ul>
+            </td>
+            <td valign="top">
+               Otros proyectos:
+               <ul>
+                  <li><a target="_blank" href="http://www.kelinux.net">Kelinux.net</a></li>
+                  <li><a target="_blank" href="http://www.locierto.es">LoCierto.es</a></li>
+               </ul>
+            </td>
+         </tr>
+      </table>
+      <table width="100%">
+         <tr>
+            <td>Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()}</td>
+            <td align="right">Tiempo de ejecución: {$fsc->duration()}</td>
+         </tr>
+      </table>
+   </div>
+</body>
+</html>

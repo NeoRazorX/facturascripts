@@ -421,6 +421,9 @@ class asiento extends fs_model
    
    public function descuadrados()
    {
+      /// iniciamos partidas para asegurarnos que existe la tabla
+      new partida();
+      
       $alist = array();
       $asientos = $this->db->select("SELECT p.idasiento,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
          FROM co_partidas p, co_asientos a

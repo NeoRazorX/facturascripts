@@ -112,9 +112,10 @@
          </ul>
       </div>
    </div>
-   <div id="shadow">
-      <div id="popup_message">Pulsa el fondo ensombrecido para cerrar el diálogo.</div>
-   </div>
+   <div id="shadow"></div>
+   <a id="b_close_popup" href="#" onclick="fs_hide_popups(); return false;">
+      <img src="img/close.png" alt="close"/>
+   </a>
 {if condition="$fsc->show_default_page_advice()"}
    <div class="advice">
       Se ha seleccionado la primera página de tu lista. Si queres que sea otra tu
