@@ -88,8 +88,8 @@ class contabilidad_factura_cli extends fs_controller
             
             $this->page->title = $this->factura->codigo;
             $this->agente = $this->factura->get_agente();
-            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE",
-                    'button', 'img/print.png', '[]', TRUE);
+            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', '#',
+                    'button', 'img/print.png');
             
             if($this->factura->idasiento)
                $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
@@ -107,7 +107,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    public function url()
@@ -143,6 +143,9 @@ class contabilidad_factura_cli extends fs_controller
          $lppag = 42;
          $pagina = 1;
          
+         if($_GET['imprimir'] == 'carta')
+            $lppag = 40;
+         
          // Imprimimos las páginas necesarias
          while($linea_actual < $lineasfact)
          {
@@ -150,9 +153,16 @@ class contabilidad_factura_cli extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
-            $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16);
-            $pdf->ezText("CIF: ".$this->empresa->cifnif." - ".$this->empresa->direccion.
-                    " - Teléfono: ".$this->empresa->telefono, 10);
+            if($_GET['imprimir'] == 'carta')
+            {
+               $pdf->ezText("\n\n", 10);
+            }
+            else
+            {
+               $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16);
+               $pdf->ezText("CIF: ".$this->empresa->cifnif." - ".$this->empresa->direccion.
+                       " - Teléfono: ".$this->empresa->telefono, 10);
+            }
             
             /// Creamos la tabla del encabezado
             $filas = array(
@@ -176,7 +186,11 @@ class contabilidad_factura_cli extends fs_controller
                         'width' => 540
                     )
             );
-            $pdf->ezText("\n", 10);
+            
+            if($_GET['imprimir'] == 'carta')
+               $pdf->ezText("\n\n\n", 14);
+            else
+               $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas de la factura
             $saltos = 0;

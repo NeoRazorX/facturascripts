@@ -33,10 +33,7 @@ div.advice, div.message, div.error {
    margin: 5px;
    padding: 10px;
    border: 1px solid #333333;
-   border-top-left-radius: 3px 3px;
-   border-top-right-radius: 3px 3px;
-   border-bottom-left-radius: 3px 3px;
-   border-bottom-right-radius: 3px 3px;
+   border-radius: 3px;
    color: black;
    font-size: 16px;
 }
@@ -111,10 +108,7 @@ div#header_folders a, div#header_user a.button {
    padding-bottom: 3px;
    background-color: #333333;
    border: 1px solid #999999;
-   border-top-left-radius: 3px 3px;
-   border-top-right-radius: 3px 3px;
-   border-bottom-left-radius: 3px 3px;
-   border-bottom-right-radius: 3px 3px;
+   border-radius: 3px;
    color: white;
    text-transform: capitalize;
    text-decoration: none;
@@ -127,10 +121,7 @@ a#fs_exit {
    padding: 2px;
    background-color: #333333;
    border: 1px solid #999999;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border-radius: 4px
    vertical-align: top;
 }
 
@@ -164,10 +155,7 @@ div#header_buttons a.button, div#header_buttons a.remove {
    padding-bottom: 1px;
    background-color: white;
    border: 1px solid #424242;
-   border-top-left-radius: 3px 3px;
-   border-top-right-radius: 3px 3px;
-   border-bottom-left-radius: 3px 3px;
-   border-bottom-right-radius: 3px 3px;
+   border-radius: 3px;
    color: #424242;
    text-decoration: none;
 }
@@ -270,10 +258,7 @@ div.main_div div.popup {
    overflow: auto;
    background-color: white;
    border: 5px solid #666666;
-   border-top-left-radius: 5px 5px;
-   border-top-right-radius: 5px 5px;
-   border-bottom-left-radius: 5px 5px;
-   border-bottom-right-radius: 5px 5px;
+   border-radius: 5px;
    color: black;
 }
 
@@ -313,10 +298,7 @@ div.main_div div.rounded {
    padding-bottom: 8px;
    background-color: white;
    border: 1px solid #333333;
-   border-top-left-radius: 5px 5px;
-   border-top-right-radius: 5px 5px;
-   border-bottom-left-radius: 5px 5px;
-   border-bottom-right-radius: 5px 5px;
+   border-radius: 5px;
    color: black;
 }
 
@@ -359,18 +341,6 @@ div.main_div table.list td.locked {
    text-decoration: line-through;
 }
 
-div.main_div ul.horizontal {
-   margin: 5px;
-   padding: 5px;
-   list-style-type: none;
-}
-
-div.main_div ul.horizontal li {
-   display: inline-block;
-   padding: 2px;
-   min-width: 225px;
-}
-
 div.main_div a.next {
    display: inline-block;
    padding-top: 2px;
@@ -379,10 +349,7 @@ div.main_div a.next {
    padding-bottom: 1px;
    background-color: #bbbbbb;
    border: 1px solid #424242;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border-radius: 2px;
    color: black;
    font-size: 16px;
    text-transform: capitalize;
@@ -409,10 +376,7 @@ div.main_div div.paginas a {
    padding-bottom: 1px;
    background-color: #bbbbbb;
    border: 1px solid #424242;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border-radius: 2px;
    color: black;
    font-size: 13px;
    text-transform: capitalize;
@@ -471,16 +435,48 @@ div.select a {
    padding-right: 6px;
    padding-bottom: 2px;
    background-color: #888888;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border-radius: 2px;
    color: white;
    text-decoration: none;
 }
 
 div.select a.selected {
    background-color: #424242;
+}
+
+ul.horizontal {
+   margin: 5px;
+   padding: 5px;
+   list-style-type: none;
+}
+
+ul.horizontal li {
+   display: inline-block;
+   padding: 2px;
+   min-width: 225px;
+}
+
+ul.bloque {
+   margin: 5px;
+   padding: 5px;
+   list-style-type: none;
+}
+
+ul.bloque li {
+   display: inline-block;
+   background-color: #ACD6F5;
+   border: 1px outset #cccccc;
+   border-radius: 3px;
+   font-size: 16px;
+   text-align: center;
+}
+
+ul.bloque li a {
+   display: block;
+   padding: 5px;
+   padding-top: 30px;
+   padding-bottom: 30px;
+   text-decoration: none;
 }
 
 div.footer {
@@ -523,10 +519,7 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    padding-right: 5px;
    padding-bottom: 1px;
    border: 1px solid #333333;
-   border-top-left-radius: 2px 2px;
-   border-top-right-radius: 2px 2px;
-   border-bottom-left-radius: 2px 2px;
-   border-bottom-right-radius: 2px 2px;
+   border-radius: 2px;
    color: #333333;
    text-transform: capitalize;
    font-weight: bold;
@@ -589,14 +582,4 @@ div#sql_history {
 div#sql_history h1 {
    margin: 5px;
    font-size: 20px;
-}
-
-/* reglas para las gráficas generadas con jquery.charts.js */
-h1.jqbar {
-   margin: 5px;
-}
-
-ul.jqbar {
-   padding: 5px;
-   list-style-type: none;
 }

@@ -1,48 +1,5 @@
 {include="header"}
 
-<script type="text/javascript" src="js/jquery.charts.js"></script>
-<script type="text/javascript">
-   $(document).ready(function() {
-      $("#stats").charts();
-   });
-</script>
-
-<div class="rounded">
-   <table id="stats">
-      <caption>Articulos (no unidades):</caption>
-      <thead>
-         <tr>
-            <th>Option</th>
-            <th>Popularity</th>
-         </tr>
-      </thead>
-      <tfoot>
-         <tr>
-            <td>Total</td>
-            <td>{$fsc->resultados['articulos_total']}</td>
-         </tr>
-      </tfoot>
-      <tbody>
-         <tr>
-            <td>Total</td>
-            <td>{$fsc->resultados['articulos_total']}</td>
-         </tr>
-         <tr>
-            <td>En stock</td>
-            <td>{$fsc->resultados['articulos_stock']}</td>
-         </tr>
-         <tr>
-            <td>Vendidos</td>
-            <td>{$fsc->resultados['articulos_vendidos']}</td>
-         </tr>
-         <tr>
-            <td>Comprados</td>
-            <td>{$fsc->resultados['articulos_comprados']}</td>
-         </tr>
-      </tbody>
-   </table>
-</div>
-
 <div class="rounded">
    <h1>Top ventas (unidades):</h1>
    <ul class="horizontal">

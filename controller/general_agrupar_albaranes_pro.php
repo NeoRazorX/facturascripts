@@ -71,7 +71,7 @@ class general_agrupar_albaranes_pro extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    private function agrupar()
@@ -127,13 +127,20 @@ class general_agrupar_albaranes_pro extends fs_controller
       $factura->totalirpf = $albaranes[0]->totalirpf;
       $factura->totalrecargo = $albaranes[0]->totalrecargo;
       
+      /// calculamos neto e iva
       foreach($albaranes as $alb)
       {
-         $factura->neto += $alb->neto;
-         $factura->totaliva += $alb->totaliva;
+         foreach($alb->get_lineas() as $l)
+         {
+            $factura->neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
+            $factura->totaliva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
+         }
       }
-      
+      /// redondeamos
+      $factura->neto = round($factura->neto, 2);
+      $factura->totaliva = round($factura->totaliva, 2);
       $factura->total = $factura->neto + $factura->totaliva;
+      
       if( $factura->save() )
       {
          foreach($albaranes as $alb)

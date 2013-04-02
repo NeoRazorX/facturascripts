@@ -209,16 +209,16 @@ class general_importar_familia extends fs_controller
             {
                $this->ready = $this->test_csv_file();
                if( !$this->ready )
-               {
                   $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
-                                     "/".$this->family_data->lineas);
-               }
+                          "/".$this->family_data->lineas);
                else
                {
                   $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
                   $this->buttons[] = new fs_button('b_start', 'procesar',
                           $this->url().'&action=start', '', 'img/tools.png');
                }
+               $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
+                    'remove', 'img/remove.png');
             }
             else if($this->family_data->action == 'start')
             {
@@ -226,13 +226,13 @@ class general_importar_familia extends fs_controller
                if( !$this->ready )
                {
                   $this->new_message("Procesando ... ".$this->family_data->lineas_procesadas.
-                                     "/".$this->family_data->lineas);
+                          "/".$this->family_data->lineas);
+                  $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
+                    'remove', 'img/remove.png');
                }
                else
                   $this->new_message("Proceso finalizado");
             }
-            
-            $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE', 'remove', 'img/remove.png');
          }
          else
             $this->new_error_msg("¡No se ha encontrado el archivo ".$this->familia->codfamilia.".csv!");
@@ -251,7 +251,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    private function get_family_data()

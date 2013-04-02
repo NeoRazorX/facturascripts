@@ -192,7 +192,6 @@ function fs_select_folder(folder)
             'padding-left': ( $("#folder_"+folder).outerWidth()/2 ) - 10
          });
          $('#folder_'+folder).css({
-            display: 'inline-block',
             position: 'absolute',
             left: left2,
             top: $("#b_folder_"+folder).position().top+25
@@ -204,36 +203,34 @@ function fs_select_folder(folder)
             'padding-left': ( $("#b_folder_"+folder).outerWidth()/2 ) - 5
          });
          $('#folder_'+folder).css({
-            display: 'inline-block',
             position: 'absolute',
             left: 5,
             top: $("#b_folder_"+folder).position().top+25
          });
       }
+      $('#folder_'+folder).show('fast');
    }
 }
 
 function fs_show_popup(id, top)
 {
    $("#shadow").show();
+   
+   var pleft = ($(window).width() - $("#"+id).outerWidth())/2;
    if( typeof(top) == 'undefined' )
-   {
-      $("#"+id).css({
-         left: ($(window).width() - $("#"+id).outerWidth())/2,
-         top: ($(window).height() - $("#"+id).outerHeight())/2
-      });
-   }
+      var ptop = ($(window).height() - $("#"+id).outerHeight())/2;
    else
-   {
-      $("#"+id).css({
-         left: ($(window).width() - $("#"+id).outerWidth())/2,
-         top: top
-      });
-   }
+      var ptop = top;
+   
+   $("#"+id).css({
+      left: pleft,
+      top: ptop
+   });
    $("#"+id).show('fast');
+   
    $("#b_close_popup").css({
-      left: $("#"+id).position().left - 15,
-      top: $("#"+id).position().top - 10,
+      left: pleft - 15,
+      top: ptop - 10,
       display: 'block'
    });
 }
@@ -267,7 +264,6 @@ $(document).ready(function() {
                'padding-right': ( $("#user_list").outerWidth()/2 ) - 10
             });
             $('#user_list').css({
-               display: 'inline-block',
                position: 'absolute',
                'text-align': 'right',
                right: right2,
@@ -280,13 +276,13 @@ $(document).ready(function() {
                'padding-right': ( $("#b_user_list").outerWidth()/2 ) + 30
             });
             $('#user_list').css({
-               display: 'inline-block',
                position: 'absolute',
                'text-align': 'right',
                right: 15,
                top: $("#b_user_list").position().top+25
             });
          }
+         $('#user_list').show('fast');
       }
    });
    $("#header_logo, #header_buttons, #header_search, div.main_div, div.footer").click(function() {

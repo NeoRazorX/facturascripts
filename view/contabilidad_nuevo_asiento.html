@@ -210,20 +210,20 @@
                Fecha:
                <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
             </td>
-            <td>
+            <td colspan="2" align="center">
                Concepto:
                <select id="s_idconceptopar" name="idconceptopar" onchange="asigna_concepto()">
                   <option value="">---</option>
                   {loop="$fsc->concepto->all()"}<option value="{$value->idconceptopar}">{$value->concepto}</option>{/loop}
                </select>
-               <input name="concepto" type="text" size="60" maxlength="250" autocomplete="off"/>
+               <input name="concepto" type="text" size="40" maxlength="250" autocomplete="off"/>
             </td>
             <td align="right">
                <input type="submit" value="guardar"/>
             </td>
          </tr>
          <tr>
-            <td>
+            <td colspan="2">
                Divisa:
                <select name='divisa'>
                   {loop="$fsc->divisa->all()"}

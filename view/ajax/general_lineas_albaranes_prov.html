@@ -11,7 +11,6 @@
    </div>
 {/if}
 
-{if condition="$fsc->lineas"}
 <table class="list">
    <tr>
       <th align="left">Albarán</th>
@@ -28,6 +27,7 @@
       <td align="right">{$value->show_total_iva()} €</td>
       <td align="right">{$value->show_fecha()}</td>
    </tr>
+   {else}
+   <tr><td colspan="5">Sin resultados.</td></tr>
    {/loop}
 </table>
-{/if}
