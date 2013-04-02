@@ -216,7 +216,8 @@ class linea_albaran_proveedor extends fs_model
       if( is_null($this->idlinea) )
          return false;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
@@ -283,7 +284,8 @@ class linea_albaran_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function all_from_albaran($id)
@@ -549,7 +551,8 @@ class albaran_proveedor extends fs_model
    
    public function get($id)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idalbaran = ".$this->var2str($id).";");
       if($albaran)
          return new albaran_proveedor($albaran[0]);
       else
@@ -561,7 +564,8 @@ class albaran_proveedor extends fs_model
       if( is_null($this->idalbaran) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function new_idalbaran()
@@ -585,7 +589,8 @@ class albaran_proveedor extends fs_model
       if(!$sec OR $this->numero <= 1)
       {
          $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name."
-            WHERE codejercicio = ".$this->var2str($this->codejercicio)." AND codserie = ".$this->var2str($this->codserie).";");
+            WHERE codejercicio = ".$this->var2str($this->codejercicio).
+            " AND codserie = ".$this->var2str($this->codserie).";");
          if($numero)
             $this->numero = 1 + intval($numero[0]['num']);
          else
@@ -598,7 +603,7 @@ class albaran_proveedor extends fs_model
          }
       }
       
-      $this->codigo = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $this->numero);
+      $this->codigo = $this->codejercicio.sprintf('%02s', $this->codserie).sprintf('%06s', $this->numero);
    }
    
    public function test()
@@ -612,10 +617,10 @@ class albaran_proveedor extends fs_model
    public function full_test()
    {
       $status = TRUE;
-      $neto = 0;
-      $iva = 0;
       
       /// comprobamos las líneas
+      $neto = 0;
+      $iva = 0;
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -624,30 +629,35 @@ class albaran_proveedor extends fs_model
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
       }
-      $neto = round($neto, 2);
-      $iva = round($iva, 2);
       $total = $neto + $iva;
+      $neto2 = round($neto, 2);
+      $iva2 = round($iva, 2);
+      $total2 = $neto2 + $iva2;
       
       /// comprobamos los totales
-      if( !$this->floatcmp(round($this->neto, 2), $neto) )
+      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp(round($this->neto, 2), $neto2) )
       {
-         $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto);
+         $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp(round($this->totaliva, 2), $iva) )
+      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp(round($this->totaliva, 2), $iva2) )
       {
-         $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva);
+         $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp(round($this->total, 2), $total) )
+      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp(round($this->total, 2), $total2) )
       {
-         $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".$total);
+         $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".$total2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp(round($this->totaleuros, 2), $total) )
+      else if( !$this->floatcmp($this->totaleuros, $total*$this->tasaconv) )
       {
-         $this->new_error_msg("Valor totaleuros del albarán incorrecto. Valor correcto: ".$total);
-         $status = FALSE;
+         if( !$this->floatcmp(round($this->totaleuros, 2), round($total2*$this->tasaconv, 2)) )
+         {
+            $this->new_error_msg("Valor totaleuros del albarán incorrecto.
+               Valor correcto: ".round($total2*$this->tasaconv, 2));
+            $status = FALSE;
+         }
       }
       
       /// comprobamos las facturas asociadas

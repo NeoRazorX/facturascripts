@@ -12,6 +12,29 @@
    <script type="text/javascript">
       $(document).ready(function() {
          document.f_login.user.focus();
+         $("#b_donar").click(function() {
+            $("#shadow").show();
+            $("#popup_donar").css({
+               top: $(window).scrollTop() + 15,
+               left: ($(window).width() - $("#popup_donar").outerWidth())/2
+            });
+            $("#popup_donar").show('fast');
+            $("#b_close_donar").css({
+               top: $(window).scrollTop() + 5,
+               left: $("#popup_donar").position().left - 15,
+               display: 'block'
+            });
+         });
+         $("#b_close_donar").click(function() {
+            $("#b_close_donar").hide();
+            $("#popup_donar").hide();
+            $("#shadow").hide();
+         });
+         $("#shadow").click(function() {
+            $("#b_close_donar").hide();
+            $("#popup_donar").hide();
+            $("#shadow").hide();
+         });
       });
    </script>
    <script type="text/javascript">
@@ -85,7 +108,7 @@
                Si tienes cualquier problema o sugerencia no dudes en
                <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">informar</a>.
                <br/>
-               Puedes seguir el desarrollo de FacturaScripts a través de mi
+               Puedes seguir el desarrollo de FacturaScripts a través de
                <a target="_blank" href="http://www.neorazorx.com">mi blog</a>,<br/>
                mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a> o la comunidad de
                <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
@@ -116,15 +139,39 @@
                     })();
                </script>
             </td>
-            <td>
-               <div class="donar">
-                  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                     <input type="hidden" name="cmd" value="_s-xclick"/>
-                     <input type="hidden" name="hosted_button_id" value="NXUH3XYDVPQBG"/>
-                     <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal. La forma rápida y segura de pagar en Internet."/>
-                     <img alt="" border="0" src="https://www.paypalobjects.com/es_ES/i/scr/pixel.gif" width="1" height="1"/>
-                  </form>
-               </div>
+            <td><a id="b_donar" href="#">Donar</a></td>
+            <td align="right"><img src="../img/bitcoin_nano.png" alt="acepto bitcoin"/></td>
+         </tr>
+      </table>
+   </div>
+   
+   <div id="shadow"></div>
+   <a id="b_close_donar" href="#"><img src="../img/close.png" alt="close"/></a>
+   <div id="popup_donar">
+      <h1>Ayuda a mejorar FacturaScripts</h1>
+      <table width="100%">
+         <tr>
+            <td valign="top">
+               Necesito:
+               <ul>
+                  <li>Una impresora de tickets.</li>
+                  <li>Un cajón portamonedas.</li>
+                  <li>Una tablet.</li>
+               </ul>
+               <br/><br/>
+               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                  <input type="hidden" name="cmd" value="_s-xclick"/>
+                  <input type="hidden" name="hosted_button_id" value="NXUH3XYDVPQBG"/>
+                  <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal. La forma rápida y segura de pagar en Internet."/>
+                  <img alt="" border="0" src="https://www.paypalobjects.com/es_ES/i/scr/pixel.gif" width="1" height="1"/>
+               </form>
+            </td>
+            <td valign="top" align="center">
+               <img src="../img/bitcoin_mini.png" alt="acepto bitcoins"/>
+               <br/>
+               <a href="bitcoin:1NJ7h6h52nVm1bi5VcNMb4v48t89FCQ9wb">
+                  <img src="../img/bitcoin.png" alt="bitcoin"/></a>
+               <br/>1NJ7h6h52nVm1bi5VcNMb4v48t89FCQ9wb
             </td>
          </tr>
       </table>
