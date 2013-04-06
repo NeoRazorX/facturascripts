@@ -4,8 +4,7 @@
 body {
    margin: 0px;
    padding: 0px;
-   background-color: #4C769E;
-   color: white;
+   background-color: #E5F2FF;
    font-family: Verdana, sans-serif;
    text-rendering: optimizeLegibility;
    -webkit-font-smoothing: antialiased;
@@ -14,27 +13,11 @@ body {
    font-weight: normal;
 }
 
-a {
-   color: #2F33AB;
-}
-
-a.hidden_black {
-   display: block;
-   background-color: #333333;
-   color: #333333;
-}
-
-a.hidden_black:hover {
-   background-color: transparent;
-   color: #2F33AB;
-}
-
 div.advice, div.message, div.error {
-   margin: 0px;
+   margin: 5px;
    padding: 10px;
-   border-top: 1px solid #3D5F80;
-   border-bottom: 1px solid #5C8EBF;
-   box-shadow: inset 0px 3px 3px #666;
+   border: 1px solid #999999;
+   border-radius: 5px;
    color: #333333;
    font-size: 16px;
 }
@@ -62,65 +45,39 @@ div.message ul, div.error ul {
    margin-bottom: 0px;
 }
 
-div.header {
-   display: table;
-   width: 100%;
-   font-size: 16px;
-}
-
-div.header_box {
-   display: table-row;
-}
-
-div#header_folders, div#header_logo, div#header_user,
-div#header_buttons, div#header_search {
-   display: table-cell;
-   vertical-align: top;
-   padding: 0px;
-}
-
 div#header_folders {
-   padding-left: 5px;
-   padding-top: 5px;
+   background-color: #314F71;
+   color: white;
+}
+
+div#header_folders a {
+   display: inline-block;
+   margin-left: 5px;
+   padding: 5px;
+   color: white;
+   text-decoration: none;
+   text-transform: capitalize;
+   font-weight: bold;
+}
+
+div#header_folders a:hover {
+   background-color: #21354D;
 }
 
 div#header_folders a.selected {
    text-decoration: underline;
 }
 
-div#header_user {
-   padding-right: 5px;
-   padding-top: 5px;
-   text-align: right;
-}
-
-div#header_folders a, div#header_user a.button {
-   display: inline-block;
-   margin-left: 3px;
-   margin-right: 3px;
-   padding-top: 5px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 3px;
-   background-color: #333333;
-   border: 1px solid #999999;
-   border-radius: 3px;
-   color: white;
-   text-transform: capitalize;
-   text-decoration: none;
-   font-weight: bold;
-}
-
-div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
-   background-color: #252525;
-   border-color: #aaaaaa;
+div#header_logo {
+   padding: 10px;
+   background: #5381b5 url('../img/fondo2.png') repeat top left;
+   border-bottom: 1px solid #406895;
 }
 
 div#header_buttons {
-   vertical-align: bottom;
-   padding-top: 10px;
-   text-align: left;
-   text-transform: capitalize;
+   display: inline-block;
+   margin-top: 20px;
+   margin-left: 10px;
 }
 
 div#header_buttons img {
@@ -135,17 +92,12 @@ div#header_buttons a.button, div#header_buttons a.remove {
    padding-left: 5px;
    padding-right: 5px;
    padding-bottom: 1px;
-   background-color: #f1f1f1;
+   background-color: white;
    border: 1px solid #424242;
    border-radius: 3px;
-   box-shadow: 1px 1px 1px #444;
+   box-shadow: 1px 1px 1px #666;
    color: #333333;
    text-decoration: none;
-}
-
-div#header_buttons a.button:hover {
-   background-color: white;
-   color: black;
 }
 
 div#header_buttons a.remove {
@@ -153,26 +105,12 @@ div#header_buttons a.remove {
    color: white;
 }
 
-div#header_buttons a.remove:hover {
-   background-color: #F2523E;
-}
-
 div#header_location {
    display: inline-block;
-   padding-left: 15px;
-   padding-right: 15px;
-}
-
-div#header_location a {
-   color: white;
-   font-weight: bold;
 }
 
 div#header_search {
-   vertical-align: bottom;
-   padding-top: 10px;
-   padding-right: 5px;
-   text-align: right;
+   display: inline-block;
 }
 
 div.pages div {
@@ -196,11 +134,11 @@ div.pages ul {
 }
 
 div.pages ul li.selected {
-   background-color: #30538D;
+   background-color: #314F71;
 }
 
 div.pages ul li:hover {
-   background-color: #3768B8;
+   background-color: #5B87B8;
 }
 
 div.pages ul li a {
@@ -234,7 +172,7 @@ a#b_close_popup {
    position: fixed;
 }
 
-div.main_div div.popup {
+div.popup {
    display: none;
    z-index: 3;
    position: fixed;
@@ -250,29 +188,31 @@ div.main_div div.popup {
    color: black;
 }
 
-div.main_div div.popup h1 {
+div.popup h1 {
    margin: 0px;
    margin-bottom: 10px;
    padding: 2px;
-   background-color: #3768B8;
+   background: #5381b5 url('../img/fondo2.png') repeat top left;
+   border-bottom: 1px solid #406895;
    color: white;
    text-align: center;
    font-family: 'Oleo Script', cursive;
    font-size: 30px;
    font-weight: normal;
+   text-shadow: #333 2px 2px 2px;
 }
 
-div.main_div div.popup h2 {
+div.popup h2 {
    margin: 0px;
    margin-bottom: 10px;
    padding: 5px;
 }
 
-div.main_div div.popup h2 span {
+div.popup h2 span {
    float: right;
 }
 
-div.main_div div.popup div.grupo {
+div.popup div.grupo {
    margin: 5px;
    margin-bottom: 10px;
    padding: 5px;
@@ -280,75 +220,29 @@ div.main_div div.popup div.grupo {
    border: 1px dashed #333333;
 }
 
-div.main_div div.rounded {
-   margin: 5px;
-   padding: 5px;
-   padding-bottom: 8px;
-   background-color: white;
-   border: 1px solid #333333;
-   border-radius: 5px;
-   color: black;
+div.main_div {
+   margin-top: 5px;
 }
 
-div.main_div div.rounded h1 {
-   margin: 0px;
+div.rounded {
+   margin-left: 5px;
+   margin-right: 5px;
    margin-bottom: 5px;
    padding: 5px;
-   min-height: 25px;
-   background-color: #e1e1e1;
-   font-size: 18px;
+   background-color: white;
+   border: 1px solid #CCCCCC;
+   border-radius: 5px;
+   box-shadow: 2px 2px #999;
 }
 
-div.main_div div.rounded h1 span {
-   float: right;
-   clear: both;
-   font-size: 14px;
-   font-weight: normal;
-}
-
-div.main_div div.bloque {
+div.bloque {
    display: inline-block;
-   padding: 5px;
+   padding: 2px;
 }
 
-div.main_div table.list {
+table.list {
    width: 100%;
 }
-
-div.main_div table.list th {
-   border-bottom: 1px solid #666666;
-   text-transform: capitalize;
-}
-
-div.main_div table.list tr:hover {
-   background-color: #FFFAA6;
-}
-
-div.main_div table.list td.locked {
-   background-color: #fdcece;
-   text-decoration: line-through;
-}
-
-div.main_div a.next {
-   display: inline-block;
-   padding-top: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 1px;
-   background-color: #bbbbbb;
-   border: 1px solid #424242;
-   border-radius: 2px;
-   color: black;
-   font-size: 16px;
-   text-transform: capitalize;
-   text-decoration: none;
-}
-
-div.main_div a.next:hover {
-   background-color: #3768B8;
-   color: white;
-}
-
 div.main_div div.paginas {
    text-align: center;
 }
@@ -422,15 +316,14 @@ div.select a {
    padding-left: 6px;
    padding-right: 6px;
    padding-bottom: 2px;
-   background-color: #dddddd;
+   background-color: #7EBBFF;
    border-radius: 2px;
-   color: #333333;
+   color: white;
    text-decoration: none;
 }
 
 div.select a.selected {
    background-color: #5B87B8;
-   color: white;
 }
 
 ul.horizontal {
@@ -471,10 +364,6 @@ ul.bloque li a {
 div.footer {
    margin-top: 20px;
    padding: 5px;
-}
-
-div.footer a {
-   color: white;
 }
 
 div.footer a.selected {
@@ -533,18 +422,12 @@ input[type='submit'] {
 }
 
 input[type='button'] {
-   background-color: #dddddd;
+   background-color: #CCCCCC;
 }
 
-input[type='submit']:hover {
-   background-color: #5DCC48;
-   color: black;
-   cursor: pointer;
-}
-
-input[type='button']:hover {
-   background-color: #e1e1e1;
-   color: black;
+input[type='submit']:hover, input[type='button']:hover {
+   background-color: #333333;
+   color: white;
    cursor: pointer;
 }
 
@@ -568,15 +451,24 @@ a#fs_logo {
    font-weight: normal;
    font-family: 'Oleo Script', cursive;
    text-shadow: #333 2px 2px 2px;
-   font-size: 32px;
+   font-size: 35px;
+}
+
+a#b_user_list {
+   position: absolute;
+   top: 50px;
+   right: 90px;
+   color: white;
+   font-weight: bold;
+   text-transform: capitalize;
 }
 
 a#fs_exit {
-   display: inline-block;
-   margin-left: 15px;
+   position: absolute;
+   top: 46px;
+   right: 10px;
    padding: 2px;
    background-color: #333333;
-   border: 1px solid #999999;
    border-radius: 4px
 }
 
@@ -588,10 +480,12 @@ div#sql_history {
    margin: 5px;
    margin-top: 20px;
    padding: 5px;
-   border: 1px dashed white;
+   border: 1px dashed #424242;
+   font-size: 12px;
 }
 
 div#sql_history h1 {
-   margin: 5px;
-   font-size: 20px;
+   margin: 0px;
+   padding: 0px;
+   font-size: 16px;
 }

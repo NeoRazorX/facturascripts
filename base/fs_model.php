@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db.php';
 require_once 'base/fs_default_items.php';
@@ -189,9 +190,19 @@ abstract class fs_model
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
     */
-   public function floatcmp($f1, $f2, $precision = 10)
+   public function floatcmp($f1, $f2, $precision = 10, $round=FALSE)
    {
-      return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
+      if($round)
+      {
+         if( bccomp( (string)round($f1, $precision), (string)round($f2, $precision), $precision ) == 0 )
+            return TRUE;
+         else if( bccomp( (string)bround($f1, $precision), (string)bround($f2, $precision), $precision ) == 0 )
+            return TRUE;
+         else
+            return FALSE;
+      }
+      else
+         return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
    }
    
    /// functión auxiliar para facilitar el uso de fechas

@@ -33,6 +33,7 @@ class general_albaran_cli extends fs_controller
 {
    public $agente;
    public $albaran;
+   public $cliente;
    public $ejercicio;
    public $familia;
    public $impuesto;
@@ -46,6 +47,7 @@ class general_albaran_cli extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_albaranes_cli');
+      $this->cliente = new cliente();
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
@@ -94,7 +96,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-15';
+      return parent::version().'-16';
    }
    
    public function url()
@@ -113,8 +115,32 @@ class general_albaran_cli extends fs_controller
       $this->albaran->numero2 = $_POST['numero2'];
       $this->albaran->hora = $_POST['hora'];
       $this->albaran->observaciones = $_POST['observaciones'];
-      $this->albaran->neto = 0;
-      $this->albaran->totaliva = 0;
+      
+      /// ¿cambiamos el cliente?
+      if( isset($_POST['cliente']) AND $this->albaran->ptefactura )
+      {
+         $cliente = $this->cliente->get($_POST['cliente']);
+         if($cliente)
+         {
+            foreach($cliente->get_direcciones() as $d)
+            {
+               if($d->domfacturacion)
+               {
+                  $this->albaran->codcliente = $cliente->codcliente;
+                  $this->albaran->cifnif = $cliente->cifnif;
+                  $this->albaran->nombrecliente = $cliente->nombre;
+                  $this->albaran->apartado = $d->apartado;
+                  $this->albaran->ciudad = $d->ciudad;
+                  $this->albaran->coddir = $d->id;
+                  $this->albaran->codpais = $d->codpais;
+                  $this->albaran->codpostal = $d->codpostal;
+                  $this->albaran->direccion = $d->direccion;
+                  $this->albaran->provincia = $d->provincia;
+                  break;
+               }
+            }
+         }
+      }
       
       /// obtenemos los datos del ejercicio para acotar la fecha
       $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
@@ -125,6 +151,9 @@ class general_albaran_cli extends fs_controller
       
       if( isset($_POST['lineas']) AND $this->albaran->ptefactura )
       {
+         $this->albaran->neto = 0;
+         $this->albaran->totaliva = 0;
+         
          $lineas = $this->albaran->get_lineas();
          /// eliminamos las líneas que no encontremos en el $_POST
          foreach($lineas as $l)
@@ -157,6 +186,7 @@ class general_albaran_cli extends fs_controller
             {
                foreach($lineas as $k => $value)
                {
+                  /// modificamos la línea
                   if($value->idlinea == intval($_POST['idlinea_'.$num]))
                   {
                      $encontrada = TRUE;
@@ -175,7 +205,7 @@ class general_albaran_cli extends fs_controller
                         $lineas[$k]->codimpuesto = NULL;
                         $lineas[$k]->iva = 0;
                      }
-                     else if( floatval($_POST['iva_'.$num]) != $lineas[$k]->iva )
+                     else
                      {
                         $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                         if($imp0)
@@ -190,13 +220,18 @@ class general_albaran_cli extends fs_controller
                         }
                      }
                      
-                     $this->albaran->neto += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
-                     $this->albaran->totaliva += ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100 * $value->iva/100);
-                     if( !$lineas[$k]->save() )
+                     if( $lineas[$k]->save() )
+                     {
+                        $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
+                        $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                     }
+                     else
                         $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
                      break;
                   }
                }
+               
+               /// añadimos la línea
                if(!$encontrada AND intval($_POST['idlinea_'.$num]) == -1 AND isset($_POST['referencia_'.$num]))
                {
                   $art0 = $articulo->get( $_POST['referencia_'.$num] );
@@ -214,11 +249,6 @@ class general_albaran_cli extends fs_controller
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
-                     }
-                     else if( floatval($_POST['iva_'.$num]) == $art0->get_iva() )
-                     {
-                        $linea->codimpuesto = $art0->codimpuesto;
-                        $linea->iva = $art0->iva;
                      }
                      else
                      {
@@ -242,14 +272,20 @@ class general_albaran_cli extends fs_controller
                      $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
                      $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
                      
-                     $this->albaran->neto += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
-                     $this->albaran->totaliva += ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100 * $linea->iva/100);
-                     if( !$linea->save() )
+                     if( $linea->save() )
+                     {
+                        $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
+                        $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                     }
+                     else
                         $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
                   }
+                  else
+                     $this->new_error_msg("¡Artículo ".$linea->referencia." no encontrado!");
                }
             }
          }
+         
          /// redondeamos
          $this->albaran->neto = round($this->albaran->neto, 2);
          $this->albaran->totaliva = round($this->albaran->totaliva, 2);
@@ -345,8 +381,7 @@ class general_albaran_cli extends fs_controller
    
    private function generar_asiento($factura)
    {
-      $cliente = new cliente();
-      $cliente = $cliente->get($factura->codcliente);
+      $cliente = $this->cliente->get($factura->codcliente);
       $subcuenta_cli = $cliente->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )

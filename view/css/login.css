@@ -290,14 +290,10 @@ div.footer ul li {
 }
 
 div.advice, div.message, div.error {
-   margin: 5px;
+   margin: 0px;
    padding: 10px;
-   border: 1px solid #333333;
-   border-top-left-radius: 3px 3px;
-   border-top-right-radius: 3px 3px;
-   border-bottom-left-radius: 3px 3px;
-   border-bottom-right-radius: 3px 3px;
-   color: black;
+   border: 1px solid #424242;
+   color: #333333;
    font-size: 16px;
 }
 
@@ -311,11 +307,12 @@ div.advice img {
 }
 
 div.message {
-   background-color: #FFFAA6;
+   background-color: #FAF1C1;
 }
 
 div.error {
-   background-color: #E47575;
+   background-color: #F2DEDE;
+   color: #B94A65;
 }
 
 div.message ul, div.error ul {

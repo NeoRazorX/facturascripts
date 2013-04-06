@@ -297,7 +297,19 @@
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <div class="rounded">
       <h1>
+         {if condition="$fsc->albaran->ptefactura"}
+         <select name="cliente">
+            {loop="$fsc->cliente->all_full()"}
+               {if condition="$value->codcliente==$fsc->albaran->codcliente"}
+               <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+               {else}
+               <option value="{$value->codcliente}">{$value->nombre}</option>
+               {/if}
+            {/loop}
+         </select>
+         {else}
          <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
+         {/if}
          <span><input type="submit" value="guardar"/></span>
       </h1>
       <div class="bloque">Número: {$fsc->albaran->numero}</div>

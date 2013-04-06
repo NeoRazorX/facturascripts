@@ -49,6 +49,7 @@ class linea_factura_cliente extends fs_model
    private $factura_url;
    private $albaran_codigo;
    private $albaran_numero;
+   private $albaran_fecha;
    private $albaran_url;
    private $articulo_url;
    
@@ -149,6 +150,7 @@ class linea_factura_cliente extends fs_model
                $this->albaran_numero = $a->numero;
             else
                $this->albaran_numero = $a->numero2;
+            $this->albaran_fecha = $a->fecha;
             $this->albaran_url = $a->url();
             $encontrado = TRUE;
             break;
@@ -165,6 +167,7 @@ class linea_factura_cliente extends fs_model
                $this->albaran_numero = $alb->numero;
             else
                $this->albaran_numero = $alb->numero2;
+            $this->albaran_fecha = $alb->fecha;
             $this->albaran_url = $alb->url();
             self::$albaranes[] = $alb;
          }
@@ -254,6 +257,13 @@ class linea_factura_cliente extends fs_model
       return $this->albaran_numero;
    }
    
+   public function albaran_fecha()
+   {
+      if( !isset($this->albaran_fecha) )
+         $this->fill();
+      return $this->albaran_fecha;
+   }
+   
    public function articulo_url()
    {
       if( !isset($this->articulo_url) )
@@ -284,13 +294,13 @@ class linea_factura_cliente extends fs_model
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
-      if( !$this->floatcmp($this->pvptotal, $total) )
+      if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->pvpsindto, $totalsindto) )
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$totalsindto);
@@ -334,18 +344,43 @@ class linea_factura_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function all_from_factura($id)
    {
       $linlist = array();
       $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idfactura = ".$this->var2str($id)." ORDER BY idlinea ASC;");
+         WHERE idfactura = ".$this->var2str($id).
+         " ORDER BY idlinea ASC;");
       if($lineas)
       {
+         $aux = array();
          foreach($lineas as $l)
-            $linlist[] = new linea_factura_cliente($l);
+            $aux[] = new linea_factura_cliente($l);
+         
+         /// ordenamos por fecha del albarán
+         $lids = array();
+         while( count($linlist) != count($aux) )
+         {
+            $selection = FALSE;
+            foreach($aux as $linea)
+            {
+               if( !in_array($linea->idlinea, $lids) )
+               {
+                  if( !$selection )
+                     $selection = $linea;
+                  else if( $linea->albaran_fecha() < $selection->albaran_fecha() )
+                     $selection = $linea;
+               }
+            }
+            if($selection)
+            {
+               $linlist[] = $selection;
+               $lids[] = $selection->idlinea;
+            }
+         }
       }
       return $linlist;
    }
@@ -354,7 +389,8 @@ class linea_factura_cliente extends fs_model
    {
       $linealist = array();
       $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
+         WHERE referencia = ".$this->var2str($ref).
+         " ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -376,6 +412,19 @@ class linea_factura_cliente extends fs_model
       }
       return $facturalist;
    }
+}
+
+
+/*
+ * Función para comparar dos linea_iva_factura_cliente
+ * en función de su totallinea
+ */
+function cmp_linea_iva_fact_cli($a, $b)
+{
+   if($a->totallinea == $b->totallinea)
+      return 0;
+   else
+      return ($a->totallinea < $b->totallinea) ? 1 : -1;
 }
 
 
@@ -763,13 +812,89 @@ class factura_cliente extends fs_model
                   $lineasi[$i]->totaliva = ($l->pvptotal*$l->iva)/100;
                }
             }
+            
             /// redondeamos y guardamos
-            foreach($lineasi as $li)
+            if( count($lineasi) == 1 )
             {
-               $li->neto = round($li->neto, 2);
-               $li->totaliva = round($li->totaliva, 2);
-               $li->totallinea = $li->neto + $li->totaliva;
-               $li->save();
+               $lineasi[0]->neto = round($lineasi[0]->neto, 2);
+               $lineasi[0]->totaliva = round($lineasi[0]->totaliva, 2);
+               $lineasi[0]->totallinea = $lineasi[0]->neto + $lineasi[0]->totaliva;
+               $lineasi[0]->save();
+            }
+            else
+            {
+               /*
+                * Como el neto y el iva se redondean en la factura, al dividirlo
+                * en líneas de iva podemos encontrarnos con un descuadre que
+                * hay que calcular y solucionar.
+                */
+               $t_neto = 0;
+               $t_iva = 0;
+               foreach($lineasi as $li)
+               {
+                  $li->neto = bround($li->neto, 2);
+                  $li->totaliva = bround($li->totaliva, 2);
+                  $li->totallinea = $li->neto + $li->totaliva;
+                  
+                  $t_neto += $li->neto;
+                  $t_iva += $li->totaliva;
+               }
+               
+               if( !$this->floatcmp($this->neto, $t_neto) )
+               {
+                  /*
+                   * Sumamos o restamos un céntimo a los netos más altos
+                   * hasta que desaparezca el descuadre
+                   */
+                  $diferencia = round( ($this->totaliva-$t_iva) * 100 );
+                  usort($lineasi, 'cmp_linea_iva_fact_cli');
+                  foreach($lineasi as $i => $value)
+                  {
+                     if($diferencia > 0)
+                     {
+                        $lineasi[$i]->neto += .01;
+                        $diferencia--;
+                     }
+                     else if($diferencia < 0)
+                     {
+                        $lineasi[$i]->neto -= .01;
+                        $diferencia++;
+                     }
+                     else
+                        break;
+                  }
+               }
+               
+               if( !$this->floatcmp($this->totaliva, $t_iva) )
+               {
+                  /*
+                   * Sumamos o restamos un céntimo a los netos más altos
+                   * hasta que desaparezca el descuadre
+                   */
+                  $diferencia = round( ($this->totaliva-$t_iva) * 100 );
+                  usort($lineasi, 'cmp_linea_iva_fact_cli');
+                  foreach($lineasi as $i => $value)
+                  {
+                     if($diferencia > 0)
+                     {
+                        $lineasi[$i]->totaliva += .01;
+                        $diferencia--;
+                     }
+                     else if($diferencia < 0)
+                     {
+                        $lineasi[$i]->totaliva -= .01;
+                        $diferencia++;
+                     }
+                     else
+                        break;
+                  }
+               }
+               
+               foreach($lineasi as $i => $value)
+               {
+                  $lineasi[$i]->totallinea = $value->neto + $value->totaliva;
+                  $lineasi[$i]->save();
+               }
             }
          }
       }

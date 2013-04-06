@@ -266,7 +266,8 @@ class linea_factura_proveedor extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
@@ -283,13 +284,13 @@ class linea_factura_proveedor extends fs_model
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
-      if( !$this->floatcmp($this->pvptotal, $total) )
+      if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$total);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->pvpsindto, $totalsindto) )
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$totalsindto);
@@ -375,6 +376,19 @@ class linea_factura_proveedor extends fs_model
       }
       return $facturalist;
    }
+}
+
+
+/*
+ * Función para comparar dos linea_iva_factura_proveedor
+ * en función de su totallinea
+ */
+function cmp_linea_iva_fact_pro($a, $b)
+{
+   if($a->totallinea == $b->totallinea)
+      return 0;
+   else
+      return ($a->totallinea < $b->totallinea) ? 1 : -1;
 }
 
 
@@ -717,13 +731,89 @@ class factura_proveedor extends fs_model
                   $lineasi[$i]->totaliva = ($l->pvptotal*$l->iva)/100;
                }
             }
+            
             /// redondeamos y guardamos
-            foreach($lineasi as $li)
+            if( count($lineasi) == 1 )
             {
-               $li->neto = round($li->neto, 2);
-               $li->totaliva = round($li->totaliva, 2);
-               $li->totallinea = $li->neto + $li->totaliva;
-               $li->save();
+               $lineasi[0]->neto = round($lineasi[0]->neto, 2);
+               $lineasi[0]->totaliva = round($lineasi[0]->totaliva, 2);
+               $lineasi[0]->totallinea = $lineasi[0]->neto + $lineasi[0]->totaliva;
+               $lineasi[0]->save();
+            }
+            else
+            {
+               /*
+                * Como el neto y el iva se redondean en la factura, al dividirlo
+                * en líneas de iva podemos encontrarnos con un descuadre que
+                * hay que calcular y solucionar.
+                */
+               $t_neto = 0;
+               $t_iva = 0;
+               foreach($lineasi as $li)
+               {
+                  $li->neto = bround($li->neto, 2);
+                  $li->totaliva = bround($li->totaliva, 2);
+                  $li->totallinea = $li->neto + $li->totaliva;
+                  
+                  $t_neto += $li->neto;
+                  $t_iva += $li->totaliva;
+               }
+               
+               if( !$this->floatcmp($this->neto, $t_neto) )
+               {
+                  /*
+                   * Sumamos o restamos un céntimo a los netos más altos
+                   * hasta que desaparezca el descuadre
+                   */
+                  $diferencia = round( ($this->totaliva-$t_iva) * 100 );
+                  usort($lineasi, 'cmp_linea_iva_fact_pro');
+                  foreach($lineasi as $i => $value)
+                  {
+                     if($diferencia > 0)
+                     {
+                        $lineasi[$i]->neto += .01;
+                        $diferencia--;
+                     }
+                     else if($diferencia < 0)
+                     {
+                        $lineasi[$i]->neto -= .01;
+                        $diferencia++;
+                     }
+                     else
+                        break;
+                  }
+               }
+               
+               if( !$this->floatcmp($this->totaliva, $t_iva) )
+               {
+                  /*
+                   * Sumamos o restamos un céntimo a los netos más altos
+                   * hasta que desaparezca el descuadre
+                   */
+                  $diferencia = round( ($this->totaliva-$t_iva) * 100 );
+                  usort($lineasi, 'cmp_linea_iva_fact_pro');
+                  foreach($lineasi as $i => $value)
+                  {
+                     if($diferencia > 0)
+                     {
+                        $lineasi[$i]->totaliva += .01;
+                        $diferencia--;
+                     }
+                     else if($diferencia < 0)
+                     {
+                        $lineasi[$i]->totaliva -= .01;
+                        $diferencia++;
+                     }
+                     else
+                        break;
+                  }
+               }
+               
+               foreach($lineasi as $i => $value)
+               {
+                  $lineasi[$i]->totallinea = $value->neto + $value->totaliva;
+                  $lineasi[$i]->save();
+               }
             }
          }
       }

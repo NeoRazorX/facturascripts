@@ -45,6 +45,25 @@
          </div>
       </div>
    </div>
+   
+   {if condition="$fsc->show_default_page_advice()"}
+   <div class="advice">
+      Se ha seleccionado la primera página de tu lista. Si queres que sea otra tu
+      página de inicio, tan solo tienes que hacer clic sobre el icono
+      <img src="img/star_off.png" alt="página de inicio" /> en la página que quieras.
+   </div>
+   {/if}
+   {if condition="$fsc->get_errors()"}
+   <div class="error">
+      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+   </div>
+   {/if}
+   {if condition="$fsc->get_messages()"}
+   <div class="message">
+      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+   </div>
+   {/if}
+   
    {if condition="$fsc->page->name"}
    <div class="header">
       <div class="header_box">
@@ -116,21 +135,5 @@
    <a id="b_close_popup" href="#" onclick="fs_hide_popups(); return false;">
       <img src="img/close.png" alt="close"/>
    </a>
-{if condition="$fsc->show_default_page_advice()"}
-   <div class="advice">
-      Se ha seleccionado la primera página de tu lista. Si queres que sea otra tu
-      página de inicio, tan solo tienes que hacer clic sobre el icono
-      <img src="img/star_off.png" alt="página de inicio" /> en la página que quieras.
-   </div>
-{/if}
-{if condition="$fsc->get_errors()"}
-   <div class="error">
-      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
-   </div>
-{/if}
-{if condition="$fsc->get_messages()"}
-   <div class="message">
-      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
-   </div>
-{/if}
+   
    <div class="main_div">

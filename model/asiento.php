@@ -227,8 +227,7 @@ class asiento extends fs_model
       
       if( !$this->floatcmp($debe, $haber) )
       {
-         $total = $debe - $haber;
-         $this->new_error_msg("Asiento descuadrado. Descuadre: ".$total);
+         $this->new_error_msg("Asiento descuadrado. Descuadre: " . ($debe - $haber) );
          $status = FALSE;
       }
       
@@ -238,8 +237,9 @@ class asiento extends fs_model
       {
          if($fac->idasiento != $this->idasiento)
          {
-            $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
             $status = FALSE;
+            $this->new_error_msg("Este asiento apunta a una <a href='".
+                    $fac->url()."'>factura incorrecta</a>.");
          }
       }
       
@@ -265,9 +265,9 @@ class asiento extends fs_model
          $partidas = $this->get_partidas();
          foreach($partidas as $p)
          {
-            $p->debe = round($p->debe, 2);
+            $p->debe = bround($p->debe, 2);
             $debe += $p->debe;
-            $p->haber = round($p->haber, 2);
+            $p->haber = bround($p->haber, 2);
             $haber += $p->haber;
          }
          /// si con el redondeo se soluciona el problema, pues genial!

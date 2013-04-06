@@ -137,13 +137,16 @@ class tpv_recambios extends fs_controller
             }
          }
          else
-            $this->new_error_msg("¡No tienes un agente asociado a tu usuario!");
+         {
+            $this->new_error_msg('No tienes un <a href="'.$this->user->url().'">agente asociado</a>
+               a tu usuario, y por tanto no puedes hacer tickets.');
+         }
       }
    }
    
    public function version()
    {
-      return parent::version().'-15';
+      return parent::version().'-16';
    }
    
    private function new_search()
@@ -180,10 +183,7 @@ class tpv_recambios extends fs_controller
       
       $cliente = $this->cliente->get($_POST['cliente']);
       if( $cliente )
-      {
          $this->save_codcliente( $cliente->codcliente );
-         $dirscliente = $cliente->get_direcciones();
-      }
       else
          $continuar = FALSE;
       
@@ -221,129 +221,123 @@ class tpv_recambios extends fs_controller
       {
          $albaran = new albaran_cliente();
          $albaran->fecha = $_POST['fecha'];
-         $albaran->codcliente = $cliente->codcliente;
-         $albaran->cifnif = $cliente->cifnif;
-         $albaran->nombrecliente = $cliente->nombre;
+         $albaran->codalmacen = $almacen->codalmacen;
+         $albaran->codejercicio = $ejercicio->codejercicio;
+         $albaran->codserie = $serie->codserie;
+         $albaran->codpago = $forma_pago->codpago;
+         $albaran->coddivisa = $divisa->coddivisa;
+         $albaran->tasaconv = $divisa->tasaconv;
+         $albaran->codagente = $this->agente->codagente;
+         $albaran->observaciones = $_POST['observaciones'];
          
-         if($dirscliente)
+         foreach($cliente->get_direcciones() as $d)
          {
-            foreach($dirscliente as $d)
+            if($d->domfacturacion)
             {
-               if($d->domfacturacion)
-               {
-                  $albaran->apartado = $d->apartado;
-                  $albaran->ciudad = $d->ciudad;
-                  $albaran->coddir = $d->id;
-                  $albaran->codpais = $d->codpais;
-                  $albaran->codpostal = $d->codpostal;
-                  $albaran->direccion = $d->direccion;
-                  $albaran->provincia = $d->provincia;
-               }
+               $albaran->codcliente = $cliente->codcliente;
+               $albaran->cifnif = $cliente->cifnif;
+               $albaran->nombrecliente = $cliente->nombre;
+               $albaran->apartado = $d->apartado;
+               $albaran->ciudad = $d->ciudad;
+               $albaran->coddir = $d->id;
+               $albaran->codpais = $d->codpais;
+               $albaran->codpostal = $d->codpostal;
+               $albaran->direccion = $d->direccion;
+               $albaran->provincia = $d->provincia;
+               break;
             }
          }
          
-         if( is_null($albaran->coddir) )
+         if( is_null($albaran->codcliente) )
             $this->new_error_msg("No hay ninguna dirección asociada al cliente.");
-         else
+         else if( $albaran->save() )
          {
-            $albaran->codalmacen = $almacen->codalmacen;
-            $albaran->codejercicio = $ejercicio->codejercicio;
-            $albaran->codserie = $serie->codserie;
-            $albaran->codpago = $forma_pago->codpago;
-            $albaran->coddivisa = $divisa->coddivisa;
-            $albaran->tasaconv = $divisa->tasaconv;
-            $albaran->codagente = $this->agente->codagente;
-            $albaran->observaciones = $_POST['observaciones'];
-            
-            if( $albaran->save() )
+            $n = floatval($_POST['numlineas']);
+            for($i = 1; $i <= $n; $i++)
             {
-               $n = floatval($_POST['numlineas']);
-               for($i = 1; $i <= $n; $i++)
+               if( isset($_POST['referencia_'.$i]) )
                {
-                  if( isset($_POST['referencia_'.$i]) )
+                  $articulo = $this->articulo->get($_POST['referencia_'.$i]);
+                  if($articulo)
                   {
-                     $articulo = $this->articulo->get($_POST['referencia_'.$i]);
-                     if($articulo)
+                     $linea = new linea_albaran_cliente();
+                     $linea->idalbaran = $albaran->idalbaran;
+                     $linea->referencia = $articulo->referencia;
+                     
+                     if( isset($_POST['desc_'.$i]) )
+                        $linea->descripcion = $_POST['desc_'.$i];
+                     else
+                        $linea->descripcion = $articulo->descripcion;
+                     
+                     if( $serie->siniva )
                      {
-                        $linea = new linea_albaran_cliente();
-                        $linea->idalbaran = $albaran->idalbaran;
-                        $linea->referencia = $articulo->referencia;
-                        
-                        if( isset($_POST['desc_'.$i]) )
-                           $linea->descripcion = $_POST['desc_'.$i];
-                        else
-                           $linea->descripcion = $articulo->descripcion;
-                        
-                        if( $serie->siniva )
-                        {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = 0;
-                        }
-                        else
-                        {
-                           $linea->codimpuesto = $articulo->codimpuesto;
-                           $linea->iva = floatval($_POST['iva_'.$i]);
-                        }
-                        
-                        $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
-                        $linea->cantidad = floatval($_POST['cantidad_'.$i]);
-                        $linea->dtopor = floatval($_POST['dto_'.$i]);
-                        $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
-                        $linea->pvptotal = floatval($_POST['total_'.$i]);
-                        
-                        if( $linea->save() )
-                        {
-                           /// descontamos del stock
-                           $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
-                           
-                           $albaran->neto += $linea->pvptotal;
-                           $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                        }
-                        else
-                        {
-                           $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
-                           $continuar = FALSE;
-                        }
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = 0;
                      }
                      else
                      {
-                        $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                        $linea->codimpuesto = $articulo->codimpuesto;
+                        $linea->iva = floatval($_POST['iva_'.$i]);
+                     }
+                     
+                     $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
+                     $linea->cantidad = floatval($_POST['cantidad_'.$i]);
+                     $linea->dtopor = floatval($_POST['dto_'.$i]);
+                     $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
+                     $linea->pvptotal = floatval($_POST['total_'.$i]);
+                     
+                     if( $linea->save() )
+                     {
+                        /// descontamos del stock
+                        $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
+                        
+                        $albaran->neto += $linea->pvptotal;
+                        $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
+                     }
+                     else
+                     {
+                        $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                         $continuar = FALSE;
                      }
                   }
-               }
-               
-               if($continuar)
-               {
-                  /// redondeamos
-                  $albaran->neto = round($albaran->neto, 2);
-                  $albaran->totaliva = round($albaran->totaliva, 2);
-                  $albaran->total = $albaran->neto + $albaran->totaliva;
-                  
-                  if( $albaran->save() )
-                  {
-                     $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
-                     
-                     if( isset($_POST['num_tickets']) )
-                        $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
-                     
-                     /// actualizamos la caja
-                     $this->caja->dinero_fin += $albaran->total;
-                     $this->caja->tickets += 1;
-                     if( !$this->caja->save() )
-                        $this->new_error_msg("¡Imposible actualizar la caja!");
-                  }
                   else
-                     $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+                  {
+                     $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                     $continuar = FALSE;
+                  }
                }
-               else if( $albaran->delete() )
-                  $this->new_message("Albarán eliminado correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
             }
+            
+            if($continuar)
+            {
+               /// redondeamos
+               $albaran->neto = round($albaran->neto, 2);
+               $albaran->totaliva = round($albaran->totaliva, 2);
+               $albaran->total = $albaran->neto + $albaran->totaliva;
+               
+               if( $albaran->save() )
+               {
+                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  
+                  if( isset($_POST['num_tickets']) )
+                     $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
+                  
+                  /// actualizamos la caja
+                  $this->caja->dinero_fin += $albaran->total;
+                  $this->caja->tickets += 1;
+                  if( !$this->caja->save() )
+                     $this->new_error_msg("¡Imposible actualizar la caja!");
+               }
+               else
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+            }
+            else if( $albaran->delete() )
+               $this->new_message("Albarán eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible guardar el albarán!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
          }
+         else
+            $this->new_error_msg("¡Imposible guardar el albarán!");
       }
       else
          $this->new_error_msg("¡Faltan datos!");

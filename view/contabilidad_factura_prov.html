@@ -10,12 +10,31 @@
    });
 </script>
 
+<div class="popup" id="popup_eliminar">
+   <h1>Eliminar factura</h1>
+   {if condition="$fsc->factura->idasiento"}
+      <ul>
+         <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
+      </ul>
+   {/if}
+   <table width="100%">
+      <tr>
+         <td>¿Realmente desea eliminar esta factura?</td>
+         <td align="right">
+            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
+               eliminar
+            </a>
+         </td>
+      </tr>
+   </table>
+</div>
+
 <div class="rounded">
    <form action="{$fsc->factura->url()}" method="post">
       <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
          <a href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
-         <span><input type="submit" value="modificar"/></span>
+         <span><input type="submit" value="guardar"/></span>
       </h1>
       <div class="bloque">
          Ejercicio: {$fsc->factura->codejercicio}
@@ -37,25 +56,6 @@
          <textarea name="observaciones" cols="60">{$fsc->factura->observaciones}</textarea>
       </div>
    </form>
-</div>
-
-<div class="popup" id="popup_eliminar">
-   <h1>Eliminar factura</h1>
-   {if condition="$fsc->factura->idasiento"}
-      <ul>
-         <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
-      </ul>
-   {/if}
-   <table width="100%">
-      <tr>
-         <td>¿Realmente desea eliminar esta factura?</td>
-         <td align="right">
-            <a class="remove" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
-               eliminar
-            </a>
-         </td>
-      </tr>
-   </table>
 </div>
 
 <div class="rounded">

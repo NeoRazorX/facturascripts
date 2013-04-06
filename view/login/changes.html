@@ -1,6 +1,34 @@
 <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
 <ul>
    <li>
+      06/04/2013:
+      <ul>
+         <li>
+            Ya se puede cambiar el cliente/proveedor de un albarán
+            no facturado.
+         </li>
+         <li>
+            Nueva función de redondeo bround(). Al redondear, en caso
+            de tener duda entre dos número, elige el par. Esto también
+            se puede hacer desde la función round, pero solamente en php 5.3
+            o superior.
+         </li>
+         <li>
+            La validez de las líneas de albaranes y facturas se comprueba
+            con ambos redondeos.
+         </li>
+         <li>
+            Las funciones de generar líneas de iva para una factura añaden ahora
+            una comprobación para evitar descuadres.
+         </li>
+         <li>
+            Pequeñas mejoras en el CSS base. También se ha añadido una nueva
+            hoja de estilos (proto) para probar un nuevo diseño. Este diseño
+            aún está incompleto.
+         </li>
+      </ul>
+   </li>
+   <li>
       02/04/2013:
       <ul>
          <li>
