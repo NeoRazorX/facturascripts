@@ -212,6 +212,13 @@ class ejercicio extends fs_model
       {
          $debe += $sc->debe;
          $haber += $sc->haber;
+         
+         if( !$this->abierto() AND !$this->floatcmp($sc->saldo, 0, 5) )
+         {
+            $this->new_error_msg('El ejercicio está cerrado pero la subcuenta <a href="'.
+                    $sc->url().'">'.$sc->codsubcuenta.'</a> aún tiene saldo ('.$sc->saldo.').');
+            $status = FALSE;
+         }
       }
       
       if( !$this->floatcmp($debe, $haber, 5) )

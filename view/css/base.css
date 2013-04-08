@@ -411,8 +411,11 @@ div.main_div div.new_line a {
 }
 
 div.select {
-   display: block;
+   display: inline-block;
    margin-bottom: 10px;
+   background-color: #dddddd;
+   border: 1px solid #424242;
+   border-radius: 3px;
    font-size: 15px;
 }
 
@@ -422,8 +425,6 @@ div.select a {
    padding-left: 6px;
    padding-right: 6px;
    padding-bottom: 2px;
-   background-color: #dddddd;
-   border-radius: 2px;
    color: #333333;
    text-decoration: none;
 }
@@ -474,11 +475,16 @@ div.footer {
 }
 
 div.footer a {
+   display: inline-block;
+   padding: 0px 5px 2px 5px;
+   border-radius: 3px;
    color: white;
 }
 
 div.footer a.selected {
-   text-decoration: line-through;
+   background-color: #25394D;
+   color: #4C769E;
+   text-decoration: none;
 }
 
 div.footer table {

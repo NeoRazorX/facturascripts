@@ -13,6 +13,10 @@ body {
    font-weight: normal;
 }
 
+a {
+   color: #2F33AB;
+}
+
 div.advice, div.message, div.error {
    margin: 5px;
    padding: 10px;
@@ -76,8 +80,10 @@ div#header_logo {
 
 div#header_buttons {
    display: inline-block;
-   margin-top: 20px;
-   margin-left: 10px;
+   padding-top: 20px;
+   padding-left: 10px;
+   padding-right: 10px;
+   padding-bottom: 2px;
 }
 
 div#header_buttons img {
@@ -100,6 +106,10 @@ div#header_buttons a.button, div#header_buttons a.remove {
    text-decoration: none;
 }
 
+div#header_buttons a.button:hover {
+   background-color: #A7D0FF;
+}
+
 div#header_buttons a.remove {
    background-color: #D74937;
    color: white;
@@ -110,7 +120,10 @@ div#header_location {
 }
 
 div#header_search {
+   vertical-align: top;
    display: inline-block;
+   padding-top: 17px;
+   padding-left: 10px;
 }
 
 div.pages div {
@@ -124,7 +137,7 @@ div.pages img {
 div.pages ul {
    margin: 0px;
    padding: 0px;
-   background-color: #333333;
+   background-color: #314F71;
    border: 2px solid #333333;
    box-shadow: 5px 5px rgba(0,0,0,0.5);
    color: white;
@@ -134,7 +147,7 @@ div.pages ul {
 }
 
 div.pages ul li.selected {
-   background-color: #314F71;
+   background-color: #3D628C;
 }
 
 div.pages ul li:hover {
@@ -243,6 +256,17 @@ div.bloque {
 table.list {
    width: 100%;
 }
+
+table.list tr:hover {
+   background-color: #CEE5FF;
+}
+
+table.list th {
+   background-color: #A7D0FF;
+   color: #424242;
+   text-transform: capitalize;
+}
+
 div.main_div div.paginas {
    text-align: center;
 }
@@ -305,8 +329,11 @@ div.main_div div.new_line a {
 }
 
 div.select {
-   display: block;
+   display: inline-block;
    margin-bottom: 10px;
+   background-color: #dddddd;
+   border: 1px solid #999999;
+   border-radius: 3px;
    font-size: 15px;
 }
 
@@ -316,14 +343,13 @@ div.select a {
    padding-left: 6px;
    padding-right: 6px;
    padding-bottom: 2px;
-   background-color: #7EBBFF;
-   border-radius: 2px;
-   color: white;
+   color: #333333;
    text-decoration: none;
 }
 
 div.select a.selected {
-   background-color: #5B87B8;
+   background-color: #6B9FD9;
+   color: white;
 }
 
 ul.horizontal {
@@ -366,8 +392,16 @@ div.footer {
    padding: 5px;
 }
 
+div.footer a {
+   display: inline-block;
+   padding: 0px 5px 2px 5px;
+   border-radius: 3px;
+}
+
 div.footer a.selected {
-   text-decoration: line-through;
+   background-color: #959DA6;
+   color: #E5F2FF;
+   text-decoration: none;
 }
 
 div.footer table {
@@ -422,11 +456,11 @@ input[type='submit'] {
 }
 
 input[type='button'] {
-   background-color: #CCCCCC;
+   background-color: #eeeeee;
 }
 
 input[type='submit']:hover, input[type='button']:hover {
-   background-color: #333333;
+   background-color: #5E91CC;
    color: white;
    cursor: pointer;
 }

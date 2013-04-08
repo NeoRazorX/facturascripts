@@ -136,7 +136,7 @@ abstract class fs_model
       return $this->db->escape_string($s);
    }
    
-   protected function var2str($v)
+   public function var2str($v)
    {
       if( is_null($v) )
          return 'NULL';
@@ -151,7 +151,7 @@ abstract class fs_model
          return "'" . $this->db->escape_string($v) . "'";
    }
    
-   protected function bin2str($v)
+   public function bin2str($v)
    {
       if( is_null($v) )
          return 'NULL';
@@ -168,9 +168,9 @@ abstract class fs_model
          $i += 2;
       } while($i < strlen($data));
       return $bin;
-    }
+   }
    
-   protected function str2bin($v)
+   public function str2bin($v)
    {
       if( is_null($v) )
          return NULL;
