@@ -86,6 +86,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>email_password</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>fax</nombre>
       <tipo>character varying(20)</tipo>
       <nulo>YES</nulo>

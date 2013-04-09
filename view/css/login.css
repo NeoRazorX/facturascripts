@@ -325,13 +325,11 @@ div#sql_history h1 {
 
 div.footer {
    padding: 5px;
-   font-size: 16px;
+   font-size: 15px;
 }
 
 div.footer a {
    color: white;
-   font-size: 16px;
-   font-weight: bold;
 }
 
 div.footer table.links {

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'ezpdf/class.ezpdf.php';
+require_once 'extras/ezpdf/class.ezpdf.php';
 require_once 'model/asiento.php';
 require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';

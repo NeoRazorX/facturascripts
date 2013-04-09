@@ -172,7 +172,7 @@
          }
       }
       document.f_asiento.importe.value = Math.max(t_debe, t_haber);
-      document.f_asiento.descuadre.value = t_debe - t_haber;
+      document.f_asiento.descuadre.value = fs_round(t_debe - t_haber, 2);
    }
    function asigna_concepto()
    {

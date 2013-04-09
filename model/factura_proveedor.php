@@ -921,35 +921,6 @@ class factura_proveedor extends fs_model
    {
       $status = TRUE;
       
-      /// comprobamos la fecha de la factura
-      $numero0 = intval($this->numero)-1;
-      if( $numero0 > 0 )
-      {
-         $codigo0 = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $numero0);
-         $fac0 = $this->get_by_codigo($codigo0);
-         if($fac0)
-         {
-            if( strtotime($fac0->fecha) > strtotime($this->fecha) )
-            {
-               $status = FALSE;
-               $this->new_error_msg("La fecha de esta factura es anterior a la fecha de <a href='".
-                       $fac0->url()."'>la factura anterior</a>.");
-            }
-         }
-      }
-      $numero2 = intval($this->numero)+1;
-      $codigo2 = $this->codejercicio . sprintf('%02s', $this->codserie) . sprintf('%06s', $numero2);
-      $fac2 = $this->get_by_codigo($codigo2);
-      if($fac2)
-      {
-         if( strtotime($fac2->fecha) < strtotime($this->fecha) )
-         {
-            $status = FALSE;
-            $this->new_error_msg("La fecha de esta factura es posterior a la fecha de <a href='".
-                    $fac2->url()."'>la factura siguiente</a>.");
-         }
-      }
-      
       /// comprobamos las líneas
       $neto = 0;
       $iva = 0;
@@ -966,24 +937,24 @@ class factura_proveedor extends fs_model
       $iva2 = round($iva, 2);
       $total2 = $neto2 + $iva2;
       
-      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp(round($this->neto, 2), $neto2) )
+      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp($this->neto, $neto2, 2, TRUE) )
       {
          $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp(round($this->totaliva, 2), $iva2) )
+      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp($this->totaliva, $iva2, 2, TRUE) )
       {
          $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp(round($this->total, 2), $total2) )
+      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp($this->total, $total2, 2, TRUE) )
       {
          $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".$total2);
          $status = FALSE;
       }
       else if( !$this->floatcmp($this->totaleuros, $total*$this->tasaconv) )
       {
-         if( !$this->floatcmp(round($this->totaleuros, 2), round($total2*$this->tasaconv, 2)) )
+         if( !$this->floatcmp($this->totaleuros, $total2*$this->tasaconv, 2, TRUE) )
          {
             $this->new_error_msg("Valor totaleuros de la factura incorrecto.
                Valor correcto: ".round($total2*$this->tasaconv, 2));
@@ -992,34 +963,34 @@ class factura_proveedor extends fs_model
       }
       
       /// comprobamos las líneas de IVA
-      $neto = 0;
-      $iva = 0;
+      $li_neto = 0;
+      $li_iva = 0;
       foreach($this->get_lineas_iva() as $li)
       {
          if( !$li->test() )
             $status = FALSE;
          
-         $neto += $li->neto;
-         $iva += $li->totaliva;
+         $li_neto += $li->neto;
+         $li_iva += $li->totaliva;
       }
-      $total = $neto + $iva;
-      $neto2 = round($neto, 2);
-      $iva2 = round($iva, 2);
-      $total2 = $neto2 + $iva2;
+      $li_total = $li_neto + $li_iva;
+      $li_neto2 = round($li_neto, 2);
+      $li_iva2 = round($li_iva, 2);
+      $li_total2 = $li_neto2 + $li_iva2;
       
-      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp(round($this->neto, 2), $neto2) )
+      if( !$this->floatcmp($li_neto, $neto) AND !$this->floatcmp($li_neto2, $neto2) )
       {
-         $this->new_error_msg("Valor neto incorrecto en las líneas de IVA. Valor correcto: ".$neto2);
+         $this->new_error_msg("La suma de los netos de las líneas de IVA debería ser: ".$neto2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp(round($this->totaliva, 2), $iva2) )
+      else if( !$this->floatcmp($li_iva, $iva) AND !$this->floatcmp($li_iva2, $iva2) )
       {
-         $this->new_error_msg("Valor totaliva incorrecto en las líneas de IVA. Valor correcto: ".$iva2);
+         $this->new_error_msg("La suma de los totales de iva de las líneas de IVA debería ser: ".$iva2);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp(round($this->total, 2), $total2) )
+      else if( !$this->floatcmp($li_total, $total) AND !$this->floatcmp($li_total2, $total2) )
       {
-         $this->new_error_msg("Valor total incorrecto en las líneas de IVA. Valor correcto: ".$total2);
+         $this->new_error_msg("La suma de los totales de las líneas de IVA debería ser: ".$total2);
          $status = FALSE;
       }
       

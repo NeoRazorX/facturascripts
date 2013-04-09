@@ -51,11 +51,6 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>idcuentaesp</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
       <nombre>idsubcuenta</nombre>
       <tipo>serial</tipo>
       <nulo>NO</nulo>

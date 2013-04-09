@@ -17,17 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'ezpdf/class.ezpdf.php';
 require_once 'model/asiento.php';
 require_once 'model/cliente.php';
 require_once 'model/ejercicio.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
+require_once 'extras/ezpdf/class.ezpdf.php';
+require_once 'extras/phpmailer/class.phpmailer.php';
+require_once 'extras/phpmailer/class.smtp.php';
 
 class contabilidad_factura_cli extends fs_controller
 {
    public $agente;
+   public $cliente;
    public $ejercicio;
    public $factura;
    
@@ -76,12 +79,17 @@ class contabilidad_factura_cli extends fs_controller
       
       if($this->factura)
       {
+         $cliente = new cliente();
+         $this->cliente = $cliente->get($this->factura->codcliente);
+         
          if( isset($_GET['imprimir']) )
-            $this->generar_pdf();
+            $this->generar_pdf($_GET['imprimir']);
          else
          {
             if( isset($_GET['gen_asiento']) )
                $this->generar_asiento();
+            else if( isset($_POST['email']) )
+               $this->enviar_email();
             
             /// comprobamos la factura
             $this->factura->full_test();
@@ -90,6 +98,12 @@ class contabilidad_factura_cli extends fs_controller
             $this->agente = $this->factura->get_agente();
             $this->buttons[] = new fs_button('b_imprimir', 'imprimir', '#',
                     'button', 'img/print.png');
+            
+            if( $this->empresa->can_send_mail() )
+            {
+               $this->buttons[] = new fs_button('b_enviar', 'enviar', '#',
+                       'button', 'img/send.png');
+            }
             
             if($this->factura->idasiento)
                $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
@@ -107,7 +121,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()
@@ -118,10 +132,13 @@ class contabilidad_factura_cli extends fs_controller
          return $this->ppage->url();
    }
    
-   private function generar_pdf()
+   private function generar_pdf($tipo='simple', $archivo=FALSE)
    {
-      /// desactivamos la plantilla HTML
-      $this->template = FALSE;
+      if( !$archivo )
+      {
+         /// desactivamos la plantilla HTML
+         $this->template = FALSE;
+      }
       
       $pdf = new Cezpdf('a4');
       
@@ -143,7 +160,7 @@ class contabilidad_factura_cli extends fs_controller
          $lppag = 42;
          $pagina = 1;
          
-         if($_GET['imprimir'] == 'carta')
+         if($tipo == 'carta')
             $lppag = 40;
          
          // Imprimimos las páginas necesarias
@@ -153,7 +170,7 @@ class contabilidad_factura_cli extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
-            if($_GET['imprimir'] == 'carta')
+            if($tipo == 'carta')
             {
                $pdf->ezText("\n\n", 10);
             }
@@ -187,7 +204,7 @@ class contabilidad_factura_cli extends fs_controller
                     )
             );
             
-            if($_GET['imprimir'] == 'carta')
+            if($tipo == 'carta')
                $pdf->ezText("\n\n\n", 14);
             else
                $pdf->ezText("\n", 10);
@@ -284,7 +301,19 @@ class contabilidad_factura_cli extends fs_controller
          }
       }
       
-      $pdf->ezStream();
+      if($archivo)
+      {
+         if( !file_exists('tmp/enviar') )
+            mkdir('tmp/enviar');
+         else if( file_exists('tmp/enviar/'.$archivo) )
+            unlink('tmp/enviar/'.$archivo);
+         
+         $file = fopen('tmp/enviar/'.$archivo, 'a');
+         fwrite($file, $pdf->ezOutput());
+         fclose($file);
+      }
+      else
+         $pdf->ezStream();
    }
    
    private function generar_asiento()
@@ -293,10 +322,7 @@ class contabilidad_factura_cli extends fs_controller
          $this->new_error_msg('Ya hay un asiento asociado a esta factura.');
       else
       {
-         $cliente = new cliente();
-         $cliente = $cliente->get($this->factura->codcliente);
-         $subcuenta_cli = $cliente->get_subcuenta($this->factura->codejercicio);
-         
+         $subcuenta_cli = $this->cliente->get_subcuenta($this->factura->codejercicio);
          if( !$subcuenta_cli )
          {
             $this->new_message("El cliente no tiene asociada una subcuenta y por
@@ -343,7 +369,7 @@ class contabilidad_factura_cli extends fs_controller
                      $partida1->haber = $li->totaliva;
                      $partida1->idcontrapartida = $subcuenta_cli->idsubcuenta;
                      $partida1->codcontrapartida = $subcuenta_cli->codsubcuenta;
-                     $partida1->cifnif = $cliente->cifnif;
+                     $partida1->cifnif = $this->cliente->cifnif;
                      $partida1->documento = $asiento->documento;
                      $partida1->tipodocumento = $asiento->tipodocumento;
                      $partida1->codserie = $this->factura->codserie;
@@ -395,6 +421,51 @@ class contabilidad_factura_cli extends fs_controller
             else
                $this->new_error_msg("¡Imposible guardar el asiento!");
          }
+      }
+   }
+   
+   private function enviar_email()
+   {
+      if( $this->empresa->can_send_mail() )
+      {
+         if( $_POST['email'] != $this->cliente->email )
+         {
+            $this->cliente->email = $_POST['email'];
+            $this->cliente->save();
+         }
+         
+         $filename = 'factura_'.$this->factura->codigo.'.pdf';
+         $this->generar_pdf('simple', $filename);
+         if( file_exists('tmp/enviar/'.$filename) )
+         {
+            $mail = new PHPMailer();
+            $body = 'Hola, le adjunto su factura con código '.$this->factura->codigo.".<br/>".
+               $_POST['observaciones']."<br/>".$this->empresa->nombre;
+            $mail->IsSMTP();
+            $mail->SMTPAuth = TRUE;
+            $mail->SMTPSecure = "ssl";
+            $mail->Host = "smtp.gmail.com";
+            $mail->Port = 465;
+            $mail->Username = $this->empresa->email;
+            $mail->Password = $this->empresa->email_password;
+            $mail->From = $this->empresa->email;
+            $mail->FromName = $this->user->nick;
+            $mail->Subject = 'Su factura '.$this->factura->codigo;
+            $mail->AltBody = 'Hola, le adjunto su factura con código '.$this->factura->codigo.".\n".
+               $_POST['observaciones']."\n".$this->empresa->nombre;
+            $mail->WordWrap = 50;
+            $mail->MsgHTML($body);
+            $mail->AddAttachment('tmp/enviar/'.$filename);
+            $mail->AddAddress($_POST['email'], $this->cliente->nombrecomercial);
+            $mail->IsHTML(TRUE);
+            
+            if( $mail->Send() )
+               $this->new_message('Mensaje enviado correctamente.');
+            else
+               $this->new_error_msg("Error al enviar el email: " . $mail->ErrorInfo);
+         }
+         else
+            $this->new_error_msg('Imposible generar el PDF.');
       }
    }
 }

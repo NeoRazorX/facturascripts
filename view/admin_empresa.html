@@ -1,9 +1,9 @@
 {include="header"}
 
-<div class="rounded">
-   <form action="{$fsc->page->url()}" method="POST">
+<form action="{$fsc->page->url()}" method="POST">
+   <div class="rounded">
       <h1>
-         Datos de la empresa:
+         Datos generales:
          <span><input type="submit" value="guardar"/></span>
       </h1>
       <div class="bloque">
@@ -56,25 +56,9 @@
          fax:
          <input type="text" name="fax" size="12" value="{$fsc->empresa->fax}" autocomplete="off"/>
       </div>
-      <br/>
       <div class="bloque">
          Web:
          <input type="text" name="web" size="50" value="{$fsc->empresa->web}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         email:
-         <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
-      </div>
-      <div>
-         <div class="bloque">
-            Lema:
-            <input type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}" autocomplete="off"/>
-         </div>
-         <div class="bloque">
-            Horario:
-            <input type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}" autocomplete="off"/>
-         </div>
-         Lema y horario aparecen en el ticket.
       </div>
       <br/>
       <div class="bloque">
@@ -145,7 +129,29 @@
          {/loop}
          </select>
       </div>
-   </form>
-</div>
+   </div>
+   
+   <div class="rounded">
+      <h1>Email:</h1>
+      <div class="bloque">
+         Email:
+         <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
+         <input type="password" name="email_password" size="20" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
+         Si usas Gmail y proporcionas una contraseña podrás usar las funciones de enviar por email.
+      </div>
+   </div>
+   
+   <div class="rounded">
+      <h1>Tickets:</h1>
+      <div class="bloque">
+         Lema:
+         <input type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Horario:
+         <input type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}" autocomplete="off"/>
+      </div>
+   </div>
+</form>
 
 {include="footer"}

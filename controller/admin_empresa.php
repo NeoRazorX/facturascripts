@@ -71,6 +71,7 @@ class admin_empresa extends fs_controller
          $this->empresa->fax = $_POST['fax'];
          $this->empresa->web = $_POST['web'];
          $this->empresa->email = $_POST['email'];
+         $this->empresa->email_password = $_POST['email_password'];
          $this->empresa->lema = $_POST['lema'];
          $this->empresa->horario = $_POST['horario'];
          $this->empresa->contintegrada = isset($_POST['contintegrada']);
@@ -92,7 +93,7 @@ class admin_empresa extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
 }
 

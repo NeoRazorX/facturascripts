@@ -32,6 +32,7 @@ class empresa extends fs_model
    public $codejercicio;
    public $web;
    public $email;
+   public $email_password;
    public $fax;
    public $telefono;
    public $codpais;
@@ -72,6 +73,7 @@ class empresa extends fs_model
          $this->codejercicio = $e[0]['codejercicio'];
          $this->web = $e[0]['web'];
          $this->email = $e[0]['email'];
+         $this->email_password = $e[0]['email_password'];
          $this->fax = $e[0]['fax'];
          $this->telefono = $e[0]['telefono'];
          $this->codpais = $e[0]['codpais'];
@@ -89,11 +91,6 @@ class empresa extends fs_model
       }
    }
    
-   public function url()
-   {
-      return 'index.php?page=admin_empresa';
-   }
-
    protected function install()
    {
       $this->clean_cache();
@@ -102,6 +99,22 @@ class empresa extends fs_model
          ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES
          (NULL,FALSE,NULL,NULL,NULL,NULL,NULL,NULL,'http://code.google.com/p/facturascripts/',NULL,NULL,
          NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa S.L.','','');";
+   }
+   
+   public function url()
+   {
+      return 'index.php?page=admin_empresa';
+   }
+   
+   public function can_send_mail()
+   {
+      if( !isset($this->email) OR !isset($this->email_password) )
+         return FALSE;
+      else if( $this->email_password != '' )
+         return TRUE;
+      else
+         return FALSE;
+         
    }
    
    public function exists()
@@ -125,6 +138,7 @@ class empresa extends fs_model
       $this->codpostal = $this->no_html($this->codpostal);
       $this->direccion = $this->no_html($this->direccion);
       $this->email = $this->no_html($this->email);
+      $this->email_password = $this->no_html($this->email_password);
       $this->fax = $this->no_html($this->fax);
       $this->horario = $this->no_html($this->horario);
       $this->lema = $this->no_html($this->lema);
@@ -148,14 +162,18 @@ class empresa extends fs_model
          $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
             cifnif = ".$this->var2str($this->cifnif).", codedi = ".$this->var2str($this->codedi).",
             administrador = ".$this->var2str($this->administrador).",
-            direccion = ".$this->var2str($this->direccion).", codpostal = ".$this->var2str($this->codpostal).",
+            direccion = ".$this->var2str($this->direccion).",
+            codpostal = ".$this->var2str($this->codpostal).",
             ciudad = ".$this->var2str($this->ciudad).", provincia = ".$this->var2str($this->provincia).",
             apartado = ".$this->var2str($this->apartado).", codpais = ".$this->var2str($this->codpais).",
             telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
-            email = ".$this->var2str($this->email).", web = ".$this->var2str($this->web).",
+            email = ".$this->var2str($this->email).",
+            email_password = ".$this->var2str($this->email_password).",
+            web = ".$this->var2str($this->web).",
             codejercicio = ".$this->var2str($this->codejercicio).",
             coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
-            codalmacen = ".$this->var2str($this->codalmacen).", codserie = ".$this->var2str($this->codserie).",
+            codalmacen = ".$this->var2str($this->codalmacen).",
+            codserie = ".$this->var2str($this->codserie).",
             recequivalencia = ".$this->var2str($this->recequivalencia).",
             contintegrada = ".$this->var2str($this->contintegrada).",
             stockpedidos = ".$this->var2str($this->stockpedidos).",
