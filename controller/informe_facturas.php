@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'extras/ezpdf/class.ezpdf.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
+require_once 'extras/ezpdf/class.ezpdf.php';
 
 class informe_facturas extends fs_controller
 {
@@ -51,7 +51,7 @@ class informe_facturas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    private function listar_facturas_cli()
@@ -63,7 +63,7 @@ class informe_facturas extends fs_controller
       
       /// cambiamos ! por el simbolo del euro
       $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("ezpdf/fonts/Courier.afm",
+      $pdf->selectFont("extras/ezpdf/fonts/Courier.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
       $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
@@ -215,7 +215,7 @@ class informe_facturas extends fs_controller
       
       /// cambiamos ! por el simbolo del euro
       $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("ezpdf/fonts/Courier.afm",
+      $pdf->selectFont("extras/ezpdf/fonts/Courier.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
       $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'extras/ezpdf/class.ezpdf.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
 
@@ -76,7 +75,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    public function url()

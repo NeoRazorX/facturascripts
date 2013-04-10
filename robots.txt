@@ -1,7 +1,6 @@
 User-agent: *
 Disallow: /base/
 Disallow: /controller/
-Disallow: /ezpdf/
 Disallow: /extras/
 Disallow: /model/
 Disallow: /nbproject/

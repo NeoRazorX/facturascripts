@@ -363,6 +363,7 @@
       <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
+         <a href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
          <select name="proveedor">
             {loop="$fsc->proveedor->all_full()"}
                {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}

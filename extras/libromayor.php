@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'extras/ezpdf/class.ezpdf.php';
 require_once 'model/empresa.php';
 require_once 'model/subcuenta.php';
+require_once 'extras/ezpdf/class.ezpdf.php';
 
 class libro_mayor
 {
@@ -59,7 +59,7 @@ class libro_mayor
             
             /// cambiamos ! por el simbolo del euro
             $euro_diff = array(33 => 'Euro');
-            $pdf->selectFont("ezpdf/fonts/Helvetica.afm",
+            $pdf->selectFont("extras/ezpdf/fonts/Helvetica.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
             
             $pdf->addInfo('Title', 'Libro mayor de ' . $subc->codsubcuenta);

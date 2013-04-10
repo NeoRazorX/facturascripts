@@ -298,6 +298,7 @@
    <div class="rounded">
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
+         <a href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
          <select name="cliente">
             {loop="$fsc->cliente->all_full()"}
                {if condition="$value->codcliente==$fsc->albaran->codcliente"}

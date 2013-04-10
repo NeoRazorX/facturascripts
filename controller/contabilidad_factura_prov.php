@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'extras/ezpdf/class.ezpdf.php';
 require_once 'model/asiento.php';
 require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/partida.php';
 require_once 'model/proveedor.php';
 require_once 'model/subcuenta.php';
+require_once 'extras/ezpdf/class.ezpdf.php';
 
 class contabilidad_factura_prov extends fs_controller
 {
@@ -105,7 +105,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function url()
@@ -125,7 +125,7 @@ class contabilidad_factura_prov extends fs_controller
       
       /// cambiamos ! por el simbolo del euro
       $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("ezpdf/fonts/Helvetica.afm",
+      $pdf->selectFont("extras/ezpdf/fonts/Helvetica.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
       $pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);

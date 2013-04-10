@@ -121,7 +121,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    public function url()
@@ -144,7 +144,7 @@ class contabilidad_factura_cli extends fs_controller
       
       /// cambiamos ! por el simbolo del euro
       $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("ezpdf/fonts/Helvetica.afm",
+      $pdf->selectFont("extras/ezpdf/fonts/Helvetica.afm",
               array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
       
       $pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
