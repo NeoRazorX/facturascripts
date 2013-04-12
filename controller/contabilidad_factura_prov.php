@@ -23,7 +23,7 @@ require_once 'model/factura_proveedor.php';
 require_once 'model/partida.php';
 require_once 'model/proveedor.php';
 require_once 'model/subcuenta.php';
-require_once 'extras/ezpdf/class.ezpdf.php';
+require_once 'extras/ezpdf/Cezpdf.php';
 
 class contabilidad_factura_prov extends fs_controller
 {
@@ -87,7 +87,8 @@ class contabilidad_factura_prov extends fs_controller
             $this->factura->full_test();
             
             $this->page->title = $this->factura->codigo;
-            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
+            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE",
+                    'button', 'img/print.png', '[]', TRUE);
             
             if($this->factura->idasiento)
                $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
@@ -105,7 +106,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    public function url()
@@ -148,31 +149,54 @@ class contabilidad_factura_prov extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
-            $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16);
-            $pdf->ezText("CIF: ".$this->empresa->cifnif." - ".$this->empresa->direccion.
-                    " - Teléfono: ".$this->empresa->telefono, 10);
+            $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
+            $pdf->ezText("CIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+            
+            $direccion = $this->empresa->direccion;
+            if($this->empresa->codpostal)
+               $direccion .= ' - ' . $this->empresa->codpostal;
+            if($this->empresa->ciudad)
+               $direccion .= ' - ' . $this->empresa->ciudad;
+            if($this->empresa->provincia)
+               $direccion .= ' (' . $this->empresa->provincia . ')';
+            if($this->empresa->telefono)
+               $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
+            if($this->empresa->email)
+               $direccion .= ' - email: '.$this->empresa->email;
+            
+            $pdf->ezText($direccion, 9, array('justification' => 'center'));
             
             /// Creamos la tabla del encabezado
             $filas = array(
                 array(
-                    'campos' => "<b>Factura de proveedor:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
-                    'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
-                    'proveedor' => $this->factura->nombre."\n"
+                    'campo1' => "<b>Factura:</b>",
+                    'dato1' => $this->factura->codigo,
+                    'campo2' => "<b>Proveedor:</b>",
+                    'dato2' => $this->factura->nombre
+                ),
+                array(
+                    'campo1' => "<b>Fecha:</b>",
+                    'dato1' => $this->factura->fecha,
+                    'campo2' => "<b>CIF/NIF:</b>",
+                    'dato2' => $this->factura->cifnif
                 )
             );
             $pdf->ezTable($filas,
-                    array('campos' => '', 'factura' => '', 'proveedor' => ''),
+                    array('campo1' => '', 'dato1' => '', 'campo2' => '', 'dato2' => ''),
                     '',
                     array(
                         'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 120),
-                            'factura' => array('justification' => 'left'),
-                            'proveedor' => array('justification' => 'right')
+                            'campo1' => array('justification' => 'right'),
+                            'dato1' => array('justification' => 'left'),
+                            'campo2' => array('justification' => 'right'),
+                            'dato2' => array('justification' => 'left')
                         ),
                         'showLines' => 0,
-                        'width' => 540
+                        'width' => 540,
+                        'shaded' => 0
                     )
             );
+            
             $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas de la factura

@@ -86,6 +86,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>email_firma</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>email_password</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
@@ -125,6 +130,11 @@
       <nombre>nombre</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>pie_factura</nombre>
+      <tipo>character varying(250)</tipo>
+      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>provincia</nombre>

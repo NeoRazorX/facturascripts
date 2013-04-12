@@ -19,7 +19,7 @@
 
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
-require_once 'extras/ezpdf/class.ezpdf.php';
+require_once 'extras/ezpdf/Cezpdf.php';
 
 class informe_facturas extends fs_controller
 {

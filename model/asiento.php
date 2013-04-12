@@ -191,17 +191,16 @@ class asiento extends fs_model
    
    public function test()
    {
-      $status = FALSE;
-      
       $this->concepto = $this->no_html($this->concepto);
       $this->documento = $this->no_html($this->documento);
       
       if( strlen($this->concepto) > 255 )
+      {
          $this->new_error_msg("Concepto del asiento demasiado largo.");
+         return FALSE;
+      }
       else
-         $status = TRUE;
-      
-      return $status;
+         return TRUE;
    }
    
    public function full_test()
@@ -227,7 +226,7 @@ class asiento extends fs_model
       
       if( !$this->floatcmp($debe, $haber) )
       {
-         $this->new_error_msg("Asiento descuadrado. Descuadre: " . ($debe - $haber) );
+         $this->new_error_msg( "Asiento descuadrado. Descuadre: ".round($debe-$haber, 2) );
          $status = FALSE;
       }
       
@@ -258,7 +257,7 @@ class asiento extends fs_model
       $total = $debe - $haber;
       
       /// corregimos descuadres de menos de 0.01
-      if( !$this->floatcmp($debe, $haber) AND abs($total) < .01 )
+      if( !$this->floatcmp($debe, $haber, 2) )
       {
          $debe = 0;
          $haber = 0;

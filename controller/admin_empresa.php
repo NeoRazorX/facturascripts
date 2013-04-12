@@ -71,6 +71,7 @@ class admin_empresa extends fs_controller
          $this->empresa->fax = $_POST['fax'];
          $this->empresa->web = $_POST['web'];
          $this->empresa->email = $_POST['email'];
+         $this->empresa->email_firma = $_POST['email_firma'];
          $this->empresa->email_password = $_POST['email_password'];
          $this->empresa->lema = $_POST['lema'];
          $this->empresa->horario = $_POST['horario'];
@@ -80,6 +81,7 @@ class admin_empresa extends fs_controller
          $this->empresa->coddivisa = $_POST['coddivisa'];
          $this->empresa->codpago = $_POST['codpago'];
          $this->empresa->codalmacen = $_POST['codalmacen'];
+         $this->empresa->pie_factura = $_POST['pie_factura'];
          
          if( $this->empresa->save() )
          {
@@ -93,7 +95,7 @@ class admin_empresa extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
 }
 

@@ -10,6 +10,7 @@
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_enviar');
+         document.enviar_email.email.focus();
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
@@ -28,19 +29,22 @@
 
 <div class="popup" id="popup_enviar">
    <h1>Enviar factura</h1>
-   <form action="{$fsc->url()}" method="post">
+   <form name="enviar_email" action="{$fsc->url()}" method="post">
       <table class="list">
          <tr>
             <td>Email del cliente:</td>
             <td><input class="full" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td>Observaciones:</td>
-            <td><textarea name="observaciones" rows="5" cols="30"></textarea></td>
+            <td valign="top" align="right">Mensaje:</td>
+            <td>
+               <textarea name="mensaje" rows="6" cols="50">Hola, le adjunto su factura {$fsc->factura->codigo}.
+{$fsc->empresa->email_firma}
+               </textarea>
+            </td>
          </tr>
          <tr>
             <td colspan="2" align="right">
-               Las observaciones también se envían.
                <input type="submit" value="enviar"/>
             </td>
          </tr>

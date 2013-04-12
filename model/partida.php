@@ -182,7 +182,8 @@ class partida extends fs_model
    
    public function get($id)
    {
-      $partida = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpartida = ".$id.";");
+      $partida = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idpartida = ".$id.";");
       if( $partida )
          return new partida($partida[0]);
       else
@@ -194,8 +195,8 @@ class partida extends fs_model
       if( is_null($this->idpartida) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE idpartida = ".$this->var2str($this->idpartida).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idpartida = ".$this->var2str($this->idpartida).";");
    }
    
    public function test()
@@ -257,7 +258,8 @@ class partida extends fs_model
    
    public function delete()
    {
-      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = ".$this->var2str($this->idpartida).";") )
+      if( $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idpartida = ".$this->var2str($this->idpartida).";") )
       {
          $subc = $this->get_subcuenta();
          if($subc)
@@ -303,8 +305,8 @@ class partida extends fs_model
    public function all_from_asiento($id)
    {
       $plist = array();
-      $partidas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idasiento = ".$this->var2str($id)." ORDER BY codsubcuenta ASC;");
+      $partidas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idasiento = ".$this->var2str($id)." ORDER BY codsubcuenta ASC;");
       if($partidas)
       {
          foreach($partidas as $p)

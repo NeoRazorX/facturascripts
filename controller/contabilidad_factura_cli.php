@@ -23,7 +23,7 @@ require_once 'model/ejercicio.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
-require_once 'extras/ezpdf/class.ezpdf.php';
+require_once 'extras/ezpdf/Cezpdf.php';
 require_once 'extras/phpmailer/class.phpmailer.php';
 require_once 'extras/phpmailer/class.smtp.php';
 
@@ -121,7 +121,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    public function url()
@@ -170,44 +170,96 @@ class contabilidad_factura_cli extends fs_controller
             if($linea_actual > 0)
                $pdf->ezNewPage();
             
+            
             if($tipo == 'carta')
             {
                $pdf->ezText("\n\n", 10);
+               
+               $direccion = $this->factura->nombrecliente."\n".$this->factura->direccion;
+               if($this->factura->codpostal AND $this->factura->ciudad)
+                  $direccion .= "\n CP: " . $this->factura->codpostal . ' ' . $this->factura->ciudad;
+               else if($this->factura->ciudad)
+                  $direccion .= "\n" . $this->factura->ciudad;
+               if($this->factura->provincia)
+                  $direccion .= "\n(" . $this->factura->provincia . ")";
+               
+               /// Creamos la tabla del encabezado
+               $filas = array(
+                   array(
+                       'campos' => "<b>Factura de cliente:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
+                       'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
+                       'cliente' => $direccion
+                   )
+               );
+               $pdf->ezTable($filas,
+                       array('campos' => '', 'factura' => '', 'cliente' => ''),
+                       '',
+                       array(
+                           'cols' => array(
+                               'campos' => array('justification' => 'right', 'width' => 100),
+                               'factura' => array('justification' => 'left'),
+                               'cliente' => array('justification' => 'right')
+                           ),
+                           'showLines' => 0,
+                           'width' => 540
+                       )
+               );
+               
+               $pdf->ezText("\n\n\n", 14);
             }
             else
             {
-               $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16);
-               $pdf->ezText("CIF: ".$this->empresa->cifnif." - ".$this->empresa->direccion.
-                       " - Teléfono: ".$this->empresa->telefono, 10);
+               $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
+               $pdf->ezText("CIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               
+               $direccion = $this->empresa->direccion;
+               if($this->empresa->codpostal)
+                  $direccion .= ' - ' . $this->empresa->codpostal;
+               if($this->empresa->ciudad)
+                  $direccion .= ' - ' . $this->empresa->ciudad;
+               if($this->empresa->provincia)
+                  $direccion .= ' (' . $this->empresa->provincia . ')';
+               if($this->empresa->telefono)
+                  $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
+               if($this->empresa->email)
+                  $direccion .= ' - email: '.$this->empresa->email;
+               
+               $pdf->ezText($direccion, 9, array('justification' => 'center'));
+               
+               /// Creamos la tabla del encabezado
+               $filas = array(
+                   array(
+                       'campo1' => "<b>Factura:</b>",
+                       'dato1' => $this->factura->codigo,
+                       'campo2' => "<b>Cliente:</b>",
+                       'dato2' => $this->factura->nombrecliente
+                   ),
+                   array(
+                       'campo1' => "<b>Fecha:</b>",
+                       'dato1' => $this->factura->fecha,
+                       'campo2' => "<b>CIF/NIF:</b>",
+                       'dato2' => $this->factura->cifnif
+                   )
+               );
+               $pdf->ezTable($filas,
+                       array('campo1' => '', 'dato1' => '', 'campo2' => '', 'dato2' => ''),
+                       '',
+                       array(
+                           'cols' => array(
+                               'campo1' => array('justification' => 'right'),
+                               'dato1' => array('justification' => 'left'),
+                               'campo2' => array('justification' => 'right'),
+                               'dato2' => array('justification' => 'left')
+                           ),
+                           'showLines' => 0,
+                           'width' => 540,
+                           'shaded' => 0
+                       )
+               );
+               
+               $pdf->ezText("\n", 10);
             }
             
-            /// Creamos la tabla del encabezado
-            $filas = array(
-                array(
-                    'campos' => "<b>Factura de cliente:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
-                    'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
-                    'cliente' => $this->factura->nombrecliente."\n".$this->factura->direccion."\n".
-                                 "CP: ".$this->factura->codpostal."\n".$this->factura->ciudad.", ".$this->factura->provincia
-                )
-            );
-            $pdf->ezTable($filas,
-                    array('campos' => '', 'factura' => '', 'cliente' => ''),
-                    '',
-                    array(
-                        'cols' => array(
-                            'campos' => array('justification' => 'right', 'width' => 100),
-                            'factura' => array('justification' => 'left'),
-                            'cliente' => array('justification' => 'right')
-                        ),
-                        'showLines' => 0,
-                        'width' => 540
-                    )
-            );
-            
-            if($tipo == 'carta')
-               $pdf->ezText("\n\n\n", 14);
-            else
-               $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas de la factura
             $saltos = 0;
@@ -297,6 +349,10 @@ class contabilidad_factura_cli extends fs_controller
             $filas[0]['liquido'] = number_format($this->factura->total, 2) . ' !';
             $opciones['cols']['liquido'] = array('justification' => 'right');
             $pdf->ezTable($filas, $titulo, '', $opciones);
+            
+            if($tipo == 'simple')
+               $pdf->addText(10, 10, 8, $this->center_text($this->empresa->pie_factura), 0, 1.5);
+            
             $pagina++;
          }
       }
@@ -314,6 +370,20 @@ class contabilidad_factura_cli extends fs_controller
       }
       else
          $pdf->ezStream();
+   }
+   
+   private function center_text($word='', $tot_width=153)
+   {
+      $symbol = ' ';
+      $middle = round($tot_width / 2);
+      $length_word = strlen($word);
+      $middle_word = round($length_word / 2);
+      $last_position = $middle + $middle_word;
+      $number_of_spaces = $middle - $middle_word;
+      $result = sprintf("%'{$symbol}{$last_position}s", $word);
+      for($i = 0; $i < $number_of_spaces; $i++)
+         $result .= "$symbol";
+      return $result;
    }
    
    private function generar_asiento()
@@ -439,8 +509,6 @@ class contabilidad_factura_cli extends fs_controller
          if( file_exists('tmp/enviar/'.$filename) )
          {
             $mail = new PHPMailer();
-            $body = 'Hola, le adjunto su factura con código '.$this->factura->codigo.".<br/>".
-               $_POST['observaciones']."<br/>".$this->empresa->nombre;
             $mail->IsSMTP();
             $mail->SMTPAuth = TRUE;
             $mail->SMTPSecure = "ssl";
@@ -450,11 +518,10 @@ class contabilidad_factura_cli extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
-            $mail->Subject = 'Su factura '.$this->factura->codigo;
-            $mail->AltBody = 'Hola, le adjunto su factura con código '.$this->factura->codigo.".\n".
-               $_POST['observaciones']."\n".$this->empresa->nombre;
+            $mail->Subject = $this->empresa->nombre . ': Su factura '.$this->factura->codigo;
+            $mail->AltBody = 'Hola, le adjunto su factura '.$this->factura->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;
-            $mail->MsgHTML($body);
+            $mail->MsgHTML( nl2br($_POST['mensaje']) );
             $mail->AddAttachment('tmp/enviar/'.$filename);
             $mail->AddAddress($_POST['email'], $this->cliente->nombrecomercial);
             $mail->IsHTML(TRUE);

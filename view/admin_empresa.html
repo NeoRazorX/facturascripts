@@ -133,11 +133,23 @@
    
    <div class="rounded">
       <h1>Email:</h1>
-      <div class="bloque">
+      <div>
          Email:
          <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
          <input type="password" name="email_password" size="20" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
          Si usas Gmail y proporcionas una contraseña podrás usar las funciones de enviar por email.
+      </div>
+      <div>
+         <br/>Firma:<br/>
+         <textarea name="email_firma">{$fsc->empresa->email_firma}</textarea>
+      </div>
+   </div>
+   
+   <div class="rounded">
+      <h1>Facturas:</h1>
+      <div class="bloque">
+         Pie de página:
+         <input type="text" name="pie_factura" size="80" maxlength="255" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
       </div>
    </div>
    

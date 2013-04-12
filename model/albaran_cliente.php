@@ -180,7 +180,7 @@ class linea_albaran_cliente extends fs_model
       if($this->cantidad == 0)
          return 0;
       else
-         return number_format($this->pvptotal*(100+$this->iva)/100/$this->cantidad, 2, '.', ' ');
+         return number_format($this->pvptotal*(100+$this->iva)/100/$this->cantidad,2,'.',' ');
    }
    
    public function show_codigo()
@@ -229,25 +229,24 @@ class linea_albaran_cliente extends fs_model
    
    public function test()
    {
-      $status = TRUE;
       $this->descripcion = $this->no_html($this->descripcion);
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
       if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
       {
-         $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
-            " del albarán. Valor correcto: ".$total);
-         $status = FALSE;
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".
+                 $this->referencia." del albarán. Valor correcto: ".$total);
+         return FALSE;
       }
       else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
       {
-         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
-            " del albarán. Valor correcto: ".$totalsindto);
-         $status = FALSE;
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".
+                 $this->referencia." del albarán. Valor correcto: ".$totalsindto);
+         return FALSE;
       }
-      
-      return $status;
+      else
+         return TRUE;
    }
    
    public function save()
@@ -257,24 +256,29 @@ class linea_albaran_cliente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET idalbaran = ".$this->var2str($this->idalbaran).",
-               referencia = ".$this->var2str($this->referencia).", descripcion = ".$this->var2str($this->descripcion).",
+               referencia = ".$this->var2str($this->referencia).",
+               descripcion = ".$this->var2str($this->descripcion).",
                cantidad = ".$this->var2str($this->cantidad).", dtopor = ".$this->var2str($this->dtopor).",
-               dtolineal = ".$this->var2str($this->dtolineal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               dtolineal = ".$this->var2str($this->dtolineal).",
+               codimpuesto = ".$this->var2str($this->codimpuesto).",
                iva = ".$this->var2str($this->iva).", pvptotal = ".$this->var2str($this->pvptotal).",
-               pvpsindto = ".$this->var2str($this->pvpsindto).", pvpunitario = ".$this->var2str($this->pvpunitario).",
+               pvpsindto = ".$this->var2str($this->pvpsindto).",
+               pvpunitario = ".$this->var2str($this->pvpunitario).",
                irpf = ".$this->var2str($this->irpf).", recargo = ".$this->var2str($this->recargo)."
                WHERE idlinea = '".$this->idlinea."';";
          }
          else
          {
             $this->new_idlinea();
-            $sql = "INSERT INTO ".$this->table_name." (idlinea,idalbaran,referencia,descripcion,cantidad,dtopor,dtolineal,
-               codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo) VALUES (".$this->var2str($this->idlinea).",
-               ".$this->var2str($this->idalbaran).",".$this->var2str($this->referencia).",".$this->var2str($this->descripcion).",
-               ".$this->var2str($this->cantidad).",".$this->var2str($this->dtopor).",".$this->var2str($this->dtolineal).",
-               ".$this->var2str($this->codimpuesto).",".$this->var2str($this->iva).",".$this->var2str($this->pvptotal).",
-               ".$this->var2str($this->pvpsindto).",".$this->var2str($this->pvpunitario).",".$this->var2str($this->irpf).",
-               ".$this->var2str($this->recargo).");";
+            $sql = "INSERT INTO ".$this->table_name." (idlinea,idalbaran,referencia,descripcion,
+               cantidad,dtopor,dtolineal,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo)
+               VALUES (".$this->var2str($this->idlinea).",".$this->var2str($this->idalbaran).",
+               ".$this->var2str($this->referencia).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->cantidad).",".$this->var2str($this->dtopor).",
+               ".$this->var2str($this->dtolineal).",".$this->var2str($this->codimpuesto).",
+               ".$this->var2str($this->iva).",".$this->var2str($this->pvptotal).",
+               ".$this->var2str($this->pvpsindto).",".$this->var2str($this->pvpunitario).",
+               ".$this->var2str($this->irpf).",".$this->var2str($this->recargo).");";
          }
          return $this->db->exec($sql);
       }
@@ -291,8 +295,8 @@ class linea_albaran_cliente extends fs_model
    public function all_from_albaran($id)
    {
       $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idalbaran = ".$this->var2str($id)." ORDER BY idlinea ASC;");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idalbaran = ".$this->var2str($id)." ORDER BY idlinea ASC;");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -304,8 +308,9 @@ class linea_albaran_cliente extends fs_model
    public function all_from_articulo($ref, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($ref)." ORDER BY idalbaran DESC", $limit, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref).
+              " ORDER BY idalbaran DESC", $limit, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -343,7 +348,8 @@ class linea_albaran_cliente extends fs_model
    public function count_by_articulo()
    {
       $num = 0;
-      $lineas = $this->db->select("SELECT COUNT(DISTINCT referencia) as total FROM ".$this->table_name.";");
+      $lineas = $this->db->select("SELECT COUNT(DISTINCT referencia) as total FROM ".
+              $this->table_name.";");
       if($lineas)
          $num = intval($lineas[0]['total']);
       return $num;
@@ -353,8 +359,8 @@ class linea_albaran_cliente extends fs_model
    {
       $toplist = array();
       $articulo = new articulo();
-      $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas FROM ".$this->table_name."
-         GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
+      $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas FROM ".
+              $this->table_name." GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
       if($lineas)
       {
          foreach($lineas as $l)
@@ -660,7 +666,14 @@ class albaran_cliente extends fs_model
       $this->observaciones = $this->no_html($this->observaciones);
       $this->totaleuros = $this->total * $this->tasaconv;
       
-      return TRUE;
+      if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+         return TRUE;
+      else
+      {
+         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
+            ¡Avisa al informático!");
+         return FALSE;
+      }
    }
    
    public function full_test()
@@ -678,35 +691,29 @@ class albaran_cliente extends fs_model
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
       }
-      $total = $neto + $iva;
-      $neto2 = round($neto, 2);
-      $iva2 = round($iva, 2);
-      $total2 = $neto2 + $iva2;
       
       /// comprobamos los totales
-      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp(round($this->neto, 2), $neto2) )
+      if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
       {
-         $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto2);
+         $this->new_error_msg("Valor neto del albarán incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp(round($this->totaliva, 2), $iva2) )
+      else if( !$this->floatcmp($this->totaliva, $iva, 2, TRUE) )
       {
-         $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva2);
+         $this->new_error_msg("Valor totaliva del albarán incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp(round($this->total, 2), $total2) )
+      else if( !$this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
       {
-         $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".$total2);
+         $this->new_error_msg("Valor total del albarán incorrecto. Valor correcto: ".
+                 round($this->neto + $this->totaliva, 2));
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaleuros, $total*$this->tasaconv) )
+      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, 2, TRUE) )
       {
-         if( !$this->floatcmp(round($this->totaleuros, 2), round($total2*$this->tasaconv, 2)) )
-         {
-            $this->new_error_msg("Valor totaleuros del albarán incorrecto.
-               Valor correcto: ".round($total2*$this->tasaconv, 2));
-            $status = FALSE;
-         }
+         $this->new_error_msg("Valor totaleuros del albarán incorrecto.
+            Valor correcto: ".round($this->total * $this->tasaconv, 2));
+         $status = FALSE;
       }
       
       /// comprobamos las facturas asociadas
@@ -724,14 +731,16 @@ class albaran_cliente extends fs_model
          }
          else if($facturas[0]->idfactura != $this->idfactura)
          {
-            $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.
-               La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
+            $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url().
+                    "'>factura</a> incorrecta. La correcta es <a href='".$facturas[0]->url().
+                    "'>esta</a>.");
             $status = FALSE;
          }
       }
-      else if( !is_null($this->idfactura) )
+      else if( isset($this->idfactura) )
       {
-         $this->new_error_msg("Este albarán esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.");
+         $this->new_error_msg("Este albarán esta asociado a una <a href='".
+                 $this->factura_url()."'>factura</a> incorrecta.");
          $status = FALSE;
       }
       
@@ -745,22 +754,28 @@ class albaran_cliente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET idfactura = ".$this->var2str($this->idfactura).",
-               codigo = ".$this->var2str($this->codigo).", codagente = ".$this->var2str($this->codagente).",
-               codserie = ".$this->var2str($this->codserie).", codejercicio = ".$this->var2str($this->codejercicio).",
-               codcliente = ".$this->var2str($this->codcliente).", codpago = ".$this->var2str($this->codpago).",
-               coddivisa = ".$this->var2str($this->coddivisa).", codalmacen = ".$this->var2str($this->codalmacen).",
+               codigo = ".$this->var2str($this->codigo).",codagente = ".$this->var2str($this->codagente).",
+               codserie = ".$this->var2str($this->codserie).",
+               codejercicio = ".$this->var2str($this->codejercicio).",
+               codcliente = ".$this->var2str($this->codcliente).",
+               codpago = ".$this->var2str($this->codpago).",coddivisa = ".$this->var2str($this->coddivisa).",
+               codalmacen = ".$this->var2str($this->codalmacen).",
                codpais = ".$this->var2str($this->codpais).", coddir = ".$this->var2str($this->coddir).",
                codpostal = ".$this->var2str($this->codpostal).", numero = ".$this->var2str($this->numero).",
-               numero2 = ".$this->var2str($this->numero2).", nombrecliente = ".$this->var2str($this->nombrecliente).",
+               numero2 = ".$this->var2str($this->numero2).",
+               nombrecliente = ".$this->var2str($this->nombrecliente).",
                cifnif = ".$this->var2str($this->cifnif).", direccion = ".$this->var2str($this->direccion).",
                ciudad = ".$this->var2str($this->ciudad).", provincia = ".$this->var2str($this->provincia).",
-               apartado = ".$this->var2str($this->apartado).",
-               fecha = ".$this->var2str($this->fecha).", hora = ".$this->var2str($this->hora).", neto = ".$this->var2str($this->neto).",
+               apartado = ".$this->var2str($this->apartado).", fecha = ".$this->var2str($this->fecha).",
+               hora = ".$this->var2str($this->hora).", neto = ".$this->var2str($this->neto).",
                total = ".$this->var2str($this->total).", totaliva = ".$this->var2str($this->totaliva).",
                totaleuros = ".$this->var2str($this->totaleuros).", irpf = ".$this->var2str($this->irpf).",
-               totalirpf = ".$this->var2str($this->totalirpf).", porcomision = ".$this->var2str($this->porcomision).",
-               tasaconv = ".$this->var2str($this->tasaconv).", recfinanciero = ".$this->var2str($this->recfinanciero).",
-               totalrecargo = ".$this->var2str($this->totalrecargo).", observaciones = ".$this->var2str($this->observaciones).",
+               totalirpf = ".$this->var2str($this->totalirpf).",
+               porcomision = ".$this->var2str($this->porcomision).",
+               tasaconv = ".$this->var2str($this->tasaconv).",
+               recfinanciero = ".$this->var2str($this->recfinanciero).",
+               totalrecargo = ".$this->var2str($this->totalrecargo).",
+               observaciones = ".$this->var2str($this->observaciones).",
                ptefactura = ".$this->var2str($this->ptefactura)."
                WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
          }
@@ -768,21 +783,29 @@ class albaran_cliente extends fs_model
          {
             $this->new_idalbaran();
             $this->new_codigo();
-            $sql = "INSERT INTO ".$this->table_name." (idalbaran,idfactura,codigo,codagente,codserie,codejercicio,codcliente,
-               codpago,coddivisa,codalmacen,codpais,coddir,codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,provincia,apartado,
-               fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,observaciones,
-               ptefactura) VALUES (".  $this->var2str($this->idalbaran).",".$this->var2str($this->idfactura).",".$this->var2str($this->codigo).",
-               ".$this->var2str($this->codagente).",".$this->var2str($this->codserie).",".$this->var2str($this->codejercicio).",
-               ".$this->var2str($this->codcliente).",".$this->var2str($this->codpago).",".$this->var2str($this->coddivisa).",
-               ".$this->var2str($this->codalmacen).",".$this->var2str($this->codpais).",".$this->var2str($this->coddir).",
-               ".$this->var2str($this->codpostal).",".$this->var2str($this->numero).",".$this->var2str($this->numero2).",
-               ".$this->var2str($this->nombrecliente).",".$this->var2str($this->cifnif).",".$this->var2str($this->direccion).",
-               ".$this->var2str($this->ciudad).",".$this->var2str($this->provincia).",".$this->var2str($this->apartado).",
-               ".$this->var2str($this->fecha).",".$this->var2str($this->hora).",
-               ".$this->var2str($this->neto).",".$this->var2str($this->total).",".$this->var2str($this->totaliva).",
-               ".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",".$this->var2str($this->totalirpf).",
-               ".$this->var2str($this->porcomision).",".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
-               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",".$this->var2str($this->ptefactura).");";
+            $sql = "INSERT INTO ".$this->table_name." (idalbaran,idfactura,codigo,codagente,
+               codserie,codejercicio,codcliente,codpago,coddivisa,codalmacen,codpais,coddir,
+               codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,provincia,apartado,
+               fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,
+               recfinanciero,totalrecargo,observaciones,ptefactura) VALUES
+               (".$this->var2str($this->idalbaran).",".$this->var2str($this->idfactura).",
+               ".$this->var2str($this->codigo).",".$this->var2str($this->codagente).",
+               ".$this->var2str($this->codserie).",".$this->var2str($this->codejercicio).",
+               ".$this->var2str($this->codcliente).",".$this->var2str($this->codpago).",
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codalmacen).",
+               ".$this->var2str($this->codpais).",".$this->var2str($this->coddir).",
+               ".$this->var2str($this->codpostal).",".$this->var2str($this->numero).",
+               ".$this->var2str($this->numero2).",".$this->var2str($this->nombrecliente).",
+               ".$this->var2str($this->cifnif).",".$this->var2str($this->direccion).",
+               ".$this->var2str($this->ciudad).",".$this->var2str($this->provincia).",
+               ".$this->var2str($this->apartado).",".$this->var2str($this->fecha).",
+               ".$this->var2str($this->hora).",".$this->var2str($this->neto).",
+               ".$this->var2str($this->total).",".$this->var2str($this->totaliva).",
+               ".$this->var2str($this->totaleuros).",".$this->var2str($this->irpf).",
+               ".$this->var2str($this->totalirpf).",".$this->var2str($this->porcomision).",
+               ".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
+               ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
+               ".$this->var2str($this->ptefactura).");";
          }
          return $this->db->exec($sql);
       }
@@ -799,13 +822,16 @@ class albaran_cliente extends fs_model
          if($factura)
             $factura->delete();
       }
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+      
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -817,8 +843,10 @@ class albaran_cliente extends fs_model
    public function all_from_day($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT fecha,codagente,COUNT(idalbaran) as num,AVG(totaleuros) as media,SUM(totaleuros) as total
-         FROM ".$this->table_name." GROUP BY fecha,codagente ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT fecha,codagente,COUNT(idalbaran) as num,
+         AVG(totaleuros) as media,SUM(totaleuros) as total
+         FROM ".$this->table_name." GROUP BY fecha,codagente
+         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          $agente = new agente();
@@ -839,9 +867,9 @@ class albaran_cliente extends fs_model
    public function all_from_cliente($codcliente, $offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE codcliente = ".$this->var2str($codcliente)."
-         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codcliente = ".$this->var2str($codcliente).
+              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -853,9 +881,9 @@ class albaran_cliente extends fs_model
    public function all_from_agente($codagente, $offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE codagente = ".$this->var2str($codagente)."
-         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codagente = ".$this->var2str($codagente).
+              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -894,10 +922,9 @@ class albaran_cliente extends fs_model
    {
       $albalist = array();
       $albaranes = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE codcliente = ".$this->var2str($codcliente)."
-         AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta)."
-         AND codserie = ".$this->var2str($serie)."
-         ORDER BY fecha DESC, codigo DESC");
+         " WHERE codcliente = ".$this->var2str($codcliente).
+         " AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
+         " AND codserie = ".$this->var2str($serie)." ORDER BY fecha DESC, codigo DESC");
       if($albaranes)
       {
          foreach($albaranes as $a)

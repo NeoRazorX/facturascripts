@@ -32,6 +32,7 @@ class empresa extends fs_model
    public $codejercicio;
    public $web;
    public $email;
+   public $email_firma;
    public $email_password;
    public $fax;
    public $telefono;
@@ -47,6 +48,7 @@ class empresa extends fs_model
    public $nombre;
    public $lema;
    public $horario;
+   public $pie_factura;
    
    public function __construct()
    {
@@ -73,6 +75,7 @@ class empresa extends fs_model
          $this->codejercicio = $e[0]['codejercicio'];
          $this->web = $e[0]['web'];
          $this->email = $e[0]['email'];
+         $this->email_firma = $e[0]['email_firma'];
          $this->email_password = $e[0]['email_password'];
          $this->fax = $e[0]['fax'];
          $this->telefono = $e[0]['telefono'];
@@ -88,6 +91,7 @@ class empresa extends fs_model
          $this->nombre = $e[0]['nombre'];
          $this->lema = $e[0]['lema'];
          $this->horario = $e[0]['horario'];
+         $this->pie_factura = $e[0]['pie_factura'];
       }
    }
    
@@ -114,7 +118,6 @@ class empresa extends fs_model
          return TRUE;
       else
          return FALSE;
-         
    }
    
    public function exists()
@@ -138,10 +141,12 @@ class empresa extends fs_model
       $this->codpostal = $this->no_html($this->codpostal);
       $this->direccion = $this->no_html($this->direccion);
       $this->email = $this->no_html($this->email);
+      $this->email_firma = $this->no_html($this->email_firma);
       $this->email_password = $this->no_html($this->email_password);
       $this->fax = $this->no_html($this->fax);
       $this->horario = $this->no_html($this->horario);
       $this->lema = $this->no_html($this->lema);
+      $this->pie_factura = $this->no_html($this->pie_factura);
       $this->provincia = $this->no_html($this->provincia);
       $this->telefono = $this->no_html($this->telefono);
       $this->web = $this->no_html($this->web);
@@ -168,6 +173,7 @@ class empresa extends fs_model
             apartado = ".$this->var2str($this->apartado).", codpais = ".$this->var2str($this->codpais).",
             telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
             email = ".$this->var2str($this->email).",
+            email_firma = ".$this->var2str($this->email_firma).",
             email_password = ".$this->var2str($this->email_password).",
             web = ".$this->var2str($this->web).",
             codejercicio = ".$this->var2str($this->codejercicio).",
@@ -177,7 +183,8 @@ class empresa extends fs_model
             recequivalencia = ".$this->var2str($this->recequivalencia).",
             contintegrada = ".$this->var2str($this->contintegrada).",
             stockpedidos = ".$this->var2str($this->stockpedidos).",
-            lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario)."
+            lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario).",
+            pie_factura = ".$this->var2str($this->pie_factura)."
             WHERE id = ".$this->var2str($this->id).";";
          return $this->db->exec($sql);
       }

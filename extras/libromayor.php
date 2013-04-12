@@ -19,7 +19,7 @@
 
 require_once 'model/empresa.php';
 require_once 'model/subcuenta.php';
-require_once 'extras/ezpdf/class.ezpdf.php';
+require_once 'extras/ezpdf/Cezpdf.php';
 
 class libro_mayor
 {

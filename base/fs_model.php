@@ -190,19 +190,27 @@ abstract class fs_model
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
     */
-   public function floatcmp($f1, $f2, $precision = 10, $round=FALSE)
+   public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
    {
       if($round)
-      {
-         if( bccomp( (string)round($f1, $precision), (string)round($f2, $precision), $precision ) == 0 )
-            return TRUE;
-         else if( bccomp( (string)bround($f1, $precision), (string)bround($f2, $precision), $precision ) == 0 )
-            return TRUE;
-         else
-            return FALSE;
-      }
+         return( abs($f1-$f2) < 6/pow(10,$precision+1) );
       else
          return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
+   }
+   
+   /*
+    * Compara tres números en coma flotante usando la función floatcmp().
+    * Compara el primer número con el segundo y con el tercero, si es
+    * igual a alguno de ellos devuelve TRUE.
+    */
+   public function floatcmp3($f1, $f2, $f3, $precision = 10, $round = FALSE)
+   {
+      if( $this->floatcmp($f1, $f2, $precision, $round) )
+         return TRUE;
+      else if( $this->floatcmp($f1, $f3, $precision, $round) )
+         return TRUE;
+      else
+         return FALSE;
    }
    
    /// functión auxiliar para facilitar el uso de fechas

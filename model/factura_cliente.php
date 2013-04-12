@@ -289,7 +289,6 @@ class linea_factura_cliente extends fs_model
    
    public function test()
    {
-      $status = TRUE;
       $this->descripcion = $this->no_html($this->descripcion);
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
@@ -298,16 +297,16 @@ class linea_factura_cliente extends fs_model
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$total);
-         $status = FALSE;
+         return FALSE;
       }
       else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$totalsindto);
-         $status = FALSE;
+         return FALSE;
       }
-      
-      return $status;
+      else
+         return TRUE;
    }
    
    public function save()
@@ -317,24 +316,34 @@ class linea_factura_cliente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET idfactura = ".$this->var2str($this->idfactura).",
-               idalbaran = ".$this->var2str($this->idalbaran).", referencia = ".$this->var2str($this->referencia).",
-               descripcion = ".$this->var2str($this->descripcion).", cantidad = ".$this->var2str($this->cantidad).",
-               pvpunitario = ".$this->var2str($this->pvpunitario).", pvpsindto = ".$this->var2str($this->pvpsindto).",
-               dtopor = ".$this->var2str($this->dtopor).", dtolineal = ".$this->var2str($this->dtolineal).",
-               pvptotal = ".$this->var2str($this->pvptotal).", codimpuesto = ".$this->var2str($this->codimpuesto).",
-               iva = ".$this->var2str($this->iva).", recargo = ".$this->var2str($this->recargo).",
-               irpf = ".$this->var2str($this->irpf)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
+               idalbaran = ".$this->var2str($this->idalbaran).",
+               referencia = ".$this->var2str($this->referencia).",
+               descripcion = ".$this->var2str($this->descripcion).",
+               cantidad = ".$this->var2str($this->cantidad).",
+               pvpunitario = ".$this->var2str($this->pvpunitario).",
+               pvpsindto = ".$this->var2str($this->pvpsindto).",
+               dtopor = ".$this->var2str($this->dtopor).",
+               dtolineal = ".$this->var2str($this->dtolineal).",
+               pvptotal = ".$this->var2str($this->pvptotal).",
+               codimpuesto = ".$this->var2str($this->codimpuesto).",
+               iva = ".$this->var2str($this->iva).",
+               recargo = ".$this->var2str($this->recargo).",
+               irpf = ".$this->var2str($this->irpf).
+               " WHERE idlinea = ".$this->var2str($this->idlinea).";";
          }
          else
          {
             $this->new_idlinea();
-            $sql = "INSERT INTO ".$this->table_name." (idlinea,idfactura,idalbaran,referencia,descripcion,cantidad,
-               pvpunitario,pvpsindto,dtopor,dtolineal,pvptotal,codimpuesto,iva,recargo,irpf) VALUES
-               (".$this->var2str($this->idlinea).",".$this->var2str($this->idfactura).",".$this->var2str($this->idalbaran).",
-               ".$this->var2str($this->referencia).",".$this->var2str($this->descripcion).",".$this->var2str($this->cantidad).",
-               ".$this->var2str($this->pvpunitario).",".$this->var2str($this->pvpsindto).",".$this->var2str($this->dtopor).",
-               ".$this->var2str($this->dtolineal).",".$this->var2str($this->pvptotal).",".$this->var2str($this->codimpuesto).",
-               ".$this->var2str($this->iva).",".$this->var2str($this->recargo).",".$this->var2str($this->irpf).");";
+            $sql = "INSERT INTO ".$this->table_name." (idlinea,idfactura,idalbaran,referencia,
+               descripcion,cantidad,pvpunitario,pvpsindto,dtopor,dtolineal,pvptotal,codimpuesto,
+               iva,recargo,irpf) VALUES (".$this->var2str($this->idlinea).",
+               ".$this->var2str($this->idfactura).",".$this->var2str($this->idalbaran).",
+               ".$this->var2str($this->referencia).",".$this->var2str($this->descripcion).",
+               ".$this->var2str($this->cantidad).",".$this->var2str($this->pvpunitario).",
+               ".$this->var2str($this->pvpsindto).",".$this->var2str($this->dtopor).",
+               ".$this->var2str($this->dtolineal).",".$this->var2str($this->pvptotal).",
+               ".$this->var2str($this->codimpuesto).",".$this->var2str($this->iva).",
+               ".$this->var2str($this->recargo).",".$this->var2str($this->irpf).");";
          }
          return $this->db->exec($sql);
       }
@@ -351,9 +360,8 @@ class linea_factura_cliente extends fs_model
    public function all_from_factura($id)
    {
       $linlist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idfactura = ".$this->var2str($id).
-         " ORDER BY idlinea ASC;");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idfactura = ".$this->var2str($id)." ORDER BY idlinea ASC;");
       if($lineas)
       {
          $aux = array();
@@ -388,9 +396,9 @@ class linea_factura_cliente extends fs_model
    public function all_from_articulo($ref, $offset=0)
    {
       $linealist = array();
-      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($ref).
-         " ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE referencia = ".$this->var2str($ref).
+              " ORDER BY idalbaran DESC", FS_ITEM_LIMIT, $offset);
       if( $lineas )
       {
          foreach($lineas as $l)
@@ -402,8 +410,8 @@ class linea_factura_cliente extends fs_model
    public function facturas_from_albaran($id)
    {
       $facturalist = array();
-      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name."
-         WHERE idalbaran = ".$this->var2str($id).";");
+      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name.
+              " WHERE idalbaran = ".$this->var2str($id).";");
       if($lineas)
       {
          $factura = new factura_cliente();
@@ -505,17 +513,15 @@ class linea_iva_factura_cliente extends fs_model
    
    public function test()
    {
-      $status = TRUE;
-      $total = round($this->neto + $this->totaliva, 2);
-      
-      if( !$this->floatcmp($total, round($this->totallinea, 2)) )
+      if( $this->floatcmp($this->totallinea, $this->neto + $this->totaliva, 2, TRUE) )
+         return TRUE;
+      else
       {
          $this->new_error_msg("Error en el valor de totallinea de la línea de IVA del impuesto ".
-                 $this->codimpuesto." de la factura. Valor correcto: ".$total);
-         $status = FALSE;
+                 $this->codimpuesto." de la factura. Valor correcto: ".
+                 round($this->neto + $this->totaliva, 2));
+         return FALSE;
       }
-      
-      return $status;
    }
    
    public function save()
@@ -523,30 +529,37 @@ class linea_iva_factura_cliente extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET idfactura = ".$this->var2str($this->idfactura).",
-            neto = ".$this->var2str($this->neto).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+            neto = ".$this->var2str($this->neto).",
+            codimpuesto = ".$this->var2str($this->codimpuesto).",
             iva = ".$this->var2str($this->iva).", totaliva = ".$this->var2str($this->totaliva).",
-            recargo = ".$this->var2str($this->recargo).", totalrecargo = ".$this->var2str($this->totalrecargo).",
-            totallinea = ".$this->var2str($this->totallinea)." WHERE idlinea = ".$this->var2str($this->idlinea).";";
+            recargo = ".$this->var2str($this->recargo).",
+            totalrecargo = ".$this->var2str($this->totalrecargo).",
+            totallinea = ".$this->var2str($this->totallinea).
+            " WHERE idlinea = ".$this->var2str($this->idlinea).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (idfactura,neto,codimpuesto,iva,totaliva,recargo,totalrecargo,totallinea)
-            VALUES (".$this->var2str($this->idfactura).",".$this->var2str($this->neto).",".$this->var2str($this->codimpuesto).",
-            ".$this->var2str($this->iva).",".$this->var2str($this->totaliva).",".$this->var2str($this->recargo).",
-            ".$this->var2str($this->totalrecargo).",".$this->var2str($this->totallinea).");";
+         $sql = "INSERT INTO ".$this->table_name." (idfactura,neto,codimpuesto,iva,totaliva,
+            recargo,totalrecargo,totallinea) VALUES (".$this->var2str($this->idfactura).",
+            ".$this->var2str($this->neto).",".$this->var2str($this->codimpuesto).",
+            ".$this->var2str($this->iva).",".$this->var2str($this->totaliva).",
+            ".$this->var2str($this->recargo).",".$this->var2str($this->totalrecargo).",
+            ".$this->var2str($this->totallinea).");";
       }
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");;
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idlinea = ".$this->var2str($this->idlinea).";");;
    }
    
    public function all_from_factura($id)
    {
       $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
+      $lineas = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idfactura = ".$this->var2str($id).";");
       if($lineas)
       {
          foreach($lineas as $l)
@@ -903,7 +916,8 @@ class factura_cliente extends fs_model
    
    public function get($id)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idfactura = ".$this->var2str($id).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -912,7 +926,8 @@ class factura_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codigo = ".$this->var2str($cod).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -924,7 +939,8 @@ class factura_cliente extends fs_model
       if( is_null($this->idfactura) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    public function new_idfactura()
@@ -940,9 +956,9 @@ class factura_cliente extends fs_model
       $encontrado = FALSE;
       $num = 1;
       $fecha = $this->fecha;
-      $numeros = $this->db->select("SELECT numero::integer,fecha FROM ".$this->table_name."
-         WHERE codejercicio = ".$this->var2str($this->codejercicio).
-         " AND codserie = ".$this->var2str($this->codserie)." ORDER BY numero ASC;");
+      $numeros = $this->db->select("SELECT numero::integer,fecha FROM ".$this->table_name.
+              " WHERE codejercicio = ".$this->var2str($this->codejercicio).
+              " AND codserie = ".$this->var2str($this->codserie)." ORDER BY numero ASC;");
       if( $numeros )
       {
          foreach($numeros as $n)
@@ -988,7 +1004,14 @@ class factura_cliente extends fs_model
       $this->observaciones = $this->no_html($this->observaciones);
       $this->totaleuros = $this->total * $this->tasaconv;
       
-      return TRUE;
+      if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+         return TRUE;
+      else
+      {
+         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
+            ¡Avisa al informático!");
+         return FALSE;
+      }
    }
    
    public function full_test()
@@ -1035,39 +1058,34 @@ class factura_cliente extends fs_model
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
       }
-      $total = $neto + $iva;
-      $neto2 = round($neto, 2);
-      $iva2 = round($iva, 2);
-      $total2 = $neto2 + $iva2;
       
-      if( !$this->floatcmp($this->neto, $neto) AND !$this->floatcmp($this->neto, $neto2, 2, TRUE) )
+      if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
       {
-         $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto2);
+         $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva) AND !$this->floatcmp($this->totaliva, $iva2, 2, TRUE) )
+      else if( !$this->floatcmp($this->totaliva, $iva, 2, TRUE) )
       {
-         $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva2);
+         $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $total) AND !$this->floatcmp($this->total, $total2, 2, TRUE) )
+      else if( !$this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
       {
-         $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".$total2);
+         $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".
+                 round($this->neto + $this->totaliva, 2));
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaleuros, $total*$this->tasaconv) )
+      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, 2, TRUE) )
       {
-         if( !$this->floatcmp($this->totaleuros, $total2*$this->tasaconv, 2, TRUE) )
-         {
-            $this->new_error_msg("Valor totaleuros de la factura incorrecto.
-               Valor correcto: ".round($total2*$this->tasaconv, 2));
-            $status = FALSE;
-         }
+         $this->new_error_msg("Valor totaleuros de la factura incorrecto.
+            Valor correcto: ".round($this->total * $this->tasaconv, 2));
+         $status = FALSE;
       }
       
       /// comprobamos las líneas de IVA
       $li_neto = 0;
       $li_iva = 0;
+      $li_total = 0;
       foreach($this->get_lineas_iva() as $li)
       {
          if( !$li->test() )
@@ -1075,40 +1093,70 @@ class factura_cliente extends fs_model
          
          $li_neto += $li->neto;
          $li_iva += $li->totaliva;
+         $li_total += $li->totallinea;
       }
-      $li_total = $li_neto + $li_iva;
-      $li_neto2 = round($li_neto, 2);
-      $li_iva2 = round($li_iva, 2);
-      $li_total2 = $li_neto2 + $li_iva2;
       
-      if( !$this->floatcmp($li_neto, $neto) AND !$this->floatcmp($li_neto2, $neto2) )
+      if( !$this->floatcmp($this->neto, $li_neto, 2, TRUE) )
       {
-         $this->new_error_msg("La suma de los netos de las líneas de IVA debería ser: ".$neto2);
+         $this->new_error_msg("La suma de los netos de las líneas de IVA debería ser: ".$this->neto);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($li_iva, $iva) AND !$this->floatcmp($li_iva2, $iva2) )
+      else if( !$this->floatcmp($this->totaliva, $li_iva, 2, TRUE) )
       {
-         $this->new_error_msg("La suma de los totales de iva de las líneas de IVA debería ser: ".$iva2);
+         $this->new_error_msg("La suma de los totales de iva de las líneas de IVA debería ser: ".
+                 $this->totaliva);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($li_total, $total) AND !$this->floatcmp($li_total2, $total2) )
+      else if( !$this->floatcmp($li_total, $li_neto + $li_iva, 2, TRUE) )
       {
-         $this->new_error_msg("La suma de los totales de las líneas de IVA debería ser: ".$total2);
+         $this->new_error_msg("La suma de los totales de las líneas de IVA debería ser: ".$li_total);
          $status = FALSE;
       }
       
       /// comprobamos el asiento
-      if( !is_null($this->idasiento) )
+      if( isset($this->idasiento) )
       {
-         $asiento = new asiento();
-         $asiento = $asiento->get($this->idasiento);
+         $asiento = $this->get_asiento();
          if( $asiento )
          {
             if($asiento->tipodocumento != 'Factura de cliente' OR $asiento->documento != $this->codigo)
             {
-               $this->new_error_msg("Esta factura apunta a un <a href='".$this->asiento_url()."'>asiento incorrecto</a>.");
+               $this->new_error_msg("Esta factura apunta a un <a href='".$this->asiento_url().
+                       "'>asiento incorrecto</a>.");
                $status = FALSE;
             }
+            else
+            {
+               /// comprobamos las partidas del asiento
+               $neto_encontrado = FALSE;
+               $a_debe = 0;
+               $a_haber = 0;
+               foreach($asiento->get_partidas() as $p)
+               {
+                  if( $this->floatcmp3($this->neto, $p->debe, $p->haber, 2, TRUE) )
+                     $neto_encontrado = TRUE;
+                  
+                  $a_debe += $p->debe;
+                  $a_haber += $p->haber;
+               }
+               $importe = max( array($a_debe, $a_haber) );
+               
+               if( !$neto_encontrado )
+               {
+                  $this->new_error_msg("No se ha encontrado la partida de neto en el asiento.");
+                  $status = FALSE;
+               }
+               else if( !$this->floatcmp($this->total, $importe, 2, TRUE) )
+               {
+                  $this->new_error_msg("El importe del asiento debería ser: ".$this->total);
+                  $status = FALSE;
+               }
+            }
+         }
+         else
+         {
+            $this->new_error_msg("Asiento no encontrado.");
+            $status = FALSE;
          }
       }
       
@@ -1188,7 +1236,8 @@ class factura_cliente extends fs_model
          WHERE idfactura = ".$this->var2str($this->idfactura).";");
       
       /// eliminamos
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    private function clean_cache()
