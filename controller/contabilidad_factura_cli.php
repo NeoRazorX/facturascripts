@@ -221,8 +221,6 @@ class contabilidad_factura_cli extends fs_controller
                   $direccion .= ' (' . $this->empresa->provincia . ')';
                if($this->empresa->telefono)
                   $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
-               if($this->empresa->email)
-                  $direccion .= ' - email: '.$this->empresa->email;
                
                $pdf->ezText($direccion, 9, array('justification' => 'center'));
                
@@ -519,7 +517,7 @@ class contabilidad_factura_cli extends fs_controller
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
             $mail->Subject = $this->empresa->nombre . ': Su factura '.$this->factura->codigo;
-            $mail->AltBody = 'Hola, le adjunto su factura '.$this->factura->codigo.".\n".$this->empresa->email_firma;
+            $mail->AltBody = 'Buenos días, le adjunto su factura '.$this->factura->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;
             $mail->MsgHTML( nl2br($_POST['mensaje']) );
             $mail->AddAttachment('tmp/enviar/'.$filename);
