@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_pdf.php';
 require_once 'model/asiento.php';
 require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/partida.php';
 require_once 'model/proveedor.php';
 require_once 'model/subcuenta.php';
-require_once 'extras/ezpdf/Cezpdf.php';
 
 class contabilidad_factura_prov extends fs_controller
 {
@@ -106,7 +106,7 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()
@@ -122,16 +122,10 @@ class contabilidad_factura_prov extends fs_controller
       /// desactivamos la plantilla HTML
       $this->template = FALSE;
       
-      $pdf = new Cezpdf('a4');
-      
-      /// cambiamos ! por el simbolo del euro
-      $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("extras/ezpdf/fonts/Helvetica.afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
-      
-      $pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
-      $pdf->addInfo('Subject', 'Factura de cliente ' . $this->factura->codigo);
-      $pdf->addInfo('Author', $this->empresa->nombre);
+      $pdf_doc = new fs_pdf();
+      $pdf_doc->pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
+      $pdf_doc->pdf->addInfo('Subject', 'Factura de cliente ' . $this->factura->codigo);
+      $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->factura->get_lineas();
       $lineas_iva = $this->factura->get_lineas_iva();
@@ -147,10 +141,7 @@ class contabilidad_factura_prov extends fs_controller
          {
             /// salto de página
             if($linea_actual > 0)
-               $pdf->ezNewPage();
-            
-            $pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-            $pdf->ezText("CIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               $pdf_doc->pdf->ezNewPage();
             
             $direccion = $this->empresa->direccion;
             if($this->empresa->codpostal)
@@ -163,83 +154,90 @@ class contabilidad_factura_prov extends fs_controller
                $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
             if($this->empresa->email)
                $direccion .= ' - email: '.$this->empresa->email;
+            $pdf_doc->pdf->addText(10, 830, 8, $pdf_doc->center_text($direccion, 153), 0, 1.4);
             
-            $pdf->ezText($direccion, 9, array('justification' => 'center'));
+            $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
+            $pdf_doc->pdf->ezText("CIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
             
             /// Creamos la tabla del encabezado
-            $filas = array(
-                array(
-                    'campo1' => "<b>Factura:</b>",
-                    'dato1' => $this->factura->codigo,
-                    'campo2' => "<b>Proveedor:</b>",
-                    'dato2' => $this->factura->nombre
-                ),
-                array(
-                    'campo1' => "<b>Fecha:</b>",
-                    'dato1' => $this->factura->fecha,
-                    'campo2' => "<b>CIF/NIF:</b>",
-                    'dato2' => $this->factura->cifnif
-                )
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_row(
+               array(
+                   'campo1' => "<b>Factura:</b>",
+                   'dato1' => $this->factura->codigo,
+                   'campo2' => "<b>Proveedor:</b>",
+                   'dato2' => $this->factura->nombre
+               )
             );
-            $pdf->ezTable($filas,
-                    array('campo1' => '', 'dato1' => '', 'campo2' => '', 'dato2' => ''),
-                    '',
-                    array(
-                        'cols' => array(
-                            'campo1' => array('justification' => 'right'),
-                            'dato1' => array('justification' => 'left'),
-                            'campo2' => array('justification' => 'right'),
-                            'dato2' => array('justification' => 'left')
-                        ),
-                        'showLines' => 0,
-                        'width' => 540,
-                        'shaded' => 0
-                    )
+            $pdf_doc->add_table_row(
+               array(
+                   'campo1' => "<b>Fecha:</b>",
+                   'dato1' => $this->factura->fecha,
+                   'campo2' => "<b>CIF/NIF:</b>",
+                   'dato2' => $this->factura->cifnif
+               )
             );
+            $pdf_doc->save_table(
+               array(
+                   'cols' => array(
+                       'campo1' => array('justification' => 'right'),
+                       'dato1' => array('justification' => 'left'),
+                       'campo2' => array('justification' => 'right'),
+                       'dato2' => array('justification' => 'left')
+                   ),
+                   'showLines' => 0,
+                   'width' => 540,
+                   'shaded' => 0
+               )
+            );
+            $pdf_doc->pdf->ezText("\n", 10);
             
-            $pdf->ezText("\n", 10);
             
             /// Creamos la tabla con las lineas de la factura
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header(
+               array(
+                   'albaran' => '<b>Albarán</b>',
+                   'descripcion' => '<b>Descripción</b>',
+                   'pvp' => '<b>PVP</b>',
+                   'dto' => '<b>DTO</b>',
+                   'cantidad' => '<b>Cantidad</b>',
+                   'importe' => '<b>Importe</b>'
+               )
+            );
             $saltos = 0;
-            $filas = array();
             for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < $lineasfact));)
             {
-               $filas[$linea_actual]['albaran'] = $lineas[$linea_actual]->albaran_numero();
+               $fila = array(
+                   'albaran' => $lineas[$linea_actual]->albaran_numero(),
+                   'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
+                   'pvp' => number_format($lineas[$linea_actual]->pvpunitario, 2) . " !",
+                   'dto' => number_format($lineas[$linea_actual]->dtopor, 0) . " %",
+                   'cantidad' => $lineas[$linea_actual]->cantidad,
+                   'importe' => number_format($lineas[$linea_actual]->pvptotal, 2) . " !"
+               );
                
                if($lineas[$linea_actual]->referencia != '0')
-                  $filas[$linea_actual]['descripcion'] = substr($lineas[$linea_actual]->referencia." - ".$lineas[$linea_actual]->descripcion, 0, 40);
-               else
-                  $filas[$linea_actual]['descripcion'] = substr($lineas[$linea_actual]->descripcion, 0, 45);
+                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia." - ".
+                          $lineas[$linea_actual]->descripcion, 0, 40);
                
-               $filas[$linea_actual]['pvp'] = number_format($lineas[$linea_actual]->pvpunitario, 2) . " !";
-               $filas[$linea_actual]['dto'] = number_format($lineas[$linea_actual]->dtopor, 0) . " %";
-               $filas[$linea_actual]['cantidad'] = $lineas[$linea_actual]->cantidad;
-               $filas[$linea_actual]['importe'] = number_format($lineas[$linea_actual]->pvptotal, 2) . " !";
+               $pdf_doc->add_table_row($fila);
                $saltos++;
                $linea_actual++;
             }
-            $pdf->ezTable($filas,
-                    array(
-                        'albaran' => '<b>Albarán</b>',
-                        'descripcion' => '<b>Descripción</b>',
-                        'pvp' => '<b>PVP</b>',
-                        'dto' => '<b>DTO</b>',
-                        'cantidad' => '<b>Cantidad</b>',
-                        'importe' => '<b>Importe</b>'
-                    ),
-                    '',
-                    array(
-                        'fontSize' => 8,
-                        'cols' => array(
-                            'albaran' => array('justification' => 'center'),
-                            'pvp' => array('justification' => 'right'),
-                            'dto' => array('justification' => 'right'),
-                            'cantidad' => array('justification' => 'right'),
-                            'importe' => array('justification' => 'right')
-                        ),
-                        'width' => 540,
-                        'shaded' => 0
-                    )
+            $pdf_doc->save_table(
+               array(
+                   'fontSize' => 8,
+                   'cols' => array(
+                       'albaran' => array('justification' => 'center'),
+                       'pvp' => array('justification' => 'right'),
+                       'dto' => array('justification' => 'right'),
+                       'cantidad' => array('justification' => 'right'),
+                       'importe' => array('justification' => 'right')
+                   ),
+                   'width' => 540,
+                   'shaded' => 0
+               )
             );
             
             /// Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
@@ -255,20 +253,19 @@ class contabilidad_factura_prov extends fs_controller
             {
                for(;$saltos < $lppag; $saltos++)
                   $salto .= "\n";
-               $pdf->ezText($salto, 11);
+               $pdf_doc->pdf->ezText($salto, 11);
             }
             else if($linea_actual >= $lineasfact)
-               $pdf->ezText($salto, 11);
+               $pdf_doc->pdf->ezText($salto, 11);
             else
-               $pdf->ezText("\n", 11);
+               $pdf_doc->pdf->ezText("\n", 11);
+            
             
             /// Rellenamos la última tabla
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
-            $filas = array(
-                array(
-                    'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
-                    'neto' => number_format($this->factura->neto, 2) . ' !',
-                )
+            $fila = array(
+                'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
+                'neto' => number_format($this->factura->neto, 2) . ' !'
             );
             $opciones = array(
                 'cols' => array(
@@ -280,18 +277,22 @@ class contabilidad_factura_prov extends fs_controller
             foreach($lineas_iva as $li)
             {
                $titulo['iva'.$li->iva] = '<b>IVA'.$li->iva.'%</b>';
-               $filas[0]['iva'.$li->iva] = number_format($li->totaliva, 2) . ' !';
+               $fila['iva'.$li->iva] = number_format($li->totaliva, 2) . ' !';
                $opciones['cols']['iva'.$li->iva] = array('justification' => 'right');
             }
             $titulo['liquido'] = '<b>Total</b>';
-            $filas[0]['liquido'] = number_format($this->factura->total, 2) . ' !';
+            $fila['liquido'] = number_format($this->factura->total, 2) . ' !';
             $opciones['cols']['liquido'] = array('justification' => 'right');
-            $pdf->ezTable($filas, $titulo, '', $opciones);
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header($titulo);
+            $pdf_doc->add_table_row($fila);
+            $pdf_doc->save_table($opciones);
+            
             $pagina++;
          }
       }
       
-      $pdf->ezStream();
+      $pdf_doc->show();
    }
    
    private function generar_asiento()

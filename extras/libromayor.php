@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_pdf.php';
 require_once 'model/empresa.php';
 require_once 'model/subcuenta.php';
-require_once 'extras/ezpdf/Cezpdf.php';
 
 class libro_mayor
 {
@@ -55,17 +55,11 @@ class libro_mayor
          {
             echo '.';
             
-            $pdf = new Cezpdf('a4');
-            
-            /// cambiamos ! por el simbolo del euro
-            $euro_diff = array(33 => 'Euro');
-            $pdf->selectFont("extras/ezpdf/fonts/Helvetica.afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
-            
-            $pdf->addInfo('Title', 'Libro mayor de ' . $subc->codsubcuenta);
-            $pdf->addInfo('Subject', 'Libro mayor de ' . $subc->codsubcuenta);
-            $pdf->addInfo('Author', $this->empresa->nombre);
-            $pdf->ezStartPageNumbers(590, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
+            $pdf_doc = new fs_pdf();
+            $pdf_doc->pdf->addInfo('Title', 'Libro mayor de ' . $subc->codsubcuenta);
+            $pdf_doc->pdf->addInfo('Subject', 'Libro mayor de ' . $subc->codsubcuenta);
+            $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+            $pdf_doc->pdf->ezStartPageNumbers(590, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
             
             $partidas = $subc->get_partidas_full();
             if( $partidas )
@@ -80,72 +74,75 @@ class libro_mayor
                {
                   /// salto de página
                   if($linea_actual > 0)
-                     $pdf->ezNewPage();
+                     $pdf_doc->pdf->ezNewPage();
+                  
                   
                   /// Creamos la tabla del encabezado
-                  $filas = array(
-                      array(
-                          'campos' => "<b>Empresa:</b>\n<b>Subcuenta:</b>\n<b>Fecha:</b>",
-                          'factura' => $this->empresa->nombre."\n".$subc->codsubcuenta."\n".Date('d-m-Y')
-                      )
+                  $pdf_doc->new_table();
+                  $pdf_doc->add_table_row(
+                     array(
+                         'campos' => "<b>Empresa:</b>\n<b>Subcuenta:</b>\n<b>Fecha:</b>",
+                         'factura' => $this->empresa->nombre."\n".$subc->codsubcuenta."\n".Date('d-m-Y')
+                     )
                   );
-                  $pdf->ezTable($filas,
-                          array('campos' => '', 'factura' => ''),
-                          '',
-                          array(
-                              'cols' => array(
-                                  'campos' => array('justification' => 'right', 'width' => 70),
-                                  'factura' => array('justification' => 'left')
-                              ),
-                              'showLines' => 0,
-                              'width' => 540
-                          )
+                  $pdf_doc->save_table(
+                     array(
+                         'cols' => array(
+                             'campos' => array('justification' => 'right', 'width' => 70),
+                             'factura' => array('justification' => 'left')
+                         ),
+                         'showLines' => 0,
+                         'width' => 540
+                     )
                   );
-                  $pdf->ezText("\n", 10);
+                  $pdf_doc->pdf->ezText("\n", 10);
+                  
                   
                   /// Creamos la tabla con las lineas
-                  $filas = array();
+                  $pdf_doc->new_table();
+                  $pdf_doc->add_table_header(
+                     array(
+                         'asiento' => '<b>Asiento</b>',
+                         'fecha' => '<b>Fecha</b>',
+                         'concepto' => '<b>Concepto</b>',
+                         'debe' => '<b>Debe</b>',
+                         'haber' => '<b>Haber</b>',
+                         'saldo' => '<b>Saldo</b>'
+                     )
+                  );
                   for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < $lineasfact));)
                   {
-                     $filas[$linea_actual] = array(
-                         'asiento' => $partidas[$linea_actual]->numero,
-                         'fecha' => $partidas[$linea_actual]->fecha,
-                         'concepto' => $partidas[$linea_actual]->concepto,
-                         'debe' => number_format($partidas[$linea_actual]->debe, 2, '.', ' '),
-                         'haber' => number_format($partidas[$linea_actual]->haber, 2, '.', ' '),
-                         'saldo' => number_format($partidas[$linea_actual]->saldo, 2, '.', ' ')
+                     $pdf_doc->add_table_row(
+                        array(
+                            'asiento' => $partidas[$linea_actual]->numero,
+                            'fecha' => $partidas[$linea_actual]->fecha,
+                            'concepto' => $partidas[$linea_actual]->concepto,
+                            'debe' => number_format($partidas[$linea_actual]->debe, 2, '.', ' '),
+                            'haber' => number_format($partidas[$linea_actual]->haber, 2, '.', ' '),
+                            'saldo' => number_format($partidas[$linea_actual]->saldo, 2, '.', ' ')
+                        )
                      );
+                     
                      $linea_actual++;
                   }
-                  $pdf->ezTable($filas,
-                          array(
-                              'asiento' => '<b>Asiento</b>',
-                              'fecha' => '<b>Fecha</b>',
-                              'concepto' => '<b>Concepto</b>',
-                              'debe' => '<b>Debe</b>',
-                              'haber' => '<b>Haber</b>',
-                              'saldo' => '<b>Saldo</b>'
-                          ),
-                          '',
-                          array(
-                              'fontSize' => 8,
-                              'cols' => array(
-                                  'debe' => array('justification' => 'right'),
-                                  'haber' => array('justification' => 'right'),
-                                  'saldo' => array('justification' => 'right')
-                              ),
-                              'width' => 540,
-                              'shaded' => 0
-                          )
+                  $pdf_doc->save_table(
+                     array(
+                         'fontSize' => 8,
+                         'cols' => array(
+                             'debe' => array('justification' => 'right'),
+                             'haber' => array('justification' => 'right'),
+                             'saldo' => array('justification' => 'right')
+                         ),
+                         'width' => 540,
+                         'shaded' => 0
+                     )
                   );
                   
                   $pagina++;
                }
             }
             
-            $file = fopen('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf', 'a');
-            fwrite($file, $pdf->ezOutput());
-            fclose($file);
+            $pdf_doc->save('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf');
          }
       }
    }

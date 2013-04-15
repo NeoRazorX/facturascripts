@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_pdf.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
-require_once 'extras/ezpdf/Cezpdf.php';
 
 class informe_facturas extends fs_controller
 {
@@ -51,7 +51,7 @@ class informe_facturas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    private function listar_facturas_cli()
@@ -59,38 +59,52 @@ class informe_facturas extends fs_controller
       /// desactivamos el motor de plantillas
       $this->template = FALSE;
       
-      $pdf = new Cezpdf('a4', 'landscape');
-      
-      /// cambiamos ! por el simbolo del euro
-      $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("extras/ezpdf/fonts/Courier.afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
-      
-      $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
-      $pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
-      $pdf->addInfo('Author', $this->empresa->nombre);
+      $pdf_doc = new fs_pdf('a4', 'landscape', 'Courier');
+      $pdf_doc->pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf_doc->pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
       if($facturas)
       {
-         $total_lineas = count( $facturas );
+         $total_lineas = count($facturas);
          $linea_actual = 0;
          $lppag = 33;
          $total = $base = $re = 0;
          $impuestos = array();
          $pagina = 1;
-
+         
          while($linea_actual < $total_lineas)
          {
             if($linea_actual > 0)
             {
-               $pdf->ezNewPage();
+               $pdf_doc->pdf->ezNewPage();
                $pagina++;
             }
             
-            $pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+            /// encabezado
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".
+                    $_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
             
-            $lineas = Array();
+            /// tabla principal
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header(
+               array(
+                   'serie' => '<b>S</b>',
+                   'factura' => '<b>Fact.</b>',
+                   'asiento' => '<b>Asi.</b>',
+                   'fecha' => '<b>Fecha</b>',
+                   'subcuenta' => '<b>Subcuenta</b>',
+                   'descripcion' => '<b>Descripción</b>',
+                   'cifnif' => '<b>CIF/NIF</b>',
+                   'base' => '<b>Base Im.</b>',
+                   'iva' => '<b>% IVA</b>',
+                   'totaliva' => '<b>IVA</b>',
+                   're' => '<b>% RE</b>',
+                   'totalre' => '<b>RE</b>',
+                   'total' => '<b>Total</b>'
+               )
+            );
             for($i = 0; $i < $lppag AND $linea_actual < $total_lineas; $i++)
             {
                $linea = array(
@@ -129,81 +143,66 @@ class informe_facturas extends fs_controller
                         $impuestos[$liva->iva] += $liva->totaliva;
                   }
                }
-               $lineas[$i] = $linea;
+               $pdf_doc->add_table_row($linea);
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
             }
-            $titulo = array(
-                'serie' => '<b>S</b>',
-                'factura' => '<b>Fact.</b>',
-                'asiento' => '<b>Asi.</b>',
-                'fecha' => '<b>Fecha</b>',
-                'subcuenta' => '<b>Subcuenta</b>',
-                'descripcion' => '<b>Descripción</b>',
-                'cifnif' => '<b>CIF/NIF</b>',
-                'base' => '<b>Base Im.</b>',
-                'iva' => '<b>% IVA</b>',
-                'totaliva' => '<b>IVA</b>',
-                're' => '<b>% RE</b>',
-                'totalre' => '<b>RE</b>',
-                'total' => '<b>Total</b>'
+            $pdf_doc->save_table(
+               array(
+                   'fontSize' => 8,
+                   'cols' => array(
+                       'base' => array('justification' => 'right'),
+                       'iva' => array('justification' => 'right'),
+                       'totaliva' => array('justification' => 'right'),
+                       're' => array('justification' => 'right'),
+                       'totalre' => array('justification' => 'right'),
+                       'total' => array('justification' => 'right')
+                   ),
+                   'shaded' => 0,
+                   'width' => 750
+               )
             );
+            $pdf_doc->pdf->ezText("\n", 10);
+            
+            
+            /// Rellenamos la última tabla
+            $pdf_doc->new_table();
+            $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
+            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
+                'base' => number_format($base, 2) . ' !');
             $opciones = array(
-                'fontSize' => 8,
-                'cols' => array(
-                    'base' => array('justification' => 'right'),
-                    'iva' => array('justification' => 'right'),
-                    'totaliva' => array('justification' => 'right'),
-                    're' => array('justification' => 'right'),
-                    'totalre' => array('justification' => 'right'),
-                    'total' => array('justification' => 'right')
-                ),
-                'shaded' => 0,
+                'cols' => array('base' => array('justification' => 'right')),
+                'showLines' => 0,
                 'width' => 750
             );
-            $pdf->ezTable($lineas, $titulo, '', $opciones);
-            $pdf->ezText("\n", 10);
-            
-            /*
-             * Rellenamos la última tabla
-             */
-            $titulo = array();
-            $titulo['pagina'] = '<b>Suma y sigue</b>';
-            $titulo['base'] = '<b>Base im.</b>';
-            $filas = array();
-            $filas[0] = array();
-            $filas[0]['pagina'] = $pagina . '/' . ceil($total_lineas / $lppag);
-            $filas[0]['base'] = number_format($base, 2) . ' !';
-            $opciones = array();
-            $opciones['cols'] = array();
-            $opciones['cols']['base'] = array('justification' => 'right');
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $filas[0]['iva'.$i] = number_format($value, 2) . ' !';
+               $fila['iva'.$i] = number_format($value, 2) . ' !';
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $filas[0]['re'] = number_format($re, 2) . ' !';
-            $filas[0]['total'] = number_format($total, 2) . ' !';
+            $fila['re'] = number_format($re, 2) . ' !';
+            $fila['total'] = number_format($total, 2) . ' !';
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
-            $opciones['showLines'] = 0;
-            $opciones['width'] = 750;
-            $pdf->ezTable($filas, $titulo, '', $opciones);
+            $pdf_doc->add_table_header($titulo);
+            $pdf_doc->add_table_row($fila);
+            $pdf_doc->save_table($opciones);
          }
       }
       else
       {
-         $pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
-         $pdf->ezText("Ninguna.\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".
+                 $_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       
-      $pdf->ezStream();
+      $pdf_doc->show();
    }
    
    private function listar_facturas_prov()
@@ -211,16 +210,10 @@ class informe_facturas extends fs_controller
       /// desactivamos el motor de plantillas
       $this->template = FALSE;
       
-      $pdf = new Cezpdf('a4', 'landscape');
-      
-      /// cambiamos ! por el simbolo del euro
-      $euro_diff = array(33 => 'Euro');
-      $pdf->selectFont("extras/ezpdf/fonts/Courier.afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
-      
-      $pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
-      $pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
-      $pdf->addInfo('Author', $this->empresa->nombre);
+      $pdf_doc = new fs_pdf('a4', 'landscape', 'Courier');
+      $pdf_doc->pdf->addInfo('Title', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf_doc->pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
+      $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
       if($facturas)
@@ -236,13 +229,34 @@ class informe_facturas extends fs_controller
          {
             if($linea_actual > 0)
             {
-               $pdf->ezNewPage();
+               $pdf_doc->pdf->ezNewPage();
                $pagina++;
             }
             
-            $pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+            /// encabezado
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".
+                    $_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
             
-            $lineas = Array();
+            
+            /// tabla principal
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header(
+               array(
+                   'serie' => '<b>S</b>',
+                   'factura' => '<b>Fact.</b>',
+                   'asiento' => '<b>Asi.</b>',
+                   'fecha' => '<b>Fecha</b>',
+                   'subcuenta' => '<b>Subcuenta</b>',
+                   'descripcion' => '<b>Descripción</b>',
+                   'cifnif' => '<b>CIF/NIF</b>',
+                   'base' => '<b>Base Im.</b>',
+                   'iva' => '<b>% IVA</b>',
+                   'totaliva' => '<b>IVA</b>',
+                   're' => '<b>% RE</b>',
+                   'totalre' => '<b>RE</b>',
+                   'total' => '<b>Total</b>'
+               )
+            );
             for($i = 0; $i < $lppag AND $linea_actual < $total_lineas; $i++)
             {
                $linea = array(
@@ -281,81 +295,66 @@ class informe_facturas extends fs_controller
                         $impuestos[$liva->iva] += $liva->totaliva;
                   }
                }
-               $lineas[$i] = $linea;
+               $pdf_doc->add_table_row($linea);
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
             }
-            $titulo = array(
-                'serie' => '<b>S</b>',
-                'factura' => '<b>Fact.</b>',
-                'asiento' => '<b>Asi.</b>',
-                'fecha' => '<b>Fecha</b>',
-                'subcuenta' => '<b>Subcuenta</b>',
-                'descripcion' => '<b>Descripción</b>',
-                'cifnif' => '<b>CIF/NIF</b>',
-                'base' => '<b>Base Im.</b>',
-                'iva' => '<b>% IVA</b>',
-                'totaliva' => '<b>IVA</b>',
-                're' => '<b>% RE</b>',
-                'totalre' => '<b>RE</b>',
-                'total' => '<b>Total</b>'
+            $pdf_doc->save_table(
+               array(
+                   'fontSize' => 8,
+                   'cols' => array(
+                       'base' => array('justification' => 'right'),
+                       'iva' => array('justification' => 'right'),
+                       'totaliva' => array('justification' => 'right'),
+                       're' => array('justification' => 'right'),
+                       'totalre' => array('justification' => 'right'),
+                       'total' => array('justification' => 'right')
+                   ),
+                   'shaded' => 0,
+                   'width' => 750
+               )
             );
+            $pdf_doc->pdf->ezText("\n", 10);
+            
+            
+            /// Rellenamos la última tabla
+            $pdf_doc->new_table();
+            $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
+            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
+                'base' => number_format($base, 2) . ' !');
             $opciones = array(
-                'fontSize' => 8,
-                'cols' => array(
-                    'base' => array('justification' => 'right'),
-                    'iva' => array('justification' => 'right'),
-                    'totaliva' => array('justification' => 'right'),
-                    're' => array('justification' => 'right'),
-                    'totalre' => array('justification' => 'right'),
-                    'total' => array('justification' => 'right')
-                ),
-                'shaded' => 0,
+                'cols' => array('base' => array('justification' => 'right')),
+                'showLines' => 0,
                 'width' => 750
             );
-            $pdf->ezTable($lineas, $titulo, '', $opciones);
-            $pdf->ezText("\n", 10);
-            
-            /*
-             * Rellenamos la última tabla
-             */
-            $titulo = array();
-            $titulo['pagina'] = '<b>Suma y sigue</b>';
-            $titulo['base'] = '<b>Base im.</b>';
-            $filas = array();
-            $filas[0] = array();
-            $filas[0]['pagina'] = $pagina . '/' . ceil($total_lineas / $lppag);
-            $filas[0]['base'] = number_format($base, 2) . ' !';
-            $opciones = array();
-            $opciones['cols'] = array();
-            $opciones['cols']['base'] = array('justification' => 'right');
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $filas[0]['iva'.$i] = number_format($value, 2) . ' !';
+               $fila['iva'.$i] = number_format($value, 2) . ' !';
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $filas[0]['re'] = number_format($re, 2) . ' !';
-            $filas[0]['total'] = number_format($total, 2) . ' !';
+            $fila['re'] = number_format($re, 2) . ' !';
+            $fila['total'] = number_format($total, 2) . ' !';
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
-            $opciones['showLines'] = 0;
-            $opciones['width'] = 750;
-            $pdf->ezTable($filas, $titulo, '', $opciones);
+            $pdf_doc->add_table_header($titulo);
+            $pdf_doc->add_table_row($fila);
+            $pdf_doc->save_table($opciones);
          }
       }
       else
       {
-         $pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
-         $pdf->ezText("Ninguna.\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".
+                 $_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       
-      $pdf->ezStream();
+      $pdf_doc->show();
    }
 }
 

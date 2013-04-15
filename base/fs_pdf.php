@@ -17,56 +17,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class fs_printer
+require_once 'extras/ezpdf/Cezpdf.php';
+
+class fs_pdf
 {
-   private $file;
-   private $filename;
-   private $print_command;
+   public $pdf;
+   public $table_header;
+   public $table_rows;
    
-   public function __construct($printer='')
+   public function __construct($paper = 'a4', $orientation = 'portrait', $font = 'Helvetica')
    {
-      $this->filename = '/tmp/ticket_'.time().'.txt';
-      $this->file = fopen($this->filename, 'w');
+      $this->pdf = new Cezpdf($paper, $orientation);
       
-      if($printer == '')
-         $this->print_command = ' | lp';
-      else if( substr($printer, 0, 5) == '/dev/' )
-         $this->print_command = ' > '.$printer;
+      /// cambiamos ! por el simbolo del euro
+      $euro_diff = array(33 => 'Euro');
+      $this->pdf->selectFont("extras/ezpdf/fonts/".$font.".afm",
+              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
+   }
+   
+   public function show()
+   {
+      $this->pdf->ezStream();
+   }
+   
+   public function save($filename)
+   {
+      if($filename)
+      {
+         if( file_exists($filename) )
+            unlink($filename);
+         
+         $file = fopen($filename, 'a');
+         if($file)
+         {
+            fwrite($file, $this->pdf->ezOutput());
+            fclose($file);
+            return TRUE;
+         }
+         else
+            return TRUE;
+      }
       else
-         $this->print_command = ' | -d '.$printer;
+         return FALSE;
    }
    
-   public function __destruct()
-   {
-      if( $this->file )
-         fclose($this->file);
-      
-      if( file_exists( $this->filename ) )
-         unlink($this->filename);
-   }
-   
-   public function add($linea)
-   {
-      fwrite($this->file, $linea);
-   }
-   
-   /// añade la línea de texto en letras grandes
-   public function add_big($linea)
-   {
-      fwrite($this->file, chr(27).chr(33).chr(56).$linea.chr(27).chr(33).chr(1));
-   }
-   
-   public function imprimir()
-   {
-      shell_exec("cat " . $this->filename . $this->print_command);
-   }
-   
-   public function abrir_cajon()
-   {
-      shell_exec("echo '" . chr(27) . chr(112) . chr(48) . " '" . $this->print_command);
-   }
-   
-   public function center_text($word='', $tot_width=40)
+   public function center_text($word='', $tot_width=140)
    {
       if( strlen($word) == $tot_width )
          return $word;
@@ -100,7 +95,7 @@ class fs_printer
       }
    }
    
-   private function center_text2($word='', $tot_width=40)
+   private function center_text2($word='', $tot_width=140)
    {
       $symbol = " ";
       $middle = round($tot_width / 2);
@@ -112,6 +107,33 @@ class fs_printer
       for($i = 0; $i < $number_of_spaces; $i++)
          $result .= "$symbol";
       return $result;
+   }
+   
+   public function new_table()
+   {
+      $this->table_header = array();
+      $this->table_rows = array();
+   }
+   
+   public function add_table_header($header)
+   {
+      $this->table_header = $header;
+   }
+   
+   public function add_table_row($row)
+   {
+      $this->table_rows[] = $row;
+   }
+   
+   public function save_table($options)
+   {
+      if( !$this->table_header )
+      {
+         foreach( array_keys($this->table_rows[0]) as $k )
+            $this->table_header[$k] = '';
+      }
+      
+      $this->pdf->ezTable($this->table_rows, $this->table_header, '', $options);
    }
 }
 

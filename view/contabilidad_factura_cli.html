@@ -84,7 +84,8 @@
          Serie: {$fsc->factura->codserie}
       </div>
       <div class="bloque">
-         Número: {$fsc->factura->numero}
+         Número:
+         <input type="text" name="numero" value="{$fsc->factura->numero}" size="6" autocomplete="off"/>
       </div>
       <div class="bloque">
          Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->factura->fecha}" size="12"/>

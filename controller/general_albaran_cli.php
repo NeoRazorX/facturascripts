@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_pdf.php';
 require_once 'model/albaran_cliente.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
@@ -73,7 +74,9 @@ class general_albaran_cli extends fs_controller
          $this->albaran = $this->albaran->get($_GET['id']);
       }
       
-      if( $this->albaran )
+      if( $this->albaran AND isset($_GET['imprimir']) )
+         $this->generar_pdf();
+      else if( $this->albaran )
       {
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
@@ -83,6 +86,9 @@ class general_albaran_cli extends fs_controller
          
          if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
             $this->generar_factura();
+         
+         $this->buttons[] = new fs_button('b_imprimir', 'imprimir',
+                 $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
          
          if( $this->albaran->ptefactura )
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
@@ -96,7 +102,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-16';
+      return parent::version().'-17';
    }
    
    public function url()
@@ -497,6 +503,112 @@ class general_albaran_cli extends fs_controller
                $this->new_error_msg("¡Imposible borrar la factura!");
          }
       }
+   }
+   
+   private function generar_pdf()
+   {
+      /// desactivamos el motor de plantillas
+      $this->template = FALSE;
+      
+      $pdf_doc = new fs_pdf();
+      $pdf_doc->pdf->addInfo('Title', 'Albaran ' . $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Subject', 'Albaran de cliente ' . $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+      
+      $lineas = $this->albaran->get_lineas();
+      if($lineas)
+      {
+         $linea_actual = 0;
+         $lppag = 14;
+         $pagina = 1;
+         
+         /// imprimimos las páginas necesarias
+         while( $linea_actual < count($lineas) )
+         {
+            /// salto de página
+            if($linea_actual > 0)
+               $pdf_doc->pdf->ezNewPage();
+            
+            /// encabezado
+            $texto = "<b>Albaran:</b> ".$this->albaran->codigo."\n".
+                    "<b>Fecha:</b> ".$this->albaran->fecha."\n".
+                    "<b>SR. D:</b> ".$this->albaran->nombrecliente;
+            $pdf_doc->pdf->ezText($texto, 12, array('justification' => 'right'));
+            $pdf_doc->pdf->ezText("\n", 12);
+            
+            
+            /// tabla principal
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header(
+               array(
+                   'unidades' => '<b>Ud.</b>',
+                   'descripcion' => '<b>Descripción</b>',
+                   'dto' => '<b>DTO.</b>',
+                   'pvp' => '<b>P.U.</b>',
+                   'importe' => '<b>Importe</b>'
+               )
+            );
+            $saltos = 0;
+            for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < count($lineas)));)
+            {
+               $pdf_doc->add_table_row(
+                  Array(
+                      'unidades' => $lineas[$linea_actual]->cantidad,
+                      'descripcion' => substr($lineas[$linea_actual]->referencia." - ".$lineas[$linea_actual]->descripcion, 0, 40),
+                      'dto' => $lineas[$linea_actual]->show_dto() . " %",
+                      'pvp' => $lineas[$linea_actual]->show_pvp() . " !",
+                      'importe' => $lineas[$linea_actual]->show_total() . " !"
+                  )
+               );
+               
+               $linea_actual++;
+               $saltos++;
+            }
+            $pdf_doc->save_table(
+               array(
+                   'cols' => array(
+                       'dto' => array('justification' => 'right'),
+                       'pvp' => array('justification' => 'right'),
+                       'importe' => array('justification' => 'right')
+                   ),
+                   'width' => 540,
+                   'shadeCol' => array(0.9, 0.9, 0.9)
+               )
+            );
+            
+            /// Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
+            if($this->albaran->observaciones == '')
+               $salto = '';
+            else
+            {
+               $salto = "\n<b>Observaciones</b>: " . $this->albaran->observaciones;
+               $saltos += count( explode("\n", $this->albaran->observaciones) ) - 1;
+            }
+            
+            if($saltos < $lppag)
+            {
+               for(;$saltos < $lppag; $saltos++) { $salto .= "\n"; }
+                  $pdf_doc->pdf->ezText($salto, 12);
+            }
+            else if( $linea_actual >= count($lineas) )
+               $pdf_doc->pdf->ezText($salto, 12);
+            else
+               $pdf_doc->pdf->ezText("\n", 10);
+            
+            
+            /// Escribimos los totales
+            $opciones = array('justification' => 'right');
+            $neto = '<b>Pag</b>: ' . $pagina . '/' . ceil(count($lineas) / $lppag);
+            $neto .= '        <b>Neto</b>: ' . $this->albaran->show_neto() . ' !';
+            $neto .= '    <b>IVA</b>: ' . $this->albaran->show_iva() . ' !';
+            $neto .= '    <b>Total</b>: ' . $this->albaran->show_total() . ' !';
+            $pdf_doc->pdf->ezText($neto, 12, $opciones);
+            
+            $pagina++;
+         }
+      }
+      
+      $pdf_doc->show();
    }
 }
 
