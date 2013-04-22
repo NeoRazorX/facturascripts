@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/asiento.php';
 require_once 'model/concepto_partida.php';
 require_once 'model/divisa.php';
@@ -76,7 +75,7 @@ class contabilidad_nuevo_asiento extends fs_controller
             $this->asiento->idconcepto = $_POST['idconceptopar'];
             $this->asiento->concepto = $_POST['concepto'];
             $this->asiento->fecha = $_POST['fecha'];
-            $this->asiento->importe = $_POST['importe'];
+            $this->asiento->importe = floatval($_POST['importe']);
             if( $this->asiento->save() )
             {
                $numlineas = intval($_POST['numlineas']);
@@ -95,8 +94,8 @@ class contabilidad_nuevo_asiento extends fs_controller
                            $partida->tasaconv = $div0->tasaconv;
                            $partida->idsubcuenta = $sub0->idsubcuenta;
                            $partida->codsubcuenta = $sub0->codsubcuenta;
-                           $partida->debe = $_POST['debe_'.$i];
-                           $partida->haber = $_POST['haber_'.$i];
+                           $partida->debe = floatval($_POST['debe_'.$i]);
+                           $partida->haber = floatval($_POST['haber_'.$i]);
                            $partida->idconcepto = $this->asiento->idconcepto;
                            $partida->concepto = $this->asiento->concepto;
                            $partida->documento = $this->asiento->documento;
@@ -112,8 +111,8 @@ class contabilidad_nuevo_asiento extends fs_controller
                                     $partida->idcontrapartida = $subc1->idsubcuenta;
                                     $partida->codcontrapartida = $subc1->codsubcuenta;
                                     $partida->cifnif = $_POST['cifnif_'.$i];
-                                    $partida->iva = $_POST['iva_'.$i];
-                                    $partida->baseimponible = $_POST['baseimp_'.$i];
+                                    $partida->iva = floatval($_POST['iva_'.$i]);
+                                    $partida->baseimponible = floatval($_POST['baseimp_'.$i]);
                                  }
                                  else
                                  {
@@ -124,7 +123,10 @@ class contabilidad_nuevo_asiento extends fs_controller
                            }
                            
                            if( !$partida->save() )
+                           {
+                              $this->new_error_msg('Imposible guardar la partida de la subcuenta '.$_POST['codsubcuenta_'.$i].'.');
                               $continuar = FALSE;
+                           }
                         }
                         else
                         {
@@ -155,7 +157,7 @@ class contabilidad_nuevo_asiento extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    private function new_search()
@@ -163,14 +165,8 @@ class contabilidad_nuevo_asiento extends fs_controller
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/contabilidad_nuevo_asiento';
       
-      $cache = new fs_cache();
       $eje0 = $this->ejercicio->get_by_fecha($_POST['fecha']);
-      $this->resultados = $cache->get_array('search_subcuenta_ejercicio_'.$eje0->codejercicio.'_'.$this->query);
-      if( count($this->resultados) < 1 )
-      {
-         $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
-         $cache->set('search_subcuenta_ejercicio_'.$eje0->codejercicio.'_'.$this->query, $this->resultados);
-      }
+      $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
    }
 }
 

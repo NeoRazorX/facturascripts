@@ -25,17 +25,16 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="5">Nada que mostrar.</td>
-      </tr>
+      <tr><td colspan="5">Nada que mostrar.</td></tr>
       {/loop}
+      <tr><td colspan="5">&nbsp;</td></tr>
       <tr>
-         <td>
+         <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
          <a class="next" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="3"></td>
+         <td colspan="2"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
          <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>

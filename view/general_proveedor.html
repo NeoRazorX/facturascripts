@@ -245,13 +245,14 @@
          </tr>
          {loop="$fsc->listado"}
          <tr>
-            <td>{if condition="!$value->ptefactura"}F{/if}</td>
+            <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
             <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
+         <tr><td colspan="5">&nbsp;</td></tr>
          <tr>
             <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
@@ -267,6 +268,7 @@
          </tr>
       {else}
          <tr>
+            <th></th>
             <th align="left">código + num. proveedor</th>
             <th align="left">Observaciones</th>
             <th align="right">total</th>
@@ -274,14 +276,16 @@
          </tr>
          {loop="$fsc->listado"}
          <tr>
+            <td align="center">{if condition="$value->idasiento"}A{/if}</td>
             <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
+         <tr><td colspan="5">&nbsp;</td></tr>
          <tr>
-            <td>
+            <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
                <a class="next" href="{$fsc->anterior_url()}">anterior</a>
             {/if}

@@ -50,45 +50,48 @@
    </table>
 </div>
 
-<div class="rounded">
-   <h1>Cuentas normales</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Cuenta</th>
-         <th align="left">Descripción</th>
-      </tr>
-      {loop="$fsc->balances_cuenta"}
-      <tr>
-         <td>{$value->codcuenta}</td>
-         <td>{$value->desccuenta}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="2">Sin resultados.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
-
-<div class="rounded">
-   <h1>Cuentas de balance abreviado</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Cuenta</th>
-         <th align="left">Descripción</th>
-      </tr>
-      {loop="$fsc->balances_cuenta_a"}
-      <tr>
-         <td>{$value->codcuenta}</td>
-         <td>{$value->desccuenta}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="2">Sin resultados.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
+<table width="100%">
+   <tr>
+      <td valign="top">
+         <div class="rounded">
+            <h1>Cuentas normales</h1>
+            <table class="list">
+               <tr>
+                  <th align="left">Cuenta</th>
+                  <th align="left">Descripción</th>
+               </tr>
+               {loop="$fsc->balances_cuenta"}
+               <tr>
+                  <td>{$value->codcuenta}</td>
+                  <td>{$value->desccuenta}</td>
+               </tr>
+               {else}
+               <tr><td colspan="2">Sin resultados.</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </td>
+      <td valign="top">
+         <div class="rounded">
+            <h1>Cuentas de balance abreviado</h1>
+            <table class="list">
+               <tr>
+                  <th align="left">Cuenta</th>
+                  <th align="left">Descripción</th>
+               </tr>
+               {loop="$fsc->balances_cuenta_a"}
+               <tr>
+                  <td>{$value->codcuenta}</td>
+                  <td>{$value->desccuenta}</td>
+               </tr>
+               {else}
+               <tr><td colspan="2">Sin resultados.</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </td>
+   </tr>
+</table>
 {/if}
 
 {include="footer"}

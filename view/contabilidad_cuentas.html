@@ -75,10 +75,9 @@
          <td><a href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
-      <tr>
-         <td colspan="3">Sin resultados.</td>
-      </tr>
+      <tr><td colspan="3">Sin resultados.</td></tr>
       {/loop}
+      <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
@@ -119,10 +118,9 @@
          <td><a href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
-      <tr>
-         <td colspan="3">Sin resultados.</td>
-      </tr>
+      <tr><td colspan="3">Sin resultados.</td></tr>
       {/loop}
+      <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
@@ -152,9 +150,7 @@
          <td align="right">{$value->show_saldo()} €</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="4">Sin resultados.</td>
-      </tr>
+      <tr><td colspan="4">Sin resultados.</td></tr>
       {/loop}
    </table>
 </div>

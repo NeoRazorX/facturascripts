@@ -53,7 +53,7 @@
       </tr>
       {loop="$fsc->listado"}
       <tr>
-         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
@@ -61,8 +61,9 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="7">Ningún albarán encontrado.</td></tr>
+      <tr><td colspan="6">Ningún albarán encontrado.</td></tr>
       {/loop}
+      <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
@@ -94,7 +95,7 @@
       </tr>
       {loop="$fsc->listado"}
       <tr>
-         <td>{if condition="!$value->ptefactura"}F{/if}</td>
+         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
@@ -102,8 +103,9 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="7">Ningún albarán encontrado.</td></tr>
+      <tr><td colspan="6">Ningún albarán encontrado.</td></tr>
       {/loop}
+      <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
@@ -145,6 +147,7 @@
       {else}
       <tr><td colspan="6">No hay datos.</td></tr>
       {/loop}
+      <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}

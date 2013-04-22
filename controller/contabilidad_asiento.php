@@ -18,18 +18,33 @@
  */
 
 require_once 'model/asiento.php';
+require_once 'model/divisa.php';
+require_once 'model/ejercicio.php';
+require_once 'model/impuesto.php';
+require_once 'model/partida.php';
+require_once 'model/subcuenta.php';
 
 class contabilidad_asiento extends fs_controller
 {
    public $asiento;
-
-   public function __construct() {
+   public $divisa;
+   public $ejercicio;
+   public $impuesto;
+   public $resultados;
+   public $subcuenta;
+   
+   public function __construct()
+   {
       parent::__construct('contabilidad_asiento', 'Asiento', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()
    {
       $this->ppage = $this->page->get('contabilidad_asientos');
+      $this->divisa = new divisa();
+      $this->ejercicio = new ejercicio();
+      $this->impuesto = new impuesto();
+      $this->subcuenta = new subcuenta();
       
       if( isset($_GET['id']) )
       {
@@ -37,10 +52,15 @@ class contabilidad_asiento extends fs_controller
          $this->asiento = $this->asiento->get($_GET['id']);
       }
       
-      if( $this->asiento )
+      if( isset($_POST['fecha']) AND isset($_POST['query']) )
+         $this->new_search();
+      else if( $this->asiento )
       {
          $this->page->title = 'Asiento: '.$this->asiento->numero;
          $this->buttons[] = new fs_button('b_eliminar_asiento', 'eliminar', '#', 'remove', 'img/remove.png');
+         
+         if( isset($_POST['fecha']) AND $this->asiento->editable )
+            $this->modificar();
          
          $this->asiento->full_test();
       }
@@ -48,8 +68,9 @@ class contabilidad_asiento extends fs_controller
          $this->new_error_msg("Asiento no encontrado.");
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
    
    public function url()
@@ -58,6 +79,144 @@ class contabilidad_asiento extends fs_controller
          return $this->asiento->url();
       else
          return $this->ppage->url();
+   }
+   
+   private function new_search()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/contabilidad_nuevo_asiento';
+      
+      $eje0 = $this->ejercicio->get_by_fecha($_POST['fecha']);
+      $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
+   }
+   
+   private function modificar()
+   {
+      /// obtenemos el ejercicio para poder acotar la fecha
+      $eje0 = $this->ejercicio->get($this->asiento->codejercicio);
+      if($eje0)
+         $this->asiento->fecha = $eje0->get_best_fecha($_POST['fecha']);
+      else
+         $this->new_error_msg('No se encuentra el ejercicio asociado al asiento.');
+      
+      $this->asiento->concepto = $_POST['concepto'];
+      $this->asiento->importe = floatval($_POST['importe']);
+      
+      /// obtenemos la divisa de las partidas
+      $div0 = $this->divisa->get($_POST['divisa']);
+      if($div0)
+         $this->save_coddivisa($div0->coddivisa);
+      
+      if( $this->asiento->save() AND $eje0 AND $div0 )
+      {
+         $continuar = TRUE;
+         $numlineas = intval($_POST['numlineas']);
+         
+         /// eliminamos las partidas que faltan
+         foreach($this->asiento->get_partidas() as $pa)
+         {
+            $encontrada = FALSE;
+            for($i = 0; $i <= $numlineas; $i++)
+            {
+               if( isset($_POST['idpartida_'.$i]) )
+               {
+                  if( intval($_POST['idpartida_'.$i]) == $pa->idpartida )
+                  {
+                     $encontrada = TRUE;
+                     break;
+                  }
+               }
+            }
+            if( !$encontrada )
+            {
+               if( !$pa->delete() )
+               {
+                  $this->new_error_msg('Imposible eliminar la línea debe='.$pa->debe.' haber='.$pa->haber);
+                  $continuar = FALSE;
+                  break;
+               }
+            }
+         }
+         
+         /// añadimos y modificamos
+         $npartida = new partida();
+         for($i = 0; $i <= $numlineas; $i++)
+         {
+            if( isset($_POST['idpartida_'.$i]) )
+            {
+               if($_POST['idpartida_'.$i] == '-1')
+                  $partida = new partida();
+               else
+               {
+                  $partida = $npartida->get( $_POST['idpartida_'.$i] );
+                  if( !$partida )
+                  {
+                     $this->new_error_msg('Partida de '.$_POST['codsubcuenta_'.$i].' no encontrada.');
+                     $continuar = FALSE;
+                  }
+               }
+               
+               if($continuar)
+               {
+                  /// añadimos
+                  $sub0 = $this->subcuenta->get_by_codigo($_POST['codsubcuenta_'.$i], $eje0->codejercicio);
+                  if($sub0)
+                  {
+                     $partida->idasiento = $this->asiento->idasiento;
+                     $partida->coddivisa = $div0->coddivisa;
+                     $partida->tasaconv = $div0->tasaconv;
+                     $partida->idsubcuenta = $sub0->idsubcuenta;
+                     $partida->codsubcuenta = $sub0->codsubcuenta;
+                     $partida->debe = floatval($_POST['debe_'.$i]);
+                     $partida->haber = floatval($_POST['haber_'.$i]);
+                     $partida->idconcepto = $this->asiento->idconcepto;
+                     $partida->concepto = $this->asiento->concepto;
+                     $partida->documento = $this->asiento->documento;
+                     $partida->tipodocumento = $this->asiento->tipodocumento;
+                     
+                     if( isset($_POST['codcontrapartida_'.$i]) )
+                     {
+                        if( $_POST['codcontrapartida_'.$i] != '')
+                        {
+                           $subc1 = $this->subcuenta->get_by_codigo($_POST['codcontrapartida_'.$i], $eje0->codejercicio);
+                           if($subc1)
+                           {
+                              $partida->idcontrapartida = $subc1->idsubcuenta;
+                              $partida->codcontrapartida = $subc1->codsubcuenta;
+                              $partida->cifnif = $_POST['cifnif_'.$i];
+                              $partida->iva = floatval($_POST['iva_'.$i]);
+                              $partida->baseimponible = floatval($_POST['baseimp_'.$i]);
+                           }
+                           else
+                           {
+                              $this->new_error_msg('Subcuenta '.$_POST['codcontrapartida_'.$i].' no encontrada.');
+                              $continuar = FALSE;
+                           }
+                        }
+                     }
+                     
+                     if( !$partida->save() )
+                     {
+                        $this->new_error_msg('Imposible guardar la partida de la subcuenta '.$_POST['codsubcuenta_'.$i].'.');
+                        $continuar = FALSE;
+                     }
+                  }
+                  else
+                  {
+                     $this->new_error_msg('Subcuenta '.$_POST['codsubcuenta_'.$i].' no encontrada.');
+                     $continuar = FALSE;
+                  }
+               }
+               else
+                  break;
+            }
+         }
+         
+         if($continuar)
+            $this->new_message('Asiento modificado correctamente.');
+      }
+      else
+         $this->new_error_msg('Imposible modificar el asiento.');
    }
 }
 

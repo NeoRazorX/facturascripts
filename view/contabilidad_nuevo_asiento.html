@@ -8,18 +8,17 @@
       $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
          <table width='100%'>\n\
             <tr>\n\
-               <td>\n\
-               <table class='list'>\n\
+               <td width='450'>\n\
+               <table>\n\
                   <tr>\n\
-                     <th align='left'>Subcuenta</th>\n\
-                     <th align='left'>Debe</th>\n\
-                     <th align='left'>Haber</th>\n\
+                     <th width='200' align='left'>Subcuenta+saldo</th>\n\
+                     <th width='100' align='left'>Debe</th>\n\
+                     <th width='100' align='left'>Haber</th>\n\
                   </tr>\n\
                   <tr>\n\
                      <td>\n\
                         <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
                            onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-                        <input type='text' id='dessubcuenta_"+numlineas+"' name='dessubcuenta_"+numlineas+"' size='30' disabled='disabled'/>\n\
                         <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' size='8' disabled='disabled'/>\n\
                      </td>\n\
                      <td>\n\
@@ -27,13 +26,13 @@
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                      <td>\n\
-                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' size='5' value='0'\n\
+                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0' size='5'\n\
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                   </tr>\n\
                </table>\n\
                </td>\n\
-               <td id='contrapartida_"+numlineas+"' align='center'>\n\
+               <td id='contrapartida_"+numlineas+"'>\n\
                   <a href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
                </td>\n\
                <td align='right'><input type='button' value='x' onclick=\"clean_partida('"+numlineas+"')\"/></td>\n\
@@ -43,9 +42,9 @@
    }
    function add_contrapartida(num)
    {
-      $("#contrapartida_"+num).html("<table class='list'>\n\
+      $("#contrapartida_"+num).html("<table width='100%'>\n\
          <tr>\n\
-            <th align='left'>Contrapartida</th>\n\
+            <th width='200' align='left'>Contrapartida+saldo</th>\n\
             <th align='left'>IVA</th>\n\
             <th align='left'>Base Imp.</th>\n\
             <th align='left'>CIF/NIF</th>\n\
@@ -54,11 +53,11 @@
             <td>\n\
                <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text' size='10'\n\
                   onclick=\"show_buscar_subcuentas('"+num+"','contrapartida')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-               <input type='text' id='descontrapartida_"+num+"' name='descontrapartida_"+num+"' size='30' disabled='disabled'/>\n\
                <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' size='8' disabled='disabled'/>\n\
             </td>\n\
             <td>\n\
                <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
+                  <option value='0'>---</option>\n\
                   {loop="$fsc->impuesto->all()"}<option value='{$value->iva}'>{$value->descripcion}</option>{/loop}\n\
                </select>\n\
             </td>\n\
@@ -121,13 +120,11 @@
       if(document.f_buscar_subcuentas.tipo.value == 'subcuenta')
       {
          $("#codsubcuenta_"+num).val(codsubcuenta);
-         $("#dessubcuenta_"+num).val(descripcion);
          $("#saldo_"+num).val(saldo);
       }
       else
       {
          $("#codcontrapartida_"+num).val(codsubcuenta);
-         $("#descontrapartida_"+num).val(descripcion);
          $("#saldoc_"+num).val(saldo);
       }
       fs_hide_popups();
@@ -135,6 +132,7 @@
    function clean_partida(num)
    {
       $("#partida_"+num).remove();
+      recalcular();
    }
    function recalcular()
    {
@@ -146,7 +144,7 @@
       
       for(var i=1; i<=numlineas; i++)
       {
-         if( $("#contrapartida_"+i).length > 0 )
+         if( $("#partida_"+i).length > 0 )
          {
             debe = parseFloat( $("#debe_"+i).val() );
             haber = parseFloat( $("#haber_"+i).val() );
@@ -201,6 +199,20 @@
    });
 </script>
 
+<div class="popup" id="popup_subcuentas" style="min-width: 80%">
+   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
+      <input type="hidden" name="fecha"/>
+      <input type="hidden" name="tipo"/>
+      <input type="hidden" name="numlinea"/>
+      <h1>Buscar subcuentas</h1>
+      <div style="text-align: center;">
+         <input type="text" name="query" size="40"/>
+         <input type="submit" value="buscar"/>
+      </div>
+   </form>
+   <div id="subcuentas"></div>
+</div>
+
 <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
    <input type="hidden" name="numlineas" value="0"/>
    <div class="rounded">
@@ -249,19 +261,5 @@
       <div class="new_line"><a href="#" onclick="add_partida(); return false;">Añadir línea...</a></div>
    </div>
 </form>
-
-<div class="popup" id="popup_subcuentas" style="min-width: 80%">
-   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input type="hidden" name="fecha"/>
-      <input type="hidden" name="tipo"/>
-      <input type="hidden" name="numlinea"/>
-      <h1>Buscar subcuentas</h1>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40"/>
-         <input type="submit" value="buscar"/>
-      </div>
-   </form>
-   <div id="subcuentas"></div>
-</div>
 
 {include="footer"}

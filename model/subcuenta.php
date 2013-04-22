@@ -373,18 +373,26 @@ class subcuenta extends fs_model
    
    public function search_by_ejercicio($ejercicio, $query)
    {
-      $sublist = array();
       $query = $this->escape_string( strtolower( trim($query) ) );
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
+      
+      $sublist = $this->cache->get_array('search_subcuenta_ejercicio_'.$ejercicio.'_'.$query);
+      if( count($sublist) < 1 )
+      {
+         $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
               " WHERE codejercicio = ".$this->var2str($ejercicio).
               " AND (codsubcuenta ~~ '".$query."%' OR codsubcuenta ~~ '%".$query."'
                OR lower(descripcion) ~~ '%".$query."%')
                ORDER BY codcuenta ASC;");
-      if($subcuentas)
-      {
-         foreach($subcuentas as $s)
-            $sublist[] = new subcuenta($s);
+         
+         if($subcuentas)
+         {
+            foreach($subcuentas as $s)
+               $sublist[] = new subcuenta($s);
+         }
+         
+         $this->cache->set('search_subcuenta_ejercicio_'.$ejercicio.'_'.$query, $sublist, 300);
       }
+      
       return $sublist;
    }
 }

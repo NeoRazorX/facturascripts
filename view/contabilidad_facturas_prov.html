@@ -50,10 +50,9 @@
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="6">Ninguna factura encontrada.</td>
-      </tr>
+      <tr><td colspan="6">Ninguna factura encontrada.</td></tr>
       {/loop}
+      <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
