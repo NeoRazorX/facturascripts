@@ -83,7 +83,8 @@ class agente extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return '';
+      return "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif)
+         VALUES ('1','Paco','Pepe','123456');";
    }
    
    public function get_fullname()

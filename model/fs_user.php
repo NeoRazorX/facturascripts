@@ -54,7 +54,7 @@ class fs_user extends fs_model
          if($this->codagente < 1)
             $this->codagente = NULL;
          
-         $this->admin = ($a['admin'] == 't');
+         $this->admin = $this->str2bool($a['admin']);
          $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
          
          if( is_null($a['last_login_time']) )
@@ -96,7 +96,7 @@ class fs_user extends fs_model
       
       $this->new_error_msg('Se ha creado el usuario admin con la contraseña admin.');
       return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
-         VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
+         VALUES ('admin','".sha1('admin')."',NULL,'1',TRUE);";
    }
    
    public function url()

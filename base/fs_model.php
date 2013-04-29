@@ -19,7 +19,12 @@
 
 require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
-require_once 'base/fs_db.php';
+
+if(FS_DB_TYPE == 'MYSQL')
+   require_once 'base/fs_mysql.php';
+else
+   require_once 'base/fs_postgresql.php';
+
 require_once 'base/fs_default_items.php';
 
 abstract class fs_model
@@ -34,7 +39,11 @@ abstract class fs_model
    
    public function __construct($name = '')
    {
-      $this->db = new fs_db();
+      if(FS_DB_TYPE == 'MYSQL')
+         $this->db = new fs_mysql();
+      else
+         $this->db = new fs_postgresql();
+      
       $this->table_name = $name;
       $this->cache = new fs_cache();
       $this->default_items = new fs_default_items();
@@ -58,16 +67,7 @@ abstract class fs_model
                $tables = $this->db->list_tables();
                foreach(self::$checked_tables as $ct)
                {
-                  $found = FALSE;
-                  foreach($tables as $t)
-                  {
-                     if($ct == $t['name'])
-                     {
-                        $found = TRUE;
-                        break;
-                     }
-                  }
-                  if( !$found )
+                  if( !$this->db->table_exists($ct, $tables) )
                   {
                      $this->clean_checked_tables();
                      break;
@@ -147,6 +147,10 @@ abstract class fs_model
          else
             return 'FALSE';
       }
+      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $v) ) /// es una fecha
+         return "'".Date($this->db->date_style(), strtotime($v))."'";
+      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $v) ) /// es una fecha+hora
+         return "'".Date($this->db->date_style().' H:i:s', strtotime($v))."'";
       else
          return "'" . $this->db->escape_string($v) . "'";
    }
@@ -176,6 +180,11 @@ abstract class fs_model
          return NULL;
       else
          return $this->hex2bin($v);
+   }
+   
+   public function str2bool($v)
+   {
+      return ($v == 't' OR $v == '1');
    }
    
    public function intval($s)
@@ -252,18 +261,66 @@ abstract class fs_model
     */
    public function no_html($t)
    {
-      $newt = preg_replace('/</', '&lt;', $t);
-      $newt = preg_replace('/>/', '&gt;', $newt);
-      $newt = preg_replace('/"/', '&quot;', $newt);
-      $newt = preg_replace("/'/", '&#39;', $newt);
+      $newt = str_replace('<', '&lt;', $t);
+      $newt = str_replace('>', '&gt;', $newt);
+      $newt = str_replace('"', '&quot;', $newt);
+      $newt = str_replace("'", '&#39;', $newt);
       return trim($newt);
    }
    
+   /// comprueba y actualiza la estructura de la tabla si es necesario
+   public function check_table($table_name)
+   {
+      $done = TRUE;
+      $consulta = '';
+      $columnas = FALSE;
+      $restricciones = FALSE;
+      $xml_columnas = FALSE;
+      $xml_restricciones = FALSE;
+      
+      if( $this->get_xml_table($table_name, $xml_columnas, $xml_restricciones) )
+      {
+         if( $this->db->table_exists($table_name) )
+         {
+            /// comparamos las columnas
+            $columnas = $this->db->get_columns($table_name);
+            $consulta .= $this->db->compare_columns($table_name, $xml_columnas, $columnas);
+            
+            /// comparamos las restricciones
+            $restricciones = $this->db->get_constraints($table_name);
+            $consulta .= $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones);
+         }
+         else
+         {
+            /// generamos el sql para crear la tabla
+            $consulta .= $this->db->generate_table($table_name, $xml_columnas, $xml_restricciones);
+            $consulta .= $this->install();
+         }
+         
+         if($consulta != '')
+         {
+            if( !$this->db->exec($consulta) )
+            {
+               $this->new_error_msg('Error al comprobar la tabla '.$table_name.'. '.$this->db->last_error() );
+               $done = FALSE;
+            }
+         }
+      }
+      else
+      {
+         $this->new_error_msg('Error con el xml');
+         $done = FALSE;
+      }
+      
+      return $done;
+   }
+   
    /// obtiene las columnas y restricciones del fichero xml para una tabla
-   private function get_xml_table(&$columnas, &$restricciones)
+   protected function get_xml_table($table_name, &$columnas, &$restricciones)
    {
       $retorno = TRUE;
-      $xml = simplexml_load_file('model/table/' . $this->table_name . '.xml');
+      
+      $xml = simplexml_load_file('model/table/'.$table_name.'.xml');
       if($xml)
       {
          if($xml->columna)
@@ -274,7 +331,12 @@ abstract class fs_model
                $columnas[$i]['nombre'] = $col->nombre;
                $columnas[$i]['tipo'] = $col->tipo;
                $columnas[$i]['nulo'] = $col->nulo;
-               $columnas[$i]['defecto'] = $col->defecto;
+               
+               if($col->defecto == '')
+                  $columnas[$i]['defecto'] = NULL;
+               else
+                  $columnas[$i]['defecto'] = $col->defecto;
+               
                $i++;
             }
          }
@@ -294,223 +356,8 @@ abstract class fs_model
       }
       else
          $retorno = FALSE;
-      return($retorno);
-   }
-   
-   /*
-    * A partir del campo default del xml de una tabla
-    * comprueba si se refiere a una secuencia, y si es así
-    * comprueba la existencia de la secuencia. Si no la encuentra
-    * la crea.
-    */
-   private function default2check_sequence($default, $colname)
-   {
-      /// ¿Se refiere a una secuencia?
-      if( strtolower(substr($default, 0, 9)) == "nextval('" )
-      {
-         $aux = explode("'", $default);
-         if( count($aux) == 3 )
-         {
-            /// ¿Existe esa secuencia?
-            if( !$this->db->sequence_exists($aux[1]) )
-            {
-               /// ¿En qué número debería empezar esta secuencia?
-               $num = 1;
-               $aux_num = $this->db->select("SELECT MAX(".$colname."::integer) as num FROM ".$this->table_name.";");
-               if($aux_num)
-                  $num += intval($aux_num[0]['num']);
-               $this->db->exec("CREATE SEQUENCE ".$aux[1]." START ".$num.";");
-            }
-         }
-      }
-   }
-   
-   /*
-    * Compara dos arrays de columnas, devuelve una sentencia sql
-    * en caso de encontrar diferencias.
-    */
-   private function compare_columns($xml_cols, $columnas)
-   {
-      $consulta = '';
-      foreach($xml_cols as $col)
-      {
-         $encontrada = FALSE;
-         if($columnas)
-         {
-            foreach($columnas as $col2)
-            {
-               if($col2['column_name'] == $col['nombre'])
-               {
-                  if($col['defecto'] == '')
-                     $col['defecto'] = NULL;
-                  if($col2['column_default'] != $col['defecto'])
-                  {
-                     if( is_null($col['defecto']) )
-                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP DEFAULT;';
-                     else
-                     {
-                        $this->default2check_sequence($col['defecto'], $col['nombre']);
-                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.
-                             $col['nombre'].'" SET DEFAULT '.$col['defecto'].";";
-                     }
-                  }
-                  if($col2['is_nullable'] != $col['nulo'])
-                  {
-                     if($col['nulo'] == "YES")
-                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP NOT NULL;';
-                     else
-                        $consulta .= "ALTER TABLE ".$this->table_name.' ALTER COLUMN "'.$col['nombre'].'" SET NOT NULL;';
-                  }
-                  $encontrada = TRUE;
-                  break;
-               }
-            }
-         }
-         if(!$encontrada)
-         {
-            $consulta .= "ALTER TABLE ".$this->table_name.' ADD COLUMN "'.$col['nombre'].'" '.$col['tipo'];
-            if($col['defecto'] != "")
-               $consulta .= " DEFAULT ".$col['defecto'];
-            if($col['nulo'] == "NO")
-               $consulta .= " NOT NULL";
-            $consulta .= ";\n";
-         }
-      }
-      return $consulta;
-   }
-
-   /*
-    * Compara dos arrays de restricciones, devuelve una sentencia sql
-    * en caso de encontrar diferencias.
-    */
-   private function compare_constraints($c_nuevas, $c_old)
-   {
-      $consulta = "";
-      if($c_old)
-      {
-         if($c_nuevas)
-         {
-            /// comprobamos una a una las viejas
-            foreach($c_old as $col)
-            {
-               $encontrado = FALSE;
-               foreach($c_nuevas as $col2)
-               {
-                  if($col['restriccion'] == $col2['nombre'])
-                  {
-                     $encontrado = TRUE;
-                     break;
-                  }
-               }
-               if(!$encontrado)
-               {
-                  /// eliminamos la restriccion
-                  $consulta .= "ALTER TABLE " . $this->table_name . " DROP CONSTRAINT " . $col['restriccion'] . ";\n";
-               }
-            }
-
-            /// comprobamos una a una las nuevas
-            foreach($c_nuevas as $col)
-            {
-               $encontrado = FALSE;
-               foreach($c_old as $col2)
-               {
-                  if($col['nombre'] == $col2['restriccion'])
-                  {
-                     $encontrado = TRUE;
-                     break;
-                  }
-               }
-               if(!$encontrado)
-               {
-                  /// añadimos la restriccion
-                  $consulta .= "ALTER TABLE " . $this->table_name . " ADD CONSTRAINT " . $col['nombre'] . " " . $col['consulta'] . ";\n";
-               }
-            }
-         }
-         else
-         {
-            /// eliminamos todas las restricciones
-            foreach($c_old as $col)
-               $consulta .= "ALTER TABLE " . $this->table_name . " DROP CONSTRAINT " . $col['restriccion'] . ";\n";
-         }
-      }
-      else if($c_nuevas)
-      {
-         /// añadimos todas las restricciones nuevas
-         foreach($c_nuevas as $col)
-            $consulta .= "ALTER TABLE " . $this->table_name . " ADD CONSTRAINT " . $col['nombre'] . " " . $col['consulta'] . ";\n";
-      }
-      return($consulta);
-   }
-
-   /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
-   private function generate_table($xml_columnas, $xml_restricciones)
-   {
-      $consulta = "CREATE TABLE " . $this->table_name . " (\n";
-      $i = FALSE;
-      foreach($xml_columnas as $col)
-      {
-         /// añade la coma al final
-         if($i)
-            $consulta .= ",\n";
-         else
-            $i = TRUE;
-         $consulta .= '"' . $col['nombre'] . '" ' . $col['tipo'];
-         if($col['nulo'] == 'NO')
-            $consulta .= " NOT NULL";
-         if($col['defecto'] != "" AND !in_array($col['tipo'], array('serial', 'bigserial')))
-            $consulta .= " DEFAULT " . $col['defecto'];
-      }
-      $consulta .= " );\n" . $this->compare_constraints($xml_restricciones, FALSE);
-      return($consulta);
-   }
-   
-   /// comprueba y actualiza la estructura de la tabla si es necesario
-   private function check_table()
-   {
-      $done = TRUE;
-      $consulta = "";
-      $columnas = FALSE;
-      $restricciones = FALSE;
-      $xml_columnas = FALSE;
-      $xml_restricciones = FALSE;
       
-      if( $this->get_xml_table($xml_columnas, $xml_restricciones) )
-      {
-         if( $this->db->table_exists($this->table_name) )
-         {
-            /// comparamos las columnas
-            $columnas = $this->db->get_columns($this->table_name);
-            $consulta .= $this->compare_columns($xml_columnas, $columnas);
-            
-            /// comparamos las restricciones
-            $restricciones = $this->db->get_constraints($this->table_name);
-            $consulta .= $this->compare_constraints($xml_restricciones, $restricciones);
-         }
-         else
-         {
-            /// generamos el sql para crear la tabla
-            $consulta .= $this->generate_table($xml_columnas, $xml_restricciones);
-            $consulta .= $this->install();
-         }
-         
-         if($consulta != '')
-         {
-            if( !$this->db->exec($consulta) )
-            {
-               $this->new_error_msg("Error. " . $consulta);
-               $done = FALSE;
-            }
-         }
-      }
-      else
-      {
-         $this->new_error_msg("Error con el xml");
-         $done = FALSE;
-      }
-      
-      return $done;
+      return $retorno;
    }
 }
 

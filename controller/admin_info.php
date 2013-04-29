@@ -58,12 +58,6 @@ class admin_info extends fs_controller
       return phpversion();
    }
    
-   public function pg_version()
-   {
-      $v = $this->db->version();
-      return $v['server'];
-   }
-   
    public function cache_version()
    {
       return $this->cache->version();
@@ -86,7 +80,7 @@ class admin_info extends fs_controller
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function fs_version()
@@ -97,6 +91,11 @@ class admin_info extends fs_controller
    public function fs_db_name()
    {
       return FS_DB_NAME;
+   }
+   
+   public function fs_db_version()
+   {
+      return $this->db->version();
    }
    
    public function get_locks()

@@ -105,14 +105,16 @@ class caja extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function get($id)
    {
       if( isset($id) )
       {
-         $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+         $caja = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " WHERE id = ".$this->var2str($id).";");
          if($caja)
             return new caja($caja[0]);
          else
@@ -124,7 +126,8 @@ class caja extends fs_model
    
    public function get_last_from_this_server()
    {
-      $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
+      $caja = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
       if($caja)
          return new caja($caja[0]);
       else
@@ -133,9 +136,9 @@ class caja extends fs_model
    
    public function new_id()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_id_seq');");
+      $newid = $this->db->nextval($this->table_name.'_id_seq');
       if($newid)
-         $this->id = intval($newid[0]['nextval']);
+         $this->id = intval($newid);
    }
    
    public function test()
@@ -147,7 +150,8 @@ class caja extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET fs_id = ".$this->var2str($this->fs_id).", codagente = ".$this->var2str($this->codagente).",
+         $sql = "UPDATE ".$this->table_name." SET fs_id = ".$this->var2str($this->fs_id).",
+            codagente = ".$this->var2str($this->codagente).",
             f_inicio = ".$this->var2str($this->fecha_inicial).", d_inicio = ".$this->var2str($this->dinero_inicial).",
             f_fin = ".$this->var2str($this->fecha_fin).", d_fin = ".$this->var2str($this->dinero_fin).",
             tickets = ".$this->var2str($this->tickets)." WHERE id = ".$this->var2str($this->id).";";
@@ -157,8 +161,9 @@ class caja extends fs_model
          $this->new_id();
          $sql = "INSERT INTO ".$this->table_name." (id,fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets) VALUES
             (".$this->var2str($this->id).",".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".
-            $this->var2str($this->fecha_inicial).",".$this->var2str($this->dinero_inicial).",".$this->var2str($this->fecha_fin).
-            ",".$this->var2str($this->dinero_fin).",".$this->var2str($this->tickets).");";
+            $this->var2str($this->fecha_inicial).",".$this->var2str($this->dinero_inicial).",
+            ".$this->var2str($this->fecha_fin).",".$this->var2str($this->dinero_fin).",
+            ".$this->var2str($this->tickets).");";
       }
       return $this->db->exec($sql);
    }

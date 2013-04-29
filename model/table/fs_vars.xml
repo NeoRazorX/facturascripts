@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_vars.xml
+    Description:
+        Estructura de la tabla fs_vars.
+-->
+<tabla>
+   <columna>
+      <nombre>name</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>varchar</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>fs_vars_pkey</nombre>
+      <consulta>PRIMARY KEY (name)</consulta>
+   </restriccion>
+</tabla>

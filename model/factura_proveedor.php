@@ -579,8 +579,8 @@ class factura_proveedor extends fs_model
       parent::__construct('facturasprov');
       if($f)
       {
-         $this->editable = ($f['editable'] == 't');
-         $this->automatica = ($f['automatica'] == 't');
+         $this->editable = $this->str2bool($f['editable']);
+         $this->automatica = $this->str2bool($f['automatica']);
          $this->cifnif = $f['cifnif'];
          $this->codalmacen = $f['codalmacen'];
          $this->coddivisa = $f['coddivisa'];
@@ -590,7 +590,7 @@ class factura_proveedor extends fs_model
          $this->codpago = $f['codpago'];
          $this->codproveedor = $f['codproveedor'];
          $this->codserie = $f['codserie'];
-         $this->deabono = ($f['deabono'] == 't');
+         $this->deabono = $this->str2bool($f['deabono']);
          $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
          if( is_null($f['hora']) )
             $this->hora = '00:00:00';
@@ -602,7 +602,7 @@ class factura_proveedor extends fs_model
          $this->idpagodevol = $this->intval($f['idpagodevol']);
          $this->irpf = floatval($f['irpf']);
          $this->neto = floatval($f['neto']);
-         $this->nogenerarasiento = ($f['nogenerarasiento'] == 't');
+         $this->nogenerarasiento = $this->str2bool($f['nogenerarasiento']);
          $this->nombre = $f['nombre'];
          $this->numero = $f['numero'];
          $this->numproveedor = $f['numproveedor'];
@@ -1202,12 +1202,12 @@ class factura_proveedor extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codigo ~~ '%".$query."%' OR numproveedor ~~ '%".$query."%' OR observaciones ~~ '%".
+         $consulta .= "codigo LIKE '%".$query."%' OR numproveedor LIKE '%".$query."%' OR observaciones LIKE '%".
             $query."%' OR total BETWEEN ".($query-.01)." AND ".($query+.01);
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
-         $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
+         $consulta .= "fecha = '".$query."' OR observaciones LIKE '%".$query."%'";
       else
-         $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
+         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $facturas = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);

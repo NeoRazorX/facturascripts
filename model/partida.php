@@ -64,7 +64,7 @@ class partida extends fs_model
          $this->concepto = $p['concepto'];
          $this->idcontrapartida = $p['idcontrapartida'];
          $this->codcontrapartida = $p['codcontrapartida'];
-         $this->punteada = ($p['punteada'] == 't');
+         $this->punteada = $this->str2bool($p['punteada']);
          $this->tasaconv = $p['tasaconv'];
          $this->coddivisa = $p['coddivisa'];
          $this->haberme = floatval($p['haberme']);

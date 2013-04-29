@@ -30,17 +30,15 @@ class fs_cache
       {
          if( class_exists('Memcache') )
          {
-            try
+            self::$memcache = new Memcache();
+            if( self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT) )
             {
-               self::$memcache = new Memcache();
-               self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT);
                self::$connected = TRUE;
                self::$error = FALSE;
                self::$error_msg = '';
             }
-            catch(Exception $e)
+            else
             {
-               self::$memcache = NULL;
                self::$connected = FALSE;
                self::$error = TRUE;
                self::$error_msg = 'Error al conectar al servidor Memcache: '.$e;

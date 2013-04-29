@@ -43,7 +43,7 @@ class fs_page extends fs_model
          else
             $this->version = NULL;
          
-         $this->show_on_menu = ($p['show_on_menu'] == 't');
+         $this->show_on_menu = $this->str2bool($p['show_on_menu']);
       }
       else
       {

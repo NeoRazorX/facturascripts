@@ -21,11 +21,22 @@ date_default_timezone_set('Europe/Madrid');
 
 /// cargamos las constantes de configuración
 require_once 'config.php';
+if( !defined('FS_DB_TYPE') )
+   define('FS_DB_TYPE', 'POSTGRESQL');
 
-require_once 'base/fs_db.php';
 require_once 'model/empresa.php';
 
-$db = new fs_db();
+if(FS_DB_TYPE == 'MYSQL')
+{
+   require_once 'base/fs_mysql.php';
+   $db = new fs_mysql();
+}
+else
+{
+   require_once 'base/fs_postgresql.php';
+   $db = new fs_postgresql();
+}
+
 if( $db->connect() )
 {
    if( !isset($_SERVER["argv"]) )

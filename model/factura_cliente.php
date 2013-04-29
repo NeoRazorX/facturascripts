@@ -657,10 +657,10 @@ class factura_cliente extends fs_model
          $this->recfinanciero = floatval($f['recfinanciero']);
          $this->totalrecargo = floatval($f['totalrecargo']);
          $this->observaciones = $this->no_html($f['observaciones']);
-         $this->deabono = ($f['deabono'] == 't');
-         $this->automatica = ($f['automatica'] == 't');
-         $this->editable = ($f['editable'] == 't');
-         $this->nogenerarasiento = ($f['nogenerarasiento'] == 't');
+         $this->deabono = $this->str2bool($f['deabono']);
+         $this->automatica = $this->str2bool($f['automatica']);
+         $this->editable = $this->str2bool($f['editable']);
+         $this->nogenerarasiento = $this->str2bool($f['nogenerarasiento']);
       }
       else
       {
@@ -1307,12 +1307,12 @@ class factura_cliente extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codigo ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'
+         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN ".($query-.01)." AND ".($query+.01);
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
-         $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
+         $consulta .= "fecha = '".$query."' OR observaciones LIKE '%".$query."%'";
       else
-         $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
+         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $facturas = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);

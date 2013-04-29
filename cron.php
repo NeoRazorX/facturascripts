@@ -21,21 +21,28 @@ date_default_timezone_set('Europe/Madrid');
 
 /// cargamos las constantes de configuración
 require_once 'config.php';
+if( !defined('FS_DB_TYPE') )
+   define('FS_DB_TYPE', 'POSTGRESQL');
 if( !defined('FS_DEMO') )
    define('FS_DEMO', FALSE);
-if( !defined('FS_PRINTER') )
-   define('FS_PRINTER', '');
-if( !defined('FS_LCD') )
-   define('FS_LCD', '');
 
-require_once 'base/fs_db.php';
 require_once 'base/fs_default_items.php';
 require_once 'model/articulo.php';
 require_once 'model/asiento.php';
 require_once 'model/empresa.php';
 require_once 'extras/libromayor.php';
 
-$db = new fs_db();
+if(FS_DB_TYPE == 'MYSQL')
+{
+   require_once 'base/fs_mysql.php';
+   $db = new fs_mysql();
+}
+else
+{
+   require_once 'base/fs_postgresql.php';
+   $db = new fs_postgresql();
+}
+
 if( $db->connect() )
 {
    /// establecemos los elementos por defecto

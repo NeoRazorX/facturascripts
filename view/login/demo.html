@@ -77,7 +77,7 @@
                <h3>Requisitos:</h3>
                <ul>
                   <li>PHP 5.</li>
-                  <li>PostgreSQL.</li>
+                  <li>PostgreSQL ó MySQL.</li>
                   <li>Memcache.</li>
                </ul>
                Tutorial de instalación:
@@ -183,6 +183,45 @@
    </div>
    
    <div class="changes">
+      <table class="adds">
+         <tr>
+            <td>
+               <img src="../img/postgresql.png" alt="postgresql"/>
+               <h2>Potente</h2>
+               FacturaScripts está diseñado para sacarle el máximo partido a
+               PostgreSQL. La base de datos se genera y se adapta según se usa,
+               sin que tú tengas que hacer nada. Además, las consultas se aceleran
+               gracias al uso de Memcache.
+            </td>
+            <td>
+               <img src="../img/mysql.gif" alt="mysql"/>
+               <h2>Compatible</h2>
+               MySQL también está disponible para mayor compatibilidad y velocidad.
+               Podrás instalar FacturaScripts en cualquier hosting.
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <img src="../img/php.png" alt="php"/>
+               <h2>Sencillo</h2>
+               FacturaScripts está desarrollado en PHP, uno de los lenguajes de
+               programación más sencillos y extendidos.
+            </td>
+            <td>
+               <img src="../img/code.png" alt="code"/>
+               <h2>Extensible</h2>
+               FacturaScripts usa el patrón de diseño
+               <a target="_blank" href="http://es.wikipedia.org/wiki/Modelo_Vista_Controlador">Modelo Vista Controlador</a>.
+               Gracias a esta separación de capas, el diseño es muy sencillo y permite
+               añadir nuevas características de forma rápida y sin complicaciones.
+            </td>
+         </tr>
+      </table>
+      
+      <div class="videos">
+         <iframe width="560" height="315" src="http://www.youtube.com/embed/hX-HKD_SrcA?list=PLnAAyBqHmX-ZGgXTHuawqRMd-NG3PEt-4" frameborder="0" allowfullscreen></iframe>
+      </div>
+      
       <a name="changes"></a>
       {include="login/changes"}
    </div>
@@ -227,7 +266,7 @@
       <table width="100%">
          <tr>
             <td>Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()}</td>
-            <td align="right">Tiempo de ejecución: {$fsc->duration()}</td>
+            <td align="right">Procesado en: {$fsc->duration()}</td>
          </tr>
       </table>
    </div>

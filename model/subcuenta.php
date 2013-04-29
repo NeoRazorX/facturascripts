@@ -360,8 +360,8 @@ class subcuenta extends fs_model
       $sublist = array();
       $query = strtolower( $this->no_html($query) );
       $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codsubcuenta ~~ '".$query."%' OR codsubcuenta ~~ '%".$query."'
-               OR lower(descripcion) ~~ '%".$query."%'
+              " WHERE codsubcuenta LIKE '".$query."%' OR codsubcuenta LIKE '%".$query."'
+               OR lower(descripcion) LIKE '%".$query."%'
                ORDER BY codejercicio DESC, codcuenta ASC;");
       if($subcuentas)
       {
@@ -380,8 +380,8 @@ class subcuenta extends fs_model
       {
          $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.
               " WHERE codejercicio = ".$this->var2str($ejercicio).
-              " AND (codsubcuenta ~~ '".$query."%' OR codsubcuenta ~~ '%".$query."'
-               OR lower(descripcion) ~~ '%".$query."%')
+              " AND (codsubcuenta LIKE '".$query."%' OR codsubcuenta LIKE '%".$query."'
+               OR lower(descripcion) LIKE '%".$query."%')
                ORDER BY codcuenta ASC;");
          
          if($subcuentas)

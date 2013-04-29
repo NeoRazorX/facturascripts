@@ -71,11 +71,11 @@ class articulo extends fs_model
          $this->stockfis = floatval($a['stockfis']);
          $this->stockmin = floatval($a['stockmin']);
          $this->stockmax = floatval($a['stockmax']);
-         $this->controlstock = ($a['controlstock'] == 't');
-         $this->destacado = ($a['destacado'] == 't');
-         $this->bloqueado = ($a['bloqueado'] == 't');
-         $this->secompra = ($a['secompra'] == 't');
-         $this->sevende = ($a['sevende'] == 't');
+         $this->controlstock = $this->str2bool($a['controlstock']);
+         $this->destacado = $this->str2bool($a['destacado']);
+         $this->bloqueado = $this->str2bool($a['bloqueado']);
+         $this->secompra = $this->str2bool($a['secompra']);
+         $this->sevende = $this->str2bool($a['sevende']);
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $this->no_html($a['observaciones']);
@@ -651,14 +651,14 @@ class articulo extends fs_model
          
          if( is_numeric($query) )
          {
-            $sql .= "(referencia ~~ '%".$query."%' OR equivalencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'
+            $sql .= "(referencia LIKE '%".$query."%' OR equivalencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%'
                OR codbarras = '".$query."')";
          }
          else
          {
             $buscar = str_replace(' ', '%', $query);
-            $sql .= "(lower(referencia) ~~ '%".$buscar."%' OR lower(equivalencia) ~~ '%".$buscar."%'
-               OR lower(descripcion) ~~ '%".$buscar."%')";
+            $sql .= "(lower(referencia) LIKE '%".$buscar."%' OR lower(equivalencia) LIKE '%".$buscar."%'
+               OR lower(descripcion) LIKE '%".$buscar."%')";
          }
          
          $sql .= " ORDER BY referencia ASC";

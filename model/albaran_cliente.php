@@ -327,12 +327,12 @@ class linea_albaran_cliente extends fs_model
       $sql = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
       {
-         $sql .= "referencia ~~ '%".$query."%' OR descripcion ~~ '%".$query."%'";
+         $sql .= "referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%'";
       }
       else
       {
          $buscar = str_replace(' ', '%', $query);
-         $sql .= "lower(referencia) ~~ '%".$buscar."%' OR lower(descripcion) ~~ '%".$buscar."%'";
+         $sql .= "lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%'";
       }
       $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
       
@@ -415,7 +415,7 @@ class albaran_cliente extends fs_model
       if($a)
       {
          $this->idalbaran = $this->intval($a['idalbaran']);
-         if($a['ptefactura'] == 't')
+         if( $this->str2bool($a['ptefactura']) )
          {
             $this->ptefactura = TRUE;
             $this->idfactura = NULL;
@@ -900,13 +900,13 @@ class albaran_cliente extends fs_model
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
       {
-         $consulta .= "codigo ~~ '%".$query."%' OR numero2 ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'
+         $consulta .= "codigo LIKE '%".$query."%' OR numero2 LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
-         $consulta .= "fecha = '".$query."' OR observaciones ~~ '%".$query."%'";
+         $consulta .= "fecha = '".$query."' OR observaciones LIKE '%".$query."%'";
       else
-         $consulta .= "lower(codigo) ~~ '%".$query."%' OR lower(observaciones) ~~ '%".str_replace(' ', '%', $query)."%'";
+         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $albaranes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);

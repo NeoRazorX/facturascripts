@@ -208,7 +208,7 @@ function fs_select_folder(folder)
             top: $("#b_folder_"+folder).position().top+25
          });
       }
-      $('#folder_'+folder).show('fast');
+      $('#folder_'+folder).show();
    }
 }
 
@@ -282,7 +282,7 @@ $(document).ready(function() {
                top: $("#b_user_list").position().top+25
             });
          }
-         $('#user_list').show('fast');
+         $('#user_list').show();
       }
    });
    $("#header_logo, #header_buttons, #header_search, div.main_div, div.footer").click(function() {

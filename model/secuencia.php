@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -122,9 +122,9 @@ class secuencia extends fs_model
    
    public function new_idsec()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idsec_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idsec_seq');
       if($newid)
-         $this->idsec = intval($newid[0]['nextval']);
+         $this->idsec = intval($newid);
    }
    
    public function test()
@@ -233,9 +233,9 @@ class secuencia_contabilidad extends fs_model
    
    public function new_id()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_idsecuencia_seq');");
+      $newid = $this->db->nextval($this->table_name.'_idsecuencia_seq');
       if($newid)
-         $this->idsecuencia = intval($newid[0]['nextval']);
+         $this->idsecuencia = intval($newid);
    }
    
    public function test()
@@ -382,9 +382,9 @@ class secuencia_ejercicio extends fs_model
    
    public function new_id()
    {
-      $newid = $this->db->select("SELECT nextval('".$this->table_name."_id_seq');");
+      $newid = $this->db->nextval($this->table_name.'_id_seq');
       if($newid)
-         $this->id = intval($newid[0]['nextval']);
+         $this->id = intval($newid);
    }
    
    public function test()

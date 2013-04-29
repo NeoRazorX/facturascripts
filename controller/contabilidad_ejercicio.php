@@ -159,7 +159,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()
@@ -341,7 +341,9 @@ class contabilidad_ejercicio extends fs_controller
                      $balance->nivel4 = $b->nivel4;
                      $balance->descripcion4 = base64_decode($b->descripcion4);
                      $balance->descripcion4ba = base64_decode($b->descripcion4ba);
-                     $balance->save();
+                     
+                     if( !$balance->save() )
+                        $this->importar_url = FALSE;
                   }
                }
                
@@ -366,7 +368,9 @@ class contabilidad_ejercicio extends fs_controller
                         $new_bc->codbalance = $bc->codbalance;
                         $new_bc->codcuenta = $bc->codcuenta;
                         $new_bc->desccuenta = base64_decode($bc->descripcion);
-                        $new_bc->save();
+                        
+                        if( !$new_bc->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }
@@ -392,7 +396,9 @@ class contabilidad_ejercicio extends fs_controller
                         $new_bc->codbalance = $bc->codbalance;
                         $new_bc->codcuenta = $bc->codcuenta;
                         $new_bc->desccuenta = base64_decode($bc->descripcion);
-                        $new_bc->save();
+                        
+                        if( !$new_bc->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }
@@ -409,7 +415,9 @@ class contabilidad_ejercicio extends fs_controller
                      {
                         $cuenta_especial->idcuentaesp = $ce->idcuentaesp;
                         $cuenta_especial->descripcion = base64_decode($ce->descripcion);
-                        $cuenta_especial->save();
+                        
+                        if( !$cuenta_especial->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }
@@ -424,7 +432,9 @@ class contabilidad_ejercicio extends fs_controller
                         $grupo_epigrafes->codejercicio = $this->ejercicio->codejercicio;
                         $grupo_epigrafes->codgrupo = $ge->codgrupo;
                         $grupo_epigrafes->descripcion = base64_decode($ge->descripcion);
-                        $grupo_epigrafes->save();
+                        
+                        if( !$grupo_epigrafes->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }
@@ -445,7 +455,9 @@ class contabilidad_ejercicio extends fs_controller
                            $epigrafe->codejercicio = $this->ejercicio->codejercicio;
                            $epigrafe->codepigrafe = $ep->codepigrafe;
                            $epigrafe->descripcion = base64_decode($ep->descripcion);
-                           $epigrafe->save();
+                           
+                           if( !$epigrafe->save() )
+                              $this->importar_url = FALSE;
                         }
                      }
                   }
@@ -469,7 +481,9 @@ class contabilidad_ejercicio extends fs_controller
                         $cuenta->codejercicio = $this->ejercicio->codejercicio;
                         $cuenta->descripcion = base64_decode($c->descripcion);
                         $cuenta->idcuentaesp = $c->idcuentaesp;
-                        $cuenta->save();
+                        
+                        if( !$cuenta->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }
@@ -492,7 +506,9 @@ class contabilidad_ejercicio extends fs_controller
                         $subcuenta->codejercicio = $this->ejercicio->codejercicio;
                         $subcuenta->codsubcuenta = $sc->codsubcuenta;
                         $subcuenta->descripcion = base64_decode($sc->descripcion);
-                        $subcuenta->save();
+                        
+                        if( !$subcuenta->save() )
+                           $this->importar_url = FALSE;
                      }
                   }
                }

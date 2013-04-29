@@ -34,7 +34,7 @@ class serie extends fs_model
       {
          $this->codserie = $s['codserie'];
          $this->descripcion = $s['descripcion'];
-         $this->siniva = ($s['siniva'] == 't');
+         $this->siniva = $this->str2bool($s['siniva']);
          $this->irpf = floatval($s['irpf']);
          $this->idcuenta = $this->intval($s['idcuenta']);
       }

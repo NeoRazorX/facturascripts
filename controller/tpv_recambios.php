@@ -112,7 +112,12 @@ class tpv_recambios extends fs_controller
                      $this->borrar_ticket();
                }
                else
-                  $this->new_error_msg("Esta caja está bloqueada por el agente ".$this->caja->agente->get_fullname());
+               {
+                  $this->new_error_msg("Esta caja está bloqueada por el agente ".
+                     $this->caja->agente->get_fullname().". Puedes cerrarla
+                     desde Contabilidad &gt; Caja."
+                  );
+               }
             }
             else if( isset($_POST['d_inicial']) )
             {
@@ -146,7 +151,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-16';
+      return parent::version().'-17';
    }
    
    private function new_search()

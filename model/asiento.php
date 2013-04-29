@@ -50,7 +50,7 @@ class asiento extends fs_model
          $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
          $this->codejercicio = $a['codejercicio'];
          $this->codplanasiento = $a['codplanasiento'];
-         $this->editable = ($a['editable'] == 't');
+         $this->editable = $this->str2bool($a['editable']);
          $this->documento = $a['documento'];
          $this->tipodocumento = $a['tipodocumento'];
          $this->importe = floatval($a['importe']);
@@ -388,12 +388,12 @@ class asiento extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "numero::TEXT ~~ '%".$query."%' OR concepto ~~ '%".$query."%'
+         $consulta .= "numero::TEXT LIKE '%".$query."%' OR concepto LIKE '%".$query."%'
             OR importe BETWEEN ".($query-.01)." AND ".($query+.01);
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
-         $consulta .= "fecha = '".$query."' OR concepto ~~ '%".$query."%'";
+         $consulta .= "fecha = '".$query."' OR concepto LIKE '%".$query."%'";
       else
-         $consulta .= "lower(concepto) ~~ '%".$buscar = str_replace(' ', '%', $query)."%'";
+         $consulta .= "lower(concepto) LIKE '%".$buscar = str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC";
       
       $asientos = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);

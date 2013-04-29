@@ -309,7 +309,41 @@ div.changes h1 {
    margin: 0px;
    padding: 5px;
    border-bottom: 1px dashed #999999;
+   font-size: 22px;
    text-align: center;
+}
+
+div.changes table.adds {
+   width: 90%;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+div.changes table.adds td {
+   padding: 10px;
+}
+
+div.changes table.adds h2 {
+   margin: 0px;
+   margin-bottom: 5px;
+}
+
+div.changes table.adds img {
+   float: left;
+   clear: both;
+   margin: 10px;
+   border-radius: 5px;
+}
+
+div.changes div.videos {
+   margin-top: 20px;
+   margin-bottom: 35px;
+   text-align: center;
+}
+
+div.changes div.videos iframe {
+   padding: 5px;
+   border: 1px dashed #999999;
 }
 
 div#sql_history {
@@ -325,7 +359,7 @@ div#sql_history h1 {
 
 div.footer {
    padding: 5px;
-   font-size: 15px;
+   font-size: 13px;
 }
 
 div.footer a {
@@ -338,6 +372,7 @@ div.footer table.links {
    margin-left: auto;
    margin-right: auto;
    margin-bottom: 20px;
+   font-size: 15px;
 }
 
 div.footer ul li {

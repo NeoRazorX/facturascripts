@@ -17,12 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class fs_db
+abstract class fs_db
 {
-   private static $link;
-   private static $t_selects;
-   private static $t_transactions;
-   private static $history;
+   protected static $link;
+   protected static $t_selects;
+   protected static $t_transactions;
+   protected static $history;
    
    public function __construct()
    {
@@ -52,26 +52,7 @@ class fs_db
    }
 
    /// conecta con la base de datos
-   public function connect()
-   {
-      if(self::$link)
-         $connected = TRUE;
-      else
-      {
-         self::$link = pg_connect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
-                 ' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
-         if(self::$link)
-         {
-            $connected = TRUE;
-            
-            /// establecemos el formato de fecha para la conexión
-            pg_query(self::$link, "SET DATESTYLE TO ISO, DMY;");
-         }
-         else
-            $connected = FALSE;
-      }
-      return $connected;
-   }
+   abstract public function connect();
    
    public function connected()
    {
@@ -82,37 +63,20 @@ class fs_db
    }
    
    /// desconecta de la base de datos
-   public function close()
-   {
-      if(self::$link)
-      {
-         $retorno = pg_close(self::$link);
-         self::$link = NULL;
-         return $retorno;
-      }
-      return TRUE;
-   }
+   abstract public function close();
    
    /// devuelve un array con los nombres de las tablas de la base de datos
-   public function list_tables()
-   {
-      $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b
-         WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
-          AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
-          AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname))
-         ORDER BY a.relname ASC;";
-      $resultado = $this->select($sql);
-      if($resultado)
-         return $resultado;
-      else
-         return array();
-   }
+   abstract public function list_tables();
    
    /// devuelve TRUE si la tabla existe
-   public function table_exists($name)
+   public function table_exists($name, $list=FALSE)
    {
       $resultado = FALSE;
-      foreach($this->list_tables() as $tabla)
+      
+      if($list === FALSE)
+         $list = $this->list_tables();
+      
+      foreach($list as $tabla)
       {
          if($tabla['name'] == $name)
          {
@@ -120,138 +84,62 @@ class fs_db
             break;
          }
       }
+      
       return $resultado;
    }
    
    /// devuelve un array con las columnas de una tabla dada
-   public function get_columns($table)
-   {
-      $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable
-         FROM information_schema.columns
-         WHERE table_catalog = '".FS_DB_NAME."' AND table_name = '".$table."'
-         ORDER BY column_name ASC;";
-      return $this->select($sql);
-   }
+   abstract public function get_columns($table);
    
    /// devuelve una array con las restricciones de una tabla dada
-   public function get_constraints($table)
-   {
-      $sql = "SELECT c.conname as \"restriccion\", c.contype as \"tipo\"
-         FROM pg_class r, pg_constraint c
-         WHERE r.oid = c.conrelid AND relname = '".$table."'
-         ORDER BY restriccion ASC;";
-      return $this->select($sql);
-   }
+   abstract public function get_constraints($table);
    
    /// devuelve una array con los indices de una tabla dada
-   public function get_indexes($table)
-   {
-      return $this->select("SELECT * FROM pg_indexes WHERE tablename = '".$table."';");
-   }
+   abstract public function get_indexes($table);
    
    /// devuelve un array con los datos de bloqueos
-   public function get_locks()
-   {
-      return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks
-         WHERE relfilenode=relation AND NOT granted;");
-   }
+   abstract public function get_locks();
    
-   public function version()
-   {
-      if(self::$link)
-         return pg_version(self::$link);
-      else
-         return FALSE;
-   }
+   abstract public function version();
    
    /// ejecuta un select
-   public function select($sql)
-   {
-      $resultado = FALSE;
-      if(self::$link)
-      {
-         self::$history[] = $sql;
-         $filas = pg_query(self::$link, $sql);
-         if($filas)
-         {
-            $resultado = pg_fetch_all($filas);
-            pg_free_result($filas);
-         }
-         self::$t_selects++;
-      }
-      return $resultado;
-   }
+   abstract public function select($sql);
    
    /// ejecuta un select parcial
-   public function select_limit($sql, $limit, $offset)
-   {
-      $resultado = FALSE;
-      if(self::$link)
-      {
-         $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
-         self::$history[] = $sql;
-         $filas = pg_query(self::$link, $sql);
-         if($filas)
-         {
-            $resultado = pg_fetch_all($filas);
-            pg_free_result($filas);
-         }
-         self::$t_selects++;
-      }
-      return $resultado;
-   }
+   abstract public function select_limit($sql, $limit, $offset);
    
    /// ejecuta una consulta sobre la base de datos
-   public function exec($sql)
-   {
-      $resultado = FALSE;
-      if(self::$link)
-      {
-         self::$history[] = $sql;
-         pg_query(self::$link, 'BEGIN TRANSACTION;');
-         $aux = pg_query(self::$link, $sql);
-         if($aux)
-         {
-            pg_free_result($aux);
-            pg_query(self::$link, 'COMMIT;');
-            $resultado = TRUE;
-         }
-         else
-            pg_query(self::$link, 'ROLLBACK;');
-         self::$t_transactions++;
-      }
-      return $resultado;
-   }
+   abstract public function exec($sql);
    
-   public function sequence_exists($seq)
-   {
-      return $this->select("SELECT * FROM pg_class where relname = '".$seq."';");
-   }
+   abstract public function last_error();
+   
+   /// devuelve TRUE si existe la secuencia
+   abstract public function sequence_exists($seq);
    
    /// devuleve el siguiente valor de una secuencia
-   public function nextval($seq)
-   {
-      $aux = $this->select("SELECT nextval('".$seq."') as num;");
-      if($aux)
-         return $aux[0]['num'];
-      else
-         return FALSE;
-   }
+   abstract public function nextval($seq);
    
    /// devuleve el último ID asignado
-   public function lastval()
-   {
-      $aux = $this->select('SELECT lastval() as num;');
-      if($aux)
-         return $aux[0]['num'];
-      else
-         return FALSE;
-   }
+   abstract public function lastval();
    
-   public function escape_string($s)
-   {
-      return pg_escape_string(self::$link, $s);
-   }
+   abstract public function escape_string($s);
+   
+   abstract public function date_style();
+   
+   /*
+    * Compara dos arrays de columnas, devuelve una sentencia sql
+    * en caso de encontrar diferencias.
+    */
+   abstract public function compare_columns($table_name, $xml_cols, $columnas);
+   
+   /*
+    * Compara dos arrays de restricciones, devuelve una sentencia sql
+    * en caso de encontrar diferencias.
+    */
+   abstract public function compare_constraints($table_name, $c_nuevas, $c_old);
+   
+   /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+   abstract public function generate_table($table_name, $xml_columnas, $xml_restricciones);
 }
 
 ?>

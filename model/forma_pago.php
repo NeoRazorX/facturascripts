@@ -36,7 +36,7 @@ class forma_pago extends fs_model
          $this->descripcion = $f['descripcion'];
          $this->genrecibos = $f['genrecibos'];
          $this->codcuenta = $f['codcuenta'];
-         $this->domiciliado = ($f['domiciliado'] == 't');
+         $this->domiciliado = $this->str2bool($f['domiciliado']);
       }
       else
       {

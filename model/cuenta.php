@@ -219,6 +219,7 @@ class cuenta extends fs_model
                idepigrafe = ".$this->var2str($this->idepigrafe).", codepigrafe = ".$this->var2str($this->codepigrafe).",
                descripcion = ".$this->var2str($this->descripcion).", idcuentaesp = ".$this->var2str($this->idcuentaesp)."
                WHERE idcuenta = ".$this->var2str($this->idcuenta).";";
+            return $this->db->exec($sql);
          }
          else
          {
@@ -231,9 +232,11 @@ class cuenta extends fs_model
                   ".$this->var2str($this->codcuenta).",".$this->var2str($this->codejercicio).",
                   ".$this->var2str($this->idepigrafe).",".$this->var2str($this->codepigrafe).",
                   ".$this->var2str($this->descripcion).",".$this->var2str($this->idcuentaesp).");";
+               return $this->db->exec($sql);
             }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -301,8 +304,8 @@ class cuenta extends fs_model
    {
       $cuenlist = array();
       $query = strtolower( $this->no_html($query) );
-      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta ~~ '".$query."%'
-         OR lower(descripcion) ~~ '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
+      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcuenta LIKE '".$query."%'
+         OR lower(descripcion) LIKE '%".$query."%' ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)
       {
          foreach($cuentas as $c)

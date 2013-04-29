@@ -151,7 +151,7 @@ class familia extends fs_model
       $query = $this->no_html( strtolower($query) );
       
       $familias = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE lower(descripcion) ~~ '%".$query."%' ORDER BY descripcion ASC;");
+              " WHERE lower(descripcion) LIKE '%".$query."%' ORDER BY descripcion ASC;");
       if($familias)
       {
          foreach($familias as $f)

@@ -65,9 +65,9 @@ class empresa extends fs_model
       if($e)
       {
          $this->id = $this->intval($e[0]['id']);
-         $this->stockpedidos = ($e[0]['stockpedidos'] == 't');
-         $this->contintegrada = ($e[0]['contintegrada'] == 't');
-         $this->recequivalencia = ($e[0]['recequivalencia'] == 't');
+         $this->stockpedidos = $this->str2bool($e[0]['stockpedidos']);
+         $this->contintegrada = $this->str2bool($e[0]['contintegrada']);
+         $this->recequivalencia = $this->str2bool($e[0]['recequivalencia']);
          $this->codserie = $e[0]['codserie'];
          $this->codalmacen = $e[0]['codalmacen'];
          $this->codpago = $e[0]['codpago'];

@@ -3,17 +3,17 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th><b>Base de datos</b></th>
          <th><b>FacturaScripts</b></th>
          <th><b>PHP</b></th>
-         <th><b>PostgreSQL</b></th>
+         <th><b>Base de datos</b></th>
+         <th><b>Motor de base de datos</b></th>
          <th><b>Memcache</b></th>
       </tr>
       <tr>
-         <td align="center">{$fsc->fs_db_name()}</td>
          <td align="center">{$fsc->fs_version()}</td>
          <td align="center">{$fsc->php_version()}</td>
-         <td align="center">{$fsc->pg_version()}</td>
+         <td align="center">{$fsc->fs_db_name()}</td>
+         <td align="center">{$fsc->fs_db_version()}</td>
          <td align="center">{$fsc->cache_version()}</td>
       </tr>
    </table>

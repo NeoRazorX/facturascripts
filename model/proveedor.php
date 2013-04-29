@@ -147,7 +147,7 @@ class direccion_proveedor extends fs_model
          $this->ciudad = $d['ciudad'];
          $this->codpostal = $d['codpostal'];
          $this->direccion = $d['direccion'];
-         $this->direccionppal = ($d['direccionppal'] == 't');
+         $this->direccionppal = $this->str2bool($d['direccionppal']);
          $this->descripcion = $d['descripcion'];
          $this->id = $this->intval($d['id']);
       }
@@ -555,12 +555,12 @@ class proveedor extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codproveedor ~~ '%".$query."%' OR cifnif ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'";
+         $consulta .= "codproveedor LIKE '%".$query."%' OR cifnif LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'";
       else
       {
          $buscar = str_replace(' ', '%', $query);
-         $consulta .= "lower(nombre) ~~ '%".$buscar."%' OR lower(cifnif) ~~ '%".$buscar."%'
-            OR lower(observaciones) ~~ '%".$buscar."%'";
+         $consulta .= "lower(nombre) LIKE '%".$buscar."%' OR lower(cifnif) LIKE '%".$buscar."%'
+            OR lower(observaciones) LIKE '%".$buscar."%'";
       }
       $consulta .= " ORDER BY nombre ASC";
       

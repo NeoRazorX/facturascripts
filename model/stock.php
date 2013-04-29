@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -123,9 +123,9 @@ class stock extends fs_model
    
    public function new_idstock()
    {
-      $id = $this->db->select("SELECT nextval('".$this->table_name."_idstock_seq');");
+      $id = $this->db->nextval($this->table_name.'_idstock_seq');
       if($id)
-         $this->idstock = intval($id[0]['nextval']);
+         $this->idstock = intval($id);
    }
    
    public function test()

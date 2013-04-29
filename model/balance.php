@@ -222,6 +222,7 @@ class balance_cuenta extends fs_model
             codcuenta = ".$this->var2str($this->codcuenta).",
             desccuenta = ".$this->var2str($this->desccuenta)."
             WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -232,9 +233,12 @@ class balance_cuenta extends fs_model
             $sql = "INSERT INTO ".$this->table_name." (id,codbalance,codcuenta,desccuenta)
                VALUES (".$this->var2str($this->id).",".$this->var2str($this->codbalance).",
                ".$this->var2str($this->codcuenta).",".$this->var2str($this->desccuenta).");";
+            return $this->db->exec($sql);
          }
+         else
+            return FALSE;
       }
-      return $this->db->exec($sql);
+      
    }
    
    public function delete()
@@ -333,6 +337,7 @@ class balance_cuenta_a extends fs_model
             codcuenta = ".$this->var2str($this->codcuenta).",
             desccuenta = ".$this->var2str($this->desccuenta)."
             WHERE id = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
@@ -343,9 +348,11 @@ class balance_cuenta_a extends fs_model
             $sql = "INSERT INTO ".$this->table_name." (id,codbalance,codcuenta,desccuenta)
                VALUES (".$this->var2str($this->id).",".$this->var2str($this->codbalance).",
                ".$this->var2str($this->codcuenta).",".$this->var2str($this->desccuenta).");";
+            return $this->db->exec($sql);
          }
+         else
+            return FALSE;
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()

@@ -92,6 +92,7 @@ class grupo_epigrafes extends fs_model
                descripcion = ".$this->var2str($this->descripcion).",
                codejercicio = ".$this->var2str($this->codejercicio)."
                WHERE idgrupo = ".$this->var2str($this->idgrupo).";";
+            return $this->db->exec($sql);
          }
          else
          {
@@ -102,9 +103,11 @@ class grupo_epigrafes extends fs_model
                $sql = "INSERT INTO ".$this->table_name." (idgrupo,codgrupo,descripcion,codejercicio)
                   VALUES (".$this->var2str($this->idgrupo).",".$this->var2str($this->codgrupo).",
                   ".$this->var2str($this->descripcion).",".$this->var2str($this->codejercicio).");";
+               return $this->db->exec($sql);
             }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -226,6 +229,7 @@ class epigrafe extends fs_model
                idgrupo = ".$this->var2str($this->idgrupo).", descripcion = ".$this->var2str($this->descripcion).",
                codejercicio = ".$this->var2str($this->codejercicio)."
                WHERE idepigrafe = ".$this->var2str($this->idepigrafe).";";
+            return $this->db->exec($sql);
          }
          else
          {
@@ -237,9 +241,11 @@ class epigrafe extends fs_model
                   VALUES (".$this->var2str($this->idepigrafe).",".$this->var2str($this->codepigrafe).",
                   ".$this->var2str($this->idgrupo).",".$this->var2str($this->descripcion).",
                   ".$this->var2str($this->codejercicio).");";
+               return $this->db->exec($sql);
             }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;

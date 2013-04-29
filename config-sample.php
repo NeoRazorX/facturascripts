@@ -7,6 +7,7 @@
 
 /*
  * Configuración de la base de datos.
+ * type: postgresql o mysql (mysql está en fase experimental).
  * host: la ip del ordenador donde está la base de datos.
  * port: el puerto de la base de datos.
  * name: el nombre de la base de datos.
@@ -14,6 +15,7 @@
  * pass: la contraseña del usuario.
  * history: TRUE si quieres ver todas las consultas que se hacen en cada página.
  */
+define('FS_DB_TYPE', 'POSTGRESQL');
 define('FS_DB_HOST', 'localhost');
 define('FS_DB_PORT', '5432');
 define('FS_DB_NAME', '');

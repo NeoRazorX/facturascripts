@@ -17,18 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
+
 date_default_timezone_set('Europe/Madrid');
 
-/// cargamos las constantes de configuración
-if( file_exists('config.php') )
+if( !file_exists('config.php') )
+   include('view/no_config.html');
+else
 {
+   /// cargamos las constantes de configuración
    require_once 'config.php';
+   if( !defined('FS_DB_TYPE') )
+      define('FS_DB_TYPE', 'POSTGRESQL');
    if( !defined('FS_DEMO') )
       define('FS_DEMO', FALSE);
-   if( !defined('FS_PRINTER') )
-      define('FS_PRINTER', '');
-   if( !defined('FS_LCD') )
-      define('FS_LCD', '');
    
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
@@ -85,7 +87,5 @@ if( file_exists('config.php') )
    
    $fsc->close();
 }
-else
-   include('view/no_config.html');
 
 ?>

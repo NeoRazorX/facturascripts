@@ -106,7 +106,12 @@ class tpv_yamyam extends fs_controller
                   $this->borrar_ticket();
             }
             else
-               $this->new_error_msg("Esta caja está bloqueada por el agente ".$this->caja->agente->get_fullname());
+            {
+               $this->new_error_msg("Esta caja está bloqueada por el agente ".
+                  $this->caja->agente->get_fullname().". Puedes cerrarla
+                  desde Contabilidad &gt; Caja."
+               );
+            }
             
             $this->cargar_datos_tpv();
          }
@@ -141,7 +146,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-11';
+      return parent::version().'-12';
    }
    
    private function cargar_datos_tpv()

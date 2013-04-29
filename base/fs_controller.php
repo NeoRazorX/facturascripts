@@ -18,7 +18,12 @@
  */
 
 require_once 'base/fs_button.php';
-require_once 'base/fs_db.php';
+
+if(FS_DB_TYPE == 'MYSQL')
+   require_once 'base/fs_mysql.php';
+else
+   require_once 'base/fs_postgresql.php';
+
 require_once 'base/fs_default_items.php';
 require_once 'model/agente.php';
 require_once 'model/empresa.php';
@@ -52,7 +57,11 @@ class fs_controller
       $this->admin_page = $admin;
       $this->errors = array();
       $this->messages = array();
-      $this->db = new fs_db();
+      
+      if(FS_DB_TYPE == 'MYSQL')
+         $this->db = new fs_mysql();
+      else
+         $this->db = new fs_postgresql();
       
       $this->set_css_file();
       
@@ -201,6 +210,9 @@ class fs_controller
                      $this->user = $user;
                      $this->load_menu();
                   }
+                  else
+                     $this->new_error_msg('Imposible guardar los datos de usuario '.
+                             $this->db->last_error() );
                }
                else
                   $this->new_error_msg('¡Contraseña incorrecta!');
@@ -312,7 +324,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.9.24';
+      return '0.10';
    }
    
    public function select_default_page()

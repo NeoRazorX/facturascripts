@@ -150,8 +150,8 @@ class direccion_cliente extends fs_model
          $this->ciudad = $d['ciudad'];
          $this->codpostal = $d['codpostal'];
          $this->direccion = $d['direccion'];
-         $this->domenvio = ($d['domenvio'] == 't');
-         $this->domfacturacion = ($d['domfacturacion'] == 't');
+         $this->domenvio = $this->str2bool($d['domenvio']);
+         $this->domfacturacion = $this->str2bool($d['domfacturacion']);
          $this->descripcion = $d['descripcion'];
       }
       else
@@ -293,7 +293,7 @@ class cliente extends fs_model
          $this->codserie = $c['codserie'];
          $this->coddivisa = $c['coddivisa'];
          $this->codpago = $c['codpago'];
-         $this->debaja = ($c['debaja'] == 't');
+         $this->debaja = $this->str2bool($c['debaja']);
          $this->fechabaja = $c['fechabaja'];
          $this->observaciones = $this->no_html($c['observaciones']);
          $this->tipoidfiscal = $c['tipoidfiscal'];
@@ -563,12 +563,12 @@ class cliente extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codcliente ~~ '%".$query."%' OR cifnif ~~ '%".$query."%' OR observaciones ~~ '%".$query."%'";
+         $consulta .= "codcliente LIKE '%".$query."%' OR cifnif LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'";
       else
       {
          $buscar = str_replace(' ', '%', $query);
-         $consulta .= "lower(nombre) ~~ '%".$buscar."%' OR lower(cifnif) ~~ '%".$buscar."%'
-            OR lower(observaciones) ~~ '%".$buscar."%'";
+         $consulta .= "lower(nombre) LIKE '%".$buscar."%' OR lower(cifnif) LIKE '%".$buscar."%'
+            OR lower(observaciones) LIKE '%".$buscar."%'";
       }
       $consulta .= " ORDER BY nombre ASC";
       

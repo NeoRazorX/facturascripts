@@ -1,284 +1,71 @@
 <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
-<ul>
-   <li>
-      22/04/2013:
-      <ul>
-         <li>Ya se pueden modificar los asientos.</li>
-         <li>Pequeñas modificaciones en el HTML.</li>
-      </ul>
-   </li>
-   <li>
-      15/04/2013:
-      <ul>
-         <li>
-            Ya se pueden imprimir albaranes de cliente, en formato a5.
-            Aunque en realidad es un a4 hasta la mitad del folio, para
-            engañar al navegador y que lo imprima bien.
-         </li>
-         <li>
-            Nueva clase fs_pdf para genear PDFs. Proporciona diversas
-            función extra como guardar PDFs, centrar texto o crear
-            tablas de forma más sencilla.
-         </li>
-         <li>
-            El formulario de factura de cliente ya permite modificar
-            el número.
-         </li>
-      </ul>
-   </li>
-   <li>
-      12/04/2013:
-      <ul>
-         <li>Añadida firma para los emails. Se cambia en admin > empresa.</li>
-         <li>
-            Añadido pie de página para las facturas de cliente. Se cambia
-            en admin > empresa.
-         </li>
-         <li>Corregidas las funciones de comprobación de albaranes y facturas.</li>
-         <li>Actualizada la librería ezpdf a la versión 0.11.</li>
-         <li>
-            La página 'admin > información del sistema > errores' ha sido movida
-            a 'informes > errores'. Ya no necesitas ser administrador para
-            acceder. Además se ha añadido un selector de modelos y dos nuevos
-            modelos a comprobar: alabranes de clientes y de proveedores.
-         </li>
-      </ul>
-   </li>
-   <li>
-      09/04/2013:
-      <ul>
-         <li>
-            Si en el formulario de empresa se proporciona un email de gmail
-            (también sirven los emails de google apps),
-            entonces aparecerá el botón enviar en las facturas de cliente
-            para poder enviar la factura por email. Esta es una solución a la
-            <a target="_blank" href="https://code.google.com/p/facturascripts/issues/detail?id=19">issue 19</a>.
-         </li>
-         <li>
-            Solucionado bug con el descuadre en el formulario de nuevo asiento.
-         </li>
-         <li>
-            Ahora las líneas de iva de las facturas se comparan con los valores calculados
-            en lugar de con los valores almacenados en la factura.
-         </li>
-      </ul>
-   </li>
-   <li>
-      08/04/2013
-      <ul>
-         <li>Nuevas herramientas de importación y exportación de datos en crudo.</li>
-         <li>
-            Nuevo método de comprobación de ejercicios: si el ejercicio está cerrado
-            comprueba que no haya cuentas con saldo distinto de 0.
-         </li>
-         <li>Añadidos enlaces a github.</li>
-         <li>Pequeñas mejoras gráficas.</li>
-      </ul>
-   </li>
-   <li>
-      06/04/2013:
-      <ul>
-         <li>
-            Ya se puede cambiar el cliente/proveedor de un albarán
-            no facturado.
-         </li>
-         <li>
-            Nueva función de redondeo bround(). Al redondear, en caso
-            de tener duda entre dos número, elige el par. Esto también
-            se puede hacer desde la función round, pero solamente en php 5.3
-            o superior.
-         </li>
-         <li>
-            La validez de las líneas de albaranes y facturas se comprueba
-            con ambos redondeos.
-         </li>
-         <li>
-            Las funciones de generar líneas de iva para una factura añaden ahora
-            una comprobación para evitar descuadres.
-         </li>
-         <li>
-            Pequeñas mejoras en el CSS base. También se ha añadido una nueva
-            hoja de estilos (proto) para probar un nuevo diseño. Este diseño
-            aún está incompleto.
-         </li>
-      </ul>
-   </li>
-   <li>
-      02/04/2013:
-      <ul>
-         <li>
-            Las facturas de cliente incluyen dos modelos de impresión: factura simple
-            y modelo carta.
-         </li>
-         <li>Pequeñas correcciones.</li>
-         <li>
-            Modificadas las funciones de comprobación de albaranes y facturas para
-            comprobar los saldos tanto con redondeos como sin.
-         </li>
-         <li>
-            Añadidos banners para aceptar donaciones de bitcoins.
-         </li>
-      </ul>
-   </li>
-   <li>
-      01/04/2013:
-      <ul>
-         <li>Rediseñada la página de login para destacar mejor los elementos.</li>
-         <li>
-            Los popups ahora incluyen un botón para cerrar (también se pueden cerrar
-            haciendo clic en el fondo oscuro). También se ha añadido una pequeña animación.
-         </li>
-         <li>
-            Los PDFs de las facturas ya incluyen el nombre de la empresa, cif,
-            dirección y teléfono.
-         </li>
-      </ul>
-   </li>
-   <li>
-      26/03/2013:
-      <ul>
-         <li>
-            Grandes cambios en la clase fs_db. Ya no se usa una conexión persistente (con pg_pconnect),
-            no tiene sentido usarla. Al iniciar el controlador se conecta a la base de datos y al terminar
-            se desconecta, fin.
-            Además he simplificado mucho el código de muchas funciones como lastval() y nextval().
-            También he añadido la función sequence_exists($seq) para poder comprobar si
-            una secuencia existe en la base de datos.
-         </li>
-         <li>
-            Mejoras en la función fs_model: al comprobar la estructura de una tabla, si
-            su campo default apunta a una secuencia, ahora se comprueba que existe esa
-            secuencia, y si no, la crea. Con esto se solucionan los problemas derivados
-            de instalar Eneboo sobre una base de datos creada por FacturaScripts.
-         </li>
-         <li>
-            Se han actualizado todos los archivos xml con la estrutura de de las tablas
-            para hacerlas compatibles con la última versión de los módulo oficial de eneboo.
-         </li>
-         <li>
-            El modelo de artículos ya no borra la lista de búsquedas cuando se hace
-            alguna modificación a un artículo.
-         </li>
-         <li>Ya se puede definir el páis del almacén.</li>
-         <li>Los formularios de creación de albaranes ya recuerdan el último almacén seleccionado.</li>
-      </ul>
-   </li>
-   <li>
-      21/03/2013:
-      <ul>
-         <li>Modificado el formulario de nuevo asiento para hacerlo más sencillo.</li>
-         <li>
-            Añadidos botones de reimprimir ticket y abrir caja al formulario "TPV > Genérico".
-            Además, en las búsquedas, ahora incluye el enlace [+] para ver los precios del artículo
-            y el enlace de la referencia para añadir el artículo directamente.
-         </li>
-      </ul>
-   </li>
-   <li>
-      18/03/2013:
-      <ul>
-         <li>
-            Añadido formulario de divisas
-            (<a target="_blank" href="https://code.google.com/p/facturascripts/issues/detail?id=16">issue 16</a>).
-         </li>
-      </ul>
-   </li>
-   <li>
-      16/03/2013:
-      <ul>
-         <li>Añadido redondeo a la hora de crear/modificar albaranes.</li>
-         <li>
-            Ya se pueden cerrar correctamente los ejercicios. Desde la página del ejercicio,
-            si este está abierto, pulsas el botón "cerrar ejercicio" y se generarán los
-            asientos de regularización, cierre y apertura del ejercicio siguiente.
-         </li>
-         <li>Corregida la forma de actualizar los saldos de las subcuentas.</li>
-         <li>Nueva función floatcmp($f1, $f2, precision=10) para comparar números en coma flotante.</li>
-      </ul>
-   </li>
-   <li>
-      27/02/2013:
-      <ul>
-         <li>
-            Eliminado el código para corregir asientos y partidas ya que los descuadres detectados
-            se debían a que los saldos de las subcuentas estaban desactualizados, problema que ya
-            ha sido solucionado.
-         </li>
-      </ul>
-   </li>
-   <li>
-      26/02/2013:
-      <ul>
-         <li>Solucionado el bug que permitía crear albaranes en ejercicios ya cerrados.</li>
-         <li>
-            Mejorado el asistente de creación de albaranes. Ahora cuando se hace una búsqueda
-            se muestra para cada artículo un enlace [+] para ver los precios de compra/venta,
-            y el enlace para añadir directamente el artículo a la lista.
-         </li>
-      </ul>
-   </li>
-   <li>
-      25/02/2013:
-      <ul>
-         <li>
-            En el modo demo ahora se crea un usuario para cada visitante, en función de
-            su nombre real. Además se han establecido una serie de limitaciones al modo demo
-            para evitar malas prácticas (no se pueden eliminar agentes o usuarios,
-            no se pueden desactivar páginas).
-         </li>
-         <li>El menú de usuario ahora añade enlaces a tu usuario y a tu agente.</li>
-         <li>
-            Nueva clase fs_printer para unificar la gestión de impresión. Ahora se puede
-            imprimir tanto por cups como directamente volcando los datos al puerto de
-            la impresora. La impresora se define mediante la constante FS_PRINTER. El LCD
-            se trata como a una impresora, y se define mediante la constante FS_LCD.
-         </li>
-         <li>"General > Familias" ya permite buscar.</li>
-         <li>
-            Generación y asignación de ejercicio automática:
-            A la hora de crear albaranes ya no se necesita especificar el ejercicio,
-            ahora se selecciona el ejercicio en función de la fecha del albarán. Si no hay
-            ningún ejercicio para una fecha e concreto, se crea un ejercicio nuevo automáticamente.
-         </li>
-         <li>"Admin > agentes > agente" añade ahora un listado de cajas del usuario.</li>
-         <li>
-            "TPV > TPV_recambios" es ahora "TPV > genérico" y "TPV > TPV_yamyam" es ahora
-            "TPV > Restaurante".
-         </li>
-         <li>Ya se pueden generar asientos desde la página de la factura.</li>
-         <li>
-            El asistente de creación de albaranes muestra ahora una ventana con todos los
-            datos de venta del artículo seleccionado en la ventana de búsqueda.
-         </li>
-         <li>
-            La página de cada ejercicio hace un chequeo completo del ejercicio para informarnos de
-            posibles descuadres.
-         </li>
-         <li>
-            "Admin > Información del sistema > errores" ahora inicia un proceso de búsqueda de
-            errores en asientos y facturas.
-         </li>
-         <li>
-            El proceso de cron ahora recalcula los saldos de las subcuentas cada hora, y detecta mejor
-            los cambios para generar su libro mayor asociado.
-         </li>
-      </ul>
-   </li>
-   <li>
-      02/02/2013:
-      <ul>
-         <li>
-            La clase fs_cache ahora se guarda el mensaje de error de conexión o clase memcache no encontrada,
-            así es mucho más sencillo detectar problemas de instalación.
-            También se ha añadido la función version().
-         </li>
-         <li>La versión de memcache ya se muestra desde "Admin > información del sistema".</li>
-         <li>
-            La página "Admin > Tabla a XML" ahora detecta columnas de tipo serial (en lugar de detectarlas
-            como simples enteros). Las columnas se ordenan alfabéticamente y las restricciones ahora
-            incluyen el tipo.
-         </li>
-         <li>Añadido soporte para el LCD Glancetron 8035 en "TPV > TPV_yamyam".</li>
-      </ul>
-   </li>
-</ul>
+<table>
+   <tr>
+      <td>
+         <ul>
+            <li>
+               29/04/2013:
+               <ul>
+                  <li>Añadido soporte para <b>MySQL</b>.</li>
+                  <li>
+                     Esta es la versión 0.10, nombre en clave <b>Oso de agua</b>
+                     ¿Por qué? Porque esta versión es la que más quebraderos de
+                     cabeza me ha dado. Cada vez que pensaba que ya estaba lista
+                     salían más y más problemas. Por eso le he puesto el nombre del
+                     <a target="_blank" href="http://www.xatakaciencia.com/biologia/cual-es-el-animal-mas-dificil-de-matar-del-mundo">
+                        animal más difícil de matar</a>.
+                  </li>
+               </ul>
+            </li>
+            <li>
+               15/04/2013:
+               <ul>
+                  <li>
+                     Ya se pueden imprimir albaranes de cliente, en formato a5.
+                     Aunque en realidad es un a4 hasta la mitad del folio, para
+                     engañar al navegador y que lo imprima bien.
+                  </li>
+                  <li>
+                     Nueva clase fs_pdf para genear PDFs. Proporciona diversas
+                     función extra como guardar PDFs, centrar texto o crear
+                     tablas de forma más sencilla.
+                  </li>
+                  <li>
+                     El formulario de factura de cliente ya permite modificar
+                     el número.
+                  </li>
+               </ul>
+            </li>
+         </ul>
+      </td>
+      <td>
+         <ul>
+            <li>
+               22/04/2013:
+               <ul>
+                  <li>Ya se pueden modificar los asientos.</li>
+                  <li>Pequeñas modificaciones en el HTML.</li>
+               </ul>
+            </li>
+            <li>
+               12/04/2013:
+               <ul>
+                  <li>Añadida firma para los emails. Se cambia en admin > empresa.</li>
+                  <li>
+                     Añadido pie de página para las facturas de cliente. Se cambia
+                     en admin > empresa.
+                  </li>
+                  <li>Corregidas las funciones de comprobación de albaranes y facturas.</li>
+                  <li>Actualizada la librería ezpdf a la versión 0.11.</li>
+                  <li>
+                     La página 'admin > información del sistema > errores' ha sido movida
+                     a 'informes > errores'. Ya no necesitas ser administrador para
+                     acceder. Además se ha añadido un selector de modelos y dos nuevos
+                     modelos a comprobar: alabranes de clientes y de proveedores.
+                  </li>
+               </ul>
+            </li>
+         </ul>
+      </td>
+   </tr>
+</table>
