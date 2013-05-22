@@ -15,7 +15,9 @@
    <form action="{$fsc->url()}" method="post">
       <h1>
          {$fsc->agente->get_fullname()}
-         <span><input type="submit" value="guardar"/></span>
+         <span>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
       </h1>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->agente->nombre}" maxlength="50" autocomplete="off"/>

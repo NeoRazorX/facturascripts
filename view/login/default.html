@@ -14,8 +14,19 @@
          document.f_login.password.focus();
       });
    </script>
+   <script>
+      (function(d, s, id) {
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) return;
+         js = d.createElement(s);
+         js.id = id;
+         js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+   </script>
 </head>
 <body>
+   <div id="fb-root"></div>
    
    {if condition="$fsc->get_errors()"}
       <div class="error">
@@ -30,8 +41,14 @@
    
    <div class="header">
       <h1><a href="index.php">{$fsc->empresa->nombre}</a></h1>
-      <h2>{$fsc->empresa->lema}</h2>
-      {$fsc->empresa->direccion}
+      
+      {if condition="$nlogin"}
+         <h2>¡Hola {$nlogin}!</h2>
+         Si no eres {$nlogin} ignora este saludo.
+      {else}
+         <h2>¡Hola!</h2>
+      {/if}
+      
       <br/><br/>
       <table>
          <tr>
@@ -53,7 +70,7 @@
             </td>
          </tr>
       </table>
-      <br/><br/>
+      <br/><br/><br/><br/>
    </div>
    
    <div class="colaborar">
@@ -61,13 +78,15 @@
          <tr>
             <td><div class="colabora2">Colabora</div></td>
             <td>
-               Si tienes cualquier problema o sugerencia no dudes en
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">informar</a>.
+               Si tienes cualquier problema o sugerencia no dudes en informar a través de
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Google Code</a>,
+               <a href='#fb_comments'>Facebook</a>, <a target="_blank" href="https://twitter.com/neorazorx">Twitter</a>
+               o <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
+               <br/>
                Puedes seguir el desarrollo de FacturaScripts a través de
-               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>,
-               mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a> o la comunidad de
-               <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
+               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>.
             </td>
+            <td><a id="b_github" target="_blank" href="https://github.com/NeoRazorX/facturascripts">github</a></td>
          </tr>
       </table>
    </div>

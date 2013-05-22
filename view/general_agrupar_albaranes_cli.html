@@ -43,13 +43,14 @@
       <div class="bloque">
          Hasta: <input type="text" name="hasta" class="tcal" value="{$fsc->hasta}" size="10" maxlength="10"/>
       </div>
-      <input type="submit" value="buscar"/>
+      <input type="submit" value="buscar" onclick="this.disabled=true;this.form.submit();"/>
    </form>
 </div>
 
 {if condition="$fsc->resultados"}
 <div class="rounded">
    <form id="f_agrupar_cli" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
       <table width="100%">
          <tr>
             <td>
@@ -60,7 +61,9 @@
                <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
                <label for="cb_f_individuales">Generar facturas individuales</label>
             </td>
-            <td align="right"><input type="submit" value="Generar Factura"/></td>
+            <td align="right">
+               <input type="submit" value="Generar Factura" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
       
@@ -94,7 +97,9 @@
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
             </td>
-            <td align="right"><input type="submit" value="Generar factura"/></td>
+            <td align="right">
+               <input type="submit" value="Generar factura" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </form>

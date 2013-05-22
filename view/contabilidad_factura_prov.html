@@ -34,7 +34,9 @@
       <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
          <a href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
-         <span><input type="submit" value="guardar"/></span>
+         <span>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
       </h1>
       <div class="bloque">
          Ejercicio: {$fsc->factura->codejercicio}

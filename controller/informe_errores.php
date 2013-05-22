@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/asiento.php';
 require_once 'model/factura_cliente.php';
 require_once 'model/factura_proveedor.php';
@@ -27,7 +26,6 @@ require_once 'model/albaran_proveedor.php';
 class informe_errores extends fs_controller
 {
    public $ajax;
-   private $cache;
    public $informe;
    public $errores;
    
@@ -39,7 +37,6 @@ class informe_errores extends fs_controller
    protected function process()
    {
       $this->ajax = FALSE;
-      $this->cache = new fs_cache();
       
       $this->informe = $this->cache->get('informe_errores');
       if( !$this->informe OR isset($_GET['cancelar']) OR isset($_POST['modelo']) )
@@ -55,18 +52,30 @@ class informe_errores extends fs_controller
              'offset' => 0,
              'pages' => 0,
              'show_page' => 0,
-             'started' => FALSE
+             'started' => FALSE,
+             'all' => FALSE
          );
          
          if( isset($_POST['modelo']) )
          {
-            $this->informe['model'] = $_POST['modelo'];
-            $this->informe['started'] = TRUE;
+            if($_POST['modelo'] == 'todo')
+            {
+               $this->informe['model'] = 'asiento';
+               $this->informe['started'] = TRUE;
+               $this->informe['all'] = TRUE;
+            }
+            else if($_POST['modelo'] != '')
+            {
+               $this->informe['model'] = $_POST['modelo'];
+               $this->informe['started'] = TRUE;
+            }
          }
       }
       
       if( $this->informe['started'] )
       {
+         $mpp = 75;
+         
          $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
               'remove', 'img/remove.png');
          
@@ -80,7 +89,7 @@ class informe_errores extends fs_controller
             {
                default:
                   $asiento = new asiento();
-                  $asientos = $asiento->all($this->informe['offset'], 100);
+                  $asientos = $asiento->all($this->informe['offset'], $mpp);
                   if($asientos)
                   {
                      foreach($asientos as $asi)
@@ -97,7 +106,12 @@ class informe_errores extends fs_controller
                            );
                         }
                      }
-                     $this->informe['offset'] += 100;
+                     $this->informe['offset'] += $mpp;
+                  }
+                  else if($this->informe['all'])
+                  {
+                     $this->informe['model'] = 'factura cliente';
+                     $this->informe['offset'] = 0;
                   }
                   else
                   {
@@ -108,7 +122,7 @@ class informe_errores extends fs_controller
                   
                case 'factura cliente':
                   $factura = new factura_cliente();
-                  $facturas = $factura->all($this->informe['offset'], 100);
+                  $facturas = $factura->all($this->informe['offset'], $mpp);
                   if($facturas)
                   {
                      foreach($facturas as $fac)
@@ -125,7 +139,12 @@ class informe_errores extends fs_controller
                            );
                         }
                      }
-                     $this->informe['offset'] += 100;
+                     $this->informe['offset'] += $mpp;
+                  }
+                  else if($this->informe['all'])
+                  {
+                     $this->informe['model'] = 'factura proveedor';
+                     $this->informe['offset'] = 0;
                   }
                   else
                   {
@@ -136,7 +155,7 @@ class informe_errores extends fs_controller
                   
                case 'factura proveedor':
                   $factura = new factura_proveedor();
-                  $facturas = $factura->all($this->informe['offset'], 100);
+                  $facturas = $factura->all($this->informe['offset'], $mpp);
                   if($facturas)
                   {
                      foreach($facturas as $fac)
@@ -153,7 +172,12 @@ class informe_errores extends fs_controller
                            );
                         }
                      }
-                     $this->informe['offset'] += 100;
+                     $this->informe['offset'] += $mpp;
+                  }
+                  else if($this->informe['all'])
+                  {
+                     $this->informe['model'] = 'albaran cliente';
+                     $this->informe['offset'] = 0;
                   }
                   else
                   {
@@ -164,7 +188,7 @@ class informe_errores extends fs_controller
 
                case 'albaran cliente':
                   $albaran = new albaran_cliente();
-                  $albaranes = $albaran->all($this->informe['offset'], 100);
+                  $albaranes = $albaran->all($this->informe['offset'], $mpp);
                   if($albaranes)
                   {
                      foreach($albaranes as $alb)
@@ -181,7 +205,12 @@ class informe_errores extends fs_controller
                            );
                         }
                      }
-                     $this->informe['offset'] += 100;
+                     $this->informe['offset'] += $mpp;
+                  }
+                  else if($this->informe['all'])
+                  {
+                     $this->informe['model'] = 'albaran proveedor';
+                     $this->informe['offset'] = 0;
                   }
                   else
                   {
@@ -192,7 +221,7 @@ class informe_errores extends fs_controller
                
                case 'albaran proveedor':
                   $albaran = new albaran_proveedor();
-                  $albaranes = $albaran->all($this->informe['offset'], 100);
+                  $albaranes = $albaran->all($this->informe['offset'], $mpp);
                   if($albaranes)
                   {
                      foreach($albaranes as $alb)
@@ -209,7 +238,7 @@ class informe_errores extends fs_controller
                            );
                         }
                      }
-                     $this->informe['offset'] += 100;
+                     $this->informe['offset'] += $mpp;
                   }
                   else
                   {
@@ -222,20 +251,25 @@ class informe_errores extends fs_controller
                   break;
             }
             
-            $this->set_errores_page($this->informe['pages'], $last_errores);
-            if( count($last_errores) > FS_ITEM_LIMIT )
-               $this->informe['pages']++;
+            /// si ya no existe informe_errores, entonces no guardamos
+            if( $this->cache->get('informe_errores') )
+            {
+               $this->set_errores_page($this->informe['pages'], $last_errores);
+               if( count($last_errores) > FS_ITEM_LIMIT )
+                  $this->informe['pages']++;
+               $this->cache->set('informe_errores', $this->informe, 86400);
+            }
             
             $this->errores = $this->get_errores_page( $this->informe['show_page'] );
          }
-         
-         $this->cache->set('informe_errores', $this->informe, 86400);
+         else
+            $this->cache->set('informe_errores', $this->informe, 86400);
       }
    }
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
    
    private function get_errores_page($page)

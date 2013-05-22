@@ -57,7 +57,8 @@ class fs_postgresql extends fs_db
          self::$link = NULL;
          return $retorno;
       }
-      return TRUE;
+      else
+         return TRUE;
    }
    
    /// devuelve un array con los nombres de las tablas de la base de datos

@@ -50,6 +50,8 @@ class partida extends fs_model
    public $numero;
    public $fecha;
    public $saldo;
+   public $sum_debe;
+   public $sum_haber;
    
    public function __construct($p=FALSE)
    {
@@ -110,6 +112,8 @@ class partida extends fs_model
       $this->numero = 0;
       $this->fecha = Date('d-m-Y');
       $this->saldo = 0;
+      $this->sum_debe = 0;
+      $this->sum_haber = 0;
    }
    
    protected function install()
@@ -130,6 +134,16 @@ class partida extends fs_model
    public function show_saldo()
    {
       return number_format($this->saldo, 2, '.', ' ');
+   }
+   
+   public function show_sumdebe()
+   {
+      return number_format($this->sum_debe, 2, '.', ' ');
+   }
+   
+   public function show_sumhaber()
+   {
+      return number_format($this->sum_haber, 2, '.', ' ');
    }
    
    public function show_baseimponible()
@@ -282,9 +296,13 @@ class partida extends fs_model
          $partida = new partida();
          $i = 0;
          $saldo = 0;
+         $sum_debe = 0;
+         $sum_haber = 0;
          foreach($ordenadas as $po)
          {
             $saldo += floatval($po['debe']) - floatval($po['haber']);
+            $sum_debe += floatval($po['debe']);
+            $sum_haber += floatval($po['haber']);
             if( $i >= $offset AND $i < ($offset+FS_ITEM_LIMIT) )
             {
                $aux = $partida->get($po['idpartida']);
@@ -293,6 +311,8 @@ class partida extends fs_model
                   $aux->numero = intval($po['numero']);
                   $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
                   $aux->saldo = $saldo;
+                  $aux->sum_debe = $sum_debe;
+                  $aux->sum_haber = $sum_haber;
                   $plist[] = $aux;
                }
             }
@@ -325,6 +345,8 @@ class partida extends fs_model
       {
          $partida = new partida();
          $saldo = 0;
+         $sum_debe = 0;
+         $sum_haber = 0;
          foreach($ordenadas as $po)
          {
             $aux = $partida->get($po['idpartida']);
@@ -333,7 +355,11 @@ class partida extends fs_model
                $aux->numero = intval($po['numero']);
                $aux->fecha = Date('d-m-Y', strtotime($po['fecha']));
                $saldo += $aux->debe - $aux->haber;
+               $sum_debe += $aux->debe;
+               $sum_haber += $aux->haber;
                $aux->saldo = $saldo;
+               $aux->sum_debe = $sum_debe;
+               $aux->sum_haber = $sum_haber;
                $plist[] = $aux;
             }
          }

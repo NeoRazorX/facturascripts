@@ -45,6 +45,16 @@ class fs_printer
          unlink($this->filename);
    }
    
+   public function set_printer($printer='')
+   {
+      if($printer == '')
+         $this->print_command = ' | lp';
+      else if( substr($printer, 0, 5) == '/dev/' )
+         $this->print_command = ' > '.$printer;
+      else
+         $this->print_command = ' | -d '.$printer;
+   }
+   
    public function add($linea)
    {
       fwrite($this->file, $linea);

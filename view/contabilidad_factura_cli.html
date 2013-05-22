@@ -44,7 +44,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input type="submit" value="enviar"/>
+               <input type="submit" value="enviar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -75,7 +75,9 @@
       <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
          <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
-         <span><input type="submit" value="guardar"/></span>
+         <span>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
       </h1>
       <div class="bloque">
          Ejercicio: {$fsc->factura->codejercicio}

@@ -295,7 +295,7 @@
             <td align="right">
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-               <input type="submit" value="Actualizar"/>
+               <input type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -330,7 +330,7 @@
             <td align="right">
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-               <input type="submit" value="Actualizar"/>
+               <input type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -376,7 +376,9 @@
          {else}
          <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
          {/if}
-         <span><input type="submit" value="guardar"/></span>
+         <span>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
       </h1>
       <div class="bloque">Número: {$fsc->albaran->numero}</div>
       <div class="bloque">
@@ -472,7 +474,9 @@
             <td></td>
             <th>Anterior</th>
             <th>Nuevo</th>
-            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
+            <td rowspan="2" align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
          <tr>
             <td align="right"><b>Neto:</b></td>
@@ -519,7 +523,9 @@
             <th>Neto:</th>
             <th>IVA:</th>
             <th>Total:</th>
-            <td rowspan="2" align="right"><input type="submit" value="guardar"/></td>
+            <td rowspan="2" align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
          <tr>
             <td align="center">{$fsc->albaran->show_neto()} €</td>

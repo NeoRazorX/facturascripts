@@ -221,6 +221,7 @@
    </div>
    
    <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
       <input type="hidden" id="numlineas" name="numlineas" value="0"/>
       <div class="popup" id="popup_tpv_opciones"/>
          <h1>Guardar como...</h1>
@@ -310,7 +311,9 @@
                   <input type="text" id="num_tickets" name="num_tickets" value="1" size="2"/>
                   <input type="button" value="+" onclick="more_tickets('1')"/>
                </td>
-               <td align="right"><input type="submit" value="guardar"/></td>
+               <td align="right">
+                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
             </tr>
          </table>
       </div>

@@ -25,7 +25,9 @@
       <div class="rounded">
          <h1>
             Datos de usuario:
-            <span><input type="submit" value="guardar"/></span>
+            <span>
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </span>
          </h1>
          <div class="bloque">
             Nick: <input type="text" value="{$fsc->suser->nick}" size="12" maxlength="12" disabled="disabled"/>
@@ -144,7 +146,9 @@
                   <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                   <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
                </td>
-               <td align="right"><input type="submit" value="Guardar"/></td>
+               <td align="right">
+                  <input type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
             </tr>
          </table>
       </div>

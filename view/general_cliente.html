@@ -19,7 +19,9 @@
       <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <h1>
          {$fsc->cliente->nombre}
-         <span><input type="submit" value="guardar"/></span>
+         <span>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
       </h1>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->cliente->nombre}" size="25"/>
@@ -99,7 +101,9 @@
             <input type="hidden" name="coddir" value="{$value->id}"/>
             <h2>
                Dirección #{$value->id}:
-               <span><input type="submit" value="guardar"/></span>
+               <span>
+                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </span>
             </h2>
             <div class="bloque">
                <a href="">País</a>:
@@ -162,7 +166,9 @@
          <input type="hidden" name="coddir" value=""/>
          <h2>
             Nueva dirección:
-            <span><input type="submit" value="guardar"/></span>
+            <span>
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </span>
          </h2>
          <div class="bloque">
             <a href="">País</a>:

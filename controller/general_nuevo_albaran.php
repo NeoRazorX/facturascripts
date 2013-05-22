@@ -92,7 +92,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-16';
+      return parent::version().'-17';
    }
    
    private function new_articulo()
@@ -131,41 +131,68 @@ class general_nuevo_albaran extends fs_controller
       if( $cliente )
          $this->save_codcliente( $cliente->codcliente );
       else
+      {
+         $this->new_error_msg('Cliente no encontrado.');
          $continuar = FALSE;
+      }
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
          $this->save_codalmacen( $almacen->codalmacen );
       else
+      {
+         $this->new_error_msg('Almacén no encontrado.');
          $continuar = FALSE;
+      }
       
       $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
+      {
+         $this->new_error_msg('Ejercicio no encontrado.');
          $continuar = FALSE;
+      }
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
          $this->save_codserie( $serie->codserie );
       else
+      {
+         $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
+      }
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
          $this->save_codpago( $forma_pago->codpago );
       else
+      {
+         $this->new_error_msg('Forma de pago no encontrada.');
          $continuar = FALSE;
+      }
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
          $this->save_coddivisa( $divisa->coddivisa );
       else
+      {
+         $this->new_error_msg('Divisa no encontrada.');
          $continuar = FALSE;
+      }
+      
+      $albaran = new albaran_cliente();
+      
+      if( $this->duplicated_petition($_POST['petition_id']) )
+      {
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
+               para ver si el albarán se ha guardado correctamente.');
+         $continuar = FALSE;
+      }
       
       if( $continuar )
       {
-         $albaran = new albaran_cliente();
          $albaran->fecha = $_POST['fecha'];
          $albaran->codalmacen = $almacen->codalmacen;
          $albaran->codejercicio = $ejercicio->codejercicio;
@@ -285,8 +312,6 @@ class general_nuevo_albaran extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");
       }
-      else
-         $this->new_error_msg("¡Faltan datos!");
    }
    
    private function nuevo_albaran_proveedor()
@@ -297,41 +322,68 @@ class general_nuevo_albaran extends fs_controller
       if( $proveedor )
          $this->save_codproveedor( $proveedor->codproveedor );
       else
+      {
+         $this->new_error_msg('Proveedor no encontrado.');
          $continuar = FALSE;
+      }
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
          $this->save_codalmacen( $almacen->codalmacen );
       else
+      {
+         $this->new_error_msg('Almacén no encontrado.');
          $continuar = FALSE;
+      }
       
       $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
+      {
+         $this->new_error_msg('Ejercicio no encontrado.');
          $continuar = FALSE;
+      }
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
          $this->save_codserie( $serie->codserie );
       else
+      {
+         $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
+      }
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
          $this->save_codpago( $forma_pago->codpago );
       else
+      {
+         $this->new_error_msg('Forma de pago no encontrada.');
          $continuar = FALSE;
+      }
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
          $this->save_coddivisa( $divisa->coddivisa );
       else
+      {
+         $this->new_error_msg('Divisa no encontrada.');
          $continuar = FALSE;
+      }
+      
+      $albaran = new albaran_proveedor();
+      
+      if( $this->duplicated_petition($_POST['petition_id']) )
+      {
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
+               para ver si el albarán se ha guardado correctamente.');
+         $continuar = FALSE;
+      }
       
       if( $continuar )
       {
-         $albaran = new albaran_proveedor();
          $albaran->fecha = $_POST['fecha'];
          $albaran->codproveedor = $proveedor->codproveedor;
          $albaran->nombre = $proveedor->nombre;
@@ -439,8 +491,6 @@ class general_nuevo_albaran extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");
       }
-      else
-         $this->new_error_msg("¡Faltan datos!");
    }
    
    private function get_precios_articulo()

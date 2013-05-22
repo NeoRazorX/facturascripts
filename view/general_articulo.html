@@ -116,7 +116,7 @@
                {/if}
                <label for="articulo_bloqueado">bloqueado</label>
                &nbsp;
-               <input type="submit" value="guardar"/>
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </span>
          </h1>
          <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
@@ -224,7 +224,9 @@
                <td align="center">{$value->reservada}</td>
                <td align="center">{$value->disponible}</td>
                <td align="center">{$value->pterecibir}</td>
-               <td align="right"><input type="submit" value="guardar"/></td>
+               <td align="right">
+                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
             </form>
          </tr>
          {/loop}
@@ -243,7 +245,9 @@
                <td align="center"></td>
                <td align="center"></td>
                <td align="center"></td>
-               <td align="right"><input type="submit" value="guardar"/></td>
+               <td align="right">
+                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
             </form>
          </tr>
          {/if}
@@ -256,7 +260,9 @@
             <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
             <h1>
                Precios:
-               <span><input type="submit" value="guardar"/></span>
+               <span>
+                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </span>
             </h1>
             <table class="list">
                <tr>
@@ -402,7 +408,9 @@
       <table width="100%">
          <tr>
             <td><input type="file" name="fimagen" accept="image/png"/></td>
-            <td align="right"><input type="submit" value="guardar"/></td>
+            <td align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </form>

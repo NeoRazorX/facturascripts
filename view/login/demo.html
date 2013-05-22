@@ -48,8 +48,19 @@
          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
    </script>
+   <script>
+      (function(d, s, id) {
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) return;
+         js = d.createElement(s);
+         js.id = id;
+         js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+   </script>
 </head>
 <body>
+   <div id="fb-root"></div>
    
    {if condition="$fsc->get_errors()"}
       <div class="error">
@@ -74,6 +85,7 @@
          <tr>
             <td class="rounded">
                <a id="download" target="_blank" href="https://github.com/NeoRazorX/facturascripts/archive/master.zip">DESCARGAR</a>
+               <br/>
                <h3>Requisitos:</h3>
                <ul>
                   <li>PHP 5.</li>
@@ -90,10 +102,11 @@
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
                   <input type="hidden" name="password" value="demo"/>
                   <input type="submit" value="entrar en la demo"/>
+                  <br/>
                   <input type="text" name="user" size="12" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
                </form>
                <br/><br/>
-               Esto es una demo, por eso la seguridad está desactivada.
+               <center>Esto es una demo, por eso la seguridad está desactivada.</center>
             </td>
          </tr>
       </table>
@@ -101,11 +114,21 @@
       <table>
          <tr>
             <td width="100">
-               <a href="https://twitter.com/share" class="twitter-share-button" data-lang="es" data-count="vertical" data-related="neorazorx">Tweet</a>
-               <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+               <a href="https://twitter.com/share" class="twitter-share-button" data-lang="es" data-count="vertical" data-related="neorazorx" data-url="http://www.facturascripts.com">Tweet</a>
+               <script>
+                  !function(d,s,id){
+                     var js,fjs=d.getElementsByTagName(s)[0];
+                     if(!d.getElementById(id)){
+                        js=d.createElement(s);
+                        js.id=id;
+                        js.src="https://platform.twitter.com/widgets.js";
+                        fjs.parentNode.insertBefore(js,fjs);
+                     }
+                  }(document,"script","twitter-wjs");
+               </script>
             </td>
             <td width="100">
-               <div class="g-plusone" data-size="tall"></div>
+               <div class="g-plusone" data-size="tall" data-href="http://www.facturascripts.com"></div>
                <script type="text/javascript">
                     window.___gcfg = {lang: 'es'};
                     (function() {
@@ -116,15 +139,7 @@
                </script>
             </td>
             <td width="100">
-               <div id="fb-root"></div>
-               <div class="fb-like" data-layout="box_count" data-width="90" data-show-faces="false"></div>
-               <script>(function(d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) return;
-                    js = d.createElement(s); js.id = id;
-                    js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
-                    fjs.parentNode.insertBefore(js, fjs);
-               }(document, 'script', 'facebook-jssdk'));</script>
+               <div class="fb-like" data-href="http://www.facturascripts.com" data-layout="box_count" data-width="90" data-show-faces="false"></div>
             </td>
          </tr>
       </table>
@@ -136,13 +151,13 @@
          <tr>
             <td><div class="colabora2">Colabora</div></td>
             <td>
-               Si tienes cualquier problema o sugerencia no dudes en
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">informar</a>.
+               Si tienes cualquier problema o sugerencia no dudes en informar a través de
+               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Google Code</a>,
+               <a href='#fb_comments'>Facebook</a>, <a target="_blank" href="https://twitter.com/neorazorx">Twitter</a>
+               o <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
                <br/>
                Puedes seguir el desarrollo de FacturaScripts a través de
-               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>,<br/>
-               mi twitter <a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a> o la comunidad de
-               <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
+               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>.
             </td>
             <td><a id="b_github" target="_blank" href="https://github.com/NeoRazorX/facturascripts">github</a></td>
             <td><a id="b_donar" href="#">Donar</a></td>
@@ -196,30 +211,34 @@
             <td>
                <img src="../img/mysql.gif" alt="mysql"/>
                <h2>Compatible</h2>
+               ¿No usas PostgreSQL? No pasa nada.
                MySQL también está disponible para mayor compatibilidad y velocidad.
                Podrás instalar FacturaScripts en cualquier hosting.
             </td>
          </tr>
          <tr>
             <td>
-               <img src="../img/php.png" alt="php"/>
+               <img src="../img/einstein.png" alt="php"/>
                <h2>Sencillo</h2>
-               FacturaScripts está desarrollado en PHP, uno de los lenguajes de
-               programación más sencillos y extendidos.
+               La vida ya es bastante complicada como para estar dos horas para hacer una factura. Mira este
+               <a target="_blank" href='http://www.youtube.com/watch?v=gk4eFGLlv6Y'>pequeño tutorial</a>
+               para ver lo sencillo que es trabajar con FacturaScripts.
             </td>
             <td>
-               <img src="../img/code.png" alt="code"/>
+               <img src="../img/php.png" alt="code"/>
                <h2>Extensible</h2>
-               FacturaScripts usa el patrón de diseño
-               <a target="_blank" href="http://es.wikipedia.org/wiki/Modelo_Vista_Controlador">Modelo Vista Controlador</a>.
-               Gracias a esta separación de capas, el diseño es muy sencillo y permite
+               FacturaScripts está desarrollado en PHP, uno de los lenguajes de
+               programación más sencillos y extendidos.
+               Y gracias al diseño de FacturaScripts, podrás
                añadir nuevas características de forma rápida y sin complicaciones.
+               Mira este <a target="_blank" href='http://youtu.be/kVqHt8l5FcE'>pequeño video-tutorial</a>.
             </td>
          </tr>
       </table>
       
       <div class="videos">
-         <iframe width="560" height="315" src="http://www.youtube.com/embed/hX-HKD_SrcA?list=PLnAAyBqHmX-ZGgXTHuawqRMd-NG3PEt-4" frameborder="0" allowfullscreen></iframe>
+         <iframe width="560" height="315" src="http://www.youtube.com/embed/hX-HKD_SrcA?list=PLnAAyBqHmX-ZGgXTHuawqRMd-NG3PEt-4" frameborder="0" allowfullscreen>
+         </iframe>
       </div>
       
       <a name="changes"></a>

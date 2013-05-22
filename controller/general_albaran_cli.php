@@ -84,16 +84,27 @@ class general_albaran_cli extends fs_controller
          /// comprobamos el albarán
          $this->albaran->full_test();
          
-         if( isset($_GET['facturar']) AND $this->albaran->ptefactura )
-            $this->generar_factura();
+         if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
+         {
+            if( $this->duplicated_petition($_GET['petid']) )
+               $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+            else
+               $this->generar_factura();
+         }
          
          $this->buttons[] = new fs_button('b_imprimir', 'imprimir',
                  $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
          
          if( $this->albaran->ptefactura )
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE");
+         {
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura',
+                    $this->url()."&facturar=TRUE&petid=".$this->random_string());
+         }
          else
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         {
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura',
+                    $this->albaran->factura_url(), 'button', 'img/zoom.png');
+         }
          $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
       }
       else
@@ -102,7 +113,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-17';
+      return parent::version().'-18';
    }
    
    public function url()

@@ -82,8 +82,13 @@ class contabilidad_ejercicio extends fs_controller
             $this->buttons[] = new fs_button('b_exportar', 'exportar',
                     $this->url().'&export=TRUE', '', 'img/tools.png', '*', TRUE);
             
-            if( isset($_GET['cerrar']) )
-               $this->cerrar_ejercicio();
+            if( isset($_GET['cerrar']) AND isset($_GET['petid']) )
+            {
+               if( $this->duplicated_petition($_GET['petid']) )
+                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               else
+                  $this->cerrar_ejercicio();
+            }
             else
                $this->ejercicio->full_test();
             
@@ -159,7 +164,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function url()

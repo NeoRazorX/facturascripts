@@ -8,12 +8,12 @@
       $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
          <table width='100%'>\n\
             <tr>\n\
-               <td width='450'>\n\
+               <td>\n\
                <table>\n\
                   <tr>\n\
-                     <th width='200' align='left'>Subcuenta+saldo</th>\n\
-                     <th width='100' align='left'>Debe</th>\n\
-                     <th width='100' align='left'>Haber</th>\n\
+                     <th align='left'>Subcuenta+saldo</th>\n\
+                     <th align='left'>Debe</th>\n\
+                     <th align='left'>Haber</th>\n\
                   </tr>\n\
                   <tr>\n\
                      <td>\n\
@@ -44,7 +44,7 @@
    {
       $("#contrapartida_"+num).html("<table width='100%'>\n\
          <tr>\n\
-            <th width='200' align='left'>Contrapartida+saldo</th>\n\
+            <th align='left'>Contrapartida+saldo</th>\n\
             <th align='left'>IVA</th>\n\
             <th align='left'>Base Imp.</th>\n\
             <th align='left'>CIF/NIF</th>\n\
@@ -189,6 +189,7 @@
          event.preventDefault();
          if(document.f_asiento.descuadre.value == 0)
          {
+            $(this).disabled = true;
             document.f_asiento.numlineas.value = numlineas;
             document.f_asiento.importe.disabled = false;
             document.f_asiento.submit();
@@ -214,6 +215,7 @@
 </div>
 
 <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <input type="hidden" name="numlineas" value="0"/>
    <div class="rounded">
       <table class="list">

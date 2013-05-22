@@ -23,7 +23,9 @@
             <td><input type="text" name="snombre" size="18" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td colspan="2" align="right"><input type="submit" value="guardar"/></td>
+            <td colspan="2" align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </form>
@@ -39,7 +41,7 @@
             <a class="remove" href="{$fsc->url()}&amp;delete={$value->codpais}">eliminar</a>
             {/if}
             &nbsp;
-            <input type="submit" value="guardar"/>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
       Nombre del país:

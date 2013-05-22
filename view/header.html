@@ -90,7 +90,7 @@
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
                <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off"/>
-               <input type="submit" value="buscar"/>
+               <input type="submit" value="buscar" onclick="this.disabled=true;this.form.submit();"/>
             </form>
             {/if}
          </div>
@@ -118,12 +118,14 @@
             <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
             <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
             {if condition="!$demo"}
-               <li><hr/></li>
-               {loop name="$fsc->user->all()"}
-                  {if condition="$value->nick != $fsc->user->nick"}
+               {if condition="count($fsc->user->all())>1"}
+                  <li><hr/></li>
+                  {loop name="$fsc->user->all()"}
+                     {if condition="$value->nick != $fsc->user->nick"}
                      <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
-                  {/if}
-               {/loop}
+                     {/if}
+                  {/loop}
+               {/if}
             {/if}
             <li><hr/></li>
             <li><a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a></li>

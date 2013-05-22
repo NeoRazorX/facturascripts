@@ -56,7 +56,9 @@
                {/loop}
                </div>
             </td>
-            <td align="right"><input type="submit" value="guardar"/></td>
+            <td align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
       
@@ -76,6 +78,7 @@
             <th>Contrapartida</th>
             <th>CIF/NIF</th>
          </tr>
+         {$total=-1+count($fsc->resultados)}
          {loop="$fsc->resultados"}
          <tr>
             <td align="center">
@@ -108,6 +111,14 @@
                {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
             </td>
          </tr>
+         {if condition="$counter==$total"}
+         <tr>
+            <td colspan="4" align="right"><b>Sumas</b>:</td>
+            <td align="right"><b>{$value->show_sumdebe()} €</b></td>
+            <td align="right"><b>{$value->show_sumhaber()} €</b></td>
+            <td colspan="5"></td>
+         </tr>
+         {/if}
          {/loop}
       </table>
       
@@ -130,7 +141,9 @@
                {/loop}
                </div>
             </td>
-            <td align="right"><input type="submit" value="guardar"/></td>
+            <td align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </div>

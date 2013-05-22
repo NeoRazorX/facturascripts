@@ -204,6 +204,7 @@
 </script>
 
 <form name="form_tpv_albaran" action="{$fsc->url()}" method="post">
+<input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
 <input type="hidden" id="numlineas" name="numlineas" value="0"/>
 <table width="100%">
    <tr>
@@ -293,7 +294,20 @@
                      </select>
                   </td>
                </tr>
+               <tr>
+                  <td align="right">Impresora 1:</td>
+                  <td>
+                     <input type="text" name="impresora1" value="{$fsc->impresora1}"/>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="right">Impresora 2:</td>
+                  <td>
+                     <input type="text" name="impresora2" value="{$fsc->impresora2}"/>
+                  </td>
+               </tr>
             </table>
+            <div class="advice">Haz un ticket para que se guarden los cambios.</div>
          </div>
          <div class="rounded">
             <div>
@@ -348,7 +362,9 @@
       </tr>
       <tr>
          <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
-         <td align="right"><input type="submit" class="comfirm" value="finalizar"/></td>
+         <td align="right">
+            <input type="submit" class="comfirm" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
+         </td>
       </tr>
    </table>
 </div>

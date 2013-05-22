@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_button.php';
-
 if(FS_DB_TYPE == 'MYSQL')
    require_once 'base/fs_mysql.php';
 else
    require_once 'base/fs_postgresql.php';
 
+require_once 'base/fs_button.php';
+require_once 'base/fs_cache.php';
 require_once 'base/fs_default_items.php';
 require_once 'model/agente.php';
 require_once 'model/empresa.php';
-require_once 'model/fs_user.php';
-require_once 'model/fs_page.php';
 require_once 'model/fs_access.php';
+require_once 'model/fs_page.php';
+require_once 'model/fs_user.php';
 
 class fs_controller
 {
@@ -49,6 +49,7 @@ class fs_controller
    public $buttons;
    public $empresa;
    public $default_items;
+   protected $cache;
    
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
    {
@@ -73,6 +74,8 @@ class fs_controller
          $this->ppage = FALSE;
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
+         
+         $this->cache = new fs_cache();
          
          $this->template = 'index';
          if( isset($_GET['logout']) )
@@ -324,7 +327,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.10';
+      return '0.11';
    }
    
    public function select_default_page()
@@ -527,6 +530,34 @@ class fs_controller
    public function today()
    {
       return date('d-m-Y');
+   }
+   
+   public function random_string($length = 30)
+   {
+      return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+              0, $length);
+   }
+   
+   /*
+    * He detectado que algunos navegadores, en algunos casos, envían varias veces la
+    * misma petición del formulario. En consecuencia se crean varios modelos (asientos,
+    * albaranes, etc...) con los mismos datos, es decir, duplicados.
+    * Para solucionarlo añado al formulario un campo petition_id con una cadena
+    * de texto aleatoria. Al llamar a esta función se comprueba si esa cadena
+    * ya ha sido almacenada, de ser así devuelve TRUE, así no hay que gabar los datos,
+    * si no, se almacena el ID y se devuelve FALSE.
+    */
+   protected function duplicated_petition($id)
+   {
+      $ids = $this->cache->get_array('petition_ids');
+      if( in_array($id, $ids) )
+         return TRUE;
+      else
+      {
+         $ids[] = $id;
+         $this->cache->set('petition_ids', $ids, 300);
+         return FALSE;
+      }
    }
 }
 

@@ -1061,6 +1061,32 @@ class factura_proveedor extends fs_model
          }
       }
       
+      if($status)
+      {
+         /// comprobamos si es un duplicado
+         $facturas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
+            AND codproveedor = ".$this->var2str($this->codproveedor)." AND total = ".$this->var2str($this->total)."
+            AND observaciones = ".$this->var2str($this->observaciones)." AND idfactura != ".$this->var2str($this->idfactura).";");
+         if($facturas)
+         {
+            foreach($facturas as $fac)
+            {
+               /// comprobamos las líneas
+               $aux = $this->db->select("SELECT referencia FROM lineasfacturasprov WHERE
+                  idfactura = ".$this->var2str($this->idfactura)."
+                  EXCEPT SELECT referencia FROM lineasfacturasprov
+                  WHERE idfactura = ".$this->var2str($fac['idfactura']).";");
+               if( !$aux )
+               {
+                  $this->new_error_msg("Esta factura es un posible duplicado de
+                     <a href='index.php?page=contabilidad_factura_pro&id=".$fac['idfactura']."'>esta otra</a>.
+                     Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
+                  $status = FALSE;
+               }
+            }
+         }
+      }
+      
       return $status;
    }
    

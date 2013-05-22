@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -43,7 +43,7 @@ class familia extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return '';
+      return "INSERT INTO ".$this->table_name." (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
    }
    
    public function url()

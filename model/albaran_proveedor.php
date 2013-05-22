@@ -696,6 +696,33 @@ class albaran_proveedor extends fs_model
          $status = FALSE;
       }
       
+      if($status)
+      {
+         /// comprobamos si es un duplicado
+         $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
+            AND codproveedor = ".$this->var2str($this->codproveedor)." AND total = ".$this->var2str($this->total)."
+            AND codagente = ".$this->var2str($this->codagente)." AND numproveedor = ".$this->var2str($this->numproveedor)."
+            AND observaciones = ".$this->var2str($this->observaciones)." AND idalbaran != ".$this->var2str($this->idalbaran).";");
+         if($albaranes)
+         {
+            foreach($albaranes as $alb)
+            {
+               /// comprobamos las líneas
+               $aux = $this->db->select("SELECT referencia FROM lineasalbaranesprov WHERE
+                  idalbaran = ".$this->var2str($this->idalbaran)."
+                  EXCEPT SELECT referencia FROM lineasalbaranesprov
+                  WHERE idalbaran = ".$this->var2str($alb['idalbaran']).";");
+               if( !$aux )
+               {
+                  $this->new_error_msg("Este albarán es un posible duplicado de
+                     <a href='index.php?page=general_albaran_prov&id=".$alb['idalbaran']."'>este otro</a>.
+                     Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
+                  $status = FALSE;
+               }
+            }
+         }
+      }
+      
       return $status;
    }
    

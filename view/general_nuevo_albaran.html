@@ -310,6 +310,7 @@
 
 {if condition="$fsc->agente"}
 <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <input type="hidden" name="tipoalbaran" value="cliente"/>
    <div class="popup" id="popup_tpv_opciones"/>
@@ -317,7 +318,7 @@
       <table>
          <tr>
             <td align="right">Fecha:</td>
-            <td colspan="3"><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/></td>
+            <td colspan="3"><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
          </tr>
          <tr id="tr_clientes">
             <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
@@ -403,18 +404,20 @@
          </tr>
          <tr id="tr_numero2">
             <td align="right">Número 2:</td>
-            <td colspan="3"><input type="text" name="numero2"/></td>
+            <td colspan="3"><input type="text" name="numero2" autocomplete="off"/></td>
          </tr>
          <tr id="tr_numproveedor">
             <td align="right">Num. proveedor:</td>
-            <td colspan="3"><input type="text" name="numproveedor"/></td>
+            <td colspan="3"><input type="text" name="numproveedor" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Observaciones:</td>
             <td colspan="3"><textarea name="observaciones" cols="50"></textarea></td>
          </tr>
          <tr>
-            <td colspan="4" align="right"><input type="submit" value="guardar"/></td>
+            <td colspan="4" align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </div>

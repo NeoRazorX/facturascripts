@@ -151,7 +151,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-17';
+      return parent::version().'-18';
    }
    
    private function new_search()
@@ -190,41 +190,68 @@ class tpv_recambios extends fs_controller
       if( $cliente )
          $this->save_codcliente( $cliente->codcliente );
       else
+      {
+         $this->new_error_msg('Cliente no encontrado.');
          $continuar = FALSE;
+      }
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
          $this->save_codalmacen( $almacen->codalmacen );
       else
+      {
+         $this->new_error_msg('Almacén no encontrado.');
          $continuar = FALSE;
+      }
       
       $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
+      {
+         $this->new_error_msg('Ejercicio no encontrado.');
          $continuar = FALSE;
+      }
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
          $this->save_codserie( $serie->codserie );
       else
+      {
+         $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
+      }
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
          $this->save_codpago( $forma_pago->codpago );
       else
+      {
+         $this->new_error_msg('Forma de pago no encontrada.');
          $continuar = FALSE;
+      }
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
          $this->save_coddivisa( $divisa->coddivisa );
       else
+      {
+         $this->new_error_msg('Divisa no encontrada.');
          $continuar = FALSE;
+      }
+      
+      $albaran = new albaran_cliente();
+      
+      if( $this->duplicated_petition($_POST['petition_id']) )
+      {
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
+               para ver si el albarán se ha guardado correctamente.');
+         $continuar = FALSE;
+      }
       
       if( $continuar )
       {
-         $albaran = new albaran_cliente();
          $albaran->fecha = $_POST['fecha'];
          $albaran->codalmacen = $almacen->codalmacen;
          $albaran->codejercicio = $ejercicio->codejercicio;
@@ -344,8 +371,6 @@ class tpv_recambios extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");
       }
-      else
-         $this->new_error_msg("¡Faltan datos!");
    }
    
    private function abrir_caja()

@@ -57,7 +57,7 @@ class fs_var extends fs_model
    {
       if( is_null($this->name) )
          return FALSE;
-      else if( count($this->name) > 1 AND count($this->name) < 20  )
+      else if( strlen($this->name) > 1 AND strlen($this->name) < 20  )
          return TRUE;
       else
          return FALSE;
@@ -87,6 +87,59 @@ class fs_var extends fs_model
    {
       return $this->db->exec("DELETE FROM ".$this->table_name.
                  " WHERE name = ".$this->var2str($this->name).";");
+   }
+   
+   public function all()
+   {
+      $vlist = array();
+      $vars = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      if($vars)
+      {
+         foreach($vars as $v)
+            $vlist[] = new fs_var($v);
+      }
+      return $vlist;
+   }
+   
+   public function multi_get($names)
+   {
+      $vlist = array();
+      
+      $insql = '';
+      foreach($names as $n)
+      {
+         if($insql == '')
+            $insql = $this->var2str($n);
+         else
+            $insql .= ','.$this->var2str($n);
+      }
+      
+      $vars = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name IN (".$insql.");");
+      if($vars)
+      {
+         foreach($vars as $v)
+            $vlist[] = new fs_var($v);
+      }
+      return $vlist;
+   }
+   
+   public function multi_save($data)
+   {
+      $done = TRUE;
+      
+      foreach($data as $d)
+      {
+         $var = new fs_var();
+         $var->name = $d['name'];
+         $var->varchar = $d['varchar'];
+         if( !$var->save() )
+         {
+            $this->new_error_msg("Error al guardar '".$$var->name."'");
+            $done = FALSE;
+         }
+      }
+      
+      return $done;
    }
 }
 

@@ -13,7 +13,7 @@
 <script type="text/javascript">
    function cerrar_ejercicio()
    {
-      location.href = '{$fsc->url()}&cerrar=TRUE';
+      location.href = '{$fsc->url()}&cerrar=TRUE&petid={$fsc->random_string()}';
    }
    $(document).ready(function() {
       $("#b_importar").click(function(event) {
@@ -45,7 +45,9 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><input type="submit" value="importar"/></td>
+            <td align="right">
+               <input type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
       </table>
    </form>
@@ -61,7 +63,9 @@
             <th align="left">Fecha fin</th>
             <th align="left">Longitud subcuenta</th>
             <th align="left">Estado</th>
-            <td align="right"><input type="submit" value="guardar"/></td>
+            <td align="right">
+               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
          </tr>
          <tr>
             <td><input type="text" name="nombre" value="{$fsc->ejercicio->nombre}" autocomplete="off"/></td>

@@ -1,7 +1,42 @@
 {include="header"}
 
 <div class="rounded">
-   
+   <form action="{$fsc->url()}" method="post">
+      <h1>
+         Base de datos de wordpress (MySQL):
+         <span>
+            <input type="submit" value="guardar"/>
+         </span>
+      </h1>
+      <div class="bloque">
+         Servidor:
+         <input type="text" name="woo_server" value="{$fsc->woo_setup['woo_server']}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Puerto:
+         <input type="text" name="woo_port" value="{$fsc->woo_setup['woo_port']}" size="4" maxlength="5" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Base de datos:
+         <input type="text" name="woo_dbname" value="{$fsc->woo_setup['woo_dbname']}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Usuario:
+         <input type="text" name="woo_user" value="{$fsc->woo_setup['woo_user']}" size="10" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Contraseña:
+         <input type="password" name="woo_password" value="{$fsc->woo_setup['woo_password']}" size="10"/>
+      </div>
+   </form>
 </div>
+
+{if condition="!$fsc->woo_setup['connected']"}
+   <div class="advice">
+      <a target="_blank" href="http://www.woothemes.com/woocommerce/">WooCommerce</a>
+      es el plugin para wordpress que sirve para montar una pequeña tienda online.
+      Introduce los datos de la base de datos de wordpress para empezar a sincronizar.
+   </div>
+{/if}
 
 {include="footer"}

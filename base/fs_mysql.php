@@ -59,7 +59,8 @@ class fs_mysql extends fs_db
          self::$link = NULL;
          return $retorno;
       }
-      return TRUE;
+      else
+         return TRUE;
    }
    
    public function list_tables()

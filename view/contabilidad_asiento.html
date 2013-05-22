@@ -9,12 +9,12 @@
       $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
          <table width='100%'>\n\
             <tr>\n\
-               <td width='450'>\n\
+               <td>\n\
                <table>\n\
                   <tr>\n\
-                     <th width='200' align='left'>Subcuenta+saldo</th>\n\
-                     <th width='100' align='left'>Debe</th>\n\
-                     <th width='100' align='left'>Haber</th>\n\
+                     <th align='left'>Subcuenta+saldo</th>\n\
+                     <th align='left'>Debe</th>\n\
+                     <th align='left'>Haber</th>\n\
                   </tr>\n\
                   <tr>\n\
                      <td>\n\
@@ -46,7 +46,7 @@
    {
       $("#contrapartida_"+num).html("<table width='100%'>\n\
          <tr>\n\
-            <th width='200' align='left'>Contrapartida+saldo</th>\n\
+            <th align='left'>Contrapartida+saldo</th>\n\
             <th align='left'>IVA</th>\n\
             <th align='left'>Base Imp.</th>\n\
             <th align='left'>CIF/NIF</th>\n\
@@ -184,7 +184,7 @@
       document.f_asiento.concepto.focus();
    }
    $(document).ready(function() {
-      recalcular();
+      {if condition="$fsc->asiento->editable"}recalcular();{/if}
       $("#b_eliminar_asiento").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar este asiento?") )
@@ -201,6 +201,7 @@
          event.preventDefault();
          if(document.f_asiento.descuadre.value == 0)
          {
+            $(this).disabled = true;
             document.f_asiento.numlineas.value = numlineas;
             document.f_asiento.importe.disabled = false;
             document.f_asiento.submit();
@@ -274,12 +275,14 @@
       <div class='rounded' id='partida_{$counter+1}'>
          <table width='100%'>
             <tr>
-               <td width='450'>
+               <td>
                <table>
                   <tr>
-                     <th width='200' align='left'>Subcuenta+saldo</th>
-                     <th width='100' align='left'>Debe</th>
-                     <th width='100' align='left'>Haber</th>
+                     <th align='left'>
+                        <a href="{$value->subcuenta_url()}">Subcuenta</a>+saldo
+                     </th>
+                     <th align='left'>Debe</th>
+                     <th align='left'>Haber</th>
                   </tr>
                   <tr>
                      <td>
@@ -303,7 +306,9 @@
                <td id='contrapartida_{$counter+1}'>
                   <table width="100%">
                      <tr>
-                        <th width="200" align='left'>Contrapartida+saldo</th>
+                        <th align='left'>
+                           <a href="{$value->contrapartida_url()}">Contrapartida</a>+saldo
+                        </th>
                         <th align='left'>IVA</th>
                         <th align='left'>Base Imp.</th>
                         <th align='left'>CIF/NIF</th>

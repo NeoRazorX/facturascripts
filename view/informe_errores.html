@@ -5,6 +5,8 @@
       <form action="{$fsc->url()}" method="post">
          <div class="bloque">
             <select name="modelo">
+               <option value="todo">Todo</option>
+               <option value="">-------</option>
                <option value="asiento">Asientos</option>
                <option value="factura cliente">Facturas de cliente</option>
                <option value="factura proveedor">Facturas de proveedor</option>
@@ -22,6 +24,7 @@
    
    <script type="text/javascript">
       var show_page = "{$fsc->informe['show_page']}";
+      var timeout = false;
       function load_errors(page)
       {
          show_page = page;
@@ -31,15 +34,23 @@
             dataType: 'html',
             data: 'ajax=TRUE&show_page='+show_page,
             success: function(datos) {
-               $("#informe_errores").html(datos);
-               var re = /<!--FIN_PROCESO-->/g;
-               if( !re.test(datos) )
-                  setTimeout("load_errors(show_page);", 1000);
+               clearTimeout(timeout);
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec(datos);
+               if(m[1] == 'FIN_PROCESO')
+               {
+                  $("#informe_errores").html(datos);
+               }
+               else if(m[1] == show_page)
+               {
+                  $("#informe_errores").html(datos);
+                  timeout = setTimeout("load_errors(show_page);", 1500);
+               }
             }
          });
       }
       $(document).ready(function() {
-         setTimeout("load_errors(show_page);", 500);
+         timeout = setTimeout("load_errors(show_page);", 500);
       });
    </script>
    
@@ -55,6 +66,7 @@
       <!--FIN_PROCESO-->
       <div class="advice">Comprobación finalizada.</div>
    {else}
+      <!--{$fsc->informe['show_page']}-->
       <div class="advice">Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...</div>
    {/if}
    

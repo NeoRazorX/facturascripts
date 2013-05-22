@@ -1,8 +1,39 @@
-<h1>Últimos cambios de la versión {$fsc->version()}:</h1>
 <table>
    <tr>
-      <td>
+      <td valign='top'>
+         <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
          <ul>
+            <li>
+               22/05/2013:
+               <ul>
+                  <li>
+                     Añadido soporte experimental para
+                     <a target="_blank" href='http://www.woothemes.com/woocommerce/'>WooCommerce</a>.
+                  </li>
+                  <li>
+                     Añadido control de duplicados. Ahora cuando se envían dos peticiones
+                     de un mismo formulario (de nuevo asiento, nuevo albarán o lo que sea)
+                     ya sea por fallo del navegador, por mala leche del usuario o por
+                     hacer doble clic sobre el botón guardar, se guarda el primero,
+                     pero la segunda petición y siguientes no producen elementos duplicados.
+                  </li>
+                  <li>
+                     Los asientos, albaranes y facturas ahora muestran un mensaje de error
+                     si encuentran duplicados.
+                  </li>
+                  <li>
+                     El libro mayor de cada subcuenta ahora incluye las sumas del debe y del haber,
+                     para facilitar cálculos.
+                  </li>
+                  <li>
+                     El TPV de restaurante permite ahora imprimir un ticket por cada impresora.
+                  </li>
+                  <li>
+                     Pequeñas modificaciones para dar más información al usuario y ofrecer una
+                     experiencia más sencilla.
+                  </li>
+               </ul>
+            </li>
             <li>
                29/04/2013:
                <ul>
@@ -12,9 +43,16 @@
                      ¿Por qué? Porque esta versión es la que más quebraderos de
                      cabeza me ha dado. Cada vez que pensaba que ya estaba lista
                      salían más y más problemas. Por eso le he puesto el nombre del
-                     <a target="_blank" href="http://www.xatakaciencia.com/biologia/cual-es-el-animal-mas-dificil-de-matar-del-mundo">
+                     <a target="_blank" href="http://www.neorazorx.com/2013/04/facturascripts-010-con-soporte-mysql.html">
                         animal más difícil de matar</a>.
                   </li>
+               </ul>
+            </li>
+            <li>
+               22/04/2013:
+               <ul>
+                  <li>Ya se pueden modificar los asientos.</li>
+                  <li>Pequeñas modificaciones en el HTML.</li>
                </ul>
             </li>
             <li>
@@ -36,17 +74,6 @@
                   </li>
                </ul>
             </li>
-         </ul>
-      </td>
-      <td>
-         <ul>
-            <li>
-               22/04/2013:
-               <ul>
-                  <li>Ya se pueden modificar los asientos.</li>
-                  <li>Pequeñas modificaciones en el HTML.</li>
-               </ul>
-            </li>
             <li>
                12/04/2013:
                <ul>
@@ -66,6 +93,11 @@
                </ul>
             </li>
          </ul>
+      </td>
+      <td valign='top'>
+         <a name='fb_comments'></a>
+         <h1>Preguntas o sugerencias:</h1>
+         <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="470" data-num-posts="10"></div>
       </td>
    </tr>
 </table>

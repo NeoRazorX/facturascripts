@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -40,20 +40,21 @@ class libro_mayor
          if( $subc->is_outdated() )
             $subc->save();
          
-         $this->libro_mayor($subc);
+         $this->libro_mayor($subc, TRUE);
       }
    }
    
-   private function libro_mayor($subc=FALSE)
+   public function libro_mayor($subc=FALSE, $echos=FALSE)
    {
-      if( $subc )
+      if($subc)
       {
          if( !file_exists('tmp/libro_mayor') )
             mkdir('tmp/libro_mayor');
          
          if( !file_exists('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf') )
          {
-            echo '.';
+            if($echos)
+               echo '.';
             
             $pdf_doc = new fs_pdf();
             $pdf_doc->pdf->addInfo('Title', 'Libro mayor de ' . $subc->codsubcuenta);
@@ -62,11 +63,11 @@ class libro_mayor
             $pdf_doc->pdf->ezStartPageNumbers(590, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
             
             $partidas = $subc->get_partidas_full();
-            if( $partidas )
+            if($partidas)
             {
                $lineasfact = count($partidas);
                $linea_actual = 0;
-               $lppag = 50;
+               $lppag = 49;
                $pagina = 1;
                
                // Imprimimos las páginas necesarias
@@ -117,14 +118,25 @@ class libro_mayor
                             'asiento' => $partidas[$linea_actual]->numero,
                             'fecha' => $partidas[$linea_actual]->fecha,
                             'concepto' => $partidas[$linea_actual]->concepto,
-                            'debe' => number_format($partidas[$linea_actual]->debe, 2, '.', ' '),
-                            'haber' => number_format($partidas[$linea_actual]->haber, 2, '.', ' '),
-                            'saldo' => number_format($partidas[$linea_actual]->saldo, 2, '.', ' ')
+                            'debe' => $partidas[$linea_actual]->show_debe(),
+                            'haber' => $partidas[$linea_actual]->show_haber(),
+                            'saldo' => $partidas[$linea_actual]->show_saldo()
                         )
                      );
                      
                      $linea_actual++;
                   }
+                  /// añadimos las sumas de la línea actual
+                  $pdf_doc->add_table_row(
+                        array(
+                            'asiento' => '',
+                            'fecha' => '',
+                            'concepto' => '',
+                            'debe' => '<b>'.$partidas[$linea_actual-1]->show_sumdebe().'</b>',
+                            'haber' => '<b>'.$partidas[$linea_actual-1]->show_sumhaber().'</b>',
+                            'saldo' => ''
+                        )
+                  );
                   $pdf_doc->save_table(
                      array(
                          'fontSize' => 8,

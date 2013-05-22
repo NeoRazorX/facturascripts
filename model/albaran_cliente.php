@@ -744,6 +744,33 @@ class albaran_cliente extends fs_model
          $status = FALSE;
       }
       
+      if($status)
+      {
+         /// comprobamos si es un duplicado
+         $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
+            AND codcliente = ".$this->var2str($this->codcliente)." AND total = ".$this->var2str($this->total)."
+            AND codagente = ".$this->var2str($this->codagente)." AND numero2 = ".$this->var2str($this->numero2)."
+            AND observaciones = ".$this->var2str($this->observaciones)." AND idalbaran != ".$this->var2str($this->idalbaran).";");
+         if($albaranes)
+         {
+            foreach($albaranes as $alb)
+            {
+               /// comprobamos las líneas
+               $aux = $this->db->select("SELECT referencia FROM lineasalbaranescli WHERE
+                  idalbaran = ".$this->var2str($this->idalbaran)."
+                  EXCEPT SELECT referencia FROM lineasalbaranescli
+                  WHERE idalbaran = ".$this->var2str($alb['idalbaran']).";");
+               if( !$aux )
+               {
+                  $this->new_error_msg("Este albarán es un posible duplicado de
+                     <a href='index.php?page=general_albaran_cli&id=".$alb['idalbaran']."'>este otro</a>.
+                     Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
+                  $status = FALSE;
+               }
+            }
+         }
+      }
+      
       return $status;
    }
    

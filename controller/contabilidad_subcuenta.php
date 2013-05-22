@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,6 +19,7 @@
 
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
+require_once 'extras/libromayor.php';
 
 class contabilidad_subcuenta extends fs_controller
 {
@@ -49,16 +50,6 @@ class contabilidad_subcuenta extends fs_controller
          $this->cuenta = $this->subcuenta->get_cuenta();
          $this->ejercicio = $this->subcuenta->get_ejercicio();
          
-         /// comprobamos la subcuenta
-         $this->subcuenta->test();
-         
-         if( file_exists('tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf') )
-         {
-            $this->buttons[] = new fs_button('b_libro_mayor', 'libro mayor',
-               'tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf','',
-               'img/print.png', 'imprimir', TRUE);
-         }
-         
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else
@@ -68,6 +59,28 @@ class contabilidad_subcuenta extends fs_controller
          
          if( isset($_POST['puntear']) )
             $this->puntear();
+         
+         if( isset($_GET['genlm']) )
+         {
+            /// generamos el PDF del libro mayor si no existe
+            $libro_mayor = new libro_mayor();
+            $libro_mayor->libro_mayor($this->subcuenta);
+         }
+         
+         if( file_exists('tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf') )
+         {
+            $this->buttons[] = new fs_button('b_libro_mayor', 'libro mayor',
+               'tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf', '',
+               'img/print.png', 'imprimir', TRUE);
+         }
+         else
+         {
+            $this->buttons[] = new fs_button('b_libro_mayor', 'generar libro mayor',
+               $this->url().'&genlm=TRUE', '', 'img/tools.png');
+         }
+         
+         /// comprobamos la subcuenta
+         $this->subcuenta->test();
       }
       else
          $this->new_error_msg("Subcuenta no encontrada.");
@@ -75,7 +88,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()

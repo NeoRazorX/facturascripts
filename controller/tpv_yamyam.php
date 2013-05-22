@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'base/fs_printer.php';
 require_once 'model/agente.php';
 require_once 'model/albaran_cliente.php';
@@ -39,7 +38,6 @@ class tpv_yamyam extends fs_controller
    public $almacen;
    public $articulo;
    public $articulos;
-   private $cache;
    public $caja;
    public $cliente;
    public $divisa;
@@ -48,6 +46,9 @@ class tpv_yamyam extends fs_controller
    public $familias;
    public $forma_pago;
    public $impuesto;
+   public $impresora1;
+   public $impresora2;
+   public $num_tickets;
    public $paquete;
    public $paquetes;
    public $serie;
@@ -63,7 +64,6 @@ class tpv_yamyam extends fs_controller
       $this->agente = $this->user->get_agente();
       $this->almacen = new almacen();
       $this->articulo = new articulo();
-      $this->cache = new fs_cache();
       $this->caja = new caja();
       $this->cliente = new cliente();
       $this->divisa = new divisa();
@@ -146,7 +146,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-12';
+      return parent::version().'-13';
    }
    
    private function cargar_datos_tpv()
@@ -185,6 +185,26 @@ class tpv_yamyam extends fs_controller
          if( $encontrado )
             $this->familias[] = $f;
       }
+      
+      if( isset($_POST['impresora1']) )
+      {
+         $this->impresora1 = $_POST['impresora1'];
+         setcookie('impresora1', $this->impresora1, time()+FS_COOKIES_EXPIRE);
+      }
+      else if( isset($_COOKIE['impresora1']) )
+         $this->impresora1 = $_COOKIE['impresora1'];
+      else
+         $this->impresora1 = FS_PRINTER;
+      
+      if( isset($_POST['impresora2']) )
+      {
+         $this->impresora2 = $_POST['impresora2'];
+         setcookie('impresora2', $this->impresora2, time()+FS_COOKIES_EXPIRE);
+      }
+      else if( isset($_COOKIE['impresora2']) )
+         $this->impresora2 = $_COOKIE['impresora2'];
+      else
+         $this->impresora2 = FS_PRINTER;
    }
    
    private function get_first_articulos()
@@ -206,41 +226,68 @@ class tpv_yamyam extends fs_controller
       if( $cliente )
          $this->save_codcliente( $cliente->codcliente );
       else
+      {
+         $this->new_error_msg('Cliente no encontrado.');
          $continuar = FALSE;
+      }
       
       $almacen = $this->almacen->get($_POST['almacen']);
       if( $almacen )
          $this->save_codalmacen( $almacen->codalmacen );
       else
+      {
+         $this->new_error_msg('Almacén no encontrado.');
          $continuar = FALSE;
+      }
       
       $ejercicio = $this->ejercicio->get_by_fecha($_POST['fecha']);
       if( $ejercicio )
          $this->save_codejercicio( $ejercicio->codejercicio );
       else
+      {
+         $this->new_error_msg('Ejercicio no encontrado.');
          $continuar = FALSE;
+      }
       
       $serie = $this->serie->get($_POST['serie']);
       if( $serie )
          $this->save_codserie( $serie->codserie );
       else
+      {
+         $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
+      }
       
       $forma_pago = $this->forma_pago->get($_POST['forma_pago']);
       if( $forma_pago )
          $this->save_codpago( $forma_pago->codpago );
       else
+      {
+         $this->new_error_msg('Forma de pago no encontrado.');
          $continuar = FALSE;
+      }
       
       $divisa = $this->divisa->get($_POST['divisa']);
       if( $divisa )
          $this->save_coddivisa( $divisa->coddivisa );
       else
+      {
+         $this->new_error_msg('Divisa no encontrada.');
          $continuar = FALSE;
+      }
+      
+      $this->albaran = new albaran_cliente();
+      
+      if( $this->duplicated_petition($_POST['petition_id']) )
+      {
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$this->albaran->url().'">albaranes</a>
+               para ver si el albarán se ha guardado correctamente.');
+         $continuar = FALSE;
+      }
       
       if( $continuar )
       {
-         $this->albaran = new albaran_cliente();
          $this->albaran->fecha = $_POST['fecha'];
          $this->albaran->codalmacen = $almacen->codalmacen;
          $this->albaran->codejercicio = $ejercicio->codejercicio;
@@ -355,8 +402,6 @@ class tpv_yamyam extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");
       }
-      else
-         $this->new_error_msg("¡Faltan datos!");
    }
    
    private function borrar_ticket()
@@ -421,7 +466,7 @@ class tpv_yamyam extends fs_controller
 
    private function imprimir_ticket($num_tickets=2)
    {
-      $fpt = new fs_printer(FS_PRINTER);
+      $fpt = new fs_printer($this->impresora1);
       
       $linea = "\nTicket: " . $this->albaran->codigo;
       $linea .= " " . $this->albaran->fecha;
@@ -463,10 +508,17 @@ class tpv_yamyam extends fs_controller
       $fpt->add($fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
       $fpt->add($fpt->center_text($this->empresa->horario) . "\n");
       
+      $cambio = FALSE;
       while($num_tickets > 0)
       {
+         if($cambio)
+            $fpt->set_printer($this->impresora2);
+         else
+            $fpt->set_printer($this->impresora1);
+         
          $fpt->imprimir();
          $num_tickets--;
+         $cambio = !$cambio;
       }
       
       $fpt->abrir_cajon();

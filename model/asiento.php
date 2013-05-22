@@ -242,6 +242,32 @@ class asiento extends fs_model
          }
       }
       
+      if($status)
+      {
+         /// comprobamos si es un duplicado
+         $asientos = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
+            AND concepto = ".$this->var2str($this->concepto)." AND importe = ".$this->var2str($this->importe)."
+            AND idasiento != ".$this->var2str($this->idasiento).";");
+         if($asientos)
+         {
+            foreach($asientos as $as)
+            {
+               /// comprobamos las líneas
+               $aux = $this->db->select("SELECT codsubcuenta,debe,haber FROM co_partidas WHERE
+                  idasiento = ".$this->var2str($this->idasiento)."
+                  EXCEPT SELECT codsubcuenta,debe,haber FROM co_partidas
+                  WHERE idasiento = ".$this->var2str($as['idasiento']).";");
+               if( !$aux )
+               {
+                  $this->new_error_msg("Este asiento es un posible duplicado de
+                     <a href='index.php?page=contabilidad_asiento&id=".$as['idasiento']."'>este otro</a>.
+                     Si no lo es, para evitar este mensaje, simplemente modifica el concepto.");
+                  $status = FALSE;
+               }
+            }
+         }
+      }
+      
       return $status;
    }
    

@@ -71,7 +71,7 @@ class general_agrupar_albaranes_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    private function agrupar()
@@ -79,16 +79,26 @@ class general_agrupar_albaranes_cli extends fs_controller
       $continuar = TRUE;
       $albaranes = array();
       
-      foreach($_POST['idalbaran'] as $id)
-         $albaranes[] = $this->albaran->get($id);
-      
-      foreach($albaranes as $alb)
+      if( $this->duplicated_petition($_POST['petition_id']) )
       {
-         if( !$alb->ptefactura )
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">albaranes</a>
+               para ver si los albaranes se han guardado correctamente.');
+         $continuar = FALSE;
+      }
+      else
+      {
+         foreach($_POST['idalbaran'] as $id)
+            $albaranes[] = $this->albaran->get($id);
+         
+         foreach($albaranes as $alb)
          {
-            $this->new_error_msg("El albarán <a href='".$alb->url()."'>".$alb->codigo."</a> ya está facturado.");
-            $continuar = FALSE;
-            break;
+            if( !$alb->ptefactura )
+            {
+               $this->new_error_msg("El albarán <a href='".$alb->url()."'>".$alb->codigo."</a> ya está facturado.");
+               $continuar = FALSE;
+               break;
+            }
          }
       }
       

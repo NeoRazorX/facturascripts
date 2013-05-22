@@ -1,5 +1,11 @@
-@import url('http://fonts.googleapis.com/css?family=Oleo+Script');
 @import url('tcal.css');
+
+@font-face {
+  font-family: 'Oleo Script';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oleo Script'), local('OleoScript-Regular'), url('oleo_script.woff') format('woff');
+}
 
 body {
    margin: 0px;
@@ -594,7 +600,10 @@ div#sql_history {
    margin: 5px;
    margin-top: 20px;
    padding: 5px;
-   border: 1px dashed white;
+   background-color: #C2D0DE;
+   border: 1px solid #A1ADB8;
+   border-radius: 5px;
+   color: #424242;
 }
 
 div#sql_history h1 {

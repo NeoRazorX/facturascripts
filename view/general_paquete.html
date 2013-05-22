@@ -6,7 +6,9 @@
    <div class="rounded">
    <h1>
       Paquete: {$fsc->paquete->referencia}
-      <span><input type="submit" value="guardar"/></span>
+      <span>
+         <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </span>
    </h1>
       ¿Cuantos grupos de artículos quieres que tenga esta paquete?
       <input type="text" name="grupos" value="{$fsc->paquete->grupos}" size="2" maxlength="2"/>

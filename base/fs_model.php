@@ -268,6 +268,12 @@ abstract class fs_model
       return trim($newt);
    }
    
+   public function random_string($length = 10)
+   {
+      return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+              0, $length);
+   }
+   
    /// comprueba y actualiza la estructura de la tabla si es necesario
    public function check_table($table_name)
    {

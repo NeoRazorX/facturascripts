@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
 require_once 'model/articulo.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
@@ -125,7 +124,6 @@ class family_data
 class general_importar_familia extends fs_controller
 {
    public $articulo;
-   private $cache;
    public $family_data;
    public $familia;
    public $ready;
@@ -140,7 +138,6 @@ class general_importar_familia extends fs_controller
       $this->ppage = $this->page->get('general_familias');
       
       $this->articulo = new articulo();
-      $this->cache = new fs_cache();
       $this->ready = TRUE;
       
       if( isset($_GET['fam']) )
@@ -251,7 +248,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    private function get_family_data()

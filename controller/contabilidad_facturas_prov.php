@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -49,6 +49,7 @@ class contabilidad_facturas_prov extends fs_controller
             $this->new_error_msg("Factura no encontrada.");
       }
       
+      $this->buttons[] = new fs_button('b_nueva', 'nueva');
       $this->buttons[] = new fs_button('b_huecos', 'huecos', '#', '', 'img/zoom.png');
       
       if( isset($_GET['offset']) )
@@ -64,7 +65,7 @@ class contabilidad_facturas_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function anterior_url()

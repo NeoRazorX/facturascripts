@@ -61,13 +61,27 @@ class contabilidad_nuevo_asiento extends fs_controller
          if($eje0)
             $this->save_codejercicio($eje0->codejercicio);
          else
+         {
+            $this->new_error_msg('Ejercicio no encontrado.');
             $continuar = FALSE;
+         }
          
          $div0 = $this->divisa->get($_POST['divisa']);
          if($div0)
             $this->save_coddivisa($div0->coddivisa);
          else
+         {
+            $this->new_error_msg('Divisa no encontrada.');
             $continuar = FALSE;
+         }
+         
+         if( $this->duplicated_petition($_POST['petition_id']) )
+         {
+            $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">asientos</a>
+               para ver si el asiento se ha guardado correctamente.');
+            $continuar = FALSE;
+         }
          
          if($continuar)
          {
@@ -150,14 +164,12 @@ class contabilidad_nuevo_asiento extends fs_controller
             else
                $this->new_error_msg("¡Imposible guardar el asiento!");
          }
-         else
-            $this->new_error_msg("Faltan datos.");
       }
    }
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    private function new_search()

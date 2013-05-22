@@ -88,8 +88,13 @@ class contabilidad_factura_cli extends fs_controller
             $this->generar_pdf($_GET['imprimir']);
          else
          {
-            if( isset($_GET['gen_asiento']) )
-               $this->generar_asiento();
+            if( isset($_GET['gen_asiento']) AND isset($_GET['petid']) )
+            {
+               if( $this->duplicated_petition($_GET['petid']) )
+                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               else
+                  $this->generar_asiento();
+            }
             else if( isset($_POST['email']) )
                $this->enviar_email();
             
@@ -108,11 +113,16 @@ class contabilidad_factura_cli extends fs_controller
             }
             
             if($this->factura->idasiento)
+            {
                $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
                        $this->factura->asiento_url(), 'button', 'img/zoom.png');
+            }
             else
+            {
                $this->buttons[] = new fs_button('b_gen_asiento', 'generar asiento',
-                       $this->url().'&gen_asiento=TRUE', 'button', 'img/tools.png');
+                       $this->url().'&gen_asiento=TRUE&petid='.$this->random_string(),
+                       'button', 'img/tools.png');
+            }
             
             $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
          }
@@ -123,7 +133,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-12';
+      return parent::version().'-13';
    }
    
    public function url()
