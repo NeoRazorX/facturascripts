@@ -146,7 +146,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    private function cargar_datos_tpv()
@@ -466,8 +466,8 @@ class tpv_yamyam extends fs_controller
 
    private function imprimir_ticket($num_tickets=2)
    {
+      /// ticket normal
       $fpt = new fs_printer($this->impresora1);
-      
       $linea = "\nTicket: " . $this->albaran->codigo;
       $linea .= " " . $this->albaran->fecha;
       $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
@@ -508,15 +508,35 @@ class tpv_yamyam extends fs_controller
       $fpt->add($fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
       $fpt->add($fpt->center_text($this->empresa->horario) . "\n");
       
+      
+      /// ticket para la cocina
+      $fpt2 = new fs_printer($this->impresora2);
+      $linea = "\nTicket: " . $this->albaran->codigo;
+      $linea .= " " . $this->albaran->fecha;
+      $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
+      $fpt2->add($linea);
+      $fpt2->add("Agente: " . $this->albaran->codagente . "\n\n");
+      $fpt2->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "P.U.") . "\n");
+      $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
+              sprintf("%10s", "----------") . "\n";
+      $fpt2->add($linea);
+      foreach($this->albaran->get_lineas() as $col)
+      {
+         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
+                 sprintf("%10s", '-') . "\n";
+         $fpt2->add($linea);
+      }
+      $fpt2->add("\n\n\n" . chr(27).chr(105) . "\n\n"); /// corta el papel
+      
+      
       $cambio = FALSE;
       while($num_tickets > 0)
       {
          if($cambio)
-            $fpt->set_printer($this->impresora2);
+            $fpt2->imprimir();
          else
-            $fpt->set_printer($this->impresora1);
+            $fpt->imprimir();
          
-         $fpt->imprimir();
          $num_tickets--;
          $cambio = !$cambio;
       }

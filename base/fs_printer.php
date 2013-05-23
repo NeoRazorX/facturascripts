@@ -25,7 +25,7 @@ class fs_printer
    
    public function __construct($printer='')
    {
-      $this->filename = '/tmp/ticket_'.time().'.txt';
+      $this->filename = '/tmp/ticket_'.$this->random_string().'.txt';
       $this->file = fopen($this->filename, 'w');
       
       if($printer == '')
@@ -122,6 +122,12 @@ class fs_printer
       for($i = 0; $i < $number_of_spaces; $i++)
          $result .= "$symbol";
       return $result;
+   }
+   
+   public function random_string($length = 20)
+   {
+      return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+              0, $length);
    }
 }
 
