@@ -39,6 +39,7 @@ class articulo extends fs_model
    public $bloqueado;
    public $secompra;
    public $sevende;
+   public $publico;
    public $equivalencia;
    public $stockfis;
    public $stockmin;
@@ -76,6 +77,7 @@ class articulo extends fs_model
          $this->bloqueado = $this->str2bool($a['bloqueado']);
          $this->secompra = $this->str2bool($a['secompra']);
          $this->sevende = $this->str2bool($a['sevende']);
+         $this->publico = $this->str2bool($a['publico']);
          $this->equivalencia = $a['equivalencia'];
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $this->no_html($a['observaciones']);
@@ -103,6 +105,7 @@ class articulo extends fs_model
          $this->bloqueado = FALSE;
          $this->secompra = TRUE;
          $this->sevende = TRUE;
+         $this->publico = FALSE;
          $this->equivalencia = NULL;
          $this->codbarras = '';
          $this->observaciones = '';
@@ -158,7 +161,7 @@ class articulo extends fs_model
       if( is_null($this->referencia) )
          return "index.php?page=general_articulos";
       else
-         return "index.php?page=general_articulo&ref=".$this->referencia;
+         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
    }
    
    public function get($ref)
@@ -503,25 +506,35 @@ class articulo extends fs_model
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
                codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
-               factualizado = ".$this->var2str($this->factualizado).", codimpuesto = ".$this->var2str($this->codimpuesto).",
+               factualizado = ".$this->var2str($this->factualizado).",
+               codimpuesto = ".$this->var2str($this->codimpuesto).",
                stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
                stockmax = ".$this->var2str($this->stockmax).",
-               controlstock = ".$this->var2str($this->controlstock).", destacado = ".$this->var2str($this->destacado).",
+               controlstock = ".$this->var2str($this->controlstock).",
+               destacado = ".$this->var2str($this->destacado).",
                bloqueado = ".$this->var2str($this->bloqueado).", sevende = ".$this->var2str($this->sevende).",
-               secompra = ".$this->var2str($this->secompra).", equivalencia = ".$this->var2str($this->equivalencia).",
-               codbarras = ".$this->var2str($this->codbarras).", observaciones = ".$this->var2str($this->observaciones).",
-               imagen = ".$this->bin2str($this->imagen)." WHERE referencia = ".$this->var2str($this->referencia).";";
+               publico = ".$this->var2str($this->publico).", secompra = ".$this->var2str($this->secompra).",
+               equivalencia = ".$this->var2str($this->equivalencia).",
+               codbarras = ".$this->var2str($this->codbarras).",
+               observaciones = ".$this->var2str($this->observaciones).",
+               imagen = ".$this->bin2str($this->imagen)."
+               WHERE referencia = ".$this->var2str($this->referencia).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,factualizado,codimpuesto,stockfis,
-               stockmin,stockmax,controlstock,destacado,bloqueado,secompra,sevende,equivalencia,codbarras,observaciones,imagen)
-               VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",".$this->var2str($this->descripcion).",
-               ".$this->var2str($this->pvp).",".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
-               ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",".$this->var2str($this->stockmax).",
-               ".$this->var2str($this->controlstock).",".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
-               ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",".$this->var2str($this->equivalencia).",
-               ".$this->var2str($this->codbarras).",".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).");";
+            $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,
+               factualizado,codimpuesto,stockfis,stockmin,stockmax,controlstock,destacado,bloqueado,
+               secompra,sevende,equivalencia,codbarras,observaciones,imagen,publico)
+               VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",
+               ".$this->var2str($this->descripcion).",".$this->var2str($this->pvp).",
+               ".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
+               ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",
+               ".$this->var2str($this->stockmax).",".$this->var2str($this->controlstock).",
+               ".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
+               ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",
+               ".$this->var2str($this->equivalencia).",".$this->var2str($this->codbarras).",
+               ".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).",
+               ".$this->var2str($this->publico).");";
          }
          return $this->db->exec($sql);
       }
@@ -583,10 +596,16 @@ class articulo extends fs_model
    
    public function cron_job()
    {
-      /// obtenemos los datos de memcache
-      $this->get_search_tags();
+      /*
+       * Eliminamos el stock de los artículos bloqueados
+       */
+      $this->db->exec("DELETE FROM stocks WHERE referencia IN
+         (SELECT referencia FROM ".$this->table_name." WHERE bloqueado = true);
+         UPDATE ".$this->table_name." SET stockfis = 0 WHERE referencia IN
+         (SELECT referencia FROM ".$this->table_name." WHERE bloqueado = true);");
       
-      if( self::$search_tags )
+      /// aceleramos las búsquedas
+      if( $this->get_search_tags() )
       {
          foreach(self::$search_tags as $i => $value)
          {
@@ -692,6 +711,19 @@ class articulo extends fs_model
       $artilist = array();
       $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
               " ORDER BY referencia ASC", $limit, $offset);
+      if($articulos)
+      {
+         foreach($articulos as $a)
+            $artilist[] = new articulo($a);
+      }
+      return $artilist;
+   }
+   
+   public function all_publico($offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $artilist = array();
+      $articulos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE publico ORDER BY referencia ASC", $limit, $offset);
       if($articulos)
       {
          foreach($articulos as $a)

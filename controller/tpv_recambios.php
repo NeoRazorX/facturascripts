@@ -42,6 +42,7 @@ class tpv_recambios extends fs_controller
    public $equivalentes;
    public $familia;
    public $forma_pago;
+   public $imprimir_descripciones;
    public $results;
    public $serie;
    public $tarifas;
@@ -86,6 +87,13 @@ class tpv_recambios extends fs_controller
          $this->ejercicio = new ejercicio();
          $this->forma_pago = new forma_pago();
          $this->serie = new serie();
+         
+         if( isset($_POST['imprimir_desc']) )
+            $this->imprimir_descripciones = TRUE;
+         else if( isset($_COOKIE['imprimir_desc']) )
+            $this->imprimir_descripciones = TRUE;
+         else
+            $this->imprimir_descripciones = FALSE;
          
          if( $this->agente )
          {
@@ -151,7 +159,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-18';
+      return parent::version().'-19';
    }
    
    private function new_search()
@@ -238,6 +246,17 @@ class tpv_recambios extends fs_controller
       {
          $this->new_error_msg('Divisa no encontrada.');
          $continuar = FALSE;
+      }
+      
+      if( isset($_POST['imprimir_desc']) )
+      {
+         $this->imprimir_descripciones = TRUE;
+         setcookie('imprimir_desc', TRUE, time()+FS_COOKIES_EXPIRE);
+      }
+      else
+      {
+         $this->imprimir_descripciones = FALSE;
+         setcookie('imprimir_desc', FALSE, time()-FS_COOKIES_EXPIRE);
       }
       
       $albaran = new albaran_cliente();
@@ -482,8 +501,17 @@ class tpv_recambios extends fs_controller
       
       foreach($albaran->get_lineas() as $col)
       {
-         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-                 sprintf("%10s", $col->show_total_iva()) . "\n";
+         if( $this->imprimir_descripciones )
+         {
+            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->descripcion) . " ".
+                    sprintf("%10s", $col->show_total_iva()) . "\n";
+         }
+         else
+         {
+            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
+                    sprintf("%10s", $col->show_total_iva()) . "\n";
+         }
+         
          $fpt->add($linea);
       }
       

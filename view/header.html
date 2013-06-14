@@ -65,7 +65,7 @@
    {/if}
    
    {if condition="$fsc->page->name"}
-   <div class="header">
+   <div class="header2">
       <div class="header_box">
          <div id="header_buttons">
             <div id="header_location">
@@ -80,6 +80,7 @@
                   <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
                   {/if}
                {/if}
+               &nbsp;
                {$fsc->page->folder} »
                {if condition="$fsc->ppage"}<a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »{/if}
                {$fsc->page->title}

@@ -7,8 +7,20 @@
       <link rel="shortcut icon" href="img/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
       <script type="text/javascript" src="js/jquery.js"></script>
+      <script>
+      (function(d, s, id) {
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) return;
+         js = d.createElement(s);
+         js.id = id;
+         js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+   </script>
    </head>
    <body>
+      <div id="fb-root"></div>
+      
       {if condition="$fsc->get_errors()"}
          <div class="error">
             <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -19,5 +31,26 @@
             <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
          </div>
       {/if}
+      
+      <div class="main_div">
+         <div class="rounded">
+            <h1>¿Necesitas ayuda?</h1>
+            <table width="100%">
+               <tr>
+                  <td valign="top">
+                     Tutoriales de instalación:
+                     <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">Linux</a> o
+                     <a target="_blank" href="http://www.neorazorx.com/2013/01/instalar-facturascripts-sobre-windows.html">Windows</a>.
+                     <br/><br/>
+                     <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="470" data-num-posts="10"></div>
+                  </td>
+                  <td valign="top">
+                     <iframe width="560" height="315" src="http://www.youtube.com/embed/gk4eFGLlv6Y?list=PLnAAyBqHmX-ZGgXTHuawqRMd-NG3PEt-4" frameborder="0" allowfullscreen>
+                     </iframe>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
    </body>
 </html>

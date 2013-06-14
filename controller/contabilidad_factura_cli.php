@@ -242,7 +242,7 @@ class contabilidad_factura_cli extends fs_controller
             else
             {
                $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-               $pdf_doc->pdf->ezText("CIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
                
                $direccion = $this->empresa->direccion;
                if($this->empresa->codpostal)
@@ -260,15 +260,24 @@ class contabilidad_factura_cli extends fs_controller
                   array(
                       'campo1' => "<b>Factura:</b>",
                       'dato1' => $this->factura->codigo,
-                      'campo2' => "<b>Cliente:</b>",
-                      'dato2' => $this->factura->nombrecliente
+                      'campo2' => "<b>Fecha:</b>",
+                      'dato2' => $this->factura->fecha
                    ));
                $pdf_doc->add_table_row(
                   array(
-                      'campo1' => "<b>Fecha:</b>",
-                      'dato1' => $this->factura->fecha,
+                      'campo1' => "<b>Cliente:</b>",
+                      'dato1' => $this->factura->nombrecliente,
                       'campo2' => "<b>CIF/NIF:</b>",
                       'dato2' => $this->factura->cifnif
+                   )
+               );
+               $pdf_doc->add_table_row(
+                  array(
+                      'campo1' => "<b>Dirección:</b>",
+                      'dato1' => $this->factura->direccion.' - '.$this->factura->ciudad.
+                                 ' ('.$this->factura->provincia.')',
+                      'campo2' => "<b>Teléfonos:</b>",
+                      'dato2' => $this->factura->telefono1.'  '.$this->factura->telefono2
                    )
                );
                $pdf_doc->save_table(

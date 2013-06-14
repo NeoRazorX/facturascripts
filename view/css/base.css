@@ -71,6 +71,15 @@ div.message ul, div.error ul {
 div.header {
    display: table;
    width: 100%;
+   padding-top: 5px;
+   padding-bottom: 5px;
+   font-size: 16px;
+}
+
+div.header2 {
+   display: table;
+   width: 100%;
+   padding-top: 5px;
    font-size: 16px;
 }
 
@@ -81,13 +90,12 @@ div.header_box {
 div#header_folders, div#header_logo, div#header_user,
 div#header_buttons, div#header_search {
    display: table-cell;
-   vertical-align: top;
    padding: 0px;
 }
 
 div#header_folders {
+   vertical-align: top;
    padding-left: 5px;
-   padding-top: 5px;
 }
 
 div#header_folders a.selected {
@@ -95,8 +103,8 @@ div#header_folders a.selected {
 }
 
 div#header_user {
+   vertical-align: top;
    padding-right: 5px;
-   padding-top: 5px;
    text-align: right;
 }
 
@@ -124,7 +132,6 @@ div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
 
 div#header_buttons {
    vertical-align: bottom;
-   padding-top: 10px;
    text-align: left;
    text-transform: capitalize;
 }
@@ -142,7 +149,7 @@ div#header_buttons a.button, div#header_buttons a.remove {
    padding-right: 5px;
    padding-bottom: 1px;
    background-color: #f1f1f1;
-   border: 1px solid #424242;
+   border: 1px solid #888888;
    border-radius: 3px;
    box-shadow: 1px 1px 1px #444;
    color: #333333;
@@ -156,6 +163,7 @@ div#header_buttons a.button:hover {
 
 div#header_buttons a.remove {
    background-color: #D74937;
+   border-color: #984034;
    color: white;
 }
 
@@ -176,7 +184,6 @@ div#header_location a {
 
 div#header_search {
    vertical-align: bottom;
-   padding-top: 10px;
    padding-right: 5px;
    text-align: right;
 }
@@ -291,7 +298,7 @@ div.main_div div.rounded {
    padding: 5px;
    padding-bottom: 8px;
    background-color: white;
-   border: 1px solid #333333;
+   border: 1px solid #cccccc;
    border-radius: 5px;
    color: black;
 }
@@ -301,7 +308,8 @@ div.main_div div.rounded h1 {
    margin-bottom: 5px;
    padding: 5px;
    min-height: 25px;
-   background-color: #e1e1e1;
+   background-color: #f1f1f1;
+   border-bottom: 1px dashed #c1c1c1;
    font-size: 18px;
 }
 
@@ -322,7 +330,7 @@ div.main_div table.list {
 }
 
 div.main_div table.list th {
-   border-bottom: 1px solid #666666;
+   border-bottom: 1px solid #bbbbbb;
    text-transform: capitalize;
 }
 
@@ -342,7 +350,7 @@ div.main_div a.next {
    padding-right: 5px;
    padding-bottom: 1px;
    background-color: #bbbbbb;
-   border: 1px solid #424242;
+   border: 1px solid #999999;
    border-radius: 2px;
    color: black;
    font-size: 16px;
@@ -369,7 +377,7 @@ div.main_div div.paginas a {
    padding-right: 5px;
    padding-bottom: 1px;
    background-color: #bbbbbb;
-   border: 1px solid #424242;
+   border: 1px solid #888888;
    border-radius: 2px;
    color: black;
    font-size: 13px;
@@ -404,7 +412,7 @@ div.main_div div.new_line {
    margin: 2px;
    padding: 0px;
    background-color: #deecfb;
-   border: 1px dashed #333333;
+   border: 1px dashed #888888;
 }
 
 div.main_div div.new_line a {
@@ -419,8 +427,8 @@ div.main_div div.new_line a {
 div.select {
    display: inline-block;
    margin-bottom: 10px;
-   background-color: #dddddd;
-   border: 1px solid #424242;
+   background-color: #D2DFEA;
+   border: 1px solid #aaaaaa;
    border-radius: 3px;
    font-size: 15px;
 }
@@ -430,14 +438,15 @@ div.select a {
    padding-top: 3px;
    padding-left: 6px;
    padding-right: 6px;
-   padding-bottom: 2px;
+   padding-bottom: 3px;
    color: #333333;
    text-decoration: none;
 }
 
 div.select a.selected {
-   background-color: #5B87B8;
-   color: white;
+   background-color: #B7C2CC;
+   box-shadow: inset 1px 1px 1px #999;
+   font-weight: bold;
 }
 
 ul.horizontal {
@@ -519,14 +528,14 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
-   padding-bottom: 1px;
-   border: 1px solid #333333;
+   padding-bottom: 2px;
+   border: 1px solid #999999;
    border-radius: 2px;
-   box-shadow: 1px 1px 1px #666;
+   box-shadow: 1px 1px 1px #777;
    color: #333333;
    text-transform: capitalize;
    font-weight: bold;
-   font-size: 16px;
+   font-size: 15px;
 }
 
 div.main_div a.remove {
@@ -541,6 +550,7 @@ div.hidden {
 
 input[type='submit'] {
    background-color: #55BA42;
+   border-color: #26641C;
    color: white;
 }
 

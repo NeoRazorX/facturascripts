@@ -306,10 +306,18 @@
             </tr>
             <tr>
                <td align="right">Nº de tickets:</td>
-               <td colspan="2">
+               <td>
                   <input type="button" value="-" onclick="more_tickets('-1')"/>
                   <input type="text" id="num_tickets" name="num_tickets" value="1" size="2"/>
                   <input type="button" value="+" onclick="more_tickets('1')"/>
+               </td>
+               <td>
+                  {if condition="$fsc->imprimir_descripciones"}
+                  <input type="checkbox" id="cb_imprimir_desc" name="imprimir_desc" value="TRUE" checked="checked"/>
+                  {else}
+                  <input type="checkbox" id="cb_imprimir_desc" name="imprimir_desc" value="TRUE"/>
+                  {/if}
+                  <label for="cb_imprimir_desc">Imprimir descripciones</label>
                </td>
                <td align="right">
                   <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>

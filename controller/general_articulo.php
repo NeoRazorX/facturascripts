@@ -126,6 +126,7 @@ class general_articulo extends fs_controller
          $this->articulo->controlstock = isset($_POST['controlstock']);
          $this->articulo->secompra = isset($_POST['secompra']);
          $this->articulo->sevende = isset($_POST['sevende']);
+         $this->articulo->publico = isset($_POST['publico']);
          $this->articulo->observaciones = $_POST['observaciones'];
          $this->articulo->stockmin = $_POST['stockmin'];
          $this->articulo->stockmax = $_POST['stockmax'];
@@ -177,7 +178,7 @@ class general_articulo extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()

@@ -39,6 +39,7 @@ class general_albaran_cli extends fs_controller
    public $familia;
    public $impuesto;
    public $nuevo_albaran_url;
+   public $serie;
    
    public function __construct()
    {
@@ -52,6 +53,7 @@ class general_albaran_cli extends fs_controller
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
+      $this->serie = new serie();
       
       /// Comprobamos si el usuario tiene acceso a general_nuevo_albaran
       $this->nuevo_albaran_url = FALSE;
@@ -113,7 +115,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-18';
+      return parent::version().'-19';
    }
    
    public function url()
@@ -126,187 +128,196 @@ class general_albaran_cli extends fs_controller
    
    private function modificar()
    {
-      $serie = new serie();
-      $serie = $serie->get($this->albaran->codserie);
-      
       $this->albaran->numero2 = $_POST['numero2'];
       $this->albaran->hora = $_POST['hora'];
       $this->albaran->observaciones = $_POST['observaciones'];
       
-      /// ¿cambiamos el cliente?
-      if( isset($_POST['cliente']) AND $this->albaran->ptefactura )
+      if( $this->albaran->ptefactura )
       {
-         $cliente = $this->cliente->get($_POST['cliente']);
-         if($cliente)
+         /// obtenemos los datos del ejercicio para acotar la fecha
+         $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
+         if($eje0)
+            $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+         else
+            $this->new_error_msg('No se encuentra el ejercicio asociado al albarán.');
+         
+         /// ¿cambiamos el cliente?
+         if($_POST['cliente'] != $this->albaran->codcliente)
          {
-            foreach($cliente->get_direcciones() as $d)
+            $cliente = $this->cliente->get($_POST['cliente']);
+            if($cliente)
             {
-               if($d->domfacturacion)
+               foreach($cliente->get_direcciones() as $d)
                {
-                  $this->albaran->codcliente = $cliente->codcliente;
-                  $this->albaran->cifnif = $cliente->cifnif;
-                  $this->albaran->nombrecliente = $cliente->nombre;
-                  $this->albaran->apartado = $d->apartado;
-                  $this->albaran->ciudad = $d->ciudad;
-                  $this->albaran->coddir = $d->id;
-                  $this->albaran->codpais = $d->codpais;
-                  $this->albaran->codpostal = $d->codpostal;
-                  $this->albaran->direccion = $d->direccion;
-                  $this->albaran->provincia = $d->provincia;
-                  break;
+                  if($d->domfacturacion)
+                  {
+                     $this->albaran->codcliente = $cliente->codcliente;
+                     $this->albaran->cifnif = $cliente->cifnif;
+                     $this->albaran->nombrecliente = $cliente->nombre;
+                     $this->albaran->apartado = $d->apartado;
+                     $this->albaran->ciudad = $d->ciudad;
+                     $this->albaran->coddir = $d->id;
+                     $this->albaran->codpais = $d->codpais;
+                     $this->albaran->codpostal = $d->codpostal;
+                     $this->albaran->direccion = $d->direccion;
+                     $this->albaran->provincia = $d->provincia;
+                     break;
+                  }
                }
             }
          }
-      }
-      
-      /// obtenemos los datos del ejercicio para acotar la fecha
-      $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
-      if($eje0)
-         $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
-      else
-         $this->new_error_msg('No se encuentra el ejercicio asociado al albarán.');
-      
-      if( isset($_POST['lineas']) AND $this->albaran->ptefactura )
-      {
-         $this->albaran->neto = 0;
-         $this->albaran->totaliva = 0;
          
-         $lineas = $this->albaran->get_lineas();
-         /// eliminamos las líneas que no encontremos en el $_POST
-         foreach($lineas as $l)
+         $serie = $this->serie->get($this->albaran->codserie);
+         
+         /// ¿cambiamos la serie?
+         if($_POST['serie'] != $this->albaran->codserie)
          {
-            $encontrada = FALSE;
+            $this->albaran->codserie = $_POST['serie'];
+            $this->albaran->new_codigo();
+         }
+         
+         if( isset($_POST['lineas']) )
+         {
+            $this->albaran->neto = 0;
+            $this->albaran->totaliva = 0;
+            $lineas = $this->albaran->get_lineas();
+            $articulo = new articulo();
+            
+            /// eliminamos las líneas que no encontremos en el $_POST
+            foreach($lineas as $l)
+            {
+               $encontrada = FALSE;
+               for($num = 0; $num <= 200; $num++)
+               {
+                  if( isset($_POST['idlinea_'.$num]) )
+                  {
+                     if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                     {
+                        $encontrada = TRUE;
+                        break;
+                     }
+                  }
+               }
+               if( !$encontrada )
+               {
+                  if( !$l->delete() )
+                     $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
+               }
+            }
+            
+            /// modificamos y/o añadimos las demás líneas
             for($num = 0; $num <= 200; $num++)
             {
+               $encontrada = FALSE;
                if( isset($_POST['idlinea_'.$num]) )
                {
-                  if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                  foreach($lineas as $k => $value)
                   {
-                     $encontrada = TRUE;
-                     break;
-                  }
-               }
-            }
-            if( !$encontrada )
-            {
-               if( !$l->delete() )
-                  $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
-            }
-         }
-         
-         $articulo = new articulo();
-         /// modificamos y/o añadimos las demás líneas
-         for($num = 0; $num <= 200; $num++)
-         {
-            $encontrada = FALSE;
-            if( isset($_POST['idlinea_'.$num]) )
-            {
-               foreach($lineas as $k => $value)
-               {
-                  /// modificamos la línea
-                  if($value->idlinea == intval($_POST['idlinea_'.$num]))
-                  {
-                     $encontrada = TRUE;
-                     $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
-                     $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
-                     $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
-                     $lineas[$k]->dtolineal = 0;
-                     $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
-                     $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
-                     
-                     if( isset($_POST['desc_'.$num]) )
-                        $lineas[$k]->descripcion = $_POST['desc_'.$num];
-                     
-                     if( $serie->siniva )
+                     /// modificamos la línea
+                     if($value->idlinea == intval($_POST['idlinea_'.$num]))
                      {
-                        $lineas[$k]->codimpuesto = NULL;
-                        $lineas[$k]->iva = 0;
-                     }
-                     else
-                     {
-                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
-                        if($imp0)
-                        {
-                           $lineas[$k]->codimpuesto = $imp0->codimpuesto;
-                           $lineas[$k]->iva = $imp0->iva;
-                        }
-                        else
+                        $encontrada = TRUE;
+                        $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
+                        $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
+                        $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
+                        $lineas[$k]->dtolineal = 0;
+                        $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
+                        $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                        
+                        if( isset($_POST['desc_'.$num]) )
+                           $lineas[$k]->descripcion = $_POST['desc_'.$num];
+                        
+                        if( $serie->siniva )
                         {
                            $lineas[$k]->codimpuesto = NULL;
-                           $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
-                        }
-                     }
-                     
-                     if( $lineas[$k]->save() )
-                     {
-                        $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
-                        $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
-                     }
-                     else
-                        $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
-                     break;
-                  }
-               }
-               
-               /// añadimos la línea
-               if(!$encontrada AND intval($_POST['idlinea_'.$num]) == -1 AND isset($_POST['referencia_'.$num]))
-               {
-                  $art0 = $articulo->get( $_POST['referencia_'.$num] );
-                  if($art0)
-                  {
-                     $linea = new linea_albaran_cliente();
-                     $linea->referencia = $art0->referencia;
-                     
-                     if( isset($_POST['desc_'.$num]) )
-                        $linea->descripcion = $_POST['desc_'.$num];
-                     else
-                        $linea->descripcion = $art0->descripcion;
-                     
-                     if( $serie->siniva )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
-                     {
-                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
-                        if($imp0)
-                        {
-                           $linea->codimpuesto = $imp0->codimpuesto;
-                           $linea->iva = $imp0->iva;
+                           $lineas[$k]->iva = 0;
                         }
                         else
                         {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = floatval($_POST['iva_'.$num]);
+                           $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
+                           if($imp0)
+                           {
+                              $lineas[$k]->codimpuesto = $imp0->codimpuesto;
+                              $lineas[$k]->iva = $imp0->iva;
+                           }
+                           else
+                           {
+                              $lineas[$k]->codimpuesto = NULL;
+                              $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
+                           }
                         }
+                        
+                        if( $lineas[$k]->save() )
+                        {
+                           $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
+                           $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                        }
+                        else
+                           $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
+                        break;
                      }
-                     
-                     $linea->idalbaran = $this->albaran->idalbaran;
-                     $linea->cantidad = floatval($_POST['cantidad_'.$num]);
-                     $linea->pvpunitario = floatval($_POST['pvp_'.$num]);
-                     $linea->dtopor = floatval($_POST['dto_'.$num]);
-                     $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
-                     $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
-                     
-                     if( $linea->save() )
+                  }
+                  
+                  /// añadimos la línea
+                  if(!$encontrada AND intval($_POST['idlinea_'.$num]) == -1 AND isset($_POST['referencia_'.$num]))
+                  {
+                     $art0 = $articulo->get( $_POST['referencia_'.$num] );
+                     if($art0)
                      {
-                        $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
-                        $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                        $linea = new linea_albaran_cliente();
+                        $linea->referencia = $art0->referencia;
+                        
+                        if( isset($_POST['desc_'.$num]) )
+                           $linea->descripcion = $_POST['desc_'.$num];
+                        else
+                           $linea->descripcion = $art0->descripcion;
+                        
+                        if( $serie->siniva )
+                        {
+                           $linea->codimpuesto = NULL;
+                           $linea->iva = 0;
+                        }
+                        else
+                        {
+                           $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
+                           if($imp0)
+                           {
+                              $linea->codimpuesto = $imp0->codimpuesto;
+                              $linea->iva = $imp0->iva;
+                           }
+                           else
+                           {
+                              $linea->codimpuesto = NULL;
+                              $linea->iva = floatval($_POST['iva_'.$num]);
+                           }
+                        }
+                        
+                        $linea->idalbaran = $this->albaran->idalbaran;
+                        $linea->cantidad = floatval($_POST['cantidad_'.$num]);
+                        $linea->pvpunitario = floatval($_POST['pvp_'.$num]);
+                        $linea->dtopor = floatval($_POST['dto_'.$num]);
+                        $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
+                        $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor)/100);
+                        
+                        if( $linea->save() )
+                        {
+                           $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
+                           $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                        }
+                        else
+                           $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
                      }
                      else
-                        $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
+                        $this->new_error_msg("¡Artículo ".$_POST['referencia_'.$num]." no encontrado!");
                   }
-                  else
-                     $this->new_error_msg("¡Artículo ".$linea->referencia." no encontrado!");
                }
             }
+            
+            /// redondeamos
+            $this->albaran->neto = round($this->albaran->neto, 2);
+            $this->albaran->totaliva = round($this->albaran->totaliva, 2);
+            $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva;
          }
-         
-         /// redondeamos
-         $this->albaran->neto = round($this->albaran->neto, 2);
-         $this->albaran->totaliva = round($this->albaran->totaliva, 2);
-         $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva;
       }
       
       if( $this->albaran->save() )

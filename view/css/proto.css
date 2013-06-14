@@ -10,7 +10,8 @@
 body {
    margin: 0px;
    padding: 0px;
-   background-color: #E5F2FF;
+   background-color: #D2D9DF;
+   color: #333333;
    font-family: Verdana, sans-serif;
    text-rendering: optimizeLegibility;
    -webkit-font-smoothing: antialiased;
@@ -19,14 +20,18 @@ body {
    font-weight: normal;
 }
 
-a {
-   color: #2F33AB;
+a.hidden_black {
+   display: block;
+   background-color: #0062DD;
+}
+
+a.hidden_black:hover {
+   background-color: transparent;
 }
 
 div.advice, div.message, div.error {
    margin: 5px;
    padding: 10px;
-   border: 1px solid #999999;
    border-radius: 5px;
    color: #333333;
    font-size: 16px;
@@ -34,6 +39,7 @@ div.advice, div.message, div.error {
 
 div.advice {
    background-color: #ACD6F5;
+   border: 1px solid #98BDD9;
    text-align: center;
 }
 
@@ -43,10 +49,12 @@ div.advice img {
 
 div.message {
    background-color: #FAF1C1;
+   border: 1px solid #E2DAB2;
 }
 
 div.error {
    background-color: #F2DEDE;
+   border: 1px solid #F4BCBC;
    color: #B94A65;
 }
 
@@ -55,41 +63,73 @@ div.message ul, div.error ul {
    margin-bottom: 0px;
 }
 
+div.header {
+   display: table;
+   width: 100%;
+   margin-bottom: 10px;
+   padding-top: 5px;
+   padding-bottom: 5px;
+   background-color: #2AA4CF;
+   border-top: 2px solid #1A6580;
+   border-bottom: 1px solid #1A6580;
+   box-shadow: 0px 2px 2px #999;
+   font-size: 16px;
+}
+
+div.header2 {
+   display: table;
+   width: 100%;
+   padding-top: 10px;
+   padding-bottom: 5px;
+   font-size: 16px;
+}
+
+div.header_box {
+   display: table-row;
+}
+
+div#header_folders, div#header_logo, div#header_user,
+div#header_buttons, div#header_search {
+   display: table-cell;
+   padding: 0px;
+}
+
 div#header_folders {
-   background-color: #314F71;
-   color: white;
-}
-
-div#header_folders a {
-   display: inline-block;
-   margin-left: 5px;
-   padding: 5px;
-   color: white;
-   text-decoration: none;
-   text-transform: capitalize;
-   font-weight: bold;
-}
-
-div#header_folders a:hover {
-   background-color: #21354D;
+   vertical-align: middle;
+   padding-left: 5px;
 }
 
 div#header_folders a.selected {
-   text-decoration: underline;
+   background-color: #1F7999;
+   box-shadow: inset 0px 2px 2px #555;
 }
 
-div#header_logo {
-   padding: 10px;
-   background: #5381b5 url('../img/fondo2.png') repeat top left;
-   border-bottom: 1px solid #406895;
+div#header_user {
+   vertical-align: middle;
+   padding-right: 5px;
+   text-align: right;
+}
+
+div#header_folders a, div#header_user a.button {
+   display: inline-block;
+   margin-left: 3px;
+   margin-right: 3px;
+   padding: 7px;
+   border-radius: 3px;
+   color: white;
+   text-transform: capitalize;
+   text-decoration: none;
+   font-weight: bold;
+}
+
+div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
+   background-color: #1A6580;
+   box-shadow: inset 0px 2px 2px #444;
 }
 
 div#header_buttons {
-   display: inline-block;
-   padding-top: 20px;
-   padding-left: 10px;
-   padding-right: 10px;
-   padding-bottom: 2px;
+   text-align: left;
+   text-transform: capitalize;
 }
 
 div#header_buttons img {
@@ -104,32 +144,48 @@ div#header_buttons a.button, div#header_buttons a.remove {
    padding-left: 5px;
    padding-right: 5px;
    padding-bottom: 1px;
-   background-color: white;
-   border: 1px solid #424242;
+   background-color: #f1f1f1;
+   border: 1px solid #999999;
    border-radius: 3px;
-   box-shadow: 1px 1px 1px #666;
+   box-shadow: 1px 1px 1px #aaa;
    color: #333333;
    text-decoration: none;
 }
 
 div#header_buttons a.button:hover {
-   background-color: #A7D0FF;
+   background-color: #D8E7EE;
+   color: black;
 }
 
 div#header_buttons a.remove {
-   background-color: #D74937;
+   background-color: #DC8F86;
    color: white;
+}
+
+div#header_buttons a.remove:hover {
+   background-color: #E46353;
 }
 
 div#header_location {
    display: inline-block;
+   padding-left: 15px;
+   padding-right: 15px;
+}
+
+div#header_location a {
+   color: #0062DD;
+   font-weight: bold;
+}
+
+div#header_location img {
+   background-color: #BFBDB9;
+   border: 1px solid #A6A4A1;
+   border-radius: 4px;
 }
 
 div#header_search {
-   vertical-align: top;
-   display: inline-block;
-   padding-top: 17px;
-   padding-left: 10px;
+   padding-right: 5px;
+   text-align: right;
 }
 
 div.pages div {
@@ -143,7 +199,7 @@ div.pages img {
 div.pages ul {
    margin: 0px;
    padding: 0px;
-   background-color: #314F71;
+   background-color: #333333;
    border: 2px solid #333333;
    box-shadow: 5px 5px rgba(0,0,0,0.5);
    color: white;
@@ -153,11 +209,11 @@ div.pages ul {
 }
 
 div.pages ul li.selected {
-   background-color: #3D628C;
+   background-color: #1D6F8C;
 }
 
 div.pages ul li:hover {
-   background-color: #5B87B8;
+   background-color: #2283A6;
 }
 
 div.pages ul li a {
@@ -191,7 +247,7 @@ a#b_close_popup {
    position: fixed;
 }
 
-div.popup {
+div.main_div div.popup {
    display: none;
    z-index: 3;
    position: fixed;
@@ -207,31 +263,29 @@ div.popup {
    color: black;
 }
 
-div.popup h1 {
+div.main_div div.popup h1 {
    margin: 0px;
    margin-bottom: 10px;
    padding: 2px;
-   background: #5381b5 url('../img/fondo2.png') repeat top left;
-   border-bottom: 1px solid #406895;
+   background-color: #2AA4CF;
    color: white;
    text-align: center;
    font-family: 'Oleo Script', cursive;
    font-size: 30px;
    font-weight: normal;
-   text-shadow: #333 2px 2px 2px;
 }
 
-div.popup h2 {
+div.main_div div.popup h2 {
    margin: 0px;
    margin-bottom: 10px;
    padding: 5px;
 }
 
-div.popup h2 span {
+div.main_div div.popup h2 span {
    float: right;
 }
 
-div.popup div.grupo {
+div.main_div div.popup div.grupo {
    margin: 5px;
    margin-bottom: 10px;
    padding: 5px;
@@ -239,38 +293,77 @@ div.popup div.grupo {
    border: 1px dashed #333333;
 }
 
-div.main_div {
-   margin-top: 5px;
-}
-
-div.rounded {
-   margin-left: 5px;
-   margin-right: 5px;
-   margin-bottom: 5px;
+div.main_div div.rounded {
+   margin: 10px;
    padding: 5px;
    background-color: white;
-   border: 1px solid #CCCCCC;
+   border: 1px solid #B3B3B3;
    border-radius: 5px;
-   box-shadow: 2px 2px #999;
+   box-shadow: 2px 2px 2px #aaa;
+   color: black;
 }
 
-div.bloque {
+div.main_div div.rounded h1 {
+   margin: 0px;
+   margin-bottom: 5px;
+   padding: 5px;
+   min-height: 25px;
+   border-bottom: 1px dashed #c1c1c1;
+   font-size: 18px;
+}
+
+div.main_div div.rounded h1 span {
+   float: right;
+   clear: both;
+   font-size: 14px;
+   font-weight: normal;
+}
+
+div.rounded a {
+   color: #0062DD;
+}
+
+div.main_div div.bloque {
    display: inline-block;
-   padding: 2px;
+   padding: 5px;
 }
 
-table.list {
+div.main_div table.list {
    width: 100%;
 }
 
-table.list tr:hover {
-   background-color: #CEE5FF;
+div.main_div table.list th {
+   border-bottom: 1px solid #cccccc;
+   text-transform: capitalize;
 }
 
-table.list th {
-   background-color: #A7D0FF;
-   color: #424242;
+div.main_div table.list tr:hover {
+   background-color: #d9edf7;
+}
+
+div.main_div table.list td.locked {
+   background-color: #fdcece;
+   text-decoration: line-through;
+}
+
+div.main_div a.next {
+   display: inline-block;
+   padding-top: 2px;
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-bottom: 1px;
+   background-color: #bbbbbb;
+   border: 1px solid #888888;
+   border-radius: 2px;
+   color: black;
+   font-size: 16px;
    text-transform: capitalize;
+   text-decoration: none;
+}
+
+div.main_div a.next:hover {
+   background-color: #3768B8;
+   color: white;
 }
 
 div.main_div div.paginas {
@@ -287,7 +380,7 @@ div.main_div div.paginas a {
    padding-right: 5px;
    padding-bottom: 1px;
    background-color: #bbbbbb;
-   border: 1px solid #424242;
+   border: 1px solid #888888;
    border-radius: 2px;
    color: black;
    font-size: 13px;
@@ -322,7 +415,7 @@ div.main_div div.new_line {
    margin: 2px;
    padding: 0px;
    background-color: #deecfb;
-   border: 1px dashed #333333;
+   border: 1px dashed #999999;
 }
 
 div.main_div div.new_line a {
@@ -337,7 +430,7 @@ div.main_div div.new_line a {
 div.select {
    display: inline-block;
    margin-bottom: 10px;
-   background-color: #dddddd;
+   background-color: #E4ECF2;
    border: 1px solid #999999;
    border-radius: 3px;
    font-size: 15px;
@@ -348,14 +441,15 @@ div.select a {
    padding-top: 3px;
    padding-left: 6px;
    padding-right: 6px;
-   padding-bottom: 2px;
+   padding-bottom: 3px;
    color: #333333;
    text-decoration: none;
 }
 
 div.select a.selected {
-   background-color: #6B9FD9;
-   color: white;
+   background-color: #C0C7CC;
+   box-shadow: inset 1px 1px 1px #999;
+   font-weight: bold;
 }
 
 ul.horizontal {
@@ -402,11 +496,12 @@ div.footer a {
    display: inline-block;
    padding: 0px 5px 2px 5px;
    border-radius: 3px;
+   color: #0062DD;
 }
 
 div.footer a.selected {
-   background-color: #959DA6;
-   color: #E5F2FF;
+   background-color: #25394D;
+   color: white;
    text-decoration: none;
 }
 
@@ -436,14 +531,14 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    padding-top: 2px;
    padding-left: 5px;
    padding-right: 5px;
-   padding-bottom: 1px;
-   border: 1px solid #333333;
+   padding-bottom: 2px;
+   border: 1px solid #999999;
    border-radius: 2px;
-   box-shadow: 1px 1px 1px #666;
+   box-shadow: 1px 1px 1px #aaa;
    color: #333333;
    text-transform: capitalize;
    font-weight: bold;
-   font-size: 16px;
+   font-size: 15px;
 }
 
 div.main_div a.remove {
@@ -458,16 +553,23 @@ div.hidden {
 
 input[type='submit'] {
    background-color: #55BA42;
+   border-color: #26641C;
    color: white;
 }
 
 input[type='button'] {
-   background-color: #eeeeee;
+   background-color: #dddddd;
 }
 
-input[type='submit']:hover, input[type='button']:hover {
-   background-color: #5E91CC;
-   color: white;
+input[type='submit']:hover {
+   background-color: #5DCC48;
+   color: black;
+   cursor: pointer;
+}
+
+input[type='button']:hover {
+   background-color: #e1e1e1;
+   color: black;
    cursor: pointer;
 }
 
@@ -490,23 +592,12 @@ a#fs_logo {
    text-decoration: none;
    font-weight: normal;
    font-family: 'Oleo Script', cursive;
-   text-shadow: #333 2px 2px 2px;
-   font-size: 35px;
-}
-
-a#b_user_list {
-   position: absolute;
-   top: 50px;
-   right: 90px;
-   color: white;
-   font-weight: bold;
-   text-transform: capitalize;
+   font-size: 32px;
 }
 
 a#fs_exit {
-   position: absolute;
-   top: 46px;
-   right: 10px;
+   display: inline-block;
+   margin-left: 15px;
    padding: 2px;
    background-color: #333333;
    border-radius: 4px
@@ -520,12 +611,13 @@ div#sql_history {
    margin: 5px;
    margin-top: 20px;
    padding: 5px;
-   border: 1px dashed #424242;
-   font-size: 12px;
+   background-color: #C2D0DE;
+   border: 1px solid #A1ADB8;
+   border-radius: 5px;
+   color: #424242;
 }
 
 div#sql_history h1 {
-   margin: 0px;
-   padding: 0px;
-   font-size: 16px;
+   margin: 5px;
+   font-size: 20px;
 }

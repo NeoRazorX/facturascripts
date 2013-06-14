@@ -451,7 +451,7 @@ class asiento extends fs_model
       
       $alist = array();
       $asientos = $this->db->select("SELECT p.idasiento,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
-         FROM co_partidas p, co_asientos a
+         FROM co_partidas p, ".$this->table_name." a
           WHERE p.idasiento = a.idasiento
            GROUP BY p.idasiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
@@ -474,8 +474,8 @@ class asiento extends fs_model
          $numero = 1;
          $sql = '';
          $continuar = TRUE;
-         $consulta = "SELECT idasiento,numero,fecha FROM co_asientos
-            WHERE codejercicio = '".$eje->codejercicio."'
+         $consulta = "SELECT idasiento,numero,fecha FROM ".$this->table_name.
+            " WHERE codejercicio = '".$eje->codejercicio."'
             ORDER BY codejercicio ASC, fecha ASC, idasiento ASC";
          
          $asientos = $this->db->select_limit($consulta, 1000, $posicion);
@@ -485,7 +485,7 @@ class asiento extends fs_model
             {
                if($col['numero'] != $numero)
                {
-                  $sql .= "UPDATE co_asientos SET numero = '".$numero.
+                  $sql .= "UPDATE ".$this->table_name." SET numero = '".$numero.
                        "' WHERE idasiento = '".$col['idasiento']."'; ";
                }
                
@@ -513,6 +513,13 @@ class asiento extends fs_model
    
    public function cron_job()
    {
+      /*
+       * Bloqueamos (marcamos como no editables) los asientos de ejercicios
+       * ya cerrados.
+       */
+      $this->db->exec("UPDATE ".$this->table_name." SET editable = false
+         WHERE codejercicio IN (SELECT codejercicio FROM ejercicios WHERE estado = 'CERRADO');");
+      
       $this->renumerar();
    }
 }

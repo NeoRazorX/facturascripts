@@ -139,6 +139,12 @@
       <tipo>boolean</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>publico</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
    <restriccion>
       <nombre>ca_articulos_impuestos</nombre>
       <consulta>FOREIGN KEY (codimpuesto)

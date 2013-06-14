@@ -463,7 +463,7 @@ class tpv_yamyam extends fs_controller
       else
          $this->new_error_msg("¡Imposible cerrar la caja!");
    }
-
+   
    private function imprimir_ticket($num_tickets=2)
    {
       /// ticket normal
@@ -526,7 +526,18 @@ class tpv_yamyam extends fs_controller
                  sprintf("%10s", '-') . "\n";
          $fpt2->add($linea);
       }
-      $fpt2->add("\n\n\n" . chr(27).chr(105) . "\n\n"); /// corta el papel
+      $fpt2->add("----------------------------------------\n");
+      if($this->impresora2 == $this->impresora1)
+      {
+         $fpt2->add("\n\n\n");
+         $fpt2->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n" );
+         $fpt2->add($fpt->center_text($this->empresa->lema) . "\n\n");
+         $fpt2->add($fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
+         $fpt2->add($fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
+         $fpt2->add($fpt->center_text($this->empresa->horario) . "\n");
+      }
+      else
+         $fpt2->add("\n\n\n" . chr(27).chr(105) . "\n\n"); /// corta el papel
       
       
       $cambio = FALSE;

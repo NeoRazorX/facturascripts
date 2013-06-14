@@ -170,6 +170,14 @@
                {/if}
                <label for="articulo_sevende">Se vende</label>
             </div>
+            <div class="bloque">
+               {if condition="$fsc->articulo->publico"}
+               <input type="checkbox" name="publico" value="TRUE" checked="checked" id="articulo_publico"/>
+               {else}
+               <input type="checkbox" name="publico" value="TRUE" id="articulo_publico"/>
+               {/if}
+               <label for="articulo_publico">Público</label>
+            </div>
          </div>
          <div>
             Observaciones:

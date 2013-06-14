@@ -31,6 +31,11 @@ class admin_woocommerce extends fs_controller
       parent::__construct('admin_woocommerce', 'WooCommerce', 'admin', TRUE, TRUE);
    }
    
+   public function version()
+   {
+      return parent::version().'-2';
+   }
+   
    protected function process()
    {
       $this->mysql = new fs_mysql_x();
@@ -115,7 +120,7 @@ class admin_woocommerce extends fs_controller
    {
       $articulo = new articulo();
       
-      foreach($articulo->all() as $art)
+      foreach($articulo->all_publico() as $art)
       {
          $post_id = 0;
          if( !$this->woo_add_product($art, $post_id) )
@@ -129,17 +134,20 @@ class admin_woocommerce extends fs_controller
             break;
          }
       }
+      
+      $this->new_message("Sincronización finalizada.");
    }
    
    private function woo_add_product($articulo, &$post_id)
    {
       $done = TRUE;
+      $referencia = $this->sanitize_title( $articulo->referencia );
       $product = $this->mysql->select("SELECT * FROM wp_posts
-         WHERE post_name = ".$articulo->var2str($articulo->referencia).";");
+         WHERE post_name = ".$articulo->var2str($referencia).";");
       if($product)
       {
          $sql = "UPDATE wp_posts SET post_content = ".$articulo->var2str($articulo->descripcion)."
-            WHERE post_name = ".$articulo->var2str($articulo->referencia).";";
+            WHERE post_name = ".$articulo->var2str($referencia).";";
          if( $this->mysql->exec($sql) )
          {
             $done = TRUE;
@@ -151,7 +159,7 @@ class admin_woocommerce extends fs_controller
          $sql = "INSERT INTO wp_posts (post_name,post_title,post_content,post_author,post_date,
             post_date_gmt,post_status,comment_status,ping_status,post_modified,post_modified_gmt,
             post_parent,menu_order,post_type,comment_count) VALUES
-            (".$articulo->var2str($articulo->referencia).",".$articulo->var2str($articulo->referencia).",
+            (".$articulo->var2str($referencia).",".$articulo->var2str($articulo->referencia).",
             ".$articulo->var2str($articulo->descripcion).",'1','".Date('Y-m-d H:m:i')."',
             '".Date('Y-m-d H:m:i')."','publish','open','closed','".Date('Y-m-d H:m:i')."',
             '".Date('Y-m-d H:m:i')."','0','0','product','0');";
@@ -162,6 +170,14 @@ class admin_woocommerce extends fs_controller
          }
       }
       return $done;
+   }
+   
+   private function sanitize_title($title)
+   {
+      $title = str_replace('+', 'M', strtolower($title) );
+      $title = str_replace('/', 'B', $title);
+      $title = str_replace('*', 'A', $title);
+      return str_replace('.', 'P', $title);
    }
    
    private function woo_add_product_info($articulo, $post_id)
