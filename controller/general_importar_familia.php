@@ -240,7 +240,9 @@ class general_importar_familia extends fs_controller
    
    public function url()
    {
-      if($this->familia)
+      if( !isset($this->familia) )
+         return parent::url();
+      else if($this->familia)
          return $this->page->url().'&fam='.$this->familia->codfamilia;
       else
          return $this->page->url();
@@ -248,7 +250,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    private function get_family_data()

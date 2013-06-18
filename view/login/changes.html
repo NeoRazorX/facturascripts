@@ -4,7 +4,32 @@
          <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
          <ul>
             <li>
-               27/05/2013:
+               18/06/2013:
+               <ul>
+                  <li>
+                     Si el usuario no tiene marcada una página por defecto,
+                     se selecciona la primera página importante de su lista.
+                  </li>
+                  <li>
+                     Nuevas páginas de acceso denegado, página no encontrada y
+                     error en la base de datos.
+                  </li>
+                  <li>
+                     Cuando un usuario accede a una página a la que no tiene acceso
+                     se producía un bug que hacía que la página no terminase de
+                     cargar. El bug estaba en las funciones url() de los controladores.
+                     Para solucionarlo he añadido una comprobación más antes de
+                     proporcionar la url.
+                  </li>
+                  <li>Añadida encuenta on-line.</li>
+                  <li>
+                     La página de cada artículo ya permite navegar por todos los
+                     albaranes y facturas donde figura ese artículo.
+                  </li>
+               </ul>
+            </li>
+            <li>
+               14/06/2013:
                <ul>
                   <li>Ahora se puede cambiar la serie de albaranes no facturados.</li>
                   <li>

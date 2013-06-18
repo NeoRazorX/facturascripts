@@ -33,6 +33,12 @@
       <nulo>NO</nulo>
       <defecto>true</defecto>
    </columna>
+   <columna>
+      <nombre>important</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
    <restriccion>
       <nombre>fs_pages_pkey</nombre>
       <consulta>PRIMARY KEY (name)</consulta>

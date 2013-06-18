@@ -26,12 +26,6 @@ if( !defined('FS_DB_TYPE') )
 if( !defined('FS_DEMO') )
    define('FS_DEMO', FALSE);
 
-require_once 'base/fs_default_items.php';
-require_once 'model/articulo.php';
-require_once 'model/asiento.php';
-require_once 'model/empresa.php';
-require_once 'extras/libromayor.php';
-
 if(FS_DB_TYPE == 'MYSQL')
 {
    require_once 'base/fs_mysql.php';
@@ -42,6 +36,15 @@ else
    require_once 'base/fs_postgresql.php';
    $db = new fs_postgresql();
 }
+
+require_once 'base/fs_default_items.php';
+require_once 'model/albaran_cliente.php';
+require_once 'model/albaran_proveedor.php';
+require_once 'model/articulo.php';
+require_once 'model/asiento.php';
+require_once 'model/empresa.php';
+require_once 'extras/libromayor.php';
+
 
 if( $db->connect() )
 {
@@ -54,6 +57,14 @@ if( $db->connect() )
    $fs_default_items->set_codpago( $empresa->codpago );
    $fs_default_items->set_codpais( $empresa->codpais );
    $fs_default_items->set_codserie( $empresa->codserie );
+   
+   $alb_cli = new albaran_cliente();
+   echo "Ejecutando tareas para los albaranes de cliente...\n";
+   $alb_cli->cron_job();
+   
+   $alb_pro = new albaran_proveedor();
+   echo "Ejecutando tareas para los albaranes de proveedor...\n";
+   $alb_pro->cron_job();
    
    $articulo = new articulo();
    echo "Ejecutando tareas para los artículos...\n";
@@ -71,5 +82,7 @@ if( $db->connect() )
 }
 else
    echo "¡Imposible conectar a la base de datos!\n";
+
+echo "\n";
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -48,13 +48,16 @@ class contabilidad_cuenta extends fs_controller
          $this->new_error_msg("Cuenta no encontrada.");
    }
    
-   public function version() {
-      return parent::version().'-1';
+   public function version()
+   {
+      return parent::version().'-2';
    }
    
    public function url()
    {
-      if($this->cuenta)
+      if( !isset($this->cuenta) )
+         return parent::url();
+      else if($this->cuenta)
          return $this->cuenta->url();
       else
          return $this->page->url();

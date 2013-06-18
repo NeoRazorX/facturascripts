@@ -133,12 +133,14 @@ class contabilidad_factura_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-13';
+      return parent::version().'-14';
    }
    
    public function url()
    {
-      if($this->factura)
+      if( !isset($this->factura) )
+         return parent::url ();
+      else if($this->factura)
          return $this->factura->url();
       else
          return $this->ppage->url();

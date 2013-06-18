@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -130,12 +130,14 @@ class general_proveedor extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function url()
    {
-      if($this->proveedor)
+      if( !isset($this->proveedor) )
+         return parent::url();
+      else if($this->proveedor)
          return $this->proveedor->url();
       else
          return $this->ppage->url();

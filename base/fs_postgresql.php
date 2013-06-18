@@ -21,17 +21,23 @@ require_once 'base/fs_db.php';
 
 class fs_postgresql extends fs_db
 {
+   public function php_support(&$msg)
+   {
+      if( function_exists('pg_connect') )
+         return TRUE;
+      else
+      {
+         $msg = "No tienes instala la extensi&oacute;n de PHP para PostgreSQL.";
+         return FALSE;
+      }
+   }
+   
    /// conecta con la base de datos
    public function connect()
    {
       if(self::$link)
          $connected = TRUE;
-      else if( !function_exists('pg_connect') )
-      {
-         echo "No tienes instala la extensi&oacute;n de PHP para PostgreSQL.<br/>";
-         $connected = FALSE;
-      }
-      else
+      else if( function_exists('pg_connect') )
       {
          self::$link = pg_connect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
                  ' port='.FS_DB_PORT.' user='.FS_DB_USER.' password='.FS_DB_PASS);
@@ -45,6 +51,9 @@ class fs_postgresql extends fs_db
          else
             $connected = FALSE;
       }
+      else
+         $connected = FALSE;
+      
       return $connected;
    }
    

@@ -164,12 +164,14 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
    }
    
    public function url()
    {
-      if( $this->ejercicio )
+      if( !isset($this->ejercicio) )
+         return parent::url();
+      else if($this->ejercicio)
          return $this->ejercicio->url();
       else
          return parent::url();

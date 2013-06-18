@@ -37,6 +37,7 @@
             <th align="left">titulo</th>
             <th align="left">versión</th>
             <th>en menú</th>
+            <th>importante</th>
             <th>existe</th>
          </tr>
          {loop="$fsc->paginas"}
@@ -57,6 +58,7 @@
             <td>{$value->title}</td>
             <td>{$value->version}</td>
             <td align="center">{if condition="$value->show_on_menu"}Si{else}-{/if}</td>
+            <td align="center">{if condition="$value->important"}Si{else}-{/if}</td>
             <td align="center">{if condition="$value->exists"}Si{else}-{/if}</td>
          </tr>
          {/loop}

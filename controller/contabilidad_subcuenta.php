@@ -88,12 +88,14 @@ class contabilidad_subcuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    public function url()
    {
-      if( $this->subcuenta )
+      if( !isset($this->subcuenta) )
+         return parent::url();
+      else if($this->subcuenta)
          return $this->subcuenta->url();
       else
          return $this->ppage->url();

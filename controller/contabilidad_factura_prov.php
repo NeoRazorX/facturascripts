@@ -116,12 +116,14 @@ class contabilidad_factura_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    public function url()
    {
-      if($this->factura)
+      if( !isset($this->factura) )
+         return parent::url();
+      else if($this->factura)
          return $this->factura->url();
       else
          return $this->page->url();

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -49,7 +49,9 @@ class contabilidad_banco extends fs_controller
    
    public function url()
    {
-      if( $this->banco )
+      if( !isset($this->banco) )
+         return parent::url();
+      else if($this->banco)
          return $this->banco->url();
       else
          return $this->page->url();

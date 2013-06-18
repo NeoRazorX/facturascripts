@@ -28,7 +28,7 @@ class general_albaranes_cli extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('general_albaranes_cli', 'Albaranes de cliente', 'general', FALSE, TRUE);
+      parent::__construct('general_albaranes_cli', 'Albaranes de cliente', 'general', FALSE, TRUE, TRUE);
    }
    
    protected function process()
@@ -79,7 +79,7 @@ class general_albaranes_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function anterior_url()

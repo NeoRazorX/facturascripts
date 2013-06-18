@@ -124,7 +124,17 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'-8';
+   }
+   
+   public function url()
+   {
+      if( !isset($this->suser) )
+         return parent::url();
+      else if($this->suser)
+         return $this->suser->url();
+      else
+         return $this->page->url();
    }
    
    public function all_pages()
@@ -149,14 +159,6 @@ class admin_user extends fs_controller
          }
       }
       return $returnlist;
-   }
-   
-   public function url()
-   {
-      if( $this->suser )
-         return $this->suser->url();
-      else
-         return $this->page->url();
    }
 }
 

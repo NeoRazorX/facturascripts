@@ -29,6 +29,12 @@ class fs_page extends fs_model
    public $exists;
    public $enabled;
    
+   /*
+    * Cuando un usuario no tiene asignada una página por defecto, se selecciona
+    * la primera página importante a la que tiene acceso.
+    */
+   public $important;
+   
    public function __construct($p=FALSE)
    {
       parent::__construct('fs_pages');
@@ -44,6 +50,7 @@ class fs_page extends fs_model
             $this->version = NULL;
          
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
+         $this->important = $this->str2bool($p['important']);
       }
       else
       {
@@ -52,7 +59,9 @@ class fs_page extends fs_model
          $this->folder = NULL;
          $this->version = NULL;
          $this->show_on_menu = TRUE;
+         $this->important = FALSE;
       }
+      
       $this->exists = FALSE;
       $this->enabled = FALSE;
    }
@@ -113,15 +122,16 @@ class fs_page extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET title = ".$this->var2str($this->title).",
             folder = ".$this->var2str($this->folder).", version = ".$this->var2str($this->version).",
-            show_on_menu = ".$this->var2str($this->show_on_menu)."
+            show_on_menu = ".$this->var2str($this->show_on_menu).",
+            important = ".$this->var2str($this->important)."
             WHERE name = ".$this->var2str($this->name).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
+         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important)
             VALUES (".$this->var2str($this->name).",".$this->var2str($this->title).",
             ".$this->var2str($this->folder).",".$this->var2str($this->version).",
-            ".$this->var2str($this->show_on_menu).");";
+            ".$this->var2str($this->show_on_menu).",".$this->var2str($this->important).");";
       }
       return $this->db->exec($sql);
    }

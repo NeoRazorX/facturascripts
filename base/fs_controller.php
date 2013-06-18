@@ -51,7 +51,7 @@ class fs_controller
    public $default_items;
    protected $cache;
    
-   public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE)
+   public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE, $important=FALSE)
    {
       $tiempo = explode(' ', microtime());
       $this->uptime = $tiempo[1] + $tiempo[0];
@@ -70,14 +70,12 @@ class fs_controller
       {
          $this->user = new fs_user();
          $this->page = new fs_page( array('name'=>$name, 'title'=>$title, 'folder'=>$folder,
-             'version'=>$this->version(), 'show_on_menu'=>$shmenu) );
+             'version'=>$this->version(), 'show_on_menu'=>$shmenu, 'important'=>$important) );
          $this->ppage = FALSE;
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
-         
          $this->cache = new fs_cache();
          
-         $this->template = 'index';
          if( isset($_GET['logout']) )
          {
             if(FS_DEMO)
@@ -97,7 +95,9 @@ class fs_controller
          else if( $this->user->have_access_to($this->page->name, $this->admin_page) )
          {
             if($name == '')
-               $this->new_error_msg('¡Página no encontrada!');
+            {
+               $this->template = 'index';
+            }
             else
             {
                $this->set_default_items();
@@ -116,9 +116,13 @@ class fs_controller
                $this->process();
             }
          }
+         else if($name == '')
+         {
+            $this->template = 'index';
+         }
          else
          {
-            $this->new_error_msg("Acceso denegado.");
+            $this->template = 'access_denied';
             $this->user->clean_cache(TRUE);
             $this->empresa->clean_cache();
          }
@@ -127,6 +131,10 @@ class fs_controller
       {
          $this->template = 'no_db';
          $this->new_error_msg('¡Imposible conectar con la base de datos!');
+         
+         $msg = '';
+         if( !$this->db->php_support($msg) )
+            $this->new_error_msg($msg);
       }
    }
    
@@ -290,9 +298,11 @@ class fs_controller
       /// actualizamos los datos de la página
       foreach($this->menu as $m)
       {
-         if($m->name == $this->page->name AND $m != $this->page)
+         if($m->name == $this->page->name AND $m->version != $this->page->version)
          {
-            $this->page->save();
+            if( !$this->page->save() )
+               $this->new_error_msg('Imposible actualizar los datos de esta página.');
+            
             break;
          }
       }
@@ -327,7 +337,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.11';
+      return '0.12';
    }
    
    public function select_default_page()
@@ -341,13 +351,20 @@ class fs_controller
             if( is_null($this->user->fs_page) )
             {
                $url = 'index.php?page=admin_pages';
+               
+               /*
+                * Cuando un usuario no tiene asignada una página por defecto,
+                * se selecciona la primera página importante a la que tiene acceso.
+                */
                foreach($this->menu as $p)
                {
-                  if($p->show_on_menu)
+                  if($p->important)
                   {
                      $url = $p->url() . '&show_dpa=TRUE';
                      break;
                   }
+                  else if($p->show_on_menu)
+                     $url = $p->url() . '&show_dpa=TRUE';
                }
             }
             else

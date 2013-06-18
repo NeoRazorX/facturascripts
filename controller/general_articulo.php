@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,20 +19,25 @@
 
 require_once 'model/almacen.php';
 require_once 'model/articulo.php';
+require_once 'model/factura_cliente.php';
+require_once 'model/factura_proveedor.php';
 require_once 'model/familia.php';
 require_once 'model/impuesto.php';
+require_once 'model/stock.php';
 
 class general_articulo extends fs_controller
 {
    public $almacen;
    public $articulo;
+   public $buscar_limit;
+   public $buscar_offset;
+   public $buscar_resultados;
+   public $buscar_tipo;
    public $familia;
    public $impuesto;
    public $nuevos_almacenes;
    public $stocks;
    public $equivalentes;
-   public $ultimas_ventas;
-   public $ultimas_compras;
 
    public function __construct()
    {
@@ -141,11 +146,14 @@ class general_articulo extends fs_controller
          $this->articulo = $this->articulo->get($_GET['ref']);
       }
       
-      if($this->articulo)
+      if( $this->articulo AND isset($_POST['buscar']) )
+         $this->buscar();
+      else if($this->articulo)
       {
          $this->page->title = $this->articulo->referencia;
          $this->buttons[] = new fs_button('b_imagen', 'imagen');
-         $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar',
+                 '#', 'remove', 'img/remove.png', '-');
          
          if($this->articulo->bloqueado)
             $this->new_error_msg("Este artículo está bloqueado.");
@@ -168,8 +176,6 @@ class general_articulo extends fs_controller
                $this->nuevos_almacenes[] = $a;
          }
          
-         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 3);
-         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 3);
          $this->equivalentes = $this->articulo->get_equivalentes();
       }
       else
@@ -178,15 +184,55 @@ class general_articulo extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function url()
    {
-      if($this->articulo)
+      if( !isset($this->articulo) )
+         return parent::url();
+      else if($this->articulo)
          return $this->articulo->url();
       else
          return $this->page->url();
+   }
+   
+   private function buscar()
+   {
+      $this->template = 'ajax/general_articulo';
+      
+      $this->buscar_limit = FS_ITEM_LIMIT;
+      
+      if( isset($_POST['offset']) )
+         $this->buscar_offset = $_POST['offset'];
+      else
+         $this->buscar_offset = 0;
+      
+      $this->buscar_tipo = $_POST['buscar'];
+      
+      switch($this->buscar_tipo)
+      {
+         default:
+            $this->buscar_tipo = 'albcli';
+            $this->buscar_resultados = $this->articulo->get_lineas_albaran_cli($this->buscar_offset);
+            break;
+         
+         case 'albpro':
+            $this->buscar_resultados = $this->articulo->get_lineas_albaran_prov($this->buscar_offset);
+            break;
+         
+         case 'faccli':
+            $linea = new linea_factura_cliente();
+            $this->buscar_resultados = $linea->all_from_articulo($this->articulo->referencia,
+                    $this->buscar_offset);
+            break;
+         
+         case 'facpro':
+            $linea = new linea_factura_proveedor();
+            $this->buscar_resultados = $linea->all_from_articulo($this->articulo->referencia,
+                    $this->buscar_offset);
+            break;
+      }
    }
 }
 

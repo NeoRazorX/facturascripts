@@ -59,7 +59,10 @@ class admin_pages extends fs_controller
             {
                require_once 'controller/'.$p->name.'.php';
                $new_fsc = new $p->name(); /// cargamos el controlador asociado
-               $new_fsc->page->save();
+               
+               if( !$new_fsc->page->save() )
+                  $this->new_error_msg("Imposible guardar la página ".$p->name);
+               
                unset($new_fsc);
             }
             else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) ) /// págine activa no marcada (desactivar)
@@ -130,7 +133,7 @@ class admin_pages extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
 }
 

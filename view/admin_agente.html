@@ -38,11 +38,12 @@
 </div>
 
 <div class="rounded">
+   <a name="listado"></a>
    {if condition="$fsc->listar=='albaranes_cli'"}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli" class="selected">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov">Albaranes de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja">Caja</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="selected">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
    <table class="list">
       <tr>
@@ -69,22 +70,22 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>
    </table>
    {elseif condition="$fsc->listar=='albaranes_prov'"}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov" class="selected">Albaranes de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja">Caja</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="selected">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
    <table class="list">
       <tr>
@@ -111,22 +112,22 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>
    </table>
    {else}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov">Albaranes de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja" class="selected">Caja</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado">Albaranes de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado" class="selected">Caja</a>
    </div>
    <table class="list">
       <tr>
@@ -153,13 +154,13 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="2"></td>
          <td colspan="2" align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>

@@ -231,13 +231,14 @@
 </div>
 
 <div class="rounded">
+   <a name="listado"></a>
    <div class="select">
       {if condition="$fsc->listar=='albaranes'"}
-         <a href="{$fsc->url()}&listar=albaranes" class="selected">Albaranes</a>
-         <a href="{$fsc->url()}&listar=facturas">Facturas</a>
+         <a href="{$fsc->url()}&listar=albaranes#listado" class="selected">Albaranes</a>
+         <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
       {else}
-         <a href="{$fsc->url()}&listar=albaranes">Albaranes</a>
-         <a href="{$fsc->url()}&listar=facturas" class="selected">Facturas</a>
+         <a href="{$fsc->url()}&listar=albaranes#listado">Albaranes</a>
+         <a href="{$fsc->url()}&listar=facturas#listado" class="selected">Facturas</a>
       {/if}
    </div>
    <table class="list">
@@ -262,13 +263,13 @@
          <tr>
             <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
-            <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+            <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
             {/if}
             </td>
             <td colspan="2"></td>
             <td align="right">
             {if condition="$fsc->siguiente_url()!=''"}
-            <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+            <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
             {/if}
             </td>
          </tr>
@@ -293,13 +294,13 @@
          <tr>
             <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
-               <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+               <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
             {/if}
             </td>
             <td colspan="2"></td>
             <td align="right">
             {if condition="$fsc->siguiente_url()!=''"}
-               <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+               <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
             {/if}
             </td>
          </tr>

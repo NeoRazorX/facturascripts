@@ -29,17 +29,23 @@ class fs_mysql extends fs_db
       $this->last_error = FALSE;
    }
    
+   public function php_support(&$msg)
+   {
+      if( function_exists('mysqli_connect') )
+         return TRUE;
+      else
+      {
+         $msg = "No tienes instala la extensi&oacute;n de PHP para MySQL.";
+         return FALSE;
+      }
+   }
+   
    /// conecta con la base de datos
    public function connect()
    {
       if(self::$link)
          $connected = TRUE;
-      else if( !function_exists('mysqli_connect') )
-      {
-         echo "No tienes instala la extensi&oacute;n de PHP para MySQL.<br/>";
-         $connected = FALSE;
-      }
-      else
+      else if( function_exists('mysqli_connect') )
       {
          self::$link = mysqli_connect(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, FS_DB_PORT);
          if(self::$link)
@@ -47,6 +53,9 @@ class fs_mysql extends fs_db
          else
             $connected = FALSE;
       }
+      else
+         $connected = FALSE;
+      
       return $connected;
    }
    

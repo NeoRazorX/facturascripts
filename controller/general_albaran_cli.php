@@ -102,7 +102,7 @@ class general_albaran_cli extends fs_controller
             $this->buttons[] = new fs_button('b_facturar', 'generar factura',
                     $this->url()."&facturar=TRUE&petid=".$this->random_string());
          }
-         else
+         else if( isset($this->albaran->idfactura) )
          {
             $this->buttons[] = new fs_button('b_ver_factura', 'factura',
                     $this->albaran->factura_url(), 'button', 'img/zoom.png');
@@ -115,12 +115,14 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-19';
+      return parent::version().'-20';
    }
    
    public function url()
    {
-      if($this->albaran)
+      if( !isset($this->albaran) )
+         return parent::url();
+      else if($this->albaran)
          return $this->albaran->url();
       else
          return $this->page->url();

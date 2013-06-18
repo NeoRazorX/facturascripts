@@ -40,6 +40,9 @@
             <a id="fs_logo" href="index.php">{if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}</a>
          </div>
          <div id="header_user">
+            {if condition="$demo"}
+            <a id="fs_encuesta" target="_blank" href="https://docs.google.com/forms/d/1iXp2QzqPyaTqYQm-noh_97xhGM6GyjG84WL3eXocbDU/viewform">!</a>
+            {/if}
             <a class="button" href="#" id="b_user_list">{$fsc->user->nick}</a>
             <a id="fs_exit" href="{$fsc->url()}&logout=TRUE"><img src="img/logout.png" alt="salir" title="cerrar sesión"/></a>
          </div>
@@ -48,9 +51,10 @@
    
    {if condition="$fsc->show_default_page_advice()"}
    <div class="advice">
-      Se ha seleccionado la primera página de tu lista. Si queres que sea otra tu
-      página de inicio, tan solo tienes que hacer clic sobre el icono
-      <img src="img/star_off.png" alt="página de inicio" /> en la página que quieras.
+      Se ha seleccionado automáticamente una página de tu lista.
+      Si queres que sea otra tu página de inicio, tan solo tienes que hacer
+      clic sobre el icono <img src="img/star_off.png" alt="página de inicio" />
+      en la página que quieras.
    </div>
    {/if}
    {if condition="$fsc->get_errors()"}
@@ -117,7 +121,9 @@
          <img id="user_list_img" src="img/flecha_submenu.png" alt="*"/>
          <ul>
             <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
+            {if condition="$fsc->user->codagente"}
             <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
+            {/if}
             {if condition="!$demo"}
                {if condition="count($fsc->user->all())>1"}
                   <li><hr/></li>

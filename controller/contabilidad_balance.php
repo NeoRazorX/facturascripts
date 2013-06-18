@@ -56,7 +56,9 @@ class contabilidad_balance extends fs_controller
    
    public function url()
    {
-      if( $this->balance )
+      if( !isset($this->balance) )
+         return parent::url();
+      else if($this->balance)
          return $this->balance->url();
       else
          return parent::url();

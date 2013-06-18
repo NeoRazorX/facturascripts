@@ -20,6 +20,7 @@
 require_once 'base/fs_model.php';
 require_once 'model/agente.php';
 require_once 'model/articulo.php';
+require_once 'model/ejercicio.php';
 require_once 'model/factura_proveedor.php';
 require_once 'model/proveedor.php';
 require_once 'model/secuencia.php';
@@ -871,6 +872,23 @@ class albaran_proveedor extends fs_model
             $albalist[] = new albaran_proveedor($a);
       }
       return $albalist;
+   }
+   
+   public function cron_job()
+   {
+      /*
+       * Marcamos como ptefactura = TRUE todos los albaranes de ejercicios
+       * ya cerrados. Así no se podrán modificar ni facturar.
+       */
+      $ejercicio = new ejercicio();
+      foreach($ejercicio->all() as $eje)
+      {
+         if( !$eje->abierto() )
+         {
+            $this->db->exec("UPDATE ".$this->table_name." SET ptefactura = FALSE
+               WHERE codejercicio = ".$this->var2str($eje->codejercicio).";");
+         }
+      }
    }
 }
 

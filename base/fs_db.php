@@ -50,7 +50,10 @@ abstract class fs_db
    {
       return self::$history;
    }
-
+   
+   /// devuelve TRUE si php tiene soporte para esta base de datos
+   abstract public function php_support(&$msg);
+   
    /// conecta con la base de datos
    abstract public function connect();
    

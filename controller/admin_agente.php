@@ -123,12 +123,14 @@ class admin_agente extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()
    {
-      if( $this->agente )
+      if( !isset($this->agente) )
+         return parent::url();
+      else if($this->agente)
          return $this->agente->url();
       else
          return $this->page->url();

@@ -4,6 +4,12 @@
    {if condition="$fsc->caja"}
       {if condition="$fsc->caja->codagente==$fsc->user->codagente"}
          {include="tpv_yamyam2"}
+      {else}
+      <div class='rounded'>
+         <center>
+            <img src='view/img/big_lock.png' alt="acceso denegado"/>
+         </center>
+      </div>
       {/if}
    {else}
    <script type="text/javascript">
@@ -23,6 +29,12 @@
       </form>
    </div>
    {/if}
+{else}
+<div class='rounded'>
+   <center>
+      <img src='view/img/big_lock.png' alt="acceso denegado"/>
+   </center>
+</div>
 {/if}
 
 {include="footer"}
