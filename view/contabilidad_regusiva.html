@@ -1,0 +1,111 @@
+{include="header"}
+
+<script type="text/javascript">
+   function full_regiva(id)
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: 'idregiva='+id,
+         success: function(datos) {
+            $("#popup_full_regiva").html(datos);
+            fs_show_popup('popup_full_regiva');
+         }
+      });
+   }
+   function completar_regiva()
+   {
+      document.f_nueva_regiva.proceso.value = 'comprobar';
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: $("form[name=f_nueva_regiva]").serialize(),
+         success: function(datos) {
+            $("#lineas_regiva").html(datos);
+         }
+      });
+   }
+   function guardar_regiva()
+   {
+      document.f_nueva_regiva.proceso.value = 'guardar';
+      document.f_nueva_regiva.submit();
+   }
+   $(document).ready(function() {
+      $("#b_nueva_regiva").click(function(event) {
+         event.preventDefault();
+         $("#lineas_regiva").html('');
+         fs_show_popup('popup_nueva_regiva', 120);
+      });
+   });
+</script>
+
+<div id="popup_nueva_regiva" class="popup">
+   <h1>Nueva regularización de IVA</h1>
+   <form name="f_nueva_regiva" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="proceso" value=""/>
+      <table class="list">
+         <tr>
+            <th>Periodo</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+         </tr>
+         <tr>
+            <td>
+               <select name="periodo">
+                  {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
+                  {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
+                  {if condition="$fsc->periodo=='T3'"}<option selected="selected">T3</option>{else}<option>T3</option>{/if}
+                  {if condition="$fsc->periodo=='T4'"}<option selected="selected">T4</option>{else}<option>T4</option>{/if}
+               </select>
+            </td>
+            <td>
+               <input type="text" class="tcal" name="desde" size="10" value="{$fsc->fecha_desde}"/>
+            </td>
+            <td>
+               <input type="text" class="tcal" name="hasta" size="10" value="{$fsc->fecha_hasta}"/>
+            </td>
+         </tr>
+      </table>
+      <table width="100%">
+         <tr>
+            <td align="right">
+               <input type="button" value="completar" onclick="completar_regiva()"/>
+            </td>
+         </tr>
+      </table>
+      <div id="lineas_regiva"></div>
+   </form>
+</div>
+
+<div id="popup_full_regiva" class="popup"></div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Periodo@Ejercicio</th>
+         <th align="left">Fecha del asiento</th>
+         <th align="left">Fecha de inicio</th>
+         <th align="right">Fecha fin</th>
+      </tr>
+      {loop="$fsc->regiva->all()"}
+      <tr>
+         <td>
+            <a href="#" onclick="full_regiva('{$value->idregiva}')">
+               {$value->periodo}@{$value->codejercicio}
+            </a>
+         </td>
+         <td>{$value->fechaasiento}</td>
+         <td>{$value->fechainicio}</td>
+         <td align="right">{$value->fechafin}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="4">Sin resultados.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

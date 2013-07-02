@@ -27,7 +27,7 @@ class admin_info extends fs_controller
    protected function process()
    {
       $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',
-              $this->url()."&clean_cache=TRUE", 'remove', 'img/remove.png', '-');
+              $this->url()."&clean_cache=TRUE", 'remove', 'img/trash.png', '-');
       
       if( isset($_GET['clean_cache']) )
       {

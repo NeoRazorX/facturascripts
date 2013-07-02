@@ -124,7 +124,7 @@ class contabilidad_factura_cli extends fs_controller
                        'button', 'img/tools.png');
             }
             
-            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/trash.png');
          }
       }
       else

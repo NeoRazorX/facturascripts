@@ -232,7 +232,7 @@ class fs_controller
             {
                $this->new_error_msg('El usuario no existe!');
                $this->user->clean_cache(TRUE);
-               $this->empresa->clean_cache();
+               $this->cache->clean();
             }
          }
       }
@@ -259,7 +259,7 @@ class fs_controller
             $this->new_message('¡El usuario no existe!');
             $this->log_out();
             $this->user->clean_cache(TRUE);
-            $this->empresa->clean_cache();
+            $this->cache->clean();
          }
       }
       return $this->user->logged_on;
@@ -337,7 +337,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.12';
+      return '0.12.1';
    }
    
    public function select_default_page()

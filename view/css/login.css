@@ -172,6 +172,19 @@ input[type='submit']:hover {
    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#40bf40, endColorstr=#005900);
 }
 
+a.feedback {
+   position: fixed;
+   top: 0px;
+   right: 50px;
+   padding: 8px;
+   background-color: #424242;
+   border-bottom-left-radius: 5px;
+   border-bottom-right-radius: 5px;
+   color: white;
+   font-size: 16px;
+   font-weight: bold;
+}
+
 div.colaborar {
    padding: 15px;
    background-color: #3C3C3C;
@@ -226,80 +239,6 @@ a#b_github:hover {
    background-image: -o-linear-gradient(top, #bababa, #575757);
    background-image: linear-gradient(to bottom, #bababa, #575757);
    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#bababa, endColorstr=#575757);
-}
-
-a#b_donar {
-   display: block;
-   border: 1px solid #ffad41;
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   font-family: arial, helvetica, sans-serif;
-   padding: 10px 10px 10px 10px;
-   text-decoration: none;
-   text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
-   font-weight: bold;
-   text-align: center;
-   color: #333333;
-   background-color: #ffc579;
-   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffc579), to(#fb9d23));
-   background-image: -webkit-linear-gradient(top, #ffc579, #fb9d23);
-   background-image: -moz-linear-gradient(top, #ffc579, #fb9d23);
-   background-image: -ms-linear-gradient(top, #ffc579, #fb9d23);
-   background-image: -o-linear-gradient(top, #ffc579, #fb9d23);
-   background-image: linear-gradient(to bottom, #ffc579, #fb9d23);
-   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ffc579, endColorstr=#fb9d23);
-}
-
-a#b_donar:hover {
-   border: 1px solid #ff9913;
-   background-color: #ffaf46;
-   background-image: -webkit-gradient(linear, left top, left bottom, from(#ffaf46), top(#e78404));
-   background-image: -webkit-linear-gradient(top, #ffaf46, #e78404);
-   background-image: -moz-linear-gradient(top, #ffaf46, #e78404);
-   background-image: -ms-linear-gradient(top, #ffaf46, #e78404);
-   background-image: -o-linear-gradient(top, #ffaf46, #e78404);
-   background-image: linear-gradient(to bottom, #ffaf46, #e78404);
-   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#ffaf46, endColorstr=#e78404);
-}
-
-div#shadow {
-   display: none;
-   z-index: 2;
-   position: fixed;
-   top: 0px;
-   left: 0px;
-   width: 100%;
-   height: 100%;
-   background: #000;
-   opacity: 0.7;
-}
-
-a#b_close_donar {
-   display: none;
-   position: absolute;
-   z-index: 4;
-}
-
-div#popup_donar {
-   display: none;
-   position: absolute;
-   z-index: 3;
-   top: 50px;
-   left: 50px;
-   padding: 10px;
-   background-color: white;
-   border: 3px solid #999999;
-   border-radius: 5px;
-   box-shadow: 10px 10px 10px #333;
-   color: #333333;
-}
-
-div#popup_donar h1 {
-   margin: 0px;
-   margin-bottom: 15px;
-   padding: 5px;
-   text-align: center;
 }
 
 div.changes {

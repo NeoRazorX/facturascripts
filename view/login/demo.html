@@ -10,34 +10,6 @@
    <link rel="stylesheet" type="text/css" href="../css/login.css" />
    <script type="text/javascript" src="../js/jquery.js"></script>
    <script type="text/javascript">
-      $(document).ready(function() {
-         document.f_login.user.focus();
-         $("#b_donar").click(function() {
-            $("#shadow").show();
-            $("#popup_donar").css({
-               top: $(window).scrollTop() + 15,
-               left: ($(window).width() - $("#popup_donar").outerWidth())/2
-            });
-            $("#popup_donar").show('fast');
-            $("#b_close_donar").css({
-               top: $(window).scrollTop() + 5,
-               left: $("#popup_donar").position().left - 15,
-               display: 'block'
-            });
-         });
-         $("#b_close_donar").click(function() {
-            $("#b_close_donar").hide();
-            $("#popup_donar").hide();
-            $("#shadow").hide();
-         });
-         $("#shadow").click(function() {
-            $("#b_close_donar").hide();
-            $("#popup_donar").hide();
-            $("#shadow").hide();
-         });
-      });
-   </script>
-   <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-417932-8']);
       _gaq.push(['_setDomainName', 'facturascripts.com']);
@@ -146,10 +118,12 @@
       <br/>
    </div>
    
+   <a class="feedback" href="#fb_comments">Preguntas</a>
+   
    <div class="colaborar">
       <table width="100%">
          <tr>
-            <td><div class="colabora2">Colabora</div></td>
+            <td><div class="colabora2">¡Habla!</div></td>
             <td>
                Si tienes cualquier problema o sugerencia no dudes en informar a través de
                <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Google Code</a>,
@@ -160,39 +134,6 @@
                <a target="_blank" href="http://www.neorazorx.com">mi blog</a>.
             </td>
             <td><a id="b_github" target="_blank" href="https://github.com/NeoRazorX/facturascripts">github</a></td>
-            <td><a id="b_donar" href="#">Donar</a></td>
-         </tr>
-      </table>
-   </div>
-   
-   <div id="shadow"></div>
-   <a id="b_close_donar" href="#"><img src="../img/close.png" alt="close"/></a>
-   <div id="popup_donar">
-      <h1>Ayuda a mejorar FacturaScripts</h1>
-      <table width="100%">
-         <tr>
-            <td valign="top">
-               Necesito:
-               <ul>
-                  <li>Una impresora de tickets.</li>
-                  <li>Un cajón portamonedas.</li>
-                  <li>Una tablet.</li>
-               </ul>
-               <br/><br/>
-               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                  <input type="hidden" name="cmd" value="_s-xclick"/>
-                  <input type="hidden" name="hosted_button_id" value="NXUH3XYDVPQBG"/>
-                  <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal. La forma rápida y segura de pagar en Internet."/>
-                  <img alt="" border="0" src="https://www.paypalobjects.com/es_ES/i/scr/pixel.gif" width="1" height="1"/>
-               </form>
-            </td>
-            <td valign="top" align="center">
-               <img src="../img/bitcoin_mini.png" alt="acepto bitcoins"/>
-               <br/>
-               <a href="bitcoin:1NJ7h6h52nVm1bi5VcNMb4v48t89FCQ9wb">
-                  <img src="../img/bitcoin.png" alt="bitcoin"/></a>
-               <br/>1NJ7h6h52nVm1bi5VcNMb4v48t89FCQ9wb
-            </td>
          </tr>
       </table>
    </div>

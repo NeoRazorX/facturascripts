@@ -41,7 +41,7 @@ class fs_cache
             {
                self::$connected = FALSE;
                self::$error = TRUE;
-               self::$error_msg = 'Error al conectar al servidor Memcache: '.$e;
+               self::$error_msg = 'Error al conectar al servidor Memcache.';
             }
          }
          else

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_regiva.xml
+    Description:
+        Estructura de la tabla co_regiva.
+-->
+<tabla>
+   <columna>
+      <nombre>codejercicio</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuentaacr</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuentadeu</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fechaasiento</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fechafin</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fechainicio</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idasiento</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idregiva</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('co_regiva_idregiva_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idsubcuentaacr</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idsubcuentadeu</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>periodo</nombre>
+      <tipo>character varying(8)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>co_regiva_pkey</nombre>
+      <consulta>PRIMARY KEY (idregiva)</consulta>
+   </restriccion>
+</tabla>

@@ -87,16 +87,24 @@ class fs_user extends fs_model
    
    protected function install()
    {
+      $this->clean_cache(TRUE);
+      
       /// Esta tabla tiene claves ajenas a agentes, fs_pages y ejercicios
       new agente();
       new fs_page();
       new ejercicio();
       
-      $this->clean_cache();
-      
       $this->new_error_msg('Se ha creado el usuario admin con la contraseña admin.');
-      return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
-         VALUES ('admin','".sha1('admin')."',NULL,'1',TRUE);";
+      if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
+      {
+         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
+            VALUES ('admin','".sha1('admin')."',NULL,'1',TRUE);";
+      }
+      else
+      {
+         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
+            VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
+      }
    }
    
    public function url()
@@ -329,7 +337,7 @@ class fs_user extends fs_model
    {
       $this->cache->delete('m_fs_user_all');
       
-      if( $full )
+      if($full)
          $this->clean_checked_tables();
    }
    

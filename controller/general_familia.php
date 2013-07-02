@@ -70,7 +70,7 @@ class general_familia extends fs_controller
             $this->buttons[] = new fs_button('b_importar_familia', 'importar', '#');
          
          $this->buttons[] = new fs_button('b_download_familia', 'exportar', $this->url().'&download=TRUE', '', 'img/save.png', '*');
-         $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         $this->buttons[] = new fs_button('b_eliminar_familia', 'eliminar', '#', 'remove', 'img/trash.png', '-');
          
          if( isset($_POST['multiplicar']) )
          {

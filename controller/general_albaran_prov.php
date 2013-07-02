@@ -105,7 +105,7 @@ class general_albaran_prov extends fs_controller
                     $this->albaran->factura_url(), 'button', 'img/zoom.png');
          }
          $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
-         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/remove.png');
+         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/trash.png');
       }
       else
          $this->new_error_msg("¡Albarán de proveedor no encontrado!");

@@ -93,7 +93,7 @@ class general_paquete extends fs_controller
          $this->buttons[] = new fs_button('b_articulo', 'ver artículo', $this->paquete->articulo->url(), '', 'img/zoom.png');
          $this->buttons[] = new fs_button('b_eliminar_paquete', 'eliminar',
                  $this->url()."&delete=".$this->paquete->referencia, 'remove',
-                 'img/remove.png', '-');
+                 'img/trash.png', '-');
       }
       else
          $this->new_error_msg("Paquete no encontrado.");

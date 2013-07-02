@@ -267,6 +267,8 @@ div.main_div div.popup h1 {
    margin: 0px;
    margin-bottom: 10px;
    padding: 2px;
+   padding-left: 10px;
+   padding-right: 10px;
    background-color: #3768B8;
    color: white;
    text-align: center;
@@ -476,11 +478,15 @@ ul.bloque li {
    text-align: center;
 }
 
+ul.bloque li.verde {
+   background-color: #ADF5AC;
+}
+
 ul.bloque li a {
    display: block;
-   padding: 5px;
-   padding-top: 30px;
-   padding-bottom: 30px;
+   padding: 8px;
+   padding-top: 20px;
+   padding-bottom: 20px;
    text-decoration: none;
 }
 
@@ -540,8 +546,13 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
 
 div.main_div a.remove {
    background-color: #D74937;
+   border-color: #666666;
    color: white;
    text-decoration: none;
+}
+
+div.main_div a.remove img {
+   vertical-align: text-bottom;
 }
 
 div.hidden {
@@ -593,7 +604,7 @@ a#fs_logo {
    font-size: 32px;
 }
 
-a#fs_encuesta {
+a#fs_feedback {
    display: inline-block;
    margin-right: 15px;
    padding-top: 2px;

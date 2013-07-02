@@ -19,6 +19,7 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/cuenta.php';
+require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
 require_once 'model/partida.php';
 
@@ -105,6 +106,21 @@ class subcuenta extends fs_model
    public function show_saldo()
    {
       return number_format($this->saldo, 2, '.', ' ');
+   }
+   
+   public function tasaconv()
+   {
+      if( isset($this->coddivisa) )
+      {
+         $divisa = new divisa();
+         $div0 = $divisa->get($this->coddivisa);
+         if($div0)
+            return $div0->tasaconv;
+         else
+            return 1;
+      }
+      else
+         return 1;
    }
    
    public function url()

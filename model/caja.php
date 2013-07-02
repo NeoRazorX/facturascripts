@@ -94,10 +94,7 @@ class caja extends fs_model
    
    public function show_diferencia()
    {
-      if( isset($this->fecha_fin) )
-         return number_format ($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
-      else
-         return '-';
+      return number_format ($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
    }
    
    public function exists()

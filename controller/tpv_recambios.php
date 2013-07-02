@@ -104,7 +104,7 @@ class tpv_recambios extends fs_controller
                if($this->caja->codagente == $this->user->codagente)
                {
                   $this->buttons[] = new fs_button('b_reticket', 'reimprimir ticket', '#', '', 'img/tools.png');
-                  $this->buttons[] = new fs_button('b_borrar_ticket', 'borrar ticket', '#', 'remove', 'img/remove.png');
+                  $this->buttons[] = new fs_button('b_borrar_ticket', 'borrar ticket', '#', 'remove', 'img/trash.png');
                   $this->buttons[] = new fs_button('b_abrir_caja', 'abrir caja', $this->url().'&abrir_caja=TRUE', '', 'img/tools.png');
                   $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', '#', 'remove', 'img/remove.png');
                   

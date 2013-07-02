@@ -47,7 +47,7 @@ class admin_user extends fs_controller
          $this->page->title = $this->suser->nick;
          
          if($this->user->nick != $this->suser->nick)
-            $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+            $this->buttons[] = new fs_button('b_eliminar_usuario', 'eliminar', '#', 'remove', 'img/trash.png', '-');
          
          if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
          {

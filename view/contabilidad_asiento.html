@@ -396,8 +396,8 @@
          <tr>
             <td>{$value->concepto}</td>
             <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
-            <td align="right">{$value->show_debe()} €</td>
-            <td align="right">{$value->show_haber()} €</td>
+            <td align="right"><span title="{$value->debe}">{$value->show_debe()} €</span></td>
+            <td align="right"><span title="{$value->haber}">{$value->show_haber()} €</span></td>
             <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
             <td align="right">
                {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} €{else}-{/if}

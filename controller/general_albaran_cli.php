@@ -107,7 +107,7 @@ class general_albaran_cli extends fs_controller
             $this->buttons[] = new fs_button('b_ver_factura', 'factura',
                     $this->albaran->factura_url(), 'button', 'img/zoom.png');
          }
-         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/remove.png', '-');
+         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/trash.png', '-');
       }
       else
          $this->new_error_msg("¡Albarán de cliente no encontrado!");
