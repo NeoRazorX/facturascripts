@@ -193,6 +193,7 @@ function fs_select_folder(folder)
          });
          $('#folder_'+folder).css({
             position: 'absolute',
+            'z-index': 2,
             left: left2,
             top: $("#b_folder_"+folder).position().top+25
          });
@@ -204,6 +205,7 @@ function fs_select_folder(folder)
          });
          $('#folder_'+folder).css({
             position: 'absolute',
+            'z-index': 2,
             left: 5,
             top: $("#b_folder_"+folder).position().top+25
          });

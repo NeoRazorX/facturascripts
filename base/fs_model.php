@@ -249,6 +249,21 @@ abstract class fs_model
          return 'fecha desconocida';
    }
    
+   public function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y' )
+   {
+      $dates = array();
+      $current = strtotime($first);
+      $last = strtotime($last);
+      
+      while( $current <= $last )
+      {
+         $dates[] = date($format, $current);
+         $current = strtotime($step, $current);
+      }
+      
+      return $dates;
+   }
+   
    /*
     * Esta función convierte:
     * < en &lt;

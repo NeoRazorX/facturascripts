@@ -1297,6 +1297,90 @@ class factura_proveedor extends fs_model
       }
       return $listam;
    }
+   
+   public function stats_last_days($numdays = 15)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMDD') as dia, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMDD') ORDER BY dia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months($num = 12)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMMM') as mes, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMMM') ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_years($num = 3)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('year' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMYYYY') as ano, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMYYYY') ORDER BY ano ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['ano']);
+            $stats[$i] = array(
+                'year' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
 }
 
 ?>

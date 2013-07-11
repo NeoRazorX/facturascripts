@@ -17,6 +17,9 @@
    <ul class="horizontal">
       <li>Impuesto: {$fsc->family_data->codimpuesto}</li>
       <li>Sufijo: {$fsc->family_data->sufijo}</li>
+      {if condition="$fsc->family_data->no_nuevos"}
+         <li>NO añadir artículos nuevos.</li>
+      {/if}
       {if condition="$fsc->family_data->con_iva"}
          <li>precios con IVA incluido.</li>
       {/if}

@@ -30,6 +30,11 @@
          fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
    </script>
+   <script type="text/javascript">
+      $(document).ready(function() {
+         document.f_login.user.focus();
+      });
+   </script>
 </head>
 <body>
    <div id="fb-root"></div>
@@ -53,7 +58,7 @@
       Es compatible con Abanq o Eneboo y es software libre bajo licencia
       <a target="_blank" href='COPYING'>GNU/AGPL</a>.
       
-      <table cellspacing="30">
+      <table class="boxes">
          <tr>
             <td class="rounded">
                <a id="download" target="_blank" href="https://github.com/NeoRazorX/facturascripts/archive/master.zip">DESCARGAR</a>
@@ -78,14 +83,14 @@
                   <input type="text" name="user" size="12" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
                </form>
                <br/><br/>
-               <center>Esto es una demo, por eso la seguridad está desactivada.</center>
+               <div style="text-align: center;">Esto es una demo, por eso la seguridad está desactivada.</div>
             </td>
          </tr>
       </table>
       <br/>
-      <table>
+      <table class="share_buttons">
          <tr>
-            <td width="100">
+            <td>
                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="es" data-count="vertical" data-related="neorazorx" data-url="http://www.facturascripts.com">Tweet</a>
                <script>
                   !function(d,s,id){
@@ -99,7 +104,7 @@
                   }(document,"script","twitter-wjs");
                </script>
             </td>
-            <td width="100">
+            <td>
                <div class="g-plusone" data-size="tall" data-href="http://www.facturascripts.com"></div>
                <script type="text/javascript">
                     window.___gcfg = {lang: 'es'};
@@ -110,7 +115,7 @@
                     })();
                </script>
             </td>
-            <td width="100">
+            <td>
                <div class="fb-like" data-href="http://www.facturascripts.com" data-layout="box_count" data-width="90" data-show-faces="false"></div>
             </td>
          </tr>
@@ -121,7 +126,7 @@
    <a class="feedback" href="#fb_comments">Preguntas</a>
    
    <div class="colaborar">
-      <table width="100%">
+      <table>
          <tr>
             <td><div class="colabora2">¡Habla!</div></td>
             <td>
@@ -196,7 +201,7 @@
    <div class="footer">
       <table class="links">
          <tr>
-            <td valign="top">
+            <td>
                Páginas especiales:
                <ul>
                   <li>
@@ -207,14 +212,14 @@
                   </li>
                </ul>
             </td>
-            <td valign="top">
+            <td>
                Autor:
                <ul>
                   <li><a target="_blank" href="http://www.neorazorx.com">NeoRazorX.com</a></li>
                   <li><a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a></li>
                </ul>
             </td>
-            <td valign="top">
+            <td>
                Otros proyectos:
                <ul>
                   <li><a target="_blank" href="http://www.kelinux.net">Kelinux.net</a></li>
@@ -223,10 +228,10 @@
             </td>
          </tr>
       </table>
-      <table width="100%">
+      <table style="width: 100%;">
          <tr>
             <td>Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()}</td>
-            <td align="right">Procesado en: {$fsc->duration()}</td>
+            <td style="text-align: right;">Procesado en: {$fsc->duration()}</td>
          </tr>
       </table>
    </div>

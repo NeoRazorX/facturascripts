@@ -3,6 +3,20 @@
 {if condition="$fsc->familia"}
 <script type="text/javascript">
    $(document).ready(function() {
+      $("#b_stats_familia").click(function(event) {
+         event.preventDefault();
+         $('#popup_stats_familia').html('');
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'stats=TRUE',
+            success: function(datos) {
+               $('#popup_stats_familia').html(datos);
+               fs_show_popup('popup_stats_familia');
+            }
+         });
+      });
       $("#b_importar_familia").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_importar_familia');
@@ -18,6 +32,8 @@
       });
    });
 </script>
+
+<div class="popup" id="popup_stats_familia" style="min-width: 500px;"></div>
 
 <div class="popup" id="popup_herramientas_familia">
    <h1>Herramientas</h1>
@@ -61,6 +77,10 @@
                <input name='sufijo' type='text' size="5" maxlength="5"/>
                Se añade al final de la referencia de cada artículo.
             </td>
+         </tr>
+         <tr>
+            <td align="right"><input id="cb_nnuevos" type="checkbox" name="nnuevos" value="TRUE"/></td>
+            <td><label for="cb_nnuevos">NO añadir artículos nuevos.</label></td>
          </tr>
          <tr>
             <td align="right"><input id="cb_con_iva" type="checkbox" name="con_iva" value="TRUE"/></td>
@@ -120,6 +140,9 @@
          <td align="right">{$value->stockfis}</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="5">&nbsp;</td>
+      </tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}

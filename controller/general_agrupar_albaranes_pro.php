@@ -33,6 +33,8 @@ class general_agrupar_albaranes_pro extends fs_controller
    public $proveedor;
    public $resultados;
    public $serie;
+   public $neto;
+   public $total;
    
    public function __construct()
    {
@@ -45,6 +47,8 @@ class general_agrupar_albaranes_pro extends fs_controller
       $this->albaran = new albaran_proveedor();
       $this->proveedor = new proveedor();
       $this->serie = new serie();
+      $this->neto = 0;
+      $this->total = 0;
       
       if( isset($_POST['desde']) )
          $this->desde = $_POST['desde'];
@@ -64,14 +68,26 @@ class general_agrupar_albaranes_pro extends fs_controller
          
          $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie']);
-         if( !$this->resultados )
+         
+         if($this->resultados)
+         {
+            foreach($this->resultados as $alb)
+            {
+               $this->neto += $alb->neto;
+               $this->total += $alb->total;
+            }
+         }
+         else
             $this->new_message("Sin resultados.");
+         
+         $this->neto = number_format($this->neto, 2, '.', ' ');
+         $this->total = number_format($this->total, 2, '.', ' ');
       }
    }
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    private function agrupar()

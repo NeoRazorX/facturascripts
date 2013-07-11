@@ -51,7 +51,7 @@ class informe_facturas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    private function listar_facturas_cli()
@@ -355,6 +355,83 @@ class informe_facturas extends fs_controller
       }
       
       $pdf_doc->show();
+   }
+   
+   public function stats_last_days()
+   {
+      $stats = array();
+      $stats_cli = $this->factura_cli->stats_last_days();
+      $stats_pro = $this->factura_pro->stats_last_days();
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'day' => $value['day'],
+             'total_cli' => $value['total'],
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = $value['total'];
+      
+      return $stats;
+   }
+   
+   public function stats_last_months()
+   {
+      $stats = array();
+      $stats_cli = $this->factura_cli->stats_last_months();
+      $stats_pro = $this->factura_pro->stats_last_months();
+      $meses = array(
+          1 => 'ene',
+          2 => 'feb',
+          3 => 'mar',
+          4 => 'abr',
+          5 => 'may',
+          6 => 'jun',
+          7 => 'jul',
+          8 => 'ago',
+          9 => 'sep',
+          10 => 'oct',
+          11 => 'nov',
+          12 => 'dic'
+      );
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'month' => $meses[ $value['month'] ],
+             'total_cli' => round($value['total'], 2),
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = round($value['total'], 2);
+      
+      return $stats;
+   }
+   
+   public function stats_last_years()
+   {
+      $stats = array();
+      $stats_cli = $this->factura_cli->stats_last_years();
+      $stats_pro = $this->factura_pro->stats_last_years();
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'year' => $value['year'],
+             'total_cli' => round($value['total'], 2),
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = round($value['total'], 2);
+      
+      return $stats;
    }
 }
 

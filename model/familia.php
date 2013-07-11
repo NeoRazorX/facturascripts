@@ -19,11 +19,14 @@
 
 require_once 'base/fs_model.php';
 require_once 'model/articulo.php';
+require_once 'model/proveedor.php';
 
 class familia extends fs_model
 {
    public $codfamilia;
    public $descripcion;
+   
+   public $stats;
    
    public function __construct($f=FALSE)
    {
@@ -38,6 +41,14 @@ class familia extends fs_model
          $this->codfamilia = NULL;
          $this->descripcion = '';
       }
+      
+      $this->stats = array(
+          'articulos' => 0,
+          'con_stock' => 0,
+          'bloqueados' => 0,
+          'publicos' => 0,
+          'factualizado' => Date('d-m-Y', strtotime(0) )
+      );
    }
    
    protected function install()
@@ -159,6 +170,41 @@ class familia extends fs_model
       }
       
       return $famlist;
+   }
+   
+   public function stats()
+   {
+      $aux = $this->db->select("SELECT GREATEST( COUNT(referencia), 0) as art,
+         GREATEST( SUM(case when stockfis > 0 then 1 else 0 end), 0) as stock,
+         GREATEST( SUM(bloqueado::integer), 0) as bloq,
+         GREATEST( SUM(publico::integer), 0) as publi,
+         MAX(factualizado) as factualizado
+         FROM articulos WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
+      if($aux)
+      {
+         $this->stats['articulos'] = intval($aux[0]['art']);
+         $this->stats['con_stock'] = intval($aux[0]['stock']);
+         $this->stats['bloqueados'] = intval($aux[0]['bloq']);
+         $this->stats['publicos'] = intval($aux[0]['publi']);
+         $this->stats['factualizado'] = Date('d-m-Y', strtotime($aux[0]['factualizado']) );
+      }
+   }
+   
+   public function proveedores()
+   {
+      $provelist = array();
+      
+      $data = $this->db->select("SELECT DISTINCT codproveedor FROM albaranesprov
+         WHERE idalbaran IN (SELECT DISTINCT idalbaran FROM lineasalbaranesprov WHERE referencia IN
+         (SELECT referencia FROM articulos WHERE codfamilia = ".$this->var2str($this->codfamilia)."));");
+      if($data)
+      {
+         $pro0 = new proveedor();
+         foreach($data as $d)
+            $provelist[] = $pro0->get($d['codproveedor']);
+      }
+      
+      return $provelist;
    }
 }
 

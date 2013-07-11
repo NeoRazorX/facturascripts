@@ -159,7 +159,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-19';
+      return parent::version().'-20';
    }
    
    private function new_search()
@@ -405,7 +405,8 @@ class tpv_recambios extends fs_controller
    
    private function cerrar_caja()
    {
-      $this->caja->fecha_fin = Date('Y-n-j H:i:s');
+      $this->caja->fecha_fin = Date('d-m-Y H:i:s');
+      $this->caja->consolidar();
       if( $this->caja->save() )
       {
          $fpt = new fs_printer(FS_PRINTER);

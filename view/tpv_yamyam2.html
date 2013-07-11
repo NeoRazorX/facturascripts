@@ -3,6 +3,15 @@
    function mostrar_paquete(paq)
    {
       fs_show_popup('paquete_'+paq);
+      
+      var iname = '';
+      $('#paquete_'+paq+" input[type='radio']").each(function() {
+         if( iname != $(this).attr('name') )
+         {
+            iname = $(this).attr('name');
+            $(this).attr('checked', 'checked');
+         }
+      });
    }
    function update_lcd(saldo)
    {

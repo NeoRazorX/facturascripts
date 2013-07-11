@@ -73,6 +73,7 @@
          <tr>
             <th align="left">código + num. proveedor</th>
             <th align="left">observaciones</th>
+            <th align="right">neto</th>
             <th align="right">total</th>
             <th align="right">fecha</th>
          </tr>
@@ -83,10 +84,17 @@
                <a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}
             </td>
             <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$value->show_neto()} €</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
+         <tr>
+            <td colspan="2"></td>
+            <td align="right"><b>{$fsc->neto}</b> €</td>
+            <td align="right"><b>{$fsc->total}</b> €</td>
+            <td></td>
+         </tr>
       </table>
       
       <br/>

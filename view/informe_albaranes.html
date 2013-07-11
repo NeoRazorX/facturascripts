@@ -60,49 +60,18 @@
    }
 </script>
 
-<table width="100%">
-   <tr>
-      <td valign="top">
-         <div class="rounded">
-            <h1>Facturas emitidas de cliente:</h1>
-            <form action="{$fsc->url()}" method="post" target="_blank">
-               <input type="hidden" name="listado" value="facturascli"/>
-               Desde:
-               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
-               Hasta:
-               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input type="submit" value="mostrar" onclick="this.disabled=true;this.form.submit();"/>
-            </form>
-         </div>
-      </td>
-      <td valign="top">
-         <div class="rounded">
-            <h1>Facturas recibidad de proveedor:</h1>
-            <form action="{$fsc->url()}" method="post" target="_blank">
-               <input type="hidden" name="listado" value="facturasprov"/>
-               Desde:
-               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
-               Hasta:
-               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input type="submit" value="mostrar" onclick="this.disabled=true;this.form.submit();"/>
-            </form>
-         </div>
-      </td>
-   </tr>
-</table>
-
 <div class="rounded">
-   <h1>Facturación de los últimos días:</h1>
+   <h1>Albaranes de los últimos días:</h1>
    <div id="chart_facturas_day" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
 </div>
 
 <div class="rounded">
-   <h1>Facturación de los últimos meses:</h1>
+   <h1>Albaranes de los últimos meses:</h1>
    <div id="chart_facturas_month" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
 </div>
 
 <div class="rounded">
-   <h1>Facturación de los últimos años:</h1>
+   <h1>Albaranes de los últimos años:</h1>
    <div id="chart_facturas_year" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
 </div>
 

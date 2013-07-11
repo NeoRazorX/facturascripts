@@ -30,6 +30,7 @@ class family_data
    public $sufijo;
    public $pvp_max;
    public $bloquear;
+   public $no_nuevos;
    public $action;
    public $num_articulos;
    public $lineas;
@@ -52,6 +53,7 @@ class family_data
       $this->sufijo = '';
       $this->pvp_max = FALSE;
       $this->bloquear = FALSE;
+      $this->no_nuevos = FALSE;
       $this->action = 'test';
       $this->num_articulos = 0;
       $this->lineas = -1;
@@ -127,6 +129,7 @@ class general_importar_familia extends fs_controller
    public $family_data;
    public $familia;
    public $ready;
+   public $error;
    
    public function __construct()
    {
@@ -139,6 +142,7 @@ class general_importar_familia extends fs_controller
       
       $this->articulo = new articulo();
       $this->ready = TRUE;
+      $this->error = FALSE;
       
       if( isset($_GET['fam']) )
       {
@@ -182,6 +186,9 @@ class general_importar_familia extends fs_controller
                if( isset($_POST['bloquear']) )
                   $this->family_data->bloquear = TRUE;
                
+               if( isset($_POST['nnuevos']) )
+                  $this->family_data->no_nuevos = TRUE;
+               
                $this->save_family_data();
             }
             else
@@ -204,31 +211,52 @@ class general_importar_familia extends fs_controller
             
             if($this->family_data->action == 'test')
             {
-               $this->ready = $this->test_csv_file();
-               if( !$this->ready )
-                  $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
-                          "/".$this->family_data->lineas);
+               $this->test_csv_file();
+               
+               if($this->ready)
+               {
+                  if($this->error)
+                  {
+                     $this->new_error_msg('Comprobación fallida.');
+                  }
+                  else
+                  {
+                     $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
+                     $this->buttons[] = new fs_button('b_start', 'procesar',
+                             $this->url().'&action=start', '', 'img/tools.png');
+                  }
+               }
                else
                {
-                  $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
-                  $this->buttons[] = new fs_button('b_start', 'procesar',
-                          $this->url().'&action=start', '', 'img/tools.png');
+                  $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
+                          "/".$this->family_data->lineas);
                }
+               
                $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
                     'remove', 'img/remove.png');
             }
             else if($this->family_data->action == 'start')
             {
-               $this->ready = $this->csv2articulos();
-               if( !$this->ready )
+               $this->csv2articulos();
+               
+               if($this->ready)
+               {
+                  if($this->error)
+                  {
+                     $this->new_message("Proceso fallido.");
+                  }
+                  else
+                  {
+                     $this->new_message("Proceso finalizado.");
+                  }
+               }
+               else
                {
                   $this->new_message("Procesando ... ".$this->family_data->lineas_procesadas.
                           "/".$this->family_data->lineas);
                   $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
                     'remove', 'img/remove.png');
                }
-               else
-                  $this->new_message("Proceso finalizado");
             }
          }
          else
@@ -250,7 +278,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    private function get_family_data()
@@ -270,7 +298,8 @@ class general_importar_familia extends fs_controller
    /// comprobamos el archivo csv, devolvemos FALSE si queremos continuar comprobando
    private function test_csv_file()
    {
-      $retorno = FALSE;
+      $this->ready = FALSE;
+      
       $file = fopen("tmp/familias/".$this->familia->codfamilia.".csv", 'r');
       if($file)
       {
@@ -288,7 +317,7 @@ class general_importar_familia extends fs_controller
          else if( $this->family_data->lineas_procesadas < $this->family_data->lineas )
          {
             $i = 0;
-            while(!feof($file) AND !$retorno)
+            while(!feof($file) AND !$this->ready)
             {
                $linea = trim( fgets($file, 1024) );
                if( $i == 0 )
@@ -297,15 +326,17 @@ class general_importar_familia extends fs_controller
                   if($cabecera[0] != 'REF' OR $cabecera[1] != 'PVP' OR $cabecera[2] != 'DESC' OR $cabecera[3] != 'CODBAR')
                   {
                      $this->new_error_msg("¡Las columnas no concuerdan!");
-                     $retorno = TRUE;
+                     $this->ready = TRUE;
+                     $this->error = TRUE;
                   }
                }
                else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
                {
                   if( !$this->test_articulo( explode(';', $linea) ) )
                   {
-                     $retorno = TRUE;
                      $this->new_error_msg("¡Error al procesar la línea ".($i+1)."!");
+                     $this->ready = TRUE;
+                     $this->error = TRUE;
                      break;
                   }
                }
@@ -318,12 +349,11 @@ class general_importar_familia extends fs_controller
             $this->save_family_data();
          }
          else if( $this->family_data->lineas_procesadas >= $this->family_data->lineas )
-            $retorno = TRUE;
+            $this->ready = TRUE;
          fclose($file);
       }
       else
          $this->new_error_msg("¡Error al leer el archivo ".$this->familia->codfamilia.".csv!");
-      return $retorno;
    }
    
    /// comprobamos la línea y el artículo, devuelve False en caso de fallo
@@ -359,7 +389,13 @@ class general_importar_familia extends fs_controller
             else
                $articulo->set_pvp($pvp);
             
-            if( $articulo->test() )
+            if($articulo->codfamilia != $this->family_data->codfamilia)
+            {
+               $this->new_error_msg('El artículo '.$articulo->referencia.' pertenece a la
+                  familia '.$articulo->codfamilia);
+               $retorno = FALSE;
+            }
+            else if( $articulo->test() )
             {
                $this->family_data->articulos_actualizados += 1;
                
@@ -382,11 +418,11 @@ class general_importar_familia extends fs_controller
             }
             else
             {
-               $retorno = FALSE;
                $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
+               $retorno = FALSE;
             }
          }
-         else
+         else if( !$this->family_data->no_nuevos )
          {
             $articulo = new articulo();
             $articulo->referencia = $tarifa[0] . $this->family_data->sufijo;
@@ -418,14 +454,15 @@ class general_importar_familia extends fs_controller
     */
    private function csv2articulos()
    {
-      $retorno = FALSE;
+      $this->ready = FALSE;
+      
       $file = fopen("tmp/familias/".$this->familia->codfamilia.".csv", 'r');
       if($file)
       {
          if( $this->family_data->lineas_procesadas < $this->family_data->lineas )
          {
             $i = 0;
-            while(!feof($file) AND !$retorno)
+            while(!feof($file) AND !$this->ready)
             {
                $linea = trim( fgets($file, 1024) );
                if( $i == 0 )
@@ -434,15 +471,17 @@ class general_importar_familia extends fs_controller
                   if($cabecera[0] != 'REF' OR $cabecera[1] != 'PVP' OR $cabecera[2] != 'DESC' OR $cabecera[3] != 'CODBAR')
                   {
                      $this->new_error_msg("¡Las columnas no concuerdan!");
-                     $retorno = TRUE;
+                     $this->ready = TRUE;
+                     $this->error = TRUE;
                   }
                }
                else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
                {
                   if( !$this->csvline2articulo( explode(';', $linea) ) )
                   {
-                     $retorno = TRUE;
                      $this->new_error_msg("¡Error al procesar la línea ".($i+1)."!");
+                     $this->ready = TRUE;
+                     $this->error = TRUE;
                      break;
                   }
                }
@@ -455,12 +494,22 @@ class general_importar_familia extends fs_controller
             $this->save_family_data();
          }
          else if( $this->family_data->lineas_procesadas >= $this->family_data->lineas )
-            $retorno = TRUE;
+         {
+            if( $this->family_data->bloquear )
+            {
+               $this->db->exec("UPDATE articulos SET bloqueado = true
+                  WHERE codfamilia = ".$this->articulo->var2str( $this->family_data->codfamilia ).
+                  " AND (factualizado < ".$this->articulo->var2str( $this->articulo->factualizado )."
+                     OR factualizado IS NULL);");
+            }
+            
+            $this->ready = TRUE;
+         }
+         
          fclose($file);
       }
       else
          $this->new_error_msg("¡Error al leer el archivo ".$this->familia->codfamilia.".csv!");
-      return $retorno;
    }
    
    /// crea/actualiza un artículos en base a la información dada, devuelve FALSE en caso de error
@@ -520,6 +569,10 @@ class general_importar_familia extends fs_controller
             }
             else
                $this->new_error_msg('Hay un error en el artículo '.$articulo->referencia);
+         }
+         else if( $this->family_data->no_nuevos )
+         {
+            $retorno = TRUE;
          }
          else
          {

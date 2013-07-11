@@ -88,6 +88,14 @@ div.header table td.rounded a {
    color: #3768B8;
 }
 
+table.boxes {
+   border-spacing: 60px;
+}
+
+table.share_buttons td {
+   width: 100px;
+}
+
 select, input[type='text'], input[type='password'], input[type='submit'] {
    display: block;
    width: 100%;
@@ -194,6 +202,10 @@ div.colaborar {
 
 div.colaborar a {
    color: white;
+}
+
+div.colaborar table {
+   width: 100%;
 }
 
 div.colabora2 {
@@ -320,6 +332,10 @@ div.footer table.links {
    margin-right: auto;
    margin-bottom: 20px;
    font-size: 15px;
+}
+
+div.footer table.links td {
+   vertical-align: top;
 }
 
 div.footer ul li {

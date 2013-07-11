@@ -73,6 +73,26 @@ class tpv_yamyam extends fs_controller
       $this->paquete = new paquete();
       $this->serie = new serie();
       
+      if( isset($_POST['impresora1']) )
+      {
+         $this->impresora1 = $_POST['impresora1'];
+         setcookie('impresora1', $this->impresora1, time()+FS_COOKIES_EXPIRE);
+      }
+      else if( isset($_COOKIE['impresora1']) )
+         $this->impresora1 = $_COOKIE['impresora1'];
+      else
+         $this->impresora1 = FS_PRINTER;
+      
+      if( isset($_POST['impresora2']) )
+      {
+         $this->impresora2 = $_POST['impresora2'];
+         setcookie('impresora2', $this->impresora2, time()+FS_COOKIES_EXPIRE);
+      }
+      else if( isset($_COOKIE['impresora2']) )
+         $this->impresora2 = $_COOKIE['impresora2'];
+      else
+         $this->impresora2 = FS_PRINTER;
+      
       if( isset($_POST['saldo']) )
       {
          $this->template = FALSE;
@@ -146,7 +166,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-14';
+      return parent::version().'-15';
    }
    
    private function cargar_datos_tpv()
@@ -185,26 +205,6 @@ class tpv_yamyam extends fs_controller
          if( $encontrado )
             $this->familias[] = $f;
       }
-      
-      if( isset($_POST['impresora1']) )
-      {
-         $this->impresora1 = $_POST['impresora1'];
-         setcookie('impresora1', $this->impresora1, time()+FS_COOKIES_EXPIRE);
-      }
-      else if( isset($_COOKIE['impresora1']) )
-         $this->impresora1 = $_COOKIE['impresora1'];
-      else
-         $this->impresora1 = FS_PRINTER;
-      
-      if( isset($_POST['impresora2']) )
-      {
-         $this->impresora2 = $_POST['impresora2'];
-         setcookie('impresora2', $this->impresora2, time()+FS_COOKIES_EXPIRE);
-      }
-      else if( isset($_COOKIE['impresora2']) )
-         $this->impresora2 = $_COOKIE['impresora2'];
-      else
-         $this->impresora2 = FS_PRINTER;
    }
    
    private function get_first_articulos()
@@ -429,7 +429,8 @@ class tpv_yamyam extends fs_controller
    
    private function cerrar_caja()
    {
-      $this->caja->fecha_fin = Date('Y-n-j H:i:s');
+      $this->caja->fecha_fin = Date('d-m-Y H:i:s');
+      $this->caja->consolidar();
       if( $this->caja->save() )
       {
          $fpt = new fs_printer(FS_PRINTER);

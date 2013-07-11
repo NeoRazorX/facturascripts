@@ -31,10 +31,16 @@ class caja extends fs_model
    public $dinero_fin;
    public $tickets;
    public $agente;
-
+   
+   private static $agentes;
+   
    public function __construct($c=FALSE)
    {
       parent::__construct('cajas');
+      
+      if( !isset(self::$agentes) )
+         self::$agentes = array();
+      
       if($c)
       {
          $this->id = $this->intval($c['id']);
@@ -49,9 +55,23 @@ class caja extends fs_model
          
          $this->dinero_fin = floatval($c['d_fin']);
          $this->codagente = $c['codagente'];
-         $this->agente = new agente();
-         $this->agente = $this->agente->get($this->codagente);
          $this->tickets = intval($c['tickets']);
+         
+         foreach(self::$agentes as $ag)
+         {
+            if( $ag->codagente == $this->codagente )
+            {
+               $this->agente = $ag;
+               break;
+            }
+         }
+         
+         if( !isset($this->agente) )
+         {
+            $ag = new agente();
+            $this->agente = $ag->get($this->codagente);
+            self::$agentes[] = $this->agente;
+         }
       }
       else
       {
@@ -63,12 +83,14 @@ class caja extends fs_model
          $this->fecha_fin = NULL;
          $this->dinero_fin = 0;
          $this->tickets = 0;
+         
+         $this->agente = NULL;
       }
    }
    
    protected function install()
    {
-      return "";
+      return '';
    }
    
    public function show_fecha_fin()
@@ -193,6 +215,29 @@ class caja extends fs_model
             $cajalist[] = new caja($c);
       }
       return $cajalist;
+   }
+   
+   public function consolidar()
+   {
+      $f0 = explode(' ', $this->fecha_inicial);
+      $fechai = $f0[0];
+      $horai = $f0[1];
+      $f1 = explode(' ', $this->fecha_fin);
+      $fechaf = $f1[0];
+      $horaf = $f1[1];
+      
+      $aux = $this->db->select("SELECT SUM(totaleuros) as total FROM albaranescli
+         WHERE (fecha = ".$this->var2str($fechai)." AND hora >= ".$this->var2str($horai).")
+            OR (fecha > ".$this->var2str($fechai)." AND fecha < ".$this->var2str($fechaf).")
+            OR (fecha = ".$this->var2str($fechaf)." AND hora <= ".$this->var2str($horaf).");");
+      if($aux)
+      {
+         $total = floatval($aux[0]['total']);
+         if($total < $this->dinero_fin - $this->dinero_inicial)
+         {
+            $this->dinero_fin = $this->dinero_inicial + $total;
+         }
+      }
    }
 }
 

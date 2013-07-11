@@ -254,6 +254,7 @@ class linea_albaran_proveedor extends fs_model
    {
       if( $this->test() )
       {
+         $this->clean_cache();
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET idalbaran = ".$this->var2str($this->idalbaran).",
@@ -289,8 +290,14 @@ class linea_albaran_proveedor extends fs_model
    
    public function delete()
    {
+      $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name.
               " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+   }
+   
+   public function clean_cache()
+   {
+      $this->cache->delete('albpro_top_articulos');
    }
    
    public function all_from_albaran($id)
@@ -358,14 +365,18 @@ class linea_albaran_proveedor extends fs_model
    
    public function top_by_articulo()
    {
-      $toplist = array();
-      $articulo = new articulo();
-      $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as compras
-         FROM ".$this->table_name." GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
-      if($lineas)
+      $toplist = $this->cache->get('albpro_top_articulos');
+      if( !$toplist )
       {
-         foreach($lineas as $l)
-            $toplist[] = array($articulo->get($l['referencia']), intval($l['compras']));
+         $articulo = new articulo();
+         $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as compras
+            FROM ".$this->table_name." GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
+         if($lineas)
+         {
+            foreach($lineas as $l)
+               $toplist[] = array($articulo->get($l['referencia']), intval($l['compras']));
+         }
+         $this->cache->set('albpro_top_articulos', $toplist);
       }
       return $toplist;
    }
@@ -889,6 +900,90 @@ class albaran_proveedor extends fs_model
                WHERE codejercicio = ".$this->var2str($eje->codejercicio).";");
          }
       }
+   }
+   
+   public function stats_last_days($numdays = 15)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMDD') as dia, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMDD') ORDER BY dia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months($num = 12)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMMM') as mes, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMMM') ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_years($num = 3)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('year' => $i, 'total' => 0);
+      }
+      
+      $data = $this->db->select("SELECT to_char(fecha,'FMYYYY') as ano, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         GROUP BY to_char(fecha,'FMYYYY') ORDER BY ano ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['ano']);
+            $stats[$i] = array(
+                'year' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
    }
 }
 

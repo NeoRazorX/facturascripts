@@ -1,6 +1,15 @@
 {include="header"}
 
 <div class="rounded">
+   <h1>Estadísticas:</h1>
+   Hay un total de <b>{$fsc->stats['total']}</b> artículos,
+   <b>{$fsc->stats['con_stock']}</b> de ellos tienen stock,
+   <b>{$fsc->stats['publicos']}</b> son públicos
+   y <b>{$fsc->stats['bloqueados']}</b> están bloqueados.
+   La última actualización de los artículos es del <b>{$fsc->stats['factualizado']}</b>.
+</div>
+
+<div class="rounded">
    <h1>Top ventas (unidades):</h1>
    <ul class="horizontal">
       {loop="$fsc->top_ventas"}

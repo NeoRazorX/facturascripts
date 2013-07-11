@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,6 +24,7 @@ require_once 'model/albaran_proveedor.php';
 class informe_articulos extends fs_controller
 {
    public $articulo;
+   public $stats;
    public $top_ventas;
    public $top_compras;
 
@@ -35,6 +36,7 @@ class informe_articulos extends fs_controller
    {
       $this->articulo = new articulo();
       
+      $this->stats = $this->articulo->stats();
       $linea_alb_cli = new linea_albaran_cliente();
       $linea_alb_pro = new linea_albaran_proveedor();
       $this->top_ventas = $linea_alb_cli->top_by_articulo();
@@ -43,7 +45,7 @@ class informe_articulos extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
 }
 

@@ -59,11 +59,17 @@ class general_familia extends fs_controller
          $this->familia = $this->familia->get($_GET['cod']);
       }
       
-      if($this->familia)
+      if( $this->familia AND isset($_POST['stats']) )
+      {
+         $this->template = 'ajax/general_familia_stats';
+         $this->familia->stats();
+      }
+      else if($this->familia)
       {
          $this->page->title = $this->familia->codfamilia;
          $this->impuesto = new impuesto();
          
+         $this->buttons[] = new fs_button('b_stats_familia', 'estadísticas', '#', '', 'img/zoom.png', '*');
          $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas', '#', '', 'img/tools.png', '*');
          
          if( $this->pag_importar )
@@ -93,7 +99,7 @@ class general_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()
