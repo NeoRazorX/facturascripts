@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -86,7 +86,13 @@ class admin_empresa extends fs_controller
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
-            setcookie('empresa', $this->empresa->nombre, time()+FS_COOKIES_EXPIRE);
+            
+            $eje0 = $this->ejercicio->get_by_fecha( $this->today() );
+            if($eje0)
+            {
+               $this->new_message('Ahora es el momento de <a href="'.$eje0->url().'">
+                  importar los datos del ejercicio fiscal</a>, si todavía no lo has hecho.');
+            }
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
@@ -95,7 +101,7 @@ class admin_empresa extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
 }
 

@@ -7,6 +7,7 @@
       </div>
    {/if}
    </div>
+   <a id="fs_feedback" href="#">Ayuda</a>
    <div class="footer">
       <table>
          <tr>
@@ -15,25 +16,15 @@
                {if condition="$fsc->css_file=='base.css'"}
                   <a class="selected" href="{$fsc->url()}&css_file=base.css">normal</a>
                   <a href="{$fsc->url()}&css_file=touch.css">touch</a>
-                  <a href="{$fsc->url()}&css_file=proto.css">proto</a>
-               {elseif condition="$fsc->css_file=='touch.css'"}
-                  <a href="{$fsc->url()}&css_file=base.css">normal</a>
-                  <a class="selected" href="{$fsc->url()}&css_file=touch.css">touch</a>
-                  <a href="{$fsc->url()}&css_file=proto.css">proto</a>
                {else}
                   <a href="{$fsc->url()}&css_file=base.css">normal</a>
-                  <a href="{$fsc->url()}&css_file=touch.css">touch</a>
-                  <a class="selected" href="{$fsc->url()}&css_file=proto.css">proto</a>
+                  <a class="selected" href="{$fsc->url()}&css_file=touch.css">touch</a>
                {/if}
             </td>
-            <td>
+            <td class="right">
                Consultas: {$fsc->selects()} |
                Transacciones: {$fsc->transactions()} |
                Procesado en: {$fsc->duration()}
-            </td>
-            <td class="right">
-               <img src="img/bug.png" alt="bug"/>
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a>
             </td>
          </tr>
       </table>

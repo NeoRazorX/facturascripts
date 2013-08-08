@@ -136,6 +136,11 @@ class fs_cache
       else
          return '-';
    }
+   
+   public function connected()
+   {
+      return self::$connected;
+   }
 }
 
 ?>

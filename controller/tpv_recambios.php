@@ -67,7 +67,6 @@ class tpv_recambios extends fs_controller
          if(FS_LCD != '')
          {
             $fpt = new fs_printer(FS_LCD);
-            $fpt->add('                    ');
             $fpt->add('TOTAL               ');
             $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20) );
             $fpt->imprimir();
@@ -145,7 +144,7 @@ class tpv_recambios extends fs_controller
             }
             else
             {
-               $fpt = new fs_printer(FS_PRINTER);
+               $fpt = new fs_printer();
                $fpt->abrir_cajon();
             }
          }
@@ -159,7 +158,7 @@ class tpv_recambios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-20';
+      return parent::version().'-21';
    }
    
    private function new_search()
@@ -396,7 +395,7 @@ class tpv_recambios extends fs_controller
    {
       if( $this->user->admin )
       {
-         $fpt = new fs_printer(FS_PRINTER);
+         $fpt = new fs_printer();
          $fpt->abrir_cajon();
       }
       else
@@ -409,7 +408,7 @@ class tpv_recambios extends fs_controller
       $this->caja->consolidar();
       if( $this->caja->save() )
       {
-         $fpt = new fs_printer(FS_PRINTER);
+         $fpt = new fs_printer();
          $fpt->add_big("\nCIERRE DE CAJA:\n");
          $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
@@ -486,7 +485,7 @@ class tpv_recambios extends fs_controller
    
    private function imprimir_ticket($albaran, $num_tickets=1, $cajon=TRUE)
    {
-      $fpt = new fs_printer(FS_PRINTER);
+      $fpt = new fs_printer();
       
       $linea = "\nTicket: " . $albaran->codigo;
       $linea .= " " . $albaran->fecha;

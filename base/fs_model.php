@@ -20,7 +20,7 @@
 require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
 
-if(FS_DB_TYPE == 'MYSQL')
+if(strtolower(FS_DB_TYPE) == 'mysql')
    require_once 'base/fs_mysql.php';
 else
    require_once 'base/fs_postgresql.php';
@@ -39,7 +39,7 @@ abstract class fs_model
    
    public function __construct($name = '')
    {
-      if(FS_DB_TYPE == 'MYSQL')
+      if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
       else
          $this->db = new fs_postgresql();

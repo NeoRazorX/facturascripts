@@ -989,7 +989,7 @@ class albaran_cliente extends fs_model
       }
    }
    
-   public function stats_last_days($numdays = 15)
+   public function stats_last_days($numdays = 25)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
@@ -1000,9 +1000,15 @@ class albaran_cliente extends fs_model
          $stats[$i] = array('day' => $i, 'total' => 0);
       }
       
-      $data = $this->db->select("SELECT to_char(fecha,'FMDD') as dia, sum(total) as total
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMDD')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
          FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         GROUP BY to_char(fecha,'FMDD') ORDER BY dia ASC;");
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
       if($data)
       {
          foreach($data as $d)
@@ -1017,7 +1023,7 @@ class albaran_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_months($num = 12)
+   public function stats_last_months($num = 11)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' month'));
@@ -1028,9 +1034,15 @@ class albaran_cliente extends fs_model
          $stats[$i] = array('month' => $i, 'total' => 0);
       }
       
-      $data = $this->db->select("SELECT to_char(fecha,'FMMM') as mes, sum(total) as total
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
          FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         GROUP BY to_char(fecha,'FMMM') ORDER BY mes ASC;");
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
       if($data)
       {
          foreach($data as $d)
@@ -1056,9 +1068,15 @@ class albaran_cliente extends fs_model
          $stats[$i] = array('year' => $i, 'total' => 0);
       }
       
-      $data = $this->db->select("SELECT to_char(fecha,'FMYYYY') as ano, sum(total) as total
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMYYYY')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%Y')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total
          FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         GROUP BY to_char(fecha,'FMYYYY') ORDER BY ano ASC;");
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY ano ASC;");
       if($data)
       {
          foreach($data as $d)

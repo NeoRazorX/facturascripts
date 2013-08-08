@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if(FS_DB_TYPE == 'MYSQL')
+if(strtolower(FS_DB_TYPE) == 'mysql')
    require_once 'base/fs_mysql.php';
 else
    require_once 'base/fs_postgresql.php';
@@ -59,11 +59,12 @@ class fs_controller
       $this->errors = array();
       $this->messages = array();
       
-      if(FS_DB_TYPE == 'MYSQL')
+      if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
       else
          $this->db = new fs_postgresql();
       
+      $this->cache = new fs_cache();
       $this->set_css_file();
       
       if( $this->db->connect() )
@@ -74,23 +75,15 @@ class fs_controller
          $this->ppage = FALSE;
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
-         $this->cache = new fs_cache();
          
          if( isset($_GET['logout']) )
          {
-            if(FS_DEMO)
-               $this->template = 'login/demo';
-            else
-               $this->template = 'login/default';
-            
+            $this->template = 'login/default';
             $this->log_out();
          }
          else if( !$this->log_in() )
          {
-            if(FS_DEMO)
-               $this->template = 'login/demo';
-            else
-               $this->template = 'login/default';
+            $this->template = 'login/default';
          }
          else if( $this->user->have_access_to($this->page->name, $this->admin_page) )
          {
@@ -337,7 +330,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.12.1';
+      return '0.13b1';
    }
    
    public function select_default_page()
@@ -360,11 +353,11 @@ class fs_controller
                {
                   if($p->important)
                   {
-                     $url = $p->url() . '&show_dpa=TRUE';
+                     $url = $p->url();
                      break;
                   }
                   else if($p->show_on_menu)
-                     $url = $p->url() . '&show_dpa=TRUE';
+                     $url = $p->url();
                }
             }
             else
@@ -373,11 +366,6 @@ class fs_controller
             Header('location: '.$url);
          }
       }
-   }
-   
-   public function show_default_page_advice()
-   {
-      return isset($_GET['show_dpa']);
    }
    
    private function set_css_file()
@@ -575,6 +563,30 @@ class fs_controller
          $this->cache->set('petition_ids', $ids, 300);
          return FALSE;
       }
+   }
+   
+   public function system_info()
+   {
+      $txt = 'facturascripts: '.$this->version()."\n";
+      $txt .= 'os: '.php_uname()."\n";
+      $txt .= 'php: '.phpversion()."\n";
+      $txt .= 'database type: '.FS_DB_TYPE."\n";
+      $txt .= 'database version: '.$this->db->version()."\n";
+      
+      if( $this->cache->connected() )
+         $txt .= "memcache: YES\n";
+      else
+         $txt .= "memcache: NO\n";
+      
+      $txt .= 'memcache version: '.$this->cache->version()."\n";
+      
+      if( isset($_SERVER['REQUEST_URI']) )
+         $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+      
+      foreach($this->get_errors() as $e)
+         $txt .= "\n" . $e;
+      
+      return $txt;
    }
 }
 

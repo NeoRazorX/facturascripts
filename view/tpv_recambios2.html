@@ -1,5 +1,14 @@
    <script type="text/javascript">
       var numlineas = 0;
+      function update_lcd(saldo)
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'saldo='+saldo
+         });
+      }
       function recalcular()
       {
          var l_uds = 0;
@@ -27,6 +36,7 @@
          neto = fs_round(neto, 2);
          total_iva = fs_round(total_iva, 2);
          $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" €");
+         update_lcd(neto + total_iva);
       }
       function ajustar_totiva()
       {
@@ -75,6 +85,7 @@
          neto = fs_round(neto, 2);
          total_iva = fs_round(total_iva, 2);
          $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" €");
+         update_lcd(neto + total_iva);
       }
       function linea_sum_ud(num,value)
       {
@@ -193,6 +204,7 @@
          $("#b_nuevo_albaran_cliente").click(function() {
             fs_show_popup('popup_tpv_opciones');
          });
+         update_lcd(0);
       });
    </script>
    
@@ -242,6 +254,8 @@
                         {else}
                         <option value="{$value->codcliente}">{$value->nombre}</option>
                         {/if}
+                     {else}
+                     <option value="">¡¡¡No tienes clientes!!!</option>
                      {/loop}
                   </select>
                </td>

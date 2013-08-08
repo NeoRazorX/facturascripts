@@ -219,6 +219,9 @@ class caja extends fs_model
    
    public function consolidar()
    {
+      /*
+       * dejar así hasta tener más datos sobre el posible fallo
+       * 
       $f0 = explode(' ', $this->fecha_inicial);
       $fechai = $f0[0];
       $horai = $f0[1];
@@ -238,6 +241,8 @@ class caja extends fs_model
             $this->dinero_fin = $this->dinero_inicial + $total;
          }
       }
+       * 
+       */
    }
 }
 

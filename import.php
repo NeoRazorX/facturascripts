@@ -24,7 +24,7 @@ require_once 'config.php';
 if( !defined('FS_DB_TYPE') )
    define('FS_DB_TYPE', 'POSTGRESQL');
 
-if(FS_DB_TYPE == 'MYSQL')
+if(strtolower(FS_DB_TYPE) == 'mysql')
 {
    require_once 'base/fs_mysql.php';
    $db = new fs_mysql();

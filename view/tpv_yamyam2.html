@@ -177,10 +177,10 @@
          $("#num_tickets").val(num);
    }
    $(document).ready(function() {
-      $("div.popup label").hover(function(event) {
+      $("div.popup label").hover(function() {
          $('#' + $(this).attr('for')).attr('checked', 'checked');
       });
-      $("#paquetes").click(function(event) {
+      $("#paquetes").click(function() {
          fs_show_popup('all_paquetes');
       });
       {loop="$fsc->familias"}
@@ -243,6 +243,8 @@
                            {else}
                            <option value="{$value->codcliente}">{$value->nombre}</option>
                            {/if}
+                        {else}
+                        <option value="">¡¡¡No tienes clientes!!!</option>
                         {/loop}
                      </select>
                   </td>
@@ -303,18 +305,6 @@
                      </select>
                   </td>
                </tr>
-               <tr>
-                  <td align="right">Impresora 1:</td>
-                  <td>
-                     <input type="text" name="impresora1" value="{$fsc->impresora1}"/>
-                  </td>
-               </tr>
-               <tr>
-                  <td align="right">Impresora 2:</td>
-                  <td>
-                     <input type="text" name="impresora2" value="{$fsc->impresora2}"/>
-                  </td>
-               </tr>
             </table>
             <div class="advice">Haz un ticket para que se guarden los cambios.</div>
          </div>
@@ -372,7 +362,7 @@
       <tr>
          <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
          <td align="right">
-            <input type="submit" class="comfirm" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
+            <input type="submit" class="confirm" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
          </td>
       </tr>
    </table>
@@ -419,7 +409,7 @@
       <table width="100%">
          <tr>
             <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
-            <td align="right"><input type="button" class="comfirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/></td>
+            <td align="right"><input type="button" class="confirm" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/></td>
          </tr>
       </table>
    </form>

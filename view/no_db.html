@@ -7,20 +7,8 @@
       <link rel="shortcut icon" href="img/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
       <script type="text/javascript" src="js/jquery.js"></script>
-      <script>
-         (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
-            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
-      </script>
    </head>
-   <body>
-      <div id="fb-root"></div>
-      
+   <body onload="document.feedback.feedback_text.focus()">
       {if condition="$fsc->get_errors()"}
          <div class="error">
             <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -34,22 +22,27 @@
       
       <div class="main_div">
          <div class="rounded">
-            <h1>¿Necesitas ayuda?</h1>
-            <table width="100%">
-               <tr>
-                  <td valign="top">
-                     Tutoriales de instalación:
-                     <a target="_blank" href="http://neorazorx.blogspot.com/2012/03/primeros-pasos-con-facturascripts-09.html">Linux</a> o
-                     <a target="_blank" href="http://www.neorazorx.com/2013/01/instalar-facturascripts-sobre-windows.html">Windows</a>.
-                     <br/><br/>
-                     <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="470" data-num-posts="10"></div>
-                  </td>
-                  <td valign="top">
-                     <iframe width="560" height="315" src="http://www.youtube.com/embed/gk4eFGLlv6Y?list=PLnAAyBqHmX-ZGgXTHuawqRMd-NG3PEt-4" frameborder="0" allowfullscreen>
-                     </iframe>
-                  </td>
-               </tr>
-            </table>
+            <h1>¿Problemas de instalación?</h1>
+            <p>
+               La <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
+               está para ayudarte. Cuéntanos tu problema y te contestaremos lo antes posible ;-)
+            </p>
+            <br/>
+            <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
+               <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+               <div class="etiquetas">
+                  <span>Elige una opción:</span>
+                  <input id="feedback_question" type="radio" name="feedback_type" value="question">
+                  <label for="feedback_question">Preguntar</label>
+                  <input id="feedback_problem" type="radio" name="feedback_type" value="error" checked="checked">
+                  <label for="feedback_problem">Informar de un error</label>
+                  <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
+                  <label for="feedback_idea">Aportar una idea</label>
+               </div>
+               <textarea name="feedback_text" rows="6"></textarea>
+               <input type="text" name="feedback_email" placeholder="introduce tu email"/>
+               <input type="submit" value="enviar"/>
+            </form>
          </div>
       </div>
    </body>

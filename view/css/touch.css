@@ -33,12 +33,13 @@ div.main_div a.remove, input[type='submit'], input[type='button'] {
    padding-bottom: 3px;
 }
 
-input.cancel, input.comfirm {
-   padding-top: 8px;
+input.cancel, input.confirm {
+   padding-top: 5px;
    padding-left: 10px;
    padding-right: 10px;
-   padding-bottom: 4px;
+   padding-bottom: 5px;
    border: 1px outset #333333;
+   box-shadow: 1px 1px 1px #999;
    color: white;
    text-align: center;
    text-transform: uppercase;
@@ -49,7 +50,7 @@ input.cancel {
    background-color: #B14E4E;
 }
 
-input.comfirm {
+input.confirm {
    background-color: green;
 }
 

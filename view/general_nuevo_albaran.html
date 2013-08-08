@@ -330,6 +330,8 @@
                      {else}
                      <option value="{$value->codcliente}">{$value->nombre}</option>
                      {/if}
+                  {else}
+                  <option value="">¡¡¡No tienes clientes!!!</option>
                   {/loop}
                </select>
             </td>
@@ -344,6 +346,8 @@
                      {else}
                      <option value="{$value->codproveedor}">{$value->nombre}</option>
                      {/if}
+                  {else}
+                  <option value="">¡¡¡No tienes proveedores!!!</option>
                   {/loop}
                </select>
             </td>

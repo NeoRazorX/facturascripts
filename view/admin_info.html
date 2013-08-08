@@ -46,13 +46,13 @@
    <h1>Bloqueos en la base de datos:</h1>
    <table class="list">
       <tr>
-         <th>Base de datos</th>
-         <th>relname</th>
-         <th>relation</th>
-         <th>transaction ID</th>
-         <th>PID</th>
-         <th>modo</th>
-         <th>granted</th>
+         <th align="left">Base de datos</th>
+         <th align="left">relname</th>
+         <th align="left">relation</th>
+         <th align="left">transaction ID</th>
+         <th align="left">PID</th>
+         <th align="left">modo</th>
+         <th align="left">granted</th>
       </tr>
       {loop="$fsc->get_locks()"}
       <tr>

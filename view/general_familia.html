@@ -139,6 +139,10 @@
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} &euro;</span></td>
          <td align="right">{$value->stockfis}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="5">Ningún artículo encontrado.</td>
+      </tr>
       {/loop}
       <tr>
          <td colspan="5">&nbsp;</td>

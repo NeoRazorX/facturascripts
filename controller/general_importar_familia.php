@@ -260,7 +260,8 @@ class general_importar_familia extends fs_controller
             }
          }
          else
-            $this->new_error_msg("¡No se ha encontrado el archivo ".$this->familia->codfamilia.".csv!");
+            $this->new_error_msg("¡No se ha encontrado el archivo ".$this->familia->codfamilia.".csv!
+               Comprueba los permisos de la carpeta facturascripts/tmp/familias");
       }
       else
          $this->new_error_msg("¡Ninguna familia seleccionada!");

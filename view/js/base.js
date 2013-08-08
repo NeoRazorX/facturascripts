@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -195,7 +195,7 @@ function fs_select_folder(folder)
             position: 'absolute',
             'z-index': 2,
             left: left2,
-            top: $("#b_folder_"+folder).position().top+25
+            top: $("#b_folder_"+folder).position().top+30
          });
       }
       else
@@ -207,7 +207,7 @@ function fs_select_folder(folder)
             position: 'absolute',
             'z-index': 2,
             left: 5,
-            top: $("#b_folder_"+folder).position().top+25
+            top: $("#b_folder_"+folder).position().top+30
          });
       }
       $('#folder_'+folder).show();
@@ -216,7 +216,7 @@ function fs_select_folder(folder)
 
 function fs_show_popup(id, top)
 {
-   $("#shadow").show();
+   $("#shadow").fadeIn();
    
    var pleft = ($(window).width() - $("#"+id).outerWidth())/2;
    if( typeof(top) == 'undefined' )
@@ -228,7 +228,7 @@ function fs_show_popup(id, top)
       left: pleft,
       top: ptop
    });
-   $("#"+id).show('fast');
+   $("#"+id).show();
    
    $("#b_close_popup").css({
       left: pleft - 15,
@@ -243,7 +243,7 @@ function fs_hide_popups()
    $('div.popup').each(function() {
       $(this).hide();
    });
-   $("#shadow").hide();
+   $("#shadow").fadeOut('fast');
 }
 
 $(document).ready(function() {
@@ -267,9 +267,10 @@ $(document).ready(function() {
             });
             $('#user_list').css({
                position: 'absolute',
+               'z-index': 2,
                'text-align': 'right',
                right: right2,
-               top: $("#b_user_list").position().top+25
+               top: $("#b_user_list").position().top+30
             });
          }
          else
@@ -279,9 +280,10 @@ $(document).ready(function() {
             });
             $('#user_list').css({
                position: 'absolute',
+               'z-index': 2,
                'text-align': 'right',
                right: 15,
-               top: $("#b_user_list").position().top+25
+               top: $("#b_user_list").position().top+30
             });
          }
          $('#user_list').show();
@@ -292,5 +294,10 @@ $(document).ready(function() {
    });
    $("#shadow").click(function() {
       fs_hide_popups();
+   });
+   $("#fs_feedback").click(function(event) {
+      event.preventDefault();
+      fs_show_popup('popup_feedback');
+      document.feedback.feedback_text.focus();
    });
 });

@@ -31,6 +31,8 @@ else
       define('FS_DB_TYPE', 'POSTGRESQL');
    if( !defined('FS_DEMO') )
       define('FS_DEMO', FALSE);
+   if( !defined('FS_COMMUNITY_URL') )
+      define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
    
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
@@ -81,6 +83,7 @@ else
       
       $tpl->assign('db_history', FS_DB_HISTORY);
       $tpl->assign('demo', FS_DEMO);
+      $tpl->assign('community_url', FS_COMMUNITY_URL);
       
       $tpl->draw( $fsc->template );
    }

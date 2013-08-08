@@ -83,6 +83,8 @@ class admin_pages extends fs_controller
          }
          
          $this->new_message('Datos guardados correctamente.');
+         $this->new_message('Ahora es el momento de <a href="index.php?page=admin_empresa">
+            introducir los datos de tu empresa</a>, si todavía no lo has hecho.');
       }
       
       $this->paginas = $this->all_pages();
@@ -133,7 +135,7 @@ class admin_pages extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
 }
 

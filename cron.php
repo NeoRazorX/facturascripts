@@ -26,7 +26,7 @@ if( !defined('FS_DB_TYPE') )
 if( !defined('FS_DEMO') )
    define('FS_DEMO', FALSE);
 
-if(FS_DB_TYPE == 'MYSQL')
+if(strtolower(FS_DB_TYPE) == 'mysql')
 {
    require_once 'base/fs_mysql.php';
    $db = new fs_mysql();

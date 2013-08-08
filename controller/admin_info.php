@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_printer.php';
+
 class admin_info extends fs_controller
 {
    public function __construct()
@@ -35,6 +37,14 @@ class admin_info extends fs_controller
             $this->new_message("Cache limpiada correctamente.");
          else
             $this->new_error_msg("¡Imposible limpiar la cache!");
+      }
+      
+      if(FS_LCD != '')
+      {
+         $fpt = new fs_printer(FS_LCD);
+         $fpt->add( $fpt->center_text('The cake is a lie!', 20) );
+         $fpt->add( $fpt->center_text('The cake is a lie!', 20) );
+         $fpt->imprimir();
       }
    }
    

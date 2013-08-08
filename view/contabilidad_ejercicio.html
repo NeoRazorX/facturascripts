@@ -121,7 +121,11 @@
          <td>{$value->descripcion}</td>
       </tr>
       {else}
-      <tr><td colspan="2">Sin resultados.</td></tr>
+      <tr>
+         <td colspan="2">
+            Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
+         </td>
+      </tr>
       {/loop}
    </table>
    {/if}
@@ -146,7 +150,11 @@
          <td>{$value->descripcion}</td>
       </tr>
       {else}
-      <tr><td colspan="3">Sin resultados.</td></tr>
+      <tr>
+         <td colspan="3">
+            Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
+         </td>
+      </tr>
       {/loop}
    </table>
    {/if}
@@ -171,7 +179,11 @@
          <td><a href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
-      <tr><td colspan="2">Sin resultados.</td></tr>
+      <tr>
+         <td colspan="3">
+            Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
+         </td>
+      </tr>
       {/loop}
    </table>
    {/if}
@@ -198,7 +210,11 @@
          <td align="right">{$value->show_saldo()}</td>
       </tr>
       {else}
-      <tr><td colspan="4">Sin resultados.</td></tr>
+      <tr>
+         <td colspan="4">
+            Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
+         </td>
+      </tr>
       {/loop}
    </table>
    {/if}

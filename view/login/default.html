@@ -9,25 +9,49 @@
    <link rel="shortcut icon" href="../img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="../css/login.css" />
    <script type="text/javascript" src="../js/jquery.js"></script>
+{if condition="$demo"}
+   <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-417932-8']);
+      _gaq.push(['_setDomainName', 'facturascripts.com']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+   </script>
+   <script type="text/javascript">
+      $(document).ready(function() {
+         document.f_login.user.focus();
+      });
+   </script>
+{else}
    <script type="text/javascript">
       $(document).ready(function() {
          document.f_login.password.focus();
       });
    </script>
-   <script>
-      (function(d, s, id) {
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) return;
-         js = d.createElement(s);
-         js.id = id;
-         js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
-         fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
+{/if}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         $("#b_feedback").click(function() {
+            $("#b_feedback").hide();
+            $("#popup_feedback").show();
+            document.feedback.feedback_text.focus();
+         });
+         $("#b_news").click(function() {
+            $("#b_news").hide();
+            $("#popup_news").show();
+         });
+         $("#b_sql").click(function() {
+            $("#b_sql").hide();
+            $("#popup_sql").show();
+         });
+      });
    </script>
 </head>
 <body>
-   <div id="fb-root"></div>
-   
    {if condition="$fsc->get_errors()"}
       <div class="error">
          <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -43,102 +67,91 @@
       <h1><a href="index.php">{$fsc->empresa->nombre}</a></h1>
       
       {if condition="$nlogin"}
-         <h2>¡Hola {$nlogin}!</h2>
+         <h2>¡Hola {$nlogin}! Bienvenido a FacturaScripts {$fsc->version()}</h2>
          Si no eres {$nlogin} ignora este saludo.
       {else}
-         <h2>¡Hola!</h2>
+         <h2>¡Hola! Bienvenido a FacturaScripts {$fsc->version()}</h2>
       {/if}
       
-      <br/><br/>
-      <table>
-         <tr>
-            <td class="rounded">
-               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
-                  <select name="user" onchange="document.f_login.password.focus()">
-                  {loop name="$fsc->user->all()"}
-                     {if condition="$value->nick == $nlogin"}
-                     <option value="{$value->nick}" selected>{$value->nick}</option>
-                     {else}
-                     <option value="{$value->nick}">{$value->nick}</option>
-                     {/if}
-                  {/loop}
-                  </select>
-                  <input type="password" name="password" size="6" maxlength="20" placeholder="contraseña"/>
-                  <br/>
-                  <input type="submit" value="entrar"/>
-               </form>
-            </td>
-         </tr>
-      </table>
-      <br/><br/><br/><br/>
-   </div>
-   
-   <div class="colaborar">
-      <table>
-         <tr>
-            <td><div class="colabora2">Colabora</div></td>
-            <td>
-               Si tienes cualquier problema o sugerencia no dudes en informar a través de
-               <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Google Code</a>,
-               <a href='#fb_comments'>Facebook</a>, <a target="_blank" href="https://twitter.com/neorazorx">Twitter</a>
-               o <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Google+</a>.
+      <br/>
+      
+      <div class="popup">
+         {if condition="$demo"}
+            <div style="text-align: center;">Escribe tu nombre y entra.</div>
+            <br/>
+            <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
+               <input type="text" class="full" name="user" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
+               <input type="hidden" name="password" value="demo"/>
                <br/>
-               Puedes seguir el desarrollo de FacturaScripts a través de
-               <a target="_blank" href="http://www.neorazorx.com">mi blog</a>.
-            </td>
-            <td><a id="b_github" target="_blank" href="https://github.com/NeoRazorX/facturascripts">github</a></td>
-         </tr>
-      </table>
+               <input type="submit" class="full" value="entrar"/>
+            </form>
+         {else}
+            <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
+               <select name="user" onchange="document.f_login.password.focus()">
+               {loop name="$fsc->user->all()"}
+                  {if condition="$value->nick == $nlogin"}
+                  <option value="{$value->nick}" selected>{$value->nick}</option>
+                  {else}
+                  <option value="{$value->nick}">{$value->nick}</option>
+                  {/if}
+               {/loop}
+               </select>
+               <input type="password" name="password" maxlength="20" placeholder="contraseña"/>
+               <br/>
+               <input type="submit" class="full" value="entrar"/>
+            </form>
+         {/if}
+      </div>
+      
+      <p>
+         Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()},
+         Procesado en: {$fsc->duration()}
+      </p>
    </div>
    
-   <div class="changes">
-      <a name="changes"></a>
+   <div class="bottom_frame">
+      <a id="b_feedback" href="#feedback">Ayuda</a>
+      <a id="b_news" href="#news">Novedades</a>
+      {if condition="$db_history"}<a id="b_sql" href="#sql">SQL</a>{/if}
+   </div>
+   
+   <a name="feedback"></a>
+   <div id="popup_feedback" class="popup" style="display: none;">
+      <h1>Comunidad FacturaScripts</h1>
+      <p>
+         Si tienes dudas, problemas o sugerencias, puedes contactar conmigo
+         a través de la <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>.
+         Te contestaré lo antes posible.
+      </p>
+      <br/>
+      <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
+         <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+         <div class="etiquetas">
+            <span>Elige una opción:</span>
+            <input id="feedback_question" type="radio" name="feedback_type" value="question" checked="checked">
+            <label for="feedback_question">Preguntar</label>
+            <input id="feedback_problem" type="radio" name="feedback_type" value="error">
+            <label for="feedback_problem">Informar de un error</label>
+            <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
+            <label for="feedback_idea">Aportar una idea</label>
+         </div>
+         <textarea name="feedback_text" rows="6">{$fsc->empresa->email_firma}</textarea>
+         <input type="text" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
+         <input type="submit" value="enviar"/>
+      </form>
+   </div>
+   
+   <a name="news"></a>
+   <div class="popup" id="popup_news" style="display: none;">
       {include="login/changes"}
    </div>
    
    {if condition="$db_history"}
-   <div id="sql_history">
+   <a name="sql"></a>
+   <div class="popup" id="popup_sql" style="display: none;">
       <h1>Consultas SQL:</h1>
       <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
    </div>
    {/if}
-   
-   <div class="footer">
-      <table class="links">
-         <tr>
-            <td>
-               Páginas especiales:
-               <ul>
-                  <li>
-                     <a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Informar de un error</a>
-                  </li>
-                  <li>
-                     <a target="_blank" href="https://plus.google.com/communities/108290867709111243870">Comunidad Google+</a>
-                  </li>
-               </ul>
-            </td>
-            <td>
-               Autor:
-               <ul>
-                  <li><a target="_blank" href="http://www.neorazorx.com">NeoRazorX.com</a></li>
-                  <li><a target="_blank" href="https://twitter.com/neorazorx">@neorazorx</a></li>
-               </ul>
-            </td>
-            <td>
-               Otros proyectos:
-               <ul>
-                  <li><a target="_blank" href="http://www.kelinux.net">Kelinux.net</a></li>
-                  <li><a target="_blank" href="http://www.locierto.es">LoCierto.es</a></li>
-               </ul>
-            </td>
-         </tr>
-      </table>
-      <table style="width: 100%;">
-         <tr>
-            <td>Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()}</td>
-            <td style="text-align: right;">Procesado en: {$fsc->duration()}</td>
-         </tr>
-      </table>
-   </div>
 </body>
 </html>

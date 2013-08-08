@@ -1,130 +1,84 @@
-<table>
-   <tr>
-      <td valign='top'>
-         <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
-         <ul>
-            <li>
-               11/07/2013:
-               <ul>
-                  <li>
-                     Mejorada la página para importal artículos a una familia.
-                     Añadida la opción de no añadir artículos nuevos.
-                  </li>
-                  <li>Solucionado con la impresora en TPV_restaurante.</li>
-                  <li>
-                     Ahora al cerrar la caja, se ejecuta la función consolidar
-                     que se encarga de actualizar el saldo en caso de que se haya
-                     borrado algún albarán manualmente.
-                  </li>
-                  <li>
-                     Añadido popup con estadísticas y lista de proveedores para
-                     cada familia.
-                  </li>
-                  <li>Añadidas gráficas estadísticas al informe de facturas.</li>
-                  <li>Añadidos datos estadísticos al informe de artículos</li>
-                  <li>Nuevo informe de albaranes.</li>
-                  <li>
-                     Las páginas para agrupar albaranes ya muestran el neto de
-                     cada albarán y los totales.
-                  </li>
-               </ul>
-            </li>
-            <li>
-               02/07/2013:
-               <ul>
-                  <li>Ya se pueden hacer regularizaciones trimestrales de IVA.</li>
-                  <li>
-                     Desde Contabilidad &gt; caja ahora se muestra la diferencia de
-                     dinero (las ganancias) incluso de las cajas no cerradas.
-                  </li>
-                  <li>
-                     Solucionado el bug que hacía que no se pudiese "instalar" FacturaScripts
-                     cuando ya existía la tabla agentes.
-                  </li>
-               </ul>
-            </li>
-            <li>
-               18/06/2013:
-               <ul>
-                  <li>
-                     Si el usuario no tiene marcada una página por defecto,
-                     se selecciona la primera página importante de su lista.
-                  </li>
-                  <li>
-                     Nuevas páginas de acceso denegado, página no encontrada y
-                     error en la base de datos.
-                  </li>
-                  <li>
-                     Cuando un usuario accede a una página a la que no tiene acceso
-                     se producía un bug que hacía que la página no terminase de
-                     cargar. El bug estaba en las funciones url() de los controladores.
-                     Para solucionarlo he añadido una comprobación más antes de
-                     proporcionar la url.
-                  </li>
-                  <li>Añadida encuenta on-line.</li>
-                  <li>
-                     La página de cada artículo ya permite navegar por todos los
-                     albaranes y facturas donde figura ese artículo.
-                  </li>
-               </ul>
-            </li>
-            <li>
-               14/06/2013:
-               <ul>
-                  <li>Ahora se puede cambiar la serie de albaranes no facturados.</li>
-                  <li>
-                     Los asientos de ejercicios ya cerrados se bloquean automáticamente
-                     (se marcan como no editable).
-                  </li>
-                  <li>A los artículos bloqueados se les elimina el stock automáticamente.</li>
-                  <li>
-                     TPV genérico permite configurar si quieres que se impriman las
-                     referencias o las descripciones en los tickets.
-                  </li>
-                  <li>Las facturas de clientes incluyen la dirección y teléfonos de los mismos.</li>
-                  <li>Mejoradas las hojas de estilo.</li>
-               </ul>
-            </li>
-            <li>
-               22/05/2013:
-               <ul>
-                  <li>
-                     Añadido soporte experimental para
-                     <a target="_blank" href='http://www.woothemes.com/woocommerce/'>WooCommerce</a>.
-                  </li>
-                  <li>
-                     Añadido control de duplicados. Ahora cuando se envían dos peticiones
-                     de un mismo formulario (de nuevo asiento, nuevo albarán o lo que sea)
-                     ya sea por fallo del navegador, por mala leche del usuario o por
-                     hacer doble clic sobre el botón guardar, se guarda el primero,
-                     pero la segunda petición y siguientes no producen elementos duplicados.
-                  </li>
-                  <li>
-                     Los asientos, albaranes y facturas ahora muestran un mensaje de error
-                     si encuentran duplicados.
-                  </li>
-                  <li>
-                     El libro mayor de cada subcuenta ahora incluye las sumas del debe y del haber,
-                     para facilitar cálculos.
-                  </li>
-                  <li>
-                     El TPV de restaurante permite ahora imprimir un ticket por cada impresora.
-                  </li>
-                  <li>
-                     Pequeñas modificaciones para dar más información al usuario y ofrecer una
-                     experiencia más sencilla.
-                  </li>
-               </ul>
-            </li>
-         </ul>
-      </td>
-      <td valign='top'>
-         <a name='fb_comments'></a>
-         <h1>Preguntas o sugerencias:</h1>
-         <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="470" data-num-posts="10"></div>
-         <br/><br/>
-         Y si tienes un minuto puedes rellenar esta pequeña
-         <a target="_blank" href="https://docs.google.com/forms/d/1iXp2QzqPyaTqYQm-noh_97xhGM6GyjG84WL3eXocbDU/viewform">encuesta</a>.
-      </td>
-   </tr>
-</table>
+<h1>Últimos cambios de la versión {$fsc->version()}:</h1>
+<ul>
+   <li>
+      08/08/2013:
+      <ul>
+         <li>Nuevo diseño.</li>
+         <li>Añadida integración con la comunidad FacturaScripts.</li>
+         <li>Añadidos más diálogos de ayuda para los novatos.</li>
+         <li>
+            Los tickets de TPV &gt; Restaurante ahora muestran el total de cada
+            línea, en lugar del pvp.
+         </li>
+         <li>
+            Corregidos los informes de albaranes y facturas. Ahora ya funcionan
+            en MySQL.
+         </li>
+      </ul>
+   </li>
+   <li>
+      11/07/2013:
+      <ul>
+         <li>
+            Mejorada la página para importal artículos a una familia.
+            Añadida la opción de no añadir artículos nuevos.
+         </li>
+         <li>Solucionado con la impresora en TPV_restaurante.</li>
+         <li>
+            Ahora al cerrar la caja, se ejecuta la función consolidar
+            que se encarga de actualizar el saldo en caso de que se haya
+            borrado algún albarán manualmente.
+         </li>
+         <li>
+            Añadido popup con estadísticas y lista de proveedores para
+            cada familia.
+         </li>
+         <li>Añadidas gráficas estadísticas al informe de facturas.</li>
+         <li>Añadidos datos estadísticos al informe de artículos</li>
+         <li>Nuevo informe de albaranes.</li>
+         <li>
+            Las páginas para agrupar albaranes ya muestran el neto de
+            cada albarán y los totales.
+         </li>
+      </ul>
+   </li>
+   <li>
+      02/07/2013:
+      <ul>
+         <li>Ya se pueden hacer regularizaciones trimestrales de IVA.</li>
+         <li>
+            Desde Contabilidad &gt; caja ahora se muestra la diferencia de
+            dinero (las ganancias) incluso de las cajas no cerradas.
+         </li>
+         <li>
+            Solucionado el bug que hacía que no se pudiese "instalar" FacturaScripts
+            cuando ya existía la tabla agentes.
+         </li>
+      </ul>
+   </li>
+   <li>
+      18/06/2013:
+      <ul>
+         <li>
+            Si el usuario no tiene marcada una página por defecto,
+            se selecciona la primera página importante de su lista.
+         </li>
+         <li>
+            Nuevas páginas de acceso denegado, página no encontrada y
+            error en la base de datos.
+         </li>
+         <li>
+            Cuando un usuario accede a una página a la que no tiene acceso
+            se producía un bug que hacía que la página no terminase de
+            cargar. El bug estaba en las funciones url() de los controladores.
+            Para solucionarlo he añadido una comprobación más antes de
+            proporcionar la url.
+         </li>
+         <li>Añadida encuenta on-line.</li>
+         <li>
+            La página de cada artículo ya permite navegar por todos los
+            albaranes y facturas donde figura ese artículo.
+         </li>
+      </ul>
+   </li>
+</ul>

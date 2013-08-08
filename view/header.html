@@ -21,12 +21,6 @@
          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-      $(document).ready(function() {
-         $("#fs_feedback").click(function(event) {
-            event.preventDefault();
-            fs_show_popup('popup_feedback');
-         });
-      });
    </script>
    {/if}
 </head>
@@ -46,21 +40,12 @@
             <a id="fs_logo" href="index.php">{if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}</a>
          </div>
          <div id="header_user">
-            {if condition="$demo"}<a id="fs_feedback" href="#">ayuda</a>{/if}
             <a class="button" href="#" id="b_user_list">{$fsc->user->nick}</a>
             <a id="fs_exit" href="{$fsc->url()}&logout=TRUE"><img src="img/logout.png" alt="salir" title="cerrar sesión"/></a>
          </div>
       </div>
    </div>
    
-   {if condition="$fsc->show_default_page_advice()"}
-   <div class="advice">
-      Se ha seleccionado automáticamente una página de tu lista.
-      Si queres que sea otra tu página de inicio, tan solo tienes que hacer
-      clic sobre el icono <img src="img/star_off.png" alt="página de inicio" />
-      en la página que quieras.
-   </div>
-   {/if}
    {if condition="$fsc->get_errors()"}
    <div class="error">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -138,9 +123,6 @@
                   {/loop}
                {/if}
             {/if}
-            <li><hr/></li>
-            <li><a target="_blank" href="http://code.google.com/p/facturascripts/issues/list">Reportar un error</a></li>
-            <li><a target="_blank" href="http://code.google.com/p/facturascripts/">Web oficial</a></li>
          </ul>
       </div>
    </div>
@@ -149,26 +131,27 @@
       <img src="img/close.png" alt="close"/>
    </a>
    <div class="main_div">
-      {if condition="$demo"}
-      <script>
-         (function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
-            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
-      </script>
-      
-      <div id="fb-root"></div>
-      
       <div id="popup_feedback" class="popup">
-         <h1>Ayúdame a mejorar FacturaScripts</h1>
-         Si tienes un minuto, rellena esta pequeña
-         <a target="_blank" href="https://docs.google.com/forms/d/1iXp2QzqPyaTqYQm-noh_97xhGM6GyjG84WL3eXocbDU/viewform">encuesta</a>.
-         Y si tienes preguntas o sugerencias, escríbelas aquí abajo:
-         <br/><br/>
-         <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="700" data-num-posts="10"></div>
+         <h1>Comunidad FacturaScripts</h1>
+         <p>
+            Si tienes dudas, problemas o sugerencias, puedes contactar conmigo
+            a través de la <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>.
+            Te contestaré lo antes posible.
+         </p>
+         <br/>
+         <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
+            <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+            <div class="etiquetas">
+               <span>Elige una opción:</span>
+               <input id="feedback_question" type="radio" name="feedback_type" value="question" checked="checked">
+               <label for="feedback_question">Preguntar</label>
+               <input id="feedback_problem" type="radio" name="feedback_type" value="error">
+               <label for="feedback_problem">Informar de un error</label>
+               <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
+               <label for="feedback_idea">Aportar una idea</label>
+            </div>
+            <textarea name="feedback_text" rows="12">{$fsc->empresa->email_firma}</textarea>
+            <input type="text" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
+            <input type="submit" value="enviar"/>
+         </form>
       </div>
-      {/if}

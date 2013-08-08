@@ -46,8 +46,6 @@ class tpv_yamyam extends fs_controller
    public $familias;
    public $forma_pago;
    public $impuesto;
-   public $impresora1;
-   public $impresora2;
    public $num_tickets;
    public $paquete;
    public $paquetes;
@@ -73,26 +71,6 @@ class tpv_yamyam extends fs_controller
       $this->paquete = new paquete();
       $this->serie = new serie();
       
-      if( isset($_POST['impresora1']) )
-      {
-         $this->impresora1 = $_POST['impresora1'];
-         setcookie('impresora1', $this->impresora1, time()+FS_COOKIES_EXPIRE);
-      }
-      else if( isset($_COOKIE['impresora1']) )
-         $this->impresora1 = $_COOKIE['impresora1'];
-      else
-         $this->impresora1 = FS_PRINTER;
-      
-      if( isset($_POST['impresora2']) )
-      {
-         $this->impresora2 = $_POST['impresora2'];
-         setcookie('impresora2', $this->impresora2, time()+FS_COOKIES_EXPIRE);
-      }
-      else if( isset($_COOKIE['impresora2']) )
-         $this->impresora2 = $_COOKIE['impresora2'];
-      else
-         $this->impresora2 = FS_PRINTER;
-      
       if( isset($_POST['saldo']) )
       {
          $this->template = FALSE;
@@ -100,7 +78,6 @@ class tpv_yamyam extends fs_controller
          if(FS_LCD != '')
          {
             $fpt = new fs_printer(FS_LCD);
-            $fpt->add('                    ');
             $fpt->add('TOTAL               ');
             $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20) );
             $fpt->imprimir();
@@ -153,7 +130,7 @@ class tpv_yamyam extends fs_controller
          }
          else
          {
-            $fpt = new fs_printer(FS_PRINTER);
+            $fpt = new fs_printer();
             $fpt->abrir_cajon();
          }
       }
@@ -166,7 +143,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-15';
+      return parent::version().'-16';
    }
    
    private function cargar_datos_tpv()
@@ -433,7 +410,7 @@ class tpv_yamyam extends fs_controller
       $this->caja->consolidar();
       if( $this->caja->save() )
       {
-         $fpt = new fs_printer(FS_PRINTER);
+         $fpt = new fs_printer();
          $fpt->add_big("\nCIERRE DE CAJA:\n");
          $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
@@ -468,14 +445,14 @@ class tpv_yamyam extends fs_controller
    private function imprimir_ticket($num_tickets=2)
    {
       /// ticket normal
-      $fpt = new fs_printer($this->impresora1);
+      $fpt = new fs_printer();
       $linea = "\nTicket: " . $this->albaran->codigo;
       $linea .= " " . $this->albaran->fecha;
       $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
       $fpt->add($linea);
       $fpt->add("Cliente: " . $this->albaran->nombrecliente . "\n");
       $fpt->add("Agente: " . $this->albaran->codagente . "\n\n");
-      $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "P.U.") . "\n");
+      $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n");
       $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
               sprintf("%10s", "----------") . "\n";
       $fpt->add($linea);
@@ -483,7 +460,7 @@ class tpv_yamyam extends fs_controller
       foreach($this->albaran->get_lineas() as $col)
       {
          $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-                 sprintf("%10s", $col->show_pvp_iva()) . "\n";
+                 sprintf("%10s", $col->show_total_iva()) . "\n";
          $fpt->add($linea);
       }
       
@@ -509,48 +486,10 @@ class tpv_yamyam extends fs_controller
       $fpt->add($fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
       $fpt->add($fpt->center_text($this->empresa->horario) . "\n");
       
-      
-      /// ticket para la cocina
-      $fpt2 = new fs_printer($this->impresora2);
-      $linea = "\nTicket: " . $this->albaran->codigo;
-      $linea .= " " . $this->albaran->fecha;
-      $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
-      $fpt2->add($linea);
-      $fpt2->add("Agente: " . $this->albaran->codagente . "\n\n");
-      $fpt2->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "P.U.") . "\n");
-      $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
-              sprintf("%10s", "----------") . "\n";
-      $fpt2->add($linea);
-      foreach($this->albaran->get_lineas() as $col)
-      {
-         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-                 sprintf("%10s", '-') . "\n";
-         $fpt2->add($linea);
-      }
-      $fpt2->add("----------------------------------------\n");
-      if($this->impresora2 == $this->impresora1)
-      {
-         $fpt2->add("\n\n\n");
-         $fpt2->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n" );
-         $fpt2->add($fpt->center_text($this->empresa->lema) . "\n\n");
-         $fpt2->add($fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
-         $fpt2->add($fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
-         $fpt2->add($fpt->center_text($this->empresa->horario) . "\n");
-      }
-      else
-         $fpt2->add("\n\n\n" . chr(27).chr(105) . "\n\n"); /// corta el papel
-      
-      
-      $cambio = FALSE;
       while($num_tickets > 0)
       {
-         if($cambio)
-            $fpt2->imprimir();
-         else
-            $fpt->imprimir();
-         
+         $fpt->imprimir();
          $num_tickets--;
-         $cambio = !$cambio;
       }
       
       $fpt->abrir_cajon();

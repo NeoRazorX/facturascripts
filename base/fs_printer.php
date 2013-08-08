@@ -23,7 +23,7 @@ class fs_printer
    private $filename;
    private $print_command;
    
-   public function __construct($printer='')
+   public function __construct($printer = FS_PRINTER)
    {
       $this->filename = '/tmp/ticket_'.$this->random_string().'.txt';
       $this->file = fopen($this->filename, 'w');
@@ -45,7 +45,7 @@ class fs_printer
          unlink($this->filename);
    }
    
-   public function set_printer($printer='')
+   public function set_printer($printer = FS_PRINTER)
    {
       if($printer == '')
          $this->print_command = ' | lp';
