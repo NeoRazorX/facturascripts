@@ -859,7 +859,7 @@ class factura_cliente extends fs_model
                    * Sumamos o restamos un céntimo a los netos más altos
                    * hasta que desaparezca el descuadre
                    */
-                  $diferencia = round( ($this->totaliva-$t_iva) * 100 );
+                  $diferencia = round( ($this->neto-$t_neto) * 100 );
                   usort($lineasi, 'cmp_linea_iva_fact_cli');
                   foreach($lineasi as $i => $value)
                   {
