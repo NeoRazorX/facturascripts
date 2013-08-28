@@ -33,7 +33,7 @@
                </table>\n\
                </td>\n\
                <td id='contrapartida_"+numlineas+"'>\n\
-                  <a href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
+                  <a class='link' href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
                </td>\n\
                <td align='right'><input type='button' value='x' onclick=\"clean_partida('"+numlineas+"')\"/></td>\n\
             </tr>\n\
@@ -208,7 +208,7 @@
       <h1>Buscar subcuentas</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40"/>
-         <input type="submit" value="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>
    <div id="subcuentas"></div>
@@ -241,11 +241,7 @@
                Divisa:
                <select name='divisa'>
                   {loop="$fsc->divisa->all()"}
-                     {if condition="$value->is_default()"}
-                        <option value='{$value->coddivisa}' selected='selected'>{$value->descripcion}</option>
-                     {else}
-                        <option value='{$value->coddivisa}'>{$value->descripcion}</option>
-                     {/if}
+                     <option value='{$value->coddivisa}'{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                   {/loop}
                </select>
             </td>

@@ -13,7 +13,7 @@
    <h1>Top ventas (unidades):</h1>
    <ul class="horizontal">
       {loop="$fsc->top_ventas"}
-      <li><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
       {/loop}
    </ul>
 </div>
@@ -22,7 +22,7 @@
    <h1>Top compras (unidades):</h1>
    <ul class="horizontal">
       {loop="$fsc->top_compras"}
-      <li><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
       {/loop}
    </ul>
 </div>

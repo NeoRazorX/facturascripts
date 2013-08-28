@@ -22,7 +22,7 @@
       </div>
       <br/>
       <div class="bloque">
-         <a href="{$fsc->pais->url()}">País</a>:
+         <a class="link" href="{$fsc->pais->url()}">País</a>:
          <select name="codpais">
          {loop="$fsc->pais->all()"}
             {if condition="$fsc->empresa->codpais == $value->codpais"}
@@ -72,7 +72,7 @@
          <label for="contintegrada">Contabilidad integrada</label>
       </div>
       <div class="bloque">
-         <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+         <a class="link" href="{$fsc->ejercicio->url()}">Ejercicio</a>:
          <select name="codejercicio">
          {loop="$fsc->ejercicio->all()"}
             {if condition="$fsc->empresa->codejercicio == $value->codejercicio"}
@@ -84,7 +84,7 @@
          </select>
       </div>
       <div class="bloque">
-         <a href="{$fsc->serie->url()}">Serie</a>:
+         <a class="link" href="{$fsc->serie->url()}">Serie</a>:
          <select name="codserie">
          {loop="$fsc->serie->all()"}
             {if condition="$fsc->empresa->codserie == $value->codserie"}
@@ -120,7 +120,7 @@
          </select>
       </div>
       <div class="bloque">
-         <a href="{$fsc->almacen->url()}">Almacén</a>:
+         <a class="link" href="{$fsc->almacen->url()}">Almacén</a>:
          <select name="codalmacen">
          {loop="$fsc->almacen->all()"}
             {if condition="$fsc->empresa->codalmacen == $value->codalmacen"}

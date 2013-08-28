@@ -23,8 +23,8 @@
    {loop="$fsc->results"}
    <tr>
       {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
-         <a href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
-         <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+         <a class="link" href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
+         <a class="link" href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
             {$value->referencia}</a> {$value->descripcion}
       </td>
       <td>{$value->equivalencia}</td>
@@ -47,13 +47,13 @@
    {if condition="$fsc->familia->all()"}
    <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
       <b>Referencia</b>: <input type="text" name="referencia" value="{$fsc->query}" size="20" maxlength="18" autocomplete="off"/>
-      <a href="{$fsc->familia->url()}">Familia</a>:
+      <a class="link" href="{$fsc->familia->url()}">Familia</a>:
       <select name="codfamilia">
          {loop="$fsc->familia->all()"}
             <option value="{$value->codfamilia}">{$value->descripcion}</option>
          {/loop}
       </select>
-      <a href="{$fsc->impuesto->url()}">IVA</a>:
+      <a class="link" href="{$fsc->impuesto->url()}">IVA</a>:
       <select name="codimpuesto">
          {loop="$fsc->impuesto->all()"}
             {if condition="$value->is_default()"}
@@ -63,7 +63,7 @@
             {/if}
          {/loop}
       </select>
-      <input type="button" value="nuevo" onclick="new_articulo()"/>
+      <input type="submit" value="nuevo" onclick="this.disabled=true; new_articulo(); return false;"/>
    </form>
    {else}
    No hay <a target="_blank" href="{$fsc->familia->url()}">familias</a> creadas. Debes crear al menos una.

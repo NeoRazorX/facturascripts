@@ -96,16 +96,15 @@ class general_albaran_prov extends fs_controller
          
          if( $this->albaran->ptefactura )
          {
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura',
-                    $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
          }
          else if( isset($this->albaran->idfactura) )
          {
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura',
-                    $this->albaran->factura_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url());
          }
-         $this->buttons[] = new fs_button('b_precios', 'precios', '#', '', 'img/tools.png');
-         $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/trash.png');
+         
+         $this->buttons[] = new fs_button('b_precios', 'precios');
+         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡Albarán de proveedor no encontrado!");

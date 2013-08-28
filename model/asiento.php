@@ -283,7 +283,7 @@ class asiento extends fs_model
       $total = $debe - $haber;
       
       /// corregimos descuadres de menos de 0.01
-      if( !$this->floatcmp($debe, $haber, 2) )
+      if( $this->floatcmp($debe, $haber, 2) )
       {
          $debe = 0;
          $haber = 0;

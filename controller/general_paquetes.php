@@ -35,7 +35,7 @@ class general_paquetes extends fs_controller
    {
       $this->paquete = new paquete();
       $this->cache_paquete = new cache_paquete();
-      $this->buttons[] = new fs_button('b_nuevo_paquete', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_paquete', 'nuevo');
       
       if( $this->query != '' )
          $this->new_search();

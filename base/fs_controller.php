@@ -37,6 +37,7 @@ class fs_controller
    private $uptime;
    private $errors;
    private $messages;
+   private $advices;
    public $user;
    public $page;
    public $ppage;
@@ -58,6 +59,7 @@ class fs_controller
       $this->admin_page = $admin;
       $this->errors = array();
       $this->messages = array();
+      $this->advices = array();
       
       if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
@@ -159,6 +161,17 @@ class fs_controller
    public function get_messages()
    {
       return $this->messages;
+   }
+   
+   public function new_advice($msg=FALSE)
+   {
+      if( $msg )
+         $this->advices[] = $msg;
+   }
+   
+   public function get_advices()
+   {
+      return $this->advices;
    }
    
    public function url()
@@ -330,7 +343,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13b1';
+      return '0.13b2';
    }
    
    public function select_default_page()

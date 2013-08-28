@@ -1,84 +1,27 @@
 <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
 <ul>
+   <li>Diseño más depurado.</li>
    <li>
-      08/08/2013:
-      <ul>
-         <li>Nuevo diseño.</li>
-         <li>Añadida integración con la comunidad FacturaScripts.</li>
-         <li>Añadidos más diálogos de ayuda para los novatos.</li>
-         <li>
-            Los tickets de TPV &gt; Restaurante ahora muestran el total de cada
-            línea, en lugar del pvp.
-         </li>
-         <li>
-            Corregidos los informes de albaranes y facturas. Ahora ya funcionan
-            en MySQL.
-         </li>
-      </ul>
+      Nuevo diseño de las páginas de clientes. Además ahora ya se pueden
+      hacer búsquedas de productos vendidos a ese cliente.
    </li>
    <li>
-      11/07/2013:
-      <ul>
-         <li>
-            Mejorada la página para importal artículos a una familia.
-            Añadida la opción de no añadir artículos nuevos.
-         </li>
-         <li>Solucionado con la impresora en TPV_restaurante.</li>
-         <li>
-            Ahora al cerrar la caja, se ejecuta la función consolidar
-            que se encarga de actualizar el saldo en caso de que se haya
-            borrado algún albarán manualmente.
-         </li>
-         <li>
-            Añadido popup con estadísticas y lista de proveedores para
-            cada familia.
-         </li>
-         <li>Añadidas gráficas estadísticas al informe de facturas.</li>
-         <li>Añadidos datos estadísticos al informe de artículos</li>
-         <li>Nuevo informe de albaranes.</li>
-         <li>
-            Las páginas para agrupar albaranes ya muestran el neto de
-            cada albarán y los totales.
-         </li>
-      </ul>
+      Nuevo diseño de las páginas de proveedores. También se pueden hacer
+      búsquedas de productos comprados a ese proveedor.
    </li>
    <li>
-      02/07/2013:
-      <ul>
-         <li>Ya se pueden hacer regularizaciones trimestrales de IVA.</li>
-         <li>
-            Desde Contabilidad &gt; caja ahora se muestra la diferencia de
-            dinero (las ganancias) incluso de las cajas no cerradas.
-         </li>
-         <li>
-            Solucionado el bug que hacía que no se pudiese "instalar" FacturaScripts
-            cuando ya existía la tabla agentes.
-         </li>
-      </ul>
+      Los formularios ahora incluyen muchos más valores por defecto, como la
+      provincia, la ciudad y el código postal.
    </li>
    <li>
-      18/06/2013:
-      <ul>
-         <li>
-            Si el usuario no tiene marcada una página por defecto,
-            se selecciona la primera página importante de su lista.
-         </li>
-         <li>
-            Nuevas páginas de acceso denegado, página no encontrada y
-            error en la base de datos.
-         </li>
-         <li>
-            Cuando un usuario accede a una página a la que no tiene acceso
-            se producía un bug que hacía que la página no terminase de
-            cargar. El bug estaba en las funciones url() de los controladores.
-            Para solucionarlo he añadido una comprobación más antes de
-            proporcionar la url.
-         </li>
-         <li>Añadida encuenta on-line.</li>
-         <li>
-            La página de cada artículo ya permite navegar por todos los
-            albaranes y facturas donde figura ese artículo.
-         </li>
-      </ul>
+      El asistente de importar artículos de una familia ya permite pausar
+      el proceso. Además la comprobación es mucho más rápida.
+   </li>
+   <li>
+      En general se han incluido más mensajes de ayuda y enlaces para que
+      la adaptación sea más sencilla.
+   </li>
+   <li>
+      <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=521e4d7418c088b76c3e4ba3">Deja tus comentarios</a>.
    </li>
 </ul>

@@ -56,8 +56,9 @@ div.header a {
 }
 
 div.advice, div.message, div.error {
-   margin: 0px;
+   margin: 5px;
    padding: 10px;
+   border-radius: 5px;
    border: 1px solid #424242;
    color: #333333;
    font-size: 16px;

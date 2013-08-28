@@ -307,7 +307,7 @@ class articulo extends fs_model
       if( $this->has_imagen )
       {
          if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
-            return '../tmp/articulos/'.$this->referencia.'.png';
+            return 'tmp/articulos/'.$this->referencia.'.png';
          else
          {
             if( is_null($this->imagen) )
@@ -328,7 +328,7 @@ class articulo extends fs_model
                $f = fopen('tmp/articulos/'.$this->referencia.'.png', 'a');
                fwrite($f, $this->imagen);
                fclose($f);
-               return '../tmp/articulos/'.$this->referencia.'.png';
+               return 'tmp/articulos/'.$this->referencia.'.png';
             }
             else
                return FALSE;

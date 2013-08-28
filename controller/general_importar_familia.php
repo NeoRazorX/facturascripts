@@ -222,18 +222,17 @@ class general_importar_familia extends fs_controller
                   else
                   {
                      $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
-                     $this->buttons[] = new fs_button('b_start', 'procesar',
-                             $this->url().'&action=start', '', 'img/tools.png');
+                     $this->buttons[] = new fs_button_img('b_start', 'procesar', 'play.png', $this->url().'&action=start');
                   }
                }
                else
                {
                   $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
                           "/".$this->family_data->lineas);
+                  $this->buttons[] = new fs_button_img('b_pause_import', 'pausar', 'pause.png');
                }
                
-               $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
-                    'remove', 'img/remove.png');
+               $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
             }
             else if($this->family_data->action == 'start')
             {
@@ -242,20 +241,17 @@ class general_importar_familia extends fs_controller
                if($this->ready)
                {
                   if($this->error)
-                  {
                      $this->new_message("Proceso fallido.");
-                  }
                   else
-                  {
                      $this->new_message("Proceso finalizado.");
-                  }
                }
                else
                {
                   $this->new_message("Procesando ... ".$this->family_data->lineas_procesadas.
                           "/".$this->family_data->lineas);
-                  $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
-                    'remove', 'img/remove.png');
+                  
+                  $this->buttons[] = new fs_button_img('b_pause_import', 'pausar', 'pause.png');
+                  $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
                }
             }
          }
@@ -279,7 +275,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    private function get_family_data()
@@ -300,6 +296,7 @@ class general_importar_familia extends fs_controller
    private function test_csv_file()
    {
       $this->ready = FALSE;
+      $lineas_a_procesar = 300;
       
       $file = fopen("tmp/familias/".$this->familia->codfamilia.".csv", 'r');
       if($file)
@@ -331,7 +328,7 @@ class general_importar_familia extends fs_controller
                      $this->error = TRUE;
                   }
                }
-               else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
+               else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + $lineas_a_procesar))
                {
                   if( !$this->test_articulo( explode(';', $linea) ) )
                   {
@@ -341,7 +338,7 @@ class general_importar_familia extends fs_controller
                      break;
                   }
                }
-               else if($i >= ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
+               else if($i >= ($this->family_data->lineas_procesadas + $lineas_a_procesar))
                   break;
                $i++;
             }
@@ -456,6 +453,7 @@ class general_importar_familia extends fs_controller
    private function csv2articulos()
    {
       $this->ready = FALSE;
+      $lineas_a_procesar = 100;
       
       $file = fopen("tmp/familias/".$this->familia->codfamilia.".csv", 'r');
       if($file)
@@ -466,17 +464,7 @@ class general_importar_familia extends fs_controller
             while(!feof($file) AND !$this->ready)
             {
                $linea = trim( fgets($file, 1024) );
-               if( $i == 0 )
-               {
-                  $cabecera = explode(';', $linea);
-                  if($cabecera[0] != 'REF' OR $cabecera[1] != 'PVP' OR $cabecera[2] != 'DESC' OR $cabecera[3] != 'CODBAR')
-                  {
-                     $this->new_error_msg("¡Las columnas no concuerdan!");
-                     $this->ready = TRUE;
-                     $this->error = TRUE;
-                  }
-               }
-               else if($i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
+               if($i > 0 AND $i >= $this->family_data->lineas_procesadas AND $i < ($this->family_data->lineas_procesadas + $lineas_a_procesar))
                {
                   if( !$this->csvline2articulo( explode(';', $linea) ) )
                   {
@@ -486,7 +474,7 @@ class general_importar_familia extends fs_controller
                      break;
                   }
                }
-               else if($i >= ($this->family_data->lineas_procesadas + 2*FS_ITEM_LIMIT))
+               else if($i >= ($this->family_data->lineas_procesadas + $lineas_a_procesar))
                   break;
                $i++;
             }
@@ -496,6 +484,7 @@ class general_importar_familia extends fs_controller
          }
          else if( $this->family_data->lineas_procesadas >= $this->family_data->lineas )
          {
+            /// ¿bloqueamos los articulos no actualizados?
             if( $this->family_data->bloquear )
             {
                $this->db->exec("UPDATE articulos SET bloqueado = true

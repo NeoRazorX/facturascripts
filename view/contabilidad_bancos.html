@@ -8,7 +8,7 @@
       </tr>
       {loop="$fsc->banco->all()"}
       <tr>
-         <td width="80"><a href="{$value->url()}">{$value->entidad}</a></td>
+         <td width="80"><a class="link" href="{$value->url()}">{$value->entidad}</a></td>
          <td>{$value->nombre}</td>
       </tr>
       {else}

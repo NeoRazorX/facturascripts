@@ -31,7 +31,7 @@ class contabilidad_impuestos extends fs_controller
    protected function process()
    {
       $this->impuesto = new impuesto();
-      $this->buttons[] = new fs_button('b_nuevo_impuesto', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_impuesto', 'nuevo');
       
       if( isset($_POST['codimpuesto']) )
       {

@@ -189,7 +189,7 @@
             <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60" autocomplete="off"/>
          </div>
          <div class="bloque">
-            <a href="{$fsc->familia->url()}">Familia</a>:
+            <a class="link" href="{$fsc->familia->url()}">Familia</a>:
             <select name="codfamilia">
             {loop="$fsc->familia->all()"}
                {if condition="$value->codfamilia==$fsc->articulo->codfamilia"}
@@ -416,7 +416,7 @@
             </tr>
             {loop="$fsc->equivalentes"}
             <tr>
-               <td><a href="{$value->url()}">{$value->referencia}</a></td>
+               <td><a class="link" href="{$value->url()}">{$value->referencia}</a></td>
                <td align="right">{$value->show_pvp_iva()} €</td>
                <td align="right">{$value->stockfis}</td>
             </tr>
@@ -429,6 +429,10 @@
    </td>
 </tr>
 </table>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
 {/if}
 
 {include="footer"}

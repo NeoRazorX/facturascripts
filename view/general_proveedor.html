@@ -2,27 +2,75 @@
 
 {if condition="$fsc->proveedor"}
 <script type="text/javascript">
+   function buscar_lineas()
+   {
+      if(document.f_buscar_lineas.buscar_lineas.value == '')
+      {
+         $("#search_results").html('');
+         fs_resize_popup('popup_buscar_lineas', 40);
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_lineas]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
+               {
+                  $("#search_results").html(datos);
+                  fs_resize_popup('popup_buscar_lineas', 40);
+               }
+            }
+         });
+      }
+   }
    $(document).ready(function() {
-      $("#b_direcciones").click(function(event) {
+      $("#b_datos_generales, #b_datos_generales2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_direcciones');
+         $("#div_datos_generales").show();
+         $("#div_direcciones").hide();
+         $("#div_subcuentas").hide();
       });
-      $("#b_subcuentas").click(function(event) {
+      $("#b_direcciones, #b_direcciones2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_subcuentas');
+         $("#div_datos_generales").hide();
+         $("#div_direcciones").show();
+         $("#div_subcuentas").hide();
+      });
+      $("#b_subcuentas, #b_subcuentas2").click(function(event) {
+         event.preventDefault();
+         $("#div_datos_generales").hide();
+         $("#div_direcciones").hide();
+         $("#div_subcuentas").show();
+      });
+      $("#b_buscar_lineas").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_buscar_lineas', 40);
+         document.f_buscar_lineas.buscar_lineas.focus();
+      });
+      $("#f_buscar_lineas").keyup(function() {
+         buscar_lineas();
+      });
+      $("#f_buscar_lineas").submit(function(event) {
+         event.preventDefault();
+         buscar_lineas();
       });
    });
 </script>
 
-<div class="rounded">
+<div class="rounded" id="div_datos_generales">
+   <div class="select">
+      <a href="#" class="selected">Datos generales</a>
+      <a id="b_direcciones" href="#">Direcciones</a>
+      <a id="b_subcuentas" href="#">Subcuentas</a>
+   </div>
+   <br/><br/>
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-      <h1>
-         {$fsc->proveedor->nombre}
-         <span>
-            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->proveedor->nombre}" size="25"/>
       </div>
@@ -51,9 +99,10 @@
          Observaciones:
          <textarea name="observaciones" rows="3" cols="60">{$fsc->proveedor->observaciones}</textarea>
       </div>
+      <input class="pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       <div>
          <div class="bloque">
-            <a href="{$fsc->serie->url()}">Serie</a>:
+            <a class="link" href="{$fsc->serie->url()}">Serie</a>:
             <select name="codserie">
                {loop="$fsc->serie->all()"}
                   {if condition="$value->codserie==$fsc->proveedor->codserie"}
@@ -92,21 +141,21 @@
    </form>
 </div>
 
-<div class="popup" id="popup_direcciones">
-   <h1>Direcciones</h1>
+<div class="rounded hidden" id="div_direcciones">
+   <div class="select">
+      <a id="b_datos_generales" href="#">Datos generales</a>
+      <a href="#" class="selected">Direcciones</a>
+      <a id="b_subcuentas2" href="#">Subcuentas</a>
+   </div>
+   <br/><br/>
    {loop="$fsc->proveedor->get_direcciones()"}
       <div class="grupo">
          <form action="{$fsc->url()}" method="post"/>
             <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
             <input type="hidden" name="coddir" value="{$value->id}"/>
-            <h2>
-               Dirección {$value->id}:
-               <span>
-                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-               </span>
-            </h2>
+            <h2>Dirección {$value->id}:</h2>
             <div class="bloque">
-               <a href="">País</a>:
+               <a class="link" href="">País</a>:
                <select name="pais">
                   {loop="$fsc->pais->all()"}
                      {if condition="$value1->codpais==$value2->codpais"}
@@ -149,6 +198,7 @@
                Descripción:
                <input type="text" name="descripcion" value="{$value->descripcion}" size="60"/>
             </div>
+            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </form>
       </div>
    {/loop}
@@ -156,17 +206,12 @@
       <form action="{$fsc->url()}" method="post">
          <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
          <input type="hidden" name="coddir" value=""/>
-         <h2>
-            Nueva dirección:
-            <span>
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </span>
-         </h2>
+         <h2>Nueva dirección:</h2>
          <div class="bloque">
-            <a href="">País</a>:
+            <a class="link" href="">País</a>:
             <select name="pais">
                {loop="$fsc->pais->all()"}
-                  <option value="{$value->codpais}">{$value->nombre}</option>
+                  <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                {/loop}
             </select>
          </div>
@@ -198,12 +243,18 @@
             Descripción:
             <input type="text" name="descripcion" size="60"/>
          </div>
+         <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       </form>
    </div>
 </div>
 
-<div class="popup" id="popup_subcuentas" style="min-width: 700px">
-   <h1>Subcuentas</h1>
+<div class="rounded hidden" id="div_subcuentas">
+   <div class="select">
+      <a id="b_datos_generales2" href="#">Datos generales</a>
+      <a id="b_direcciones2" href="#">Direcciones</a>
+      <a href="#" class="selected">Subcuentas</a>
+   </div>
+   <br/><br/>
    <table class="list">
       <tr>
          <th align="left">Ejercicio</th>
@@ -216,7 +267,7 @@
       {loop="$fsc->proveedor->get_subcuentas()"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td>{$value->descripcion}</td>
          <td align="right">{$value->show_debe()} €</td>
          <td align="right">{$value->show_haber()} €</td>
@@ -230,6 +281,18 @@
    </table>
 </div>
 
+<div class="popup" id="popup_buscar_lineas" style="min-width: 75%">
+   <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
+      <h1>Buscar en las líneas de los albaranes</h1>
+      <div style="text-align: center;">
+         <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
+         <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+      </div>
+   </form>
+   <div id="search_results"></div>
+</div>
+
 <div class="rounded">
    <a name="listado"></a>
    <div class="select">
@@ -241,6 +304,8 @@
          <a href="{$fsc->url()}&listar=facturas#listado" class="selected">Facturas</a>
       {/if}
    </div>
+   &nbsp; <img id="b_buscar_lineas" class="search touch" src="view/img/zoom2.png" alt="buscar"/>
+   <br/><br/>
    <table class="list">
       {if condition="$fsc->listar=='albaranes'"}
          <tr>
@@ -253,11 +318,13 @@
          {loop="$fsc->listado"}
          <tr>
             <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
+         {else}
+         <tr><td colspan="5">Sin resultados.</td></tr>
          {/loop}
          <tr><td colspan="5">&nbsp;</td></tr>
          <tr>
@@ -284,11 +351,13 @@
          {loop="$fsc->listado"}
          <tr>
             <td align="center">{if condition="$value->idasiento"}A{/if}</td>
-            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_total()} €</td>
             <td align="right">{$value->fecha}</td>
          </tr>
+         {else}
+         <tr><td colspan="5">Sin resultados.</td></tr>
          {/loop}
          <tr><td colspan="5">&nbsp;</td></tr>
          <tr>
@@ -306,6 +375,10 @@
          </tr>
       {/if}
    </table>
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}
 

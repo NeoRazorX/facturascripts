@@ -37,7 +37,7 @@ class general_clientes extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_cliente', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'nuevo');
       $this->cliente = new cliente();
       $this->pais = new pais();
       $this->serie = new serie();

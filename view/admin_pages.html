@@ -20,7 +20,6 @@
             <td>
                <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
                <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-               Marcar para activar
             </td>
             <td align="right">
                <input type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
@@ -52,7 +51,7 @@
                {else}
                <input type="checkbox" name="enabled[]" value="{$value->name}"/>
                {/if}
-               <a target="_blank" href="{$value->url()}">{$value->name}</a>
+               <a class="link" target="_blank" href="{$value->url()}">{$value->name}</a>
             </td>
             <td>{$value->folder}</td>
             <td>{$value->title}</td>

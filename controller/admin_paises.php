@@ -31,7 +31,7 @@ class admin_paises extends fs_controller
    protected function process()
    {
       $this->pais = new pais();
-      $this->buttons[] = new fs_button('b_nuevo_pais', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_pais', 'nuevo');
       
       if( isset($_POST['scodpais']) )
       {

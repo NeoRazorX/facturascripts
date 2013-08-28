@@ -30,29 +30,21 @@
             <td><input type="text" name="referencia" size="20" maxlength="18" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->familia->url()}">Familia</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->familia->url()}">Familia</a>:</td>
             <td>
                <select name="codfamilia">
                {loop="$fsc->familia->all()"}
-                  {if condition="$value->is_default()"}
-                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
-                  {/if}
+                  <option value="{$value->codfamilia}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
                </select>
             </td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->impuesto->url()}">IVA</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->impuesto->url()}">IVA</a>:</td>
             <td>
                <select name="codimpuesto">
                {loop="$fsc->impuesto->all()"}
-                  {if condition="$value->is_default()"}
-                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                  {/if}
+                  <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
                </select>
             </td>
@@ -190,9 +182,9 @@
       <tr>
          <td>{$value->codfamilia}</td>
          {if condition="$value->bloqueado"}
-            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td class="locked"><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {else}
-            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
          <td>{$value->equivalencia}</td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp()} &euro;</span></td>

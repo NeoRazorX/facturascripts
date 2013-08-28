@@ -30,11 +30,11 @@
             <td><input type="text" name="cifnif" value="" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->pais->url()}">País</a>:</td>
             <td>
                <select name="pais">
                {loop="$fsc->pais->all()"}
-                  <option value="{$value->codpais}">{$value->nombre}</option>
+                  <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                {/loop}
                </select>
             </td>
@@ -49,7 +49,7 @@
          </tr>
          <tr>
             <td align="right">Código postal:</td>
-            <td><input type="text" name="codpostal" size="6" autocomplete="off"/></td>
+            <td><input type="text" name="codpostal" size="6" autocomplete="off" value="{$fsc->empresa->codpostal}"/></td>
          </tr>
          <tr>
             <td align="right">Dirección:</td>
@@ -75,7 +75,7 @@
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td><a href="{$value->url()}">{$value->codproveedor}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codproveedor}</a></td>
          <td>{$value->nombre}</td>
          <td>{$value->cifnif}</td>
          <td>{$value->observaciones_resume()}</td>

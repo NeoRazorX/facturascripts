@@ -59,6 +59,7 @@ else
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);
       raintpl::configure('tpl_dir', 'view/');
+      raintpl::configure('path_replace', FALSE);
       
       /// ¿Se puede escribir sobre la carpeta temporal?
       if( file_exists('tmp/test') )
@@ -67,7 +68,7 @@ else
          raintpl::configure('cache_dir', 'tmp/');
       else
          die('No se puede escribir sobre la carpeta temporal (la carpeta tmp de FacturaScripts). Consulta la
-            <a target="_blank" href="http://code.google.com/p/facturascripts">documentaci&oacute;n</a>.');
+            <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5215f20918c088832df79fe9">documentaci&oacute;n</a>.');
       
       $tpl = new RainTPL();
       $tpl->assign('fsc', $fsc);

@@ -60,7 +60,7 @@
       </tr>
       {loop="$fsc->ejercicio->all()"}
       <tr>
-         <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
          <td align="center">{$value->fechainicio}</td>
          <td align="center">{$value->fechafin}</td>
          <td align="right">{$value->estado}</td>

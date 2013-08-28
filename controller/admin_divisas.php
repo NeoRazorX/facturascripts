@@ -31,7 +31,7 @@ class admin_divisas extends fs_controller
    protected function process()
    {
       $this->divisa = new divisa();
-      $this->buttons[] = new fs_button('b_nueva_divisa', 'nueva');
+      $this->buttons[] = new fs_button_img('b_nueva_divisa', 'nueva');
       
       if( isset($_POST['coddivisa']) )
       {

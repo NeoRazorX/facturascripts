@@ -57,7 +57,7 @@ class contabilidad_asiento extends fs_controller
       else if( $this->asiento )
       {
          $this->page->title = 'Asiento: '.$this->asiento->numero;
-         $this->buttons[] = new fs_button('b_eliminar_asiento', 'eliminar', '#', 'remove', 'img/trash.png');
+         $this->buttons[] = new fs_button_img('b_eliminar_asiento', 'eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_POST['fecha']) AND $this->asiento->editable )
             $this->modificar();

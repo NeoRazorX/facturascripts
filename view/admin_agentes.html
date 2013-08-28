@@ -59,8 +59,8 @@
       </tr>
       {loop="$fsc->agente->all()"}
       <tr>
-         <td><a href="{$value->url()}">{$value->codagente}</a></td>
-         <td><a href="{$value->url()}">{$value->get_fullname()}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codagente}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->get_fullname()}</a></td>
          <td align="center">{$value->dnicif}</td>
          <td align="right">{$value->telefono}</td>
       </tr>

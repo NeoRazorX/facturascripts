@@ -76,7 +76,7 @@
    <form action="{$fsc->factura->url()}" method="post">
       <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
-         <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
+         <a class="link" href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
          <span>
             <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
@@ -96,7 +96,7 @@
       </div>
       {if condition="$fsc->agente"}
       <div class="bloque">
-         Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+         Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
       </div>
       {/if}
       <div>
@@ -121,11 +121,11 @@
       {loop="$fsc->factura->get_lineas()"}
       <tr>
          <td>
-            <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+            <a class="link" href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
             {$value->albaran_numero()}
          </td>
          <td>
-            <a href="{$value->articulo_url()}">{$value->referencia}</a>
+            <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}
          </td>
          <td align="right">{$value->cantidad}</td>
@@ -181,6 +181,10 @@
       </td>
    </tr>
 </table>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
 {/if}
 
 {include="footer"}

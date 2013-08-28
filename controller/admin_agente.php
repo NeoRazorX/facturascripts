@@ -73,7 +73,7 @@ class admin_agente extends fs_controller
          $this->page->title .= ' ' . $this->agente->codagente;
          
          if($this->user->codagente != $this->agente->codagente)
-            $this->buttons[] = new fs_button('b_delete_agente', 'eliminar', '#', 'remove', 'img/trash.png');
+            $this->buttons[] = new fs_button_img('b_delete_agente', 'eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);

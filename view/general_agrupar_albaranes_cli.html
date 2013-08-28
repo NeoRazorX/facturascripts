@@ -43,7 +43,7 @@
       <div class="bloque">
          Hasta: <input type="text" name="hasta" class="tcal" value="{$fsc->hasta}" size="10" maxlength="10"/>
       </div>
-      <input type="submit" value="buscar" onclick="this.disabled=true;this.form.submit();"/>
+      <input class="search" type="image" src="view/img/zoom2.png" alt="buscar" onclick="this.disabled=true;this.form.submit();"/>
    </form>
 </div>
 
@@ -81,7 +81,7 @@
          <tr>
             <td>
                <input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/>
-               <a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}
+               <a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}
             </td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$value->show_neto()} €</td>

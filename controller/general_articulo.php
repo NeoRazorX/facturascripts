@@ -152,8 +152,7 @@ class general_articulo extends fs_controller
       {
          $this->page->title = $this->articulo->referencia;
          $this->buttons[] = new fs_button('b_imagen', 'imagen');
-         $this->buttons[] = new fs_button('b_eliminar_articulo', 'eliminar',
-                 '#', 'remove', 'img/trash.png', '-');
+         $this->buttons[] = new fs_button_img('b_eliminar_articulo', 'eliminar', 'trash.png', '#', TRUE);
          
          if($this->articulo->bloqueado)
             $this->new_error_msg("Este artículo está bloqueado.");

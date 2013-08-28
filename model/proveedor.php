@@ -304,9 +304,9 @@ class proveedor extends fs_model
          $this->fax = '';
          $this->email = '';
          $this->web = '';
-         $this->codserie = NULL;
-         $this->coddivisa = NULL;
-         $this->codpago = NULL;
+         $this->codserie = $this->default_items->codserie();
+         $this->coddivisa = $this->default_items->coddivisa();
+         $this->codpago = $this->default_items->codpago();
          $this->observaciones = '';
          $this->tipoidfiscal = 'NIF';
       }

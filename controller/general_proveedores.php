@@ -35,7 +35,7 @@ class general_proveedores extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button('b_nuevo_proveedor', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_proveedor', 'nuevo');
       $this->pais = new pais();
       $this->proveedor = new proveedor();
       

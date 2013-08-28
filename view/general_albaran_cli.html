@@ -272,7 +272,7 @@
          </select>
          <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
          <label for="cb_con_stock">sólo con stock</label>
-         <input type="submit" value="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>
    <div id="search_results"></div>
@@ -298,7 +298,7 @@
    <div class="rounded">
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
-         <a href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
+         <a class="link" href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
          <select name="cliente">
             {loop="$fsc->cliente->all_full()"}
                {if condition="$value->codcliente==$fsc->albaran->codcliente"}
@@ -309,7 +309,7 @@
             {/loop}
          </select>
          {else}
-         <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
+         <a class="link" href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
          {/if}
          <span>
             <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
@@ -338,7 +338,7 @@
       </div>
       {if condition="$fsc->agente"}
       <div class="bloque">
-         Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+         Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
       </div>
       {/if}
       <table width="100%">
@@ -368,7 +368,7 @@
          {loop="$fsc->albaran->get_lineas()"}
          <tr id="linea_{$counter}">
             <td>
-               <a href="{$value->articulo_url()}">{$value->referencia}</a>
+               <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
                <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
             </td>
             <td>
@@ -414,7 +414,7 @@
          <div class="new_line"><a name="new_line" href="#" id="b_new_line">Añadir artículo...</a></div>
       {/if}
       <br/><br/>
-      <table class="list">
+      <table width="100%">
          <tr>
             <td rowspan="2">
                <input type="button" value="deshacer" onclick="location.reload();"/>
@@ -459,7 +459,7 @@
          </tr>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
-            <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$value->show_pvp()} €</td>
             <td align="right">{$value->show_dto()} %</td>
@@ -480,6 +480,10 @@
    </div>
 {/if}
 </form>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
 {/if}
 
 {include="footer"}

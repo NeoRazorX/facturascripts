@@ -23,7 +23,7 @@
             <td><input type="password" name="npassword"  size="12" maxlength="12"/></td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->agente->url()}">Agente</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->agente->url()}">Agente</a>:</td>
             <td>
                <select name="ncodagente">
                   <option value="">- ninguno -</option>
@@ -60,7 +60,7 @@
       </tr>
       {loop="$fsc->user->all()"}
       <tr>
-         <td><a href="{$value->url()}">{$value->nick}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->nick}</a></td>
          <td>{$value->get_agente_fullname()}</td>
          <td align="center">{if condition="$value->admin"}Si{else}-{/if}</td>
          <td align="center">{$value->last_ip}</td>

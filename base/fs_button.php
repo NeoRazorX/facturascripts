@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,36 +22,54 @@ class fs_button
    public $id;
    public $value;
    public $href;
-   public $class;
-   public $img;
-   public $alt;
    public $newpage;
    
-   public function __construct($id, $value, $href='#', $class='button', $img='img/add.png', $alt='+', $np=FALSE)
+   public function __construct($id, $value, $href='#', $np=FALSE)
    {
       $this->id = $id;
       $this->value = $value;
       $this->href = $href;
-      $this->class = $class;
-      $this->img = $img;
-      $this->alt = $alt;
       $this->newpage = $np;
    }
    
    public function HTML()
    {
-      if($this->class != '')
-         $class = " class='".$this->class."'";
+      if($this->newpage)
+         $target = " target='_blank'";
       else
-         $class = " class='button'";
+         $target = '';
+      
+      return "<a id='".$this->id."' class='btn'".$target." href='".$this->href."'>".$this->value."</a>";
+   }
+}
+
+class fs_button_img extends fs_button
+{
+   public $img;
+   public $remove;
+   
+   public function __construct($id, $value, $img='add.png', $href='#', $remove=FALSE, $np=FALSE)
+   {
+      parent::__construct($id, $value, $href, $np);
+      
+      $this->img = $img;
+      $this->remove = $remove;
+   }
+   
+   public function HTML()
+   {
+      if($this->remove)
+         $class = " class='remove'";
+      else
+         $class = " class='btn_img'";
       
       if($this->newpage)
          $target = " target='_blank'";
       else
          $target = '';
       
-      return "<a id='".$this->id."'".$class.$target." href='".$this->href.
-         "'><img src='view/".$this->img."' alt='".$this->alt."'/> ".$this->value."</a>";
+      return "<a id='".$this->id."'".$class.$target." href='".$this->href."'>".
+              "<img src='view/img/".$this->img."' alt='".$this->img."'/> ".$this->value."</a>";
    }
 }
 

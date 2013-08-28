@@ -21,14 +21,19 @@ div#header_folders a, div#header_user a.button {
    padding-bottom: 5px;
 }
 
-div#header_buttons a.button, div#header_buttons a.remove {
+div#header_buttons a.btn {
+   padding-top: 4px;
+   padding-bottom: 4px;
+}
+
+div#header_buttons a.btn_img, div#header_buttons a.remove {
    padding-top: 3px;
    padding-left: 8px;
    padding-right: 8px;
    padding-bottom: 3px;
 }
 
-div.main_div a.remove, input[type='submit'], input[type='button'] {
+input[type='submit'], input[type='button'] {
    padding: 5px;
    padding-bottom: 3px;
 }
@@ -52,6 +57,12 @@ input.cancel {
 
 input.confirm {
    background-color: green;
+}
+
+a.button2, a.delete {
+   padding: 4px;
+   padding-left: 8px;
+   padding-right: 8px;
 }
 
 ul.tpv_familias {

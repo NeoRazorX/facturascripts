@@ -209,8 +209,9 @@ abstract class fs_model
    
    /*
     * Compara tres números en coma flotante usando la función floatcmp().
-    * Compara el primer número con el segundo y con el tercero, si es
-    * igual a alguno de ellos devuelve TRUE.
+    * ATENCIÓN: NO COPARA LOS TRES NÚMERO ENTRE SI, solamente compara el
+    * primero con los otros dos.
+    * Devuelve TRUE si el primer número es igual a alguno de los otros dos.
     */
    public function floatcmp3($f1, $f2, $f3, $precision = 10, $round = FALSE)
    {

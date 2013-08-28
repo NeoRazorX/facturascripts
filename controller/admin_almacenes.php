@@ -35,7 +35,7 @@ class admin_almacenes extends fs_controller
       $this->almacen = new almacen();
       $this->pais = new pais();
       
-      $this->buttons[] = new fs_button('b_nuevo_almacen', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_almacen', 'nuevo');
       
       if( isset($_POST['scodalmacen']) )
       {

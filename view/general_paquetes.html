@@ -104,7 +104,7 @@
       <h1>Buscar artículos</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
-         <input type="submit" value="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
       <div id="search_results"></div>
    </form>
@@ -114,7 +114,7 @@
    <h1>Paquetes:</h1>
    <ul class="horizontal">
       {loop="$fsc->paquete->all()"}
-      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a class="link" href="{$value->url()}">{$value->referencia}</a></li>
       {else}
       <li>No hay paquetes creados. Pulsa el botón <b>Nuevo</b> para crear uno.</li>
       {/loop}
@@ -125,14 +125,14 @@
    <h1>
       Cesta:
       <span>
-         <a id="b_buscar_articulos" href="#">añadir...</a> |
-         <a href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a> |
+         <a class="button2" id="b_buscar_articulos" href="#">añadir...</a>
+         <a class="button2" href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a>
          <a class="delete" href="{$fsc->url()}&cleancache=TRUE">vaciar</a>
       </span>
    </h1>
    <ul class="horizontal">
       {loop="$fsc->cache_paquete->articulos"}
-      <li><a href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a class="link" href="{$value->url()}">{$value->referencia}</a></li>
       {else}
       <li>No hay artículos en la cesta. Los paquetes se crean a partir de los artículos que hay en la cesta.</li>
       {/loop}

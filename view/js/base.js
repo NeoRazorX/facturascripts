@@ -237,6 +237,26 @@ function fs_show_popup(id, top)
    });
 }
 
+function fs_resize_popup(id, top)
+{
+   var pleft = ($(window).width() - $("#"+id).outerWidth())/2;
+   if( typeof(top) == 'undefined' )
+      var ptop = ($(window).height() - $("#"+id).outerHeight())/2;
+   else
+      var ptop = top;
+   
+   $("#"+id).css({
+      left: pleft,
+      top: ptop
+   });
+   
+   $("#b_close_popup").css({
+      left: pleft - 15,
+      top: ptop - 10,
+      display: 'block'
+   });
+}
+
 function fs_hide_popups()
 {
    $("#b_close_popup").hide();

@@ -94,7 +94,7 @@
             <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
             <td>{$value.model}</td>
             <td>{$value.ejercicio}</td>
-            <td><a href="{$value.url}">{$value.id}</a></td>
+            <td><a class="link" href="{$value.url}">{$value.id}</a></td>
             <td align="right">{$value.fecha}</td>
          </tr>
          {else}
@@ -107,7 +107,7 @@
             {if condition="$value.selected"}
                <a class="actual" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
             {else}
-               <a href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+               <a class="link" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
             {/if}
          {/loop}
       </div>

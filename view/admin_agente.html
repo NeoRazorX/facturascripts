@@ -45,6 +45,7 @@
       <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
+   <br/><br/>
    <table class="list">
       <tr>
          <th></th>
@@ -57,7 +58,7 @@
       {loop="$fsc->listado"}
       <tr>
          <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>
@@ -87,6 +88,7 @@
       <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="selected">Albaranes de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
+   <br/><br/>
    <table class="list">
       <tr>
          <th></th>
@@ -99,7 +101,7 @@
       {loop="$fsc->listado"}
       <tr>
          <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+         <td><a  class="link"href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>
@@ -129,6 +131,7 @@
       <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado" class="selected">Caja</a>
    </div>
+   <br/><br/>
    <table class="list">
       <tr>
          <th>Caja</th>
@@ -166,6 +169,10 @@
       </tr>
    </table>
    {/if}
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}
 

@@ -353,6 +353,33 @@ class linea_albaran_proveedor extends fs_model
       return $linealist;
    }
    
+   public function search_from_proveedor($codproveedor, $query='', $offset=0)
+   {
+      $linealist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idalbaran IN
+         (SELECT idalbaran FROM albaranesprov WHERE codproveedor = ".$this->var2str($codproveedor).") AND ";
+      if( is_numeric($query) )
+      {
+         $sql .= "(referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%')";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "(lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%')";
+      }
+      $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_albaran_proveedor($l);
+      }
+      return $linealist;
+   }
+   
    public function count_by_articulo()
    {
       $num = 0;

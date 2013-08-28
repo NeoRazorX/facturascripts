@@ -16,8 +16,8 @@
       // Create the data table.
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'día');
-      data.addColumn('number', '€ clientes');
-      data.addColumn('number', '€ proveedores');
+      data.addColumn('number', 'ventas €');
+      data.addColumn('number', 'compras €');
       data.addRows([
       {loop="$fsc->stats_last_days()"}
          ['{$value['day']}', {$value['total_cli']}, {$value['total_pro']}],
@@ -31,8 +31,8 @@
       // Create the data table.
       var data2 = new google.visualization.DataTable();
       data2.addColumn('string', 'mes');
-      data2.addColumn('number', '€ clientes');
-      data2.addColumn('number', '€ proveedores');
+      data2.addColumn('number', 'ventas €');
+      data2.addColumn('number', 'compras €');
       data2.addRows([
       {loop="$fsc->stats_last_months()"}
          ['{$value['month']}', {$value['total_cli']}, {$value['total_pro']}],
@@ -46,8 +46,8 @@
       // Create the data table.
       var data3 = new google.visualization.DataTable();
       data3.addColumn('string', 'año');
-      data3.addColumn('number', '€ clientes');
-      data3.addColumn('number', '€ proveedores');
+      data3.addColumn('number', 'ventas €');
+      data3.addColumn('number', 'compras €');
       data3.addRows([
       {loop="$fsc->stats_last_years()"}
          ['{$value['year']}', {$value['total_cli']}, {$value['total_pro']}],

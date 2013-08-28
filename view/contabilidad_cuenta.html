@@ -10,7 +10,7 @@
       </tr>
       <tr>
          <td>{$fsc->cuenta->descripcion}</td>
-         <td align="center"><a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
+         <td align="center"><a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
          <td align="right">{$fsc->cuenta->idcuentaesp}</td>
       </tr>
    </table>
@@ -25,12 +25,16 @@
       </tr>
       {loop="$fsc->cuenta->get_subcuentas()"}
       <tr>
-         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
          <td align="right">{$value->show_saldo()} €</td>
       </tr>
       {/loop}
    </table>
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}
 

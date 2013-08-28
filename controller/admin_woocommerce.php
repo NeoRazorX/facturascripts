@@ -33,7 +33,7 @@ class admin_woocommerce extends fs_controller
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    protected function process()
@@ -108,11 +108,16 @@ class admin_woocommerce extends fs_controller
             if( isset($_GET['sync']) )
                $this->woo_sync();
             else
-               $this->buttons[] = new fs_button('b_woo_sync', 'Sincronizar',
-                       $this->url().'&sync=TRUE', 'button', 'img/tools.png');
+               $this->buttons[] = new fs_button_img('b_woo_sync', 'Sincronizar', 'tools.png', $this->url().'&sync=TRUE');
          }
          else
             $this->new_error_msg('Error al conectar. '.$this->mysql->last_error());
+      }
+      else
+      {
+         $this->new_advice('<a target="_blank" href="http://www.woothemes.com/woocommerce/">WooCommerce</a>
+            es el plugin para wordpress que sirve para montar una pequeña tienda online.
+            Introduce los datos de la base de datos de wordpress para empezar a sincronizar.');
       }
    }
    

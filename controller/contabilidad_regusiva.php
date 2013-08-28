@@ -108,7 +108,7 @@ class contabilidad_regusiva extends fs_controller
                $this->new_error_msg('Regularización no encontrada.');
          }
          
-         $this->buttons[] = new fs_button('b_nueva_regiva', 'nueva');
+         $this->buttons[] = new fs_button_img('b_nueva_regiva', 'nueva');
       }
    }
    

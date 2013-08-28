@@ -6,9 +6,9 @@
    <meta name="description" content="Facturación y contabilidad fácil, libre y con actualizaciones constantes.
          Es software libre bajo licencia GNU/AGPL." />
    <meta name="keywords" content="facturascripts, facturación, contabilidad, abanq, eneboo, facturalux, facturaplus"/>
-   <link rel="shortcut icon" href="../img/favicon.ico" />
-   <link rel="stylesheet" type="text/css" href="../css/login.css" />
-   <script type="text/javascript" src="../js/jquery.js"></script>
+   <link rel="shortcut icon" href="view/img/favicon.ico" />
+   <link rel="stylesheet" type="text/css" href="view/css/login.css" />
+   <script type="text/javascript" src="view/js/jquery.js"></script>
 {if condition="$demo"}
    <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -116,30 +116,7 @@
    </div>
    
    <a name="feedback"></a>
-   <div id="popup_feedback" class="popup" style="display: none;">
-      <h1>Comunidad FacturaScripts</h1>
-      <p>
-         Si tienes dudas, problemas o sugerencias, puedes contactar conmigo
-         a través de la <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>.
-         Te contestaré lo antes posible.
-      </p>
-      <br/>
-      <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
-         <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
-         <div class="etiquetas">
-            <span>Elige una opción:</span>
-            <input id="feedback_question" type="radio" name="feedback_type" value="question" checked="checked">
-            <label for="feedback_question">Preguntar</label>
-            <input id="feedback_problem" type="radio" name="feedback_type" value="error">
-            <label for="feedback_problem">Informar de un error</label>
-            <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
-            <label for="feedback_idea">Aportar una idea</label>
-         </div>
-         <textarea name="feedback_text" rows="6">{$fsc->empresa->email_firma}</textarea>
-         <input type="text" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
-         <input type="submit" value="enviar"/>
-      </form>
-   </div>
+   {include="feedback"}
    
    <a name="news"></a>
    <div class="popup" id="popup_news" style="display: none;">

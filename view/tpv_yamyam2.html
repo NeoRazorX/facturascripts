@@ -234,7 +234,7 @@
                   </td>
                </tr>
                <tr>
-                  <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
+                  <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
                   <td>
                      <select name="cliente">
                         {loop="$fsc->cliente->all_full()"}
@@ -250,7 +250,7 @@
                   </td>
                </tr>
                <tr>
-                  <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
+                  <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
                   <td>
                      <select name="almacen">
                         {loop="$fsc->almacen->all()"}
@@ -264,7 +264,7 @@
                   </td>
                </tr>
                <tr>
-                  <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
+                  <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
                   <td>
                      <select name="serie">
                         {loop="$fsc->serie->all()"}
@@ -312,7 +312,7 @@
             <div>
                <div class="tpv_total" id="tpv_total">0,00 €</div>
                <div class="bloque">
-                  Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                  Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
                </div>
             </div>
             <table class="list" id="tpv_albaran">
@@ -360,6 +360,9 @@
          </td>
       </tr>
       <tr>
+         <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
          <td><input type="button" class="cancel" value="cancelar" onclick="fs_hide_popups()"/></td>
          <td align="right">
             <input type="submit" class="confirm" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
@@ -378,7 +381,7 @@
          {if condition="$value->articulo->imagen_url()"}
             <br/><img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
          {else}
-            <br/><img src="img/unknown.png" alt="{$value->referencia}"/><br/>
+            <br/><img src="view/img/unknown.png" alt="{$value->referencia}"/><br/>
          {/if}
          {$value->articulo->show_pvp_iva()} €
       </li>
@@ -427,7 +430,7 @@
          {if condition="$value2->imagen_url()"}
             <br/><img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
          {else}
-            <br/><img src="img/unknown.png" alt="{$value2->referencia}"/><br/>
+            <br/><img src="view/img/unknown.png" alt="{$value2->referencia}"/><br/>
          {/if}
          {$value2->show_pvp_iva()} €
       </li>

@@ -66,7 +66,7 @@
             <td>
                <select name="impuesto">
                   {loop="$fsc->impuesto->all()"}
-                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                   {/loop}
                </select>
             </td>
@@ -130,9 +130,9 @@
       {loop="$fsc->articulos"}
       <tr>
          {if condition="$value->bloqueado"}
-            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td class="locked"><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {else}
-            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
          <td>{$value->equivalencia}</td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp()} &euro;</span></td>
@@ -161,6 +161,10 @@
          </td>
       </tr>
    </table>
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}
 

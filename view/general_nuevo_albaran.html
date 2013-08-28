@@ -182,7 +182,7 @@
       desc = Base64.decode(desc);
       $("#tpv_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
-         <a target=\"_blank\" href=\"index.php?page=general_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
+         <a class=\"link\" target=\"_blank\" href=\"index.php?page=general_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
          <td><input type=\"text\" class=\"full\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
          <td align=\"center\"><input type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/>\n\
          <input type=\"text\" id=\"cantidad_"+numlineas+"\" name=\"cantidad_"+numlineas+
@@ -298,7 +298,7 @@
          </select>
          <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
          <label for="cb_con_stock">sólo con stock</label>
-         <input type="submit" value="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>
    <div id="search_results"></div>
@@ -321,7 +321,7 @@
             <td colspan="3"><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
          </tr>
          <tr id="tr_clientes">
-            <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
             <td colspan="3">
                <select name="cliente">
                   {loop="$fsc->cliente->all_full()"}
@@ -337,7 +337,7 @@
             </td>
          </tr>
          <tr id="tr_proveedores">
-            <td align="right"><a href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
             <td colspan="3">
                <select name="proveedor">
                   {loop="$fsc->proveedor->all_full()"}
@@ -353,7 +353,7 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
             <td colspan="3">
                <select name="almacen">
                   {loop="$fsc->almacen->all()"}
@@ -367,7 +367,7 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
             <td colspan="3">
                <select name="serie">
                   {loop="$fsc->serie->all()"}
@@ -427,7 +427,7 @@
    </div>
    <div class="rounded">
       <div class="tpv_total" id="tpv_total">0,00 €</div>
-      <div class="bloque">Agente: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
+      <div class="bloque">Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
       <br/><br/>
       <table class="list" id="tpv_albaran">
          <tr>

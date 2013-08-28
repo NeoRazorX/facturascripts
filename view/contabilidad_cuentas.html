@@ -71,8 +71,8 @@
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
       <tr><td colspan="3">Sin resultados.</td></tr>
@@ -96,7 +96,7 @@
 {else}
 <div class="rounded">
    <div class="select">
-      Resultados de la búsqueda '{$fsc->query}':
+      &nbsp; Resultados de la búsqueda '{$fsc->query}': &nbsp;
       {if condition="$fsc->resultados"}
       <a id="b_show_cuentas" href="#" class="selected">Cuentas</a>
       <a id="b_show_subcuentas" href="#">Subcuentas</a>
@@ -105,6 +105,7 @@
       <a id="b_show_subcuentas" href="#" class="selected">Subcuentas</a>
       {/if}
    </div>
+   <br/><br/>
    <table class="list" id="resultados_cuentas">
       <tr>
          <th align="left">Ejercicio</th>
@@ -114,8 +115,8 @@
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
       <tr><td colspan="3">Sin resultados.</td></tr>
@@ -145,8 +146,8 @@
       {loop="$fsc->resultados2"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
          <td align="right">{$value->show_saldo()} €</td>
       </tr>
       {else}

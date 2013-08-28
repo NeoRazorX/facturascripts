@@ -86,6 +86,13 @@ class admin_pages extends fs_controller
          $this->new_message('Ahora es el momento de <a href="index.php?page=admin_empresa">
             introducir los datos de tu empresa</a>, si todavía no lo has hecho.');
       }
+      else
+      {
+         $this->check_php();
+         
+         $this->new_advice('Desde aquí se activan y desactivan todas las páginas de FacturaScripts.'
+                 . ' <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203ccc1b38d447c66000001">¿Necesitas ayuda?</a>');
+      }
       
       $this->paginas = $this->all_pages();
       $this->load_menu(TRUE);
@@ -135,7 +142,14 @@ class admin_pages extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
+   }
+   
+   private function check_php()
+   {
+      if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
+         $this->new_error_msg('FacturaScripts necesita de php 5.3 o superior,'
+                 . ' y tú tienes php '.phpversion());
    }
 }
 

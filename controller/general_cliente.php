@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/albaran_cliente.php';
 require_once 'model/cliente.php';
 require_once 'model/divisa.php';
 require_once 'model/forma_pago.php';
@@ -25,6 +26,7 @@ require_once 'model/serie.php';
 
 class general_cliente extends fs_controller
 {
+   public $buscar_lineas;
    public $cliente;
    public $divisa;
    public $forma_pago;
@@ -42,15 +44,19 @@ class general_cliente extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_clientes');
-      $this->cliente = new cliente();
       $this->divisa = new divisa();
       $this->forma_pago = new forma_pago();
       $this->pais = new pais();
       $this->serie = new serie();
       
-      if( isset($_POST['coddir']) )
+      if( isset($_POST['buscar_lineas']) )
       {
-         $this->cliente = $this->cliente->get( $_POST['codcliente'] );
+         $this->buscar_lineas();
+      }
+      else if( isset($_POST['coddir']) )
+      {
+         $cliente = new cliente();
+         $this->cliente = $cliente->get( $_POST['codcliente'] );
          $dir = new direccion_cliente();
          if($_POST['coddir'] != '')
             $dir = $dir->get($_POST['coddir']);
@@ -71,7 +77,8 @@ class general_cliente extends fs_controller
       }
       else if( isset($_POST['codcliente']) )
       {
-         $this->cliente = $this->cliente->get( $_POST['codcliente'] );
+         $cliente = new cliente();
+         $this->cliente = $cliente->get( $_POST['codcliente'] );
          $this->cliente->nombre = $_POST['nombre'];
          $this->cliente->nombrecomercial = $_POST['nombrecomercial'];
          $this->cliente->cifnif = $_POST['cifnif'];
@@ -91,15 +98,13 @@ class general_cliente extends fs_controller
       }
       else if( isset($_GET['cod']) )
       {
-         $this->cliente = $this->cliente->get($_GET['cod']);
+         $cliente = new cliente();
+         $this->cliente = $cliente->get($_GET['cod']);
          $this->page->title = $_GET['cod'];
       }
       
-      if( $this->cliente )
+      if($this->cliente)
       {
-         $this->buttons[] = new fs_button('b_direcciones', 'direcciones', '#', 'button', 'img/zoom.png');
-         $this->buttons[] = new fs_button('b_subcuentas', 'subcuentas', '#', 'button', 'img/zoom.png');
-         
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else
@@ -117,13 +122,13 @@ class general_cliente extends fs_controller
          else
             $this->listado = $this->cliente->get_albaranes($this->offset);
       }
-      else
+      else if( !isset($_POST['buscar_lineas']) )
          $this->new_error_msg("¡Cliente no encontrado!");
    }
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function url()
@@ -150,6 +155,16 @@ class general_cliente extends fs_controller
          return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
       else
          return '';
+   }
+   
+   public function buscar_lineas()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_lineas_albaranes_cli';
+      
+      $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
+      $linea = new linea_albaran_cliente();
+      $this->lineas = $linea->search_from_cliente($_POST['codcliente'], $this->buscar_lineas);
    }
 }
 

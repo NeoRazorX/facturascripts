@@ -76,8 +76,7 @@ class informe_errores extends fs_controller
       {
          $mpp = 75;
          
-         $this->buttons[] = new fs_button('b_cancelar', 'cancelar', $this->url().'&cancelar=TRUE',
-              'remove', 'img/remove.png');
+         $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
          
          if( isset($_POST['ajax']) )
          {

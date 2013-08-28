@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'model/albaran_proveedor.php';
 require_once 'model/divisa.php';
 require_once 'model/forma_pago.php';
 require_once 'model/pais.php';
@@ -25,6 +26,7 @@ require_once 'model/serie.php';
 
 class general_proveedor extends fs_controller
 {
+   public $buscar_lineas;
    public $divisa;
    public $forma_pago;
    public $listado;
@@ -47,65 +49,61 @@ class general_proveedor extends fs_controller
       $this->pais = new pais();
       $this->serie = new serie();
       
-      if( isset($_POST['coddir']) )
+      if( isset($_POST['buscar_lineas']) )
       {
-         $this->proveedor = new proveedor();
-         $this->proveedor = $this->proveedor->get($_POST['codproveedor']);
-         if( $this->proveedor )
-         {
-            $direccion = new direccion_proveedor();
-            if($_POST['coddir'] != '')
-               $direccion = $direccion->get($_POST['coddir']);
-            $direccion->apartado = $_POST['apartado'];
-            $direccion->ciudad = $_POST['ciudad'];
-            $direccion->codpais = $_POST['pais'];
-            $direccion->codpostal = $_POST['codpostal'];
-            $direccion->codproveedor = $this->proveedor->codproveedor;
-            $direccion->descripcion = $_POST['descripcion'];
-            $direccion->direccion = $_POST['direccion'];
-            $direccion->direccionppal = isset($_POST['direccionppal']);
-            $direccion->provincia = $_POST['provincia'];
-            if( $direccion->save() )
-               $this->new_message("Dirección guardada correctamente.");
-            else
-               $this->new_error_msg("¡Imposible guardar la dirección!");
-         }
+         $this->buscar_lineas();
+      }
+      else if( isset($_POST['coddir']) )
+      {
+         $proveedor = new proveedor();
+         $this->proveedor = $proveedor->get($_POST['codproveedor']);
+         $direccion = new direccion_proveedor();
+         if($_POST['coddir'] != '')
+            $direccion = $direccion->get($_POST['coddir']);
+         $direccion->apartado = $_POST['apartado'];
+         $direccion->ciudad = $_POST['ciudad'];
+         $direccion->codpais = $_POST['pais'];
+         $direccion->codpostal = $_POST['codpostal'];
+         $direccion->codproveedor = $this->proveedor->codproveedor;
+         $direccion->descripcion = $_POST['descripcion'];
+         $direccion->direccion = $_POST['direccion'];
+         $direccion->direccionppal = isset($_POST['direccionppal']);
+         $direccion->provincia = $_POST['provincia'];
+         if( $direccion->save() )
+            $this->new_message("Dirección guardada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible guardar la dirección!");
       }
       else if( isset($_POST['codproveedor']) )
       {
-         $this->proveedor = new proveedor();
-         $this->proveedor = $this->proveedor->get($_POST['codproveedor']);
-         if( $this->proveedor )
-         {
-            $this->proveedor->nombre = $_POST['nombre'];
-            $this->proveedor->nombrecomercial = $_POST['nombrecomercial'];
-            $this->proveedor->cifnif = $_POST['cifnif'];
-            $this->proveedor->telefono1 = $_POST['telefono1'];
-            $this->proveedor->telefono2 = $_POST['telefono2'];
-            $this->proveedor->fax = $_POST['fax'];
-            $this->proveedor->email = $_POST['email'];
-            $this->proveedor->web = $_POST['web'];
-            $this->proveedor->observaciones = $_POST['observaciones'];
-            $this->proveedor->codserie = $_POST['codserie'];
-            $this->proveedor->codpago = $_POST['codpago'];
-            $this->proveedor->coddivisa = $_POST['coddivisa'];
-            if( $this->proveedor->save() )
-               $this->new_message('Datos del proveedor modificados correctamente.');
-            else
-               $this->new_error_msg('¡Imposible modificar los datos del proveedor!');
-         }
+         $proveedor = new proveedor();
+         $this->proveedor = $proveedor->get($_POST['codproveedor']);
+         $this->proveedor->nombre = $_POST['nombre'];
+         $this->proveedor->nombrecomercial = $_POST['nombrecomercial'];
+         $this->proveedor->cifnif = $_POST['cifnif'];
+         $this->proveedor->telefono1 = $_POST['telefono1'];
+         $this->proveedor->telefono2 = $_POST['telefono2'];
+         $this->proveedor->fax = $_POST['fax'];
+         $this->proveedor->email = $_POST['email'];
+         $this->proveedor->web = $_POST['web'];
+         $this->proveedor->observaciones = $_POST['observaciones'];
+         $this->proveedor->codserie = $_POST['codserie'];
+         $this->proveedor->codpago = $_POST['codpago'];
+         $this->proveedor->coddivisa = $_POST['coddivisa'];
+         if( $this->proveedor->save() )
+            $this->new_message('Datos del proveedor modificados correctamente.');
+         else
+            $this->new_error_msg('¡Imposible modificar los datos del proveedor!');
       }
       else if( isset($_GET['cod']) )
       {
-         $this->proveedor = new proveedor();
-         $this->proveedor = $this->proveedor->get($_GET['cod']);
+         $proveedor = new proveedor();
+         $this->proveedor = $proveedor->get($_GET['cod']);
       }
       
-      if( $this->proveedor )
+      if($this->proveedor)
       {
          $this->page->title = $this->proveedor->codproveedor;
-         $this->buttons[] = new fs_button('b_direcciones', 'direcciones', '#', 'button', 'img/zoom.png');
-         $this->buttons[] = new fs_button('b_subcuentas', 'subcuentas', '#', 'button', 'img/zoom.png');
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
@@ -124,13 +122,13 @@ class general_proveedor extends fs_controller
          else
             $this->listado = $this->proveedor->get_facturas($this->offset);
       }
-      else
+      else if( !isset($_POST['buscar_lineas']) )
          $this->new_error_msg("¡Proveedor no encontrado!");
    }
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function url()
@@ -157,6 +155,16 @@ class general_proveedor extends fs_controller
          return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
       else
          return '';
+   }
+   
+   public function buscar_lineas()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/general_lineas_albaranes_prov';
+      
+      $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
+      $linea = new linea_albaran_proveedor();
+      $this->lineas = $linea->search_from_proveedor($_POST['codproveedor'], $this->buscar_lineas);
    }
 }
 

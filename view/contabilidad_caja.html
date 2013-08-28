@@ -15,7 +15,7 @@
       <tr>
          <td align="center">{$value->fs_id}</td>
          {if condition="$value->agente"}
-         <td align="center"><a href="{$value->agente->url()}">{$value->agente->get_fullname()}</a></td>
+         <td align="center"><a class="link" href="{$value->agente->url()}">{$value->agente->get_fullname()}</a></td>
          {else}
          <td align="center">-</td>
          {/if}

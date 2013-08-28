@@ -35,7 +35,7 @@
 <div class="rounded">
    <ul class="horizontal">
    {loop="$fsc->resultados"}
-      <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
+      <li><a class="link" href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
    {else}
       <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>
    {/loop}

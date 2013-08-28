@@ -23,8 +23,8 @@
    {loop="$fsc->results"}
    <tr>
       {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
-         <a href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
-         <a href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+         <a class="link" href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
+         <a class="link" href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
             {$value->referencia}</a> {$value->descripcion}
       </td>
       <td>{$value->equivalencia}</td>

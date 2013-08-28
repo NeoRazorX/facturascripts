@@ -92,22 +92,18 @@ class contabilidad_factura_prov extends fs_controller
             $this->factura->full_test();
             
             $this->page->title = $this->factura->codigo;
-            $this->buttons[] = new fs_button('b_imprimir', 'imprimir', $this->url()."&imprimir=TRUE",
-                    'button', 'img/print.png', '[]', TRUE);
+            $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png', $this->url()."&imprimir=TRUE", FALSE, TRUE);
             
             if($this->factura->idasiento)
             {
-               $this->buttons[] = new fs_button('b_ver_asiento', 'asiento',
-                       $this->factura->asiento_url(), 'button', 'img/zoom.png');
+               $this->buttons[] = new fs_button('b_ver_asiento', 'asiento', $this->factura->asiento_url());
             }
             else
             {
-               $this->buttons[] = new fs_button('b_gen_asiento', 'generar asiento',
-                       $this->url().'&gen_asiento=TRUE&petid='.$this->random_string(),
-                       'button', 'img/tools.png');
+               $this->buttons[] = new fs_button('b_gen_asiento', 'generar asiento', $this->url().'&gen_asiento=TRUE&petid='.$this->random_string());
             }
             
-            $this->buttons[] = new fs_button('b_eliminar', 'eliminar', '#', 'remove', 'img/trash.png');
+            $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
          }
       }
       else

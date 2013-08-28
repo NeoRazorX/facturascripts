@@ -23,22 +23,22 @@
             <td><input type="text" name="snombre" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
+            <td align="right"><a class="link" href="{$fsc->pais->url()}">País</a>:</td>
             <td>
                <select name="scodpais">
                   {loop="$fsc->pais->all()"}
-                     <option value="{$value->codpais}">{$value->nombre}</option>
+                     <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                   {/loop}
                </select>
             </td>
          </tr>
          <tr>
             <td align="right">Provincia:</td>
-            <td><input type="text" name="sprovincia" autocomplete="off"/></td>
+            <td><input type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/></td>
          </tr>
          <tr>
             <td align="right">Ciudad:</td>
-            <td><input type="text" name="spoblacion" autocomplete="off"/></td>
+            <td><input type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/></td>
          </tr>
          <tr>
             <td align="right">Dirección:</td>
@@ -46,7 +46,7 @@
          </tr>
          <tr>
             <td align="right">Código postal:</td>
-            <td><input type="text" name="scodpostal" autocomplete="off"/></td>
+            <td><input type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/></td>
          </tr>
          <tr>
             <td align="right">Teléfono:</td>
@@ -73,21 +73,12 @@
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
       <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
-      <h1>
-         Código: {$value->codalmacen}
-         <span>
-            {if condition="$counter>0"}
-            <a class="delete" href="{$fsc->url()}&amp;delete={$value->codalmacen}">eliminar</a>
-            {/if}
-            &nbsp;
-            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <h1>Código: {$value->codalmacen}</h1>
       <div class="bloque">
          Nombre: <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
       </div>
       <div class="bloque">
-         <a href="{$fsc->pais->url()}">País</a>:
+         <a class="link" href="{$fsc->pais->url()}">País</a>:
          <select name="scodpais">
          {loop="$fsc->pais->all()"}
             {if condition="$value1->codpais == $value2->codpais"}
@@ -119,6 +110,10 @@
       </div>
       <div class="bloque">
          Contacto: <input type="text" name="scontacto" value="{$value->contacto}" autocomplete="off"/>
+      </div>
+      <div>
+         <a class="delete" href="{$fsc->url()}&amp;delete={$value->codalmacen}">eliminar</a>
+         <input class="pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>
 </div>

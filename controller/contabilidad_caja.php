@@ -52,8 +52,7 @@ class contabilidad_caja extends fs_controller
                $this->new_error_msg("Tienes que ser administrador para poder cerrar la caja desde aquí. ¡Listo!");
          }
          else
-            $this->buttons[] = new fs_button('b_cerrar_caja', 'cerrar caja', $this->url().'&cerrar=TRUE',
-                                             'remove', 'img/remove.png');
+            $this->buttons[] = new fs_button_img('b_cerrar_caja', 'cerrar caja', 'remove.png', $this->url().'&cerrar=TRUE', TRUE);
       }
       
       if( isset($_GET['offset']) )

@@ -5,11 +5,11 @@
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
    <meta name="description" content="FacturaScripts es un software de facturación
          y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
-   <link rel="shortcut icon" href="img/favicon.ico" />
-   <link rel="stylesheet" type="text/css" href="css/{$fsc->css_file}" />
-   <script type="text/javascript" src="js/jquery.js"></script>
-   <script type="text/javascript" src="js/tcal.js"></script>
-   <script type="text/javascript" src="js/base.js"></script>
+   <link rel="shortcut icon" href="view/img/favicon.ico" />
+   <link rel="stylesheet" type="text/css" href="view/css/{$fsc->css_file}" />
+   <script type="text/javascript" src="view/js/jquery.js"></script>
+   <script type="text/javascript" src="view/js/tcal.js"></script>
+   <script type="text/javascript" src="view/js/base.js"></script>
    {if condition="$demo"}
    <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -41,7 +41,7 @@
          </div>
          <div id="header_user">
             <a class="button" href="#" id="b_user_list">{$fsc->user->nick}</a>
-            <a id="fs_exit" href="{$fsc->url()}&logout=TRUE"><img src="img/logout.png" alt="salir" title="cerrar sesión"/></a>
+            <a id="fs_exit" href="{$fsc->url()}&logout=TRUE"><img src="view/img/logout.png" alt="salir" title="cerrar sesión"/></a>
          </div>
       </div>
    </div>
@@ -56,6 +56,11 @@
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
+   {if condition="$fsc->get_advices()"}
+   <div class="advice">
+      <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
+   </div>
+   {/if}
    
    {if condition="$fsc->page->name"}
    <div class="header2">
@@ -63,19 +68,19 @@
          <div id="header_buttons">
             <div id="header_location">
                {if condition="$fsc->is_admin_page()"}
-               <img src="img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
+               <img src="view/img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
                {/if}
-               <a href="{$fsc->url()}"><img src="img/reload.png" alt="r" title="recargar la página"/></a>
+               <a href="{$fsc->url()}"><img src="view/img/reload.png" alt="r" title="recargar la página"/></a>
                {if condition="$fsc->page->show_on_menu"}
                   {if condition="$fsc->page->is_default()"}
-                  <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="img/star_on.png" alt="P" title="página predeterminada"/></a>
+                  <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="view/img/star_on.png" alt="P" title="página predeterminada"/></a>
                   {else}
-                  <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
+                  <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="view/img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
                   {/if}
                {/if}
                &nbsp;
                {$fsc->page->folder} »
-               {if condition="$fsc->ppage"}<a href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »{/if}
+               {if condition="$fsc->ppage"}<a class="link" href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »{/if}
                {$fsc->page->title}
             </div>
             {loop="$fsc->buttons"}{$value->HTML()}{/loop}
@@ -84,7 +89,7 @@
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
                <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off"/>
-               <input type="submit" value="buscar" onclick="this.disabled=true;this.form.submit();"/>
+               <input type="image" src="view/img/zoom2.png" alt="buscar" onclick="this.disabled=true;this.form.submit();"/>
             </form>
             {/if}
          </div>
@@ -94,7 +99,7 @@
    <div class="pages">
       {loop="$fsc->folders()"}
          <div id="folder_{$value}">
-            <img id="folder_{$value}_img" src="img/flecha_submenu.png" alt="*"/>
+            <img id="folder_{$value}_img" src="view/img/flecha_submenu.png" alt="*"/>
             <ul>
             {loop="$fsc->pages($value)"}
                {if condition="$value->showing()"}
@@ -107,7 +112,7 @@
          </div>
       {/loop}
       <div id="user_list">
-         <img id="user_list_img" src="img/flecha_submenu.png" alt="*"/>
+         <img id="user_list_img" src="view/img/flecha_submenu.png" alt="*"/>
          <ul>
             <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
             {if condition="$fsc->user->codagente"}
@@ -128,30 +133,7 @@
    </div>
    <div id="shadow"></div>
    <a id="b_close_popup" href="#" onclick="fs_hide_popups(); return false;">
-      <img src="img/close.png" alt="close"/>
+      <img src="view/img/close.png" alt="close"/>
    </a>
    <div class="main_div">
-      <div id="popup_feedback" class="popup">
-         <h1>Comunidad FacturaScripts</h1>
-         <p>
-            Si tienes dudas, problemas o sugerencias, puedes contactar conmigo
-            a través de la <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>.
-            Te contestaré lo antes posible.
-         </p>
-         <br/>
-         <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
-            <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
-            <div class="etiquetas">
-               <span>Elige una opción:</span>
-               <input id="feedback_question" type="radio" name="feedback_type" value="question" checked="checked">
-               <label for="feedback_question">Preguntar</label>
-               <input id="feedback_problem" type="radio" name="feedback_type" value="error">
-               <label for="feedback_problem">Informar de un error</label>
-               <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
-               <label for="feedback_idea">Aportar una idea</label>
-            </div>
-            <textarea name="feedback_text" rows="12">{$fsc->empresa->email_firma}</textarea>
-            <input type="text" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
-            <input type="submit" value="enviar"/>
-         </form>
-      </div>
+      {include="feedback"}

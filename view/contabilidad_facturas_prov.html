@@ -63,7 +63,7 @@
       {loop="$fsc->resultados"}
       <tr>
          <td align="center">{if condition="$value->idasiento"}A{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>

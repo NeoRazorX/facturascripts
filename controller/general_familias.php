@@ -32,7 +32,7 @@ class general_familias extends fs_controller
    protected function process()
    {
       $this->familia = new familia();
-      $this->buttons[] = new fs_button('b_nueva_familia', 'nueva');
+      $this->buttons[] = new fs_button_img('b_nueva_familia', 'nueva');
       $this->custom_search = TRUE;
       
       if( isset($_POST['ncodfamilia']) )

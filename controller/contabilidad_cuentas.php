@@ -43,8 +43,7 @@ class contabilidad_cuentas extends fs_controller
       $ce = new cuenta_especial();
       $this->cuentas_especiales = $ce->all();
       
-      $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales',
-         '#', '', 'img/tools.png');
+      $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales');
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);

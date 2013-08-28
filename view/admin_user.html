@@ -36,7 +36,7 @@
             Contraseña: <input type="password" name="spassword" size="12" maxlength="12"/>
          </div>
          <div class="bloque">
-            <a href="{$fsc->agente->url()}">Agente</a>:
+            <a class="link" href="{$fsc->agente->url()}">Agente</a>:
             <select name="scodagente">
                <option value="">- ninguno -</option>
                <option value="">-----------</option>
@@ -152,10 +152,12 @@
             </tr>
          </table>
       </div>
-      {else}
-      <div class="advice">Los administradores tienen acceso a cualquier página.</div>
       {/if}
    </form>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
 {/if}
 
 {include="footer"}

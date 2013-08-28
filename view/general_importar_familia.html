@@ -3,8 +3,22 @@
 {if condition="$fsc->familia"}
    {if condition="!$fsc->ready"}
    <script type="text/javascript">
+      var procesar = true;
+      var timeout = setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
       $(document).ready(function() {
-         setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
+         $("#b_pause_import").click(function(event) {
+            event.preventDefault();
+            if(procesar)
+            {
+               clearTimeout(timeout);
+               procesar = false;
+            }
+            else
+            {
+               timeout = setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
+               procesar = true;
+            }
+         });
       });
    </script>
    {/if}

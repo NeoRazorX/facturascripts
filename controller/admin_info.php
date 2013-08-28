@@ -28,8 +28,8 @@ class admin_info extends fs_controller
    
    protected function process()
    {
-      $this->buttons[] = new fs_button('b_clean_cache', 'limpiar la cache',
-              $this->url()."&clean_cache=TRUE", 'remove', 'img/trash.png', '-');
+      $this->buttons[] = new fs_button_img('b_clean_cache', 'limpiar la cache', 'trash.png',
+              $this->url()."&clean_cache=TRUE", TRUE);
       
       if( isset($_GET['clean_cache']) )
       {

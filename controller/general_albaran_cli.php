@@ -94,20 +94,18 @@ class general_albaran_cli extends fs_controller
                $this->generar_factura();
          }
          
-         $this->buttons[] = new fs_button('b_imprimir', 'imprimir',
-                 $this->url()."&imprimir=TRUE", 'button', 'img/print.png', '[]', TRUE);
+         $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png', $this->url()."&imprimir=TRUE", FALSE, TRUE);
          
          if( $this->albaran->ptefactura )
          {
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura',
-                    $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
          }
          else if( isset($this->albaran->idfactura) )
          {
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura',
-                    $this->albaran->factura_url(), 'button', 'img/zoom.png');
+            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url());
          }
-         $this->buttons[] = new fs_button('b_remove_albaran', 'eliminar', '#', 'remove', 'img/trash.png', '-');
+         
+         $this->buttons[] = new fs_button_img('b_remove_albaran', 'eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡Albarán de cliente no encontrado!");

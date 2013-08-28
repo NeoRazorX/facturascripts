@@ -55,7 +55,7 @@
       <h1>Buscar en las líneas</h1>
       <div style="text-align: center;">
          <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
-         <input type="submit" value="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>
    <div id="search_results"></div>
@@ -75,7 +75,7 @@
       {loop="$fsc->resultados"}
       <tr>
          <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$value->show_total()} €</td>
