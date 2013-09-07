@@ -78,6 +78,9 @@ class informe_errores extends fs_controller
          
          $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
          
+         if( isset($_GET['show_page']) )
+            $this->informe['show_page'] = intval($_GET['show_page']);
+         
          if( isset($_POST['ajax']) )
          {
             $this->ajax = TRUE;

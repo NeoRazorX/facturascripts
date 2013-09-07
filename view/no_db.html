@@ -7,8 +7,15 @@
       <link rel="shortcut icon" href="view/img/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="view/css/login.css" />
       <script type="text/javascript" src="view/js/jquery.js"></script>
+      <script type="text/javascript">
+         $(document).ready(function() {
+            $("#popup_feedback").show();
+            $("#feedback_problem").click();
+            document.feedback.feedback_text.focus();
+         });
+      </script>
    </head>
-   <body onload="document.feedback.feedback_text.focus()">
+   <body>
       {if condition="$fsc->get_errors()"}
          <div class="error">
             <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -20,28 +27,6 @@
          </div>
       {/if}
       
-      <div class="popup">
-            <h1>¿Problemas de instalación?</h1>
-            <p>
-               La <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
-               está para ayudarte. Cuéntanos tu problema y te contestaremos lo antes posible ;-)
-            </p>
-            <br/>
-            <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
-               <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
-               <div class="etiquetas">
-                  <span>Elige una opción:</span>
-                  <input id="feedback_question" type="radio" name="feedback_type" value="question">
-                  <label for="feedback_question">Preguntar</label>
-                  <input id="feedback_problem" type="radio" name="feedback_type" value="error" checked="checked">
-                  <label for="feedback_problem">Informar de un error</label>
-                  <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
-                  <label for="feedback_idea">Aportar una idea</label>
-               </div>
-               <textarea name="feedback_text" rows="6"></textarea>
-               <input type="text" name="feedback_email" placeholder="introduce tu email"/>
-               <input type="submit" value="enviar"/>
-            </form>
-      </div>
+      {include="feedback"}
    </body>
 </html>

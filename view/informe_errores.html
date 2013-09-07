@@ -74,9 +74,9 @@
       <div class="paginas">
          {loop="$fsc->all_pages()"}
             {if condition="$value.selected"}
-               <a class="actual" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
             {else}
-               <a href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
             {/if}
          {/loop}
       </div>
@@ -105,9 +105,9 @@
       <div class="paginas">
          {loop="$fsc->all_pages()"}
             {if condition="$value.selected"}
-               <a class="actual" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
             {else}
-               <a class="link" href="#" onclick="load_errors('{$value.page}')">{$value.num}</a>
+               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
             {/if}
          {/loop}
       </div>

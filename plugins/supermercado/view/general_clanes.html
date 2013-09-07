@@ -1,0 +1,22 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Nombre</th>
+      </tr>
+      {loop="$fsc->clan->all()"}
+      <tr>
+         <td>{$value->codigo}</td>
+         <td>{$value->nombre}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="2">Sin resultados.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

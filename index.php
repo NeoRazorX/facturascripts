@@ -37,16 +37,54 @@ else
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
    
+   /// Cargamos la lista de plugins activos
+   $plugins = array();
+   if( file_exists('tmp/enabled_plugins') )
+   {
+      foreach(scandir('tmp/enabled_plugins') as $f)
+      {
+         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+         {
+            if( file_exists('plugins/'.$f) )
+               $plugins[] = $f;
+            else
+               unlink('tmp/enabled_plugins/'.$f);
+         }
+      }
+   }
+   
+   $tpl_dir2 = 'view/';
+   
    /// ¿Qué controlador usar?
    if( isset($_GET['page']) )
    {
-      if( file_exists('controller/'.$_GET['page'].'.php') )
+      /// primero buscamos en los plugins
+      $found = FALSE;
+      foreach($plugins as $plugin)
       {
-         require_once 'controller/'.$_GET['page'].'.php';
-         $fsc = new $_GET['page']();
+         if( file_exists('plugins/'.$plugin.'/controller/'.$_GET['page'].'.php') )
+         {
+            require_once 'plugins/'.$plugin.'/controller/'.$_GET['page'].'.php';
+            $fsc = new $_GET['page']();
+            $found = TRUE;
+            
+            /// seleccionamod la carpeta view del plugin como segundo directorio de templates
+            $tpl_dir2 = 'plugins/'.$plugin.'/view/';
+            
+            break;
+         }
       }
-      else
-         $fsc = new fs_controller();
+      
+      if( !$found )
+      {
+         if( file_exists('controller/'.$_GET['page'].'.php') )
+         {
+            require_once 'controller/'.$_GET['page'].'.php';
+            $fsc = new $_GET['page']();
+         }
+         else
+            $fsc = new fs_controller();
+      }
    }
    else
    {
@@ -54,11 +92,12 @@ else
       $fsc->select_default_page();
    }
    
-   if( $fsc->template )
+   if($fsc->template)
    {
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);
       raintpl::configure('tpl_dir', 'view/');
+      raintpl::configure('tpl_dir2', $tpl_dir2);
       raintpl::configure('path_replace', FALSE);
       
       /// ¿Se puede escribir sobre la carpeta temporal?

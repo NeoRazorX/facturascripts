@@ -31,13 +31,14 @@ abstract class fs_model
 {
    protected $db;
    protected $table_name;
+   protected $base_dir;
    protected $cache;
    protected $default_items;
    
    private static $checked_tables;
    private static $errors;
    
-   public function __construct($name = '')
+   public function __construct($name = '', $basedir = '')
    {
       if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
@@ -45,6 +46,7 @@ abstract class fs_model
          $this->db = new fs_postgresql();
       
       $this->table_name = $name;
+      $this->base_dir = $basedir;
       $this->cache = new fs_cache();
       $this->default_items = new fs_default_items();
       
@@ -323,14 +325,14 @@ abstract class fs_model
          {
             if( !$this->db->exec($consulta) )
             {
-               $this->new_error_msg('Error al comprobar la tabla '.$table_name.'. '.$this->db->last_error() );
+               $this->new_error_msg('Error al comprobar la tabla '.$table_name);
                $done = FALSE;
             }
          }
       }
       else
       {
-         $this->new_error_msg('Error con el xml');
+         $this->new_error_msg('Error con el xml.');
          $done = FALSE;
       }
       
@@ -340,44 +342,51 @@ abstract class fs_model
    /// obtiene las columnas y restricciones del fichero xml para una tabla
    protected function get_xml_table($table_name, &$columnas, &$restricciones)
    {
-      $retorno = TRUE;
+      $retorno = FALSE;
+      $filename = $this->base_dir.'model/table/'.$table_name.'.xml';
       
-      $xml = simplexml_load_file('model/table/'.$table_name.'.xml');
-      if($xml)
+      if( file_exists($filename) )
       {
-         if($xml->columna)
+         $xml = simplexml_load_file($filename);
+         if($xml)
          {
-            $i = 0;
-            foreach($xml->columna as $col)
+            if($xml->columna)
             {
-               $columnas[$i]['nombre'] = $col->nombre;
-               $columnas[$i]['tipo'] = $col->tipo;
-               $columnas[$i]['nulo'] = $col->nulo;
+               $i = 0;
+               foreach($xml->columna as $col)
+               {
+                  $columnas[$i]['nombre'] = $col->nombre;
+                  $columnas[$i]['tipo'] = $col->tipo;
+                  $columnas[$i]['nulo'] = $col->nulo;
+                  
+                  if($col->defecto == '')
+                     $columnas[$i]['defecto'] = NULL;
+                  else
+                     $columnas[$i]['defecto'] = $col->defecto;
+                  
+                  $i++;
+               }
                
-               if($col->defecto == '')
-                  $columnas[$i]['defecto'] = NULL;
-               else
-                  $columnas[$i]['defecto'] = $col->defecto;
-               
-               $i++;
+               /// debe de haber columnas, sino es un fallo
+               $retorno = TRUE;
+            }
+            
+            if($xml->restriccion)
+            {
+               $i = 0;
+               foreach($xml->restriccion as $col)
+               {
+                  $restricciones[$i]['nombre'] = $col->nombre;
+                  $restricciones[$i]['consulta'] = $col->consulta;
+                  $i++;
+               }
             }
          }
-         else /// debe de haber columnas, sino es un fallo
-            $retorno = FALSE;
-         
-         if($xml->restriccion)
-         {
-            $i = 0;
-            foreach($xml->restriccion as $col)
-            {
-               $restricciones[$i]['nombre'] = $col->nombre;
-               $restricciones[$i]['consulta'] = $col->consulta;
-               $i++;
-            }
-         }
+         else
+            $this->new_error_msg('Error al leer el archivo '.$filename);
       }
       else
-         $retorno = FALSE;
+         $this->new_error_msg('Archivo '.$filename.' no encontrado.');
       
       return $retorno;
    }

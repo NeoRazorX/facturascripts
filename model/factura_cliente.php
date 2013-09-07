@@ -1440,7 +1440,7 @@ class factura_cliente extends fs_model
    public function stats_last_months($num = 11)
    {
       $stats = array();
-      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' month'));
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
       
       foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
       {

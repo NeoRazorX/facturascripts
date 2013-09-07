@@ -14,6 +14,8 @@
    <ul class="horizontal">
       {loop="$fsc->top_ventas"}
       <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      {else}
+      <li>Sin resultados.</li>
       {/loop}
    </ul>
 </div>
@@ -23,6 +25,8 @@
    <ul class="horizontal">
       {loop="$fsc->top_compras"}
       <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      {else}
+      <li>Sin resultados.</li>
       {/loop}
    </ul>
 </div>

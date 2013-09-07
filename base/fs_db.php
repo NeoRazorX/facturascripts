@@ -23,6 +23,7 @@ abstract class fs_db
    protected static $t_selects;
    protected static $t_transactions;
    protected static $history;
+   protected static $errors;
    
    public function __construct()
    {
@@ -31,6 +32,7 @@ abstract class fs_db
          self::$t_selects = 0;
          self::$t_transactions = 0;
          self::$history = array();
+         self::$errors = array();
       }
    }
    
@@ -51,8 +53,10 @@ abstract class fs_db
       return self::$history;
    }
    
-   /// devuelve TRUE si php tiene soporte para esta base de datos
-   abstract public function php_support(&$msg);
+   public function get_errors()
+   {
+      return self::$errors;
+   }
    
    /// conecta con la base de datos
    abstract public function connect();
@@ -113,8 +117,6 @@ abstract class fs_db
    
    /// ejecuta una consulta sobre la base de datos
    abstract public function exec($sql);
-   
-   abstract public function last_error();
    
    /// devuelve TRUE si existe la secuencia
    abstract public function sequence_exists($seq);

@@ -21,22 +21,15 @@ require_once 'base/fs_db.php';
 
 class fs_postgresql extends fs_db
 {
-   public function php_support(&$msg)
-   {
-      if( function_exists('pg_connect') )
-         return TRUE;
-      else
-      {
-         $msg = "No tienes instala la extensi&oacute;n de PHP para PostgreSQL.";
-         return FALSE;
-      }
-   }
-   
    /// conecta con la base de datos
    public function connect()
    {
+      $connected = FALSE;
+      
       if(self::$link)
+      {
          $connected = TRUE;
+      }
       else if( function_exists('pg_connect') )
       {
          self::$link = pg_connect('host='.FS_DB_HOST.' dbname='.FS_DB_NAME.
@@ -48,11 +41,9 @@ class fs_postgresql extends fs_db
             /// establecemos el formato de fecha para la conexión
             pg_query(self::$link, "SET DATESTYLE TO ISO, DMY;");
          }
-         else
-            $connected = FALSE;
       }
       else
-         $connected = FALSE;
+         self::$errors[] = 'No tienes instalada la extensión de PHP para PostgreSQL.';
       
       return $connected;
    }
@@ -187,11 +178,6 @@ class fs_postgresql extends fs_db
          self::$t_transactions++;
       }
       return $resultado;
-   }
-   
-   public function last_error()
-   {
-      return pg_errormessage(self::$link);
    }
    
    public function sequence_exists($seq)

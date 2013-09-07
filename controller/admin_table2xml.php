@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,7 +24,7 @@ class admin_table2xml extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_table2xml', 'Tabla a XML', 'admin', TRUE, TRUE);
+      parent::__construct('admin_table2xml', 'Tabla a XML', 'admin', TRUE, FALSE);
    }
    
    protected function process()
@@ -34,11 +34,15 @@ class admin_table2xml extends fs_controller
          $this->template = FALSE; /// desactivamos la renderización del template
          $this->generate_xml($_GET['table']);
       }
+      else
+      {
+         $this->ppage = $this->page->get('admin_info');
+      }
    }
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function all()
@@ -136,4 +140,5 @@ class admin_table2xml extends fs_controller
       echo $this->archivo_xml->asXML();
    }
 }
+
 ?>

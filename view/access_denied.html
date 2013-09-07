@@ -1,17 +1,10 @@
 {include="header"}
 
-<script>
-   (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "//connect.facebook.net/es_ES/all.js#xfbml=1";
-      fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#feedback_problem").click();
+   });
 </script>
-
-<div id="fb-root"></div>
 
 <div class='rounded'>
    <h1>Acceso denegado</h1>
@@ -22,12 +15,10 @@
                <li>No tienes permiso para acceder a esta página.</li>
                <li>Consulta con el administrador.</li>
                <li>
-                  Si crees que es un error de FacturaScripts, no dudes en notificármelo
-                  desde el formulario de aquí abajo.
+                  Si crees que es un error de FacturaScripts, no dudes en notificármelo.
+                  <b>Haz clic en el botón de ayuda</b>, abajo a la derecha y <b>notifícame el error</b>.
                </li>
             </ul>
-            <br/><br/>
-            <div class="fb-comments" data-href="http://www.facturascripts.com" data-width="470" data-num-posts="10"></div>
          </td>
          <td align='right' valign='top'>
             <img src='view/img/big_lock.png' alt="acceso denegado"/>

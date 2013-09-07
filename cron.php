@@ -19,6 +19,9 @@
 
 date_default_timezone_set('Europe/Madrid');
 
+$tiempo = explode(' ', microtime());
+$uptime = $tiempo[1] + $tiempo[0];
+
 /// cargamos las constantes de configuración
 require_once 'config.php';
 if( !defined('FS_DB_TYPE') )
@@ -83,6 +86,7 @@ if( $db->connect() )
 else
    echo "¡Imposible conectar a la base de datos!\n";
 
-echo "\n";
+$tiempo = explode(' ', microtime());
+echo "\nTiempo de ejecución: ".number_format($tiempo[1] + $tiempo[0] - $uptime, 3)." s\n";
 
 ?>

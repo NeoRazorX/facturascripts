@@ -253,9 +253,9 @@ class asiento extends fs_model
             foreach($asientos as $as)
             {
                /// comprobamos las líneas
-               $aux = $this->db->select("SELECT codsubcuenta,debe,haber FROM co_partidas WHERE
-                  idasiento = ".$this->var2str($this->idasiento)."
-                  EXCEPT SELECT codsubcuenta,debe,haber FROM co_partidas
+               $aux = $this->db->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
+                  FROM co_partidas WHERE idasiento = ".$this->var2str($this->idasiento)."
+                  EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
                   WHERE idasiento = ".$this->var2str($as['idasiento']).";");
                if( !$aux )
                {

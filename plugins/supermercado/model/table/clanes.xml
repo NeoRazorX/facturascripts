@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : clanes.xml
+    Description:
+        Estructura de la tabla clanes.
+-->
+<tabla>
+   <columna>
+      <nombre>codclan</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('clanes_codclan_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>nombre</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>clanes_pkey</nombre>
+      <consulta>PRIMARY KEY (codclan)</consulta>
+   </restriccion>
+</tabla>

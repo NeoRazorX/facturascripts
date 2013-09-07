@@ -21,40 +21,31 @@ require_once 'base/fs_db.php';
 
 class fs_mysql extends fs_db
 {
-   private $last_error;
-   
-   public function __construct()
-   {
-      parent::__construct();
-      $this->last_error = FALSE;
-   }
-   
-   public function php_support(&$msg)
-   {
-      if( function_exists('mysqli_connect') )
-         return TRUE;
-      else
-      {
-         $msg = "No tienes instala la extensi&oacute;n de PHP para MySQL.";
-         return FALSE;
-      }
-   }
-   
    /// conecta con la base de datos
    public function connect()
    {
+      $connected = FALSE;
+      
       if(self::$link)
-         $connected = TRUE;
-      else if( function_exists('mysqli_connect') )
       {
-         self::$link = mysqli_connect(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, FS_DB_PORT);
-         if(self::$link)
-            $connected = TRUE;
+         $connected = TRUE;
+      }
+      else if( class_exists('mysqli') )
+      {
+         if(FS_DB_PORT == '5432')
+            $port = 3306;
          else
-            $connected = FALSE;
+            $port = intval(FS_DB_PORT);
+         
+         self::$link = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, $port);
+         
+         if(self::$link->connect_error)
+            self::$link = NULL;
+         else
+            $connected = TRUE;
       }
       else
-         $connected = FALSE;
+         self::$errors[] = 'No tienes instalada la extensión de PHP para MySQL.';
       
       return $connected;
    }
@@ -64,7 +55,7 @@ class fs_mysql extends fs_db
    {
       if(self::$link)
       {
-         $retorno = mysqli_close(self::$link);
+         $retorno = self::$link->close();
          self::$link = NULL;
          return $retorno;
       }
@@ -149,7 +140,7 @@ class fs_mysql extends fs_db
    public function version()
    {
       if(self::$link)
-         return 'MYSQL '.mysqli_get_server_version(self::$link);
+         return 'MYSQL '.self::$link->server_version;
       else
          return FALSE;
    }
@@ -163,16 +154,19 @@ class fs_mysql extends fs_db
       {
          $sql = str_replace('::character varying', '', $sql);
          $sql = str_replace('::integer', '', $sql);
-         
          self::$history[] = $sql;
-         $filas = mysqli_query(self::$link, $sql);
+         
+         $filas = self::$link->query($sql);
          if($filas)
          {
             $resultado = array();
-            while($row = mysqli_fetch_array($filas))
+            while( $row = $filas->fetch_array() )
                $resultado[] = $row;
-            mysqli_free_result($filas);
+            $filas->free();;
          }
+         else
+            self::$errors[] = self::$link->error;
+         
          self::$t_selects++;
       }
       
@@ -187,17 +181,20 @@ class fs_mysql extends fs_db
       {
          $sql = str_replace('::character varying', '', $sql);
          $sql = str_replace('::integer', '', $sql);
-         
          $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
          self::$history[] = $sql;
-         $filas = mysqli_query(self::$link, $sql);
+         
+         $filas = self::$link->query($sql);
          if($filas)
          {
             $resultado = array();
-            while($row = mysqli_fetch_array($filas))
+            while($row = $filas->fetch_array() )
                $resultado[] = $row;
-            mysqli_free_result($filas);
+            $filas->free();
          }
+         else
+            self::$errors[] = self::$link->error;
+         
          self::$t_selects++;
       }
       
@@ -222,54 +219,33 @@ class fs_mysql extends fs_db
          $sql = str_replace('CURRENT_DATE', "'2013-01-01'", $sql);
          $sql = str_replace('::character varying', '', $sql);
          $sql = str_replace('::integer', '', $sql);
-         
          self::$history[] = $sql;
          self::$t_transactions++;
          
          /// desactivamos el autocommit
-         mysqli_autocommit(self::$link, FALSE);
+         self::$link->autocommit(FALSE);
          
-         /// ejecutar multi consulta
-         if( mysqli_multi_query(self::$link, $sql) )
+         if( self::$link->multi_query($sql) )
          {
+            $i = 0;
+            do { $i++; } while ( self::$link->more_results() AND self::$link->next_result() );
+         }
+         
+         if( self::$link->errno )
+            self::$errors[] =  "Error al ejecutar la consulta $i: ".self::$link->error;
+         else
             $resultado = TRUE;
-            
-            do {
-               
-               $aux = mysqli_store_result(self::$link);
-               if($aux)
-                  mysqli_free_result($aux);
-               
-            } while ( mysqli_next_result(self::$link) );
-         }
-         
-         if( mysqli_errno(self::$link) )
-         {
-            $this->last_error = mysqli_error(self::$link);
-            $resultado = FALSE;
-         }
          
          if($resultado)
-            mysqli_commit(self::$link);
+            self::$link->commit();
          else
-            mysqli_rollback(self::$link);
+            self::$link->rollback();
          
          /// reactivamos el autocommit
-         mysqli_autocommit(self::$link, TRUE);
+         self::$link->autocommit(TRUE);
       }
       
       return $resultado;
-   }
-   
-   public function last_error()
-   {
-      $error = '';
-      if($this->last_error)
-      {
-         $error = $this->last_error;
-         $this->last_error = FALSE;
-      }
-      return $error."\n".mysqli_error(self::$link);
    }
    
    public function sequence_exists($seq)
@@ -330,7 +306,7 @@ class fs_mysql extends fs_db
    
    public function escape_string($s)
    {
-      return mysqli_escape_string(self::$link, $s);
+      return self::$link->escape_string($s);
    }
    
    public function date_style()

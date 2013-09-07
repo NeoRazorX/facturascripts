@@ -20,6 +20,7 @@ class RainTPL
      * @var string
      */
    static $tpl_dir = 'tpl/';
+   static $tpl_dir2 = 'tpl/';
    
    /**
      * Cache directory. Is the directory where RainTPL will compile the template and save the cache
@@ -241,7 +242,12 @@ class RainTPL
       {
          $tpl_basename                   = basename( $tpl_name );                                           // template basename
          $tpl_basedir                    = strpos($tpl_name,"/") ? dirname($tpl_name) . '/' : null;         // template basedirectory
-         $tpl_dir                        = self::$tpl_dir . $tpl_basedir;                                   // template directory
+         
+         if( file_exists(self::$tpl_dir2 . $tpl_name . '.' . self::$tpl_ext) )
+            $tpl_dir                     = self::$tpl_dir2 . $tpl_basedir;                                  // template directory
+         else
+            $tpl_dir                     = self::$tpl_dir . $tpl_basedir;                                   // template directory
+         
          $this->tpl['tpl_filename']      = $tpl_dir . $tpl_basename . '.' . self::$tpl_ext;                 // template filename
          $temp_compiled_filename         = self::$cache_dir . $tpl_basename . "." . md5( $tpl_dir . serialize(self::$config_name_sum));
          $this->tpl['compiled_filename'] = $temp_compiled_filename . '.rtpl.php';                           // cache filename
@@ -250,7 +256,7 @@ class RainTPL
          // if the template doesn't exsist throw an error
          if( self::$check_template_update && !file_exists( $this->tpl['tpl_filename'] ) )
          {
-            $e = new RainTpl_NotFoundException( 'Template '. $tpl_basename .' not found!' );
+            $e = new RainTpl_NotFoundException( 'Template '. $this->tpl['tpl_filename'] .' not found!' );
             throw $e->setTemplateFile($this->tpl['tpl_filename']);
          }
          

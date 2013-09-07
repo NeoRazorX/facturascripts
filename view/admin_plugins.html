@@ -1,0 +1,27 @@
+{include="header"}
+
+{if condition="$demo"}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{else}
+   {loop="$fsc->plugins()"}
+   <div class="rounded">
+      <h1>
+         {$value['name']}
+         <span>
+            {if condition="$value['enabled']"}
+            <a class="delete" href="{$fsc->url()}&amp;disable={$value['name']}">Desctivar</a>
+            {else}
+            <a class="button2" href="{$fsc->url()}&amp;enable={$value['name']}">Activar</a>
+            {/if}
+         </span>
+      </h1>
+      <p>{$value['description']}</p>
+   </div>
+   {else}
+   <div class="advice">Ningún plugin encontrado.</div>
+   {/if}
+{/if}
+
+{include="footer"}

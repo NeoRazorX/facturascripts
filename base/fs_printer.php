@@ -25,7 +25,7 @@ class fs_printer
    
    public function __construct($printer = FS_PRINTER)
    {
-      $this->filename = '/tmp/ticket_'.$this->random_string().'.txt';
+      $this->filename = 'tmp/ticket_'.$this->random_string().'.txt';
       $this->file = fopen($this->filename, 'w');
       
       if($printer == '')

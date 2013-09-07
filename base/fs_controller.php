@@ -126,10 +126,6 @@ class fs_controller
       {
          $this->template = 'no_db';
          $this->new_error_msg('¡Imposible conectar con la base de datos!');
-         
-         $msg = '';
-         if( !$this->db->php_support($msg) )
-            $this->new_error_msg($msg);
       }
    }
    
@@ -146,10 +142,12 @@ class fs_controller
    
    public function get_errors()
    {
+      $full = array_merge( $this->errors, $this->db->get_errors() );
+      
       if( isset($this->empresa) )
-         return array_merge($this->errors, $this->empresa->get_errors());
-      else
-         return $this->errors;
+         $full = array_merge( $full, $this->empresa->get_errors() );
+      
+      return $full;
    }
    
    public function new_message($msg=FALSE)
@@ -228,8 +226,7 @@ class fs_controller
                      $this->load_menu();
                   }
                   else
-                     $this->new_error_msg('Imposible guardar los datos de usuario '.
-                             $this->db->last_error() );
+                     $this->new_error_msg('Imposible guardar los datos de usuario.');
                }
                else
                   $this->new_error_msg('¡Contraseña incorrecta!');
@@ -343,7 +340,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13b2';
+      return '0.13b3';
    }
    
    public function select_default_page()
