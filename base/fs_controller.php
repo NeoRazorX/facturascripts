@@ -253,7 +253,8 @@ class fs_controller
             }
             else
             {
-               $this->new_message('¡Cookie no válida!');
+               $this->new_message('¡Cookie no válida! Tú o alguien ha accedido
+                  a esta cuenta desde otro PC.');
                $this->log_out();
             }
          }
@@ -340,7 +341,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13b3';
+      return '0.13b4';
    }
    
    public function select_default_page()

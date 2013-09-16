@@ -1,5 +1,6 @@
 <script type="text/javascript">
    var numlineas = 0;
+   var lcd_txt = '';
    function mostrar_paquete(paq)
    {
       fs_show_popup('paquete_'+paq);
@@ -15,12 +16,16 @@
    }
    function update_lcd(saldo)
    {
-      $.ajax({
-         type: 'POST',
-         url: '{$fsc->url()}',
-         dataType: 'html',
-         data: 'saldo='+saldo
-      });
+      if(saldo != lcd_txt)
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'saldo='+saldo
+         });
+         lcd_txt = saldo;
+      }
    }
    function recalcular()
    {

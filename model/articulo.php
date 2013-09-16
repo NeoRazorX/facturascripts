@@ -50,9 +50,11 @@ class articulo extends fs_model
    
    private $imagen;
    private $has_imagen;
+   private $exists;
    
    private static $impuestos;
    private static $search_tags;
+   private static $cleaned_cache;
    
    public function __construct($a=FALSE)
    {
@@ -88,6 +90,8 @@ class articulo extends fs_model
             $this->has_imagen = TRUE;
          else
             $this->has_imagen = FALSE;
+         
+         $this->exists = TRUE;
       }
       else
       {
@@ -112,7 +116,9 @@ class articulo extends fs_model
          
          $this->imagen = NULL;
          $this->has_imagen = FALSE;
+         $this->exists = FALSE;
       }
+      
       $this->pvp_ant = 0;
       $this->iva = NULL;
    }
@@ -166,6 +172,8 @@ class articulo extends fs_model
    
    public function get($ref)
    {
+      $ref = str_replace(' ', '_', trim($ref));
+      
       $art = $this->db->select("SELECT * FROM ".$this->table_name.
               " WHERE referencia = ".$this->var2str($ref).";");
       if($art)
@@ -435,11 +443,7 @@ class articulo extends fs_model
    
    public function exists()
    {
-      if( is_null($this->referencia) )
-         return FALSE;
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE referencia = ".$this->var2str($this->referencia).";");
+      return $this->exists;
    }
    
    public function test()
@@ -536,7 +540,14 @@ class articulo extends fs_model
                ".$this->var2str($this->observaciones).",".$this->bin2str($this->imagen).",
                ".$this->var2str($this->publico).");";
          }
-         return $this->db->exec($sql);
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->exists = TRUE;
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
       else
          return FALSE;
@@ -547,8 +558,14 @@ class articulo extends fs_model
       $this->clean_cache();
       $this->clean_image_cache();
       
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE referencia = ".$this->var2str($this->referencia).";");
+      $sql = "DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";";
+      if( $this->db->exec($sql) )
+      {
+         $this->exists = FALSE;
+         return TRUE;
+      }
+      else
+         return FALSE;
    }
    
    private function new_search_tag($tag)
@@ -633,17 +650,26 @@ class articulo extends fs_model
    
    private function clean_cache()
    {
-      /// obtenemos los datos de memcache
-      $this->get_search_tags();
-      
-      if( self::$search_tags )
+      /*
+       * Durante las actualizaciones masivas de artículos se ejecuta esta
+       * función cada vez que se guarda un artículo, por eso es mejor limitarla.
+       */
+      if( !self::$cleaned_cache )
       {
-         foreach(self::$search_tags as $value)
-            $this->cache->delete('articulos_search_'.$value['tag']);
+         /// obtenemos los datos de memcache
+         $this->get_search_tags();
+         
+         if( self::$search_tags )
+         {
+            foreach(self::$search_tags as $value)
+               $this->cache->delete('articulos_search_'.$value['tag']);
+         }
+         
+         /// eliminamos también la cache de tpv_yamyam
+         $this->cache->delete('tpv_yamyam_articulos');
+         
+         self::$cleaned_cache = TRUE;
       }
-      
-      /// eliminamos también la cache de tpv_yamyam
-      $this->cache->delete('tpv_yamyam_articulos');
    }
    
    public function search($query, $offset=0, $codfamilia='', $con_stock=FALSE)
@@ -791,8 +817,8 @@ class articulo extends fs_model
       
       $aux = $this->db->select("SELECT GREATEST( COUNT(referencia), 0) as art,
          GREATEST( SUM(case when stockfis > 0 then 1 else 0 end), 0) as stock,
-         GREATEST( SUM(bloqueado::integer), 0) as bloq,
-         GREATEST( SUM(publico::integer), 0) as publi,
+         GREATEST( SUM(".$this->db->sql_to_int('bloqueado')."), 0) as bloq,
+         GREATEST( SUM(".$this->db->sql_to_int('publico')."), 0) as publi,
          MAX(factualizado) as factualizado FROM articulos;");
       if($aux)
       {

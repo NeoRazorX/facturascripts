@@ -364,13 +364,13 @@
             <th align="right">Importe</th>
          </tr>
          <tr>
-            <td><a href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
+            <td><a class='link' href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
             <td align="center">{$fsc->asiento->fecha}</td>
             <td align="center">{$fsc->asiento->concepto}</td>
             <td align="center">
                {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
                {if condition="$fsc->asiento->documento"}
-                  <a href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+                  <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
                {else}
                   -
                {/if}
@@ -395,7 +395,7 @@
          {loop="$fsc->asiento->get_partidas()"}
          <tr>
             <td>{$value->concepto}</td>
-            <td align="center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+            <td align="center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
             <td align="right"><span title="{$value->debe}">{$value->show_debe()} €</span></td>
             <td align="right"><span title="{$value->haber}">{$value->show_haber()} €</span></td>
             <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
@@ -404,7 +404,7 @@
             </td>
             <td align="center">
                {if condition="$value->codcontrapartida"}
-               <a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+               <a class='link' href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
                {else}
                -
                {/if}

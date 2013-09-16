@@ -215,6 +215,11 @@ class fs_postgresql extends fs_db
       return 'd-m-Y';
    }
    
+   public function sql_to_int($col)
+   {
+      return $col.'::integer';
+   }
+   
    /*
     * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.

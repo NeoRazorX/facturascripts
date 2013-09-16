@@ -131,6 +131,8 @@ abstract class fs_db
    
    abstract public function date_style();
    
+   abstract public function sql_to_int($col);
+   
    /*
     * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.

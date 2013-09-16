@@ -18,6 +18,7 @@
  */
 
 require_once 'model/albaran_proveedor.php';
+require_once 'model/articulo.php';
 
 class general_albaranes_prov extends fs_controller
 {
@@ -50,19 +51,9 @@ class general_albaranes_prov extends fs_controller
          
          $this->buttons[] = new fs_button_img('b_buscar_lineas', 'lineas', 'zoom.png');
          
-         if( isset($_GET['delete']) )
+         if( isset($_POST['delete']) )
          {
-            $alb1 = new albaran_proveedor();
-            $alb1 = $alb1->get($_GET['delete']);
-            if($alb1)
-            {
-               if( $alb1->delete() )
-                  $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible borrar el albarán!");
-            }
-            else
-               $this->new_error_msg("¡Albarán no encontrado!");
+            $this->delete_albaran();
          }
          
          if( isset($_GET['offset']) )
@@ -79,7 +70,7 @@ class general_albaranes_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function anterior_url()
@@ -110,6 +101,37 @@ class general_albaranes_prov extends fs_controller
       $this->buscar_lineas = $_POST['buscar_lineas'];
       $linea = new linea_albaran_proveedor();
       $this->lineas = $linea->search($this->buscar_lineas);
+   }
+   
+   private function delete_albaran()
+   {
+      $alb1 = new albaran_proveedor();
+      $alb1 = $alb1->get($_POST['delete']);
+      if($alb1)
+      {
+         /// ¿Actualizamos el stock de los artículos?
+         if( isset($_POST['stock']) )
+         {
+            $articulo = new articulo();
+            
+            foreach($alb1->get_lineas() as $linea)
+            {
+               $art0 = $articulo->get($linea->referencia);
+               if($art0)
+               {
+                  $art0->sum_stock($alb1->codalmacen, 0 - $linea->cantidad);
+                  $art0->save();
+               }
+            }
+         }
+         
+         if( $alb1->delete() )
+            $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible borrar el albarán!");
+      }
+      else
+         $this->new_error_msg("¡Albarán no encontrado!");
    }
 }
 

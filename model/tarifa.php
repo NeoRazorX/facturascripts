@@ -64,7 +64,7 @@ class tarifa extends fs_model
    
    public function get_new_codigo()
    {
-      $cod = $this->db->select("SELECT MAX(codtarifa::integer) as cod FROM ".$this->table_name.";");
+      $cod = $this->db->select("SELECT MAX(".$this->db->sql_to_int('codtarifa').") as cod FROM ".$this->table_name.";");
       if($cod)
          return sprintf('%06s', (1 + intval($cod[0]['cod'])));
       else

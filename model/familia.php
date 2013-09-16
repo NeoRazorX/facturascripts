@@ -176,8 +176,8 @@ class familia extends fs_model
    {
       $aux = $this->db->select("SELECT GREATEST( COUNT(referencia), 0) as art,
          GREATEST( SUM(case when stockfis > 0 then 1 else 0 end), 0) as stock,
-         GREATEST( SUM(bloqueado::integer), 0) as bloq,
-         GREATEST( SUM(publico::integer), 0) as publi,
+         GREATEST( SUM(".$this->db->sql_to_int('bloqueado')."), 0) as bloq,
+         GREATEST( SUM(".$this->db->sql_to_int('publico')."), 0) as publi,
          MAX(factualizado) as factualizado
          FROM articulos WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
       if($aux)

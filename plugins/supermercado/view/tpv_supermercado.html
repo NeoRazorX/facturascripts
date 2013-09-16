@@ -1,7 +1,36 @@
 {include="header"}
 
-<div class="rounded">
-   <h1>En construcción...</h1>
+{if condition="$fsc->agente"}
+   {if condition="$fsc->caja"}
+      <div class='rounded'>
+         <center>
+            <img src='view/img/big_lock.png' alt="acceso denegado"/>
+         </center>
+      </div>
+   {else}
+      <script type="text/javascript">
+         $(document).ready(function() {
+            document.f_caja.d_inicial.select();
+         });
+      </script>
+      <div class="rounded">
+         <form name="f_caja" action="{$fsc->url()}" method="post">
+            <h1>
+               Caja:
+               <span><input type="submit" value="guardar"/></span>
+            </h1>
+            ¿Cuanto hay en la caja?
+            <input type="text" name="d_inicial" value="0.00" size="7" autocomplete="off"/>
+            Euros.
+         </form>
+      </div>
+   {/if}
+{else}
+<div class='rounded'>
+   <center>
+      <img src='view/img/big_lock.png' alt="acceso denegado"/>
+   </center>
 </div>
+{/if}
 
 {include="footer"}

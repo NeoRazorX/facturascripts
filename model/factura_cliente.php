@@ -956,9 +956,9 @@ class factura_cliente extends fs_model
       $encontrado = FALSE;
       $num = 1;
       $fecha = $this->fecha;
-      $numeros = $this->db->select("SELECT numero::integer,fecha FROM ".$this->table_name.
-              " WHERE codejercicio = ".$this->var2str($this->codejercicio).
-              " AND codserie = ".$this->var2str($this->codserie)." ORDER BY numero ASC;");
+      $numeros = $this->db->select("SELECT ".$this->db->sql_to_int('numero')." as numero,fecha
+         FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).
+         " AND codserie = ".$this->var2str($this->codserie)." ORDER BY numero ASC;");
       if( $numeros )
       {
          foreach($numeros as $n)
@@ -1173,8 +1173,8 @@ class factura_cliente extends fs_model
                /// comprobamos las líneas
                $aux = $this->db->select("SELECT referencia FROM lineasfacturascli WHERE
                   idfactura = ".$this->var2str($this->idfactura)."
-                  EXCEPT SELECT referencia FROM lineasfacturascli
-                  WHERE idfactura = ".$this->var2str($fac['idfactura']).";");
+                  AND referencia NOT IN (SELECT referencia FROM lineasfacturascli
+                  WHERE idfactura = ".$this->var2str($fac['idfactura']).");");
                if( !$aux )
                {
                   $this->new_error_msg("Esta factura es un posible duplicado de
@@ -1361,8 +1361,8 @@ class factura_cliente extends fs_model
          {
             $codserie = '';
             $num = 1;
-            $numeros = $this->db->select("SELECT codserie,numero::integer,fecha FROM ".$this->table_name.
-               " WHERE codejercicio = ".$this->var2str($eje->codejercicio).
+            $numeros = $this->db->select("SELECT codserie,".$this->db->sql_to_int('numero')." as numero,fecha
+               FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($eje->codejercicio).
                " ORDER BY codserie ASC, numero ASC;");
             if( $numeros )
             {

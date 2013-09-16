@@ -158,6 +158,7 @@ div#header_buttons a.remove {
 
 div#header_buttons a.btn_img img, div#header_buttons a.remove img {
    vertical-align: text-bottom;
+   border: 0px solid transparent;
 }
 
 div#header_buttons a.btn:hover, div#header_buttons a.btn_img:hover {
@@ -259,6 +260,10 @@ a#b_close_popup {
    display: none;
    z-index: 4;
    position: fixed;
+}
+
+a#b_close_popup img {
+   border: 0px solid transparent;
 }
 
 div.popup {
@@ -558,10 +563,6 @@ div.footer table td.left {
    text-align: left;
 }
 
-div.footer img {
-   vertical-align: middle;
-}
-
 input[type='submit'], input[type='button'] {
    display: inline-block;
    vertical-align: middle;
@@ -612,7 +613,7 @@ input.full, textarea {
    -ms-box-sizing: border-box;
 }
 
-a.button2, a.delete {
+a.button2, a.delete, button.delete {
    display: inline-block;
    vertical-align: middle;
    padding-top: 2px;
@@ -630,14 +631,15 @@ a.button2 {
    color: #333333;
 }
 
-a.delete {
+a.delete, button.delete {
    background-color: #D74937;
    border: 1px solid #993427;
    color: white;
 }
 
-a.button2 img, a.delete img {
+a.button2 img, a.delete img, button.delete img {
    vertical-align: text-bottom;
+   border: 0px solid transparent;
 }
 
 a.link {
@@ -743,6 +745,7 @@ a#fs_exit {
 
 a#fs_exit img {
    vertical-align: bottom;
+   border: 0px solid transparent;
 }
 
 div#sql_history {

@@ -174,8 +174,8 @@ class asiento extends fs_model
       
       if( !$secc0 OR $this->numero <= 1 )
       {
-         $num = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name.
-                 " WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+         $num = $this->db->select("SELECT MAX(".$this->db->sql_to_int('numero').") as num
+            FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
          if($num)
             $this->numero = 1 + intval($num[0]['num']);
          else

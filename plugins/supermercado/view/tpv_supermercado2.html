@@ -1,0 +1,19 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_borrar_ticket").click(function() {
+         window.location.href = "{$fsc->url()}&delete="+prompt('Introduce el código del ticket:');
+      });
+      $("#b_cerrar_caja").click(function() {
+         if( confirm("¿Realmente deseas cerrar la caja?") )
+            window.location.href = "{$fsc->url()}&cerrar_caja=TRUE";
+      });
+   });
+</script>
+
+<div class='rounded'>
+   <h1>¿Cliente?</h1>
+</div>
+
+{include="footer"}

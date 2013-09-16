@@ -216,34 +216,6 @@ class caja extends fs_model
       }
       return $cajalist;
    }
-   
-   public function consolidar()
-   {
-      /*
-       * dejar así hasta tener más datos sobre el posible fallo
-       * 
-      $f0 = explode(' ', $this->fecha_inicial);
-      $fechai = $f0[0];
-      $horai = $f0[1];
-      $f1 = explode(' ', $this->fecha_fin);
-      $fechaf = $f1[0];
-      $horaf = $f1[1];
-      
-      $aux = $this->db->select("SELECT SUM(totaleuros) as total FROM albaranescli
-         WHERE (fecha = ".$this->var2str($fechai)." AND hora >= ".$this->var2str($horai).")
-            OR (fecha > ".$this->var2str($fechai)." AND fecha < ".$this->var2str($fechaf).")
-            OR (fecha = ".$this->var2str($fechaf)." AND hora <= ".$this->var2str($horaf).");");
-      if($aux)
-      {
-         $total = floatval($aux[0]['total']);
-         if($total < $this->dinero_fin - $this->dinero_inicial)
-         {
-            $this->dinero_fin = $this->dinero_inicial + $total;
-         }
-      }
-       * 
-       */
-   }
 }
 
 ?>

@@ -42,7 +42,6 @@ class contabilidad_caja extends fs_controller
             if( $this->user->admin )
             {
                $caja0->fecha_fin = Date('d-m-Y H:i:s');
-               $caja0->consolidar();
                if( $caja0->save() )
                   $this->new_message("Caja cerrada correctamente.");
                else

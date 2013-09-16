@@ -634,8 +634,8 @@ class albaran_proveedor extends fs_model
       
       if(!$sec OR $this->numero <= 1)
       {
-         $numero = $this->db->select("SELECT MAX(numero::integer) as num FROM ".$this->table_name.
-            " WHERE codejercicio = ".$this->var2str($this->codejercicio).
+         $numero = $this->db->select("SELECT MAX(".$this->db->sql_to_int('numero').") as num
+            FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).
             " AND codserie = ".$this->var2str($this->codserie).";");
          if($numero)
             $this->numero = 1 + intval($numero[0]['num']);
@@ -749,8 +749,8 @@ class albaran_proveedor extends fs_model
                /// comprobamos las líneas
                $aux = $this->db->select("SELECT referencia FROM lineasalbaranesprov WHERE
                   idalbaran = ".$this->var2str($this->idalbaran)."
-                  EXCEPT SELECT referencia FROM lineasalbaranesprov
-                  WHERE idalbaran = ".$this->var2str($alb['idalbaran']).";");
+                  AND referencia NOT IN (SELECT referencia FROM lineasalbaranesprov
+                  WHERE idalbaran = ".$this->var2str($alb['idalbaran']).");");
                if( !$aux )
                {
                   $this->new_error_msg("Este albarán es un posible duplicado de

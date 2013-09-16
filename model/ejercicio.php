@@ -81,7 +81,7 @@ class ejercicio extends fs_model
    
    public function get_new_codigo()
    {
-      $cod = $this->db->select("SELECT MAX(codejercicio::integer) as cod FROM ".$this->table_name.";");
+      $cod = $this->db->select("SELECT MAX(".$this->db->sql_to_int('codejercicio').") as cod FROM ".$this->table_name.";");
       if($cod)
          return sprintf('%04s', (1 + intval($cod[0]['cod'])));
       else

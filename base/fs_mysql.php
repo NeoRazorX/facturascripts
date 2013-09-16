@@ -153,7 +153,6 @@ class fs_mysql extends fs_db
       if(self::$link)
       {
          $sql = str_replace('::character varying', '', $sql);
-         $sql = str_replace('::integer', '', $sql);
          self::$history[] = $sql;
          
          $filas = self::$link->query($sql);
@@ -180,7 +179,6 @@ class fs_mysql extends fs_db
       if(self::$link)
       {
          $sql = str_replace('::character varying', '', $sql);
-         $sql = str_replace('::integer', '', $sql);
          $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
          self::$history[] = $sql;
          
@@ -218,21 +216,20 @@ class fs_mysql extends fs_db
          $sql = str_replace('CURRENT_TIMESTAMP', "'00:00:00'", $sql);
          $sql = str_replace('CURRENT_DATE', "'2013-01-01'", $sql);
          $sql = str_replace('::character varying', '', $sql);
-         $sql = str_replace('::integer', '', $sql);
          self::$history[] = $sql;
          self::$t_transactions++;
          
          /// desactivamos el autocommit
          self::$link->autocommit(FALSE);
          
+         $i = 0;
          if( self::$link->multi_query($sql) )
          {
-            $i = 0;
             do { $i++; } while ( self::$link->more_results() AND self::$link->next_result() );
          }
          
          if( self::$link->errno )
-            self::$errors[] =  "Error al ejecutar la consulta $i: ".self::$link->error;
+            self::$errors[] =  'Error al ejecutar la consulta '.$i.': '.self::$link->error;
          else
             $resultado = TRUE;
          
@@ -312,6 +309,11 @@ class fs_mysql extends fs_db
    public function date_style()
    {
       return 'Y-m-d';
+   }
+   
+   public function sql_to_int($col)
+   {
+      return 'CAST('.$col.' as UNSIGNED)';
    }
    
    /*

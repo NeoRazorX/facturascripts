@@ -143,7 +143,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-16';
+      return parent::version().'-17';
    }
    
    private function cargar_datos_tpv()
@@ -387,6 +387,18 @@ class tpv_yamyam extends fs_controller
       $alb = $this->albaran->get_by_codigo($_GET['delete']);
       if($alb)
       {
+         $articulo = new articulo();
+         
+         foreach($alb->get_lineas() as $linea)
+         {
+            $art0 = $articulo->get($linea->referencia);
+            if($art0)
+            {
+               $art0->sum_stock($alb->codalmacen, $linea->cantidad);
+               $art0->save();
+            }
+         }
+         
          if( $alb->delete() )
          {
             $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
@@ -407,7 +419,6 @@ class tpv_yamyam extends fs_controller
    private function cerrar_caja()
    {
       $this->caja->fecha_fin = Date('d-m-Y H:i:s');
-      $this->caja->consolidar();
       if( $this->caja->save() )
       {
          $fpt = new fs_printer();
