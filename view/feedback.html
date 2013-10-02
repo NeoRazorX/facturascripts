@@ -1,7 +1,7 @@
 <div id="popup_feedback" class="popup" style="display: none;">
    <h1>¿Necesitas ayuda?</h1>
    <p>
-      La <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
+      La <a class="link" href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
       está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
       lo antes posible.
    </p>
@@ -21,11 +21,11 @@
       <br/>
       {if condition="$fsc->empresa"}
       <textarea name="feedback_text" rows="12">{$fsc->empresa->email_firma}</textarea>
-      <input type="text" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
+      <input type="text" name="feedback_email" size="30" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
       {else}
       <textarea name="feedback_text" rows="12"></textarea>
-      <input type="text" name="feedback_email" placeholder="introduce tu email"/>
+      <input type="text" name="feedback_email" size="30" placeholder="introduce tu email"/>
       {/if}
-      <input type="submit" value="enviar"/>
+      <input class="submit" type="submit" value="enviar"/>
    </form>
 </div>

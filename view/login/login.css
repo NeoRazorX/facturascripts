@@ -2,7 +2,7 @@
   font-family: 'Oleo Script';
   font-style: normal;
   font-weight: 400;
-  src: local('Oleo Script'), local('OleoScript-Regular'), url('oleo_script.woff') format('woff');
+  src: local('Oleo Script'), local('OleoScript-Regular'), url('../css/oleo_script.woff') format('woff');
 }
 
 body {
@@ -55,7 +55,7 @@ div.header a {
    color: white;
 }
 
-div.advice, div.message, div.error {
+div.message, div.error {
    margin: 5px;
    padding: 10px;
    border-radius: 5px;
@@ -63,15 +63,6 @@ div.advice, div.message, div.error {
    color: #333333;
    font-size: 16px;
    text-align: left;
-}
-
-div.advice {
-   background-color: #ACD6F5;
-   text-align: center;
-}
-
-div.advice img {
-   vertical-align: middle;
 }
 
 div.message {

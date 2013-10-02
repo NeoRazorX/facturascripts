@@ -33,6 +33,31 @@ class contabilidad_series extends fs_controller
       $this->serie = new serie();
       $this->buttons[] = new fs_button_img('b_nueva_serie', 'nueva');
       
+      if( isset($_GET['delete']) )
+      {
+         if(FS_DEMO)
+         {
+            $this->new_error_msg('En el modo demo no puedes eliminar series.
+               Otro usuario podría necesitarlas.');
+         }
+         else if(!$this->user->admin)
+         {
+            $this->new_error_msg('Sólo un administrador puede eliminar series.');
+         }
+         else
+         {
+            $serie = $this->serie->get($_GET['delete']);
+            if($serie)
+            {
+               if( $serie->delete() )
+                  $this->new_message('Serie eliminada correctamente.');
+               else
+                  $this->new_error_msg("¡Imposible eliminar la serie!");
+            }
+            else
+               $this->new_error_msg("Serie no encontrada.");
+         }
+      }
       if( isset($_POST['codserie']) )
       {
          $serie = $this->serie->get($_POST['codserie']);
@@ -50,8 +75,9 @@ class contabilidad_series extends fs_controller
       }
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
 }
 

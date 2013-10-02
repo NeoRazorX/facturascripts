@@ -5,7 +5,7 @@
    $(document).ready(function() {
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_eliminar');
+         fs_show_popup('popup_eliminar', 60);
       });
    });
 </script>
@@ -35,7 +35,7 @@
       <h1>
          <a class="link" href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
          <span>
-            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
       <div class="bloque">

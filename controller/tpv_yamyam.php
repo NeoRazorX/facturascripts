@@ -78,7 +78,7 @@ class tpv_yamyam extends fs_controller
          if(FS_LCD != '')
          {
             $fpt = new fs_printer(FS_LCD);
-            $fpt->add('TOTAL               ');
+            $fpt->add( chr(12).'TOTAL               ');
             $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20) );
             $fpt->imprimir();
          }
@@ -143,7 +143,7 @@ class tpv_yamyam extends fs_controller
    
    public function version()
    {
-      return parent::version().'-17';
+      return parent::version().'-18';
    }
    
    private function cargar_datos_tpv()
@@ -387,30 +387,34 @@ class tpv_yamyam extends fs_controller
       $alb = $this->albaran->get_by_codigo($_GET['delete']);
       if($alb)
       {
-         $articulo = new articulo();
-         
-         foreach($alb->get_lineas() as $linea)
+         if($alb->ptefactura)
          {
-            $art0 = $articulo->get($linea->referencia);
-            if($art0)
+            $articulo = new articulo();
+            foreach($alb->get_lineas() as $linea)
             {
-               $art0->sum_stock($alb->codalmacen, $linea->cantidad);
-               $art0->save();
+               $art0 = $articulo->get($linea->referencia);
+               if($art0)
+               {
+                  $art0->sum_stock($alb->codalmacen, $linea->cantidad);
+                  $art0->save();
+               }
             }
-         }
-         
-         if( $alb->delete() )
-         {
-            $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
             
-            /// actualizamos la caja
-            $this->caja->dinero_fin -= $alb->total;
-            $this->caja->tickets -= 1;
-            if( !$this->caja->save() )
-               $this->new_error_msg("¡Imposible actualizar la caja!");
+            if( $alb->delete() )
+            {
+               $this->new_message("Ticket ".$_GET['delete']." borrado correctamente.");
+               
+               /// actualizamos la caja
+               $this->caja->dinero_fin -= $alb->total;
+               $this->caja->tickets -= 1;
+               if( !$this->caja->save() )
+                  $this->new_error_msg("¡Imposible actualizar la caja!");
+            }
+            else
+               $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
+            $this->new_error_msg('No se ha podido borrar este albarán porque ya está facturado.');
       }
       else
          $this->new_error_msg("Ticket no encontrado.");
@@ -455,8 +459,9 @@ class tpv_yamyam extends fs_controller
    
    private function imprimir_ticket($num_tickets=2)
    {
-      /// ticket normal
       $fpt = new fs_printer();
+      $fpt->abrir_cajon();
+      
       $linea = "\nTicket: " . $this->albaran->codigo;
       $linea .= " " . $this->albaran->fecha;
       $linea .= " " . $this->albaran->show_hora(FALSE) . "\n";
@@ -502,8 +507,6 @@ class tpv_yamyam extends fs_controller
          $fpt->imprimir();
          $num_tickets--;
       }
-      
-      $fpt->abrir_cajon();
    }
 }
 

@@ -113,7 +113,7 @@ class general_albaran_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-20';
+      return parent::version().'-21';
    }
    
    public function url()
@@ -132,7 +132,7 @@ class general_albaran_cli extends fs_controller
       $this->albaran->hora = $_POST['hora'];
       $this->albaran->observaciones = $_POST['observaciones'];
       
-      if( $this->albaran->ptefactura )
+      if($this->albaran->ptefactura)
       {
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
@@ -200,7 +200,14 @@ class general_albaran_cli extends fs_controller
                }
                if( !$encontrada )
                {
-                  if( !$l->delete() )
+                  if( $l->delete() )
+                  {
+                     /// actualizamos el stock
+                     $art0 = $articulo->get($l->referencia);
+                     if($art0)
+                        $art0->sum_stock($this->albaran->codalmacen, $l->cantidad);
+                  }
+                  else
                      $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
                }
             }
@@ -217,6 +224,7 @@ class general_albaran_cli extends fs_controller
                      if($value->idlinea == intval($_POST['idlinea_'.$num]))
                      {
                         $encontrada = TRUE;
+                        $cantidad_old = $value->cantidad;
                         $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
                         $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
                         $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
@@ -251,6 +259,11 @@ class general_albaran_cli extends fs_controller
                         {
                            $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
                            $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                           
+                           /// actualizamos el stock
+                           $art0 = $articulo->get($value->referencia);
+                           if($art0)
+                              $art0->sum_stock($this->albaran->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
                         }
                         else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
@@ -303,6 +316,9 @@ class general_albaran_cli extends fs_controller
                         {
                            $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
                            $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                           
+                           /// actualizamos el stock
+                           $art0->sum_stock($this->albaran->codalmacen, 0 - $linea->cantidad);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
@@ -415,8 +431,10 @@ class general_albaran_cli extends fs_controller
       if( !$this->empresa->contintegrada )
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
       else if( !$subcuenta_cli )
+      {
          $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará
             un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      }
       else
       {
          $asiento = new asiento();

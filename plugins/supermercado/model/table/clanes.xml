@@ -16,6 +16,12 @@
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>limite</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+      <defecto>0</defecto>
+   </columna>
    <restriccion>
       <nombre>clanes_pkey</nombre>
       <consulta>PRIMARY KEY (codclan)</consulta>

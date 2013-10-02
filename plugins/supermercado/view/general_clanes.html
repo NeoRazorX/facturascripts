@@ -1,22 +1,35 @@
 {include="header"}
 
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_clan").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_clan', 60);
+         document.f_nuevo_clan.nombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_clan">
+   <h1>Nuevo clan familiar</h1>
+   <form name="f_nuevo_clan" action="{$fsc->url()}" method="post">
+      Nombre:
+      <input type="text" name="nombre"/>
+      <input class="submit" type="submit" value="guardar"/>
+   </form>
+</div>
+
 <div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Código</th>
-         <th align="left">Nombre</th>
-      </tr>
+   <ul class="horizontal">
       {loop="$fsc->clan->all()"}
-      <tr>
-         <td>{$value->codigo}</td>
-         <td>{$value->nombre}</td>
-      </tr>
+      <li>
+         {$value->codclan}
+         <a class="link" href="{$value->url()}">{$value->nombre}</a>
+      </li>
       {else}
-      <tr>
-         <td colspan="2">Sin resultados.</td>
-      </tr>
+      <li>Sin resultados.</li>
       {/loop}
-   </table>
+   </ul>
 </div>
 
 {include="footer"}

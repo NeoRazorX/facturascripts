@@ -184,16 +184,16 @@
          <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
          <a class=\"link\" target=\"_blank\" href=\"index.php?page=general_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
          <td><input type=\"text\" class=\"full\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
-         <td align=\"center\"><input type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/>\n\
+         <td align=\"center\"><input class=\"button\" type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/>\n\
          <input type=\"text\" id=\"cantidad_"+numlineas+"\" name=\"cantidad_"+numlineas+
             "\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\" size=\"2\"/>\n\
-         <input type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
+         <input class=\"button\" type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
          <td align=\"center\">\n\
          <input type=\"text\" class=\"full\" id=\"pvp_"+numlineas+"\" name=\"pvp_"+numlineas+"\" value=\""+pvp+
             "\" size=\"6\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
          <td align=\"center\"><input type=\"text\" id=\"dto_"+numlineas+"\" name=\"dto_"+numlineas+"\" value=\""+dto+
             "\" size=\"4\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/>\n\
-         <input type=\"button\" value=\"+\" onclick=\"aplicar_dto2("+numlineas+")\"/></td>\n\
+         <input class=\"button\" type=\"button\" value=\"+\" onclick=\"aplicar_dto2("+numlineas+")\"/></td>\n\
          <td align=\"center\"><input type=\"text\" class=\"full\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
             "\" size=\"6\" onkeyup=\"ajustar_total()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
          <td align=\"center\">"+aux_all_impuestos(numlineas,iva)+"</td>\n\
@@ -211,10 +211,7 @@
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
             $("#search_results").html(datos);
-            $("#popup_new_line").css({
-               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-               top: 40
-            });
+            fs_resize_popup("popup_new_line", 40);
          }
       });
    }
@@ -223,10 +220,7 @@
       if(document.f_buscar_articulos.query.value == '')
       {
          $("#search_results").html('');
-         $("#popup_new_line").css({
-            left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-            top: 40
-         });
+         fs_resize_popup("popup_new_line", 40);
       }
       else
       {
@@ -241,10 +235,7 @@
                if( m[1] == document.f_buscar_articulos.query.value )
                {
                   $("#search_results").html(datos);
-                  $("#popup_new_line").css({
-                     left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
-                     top: 40
-                  });
+                  fs_resize_popup("popup_new_line", 40);
                }
             }
          });
@@ -420,13 +411,13 @@
          </tr>
          <tr>
             <td colspan="4" align="right">
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
    </div>
    <div class="rounded">
-      <div class="tpv_total" id="tpv_total">0,00 €</div>
+      <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
       <div class="bloque">Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
       <br/><br/>
       <table class="list" id="tpv_albaran">
@@ -445,8 +436,12 @@
       <br/><br/>
       <table width="100%">
          <tr>
-            <td><input type="button" id="b_nuevo_albaran_proveedor" value="nuevo albarán de proveedor"></td>
-            <td align="right"><input type="button" id="b_nuevo_albaran_cliente" value="nuevo albarán de cliente"></td>
+            <td>
+               <input class="button" type="button" id="b_nuevo_albaran_proveedor" value="nuevo albarán de proveedor">
+            </td>
+            <td align="right">
+               <input class="button" type="button" id="b_nuevo_albaran_cliente" value="nuevo albarán de cliente">
+            </td>
          </tr>
       </table>
    </div>

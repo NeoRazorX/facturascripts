@@ -40,7 +40,7 @@
    <form action="{$fsc->url()}" method="post">
       Multiplicar precios por:
       <input type="text" name="multiplicar" value="1" size="3"/>
-      <input type="submit" value="aplicar" onclick="this.disabled=true;this.form.submit();"/>
+      <input class="submit" type="submit" value="aplicar" onclick="this.disabled=true;this.form.submit();"/>
    </form>
 </div>
 
@@ -96,7 +96,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -109,7 +109,7 @@
       <h1>
          {$fsc->familia->descripcion}
          <span>
-            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
       <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>

@@ -25,17 +25,41 @@ class general_clanes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_clanes', 'Clanes', 'general');
+      parent::__construct('general_clanes', 'Clanes familiares', 'general');
    }
    
    protected function process()
    {
       $this->clan = new clan_familiar();
+      
+      if( isset($_GET['delete']) )
+      {
+         $clan = $this->clan->get($_GET['delete']);
+         if($clan)
+         {
+            if( $clan->delete() )
+               $this->new_message('Clan eliminado correctamente.');
+            else
+               $this->new_message('Ha sido imposible eliminar el clan.');
+         }
+         else
+            $this->new_message('Clan no encontrado.');
+      }
+      else if( isset($_POST['nombre']) )
+      {
+         $this->clan->nombre = $_POST['nombre'];
+         if( $this->clan->save() )
+            header('Location: '.$this->clan->url());
+         else
+            $this->new_error_msg('Imposible guardar el clan familiar.');
+      }
+      
+      $this->buttons[] = new fs_button_img('b_nuevo_clan', 'nuevo');
    }
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

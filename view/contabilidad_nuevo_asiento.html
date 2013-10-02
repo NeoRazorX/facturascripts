@@ -35,7 +35,7 @@
                <td id='contrapartida_"+numlineas+"'>\n\
                   <a class='link' href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
                </td>\n\
-               <td align='right'><input type='button' value='x' onclick=\"clean_partida('"+numlineas+"')\"/></td>\n\
+               <td align='right'><a class='delete'onclick=\"clean_partida('"+numlineas+"')\">x</a></td>\n\
             </tr>\n\
          </table>\n\
          </div>");
@@ -85,10 +85,7 @@
       if(document.f_buscar_subcuentas.query.value == '')
       {
          $("#subcuentas").html('');
-         $("#popup_subcuentas").css({
-            left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-            top: 40
-         });
+         fs_resize_popup("popup_subcuentas", 40);
       }
       else
       {
@@ -105,10 +102,7 @@
                if( m[1] == document.f_buscar_subcuentas.query.value )
                {
                   $("#subcuentas").html(datos);
-                  $("#popup_subcuentas").css({
-                     left: ($(window).width() - $("#popup_subcuentas").outerWidth())/2,
-                     top: 40
-                  });
+                  fs_resize_popup("popup_subcuentas", 40);
                }
             }
          });
@@ -233,7 +227,7 @@
                <input name="concepto" type="text" size="40" maxlength="250" autocomplete="off"/>
             </td>
             <td align="right">
-               <input type="submit" value="guardar"/>
+               <input class="submit" type="submit" value="guardar"/>
             </td>
          </tr>
          <tr>

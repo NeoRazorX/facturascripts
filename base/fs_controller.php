@@ -341,7 +341,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13b4';
+      return '0.13';
    }
    
    public function select_default_page()
@@ -597,7 +597,7 @@ class fs_controller
       foreach($this->get_errors() as $e)
          $txt .= "\n" . $e;
       
-      return $txt;
+      return str_replace('"', "'", $txt);
    }
 }
 

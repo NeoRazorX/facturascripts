@@ -521,7 +521,12 @@ class cliente extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($this->codcliente).";");
+      
+      foreach($this->get_direcciones() as $dir)
+         $dir->delete();
+      
+      return $this->db->exec("DELETE FROM ".$this->table_name.
+              " WHERE codcliente = ".$this->var2str($this->codcliente).";");
    }
    
    private function clean_cache()

@@ -6,10 +6,7 @@
       if(document.f_buscar_articulos.query.value == '')
       {
          $("#search_results").html('');
-         $("#popup_buscar_articulos").css({
-            left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-            top: 40
-         });
+         fs_resize_popup("popup_buscar_articulos", 40);
       }
       else
       {
@@ -24,10 +21,7 @@
                if( m[1] == document.f_buscar_articulos.query.value )
                {
                   $("#search_results").html(datos);
-                  $("#popup_buscar_articulos").css({
-                     left: ($(window).width() - $("#popup_buscar_articulos").outerWidth())/2,
-                     top: 40
-                  });
+                  fs_resize_popup("popup_buscar_articulos", 40);
                }
             }
          });
@@ -89,7 +83,7 @@
       <table width="100%">
          <tr>
             <td colspan="2" align="right">
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -125,8 +119,8 @@
    <h1>
       Cesta:
       <span>
-         <a class="button2" id="b_buscar_articulos" href="#">añadir...</a>
-         <a class="button2" href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a>
+         <a class="button" id="b_buscar_articulos" href="#">añadir...</a>
+         <a class="button" href="{$fsc->url()}&fillcache=TRUE">añadir los primeros artículos</a>
          <a class="delete" href="{$fsc->url()}&cleancache=TRUE">vaciar</a>
       </span>
    </h1>

@@ -50,7 +50,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -59,18 +59,11 @@
 
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
-      
-      <table width="100%">
-         <tr>
-            <td>
-               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-            </td>
-            <td align="right">
-               <input type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+      <div>
+         <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
       
       <br/>
       
@@ -106,18 +99,11 @@
       
       <br/>
       
-      <table width="100%">
-         <tr>
-            <td>
-               <input type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-               <input type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-            </td>
-            <td align="right">
-               <input type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-      
+      <div>
+         <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
    </form>
 </div>
 

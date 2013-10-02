@@ -27,6 +27,9 @@ class fs_pdf
    
    public function __construct($paper = 'a4', $orientation = 'portrait', $font = 'Helvetica')
    {
+      if( !file_exists('tmp/pdf') )
+         mkdir('tmp/pdf');
+      
       $this->pdf = new Cezpdf($paper, $orientation);
       
       /// cambiamos ! por el simbolo del euro

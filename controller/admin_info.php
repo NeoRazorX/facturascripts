@@ -43,8 +43,8 @@ class admin_info extends fs_controller
       if(FS_LCD != '')
       {
          $fpt = new fs_printer(FS_LCD);
-         $fpt->add( $fpt->center_text('The cake is a lie!', 20) );
-         $fpt->add( $fpt->center_text('The cake is a lie!', 20) );
+         $fpt->add( chr(12).$fpt->center_text('The cake is', 20) );
+         $fpt->add( $fpt->center_text('a lie!', 20) );
          $fpt->imprimir();
       }
    }
@@ -86,7 +86,7 @@ class admin_info extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function fs_version()

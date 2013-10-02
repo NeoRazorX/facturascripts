@@ -39,7 +39,25 @@ class general_proveedores extends fs_controller
       $this->pais = new pais();
       $this->proveedor = new proveedor();
       
-      if( isset($_POST['codproveedor']) )
+      if( isset($_GET['delete']) )
+      {
+         $proveedor = $this->proveedor->get($_GET['delete']);
+         if($proveedor)
+         {
+            if(FS_DEMO)
+            {
+               $this->new_error_msg('En el modo demo no se pueden eliminar proveedores.
+                  Otros usuarios podrían necesitarlos.');
+            }
+            else if( $proveedor->delete() )
+               $this->new_message('Proveedor eliminado correctamente.');
+            else
+               $this->new_error_msg('Ha sido imposible borrar el proveedor.');
+         }
+         else
+            $this->new_message('Proveedor no encontrado.');
+      }
+      else if( isset($_POST['codproveedor']) )
       {
          $this->save_codpais( $_POST['pais'] );
          
@@ -80,7 +98,7 @@ class general_proveedores extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function anterior_url()

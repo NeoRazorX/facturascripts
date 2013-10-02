@@ -49,21 +49,30 @@ class admin_paises extends fs_controller
       }
       else if( isset($_GET['delete']) )
       {
-         $pais = $this->pais->get($_GET['delete']);
-         if( $pais )
+         if(FS_DEMO)
          {
-            if( $pais->delete() )
-               $this->new_message("País ".$pais->nombre." eliminado correctamente.");
-            else
-               $this->new_error_msg("¡Imposible eliminar el país!");
+            $this->new_error_msg('En el modo demo no puedes eliminar paises.
+               Otro usuario podría necesitarlo.');
          }
          else
-            $this->new_error_msg("¡País no encontrado!");
+         {
+            $pais = $this->pais->get($_GET['delete']);
+            if( $pais )
+            {
+               if( $pais->delete() )
+                  $this->new_message("País ".$pais->nombre." eliminado correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible eliminar el país!");
+            }
+            else
+               $this->new_error_msg("¡País no encontrado!");
+         }
       }
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
 }
 

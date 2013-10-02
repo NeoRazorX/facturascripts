@@ -101,7 +101,7 @@ class admin_plugins extends fs_controller
          }
          
          $this->new_message('Se han activado automáticamente las siguientes páginas: '.
-                 join(',', $page_list) . '.');
+                 join(', ', $page_list) . '.');
          $this->load_menu(TRUE);
       }
       else

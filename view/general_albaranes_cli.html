@@ -6,10 +6,7 @@
       if(document.f_buscar_lineas.buscar_lineas.value == '')
       {
          $("#search_results").html('');
-         $("#popup_buscar_lineas").css({
-            left: ($(window).width() - $("#popup_buscar_lineas").outerWidth())/2,
-            top: 40
-         });
+         fs_resize_popup("popup_buscar_lineas", 40);
       }
       else
       {
@@ -24,10 +21,7 @@
                if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
                {
                   $("#search_results").html(datos);
-                  $("#popup_buscar_lineas").css({
-                     left: ($(window).width() - $("#popup_buscar_lineas").outerWidth())/2,
-                     top: 40
-                  });
+                  fs_resize_popup("popup_buscar_lineas", 40);
                }
             }
          });

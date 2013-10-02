@@ -50,7 +50,7 @@ class Cpdf
 	/**
 	 * global defined temporary path used on several places
 	 */
-	public $tempPath = '/tmp';
+	public $tempPath = 'tmp/pdf';
     /**
      * the current number of pdf objects in the document
      *
@@ -1703,7 +1703,7 @@ EOT;
         $this->checkAllHere();
 
         $xref=array();
-        $content="%PDF-1.4\n%âãÏÓ";
+        $content="%PDF-1.4\n%ï¿½ï¿½ï¿½ï¿½";
         //  $content="%PDF-1.3\n";
         $pos=strlen($content);
         foreach($this->objects as $k=>$v){

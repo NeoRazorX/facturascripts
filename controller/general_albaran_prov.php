@@ -112,7 +112,7 @@ class general_albaran_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-19';
+      return parent::version().'-20';
    }
    
    public function url()
@@ -184,7 +184,14 @@ class general_albaran_prov extends fs_controller
                }
                if( !$encontrada )
                {
-                  if( !$l->delete() )
+                  if( $l->delete() )
+                  {
+                     /// actualizamos el stock
+                     $art0 = $articulo->get($l->referencia);
+                     if($art0)
+                        $art0->sum_stock($this->albaran->codalmacen, 0 - $l->cantidad);
+                  }
+                  else
                      $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
                }
             }
@@ -201,6 +208,7 @@ class general_albaran_prov extends fs_controller
                      if($value->idlinea == intval($_POST['idlinea_'.$num]))
                      {
                         $encontrada = TRUE;
+                        $cantidad_old = $value->cantidad;
                         $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
                         $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
                         $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
@@ -235,6 +243,11 @@ class general_albaran_prov extends fs_controller
                         {
                            $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
                            $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                           
+                           /// actualizamos el stock
+                           $art0 = $articulo->get($value->referencia);
+                           if($art0)
+                              $art0->sum_stock($this->albaran->codalmacen, $lineas[$k]->cantidad - $cantidad_old);
                         }
                         else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
@@ -287,6 +300,9 @@ class general_albaran_prov extends fs_controller
                         {
                            $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
                            $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                           
+                           /// actualizamos el stock
+                           $art0->sum_stock($this->albaran->codalmacen, $linea->cantidad);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");

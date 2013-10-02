@@ -1,0 +1,33 @@
+<!--{$fsc->busqueda}-->
+
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
+<table class="list">
+   <tr>
+      <th align="left">código</th>
+      <th align="left">nombre</th>
+      <th align="left">DNI</th>
+      <th align="left">observaciones</th>
+   </tr>
+   {loop="$fsc->resultado"}
+   <tr>
+      <td><a class="link" href="{$fsc->url()}&cliente={$value->codcliente}">{$value->codcliente}</a></td>
+      <td>{$value->nombre}</td>
+      <td>{$value->cifnif}</td>
+      <td>{$value->observaciones_resume()}</td>
+   </tr>
+   {else}
+   <tr>
+      <td colspan="4">Sin resultados.</td>
+   </tr>
+   {/loop}
+</table>

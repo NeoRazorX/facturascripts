@@ -42,7 +42,25 @@ class general_clientes extends fs_controller
       $this->pais = new pais();
       $this->serie = new serie();
       
-      if( isset($_POST['codcliente']) )
+      if( isset($_GET['delete']) )
+      {
+         $cliente = $this->cliente->get($_GET['delete']);
+         if($cliente)
+         {
+            if(FS_DEMO)
+            {
+               $this->new_error_msg('En el modo demo no se pueden eliminar clientes.
+                  Otros usuarios podrían necesitarlos.');
+            }
+            else if( $cliente->delete() )
+               $this->new_message('Cliente eliminado correctamente.');
+            else
+               $this->new_error_msg('Ha sido imposible eliminar el cliente.');
+         }
+         else
+            $this->new_error_msg('Cliente no encontrado.');
+      }
+      else if( isset($_POST['codcliente']) )
       {
          $this->save_codpais( $_POST['pais'] );
          $this->save_codserie( $_POST['codserie'] );
@@ -85,7 +103,7 @@ class general_clientes extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function anterior_url()

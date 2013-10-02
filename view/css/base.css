@@ -96,7 +96,7 @@ div#header_user {
    text-align: right;
 }
 
-div#header_folders a, div#header_user a.button {
+div#header_folders a, div#header_user a.btn {
    display: inline-block;
    margin-left: 3px;
    margin-right: 3px;
@@ -108,7 +108,7 @@ div#header_folders a, div#header_user a.button {
    font-weight: bold;
 }
 
-div#header_folders a:hover, div#header_user a.button:hover, a#fs_exit:hover {
+div#header_folders a:hover, div#header_user a.btn:hover, a#fs_exit:hover {
    background-color: #456E8C;
    box-shadow: inset 0px 2px 2px #444;
 }
@@ -131,10 +131,7 @@ div#header_buttons a.btn, div#header_buttons a.btn_img, div#header_buttons a.rem
 }
 
 div#header_buttons a.btn {
-   padding-top: 3px;
-   padding-right: 8px;
-   padding-left: 8px;
-   padding-bottom: 1px;
+   padding: 3px 8px 1px 8px;
    background-color: white;
    border: 1px solid #888888;
    color: #333333;
@@ -256,6 +253,10 @@ div#shadow {
    opacity: 0.5;
 }
 
+div#shadow:hover {
+   cursor: pointer;
+}
+
 a#b_close_popup {
    display: none;
    z-index: 4;
@@ -286,9 +287,7 @@ div.popup {
 div.popup h1 {
    margin: 0px;
    margin-bottom: 10px;
-   padding: 2px;
-   padding-left: 10px;
-   padding-right: 10px;
+   padding: 2px 10px 2px 10px;
    background-color: #3076AB;
    color: white;
    text-align: center;
@@ -379,10 +378,7 @@ div.paginas a {
    margin-top: 4px;
    margin-right: 5px;
    margin-bottom: 4px;
-   padding-top: 1px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 1px;
+   padding: 1px 5px 1px 5px;
    background-color: #bbbbbb;
    border: 1px solid #888888;
    border-radius: 2px;
@@ -400,19 +396,6 @@ div.paginas a.actual {
 div.paginas a:hover {
    background-color: #3768B8;
    color: white;
-}
-
-div.tpv_total {
-   float: right;
-   padding: 3px;
-   padding-left: 6px;
-   padding-right: 6px;
-   min-width: 150px;
-   background-color: #333333;
-   color: white;
-   font-size: 25px;
-   font-weight: bold;
-   text-align: right;
 }
 
 div.new_line {
@@ -442,10 +425,7 @@ div.select {
 
 div.select a {
    display: inline-block;
-   padding-top: 3px;
-   padding-left: 6px;
-   padding-right: 6px;
-   padding-bottom: 2px;
+   padding: 3px 6px 3px 6px;
    color: #333333;
    text-decoration: none;
 }
@@ -475,10 +455,11 @@ ul.bloque {
 
 ul.bloque li {
    display: inline-block;
+   margin: 5px;
    background-color: #ACD6F5;
    border: 1px outset #cccccc;
    border-radius: 3px;
-   font-size: 16px;
+   font-size: 18px;
    text-align: center;
 }
 
@@ -488,10 +469,27 @@ ul.bloque li.verde {
 
 ul.bloque li a {
    display: block;
-   padding: 8px;
-   padding-top: 20px;
-   padding-bottom: 20px;
+   padding: 20px 8px 20px 8px;
    text-decoration: none;
+   color: #333333;
+}
+
+ul.items {
+   list-style: none;
+   font-size: 16px;
+   padding: 0px;
+   margin: 0px;
+   text-align: center;
+}
+
+ul.items li {
+   display: inline-block;
+   vertical-align: middle;
+   padding: 5px;
+   margin: 5px;
+   border: 1px dashed #333333;
+   border-radius: 5px;
+   text-align: center;
 }
 
 div.etiquetas {
@@ -511,10 +509,7 @@ div.etiquetas input[type='radio'] {
 
 div.etiquetas label {
    display: inline-block;
-   padding-top: 5px;
-   padding-left: 10px;
-   padding-right: 10px;
-   padding-bottom: 5px;
+   padding: 5px 10px 5px 10px;
    background-color: #E4ECF2;
    border: 1px solid #999999;
    border-radius: 3px;
@@ -563,40 +558,48 @@ div.footer table td.left {
    text-align: left;
 }
 
-input[type='submit'], input[type='button'] {
+.submit, .button, .delete {
    display: inline-block;
    vertical-align: middle;
-   padding-top: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 2px;
+   padding: 2px 5px 2px 5px;
    border-radius: 2px;
    text-transform: capitalize;
    font-weight: bold;
    font-size: 15px;
+   text-decoration: none;
 }
 
-input[type='submit'] {
+.submit {
    background-color: #55BA42;
    border: 1px solid #26641C;
    color: white;
 }
 
-input[type='button'] {
-   background-color: #dddddd;
-   border: 1px solid #bbbbbb;
-   color: #424242;
-}
-
-input[type='submit']:hover {
+.submit:hover {
    background-color: #5DCC48;
    color: black;
    cursor: pointer;
 }
 
-input[type='button']:hover {
+.button {
+   background-color: #dddddd;
+   border: 1px solid #bbbbbb;
+   color: #424242;
+}
+
+.button:hover {
    background-color: #e1e1e1;
    color: black;
+   cursor: pointer;
+}
+
+.delete {
+   background-color: #E46353;
+   border: 1px solid #994238;
+   color: white;
+}
+
+.delete:hover {
    cursor: pointer;
 }
 
@@ -613,45 +616,18 @@ input.full, textarea {
    -ms-box-sizing: border-box;
 }
 
-a.button2, a.delete, button.delete {
-   display: inline-block;
-   vertical-align: middle;
-   padding-top: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 1px;
-   border-radius: 2px;
-   text-decoration: none;
-   font-size: 16px;
-}
-
-a.button2 {
-   background-color: #DDDDDD;
-   border: 1px solid #888888;
-   color: #333333;
-}
-
-a.delete, button.delete {
-   background-color: #D74937;
-   border: 1px solid #993427;
-   color: white;
-}
-
-a.button2 img, a.delete img, button.delete img {
+.button img, .delete img {
    vertical-align: text-bottom;
    border: 0px solid transparent;
 }
 
-a.link {
+.link {
    color: #0062DD;
 }
 
 a.next {
    display: inline-block;
-   padding-top: 2px;
-   padding-left: 5px;
-   padding-right: 5px;
-   padding-bottom: 1px;
+   padding: 2px 5px 1px 5px;
    background-color: #bbbbbb;
    border: 1px solid #888888;
    border-radius: 2px;
@@ -666,13 +642,13 @@ a.next:hover {
    color: white;
 }
 
-a.hidden_black {
+.hidden_black {
    display: block;
    background-color: #424242;
    color: #424242;
 }
 
-a.hidden_black:hover {
+.hidden_black:hover {
    background-color: transparent;
    color: black;
 }
@@ -700,6 +676,20 @@ a.hidden_black:hover {
    cursor: pointer;
 }
 
+.tpv_total {
+   padding: 3px 6px 3px 6px;
+   min-width: 150px;
+   background-color: #333333;
+   color: white;
+   font-size: 25px;
+   font-weight: bold;
+   text-align: right;
+}
+
+#tpv_total2, #tpv_efectivo, #tpv_cambio {
+   font-size: 25px;
+}
+
 a#fs_logo {
    color: white;
    text-transform: capitalize;
@@ -713,9 +703,7 @@ a#fs_feedback {
    position: fixed;
    right: 100px;
    bottom: 0px;
-   padding: 5px;
-   padding-left: 10px;
-   padding-right: 10px;
+   padding: 5px 10px 5px 10px;
    background-color: #FDDA58;
    border-top-left-radius: 4px;
    border-top-right-radius: 4px;
@@ -725,7 +713,6 @@ a#fs_feedback {
    box-shadow: 2px 2px 2px #444;
    color: black;
    text-decoration: none;
-   text-transform: uppercase;
    font-weight: bold;
    font-size: 15px;
 }

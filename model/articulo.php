@@ -719,6 +719,19 @@ class articulo extends fs_model
       return $artilist;
    }
    
+   public function search_by_codbar($cod)
+   {
+      $artilist = array();
+      $articulos = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE codbarras = ".$this->var2str($cod)." ORDER BY referencia ASC");
+      if($articulos)
+      {
+         foreach($articulos as $a)
+            $artilist[] = new articulo($a);
+      }
+      return $artilist;
+   }
+   
    public function multiplicar_precios($codfam, $m=1)
    {
       if( isset($codfam) AND $m != 1 )

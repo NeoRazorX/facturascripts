@@ -7,10 +7,10 @@
          Es software libre bajo licencia GNU/AGPL." />
    <meta name="keywords" content="facturascripts, facturación, contabilidad, abanq, eneboo, facturalux, facturaplus"/>
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet" type="text/css" href="view/css/login.css" />
+   <link rel="stylesheet" type="text/css" href="view/login/login.css" />
    <script type="text/javascript" src="view/js/jquery.js"></script>
-{if condition="$demo"}
    <script type="text/javascript">
+{if condition="$demo"}
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-417932-8']);
       _gaq.push(['_trackPageview']);
@@ -19,21 +19,9 @@
          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-   </script>
-   <script type="text/javascript">
-      $(document).ready(function() {
-         document.f_login.user.focus();
-      });
-   </script>
-{else}
-   <script type="text/javascript">
-      $(document).ready(function() {
-         document.f_login.password.focus();
-      });
-   </script>
 {/if}
-   <script type="text/javascript">
       $(document).ready(function() {
+         {if condition="$demo"}document.f_login.user.focus();{else}document.f_login.password.focus();{/if}
          $("#b_feedback").click(function() {
             $("#b_feedback").hide();
             $("#popup_feedback").show();
@@ -121,7 +109,28 @@
    
    <a name="news"></a>
    <div class="popup" id="popup_news" style="display: none;">
-      {include="login/changes"}
+      <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
+      <ul>
+         <li>Solucionado bug el enviar informes de errores.</li>
+         <li>Actualizada la librería para generar PDFs y eliminadas las fuentes antiguas.</li>
+         <li>Eliminados los archivos innecesarios de phpmailer.</li>
+         <li>
+            Solucionado el bug que deficultaba modificar la tarifa de un artículo
+            con pvp igual a 0.
+         </li>
+         <li>
+            Solucionados los bugs que impedían la actualización del stock de los artículos
+            cuando se modificaba un albarán o cuando se eliminaba desde los TPVs.
+         </li>
+         <li>Completado el plugin del supermercado solidario.</li>
+         <li>Ya se pueden eliminar clientes y proveedores.</li>
+         <li>Ya se pueden eliminar impuestos y series.</li>
+         <li>Modificadas las hojas de estilos para facilitar cambios futuros.</li>
+         <li>
+            <a target="_blank" href="http://www.facturascripts.com/community/item/ya-disponible-facturascripts-0-13-lista-de-cambios-solucionado-bug-el-1.html">Deja
+               tus comentarios</a>.
+         </li>
+      </ul>
    </div>
    
    <br/>
@@ -133,5 +142,9 @@
       <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
    </div>
    {/if}
+   
+   <br/><br/>
+   
+   <img src="view/img/calamar.png" alt="calamar"/>
 </body>
 </html>

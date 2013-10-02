@@ -105,6 +105,8 @@ class general_cliente extends fs_controller
       
       if($this->cliente)
       {
+         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
          else
@@ -128,7 +130,7 @@ class general_cliente extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()

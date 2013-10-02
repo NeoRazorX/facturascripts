@@ -4,65 +4,37 @@ body {
    font-size: 14px;
 }
 
-a {
-   display: inline-block;
-   padding: 2px;
-}
-
 input[type='text'], input[type='password'], textarea, select {
    padding: 5px;
    font-size: 16px;
 }
 
-div#header_folders a, div#header_user a.button {
-   padding-top: 8px;
-   padding-left: 8px;
-   padding-right: 8px;
-   padding-bottom: 5px;
+div#header_folders a, div#header_user a.btn {
+   padding: 8px 10px 8px 10px;
 }
 
 div#header_buttons a.btn {
-   padding-top: 4px;
-   padding-bottom: 4px;
+   padding: 6px 10px 6px 10px;
 }
 
 div#header_buttons a.btn_img, div#header_buttons a.remove {
-   padding-top: 3px;
-   padding-left: 8px;
-   padding-right: 8px;
-   padding-bottom: 3px;
+   padding: 5px 8px 5px 8px;
 }
 
-input[type='submit'], input[type='button'] {
-   padding: 5px;
-   padding-bottom: 3px;
+div.pages ul li a {
+   padding: 8px;
 }
 
-input.cancel, input.confirm {
-   padding-top: 5px;
-   padding-left: 10px;
-   padding-right: 10px;
-   padding-bottom: 5px;
-   border: 1px outset #333333;
-   box-shadow: 1px 1px 1px #999;
-   color: white;
-   text-align: center;
-   text-transform: uppercase;
-   font-weight: bold;
+.button, .submit, .delete {
+   padding: 5px 8px 5px 8px;
 }
 
-input.cancel {
-   background-color: #B14E4E;
+.link {
+   padding: 2px;
 }
 
-input.confirm {
-   background-color: green;
-}
-
-a.button2, a.delete {
-   padding: 4px;
-   padding-left: 8px;
-   padding-right: 8px;
+div.rounded h1 {
+   padding-bottom: 8px;
 }
 
 ul.tpv_familias {
@@ -93,17 +65,7 @@ ul.tpv_familias li:hover {
    cursor: pointer;
 }
 
-table#tpv_albaran {
-   margin-top: 20px;
-   margin-bottom: 30px;
-}
-
-table#tpv_albaran td {
-   height: 40px;
-   vertical-align: middle;
-}
-
-div.popup div.grupo label {
+div.grupo_paquete label {
    display: inline-block;
    padding: 10px;
    margin: 5px;
@@ -112,12 +74,12 @@ div.popup div.grupo label {
    font-size: 25px;
 }
 
-input:checked + label {
+div.grupo_paquete input:checked + label {
     color: green;
     font-weight: bold;
 }
 
-div.popup ul {
+div.grupo_paquete ul {
    list-style: none;
    font-size: 16px;
    padding: 0px;
@@ -125,7 +87,7 @@ div.popup ul {
    text-align: center;
 }
 
-div.popup ul li {
+div.grupo_paquete ul li {
    display: inline-block;
    vertical-align: middle;
    padding: 5px;
@@ -136,39 +98,4 @@ div.popup ul li {
    border-bottom-left-radius: 5px 5px;
    border-bottom-right-radius: 5px 5px;
    text-align: center;
-}
-
-div.popup ul li.cancel {
-   background-color: #B14E4E;
-   color: white;
-   text-align: center;
-   text-transform: uppercase;
-   font-weight: bold;
-}
-
-div.popup ul li:hover {
-   cursor: pointer;
-}
-
-div.popup ul li img {
-   margin-top: 4px;
-   height: 80px;
-}
-
-input#tpv_total2, input#tpv_efectivo, input#tpv_cambio {
-   background-color: #333333;
-   color: white;
-   text-align: right;
-   font-size: 28px;
-   font-weight: bold;
-}
-
-div#login_header {
-   font-size: 18px;
-}
-
-div#login_box input[type='password'],
-div#login_box select {
-   padding: 5px;
-   font-size: 18px;
 }

@@ -59,6 +59,15 @@
          if( $("#pvp_"+i) )
          {
             npvp = parseFloat( $("#pvp_"+i).val() );
+            
+            if(pvp == 0)
+            {
+               $("#pvp").val(npvp);
+               cambiar_pvp();
+               pvp = parseFloat( $("#pvp").val() );
+               iva = parseFloat( $("#iva").val() );
+            }
+            
             $("#dto_"+i).val( 100 - (100*npvp)/pvp );
             $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
          }
@@ -75,6 +84,15 @@
          if( $("#pvp_"+i) )
          {
             npvpi = parseFloat( $("#pvpi_"+i).val() );
+            
+            if(parseFloat($("#pvpi").val()) == 0)
+            {
+               $("#pvpi").val(npvpi);
+               cambiar_pvpi();
+               pvp = parseFloat( $("#pvp").val() );
+               iva = parseFloat( $("#iva").val() );
+            }
+            
             npvp = (100*npvpi)/(100+iva);
             $("#pvp_"+i).val( npvp );
             $("#dto_"+i).val( 100 - (100*npvp)/pvp );
@@ -150,7 +168,7 @@
          <tr>
             <td><input type="file" name="fimagen" accept="image/png"/></td>
             <td align="right">
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -180,7 +198,7 @@
                {/if}
                <label for="articulo_bloqueado">bloqueado</label>
                &nbsp;
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </span>
          </h1>
          <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
@@ -289,15 +307,15 @@
                <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
                <td>{$value->codalmacen} {$value->nombre}</td>
                <td align="center">
-                  <input type="button" value="-" onclick="sum_stock('{$counter}', -1)"/>
+                  <input class="button" type="button" value="-" onclick="sum_stock('{$counter}', -1)"/>
                   <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3" autocomplete="off"/>
-                  <input type="button" value="+" onclick="sum_stock('{$counter}', 1)"/>
+                  <input class="button" type="button" value="+" onclick="sum_stock('{$counter}', 1)"/>
                </td>
                <td align="center">{$value->reservada}</td>
                <td align="center">{$value->disponible}</td>
                <td align="center">{$value->pterecibir}</td>
                <td align="right">
-                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
                </td>
             </form>
          </tr>
@@ -313,12 +331,12 @@
                      {/loop}
                   </select>
                </td>
-               <td align="center"><input type="text" name="cantidad" value="1" size="3" autocomplete="off"/></td>
+               <td align="center"><input type="text" name="cantidad" value="0" size="3" autocomplete="off"/></td>
                <td align="center"></td>
                <td align="center"></td>
                <td align="center"></td>
                <td align="right">
-                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
                </td>
             </form>
          </tr>
@@ -343,7 +361,7 @@
             <h1>
                Precios:
                <span>
-                  <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
                </span>
             </h1>
             <table class="list">

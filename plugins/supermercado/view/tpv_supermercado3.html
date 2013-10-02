@@ -1,0 +1,201 @@
+{include="header"}
+
+<script type="text/javascript">
+   var numlineas = 1;
+   function recalcular()
+   {
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_iva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            $("#pvpt_"+i).val( l_uds*l_pvp*(100+l_iva)/100 );
+            
+            neto += l_uds*l_pvp;
+            total_iva += l_uds*l_pvp*l_iva/100;
+         }
+      }
+      
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+      $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
+   }
+   function linea_sum_ud(num,value)
+   {
+      var udl = parseInt($("#cantidad_"+num).val()) + parseInt(value);
+      if(udl < 1)
+         $("#linea_"+num).remove();
+      else
+         $("#cantidad_"+num).val(udl);
+      recalcular();
+      document.f_albaran.codbar.focus();
+   }
+   function ajustar_pvpt(num)
+   {
+      if($("#linea_"+num).length > 0)
+      {
+         var l_uds = parseFloat( $("#cantidad_"+num).val() );
+         var l_pvp = 0;
+         var l_iva = parseFloat( $("#iva_"+num).val() );
+         var l_pvpt = parseFloat( $("#pvpt_"+num).val() );
+         var neto = 0;
+         var total_iva = 0;
+         
+         if( !isNaN(l_pvpt) )
+         {
+            $("#pvp_"+num).val( 100*l_pvpt/(l_uds*(100+l_iva)) );
+            
+            for(var i=1; i<=numlineas; i++)
+            {
+               if($("#linea_"+i).length > 0)
+               {
+                  l_uds = parseFloat( $("#cantidad_"+i).val() );
+                  l_pvp = parseFloat( $("#pvp_"+i).val() );
+                  l_iva = parseFloat( $("#iva_"+i).val() );
+                  
+                  neto += l_uds*l_pvp;
+                  total_iva += l_uds*l_pvp*l_iva/100;
+               }
+            }
+            
+            neto = fs_round(neto, 2);
+            total_iva = fs_round(total_iva, 2);
+            $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+            $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
+            update_lcd(neto + total_iva);
+         }
+      }
+   }
+   function send_albaran()
+   {
+      if(document.f_albaran.codbar.value == '')
+      {
+         if(numlineas > 1)
+            save_popup();
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'codbar2='+document.f_albaran.codbar.value+'&numlineas='+numlineas,
+            success: function(datos) {
+               if( datos.indexOf('<!--no_encontrado-->') != -1 )
+               {
+                  alert('¡Artículo no encontrado!');
+                  document.f_albaran.codbar.value = '';
+               }
+               else
+               {
+                  $("#tpv_albaran").append(datos);
+                  numlineas += 1;
+                  document.f_albaran.codbar.value = '';
+                  recalcular();
+               }
+            }
+         });
+      }
+   }
+   function save_popup()
+   {
+      fs_show_popup('popup_guardar')
+      document.f_albaran.efectivo.select();
+   }
+   function save_albaran()
+   {
+      document.f_albaran.total2.disabled = false;
+      document.f_albaran.numlineas.value = numlineas;
+      document.f_albaran.submit();
+   }
+   $(document).ready(function() {
+      document.f_albaran.codbar.focus();
+      $('#b_codbar').keypress(function(e) {
+         if(e.which == 13)
+            send_albaran();
+      });
+      $("#tpv_efectivo").keyup(function(e) {
+         $("#tpv_cambio").val( number_format(parseFloat($(this).val()) - parseFloat($("#tpv_total2").val()),2,'.','') );
+      });
+      $('#tpv_efectivo').keypress(function(e) {
+         if(e.which == 13)
+            save_albaran();
+      });
+   });
+</script>
+
+<form id="f_albaran" name="f_albaran" action="{$fsc->url()}" method="post">
+<input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+<input type="hidden" name="numlineas" value="0"/>
+<div class="rounded">
+   <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
+   <div class="bloque">
+      Cliente: <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a> |
+      Gastados: {$fsc->clan->gastado()} € de {$fsc->clan->limite} €
+   </div>
+   <br/><br/>
+   <table class="list" id="tpv_albaran">
+      <tr>
+         <th align="left">Referencia</th>
+         <th>Descripción</th>
+         <th>Disponible</th>
+         <th>Ud.</th>
+         <th align="right">TOTAL+IVA</th>
+      </tr>
+   </table>
+   <div class="new_line" style="padding: 3px;">
+      <input class="full" type="text" id="b_codbar" name="codbar" size="60" autocomplete="off" placeholder=" introduce el código de barras"/>
+   </div>
+   <br/><br/>
+   <div>
+      <a class="delete" href="index.php?page=tpv_supermercado">Cancelar</a>
+      <button type="button" class="pull_right submit" onclick="save_popup()">Guardar</button>
+   </div>
+</div>
+
+<div class="popup" id="popup_guardar">
+   <h1>Guardar:</h1>
+   <table>
+      <tr>
+         <td align="right">Total:</td>
+         <td><input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/> €</td>
+      </tr>
+      <tr>
+         <td align="right">Efectivo:</td>
+         <td><input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> €</td>
+      </tr>
+      <tr>
+         <td align="right">Cambio:</td>
+         <td><input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> €</td>
+      </tr>
+      <tr>
+         <td>Observaciones:</td>
+      </tr>
+      <tr>
+         <td colspan="2">
+            <textarea name="observaciones"></textarea>
+            <br/>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <button type="button" class="delete" onclick="fs_hide_popups()">Cancelar</button>
+         </td>
+         <td align="right">
+            <button type="button" class="submit" onclick="save_albaran()">Guardar</button>
+         </td>
+      </tr>
+   </table>
+</div>
+</form>
+
+{include="footer"}

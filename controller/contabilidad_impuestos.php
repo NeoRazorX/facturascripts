@@ -33,7 +33,32 @@ class contabilidad_impuestos extends fs_controller
       $this->impuesto = new impuesto();
       $this->buttons[] = new fs_button_img('b_nuevo_impuesto', 'nuevo');
       
-      if( isset($_POST['codimpuesto']) )
+      if( isset($_GET['delete']) )
+      {
+         if(FS_DEMO)
+         {
+            $this->new_error_msg('En el modo demo no puedes eliminar impuestos.
+               Otro usuario podría necesitarlo.');
+         }
+         else if(!$this->user->admin)
+         {
+            $this->new_error_msg('Sólo un administrador puede eliminar impuestos.');
+         }
+         else
+         {
+            $impuesto = $this->impuesto->get($_GET['delete']);
+            if($impuesto)
+            {
+               if( $impuesto->delete() )
+                  $this->new_message('Impuesto eliminado correctamente.');
+               else
+                  $this->new_error_msg('Ha sido imposible eliminar el impuesto.');
+            }
+            else
+               $this->new_error_msg('Impuesto no encontrado.');
+         }
+      }
+      else if( isset($_POST['codimpuesto']) )
       {
          $impuesto = $this->impuesto->get($_POST['codimpuesto']);
          if( !$impuesto )
@@ -50,8 +75,9 @@ class contabilidad_impuestos extends fs_controller
       }
    }
    
-   public function version() {
-      return parent::version().'-3';
+   public function version()
+   {
+      return parent::version().'-4';
    }
 }
 

@@ -104,6 +104,7 @@ class general_proveedor extends fs_controller
       if($this->proveedor)
       {
          $this->page->title = $this->proveedor->codproveedor;
+         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
@@ -128,7 +129,7 @@ class general_proveedor extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function url()

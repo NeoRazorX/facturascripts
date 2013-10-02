@@ -58,7 +58,12 @@ class admin_divisas extends fs_controller
             {
                if( isset($_POST['delete_'.$i]) )
                {
-                  if( $div0->delete() )
+                  if(FS_DEMO)
+                  {
+                     $this->new_error_msg('En el modo demo no puedes eliminar divisas.
+                        Otro usuario podría necesitarlas.');
+                  }
+                  else if( $div0->delete() )
                      $this->new_message('Divisa '.$div0->coddivisa.' eliminada correctamente.');
                   else
                      $this->new_error_msg('Error al eliminar la divisa '.$div0->coddivisa.'.');
@@ -80,7 +85,7 @@ class admin_divisas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-1';
+      return parent::version().'-2';
    }
 }
 

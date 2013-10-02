@@ -510,6 +510,10 @@ class proveedor extends fs_model
    public function delete()
    {
       $this->clean_cache();
+      
+      foreach($this->get_direcciones() as $dir)
+         $dir->delete();
+      
       return $this->db->exec("DELETE FROM ".$this->table_name."
          WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
    }

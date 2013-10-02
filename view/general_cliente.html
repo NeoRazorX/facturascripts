@@ -29,6 +29,11 @@
       }
    }
    $(document).ready(function() {
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este cliente?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->cliente->codcliente}';
+      });
       $("#b_datos_generales, #b_datos_generales2").click(function(event) {
          event.preventDefault();
          $("#div_datos_generales").show();
@@ -99,7 +104,7 @@
          Observaciones:
          <textarea name="observaciones" rows="3" cols="60">{$fsc->cliente->observaciones}</textarea>
       </div>
-      <input class="pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+      <input class="submit pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       <div>
          <div class="bloque">
             <a class="link" href="{$fsc->serie->url()}">Serie</a>:
@@ -206,7 +211,7 @@
                Descripción:
                <input type="text" name="descripcion" value="{$value->descripcion}" size="60"/>
             </div>
-            <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </form>
       </div>
    {/loop}
@@ -255,7 +260,7 @@
             Descripción:
             <input type="text" name="descripcion" size="60"/>
          </div>
-         <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       </form>
    </div>
 </div>

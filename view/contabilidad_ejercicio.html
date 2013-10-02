@@ -46,7 +46,7 @@
          </tr>
          <tr>
             <td align="right">
-               <input type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -64,7 +64,7 @@
             <th align="left">Longitud subcuenta</th>
             <th align="left">Estado</th>
             <td align="right">
-               <input type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
          <tr>
@@ -85,7 +85,7 @@
                {/if}
                </select>
                {if condition="$fsc->ejercicio->abierto()"}
-               <input type="button" value="cerrar ejercicio" onclick="cerrar_ejercicio()"/>
+               <input class="button" type="button" value="cerrar ejercicio" onclick="cerrar_ejercicio()"/>
                {/if}
             </td>
          </tr>

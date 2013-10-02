@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cliente2clan.xml
+    Description:
+        Estructura de la tabla cliente2clan.
+-->
+<tabla>
+   <columna>
+      <nombre>codclan</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codcliente</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>ca_cliente2clan_clan</nombre>
+      <consulta>FOREIGN KEY (codclan)
+      REFERENCES clanes (codclan) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_cliente2clan_clientes</nombre>
+      <consulta>FOREIGN KEY (codcliente)
+      REFERENCES clientes (codcliente) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>cliente2clan_pkey</nombre>
+      <consulta>PRIMARY KEY (codclan,codcliente)</consulta>
+   </restriccion>
+</tabla>
