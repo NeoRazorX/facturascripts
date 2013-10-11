@@ -341,7 +341,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13';
+      return '0.13.1';
    }
    
    public function select_default_page()
@@ -546,6 +546,11 @@ class fs_controller
    public function today()
    {
       return date('d-m-Y');
+   }
+   
+   public function hour()
+   {
+      return Date('H:i:s');
    }
    
    public function random_string($length = 30)

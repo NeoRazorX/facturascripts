@@ -92,7 +92,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-17';
+      return parent::version().'-18';
    }
    
    private function new_articulo()
@@ -194,13 +194,14 @@ class general_nuevo_albaran extends fs_controller
       if( $continuar )
       {
          $albaran->fecha = $_POST['fecha'];
+         $albaran->hora = $_POST['hora'];
          $albaran->codalmacen = $almacen->codalmacen;
          $albaran->codejercicio = $ejercicio->codejercicio;
          $albaran->codserie = $serie->codserie;
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $this->agente->codagente;
+         $albaran->codagente = $_POST['codagente'];
          if( isset($_POST['numero2']) )
             $albaran->numero2 = $_POST['numero2'];
          $albaran->observaciones = $_POST['observaciones'];
@@ -385,6 +386,7 @@ class general_nuevo_albaran extends fs_controller
       if( $continuar )
       {
          $albaran->fecha = $_POST['fecha'];
+         $albaran->hora = $_POST['hora'];
          $albaran->codproveedor = $proveedor->codproveedor;
          $albaran->nombre = $proveedor->nombre;
          $albaran->cifnif = $proveedor->cifnif;
@@ -394,7 +396,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $this->agente->codagente;
+         $albaran->codagente = $_POST['codagente'];
          if( isset($_POST['numproveedor']) )
             $albaran->numproveedor = $_POST['numproveedor'];
          $albaran->observaciones = $_POST['observaciones'];

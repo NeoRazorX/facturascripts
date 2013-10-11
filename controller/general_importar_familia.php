@@ -275,7 +275,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-10';
+      return parent::version().'-11';
    }
    
    private function get_family_data()
@@ -537,6 +537,10 @@ class general_importar_familia extends fs_controller
             
             if( $articulo->save() )
             {
+               /// ¿Actualizamos el stock?
+               if(strlen($tarifa[4]) > 0)
+                  $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               
                $retorno = TRUE;
                $this->family_data->articulos_actualizados += 1;
                
@@ -579,6 +583,10 @@ class general_importar_familia extends fs_controller
             
             if( $articulo->save() )
             {
+               /// ¿Actualizamos el stock?
+               if(strlen($tarifa[4]) > 0)
+                  $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               
                $retorno = TRUE;
                $this->family_data->articulos_nuevos += 1;
             }

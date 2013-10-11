@@ -4,7 +4,7 @@
    $(document).ready(function() {
       document.f_custom_search.query.focus();
       $("#b_nueva").click(function() {
-         fs_show_popup('popup_nueva');
+         fs_show_popup('popup_nueva', 50);
       });
       $("#b_huecos").click(function() {
          fs_show_popup('popup_huecos');
@@ -14,10 +14,12 @@
 
 <div class="popup" id="popup_nueva">
    <h1>Nueva factura:</h1>
-   Para crear una nueva factura, primero hay que <b>crear un albarán</b>
-   <br/>
-   y luego pulsar el botón <b>generar factura</b>.
+   En lugar de crear una factura directamente, es mejor que<br/>
+   crees un albarán de cliente (que es un "borrador" de factura)<br/>
+   y después pulses el botón <b>generar factura</b>.
    <br/><br/>
+   Trabajar con albaranes es más cómodo porque puedes modificarlos<br/>
+   e incluso agruparlos en una sola factura.
    <div>
       <a class="submit pull_right" href="index.php?page=general_nuevo_albaran">crear un albarán</a>
    </div>

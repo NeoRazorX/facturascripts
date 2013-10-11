@@ -309,7 +309,9 @@
       <table>
          <tr>
             <td align="right">Fecha:</td>
-            <td colspan="3"><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
+            <td><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
+            <td align="right">Hora:</td>
+            <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
          </tr>
          <tr id="tr_clientes">
             <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
@@ -418,7 +420,18 @@
    </div>
    <div class="rounded">
       <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
-      <div class="bloque">Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
+      <div class="bloque">
+         Agente:
+         <select name="codagente">
+            <option value="{$fsc->agente->codagente}">{$fsc->agente->get_fullname()}</option>
+            {if condition="$fsc->user->admin"}
+               <option value="{$fsc->agente->codagente}">-----</option>
+               {loop="$fsc->agente->all()"}
+               <option value="{$value->codagente}">{$value->get_fullname()}</option>
+               {/loop}
+            {/if}
+         </select>
+      </div>
       <br/><br/>
       <table class="list" id="tpv_albaran">
          <tr>
