@@ -66,7 +66,14 @@ class general_nuevo_albaran extends fs_controller
          $this->get_precios_articulo();
       else
       {
-         $this->agente = $this->user->get_agente();
+         if( isset($_POST['codagente']) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($_POST['codagente']);
+         }
+         else
+            $this->agente = $this->user->get_agente();
+         
          $this->almacen = new almacen();
          $this->cliente = new cliente();
          $this->divisa = new divisa();
@@ -92,7 +99,7 @@ class general_nuevo_albaran extends fs_controller
    
    public function version()
    {
-      return parent::version().'-18';
+      return parent::version().'-19';
    }
    
    private function new_articulo()
@@ -201,7 +208,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $_POST['codagente'];
+         $albaran->codagente = $this->agente->codagente;
          if( isset($_POST['numero2']) )
             $albaran->numero2 = $_POST['numero2'];
          $albaran->observaciones = $_POST['observaciones'];
@@ -396,7 +403,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $_POST['codagente'];
+         $albaran->codagente = $this->agente->codagente;
          if( isset($_POST['numproveedor']) )
             $albaran->numproveedor = $_POST['numproveedor'];
          $albaran->observaciones = $_POST['observaciones'];

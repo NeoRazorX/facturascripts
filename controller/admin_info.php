@@ -34,6 +34,13 @@ class admin_info extends fs_controller
       
       if( isset($_GET['clean_cache']) )
       {
+         /// borramos los archivos php del directorio tmp
+         foreach(scandir('tmp') as $f)
+         {
+            if( substr($f, -4) == '.php' )
+               unlink('tmp/'.$f);
+         }
+         
          if( $this->cache->clean() )
             $this->new_message("Cache limpiada correctamente.");
          else

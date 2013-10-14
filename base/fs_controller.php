@@ -129,6 +129,11 @@ class fs_controller
       }
    }
    
+   public function version()
+   {
+      return '0.13.2';
+   }
+   
    public function close()
    {
       $this->db->close();
@@ -337,11 +342,6 @@ class fs_controller
    protected function process()
    {
       
-   }
-   
-   public function version()
-   {
-      return '0.13.1';
    }
    
    public function select_default_page()

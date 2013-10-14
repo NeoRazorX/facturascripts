@@ -421,7 +421,7 @@
    <div class="rounded">
       <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
       <div class="bloque">
-         Agente:
+         <a class="link" href="{$fsc->agente->url()}">Agente</a>:
          <select name="codagente">
             <option value="{$fsc->agente->codagente}">{$fsc->agente->get_fullname()}</option>
             {if condition="$fsc->user->admin"}

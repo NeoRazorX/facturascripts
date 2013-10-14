@@ -194,6 +194,16 @@ class epigrafe extends fs_model
       return $cuenta->full_from_epigrafe($this->idepigrafe);
    }
    
+   public function get($id)
+   {
+      $epis = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE idepigrafe = ".$this->var2str($id).";");
+      if($epis)
+         return new epigrafe($epis[0]);
+      else
+         return FALSE;
+   }
+   
    public function get_by_codigo($cod, $eje)
    {
       $epis = $this->db->select("SELECT * FROM ".$this->table_name.

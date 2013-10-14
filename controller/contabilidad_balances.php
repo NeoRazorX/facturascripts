@@ -25,12 +25,18 @@ class contabilidad_balances extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_balances', 'Balances', 'contabilidad', FALSE, TRUE);
+      parent::__construct('contabilidad_balances', 'Balances', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()
    {
+      $this->ppage = $this->page->get('contabilidad_cuentas');
       $this->balance = new balance();
+   }
+   
+   public function version()
+   {
+      return parent::version().'-2';
    }
 }
 
