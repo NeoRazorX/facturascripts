@@ -55,7 +55,23 @@ class contabilidad_cuentas extends fs_controller
       else
          $this->offset = 0;
       
-      if( isset($_POST['codejercicio']) )
+      if( isset($_GET['delete']) )
+      {
+         $cuenta2 = $this->cuenta->get($_GET['delete']);
+         if($cuenta2)
+         {
+            if( $cuenta2->delete() )
+               $this->new_message('Cuenta eliminada correctamente.');
+            else
+               $this->new_error_msg('Error al eliminar la cuenta.');
+         }
+         else
+            $this->new_error_msg('Cuenta no encontrada.');
+         
+         $this->resultados = $this->cuenta->all_from_ejercicio($this->default_items->codejercicio(), $this->offset);
+         $this->resultados2 = array();
+      }
+      else if( isset($_POST['codejercicio']) )
       {
          $this->nueva_cuenta();
       }
@@ -80,7 +96,7 @@ class contabilidad_cuentas extends fs_controller
    
    public function version()
    {
-      return parent::version().'-5';
+      return parent::version().'-6';
    }
    
    public function anterior_url()

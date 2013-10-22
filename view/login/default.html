@@ -111,15 +111,21 @@
    <div class="popup" id="popup_news" style="display: none;">
       <h1>Últimos cambios de la versión {$fsc->version()}:</h1>
       <ul>
+         <li>Ya se pueden crear y eliminar bancos.</li>
+         <li>Ya se pueden eliminar cuentas.</li>
+         <li>También se pueden crear y asignar agentes desde la página de un usuario.</li>
          <li>
-            Mejorada la selección del agente a la hora de crear un nuevo albarán, tal y como se pedía
-            <a target="_blank" href="http://www.facturascripts.com/community/item/seria-bueno-que-se-pueda-editar-el-agente-que-ingresa-el-albaran-yo-lo-estoy-42.html">aquí</a>.
+            Las páginas de albaranes de cliente/proveedor ahora permiten mostrar
+            exclusivamente los albaranes todavía no facturados.
          </li>
-         <li>Ya se pueden crear cuentas manualmente.</li>
-         <li>La página de balances es ahora una subpágina de contabilidad &gt; cuentas.</li>
          <li>
-            Al limpiar la caché desde 'admin &gt; información del sistema' también se borran los
-            archivos del directorio tmp. Así se evitan problemas.
+            Pequeñas mejoras en los formularios de eliminar almacenes, países, series,
+            etc, para evitar eliminaciones accidentales.
+         </li>
+         <li>
+            Cómo es habitual, en esta versión también se han corregido muchos problemas
+            con MySQL. En concreto, ahora ya se actualizan correctamente las claves ajenas
+            de las tablas. Además se añade la opción AUTO_INCREMENT allí dónde sea necesario.
          </li>
          <li>
             <a target="_blank" href="http://www.facturascripts.com/community/item/disponible-facturascripts-0-13-2-con-correcciones-para-mysql-lista-de-369.html">Deja

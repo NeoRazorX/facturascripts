@@ -906,6 +906,19 @@ class albaran_cliente extends fs_model
       return $albalist;
    }
    
+   public function all_ptefactura($offset=0)
+   {
+      $albalist = array();
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE ptefactura = true ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($albaranes)
+      {
+         foreach($albaranes as $a)
+            $albalist[] = new albaran_cliente($a);
+      }
+      return $albalist;
+   }
+   
    public function all_from_day($offset=0)
    {
       $albalist = array();

@@ -1,6 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
+   function delete_serie(url)
+   {
+      if( confirm("¿Realmente desea eliminar esta serie?") )
+         window.location.href = url;
+   }
    $(document).ready(function() {
       $("#b_nueva_serie").click(function(event) {
          event.preventDefault();
@@ -42,7 +47,7 @@
       <h1>
          {$value->codserie}
          <span>
-            <a class="delete" href="{$fsc->url()}&amp;delete={$value->codserie}">eliminar</a> &nbsp;
+            <a class="delete" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">eliminar</a> &nbsp;
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
@@ -60,6 +65,8 @@
       </div>
    </form>
 </div>
+{else}
+<div class="message">No hay ninguna serie creada. Pulsa el botoón <b>nueva</b>.</div>
 {/loop}
 
 {include="footer"}

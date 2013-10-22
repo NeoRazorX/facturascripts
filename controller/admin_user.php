@@ -46,13 +46,33 @@ class admin_user extends fs_controller
       {
          $this->page->title = $this->suser->nick;
          
-         if($this->suser->admin)
-            $this->new_advice('Los administradores tienen acceso a cualquier página.');
-         
+         /// no puedes eliminar tu propio usuario
          if($this->user->nick != $this->suser->nick)
             $this->buttons[] = new fs_button_img('b_eliminar_usuario', 'eliminar', 'trash.png', '#', TRUE);
          
-         if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
+         if( isset($_POST['scodagente']) )
+         {
+            $age0 = new agente();
+            $age0->codagente = $_POST['scodagente'];
+            $age0->nombre = $_POST['snombre'];
+            $age0->apellidos = $_POST['sapellidos'];
+            $age0->dnicif = $_POST['sdnicif'];
+            $age0->telefono = $_POST['stelefono'];
+            $age0->email = $_POST['semail'];
+            if( $age0->save() )
+            {
+               $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
+               $this->suser->codagente = $_POST['scodagente'];
+               
+               if( $this->suser->save() )
+                  $this->new_message("Agente ".$age0->codagente." asignado correctamente.");
+               else
+                  $this->new_error_msg("¡Imposible asignar el agente!");
+            }
+            else
+               $this->new_error_msg("¡Imposible guardar el agente!");
+         }
+         else if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
          {
             if($_POST['spassword'] != '')
                $this->suser->set_password($_POST['spassword']);
@@ -127,7 +147,7 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()

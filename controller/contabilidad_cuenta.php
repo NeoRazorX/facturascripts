@@ -43,6 +43,7 @@ class contabilidad_cuenta extends fs_controller
       {
          $this->page->title = 'Cuenta: '.$this->cuenta->codcuenta;
          $this->ejercicio = $this->cuenta->get_ejercicio();
+         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("Cuenta no encontrada.");
@@ -50,7 +51,7 @@ class contabilidad_cuenta extends fs_controller
    
    public function version()
    {
-      return parent::version().'-2';
+      return parent::version().'-3';
    }
    
    public function url()

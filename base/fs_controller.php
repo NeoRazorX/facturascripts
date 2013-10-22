@@ -131,7 +131,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13.2';
+      return '0.13.3';
    }
    
    public function close()

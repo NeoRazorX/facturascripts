@@ -1,5 +1,15 @@
 {include="header"}
 
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este banco?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->banco->entidad}';
+      });
+   });
+</script>
+
 {if condition="$fsc->banco"}
 <div class="rounded">
    <table class="list">

@@ -18,10 +18,12 @@
  */
 
 require_once 'model/banco.php';
+require_once 'model/proveedor.php';
 
 class contabilidad_bancos extends fs_controller
 {
    public $banco;
+   public $proveedor;
    
    public function __construct()
    {
@@ -31,6 +33,46 @@ class contabilidad_bancos extends fs_controller
    protected function process()
    {
       $this->banco = new banco();
+      $this->proveedor = new proveedor();
+      $this->buttons[] = new fs_button_img('b_nuevo_banco', 'nuevo');
+      
+      if( isset($_POST['entidad']) )
+      {
+         $banco2 = $this->banco->get($_POST['entidad']);
+         if($banco2)
+            $this->new_error_msg('Ya existe la entidad <a href="'.$banco2->url().'">'.$banco2->entidad.'</a>');
+         else
+         {
+            $this->banco->entidad = $_POST['entidad'];
+            $this->banco->nombre = $_POST['nombre'];
+            
+            if($_POST['codproveedor'] != '-1')
+               $this->banco->codproveedor = $_POST['codproveedor'];
+            
+            if( $this->banco->save() )
+               header('Location: '.$this->banco->url());
+            else
+               $this->new_error_msg('Error al guardar el banco.');
+         }
+      }
+      else if( isset($_GET['delete']) )
+      {
+         $banco2 = $this->banco->get($_GET['delete']);
+         if($banco2)
+         {
+            if( $banco2->delete() )
+               $this->new_message('Banco eliminado correctamente.');
+            else
+               $this->new_error_msg('Ha sido imposible eliminar el banco.');
+         }
+         else
+            $this->new_error_msg('Banco no encontrado.');
+      }
+   }
+   
+   public function version()
+   {
+      return parent::version().'-2';
    }
 }
 

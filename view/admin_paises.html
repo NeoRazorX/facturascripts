@@ -1,6 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
+   function delete_pais(url)
+   {
+      if( confirm("¿Realmente desea eliminar este país?") )
+         window.location.href = url;
+   }
    $(document).ready(function() {
       $("#b_nuevo_pais").click(function(event) {
          event.preventDefault();
@@ -37,7 +42,7 @@
       <h1>
          Código: {$value->codpais}
          <span>
-            <a class="delete" href="{$fsc->url()}&amp;delete={$value->codpais}">eliminar</a> &nbsp;
+            <a class="delete" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">eliminar</a> &nbsp;
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
@@ -46,6 +51,8 @@
       <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
    </form>
 </div>
+{else}
+<div class="message">No hay países creados. Pulsa el botón <b>nuevo</b> para crear uno.</div>
 {/loop}
 
 {include="footer"}

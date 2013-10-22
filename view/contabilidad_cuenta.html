@@ -1,5 +1,15 @@
 {include="header"}
 
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar esta cuenta?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->cuenta->idcuenta}';
+      });
+   });
+</script>
+
 {if condition="$fsc->cuenta"}
 <div class="rounded">
    <table class="list">
@@ -28,6 +38,10 @@
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
          <td align="right">{$value->show_saldo()} €</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3">No hay ninguna subcuenta asociada a esta cuenta.</td>
       </tr>
       {/loop}
    </table>

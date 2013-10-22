@@ -92,14 +92,11 @@ class banco extends fs_model
       
       $this->entidad = $this->no_html($this->entidad);
       $this->nombre = $this->no_html($this->nombre);
-      $this->codproveedor = $this->no_html($this->codproveedor);
       
       if( !preg_match("/^[A-Z0-9]{1,4}$/i", $this->entidad) )
          $this->new_error_msg("Código de entidad no válido.");
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
-         $this->new_error_msg("Nombre de almacén no válido.");
-      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codproveedor) )
-         $this->new_error_msg("Código de proveedor no válido.");
+         $this->new_error_msg("Nombre no válido.");
       else
          $status = TRUE;
       
@@ -112,11 +109,14 @@ class banco extends fs_model
       {
          if( $this->exists() )
          {
-            $sql = "";
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               codproveedor = ".$this->var2str($this->codproveedor)." WHERE entidad = ".$this->var2str($this->entidad).";";
          }
          else
          {
-            $sql = "";
+            $sql = "INSERT INTO ".$this->table_name." (entidad,nombre,codproveedor) VALUES
+               (".$this->var2str($this->entidad).",".$this->var2str($this->nombre).",
+                  ".$this->var2str($this->codproveedor).");";
          }
          return $this->db->exec($sql);
       }

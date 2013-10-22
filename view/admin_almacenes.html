@@ -1,6 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
+   function delete_almacen(url)
+   {
+      if( confirm("¿Realmente desea eliminar este almacén?") )
+         window.location.href = url;
+   }
    $(document).ready(function() {
       $("#b_nuevo_almacen").click(function(event) {
          event.preventDefault();
@@ -112,7 +117,7 @@
          Contacto: <input type="text" name="scontacto" value="{$value->contacto}" autocomplete="off"/>
       </div>
       <div>
-         <a class="delete" href="{$fsc->url()}&amp;delete={$value->codalmacen}">eliminar</a>
+         <a class="delete" href="#" onclick="delete_almacen('{$fsc->url()}&delete={$value->codalmacen}')">eliminar</a>
          <input class="pull_right submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>

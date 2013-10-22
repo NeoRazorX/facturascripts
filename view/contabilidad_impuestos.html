@@ -1,6 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
+   function delete_impuesto(url)
+   {
+      if( confirm("¿Realmente desea eliminar este impuesto?") )
+         window.location.href = url;
+   }
    $(document).ready(function() {
       $("#b_nuevo_impuesto").click(function(event) {
          event.preventDefault();
@@ -42,7 +47,7 @@
       <h1>
          {$value->codimpuesto}
          <span>
-            <a class="delete" href="{$fsc->url()}&amp;delete={$value->codimpuesto}">eliminar</a> &nbsp;
+            <a class="delete" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">eliminar</a> &nbsp;
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
@@ -54,6 +59,8 @@
       </div>
    </form>
 </div>
+{else}
+<div class="message">No hay impuestos creados. Pulsa el botón <b>nuevo</b> para crear uno.</div>
 {/loop}
 
 {include="footer"}

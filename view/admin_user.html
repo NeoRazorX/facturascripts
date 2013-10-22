@@ -1,27 +1,70 @@
 {include="header"}
 
 {if condition="$fsc->suser"}
-   <script type="text/javascript">
-      function fs_marcar_todo()
-      {
-         $("#f_user_pages input[name='enabled[]']").attr('checked', true);
-      }
-      function fs_marcar_nada()
-      {
-         $("#f_user_pages input[name='enabled[]']").attr('checked', false);
-      }
-      $(document).ready(function() {
-         $("#b_eliminar_usuario").click(function(event) {
-            event.preventDefault();
-            if( confirm("¿Realmente desea eliminar el usuario?") )
-               window.location.href = '{$fsc->ppage->url()}&delete={$fsc->suser->nick}';
-         });
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $("#f_user_pages input[name='enabled[]']").attr('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $("#f_user_pages input[name='enabled[]']").attr('checked', false);
+   }
+   $(document).ready(function() {
+      $("#b_eliminar_usuario").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar el usuario?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->suser->nick}';
       });
-   </script>
-   
-   <form id="f_user_pages" action="{$fsc->url()}" method="POST">
-      <input type="hidden" name="modupages" value="TRUE"/>
-      
+      $("#b_nuevo_agente").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_agente', 50);
+         document.f_nuevo_agente.snombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_agente">
+   <h1>Nuevo agente</h1>
+   <form name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td>
+               <input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre" maxlength="50" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Apellidos:</td>
+            <td><input type="text" name="sapellidos" maxlength="100" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="sdnicif" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Teléfono:</td>
+            <td><input type="text" name="stelefono" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Email:</td>
+            <td><input type="text" name="semail" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="submit" type="submit" value="guardar y asignar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<form id="f_user_pages" action="{$fsc->url()}" method="POST">
+   <input type="hidden" name="modupages" value="TRUE"/>
       <div class="rounded">
          <h1>
             Datos de usuario:
@@ -36,6 +79,15 @@
             Contraseña: <input type="password" name="spassword" size="12" maxlength="12"/>
          </div>
          <div class="bloque">
+            {if condition="$fsc->suser->admin"}
+            <input type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
+            {else}
+            <input type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
+            {/if}
+            <label for="usuario_admin">Administrador</label>
+         </div>
+         <br/>
+         <div class="bloque">
             <a class="link" href="{$fsc->agente->url()}">Agente</a>:
             <select name="scodagente">
                <option value="">- ninguno -</option>
@@ -48,16 +100,8 @@
                   {/if}
                {/loop}
             </select>
+            <input id="b_nuevo_agente" class="button" type="button" value="crear" title="crear un nuevo agente y asignarlo a este usuario"/>
          </div>
-         <div class="bloque">
-            {if condition="$fsc->suser->admin"}
-            <input type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
-            {else}
-            <input type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
-            {/if}
-            <label for="usuario_admin">Administrador</label>
-         </div>
-         <br/>
          <div class="bloque">
             Página de inicio:
             <select name="udpage">
@@ -152,8 +196,10 @@
             </tr>
          </table>
       </div>
+      {else}
+      <div class="advice">Los administradores tienen acceso a cualquier página.</div>
       {/if}
-   </form>
+</form>
 {else}
 <div class="rounded" style="text-align: center;">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>

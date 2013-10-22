@@ -67,7 +67,11 @@ class contabilidad_asientos extends fs_controller
          $this->offset = 0;
       
       if( isset($_GET['descuadrados']) )
+      {
+         $this->new_advice('Estos son los asientos descuadrados. Haz clic <a class="link" href="'.$this->url().
+                 '">aquí</a> para volver a la vista normal.');
          $this->resultados = $this->asiento->descuadrados();
+      }
       else if($this->query)
          $this->resultados = $this->asiento->search($this->query, $this->offset);
       else
@@ -76,7 +80,7 @@ class contabilidad_asientos extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
    
    public function anterior_url()

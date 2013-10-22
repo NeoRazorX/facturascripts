@@ -90,10 +90,11 @@ class fs_mysql extends fs_db
          foreach($aux as $a)
          {
             $columnas[] = array(
-                'column_name' => $a['Field'],
-                'data_type' => $a['Type'],
-                'column_default' => $a['Default'],
-                'is_nullable' => $a['Null']
+               'column_name' => $a['Field'],
+               'data_type' => $a['Type'],
+               'column_default' => $a['Default'],
+               'is_nullable' => $a['Null'],
+               'extra' => $a['Extra']
             );
          }
          return $columnas;
@@ -343,7 +344,19 @@ class fs_mysql extends fs_db
                         $consulta .= 'ALTER TABLE '.$table_name.' ALTER `'.$col['nombre'].'` DROP DEFAULT;';
                      else
                      {
-                        if( strtolower(substr($col['defecto'], 0, 9)) != "nextval('" ) /// nextval es para postgresql
+                        if( strtolower(substr($col['defecto'], 0, 9)) == "nextval('" ) /// nextval es para postgresql
+                        {
+                           if($col2['extra'] != 'auto_increment')
+                           {
+                              $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col2['column_name'].'` '.$col2['data_type'];
+                              
+                              if($col2['is_nullable'] == 'YES')
+                                 $consulta .= ' NULL AUTO_INCREMENT;';
+                              else
+                                 $consulta .= ' NOT NULL AUTO_INCREMENT;';
+                           }
+                        }
+                        else
                            $consulta .= 'ALTER TABLE '.$table_name.' ALTER `'.$col['nombre'].'` SET DEFAULT '.$col['defecto'].";";
                      }
                   }
@@ -420,9 +433,51 @@ class fs_mysql extends fs_db
     */
    public function compare_constraints($table_name, $c_nuevas, $c_old)
    {
-      /*
-       * He acabado hasta los cojones de MySQL.
-       */
+      $consulta = '';
+      
+      if($c_old)
+      {
+         if($c_nuevas)
+         {
+            /// comprobamos una a una las nuevas
+            foreach($c_nuevas as $col)
+            {
+               $encontrado = FALSE;
+               foreach($c_old as $col2)
+               {
+                  if($col['nombre'] == $col2['restriccion'])
+                  {
+                     $encontrado = TRUE;
+                     break;
+                  }
+               }
+               if( !$encontrado AND substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
+               {
+                  /// quitamos el match simple que sólo sirve para postgresql
+                  $sql_aux = str_replace('MATCH SIMPLE', '', $col['consulta']);
+                  
+                  /// añadimos la restriccion
+                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$sql_aux.';';
+               }
+            }
+         }
+      }
+      else if($c_nuevas)
+      {
+         /// añadimos todas las restricciones nuevas
+         foreach($c_nuevas as $col)
+         {
+            if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
+            {
+               /// quitamos el match simple que sólo sirve para postgresql
+               $sql_aux = str_replace('MATCH SIMPLE', '', $col['consulta']);
+               
+               $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$sql_aux.';';
+            }
+         }
+      }
+      
+      return $consulta;
    }
    
    /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
@@ -476,7 +531,7 @@ class fs_mysql extends fs_db
             else if( strstr(strtolower($res['consulta']), 'foreign key') )
             {
                $consulta .= ', CONSTRAINT '.$res['nombre'].' '.
-                    str_replace (' MATCH SIMPLE', '', $res['consulta']);
+                    str_replace (' MATCH SIMPLE', '', $res['consulta']); /// match simple sólo sirve para postgresql
             }
          }
       }
