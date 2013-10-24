@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_mysql_x.php';
+require_once 'plugins/woocommerce/model/fs_mysql_x.php';
 require_once 'model/articulo.php';
 require_once 'model/fs_var.php';
 

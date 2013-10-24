@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,6 +24,7 @@ class contabilidad_caja extends fs_controller
    public $caja;
    public $offset;
    public $resultados;
+   public $show_cerrar;
    
    public function __construct()
    {
@@ -33,9 +34,32 @@ class contabilidad_caja extends fs_controller
    protected function process()
    {
       $this->caja = new caja();
+      $this->show_cerrar = FALSE;
+      
+      if( isset($_POST['delete']) )
+      {
+         if( $this->user->admin )
+         {
+            $correcto = TRUE;
+            
+            foreach($_POST['delete'] as $cid)
+            {
+               $caja2 = $this->caja->get($cid);
+               if( !$caja2->delete() )
+                  $correcto = FALSE;
+            }
+            
+            if($correcto)
+               $this->new_message("Caja(s) eliminadas correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar la(s) caja(s)!");
+         }
+         else
+            $this->new_error_msg("Tienes que ser administrador para poder eliminar cajas.");
+      }
       
       $caja0 = $this->caja->get_last_from_this_server();
-      if( $caja0 )
+      if($caja0)
       {
          if( isset($_GET['cerrar']) )
          {
@@ -51,7 +75,7 @@ class contabilidad_caja extends fs_controller
                $this->new_error_msg("Tienes que ser administrador para poder cerrar la caja desde aquí. ¡Listo!");
          }
          else
-            $this->buttons[] = new fs_button_img('b_cerrar_caja', 'cerrar caja', 'remove.png', $this->url().'&cerrar=TRUE', TRUE);
+            $this->show_cerrar = TRUE;
       }
       
       if( isset($_GET['offset']) )
@@ -64,7 +88,7 @@ class contabilidad_caja extends fs_controller
    
    public function version()
    {
-      return parent::version().'-3';
+      return parent::version().'-4';
    }
    
    public function anterior_url()

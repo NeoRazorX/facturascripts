@@ -77,26 +77,38 @@ class general_albaranes_prov extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function anterior_url()
    {
       $url = '';
+      $extra = '';
+      
+      if( isset($_GET['ptefactura']) )
+         $extra = '&ptefactura=TRUE';
+      
       if($this->query!='' AND $this->offset>'0')
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
       else if($this->query=='' AND $this->offset>'0')
-         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      
       return $url;
    }
    
    public function siguiente_url()
    {
       $url = '';
+      $extra = '';
+      
+      if( isset($_GET['ptefactura']) )
+         $extra = '&ptefactura=TRUE';
+      
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      
       return $url;
    }
    
