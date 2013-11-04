@@ -435,7 +435,7 @@
             {loop="$fsc->equivalentes"}
             <tr>
                <td><a class="link" href="{$value->url()}">{$value->referencia}</a></td>
-               <td align="right">{$value->show_pvp_iva()} €</td>
+               <td align="right">{$value->show_pvp_iva()} {$fsc->simbolo_divisa()}</td>
                <td align="right">{$value->stockfis}</td>
             </tr>
             {/loop}

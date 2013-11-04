@@ -39,9 +39,10 @@ class fs_mysql extends fs_db
          
          self::$link = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, $port);
          
-         
          if(self::$link->connect_error)
+         {
             self::$link = NULL;
+         }
          else
          {
             $connected = TRUE;
@@ -49,7 +50,9 @@ class fs_mysql extends fs_db
          }
       }
       else
+      {
          self::$errors[] = 'No tienes instalada la extensión de PHP para MySQL.';
+      }
       
       return $connected;
    }

@@ -61,7 +61,7 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
@@ -104,7 +104,7 @@
          <td><a  class="link"href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
@@ -145,9 +145,9 @@
       <tr>
          <td align="center">{$value->fs_id}</td>
          <td align="center">{$value->fecha_inicial}</td>
-         <td align="right">{$value->show_dinero_inicial()} €</td>
+         <td align="right">{$value->show_dinero_inicial()} {$fsc->simbolo_divisa()}</td>
          <td align="center">{$value->show_fecha_fin()}</td>
-         <td align="right">{$value->show_diferencia()} €</td>
+         <td align="right">{$value->show_diferencia()} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$value->tickets}</td>
       </tr>
       {else}

@@ -53,9 +53,9 @@
          <td align="center">-</td>
          {/if}
          <td align="center">{$value->fecha_inicial}</td>
-         <td align="right">{$value->show_dinero_inicial()} €</td>
+         <td align="right">{$value->show_dinero_inicial()} {$fsc->simbolo_divisa()}</td>
          <td align="center">{$value->show_fecha_fin()}</td>
-         <td align="right">{$value->show_diferencia()} €</td>
+         <td align="right">{$value->show_diferencia()} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$value->tickets}</td>
       </tr>
       {else}

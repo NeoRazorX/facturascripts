@@ -31,9 +31,9 @@
                <a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
             </td>
             <td align="center"><a class="link" href="{$fsc->cuenta->url()}">{$fsc->cuenta->codcuenta}</a></td>
-            <td align="right">{$fsc->subcuenta->show_debe()} €</td>
-            <td align="right">{$fsc->subcuenta->show_haber()} €</td>
-            <td align="right">{$fsc->subcuenta->show_saldo()} €</td>
+            <td align="right">{$fsc->subcuenta->show_debe()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
+            <td align="right">{$fsc->subcuenta->show_haber()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
+            <td align="right">{$fsc->subcuenta->show_saldo()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
          </tr>
       </table>
    </div>
@@ -91,14 +91,14 @@
             <td><a class="link" href="{$value->url()}">{$value->numero}</a></td>
             <td align="center">{$value->fecha}</td>
             <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
-            <td align="right">{$value->show_debe()} €</td>
-            <td align="right">{$value->show_haber()} €</td>
-            <td align="right">{$value->show_saldo()} €</td>
+            <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
+            <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
+            <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</td>
             <td align="right">
                {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
             </td>
             <td align="right">
-               {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} €{else}-{/if}
+               {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}{else}-{/if}
             </td>
             <td align="center">
                {if condition="$value->codcontrapartida"}
@@ -114,8 +114,8 @@
          {if condition="$counter==$total"}
          <tr>
             <td colspan="4" align="right"><b>Sumas</b>:</td>
-            <td align="right"><b>{$value->show_sumdebe()} €</b></td>
-            <td align="right"><b>{$value->show_sumhaber()} €</b></td>
+            <td align="right"><b>{$value->show_sumdebe()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</b></td>
+            <td align="right"><b>{$value->show_sumhaber()} {$fsc->simbolo_divisa($fsc->subcuenta->coddivisa)}</b></td>
             <td colspan="5"></td>
          </tr>
          {/if}

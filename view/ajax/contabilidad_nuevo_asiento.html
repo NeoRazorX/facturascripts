@@ -32,9 +32,9 @@
             {$value->descripcion}
          </a>
       </td>
-      <td align="right">{$value->show_debe()} €</td>
-      <td align="right">{$value->show_haber()} €</td>
-      <td align="right">{$value->show_saldo()} €</td>
+      <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+      <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+      <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
    </tr>
    {/loop}
 </table>

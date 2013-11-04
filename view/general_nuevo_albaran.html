@@ -28,7 +28,7 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" €");
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" {$fsc->simbolo_divisa()}");
    }
    function ajustar_total()
    {
@@ -78,7 +78,7 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" €");
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" {$fsc->simbolo_divisa()}");
    }
    function ajustar_totiva()
    {
@@ -126,7 +126,7 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" €");
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" {$fsc->simbolo_divisa()}");
    }
    function aplicar_dto2(num)
    {
@@ -419,7 +419,7 @@
       </table>
    </div>
    <div class="rounded">
-      <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
+      <div class="tpv_total pull_right" id="tpv_total">0,00 {$fsc->simbolo_divisa()}</div>
       <div class="bloque">
          <a class="link" href="{$fsc->agente->url()}">Agente</a>:
          <select name="codagente">

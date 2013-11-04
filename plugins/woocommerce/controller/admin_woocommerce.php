@@ -108,7 +108,7 @@ class admin_woocommerce extends fs_controller
             if( isset($_GET['sync']) )
                $this->woo_sync();
             else
-               $this->buttons[] = new fs_button_img('b_woo_sync', 'Sincronizar', 'tools.png', $this->url().'&sync=TRUE');
+               $this->buttons[] = new fs_button('b_woo_sync', 'Sincronizar', $this->url().'&sync=TRUE');
          }
          else
             $this->new_error_msg('Error al conectar. '.$this->mysql->last_error());

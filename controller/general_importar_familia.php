@@ -155,7 +155,12 @@ class general_importar_familia extends fs_controller
          $this->familia = $familia->get($_POST['fam']);
       }
       
-      if( $this->familia )
+      if( $this->cache->error() )
+      {
+         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.
+                 $this->cache->error_msg() );
+      }
+      else if( $this->familia )
       {
          if( isset($_POST['archivo']) )
          {
@@ -275,7 +280,7 @@ class general_importar_familia extends fs_controller
    
    public function version()
    {
-      return parent::version().'-11';
+      return parent::version().'-12';
    }
    
    private function get_family_data()
@@ -537,9 +542,12 @@ class general_importar_familia extends fs_controller
             
             if( $articulo->save() )
             {
-               /// ¿Actualizamos el stock?
-               if(strlen($tarifa[4]) > 0)
-                  $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               if( count($tarifa) >= 5 )
+               {
+                  /// ¿Actualizamos el stock?
+                  if(strlen($tarifa[4]) > 0)
+                     $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               }
                
                $retorno = TRUE;
                $this->family_data->articulos_actualizados += 1;
@@ -583,9 +591,12 @@ class general_importar_familia extends fs_controller
             
             if( $articulo->save() )
             {
-               /// ¿Actualizamos el stock?
-               if(strlen($tarifa[4]) > 0)
-                  $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               if( count($tarifa) >= 5 )
+               {
+                  /// ¿Actualizamos el stock?
+                  if(strlen($tarifa[4]) > 0)
+                     $articulo->set_stock($this->empresa->codalmacen, floatval($tarifa[4]));
+               }
                
                $retorno = TRUE;
                $this->family_data->articulos_nuevos += 1;

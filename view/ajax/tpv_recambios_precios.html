@@ -42,10 +42,10 @@
                <tr>
                   <td>General</td>
                   <td align="right">0 %</td>
-                  <td align="right">{$fsc->articulo->show_pvp()} €</td>
+                  <td align="right">{$fsc->articulo->show_pvp()} {$fsc->simbolo_divisa()}</td>
                   <td align="right">
                      <a class="link" href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','0','{$fsc->articulo->get_iva()}')">
-                        {$fsc->articulo->show_pvp_iva()} €
+                        {$fsc->articulo->show_pvp_iva()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                   <td align="right">
@@ -58,10 +58,10 @@
                <tr>
                   <td>{$value->nombre}</td>
                   <td align="right">{$value->show_descuento()} %</td>
-                  <td align="right">{$value->show_pvp()} €</td>
+                  <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa()}</td>
                   <td align="right">
                      <a class="link" href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','{$value->descuento}','{$fsc->articulo->get_iva()}')">
-                        {$value->show_pvp_iva()} €
+                        {$value->show_pvp_iva()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                   <td align="right">
@@ -92,10 +92,10 @@
                         {$value->referencia}
                      </a>
                   </td>
-                  <td align="right">{$value->show_pvp()} €</td>
+                  <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa()}</td>
                   <td align="right">
                      <a class="link" href="#new_line" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvp}','0','{$fsc->articulo->get_iva()}')">
-                        {$value->show_pvp_iva()} €
+                        {$value->show_pvp_iva()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                   <td align="right">{$value->stockfis}</td>
@@ -127,7 +127,7 @@
                   <td align="center"><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
                   <td align="right">
                      <a class="link hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->show_pvp()} €
+                        {$value->show_pvp()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                   <td align="right">
@@ -137,7 +137,7 @@
                   </td>
                   <td align="right">
                      <a class="link hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->show_total_iva2()} €
+                        {$value->show_total_iva2()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                </tr>
@@ -166,7 +166,7 @@
                   <td align="center"><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
                   <td align="right">
                      <a class="link hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->show_pvp()} €
+                        {$value->show_pvp()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                   <td align="right">
@@ -176,7 +176,7 @@
                   </td>
                   <td align="right">
                      <a class="link hidden_black" href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
-                        {$value->show_total_iva2()} €
+                        {$value->show_total_iva2()} {$fsc->simbolo_divisa()}
                      </a>
                   </td>
                </tr>

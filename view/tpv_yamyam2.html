@@ -50,7 +50,7 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+      $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" {$fsc->simbolo_divisa()}");
       $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
       update_lcd(neto + total_iva);
    }
@@ -117,7 +117,7 @@
             
             neto = fs_round(neto, 2);
             total_iva = fs_round(total_iva, 2);
-            $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" €");
+            $("#tpv_total").html( number_format(neto + total_iva, 2, ',', '.') +" {$fsc->simbolo_divisa()}");
             $("#tpv_total2").val( number_format(neto + total_iva, 2, '.', '') );
             update_lcd(neto + total_iva);
          }
@@ -315,7 +315,7 @@
          </div>
          <div class="rounded">
             <div>
-               <div class="tpv_total pull_right" id="tpv_total">0,00 €</div>
+               <div class="tpv_total pull_right" id="tpv_total">0,00 {$fsc->simbolo_divisa()}</div>
                <div class="bloque">
                   Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
                </div>
@@ -340,15 +340,15 @@
    <table>
       <tr>
          <td align="right">Total:</td>
-         <td><input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/> €</td>
+         <td><input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/> {$fsc->simbolo_divisa()}</td>
       </tr>
       <tr>
          <td align="right">Efectivo:</td>
-         <td><input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> €</td>
+         <td><input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
       </tr>
       <tr>
          <td align="right">Cambio:</td>
-         <td><input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> €</td>
+         <td><input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
       </tr>
       <tr>
          <td align="right">Observaciones:</td>
@@ -386,7 +386,7 @@
          {else}
             <br/><img src="view/img/unknown.png" alt="{$value->referencia}"/><br/>
          {/if}
-         {$value->articulo->show_pvp_iva()} €
+         {$value->articulo->show_pvp_iva()} {$fsc->simbolo_divisa()}
       </li>
    {/loop}
    </ul>
@@ -394,7 +394,7 @@
 
 {loop="$fsc->paquetes"}
 <div class="popup" id="paquete_{$value1->referencia}">
-   <h1>PAQUETE: {$value1->referencia} &nbsp; &nbsp; {$value1->articulo->show_pvp_iva()} €</h1>
+   <h1>PAQUETE: {$value1->referencia} &nbsp; &nbsp; {$value1->articulo->show_pvp_iva()} {$fsc->simbolo_divisa()}</h1>
    <form id="f_p_{$value1->referencia}">
       <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
       <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
@@ -435,7 +435,7 @@
          {else}
             <br/><img src="view/img/unknown.png" alt="{$value2->referencia}"/><br/>
          {/if}
-         {$value2->show_pvp_iva()} €
+         {$value2->show_pvp_iva()} {$fsc->simbolo_divisa()}
       </li>
       {/if}
    {/loop}

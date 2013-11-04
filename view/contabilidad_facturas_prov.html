@@ -62,7 +62,7 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}

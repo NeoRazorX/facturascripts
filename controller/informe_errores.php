@@ -36,6 +36,17 @@ class informe_errores extends fs_controller
    
    protected function process()
    {
+      if( $this->cache->error() )
+      {
+         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.
+                 $this->cache->error_msg() );
+      }
+      else
+         $this->process2();
+   }
+   
+   private function process2()
+   {
       $this->ajax = FALSE;
       
       $this->informe = $this->cache->get('informe_errores');

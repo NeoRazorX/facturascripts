@@ -26,6 +26,7 @@ require_once 'base/fs_button.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_default_items.php';
 require_once 'model/agente.php';
+require_once 'model/divisa.php';
 require_once 'model/empresa.php';
 require_once 'model/fs_access.php';
 require_once 'model/fs_page.php';
@@ -38,6 +39,7 @@ class fs_controller
    private $errors;
    private $messages;
    private $advices;
+   private $simbolo_divisas;
    public $user;
    public $page;
    public $ppage;
@@ -60,6 +62,7 @@ class fs_controller
       $this->errors = array();
       $this->messages = array();
       $this->advices = array();
+      $this->simbolo_divisas = array();
       
       if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
@@ -131,7 +134,7 @@ class fs_controller
    
    public function version()
    {
-      return '0.13.3';
+      return '2013.11';
    }
    
    public function close()
@@ -603,6 +606,27 @@ class fs_controller
          $txt .= "\n" . $e;
       
       return str_replace('"', "'", $txt);
+   }
+   
+   public function simbolo_divisa($coddivisa = FALSE)
+   {
+      if(!$coddivisa)
+         $coddivisa = $this->empresa->coddivisa;
+      
+      if( isset($this->simbolo_divisas[$coddivisa]) )
+         return $this->simbolo_divisas[$coddivisa];
+      else
+      {
+         $divisa = new divisa();
+         $divi0 = $divisa->get($coddivisa);
+         if($divi0)
+         {
+            $this->simbolo_divisas[$coddivisa] = $divi0->simbolo;
+            return $divi0->simbolo;
+         }
+         else
+            return '?';
+      }
    }
 }
 

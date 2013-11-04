@@ -25,6 +25,7 @@ class divisa extends fs_model
    public $descripcion;
    public $tasaconv;
    public $codiso;
+   public $simbolo;
 
    public function __construct($d=FALSE)
    {
@@ -35,6 +36,13 @@ class divisa extends fs_model
          $this->descripcion = $d['descripcion'];
          $this->tasaconv = floatval($d['tasaconv']);
          $this->codiso = $d['codiso'];
+         $this->simbolo = $d['simbolo'];
+         
+         if($this->simbolo == '' AND $this->coddivisa == 'EUR')
+         {
+            $this->simbolo = '€';
+            $this->save();
+         }
       }
       else
       {
@@ -42,14 +50,15 @@ class divisa extends fs_model
          $this->descripcion = '';
          $this->tasaconv = 1;
          $this->codiso = NULL;
+         $this->simbolo = '?';
       }
    }
    
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso)
-         VALUES ('EUR','EUROS','1','978');";
+      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('EUR','EUROS','1','978','€');";
    }
    
    public function show_tasa()
@@ -105,14 +114,16 @@ class divisa extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-               tasaconv = ".$this->var2str($this->tasaconv).", codiso = ".$this->var2str($this->codiso)."
+               tasaconv = ".$this->var2str($this->tasaconv).", codiso = ".$this->var2str($this->codiso).",
+               simbolo = ".$this->var2str($this->simbolo)."
                WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso) VALUES
+            $sql = "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo) VALUES
                (".$this->var2str($this->coddivisa).",".$this->var2str($this->descripcion).",
-                ".$this->var2str($this->tasaconv).",".$this->var2str($this->codiso).");";
+                ".$this->var2str($this->tasaconv).",".$this->var2str($this->codiso).",
+                ".$this->var2str($this->simbolo).");";
          }
          
          return $this->db->exec($sql);

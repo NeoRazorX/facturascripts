@@ -33,18 +33,30 @@ class contabilidad_ejercicios extends fs_controller
       $this->ejercicio = new ejercicio();
       $this->buttons[] = new fs_button_img('b_nuevo_ejercicio', 'nuevo');
       
-      if( isset($_POST['codejercicio']) )
+      if( isset($_GET['delete']) )
       {
-         $eje0 = new ejercicio();
-         $eje0->codejercicio = $_POST['codejercicio'];
-         $eje0->nombre = $_POST['nombre'];
-         $eje0->fechainicio = $_POST['fechainicio'];
-         $eje0->fechafin = $_POST['fechafin'];
-         $eje0->estado = $_POST['estado'];
-         if( $eje0->save() )
+         $eje0 = $this->ejercicio->get($_GET['delete']);
+         if($eje0)
          {
-            $this->new_message("Ejercicio ".$eje0->codejercicio." guardado correctamente.");
-            header('location: '.$eje0->url());
+            if( $eje0->delete() )
+               $this->new_message('Ejercicio eliminado correctamente.');
+            else
+               $this->new_error_msg("¡Imposible eliminar el ejercicio!");
+         }
+         else
+            $this->new_error_msg("Ejercicio no encontrado");
+      }
+      else if( isset($_POST['codejercicio']) )
+      {
+         $this->ejercicio->codejercicio = $_POST['codejercicio'];
+         $this->ejercicio->nombre = $_POST['nombre'];
+         $this->ejercicio->fechainicio = $_POST['fechainicio'];
+         $this->ejercicio->fechafin = $_POST['fechafin'];
+         $this->ejercicio->estado = $_POST['estado'];
+         if( $this->ejercicio->save() )
+         {
+            $this->new_message("Ejercicio ".$this->ejercicio->codejercicio." guardado correctamente.");
+            header('location: '.$this->ejercicio->url());
          }
          else
             $this->new_error_msg("¡Imposible guardar el ejercicio!");
@@ -53,7 +65,7 @@ class contabilidad_ejercicios extends fs_controller
    
    public function version()
    {
-      return parent::version().'-4';
+      return parent::version().'-5';
    }
 }
 

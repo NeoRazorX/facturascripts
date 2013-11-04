@@ -78,22 +78,22 @@ class admin_info extends fs_controller
    
    public function sys_uptime()
    {
-      return system('uptime');
+      system('uptime');
    }
    
    public function sys_df()
    {
-      return system('df -h');
+      system('df -h');
    }
    
    public function sys_free()
    {
-      return system('free -m');
+      system('free -m');
    }
    
    public function version()
    {
-      return parent::version().'-6';
+      return parent::version().'-7';
    }
    
    public function fs_version()

@@ -896,7 +896,7 @@ class albaran_proveedor extends fs_model
             OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
-         $consulta .= "fecha = '".$query."' OR observaciones LIKE '%".$query."%'";
+         $consulta .= "fecha = ".$this->var2str($query)." OR observaciones LIKE '%".$query."%'";
       else
          $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC, codigo DESC";

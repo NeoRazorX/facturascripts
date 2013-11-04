@@ -31,7 +31,7 @@ class fs_cache
          if( class_exists('Memcache') )
          {
             self::$memcache = new Memcache();
-            if( self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT) )
+            if( @self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT) )
             {
                self::$connected = TRUE;
                self::$error = FALSE;

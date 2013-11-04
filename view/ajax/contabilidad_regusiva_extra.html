@@ -33,8 +33,8 @@
          <td>
             <a class="link" href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a>
          </td>
-         <td align="right">{$value->show_debe()} €</td>
-         <td align="right">{$value->show_haber()} €</td>
+         <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
       </tr>
       {else}
       <tr>

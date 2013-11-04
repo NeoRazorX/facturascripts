@@ -24,7 +24,7 @@
       <td><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
       <td><a class="link" target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
       <td align="right">{$value->cantidad}</td>
-      <td align="right">{$value->show_total_iva()} €</td>
+      <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa()}</td>
       <td align="right">{$value->show_fecha()}</td>
    </tr>
    {else}

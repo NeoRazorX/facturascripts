@@ -21,7 +21,7 @@
          <td align="center">{if condition="$value->editable"}E{/if}</td>
          <td>{$value->codejercicio} <a class="link" href="{$value->url()}">{$value->numero}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
-         <td align="right">{$value->show_importe()} €</td>
+         <td align="right">{$value->show_importe()} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}

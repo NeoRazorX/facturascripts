@@ -37,6 +37,12 @@ class general_paquetes extends fs_controller
       $this->cache_paquete = new cache_paquete();
       $this->buttons[] = new fs_button_img('b_nuevo_paquete', 'nuevo');
       
+      if( $this->cache->error() )
+      {
+         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.
+                 $this->cache->error_msg() );
+      }
+      
       if( $this->query != '' )
          $this->new_search();
       else if( isset($_GET['add2cache']) )
@@ -51,7 +57,8 @@ class general_paquetes extends fs_controller
       }
    }
    
-   public function version() {
+   public function version()
+   {
       return parent::version().'-5';
    }
    

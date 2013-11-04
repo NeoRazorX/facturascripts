@@ -309,8 +309,8 @@
                <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
                {$value->descripcion}
             </td>
-            <td align="right">{$value->show_pvp()} €</td>
-            <td align="right">{$value->show_pvp_iva()} €</td>
+            <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="right">{$value->show_pvp_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
             <td align="center">
                <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
                <input type="checkbox" name="pvp_{$counter}" value="{$value->pvpunitario}" checked="checked"/>
@@ -486,14 +486,14 @@
          </tr>
          <tr>
             <td align="right"><b>Neto:</b></td>
-            <td align="center">{$fsc->albaran->show_neto()} €</td>
-            <td align="center"><span id="aneto"></span> €</td>
+            <td align="center">{$fsc->albaran->show_neto()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="aneto"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
             <td align="right"><b>IVA:</b></td>
-            <td align="center">{$fsc->albaran->show_iva()} €</td>
-            <td align="center"><span id="aiva"></span> €</td>
+            <td align="center">{$fsc->albaran->show_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="aiva"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
             <td align="right"><b>Total:</b></td>
-            <td align="center">{$fsc->albaran->show_total()} €</td>
-            <td align="center"><span id="atotal"></span> €</td>
+            <td align="center">{$fsc->albaran->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="atotal"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
          </tr>
       </table>
    </div>
@@ -513,20 +513,20 @@
          <tr>
             <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_pvp()} €</td>
+            <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
             <td align="right">{$value->show_dto()} %</td>
-            <td align="right">{$value->show_total()} €</td>
+            <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
             <td align="right">{$value->iva} %</td>
-            <td align="right">{$value->show_total_iva()} €</td>
+            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
       </table>
       <br/><br/>
       <table class="list">
          <tr>
-            <td><b>Neto:</b> {$fsc->albaran->show_neto()} €</td>
-            <td align="center"><b>IVA:</b> {$fsc->albaran->show_iva()} €</td>
-            <td align="right"><b>Total:</b> {$fsc->albaran->show_total()} €</td>
+            <td><b>Neto:</b> {$fsc->albaran->show_neto()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center"><b>IVA:</b> {$fsc->albaran->show_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="right"><b>Total:</b> {$fsc->albaran->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
          </tr>
       </table>
    </div>

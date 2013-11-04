@@ -57,7 +57,6 @@ abstract class fs_model
       {
          if( $this->cache->error() )
          {
-            $this->new_error_msg( 'Memcache está deshabilitado. '.$this->cache->error_msg() );
             self::$checked_tables = array();
          }
          else

@@ -80,6 +80,7 @@ class contabilidad_ejercicio extends fs_controller
             $this->page->title = $this->ejercicio->codejercicio.' ('.$this->ejercicio->nombre.')';
             $this->buttons[] = new fs_button('b_importar', 'importar');
             $this->buttons[] = new fs_button('b_exportar', 'exportar', $this->url().'&export=TRUE');
+            $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
             
             if( isset($_GET['cerrar']) AND isset($_GET['petid']) )
             {
@@ -163,7 +164,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function version()
    {
-      return parent::version().'-8';
+      return parent::version().'-9';
    }
    
    public function url()

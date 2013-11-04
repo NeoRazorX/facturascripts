@@ -21,6 +21,16 @@ class fs_mysql_x
 {
    private $link;
    public $connected;
+   public $history;
+   public $errors;
+   
+   public function __construct()
+   {
+      $this->link = NULL;
+      $this->connected = FALSE;
+      $this->history = array();
+      $this->errors = array();
+   }
    
    public function __destruct()
    {
@@ -31,20 +41,30 @@ class fs_mysql_x
    public function connect($server, $port, $user, $password, $dbname)
    {
       if($this->link)
+      {
          $this->connected = TRUE;
+      }
       else if( !function_exists('mysqli_connect') )
       {
-         echo "No tienes instala la extensi&oacute;n de PHP para MySQL.<br/>";
+         $this->errors[] = "No tienes instala la extensi&oacute;n de PHP para MySQL.";
          $this->connected = FALSE;
       }
       else
       {
          $this->link = mysqli_connect($server, $user, $password, $dbname, $port);
-         if($this->link)
-            $this->connected = TRUE;
-         else
+         
+         if( mysqli_connect_error($this->link) )
+         {
+            $this->link = NULL;
             $this->connected = FALSE;
+         }
+         else
+         {
+            $this->connected = TRUE;
+            mysqli_set_charset($this->link, 'utf8');
+         }
       }
+      
       return $this->connected;
    }
    
@@ -55,6 +75,7 @@ class fs_mysql_x
       {
          $retorno = mysqli_close($this->link);
          $this->link = NULL;
+         $this->connected = FALSE;
          return $retorno;
       }
       else
@@ -150,6 +171,8 @@ class fs_mysql_x
       
       if($this->link)
       {
+         $this->history[] = $sql;
+         
          $filas = mysqli_query($this->link, $sql);
          if($filas)
          {
@@ -170,6 +193,8 @@ class fs_mysql_x
       if($this->link)
       {
          $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
+         $this->history[] = $sql;
+         
          $filas = mysqli_query($this->link, $sql);
          if($filas)
          {
@@ -190,25 +215,22 @@ class fs_mysql_x
       
       if($this->link)
       {
+         $this->history[] = $sql;
+         
          /// desactivamos el autocommit
          mysqli_autocommit($this->link, FALSE);
          
-         /// ejecutar multi consulta
+         /// ejecutar multi-consulta
+         $i = 0;
          if( mysqli_multi_query($this->link, $sql) )
          {
-            $resultado = TRUE;
-            
-            do {
-               
-               $aux = mysqli_store_result($this->link);
-               if($aux)
-                  mysqli_free_result($aux);
-               
-            } while ( mysqli_next_result($this->link) );
+            do { $i++; } while ( mysqli_more_results($this->link) AND mysqli_next_result($this->link) );
          }
          
          if( mysqli_errno($this->link) )
-            $resultado = FALSE;
+            self::$errors[] =  'Error al ejecutar la consulta '.$i.': '.mysqli_error($this->link);
+         else
+            $resultado = TRUE;
          
          if($resultado)
             mysqli_commit($this->link);

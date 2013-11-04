@@ -22,7 +22,7 @@
    $(document).ready(function() {
       $("#b_nueva_divisa").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_divisa');
+         fs_show_popup('popup_nueva_divisa', 50);
          document.f_nueva_divisa.coddivisa.focus();
       });
    });
@@ -35,21 +35,21 @@
          <tr>
             <td align="right">Código:</td>
             <td><input type="text" name="coddivisa" size="3" maxlength="3" autocomplete="off"/></td>
+            <td align="right">Símbolo:</td>
+            <td><input type="text" name="simbolo" value="?" size="5" maxlength="10" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion" autocomplete="off"/></td>
+            <td colspan="3"><input class="full" type="text" name="descripcion" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Código ISO:</td>
             <td><input type="text" name="codiso" size="3" maxlength="3" autocomplete="off"/></td>
+            <td align="right">&nbsp; Tasa de conversión:</td>
+            <td><input type="text" name="tasaconv" value="1" size="5" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right">Tasa de conversión:</td>
-            <td><input type="text" name="tasaconv" size="5" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
+            <td colspan="4" align="right">
                <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
@@ -71,6 +71,7 @@
          <tr>
             <th>Eliminar</th>
             <th align="left">Código</th>
+            <th align="left">Símbolo</th>
             <th align="left">Descripción</th>
             <th align="left">Código ISO</th>
             <th align="left">Tasa de conversión</th>
@@ -83,6 +84,9 @@
             <td>
                {$value->coddivisa}
                <input type="hidden" name="coddivisa_{$counter}" value="{$value->coddivisa}"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="simbolo_{$counter}" value="{$value->simbolo}" size="5" maxlength="10" autocomplete="off"/>
             </td>
             <td>
                <input class="full" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>

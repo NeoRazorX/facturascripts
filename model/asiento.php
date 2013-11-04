@@ -417,7 +417,7 @@ class asiento extends fs_model
          $consulta .= "numero::TEXT LIKE '%".$query."%' OR concepto LIKE '%".$query."%'
             OR importe BETWEEN ".($query-.01)." AND ".($query+.01);
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
-         $consulta .= "fecha = '".$query."' OR concepto LIKE '%".$query."%'";
+         $consulta .= "fecha = ".$this->var2str($query)." OR concepto LIKE '%".$query."%'";
       else
          $consulta .= "lower(concepto) LIKE '%".$buscar = str_replace(' ', '%', $query)."%'";
       $consulta .= " ORDER BY fecha DESC";

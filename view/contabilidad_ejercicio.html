@@ -2,23 +2,21 @@
 
 {if condition="$fsc->ejercicio"}
 
-{if condition="$fsc->importar_url"}
-<script type="text/javascript">
-   $(document).ready(function() {
-      setTimeout("location.href = '{$fsc->importar_url}';", 2000);
-   });
-</script>
-{/if}
-
 <script type="text/javascript">
    function cerrar_ejercicio()
    {
       location.href = '{$fsc->url()}&cerrar=TRUE&petid={$fsc->random_string()}';
    }
    $(document).ready(function() {
+      {if condition="$fsc->importar_url"}setTimeout("location.href = '{$fsc->importar_url}';", 2000);{/if}
       $("#b_importar").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_importar');
+      });
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este ejercicio?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->ejercicio->codejercicio}';
       });
    });
 </script>
@@ -211,7 +209,7 @@
          <td>{$value->codcuenta}</td>
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
-         <td align="right">{$value->show_saldo()}</td>
+         <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
       </tr>
       {else}
       <tr>
