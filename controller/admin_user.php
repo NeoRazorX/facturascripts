@@ -50,19 +50,19 @@ class admin_user extends fs_controller
          if($this->user->nick != $this->suser->nick)
             $this->buttons[] = new fs_button_img('b_eliminar_usuario', 'eliminar', 'trash.png', '#', TRUE);
          
-         if( isset($_POST['scodagente']) )
+         if( isset($_POST['ncodagente']) )
          {
             $age0 = new agente();
-            $age0->codagente = $_POST['scodagente'];
-            $age0->nombre = $_POST['snombre'];
-            $age0->apellidos = $_POST['sapellidos'];
-            $age0->dnicif = $_POST['sdnicif'];
-            $age0->telefono = $_POST['stelefono'];
-            $age0->email = $_POST['semail'];
+            $age0->codagente = $_POST['ncodagente'];
+            $age0->nombre = $_POST['nnombre'];
+            $age0->apellidos = $_POST['napellidos'];
+            $age0->dnicif = $_POST['ndnicif'];
+            $age0->telefono = $_POST['ntelefono'];
+            $age0->email = $_POST['nemail'];
             if( $age0->save() )
             {
                $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
-               $this->suser->codagente = $_POST['scodagente'];
+               $this->suser->codagente = $_POST['ncodagente'];
                
                if( $this->suser->save() )
                   $this->new_message("Agente ".$age0->codagente." asignado correctamente.");
@@ -147,7 +147,7 @@ class admin_user extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'-10';
    }
    
    public function url()

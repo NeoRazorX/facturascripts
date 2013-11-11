@@ -67,14 +67,19 @@ class fs_var extends fs_model
    {
       if( $this->test() )
       {
+         if( strtolower(FS_DB_TYPE) == 'mysql' )
+            $comillas = '`';
+         else
+            $comillas = '';
+         
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET varchar = ".$this->var2str($this->varchar).
+            $sql = "UPDATE ".$this->table_name." SET ".$comillas."varchar".$comillas." = ".$this->var2str($this->varchar).
                     " WHERE name = ".$this->var2str($this->name).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (name,varchar) VALUES
+            $sql = "INSERT INTO ".$this->table_name." (name,".$comillas."varchar".$comillas.") VALUES
                (".$this->var2str($this->name).",".$this->var2str($this->varchar).");";
          }
          return $this->db->exec($sql);
@@ -134,7 +139,7 @@ class fs_var extends fs_model
          $var->varchar = $d['varchar'];
          if( !$var->save() )
          {
-            $this->new_error_msg("Error al guardar '".$$var->name."'");
+            $this->new_error_msg("Error al guardar '".$var->name."'");
             $done = FALSE;
          }
       }

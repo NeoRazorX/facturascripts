@@ -18,8 +18,8 @@
       });
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_agente', 50);
-         document.f_nuevo_agente.snombre.focus();
+         fs_show_popup('popup_nuevo_agente');
+         document.f_nuevo_agente.nnombre.focus();
       });
    });
 </script>
@@ -31,28 +31,28 @@
          <tr>
             <td align="right">Código:</td>
             <td>
-               <input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
+               <input type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
             </td>
          </tr>
          <tr>
             <td align="right">Nombre:</td>
-            <td><input type="text" name="snombre" maxlength="50" autocomplete="off"/></td>
+            <td><input type="text" name="nnombre" maxlength="50" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Apellidos:</td>
-            <td><input type="text" name="sapellidos" maxlength="100" autocomplete="off"/></td>
+            <td><input type="text" name="napellidos" maxlength="100" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">CIF/NIF:</td>
-            <td><input type="text" name="sdnicif" autocomplete="off"/></td>
+            <td><input type="text" name="ndnicif" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Teléfono:</td>
-            <td><input type="text" name="stelefono" autocomplete="off"/></td>
+            <td><input type="text" name="ntelefono" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Email:</td>
-            <td><input type="text" name="semail" autocomplete="off"/></td>
+            <td><input type="text" name="nemail" autocomplete="off"/></td>
          </tr>
          <tr>
             <td colspan="2" align="right">

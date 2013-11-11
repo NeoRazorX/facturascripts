@@ -133,7 +133,12 @@ class cuenta extends fs_model
          $this->codejercicio = $c['codejercicio'];
          $this->idepigrafe = $this->intval($c['idepigrafe']);
          $this->codepigrafe = $c['codepigrafe'];
-         $this->descripcion = $c['descripcion'];
+         
+         if($c['descripcion'] == '')
+            $this->descripcion = '---';
+         else
+            $this->descripcion = $c['descripcion'];
+         
          $this->idcuentaesp = $c['idcuentaesp'];
       }
       else
@@ -205,7 +210,14 @@ class cuenta extends fs_model
    public function test()
    {
       $this->descripcion = $this->no_html($this->descripcion);
-      return TRUE;
+      
+      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcuenta) )
+      {
+         $this->new_error_msg("Código de cuenta no válido.");
+         return FALSE;
+      }
+      else
+         return TRUE;
    }
    
    public function save()

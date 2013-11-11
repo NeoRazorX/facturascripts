@@ -49,7 +49,9 @@ class general_albaranes_cli extends fs_controller
             $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
          
          $this->buttons[] = new fs_button_img('b_buscar_lineas', 'lineas', 'zoom.png');
-         $this->buttons[] = new fs_button('b_pendientes', 'pendientes', $this->url()."&amp;ptefactura=TRUE");
+         
+         if( !isset($_GET['ptefactura']) )
+            $this->buttons[] = new fs_button('b_pendientes', 'pendientes', $this->url()."&amp;ptefactura=TRUE");
          
          if( isset($_POST['delete']) )
          {
@@ -65,7 +67,7 @@ class general_albaranes_cli extends fs_controller
             $this->resultados = $albaran->search($this->query, $this->offset);
          else if( isset($_GET['ptefactura']) )
          {
-            $this->new_advice('Estos son los albaranes pendientes de factura. Haz clic <a class="link" href="'.$this->url().
+            $this->new_advice('Estos son los albaranes pendientes de facturar. Haz clic <a class="link" href="'.$this->url().
                  '">aquí</a> para volver a la vista normal.');
             $this->resultados = $albaran->all_ptefactura($this->offset);
          }
@@ -76,7 +78,7 @@ class general_albaranes_cli extends fs_controller
    
    public function version()
    {
-      return parent::version().'-9';
+      return parent::version().'_10';
    }
    
    public function anterior_url()

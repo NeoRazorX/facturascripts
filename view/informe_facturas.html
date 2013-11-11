@@ -71,20 +71,20 @@
                <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
                Hasta:
                <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input class="submit" type="submit" value="mostrar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="mostrar" onclick="this.form.submit();"/>
             </form>
          </div>
       </td>
       <td valign="top">
          <div class="rounded">
-            <h1>Facturas recibidad de proveedor:</h1>
+            <h1>Facturas recibidas de proveedor:</h1>
             <form action="{$fsc->url()}" method="post" target="_blank">
                <input type="hidden" name="listado" value="facturasprov"/>
                Desde:
                <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
                Hasta:
                <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input class="submit" type="submit" value="mostrar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="mostrar" onclick="this.form.submit();"/>
             </form>
          </div>
       </td>

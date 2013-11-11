@@ -135,15 +135,18 @@ class informe_facturas extends fs_controller
                {
                   foreach($linivas as $liva)
                   {
-                     $linea['iva'] = $liva->iva;
-                     $linea['totaliva'] = $liva->show_totaliva();
+                     /// acumulamos el iva
                      if( !isset($impuestos[$liva->iva]) )
                         $impuestos[$liva->iva] = $liva->totaliva;
                      else
                         $impuestos[$liva->iva] += $liva->totaliva;
+                     
+                     /// Ponemos el iva y añadimos la línea al PDF
+                     $linea['iva'] = $liva->iva;
+                     $linea['totaliva'] = $liva->show_totaliva();
+                     $pdf_doc->add_table_row($linea);
                   }
                }
-               $pdf_doc->add_table_row($linea);
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
@@ -287,15 +290,18 @@ class informe_facturas extends fs_controller
                {
                   foreach($linivas as $liva)
                   {
-                     $linea['iva'] = $liva->iva;
-                     $linea['totaliva'] = $liva->show_totaliva();
+                     /// acumulamos el iva
                      if( !isset($impuestos[$liva->iva]) )
                         $impuestos[$liva->iva] = $liva->totaliva;
                      else
                         $impuestos[$liva->iva] += $liva->totaliva;
+                     
+                     /// ponemos el iva y añadimos la línea al pdf
+                     $linea['iva'] = $liva->iva;
+                     $linea['totaliva'] = $liva->show_totaliva();
+                     $pdf_doc->add_table_row($linea);
                   }
                }
-               $pdf_doc->add_table_row($linea);
                
                $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;

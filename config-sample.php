@@ -15,11 +15,11 @@
  * pass: la contraseña del usuario.
  * history: TRUE si quieres ver todas las consultas que se hacen en cada página.
  */
-define('FS_DB_TYPE', 'POSTGRESQL'); /// si usas mysql, pon mysql !!!
+define('FS_DB_TYPE', 'MYSQL'); /// MYSQL o POSTGRESQL
 define('FS_DB_HOST', 'localhost');
-define('FS_DB_PORT', '5432'); /// si usar mysql, pon 3306 !!!
+define('FS_DB_PORT', '3306'); /// MYSQL -> 3306, POSTGRESQL -> 5432
 define('FS_DB_NAME', '');
-define('FS_DB_USER', ''); /// si usas mysql pon root !!!
+define('FS_DB_USER', 'root'); /// MYSQL -> root, POSTGRESQL -> postgres
 define('FS_DB_PASS', '');
 
 /*

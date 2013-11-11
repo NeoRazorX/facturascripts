@@ -46,7 +46,12 @@ class asiento extends fs_model
          $this->idasiento = $this->intval($a['idasiento']);
          $this->numero = $this->intval($a['numero']);
          $this->idconcepto = $a['idconcepto'];
-         $this->concepto = $a['concepto'];
+         
+         if($a['concepto'] == '')
+            $this->concepto = '---';
+         else
+            $this->concepto = $a['concepto'];
+         
          $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
          $this->codejercicio = $a['codejercicio'];
          $this->codplanasiento = $a['codplanasiento'];

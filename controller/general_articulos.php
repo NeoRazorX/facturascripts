@@ -58,6 +58,9 @@ class general_articulos extends fs_controller
       $this->buttons[] = new fs_button('b_tarifas', 'tarifas');
       $this->buttons[] = new fs_button('b_modificar_iva', 'modificar iva');
       
+      if( !isset($_GET['public']) )
+         $this->buttons[] = new fs_button('b_publicos', 'publicos', $this->url().'&public=TRUE');
+      
       if( isset($_POST['codtarifa']) )
       {
          $tar0 = $this->tarifa->get($_POST['codtarifa']);
@@ -128,42 +131,61 @@ class general_articulos extends fs_controller
       
       if($this->query != '')
          $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia, $this->con_stock);
+      else if( isset($_GET['public']) )
+      {
+         $this->new_advice('Estos son los artículos que tienes marcados como púbicos. Haz clic <a class="link" href="'.$this->url().
+                 '">aquí</a> para volver a la vista normal.');
+         $this->resultados = $articulo->all_publico($this->offset);
+      }
       else
          $this->resultados = $articulo->all($this->offset);
    }
    
    public function version()
    {
-      return parent::version().'-7';
+      return parent::version().'_8';
    }
    
    public function anterior_url()
    {
       $url = '';
+      $extra = '';
+      
+      if( isset($_GET['publico']) )
+         $extra = '&public=TRUE';
+      
       if($this->query!='' AND $this->offset>'0')
       {
          if( $this->con_stock )
-            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset-FS_ITEM_LIMIT);
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
          else
-            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset-FS_ITEM_LIMIT);
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
       }
       else if($this->query=='' AND $this->offset>'0')
-         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      
       return $url;
    }
    
    public function siguiente_url()
    {
       $url = '';
+      $extra = '';
+      
+      if( isset($_GET['publico']) )
+         $extra = '&public=TRUE';
+      
+      
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
       {
          if( $this->con_stock )
-            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset+FS_ITEM_LIMIT);
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&con_stock=TRUE&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
          else
-            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset+FS_ITEM_LIMIT);
+            $url = $this->url()."&query=".$this->query."&codfamilia=".$this->codfamilia."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
       }
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
-         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      
       return $url;
    }
 }

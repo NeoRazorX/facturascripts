@@ -210,7 +210,7 @@
             <a class="link" href="{$fsc->familia->url()}">Familia</a>:
             <select name="codfamilia">
             {loop="$fsc->familia->all()"}
-               {if condition="$value->codfamilia==$fsc->articulo->codfamilia"}
+               {if condition="$value->codfamilia===$fsc->articulo->codfamilia"}
                   <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
                {else}
                   <option value="{$value->codfamilia}">{$value->descripcion}</option>
