@@ -280,11 +280,6 @@ class informe_errores extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-2';
-   }
-   
    private function get_errores_page($page)
    {
       return $this->cache->get_array('informe_errores_'.$page);

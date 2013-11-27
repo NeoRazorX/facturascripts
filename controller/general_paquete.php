@@ -98,11 +98,6 @@ class general_paquete extends fs_controller
          $this->new_error_msg("Paquete no encontrado.");
    }
    
-   public function version()
-   {
-      return parent::version().'-4';
-   }
-   
    public function url()
    {
       if( !isset($this->paquete) )

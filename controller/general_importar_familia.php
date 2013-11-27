@@ -278,11 +278,6 @@ class general_importar_familia extends fs_controller
          return $this->page->url();
    }
    
-   public function version()
-   {
-      return parent::version().'-12';
-   }
-   
    private function get_family_data()
    {
       $data = $this->cache->get_array('family_data_'.$this->familia->codfamilia);

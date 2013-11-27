@@ -76,11 +76,6 @@ class general_albaranes_cli extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'_10';
-   }
-   
    public function anterior_url()
    {
       $url = '';

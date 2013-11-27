@@ -68,11 +68,6 @@ class contabilidad_asiento extends fs_controller
          $this->new_error_msg("Asiento no encontrado.");
    }
    
-   public function version()
-   {
-      return parent::version().'-5';
-   }
-   
    public function url()
    {
       if( !isset($this->asiento) )

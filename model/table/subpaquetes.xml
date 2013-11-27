@@ -36,15 +36,15 @@
       <consulta>UNIQUE (referenciapaq,referencia)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_subpaquetes_paquetes</nombre>
+      <nombre>ca_subpaquetes_paquetes2</nombre>
       <consulta>FOREIGN KEY (referenciapaq)
-      REFERENCES paquetes (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES paquetes (referencia)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_subpaquetes_articulos</nombre>
+      <nombre>ca_subpaquetes_articulos2</nombre>
       <consulta>FOREIGN KEY (referencia)
-      REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES articulos (referencia)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

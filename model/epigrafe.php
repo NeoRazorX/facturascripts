@@ -51,10 +51,28 @@ class grupo_epigrafes extends fs_model
       return '';
    }
    
+   public function url()
+   {
+      if( isset($this->idgrupo) )
+         return 'index.php?page=contabilidad_epigrafes&grupo='.$this->idgrupo;
+      else
+         return 'index.php?page=contabilidad_epigrafes';
+   }
+   
    public function get_epigrafes()
    {
       $epigrafe = new epigrafe();
       return $epigrafe->all_from_grupo($this->idgrupo);
+   }
+   
+   public function get($id)
+   {
+      $grupo = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE idgrupo = ".$this->var2str($id).";");
+      if($grupo)
+         return new grupo_epigrafes($grupo[0]);
+      else
+         return FALSE;
    }
    
    public function get_by_codigo($cod, $eje)
@@ -79,7 +97,14 @@ class grupo_epigrafes extends fs_model
    public function test()
    {
       $this->descripcion = $this->no_html($this->descripcion);
-      return TRUE;
+      
+      if( strlen($this->codejercicio)>0 AND strlen($this->codgrupo)>0 AND strlen($this->descripcion)>0 )
+         return TRUE;
+      else
+      {
+         $this->new_error_msg('Faltan datos en el grupo de epígrafes.');
+         return FALSE;
+      }
    }
    
    public function save()
@@ -184,8 +209,17 @@ class epigrafe extends fs_model
    
    protected function install()
    {
-      new grupo_epigrafes();
+      /// forzamos los creación de la tabla de grupos
+      $grupo = new grupo_epigrafes();
       return '';
+   }
+   
+   public function url()
+   {
+      if( isset($this->idepigrafe) )
+         return 'index.php?page=contabilidad_epigrafes&epi='.$this->idepigrafe;
+      else
+         return 'index.php?page=contabilidad_epigrafes';
    }
    
    public function get_cuentas()
@@ -226,7 +260,14 @@ class epigrafe extends fs_model
    public function test()
    {
       $this->descripcion = $this->no_html($this->descripcion);
-      return TRUE;
+      
+      if( strlen($this->codepigrafe)>0 AND strlen($this->descripcion)>0 AND strlen($this->codgrupo)>0 )
+         return TRUE;
+      else
+      {
+         $this->new_error_msg('Faltan datos en el epígrafe.');
+         return FALSE;
+      }
    }
    
    public function save()

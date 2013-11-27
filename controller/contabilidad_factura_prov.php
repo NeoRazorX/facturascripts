@@ -110,11 +110,6 @@ class contabilidad_factura_prov extends fs_controller
          $this->new_error_msg("¡Factura de proveedor no encontrada!");
    }
    
-   public function version()
-   {
-      return parent::version().'-11';
-   }
-   
    public function url()
    {
       if( !isset($this->factura) )

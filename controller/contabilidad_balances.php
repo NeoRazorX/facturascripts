@@ -33,11 +33,6 @@ class contabilidad_balances extends fs_controller
       $this->ppage = $this->page->get('contabilidad_cuentas');
       $this->balance = new balance();
    }
-   
-   public function version()
-   {
-      return parent::version().'-2';
-   }
 }
 
 ?>

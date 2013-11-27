@@ -77,11 +77,6 @@ class general_albaranes_prov extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'_10';
-   }
-   
    public function anterior_url()
    {
       $url = '';

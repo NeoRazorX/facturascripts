@@ -48,11 +48,6 @@ class contabilidad_banco extends fs_controller
          $this->new_error_msg('Banco no encontrado.');
    }
    
-   public function version()
-   {
-      return parent::version().'-2';
-   }
-   
    public function url()
    {
       if( !isset($this->banco) )

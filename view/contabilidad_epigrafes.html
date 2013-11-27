@@ -1,0 +1,253 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_grupo, #b_nuevo_grupo2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_grupo');
+         document.f_nuevo_grupo.ngrupo.select();
+      });
+      $("#b_nuevo_epigrafe, #b_nuevo_epigrafe2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_epigrafe');
+         document.f_nuevo_epigrafe.nepigrafe.select();
+      });
+      $("#b_nueva_cuenta, #b_nueva_cuenta2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nueva_cuenta');
+         document.f_nueva_cuenta.ncuenta.select();
+      });
+      {if condition="$fsc->grupo"}
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este grupo?") )
+            window.location.href = '{$fsc->page->url()}&deleteg={$fsc->grupo->idgrupo}';
+      });
+      {/if}
+      {if condition="$fsc->epigrafe"}
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este epígrafe?") )
+            window.location.href = '{$fsc->page->url()}&deletee={$fsc->epigrafe->idepigrafe}';
+      });
+      {/if}
+   });
+</script>
+
+{if condition="$fsc->grupo"}
+<div class="popup" id="popup_nuevo_epigrafe">
+   <h1>Nuevo epígrafe</h1>
+   <form name="f_nuevo_epigrafe" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right"><b>Grupo:</b></td>
+            <td>
+               <input type="hidden" name="ejercicio" value="{$fsc->grupo->codejercicio}"/>
+               <input type="hidden" name="idgrupo" value="{$fsc->grupo->idgrupo}"/>
+               <input type="hidden" name="codgrupo" value="{$fsc->grupo->codgrupo}"/>
+               {$fsc->grupo->codgrupo}
+            </td>
+            <td align="right"><b>Código:</b></td>
+            <td>
+               <input type="text" name="nepigrafe" size="4" value="{$fsc->grupo->codgrupo}0" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><b>Descripción:</b></td>
+            <td colspan="3">
+               <input class="full" type="text" name="descripcion" size="30" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="4" align="right">
+               <input class="submit" type="submit" value="Guardar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Descripcion</th>
+         <th align="right">Ejercicio</th>
+      </tr>
+      <tr>
+         <td>{$fsc->grupo->descripcion}</td>
+         <td align="right">
+            <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
+         </td>
+      </tr>
+   </table>
+</div>
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+            <div class="new_line">
+               <a id="b_nuevo_epigrafe2" href="#">Nuevo epígrafe</a>
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+{elseif condition="$fsc->epigrafe"}
+<div class="popup" id="popup_nueva_cuenta">
+   <h1>Nueva cuenta</h1>
+   <form name="f_nueva_cuenta" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right"><b>Epígrafe:</b></td>
+            <td>
+               <input type="hidden" name="ejercicio" value="{$fsc->epigrafe->codejercicio}"/>
+               <input type="hidden" name="idepigrafe" value="{$fsc->epigrafe->idepigrafe}"/>
+               <input type="hidden" name="codepigrafe" value="{$fsc->epigrafe->codepigrafe}"/>
+               {$fsc->epigrafe->codepigrafe}
+            </td>
+            <td align="right"><b>Código:</b></td>
+            <td>
+               <input type="text" name="ncuenta" value="{$fsc->epigrafe->codepigrafe}0" size="4" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><b>Descripción:</b></td>
+            <td colspan="3">
+               <input class="full" type="text" name="descripcion" size="30" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="4" align="right">
+               <input class="submit" type="submit" value="Guardar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Descripcion</th>
+         <th align="right">Ejercicio</th>
+      </tr>
+      <tr>
+         <td>{$fsc->epigrafe->descripcion}</td>
+         <td align="right">
+            <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
+         </td>
+      </tr>
+   </table>
+</div>
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+            <div class="new_line">
+               <a id="b_nueva_cuenta2" href="#">Nueva cuenta</a>
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+{else}
+<div class="popup" id="popup_nuevo_grupo">
+   <h1>Nuevo grupo</h1>
+   <form name="f_nuevo_grupo" action="{$fsc->url()}" method="post">
+   <table>
+      <tr>
+         <td align="right"><b>Ejercicio:</b></td>
+         <td>
+            <select name="ejercicio">
+            {loop="$fsc->ejercicio->all()"}
+               {if condition="$value->is_default()"}
+               <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+               {else}
+               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+               {/if}
+            {/loop}
+            </select>
+         </td>
+         <td align="right"><b>Código:</b></td>
+         <td>
+            <input type="text" name="ngrupo" size="4" autocomplete="off"/>
+         </td>
+      </tr>
+      <tr>
+         <td align="right"><b>Descripción:</b></td>
+         <td colspan="3">
+            <input class="full" type="text" name="descripcion" size="30" autocomplete="off"/>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="4" align="right">
+            <input class="submit" type="submit" value="guardar"/>
+         </td>
+      </tr>
+   </table>
+   </form>
+</div>
+<div class="rounded">
+   <table width="100%">
+      <tr>
+         <td>
+            <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
+               <b>Ejercicio:</b>
+               <select name="ejercicio" onchange="document.f_filtro_cuentas.submit()">
+                  {loop="$fsc->ejercicio->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+                     {else}
+                     <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </form>
+         </td>
+         <td align="right">
+            <a class="button" href="index.php?page=contabilidad_cuentas">Cuentas &gt;</a>
+         </td>
+      </tr>
+   </table>
+   <br/>
+   <table class="list">
+      <tr>
+         <th align="left">Código</th>
+         <th align="left">Descripción</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->codgrupo}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+            <div class="new_line">
+               <a id="b_nuevo_grupo2" href="#">Nuevo grupo</a>
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+{/if}
+
+{include="footer"}

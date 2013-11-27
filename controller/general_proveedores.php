@@ -96,11 +96,6 @@ class general_proveedores extends fs_controller
          $this->resultados = $this->proveedor->all($this->offset);
    }
    
-   public function version()
-   {
-      return parent::version().'-6';
-   }
-   
    public function anterior_url()
    {
       $url = '';

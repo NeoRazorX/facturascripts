@@ -53,9 +53,9 @@
       <consulta>PRIMARY KEY (id)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_cajas_agentes</nombre>
+      <nombre>ca_cajas_agentes2</nombre>
       <consulta>FOREIGN KEY (codagente)
-      REFERENCES agentes (codagente) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES agentes (codagente)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

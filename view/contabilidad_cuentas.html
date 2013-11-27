@@ -1,24 +1,7 @@
 {include="header"}
 
 <script type="text/javascript">
-   function completar_nueva_cuenta()
-   {
-      $.ajax({
-         type: 'POST',
-         url: '{$fsc->url()}',
-         dataType: 'html',
-         data: "codejercicio="+$("#select_codejercicio").val(),
-         success: function(datos) {
-            $("#div_epigrafes").html(datos);
-            fs_resize_popup('popup_nueva_cuenta', 50);
-         }
-      });
-   }
    $(document).ready(function() {
-      $("#b_nueva_cuenta").click(function(event) {
-         event.preventDefault();
-         fs_show_popup('popup_nueva_cuenta', 50);
-      });
       $("#b_cuentas_especiales").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_cuentas_especiales');
@@ -44,22 +27,6 @@
    });
 </script>
 
-<div class="popup" id="popup_nueva_cuenta">
-   <h1>Nueva cuenta</h1>
-   <form name="f_nueva_cuenta" action="{$fsc->url()}" method="post">
-      <div style="text-align: center;">
-         <a class="link" href="{$fsc->ejercicio->url}">Ejercicio</a>:
-         <select id="select_codejercicio" name="codejercicio" onchange="completar_nueva_cuenta()">
-            <option value="">---</option>
-            {loop="$fsc->ejercicio->all()"}
-            <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
-            {/loop}
-         </select>
-      </div>
-      <div id="div_epigrafes"></div>
-   </form>
-</div>
-
 <div class="popup" id="popup_cuentas_especiales">
    <h1>Cuentas especiales</h1>
    <table class="list">
@@ -82,20 +49,28 @@
 
 {if condition="$fsc->query==''"}
 <div class="rounded">
-   <h1>
-      <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
-         Cuentas del ejercicio:
-         <select name="ejercicio" onchange="document.f_filtro_cuentas.submit()">
-            {loop="$fsc->ejercicio->all()"}
-               {if condition="$value->is_default()"}
-                  <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
-               {else}
-                  <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
-               {/if}
-            {/loop}
-         </select>
-      </form>
-   </h1>
+   <table width="100%">
+      <tr>
+         <td>
+            <a class="button" href="index.php?page=contabilidad_epigrafes">&lt; grupos y epígrafes</a>
+         </td>
+         <td align="right">
+            <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
+               <b>Ejercicio:</b>
+               <select name="ejercicio" onchange="document.f_filtro_cuentas.submit()">
+                  {loop="$fsc->ejercicio->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+                     {else}
+                     <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </form>
+         </td>
+      </tr>
+   </table>
+   <br/>
    <table class="list">
       <tr>
          <th align="left">Ejercicio</th>

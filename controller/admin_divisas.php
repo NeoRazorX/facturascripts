@@ -31,7 +31,6 @@ class admin_divisas extends fs_controller
    protected function process()
    {
       $this->divisa = new divisa();
-      $this->buttons[] = new fs_button_img('b_nueva_divisa', 'nueva');
       
       if( isset($_POST['coddivisa']) )
       {
@@ -87,11 +86,6 @@ class admin_divisas extends fs_controller
                $this->new_error_msg('Divisa '.$_POST['coddivisa_'.$i].' no encontrada.');
          }
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-3';
    }
 }
 

@@ -91,16 +91,6 @@ class admin_info extends fs_controller
       system('free -m');
    }
    
-   public function version()
-   {
-      return parent::version().'-7';
-   }
-   
-   public function fs_version()
-   {
-      return parent::version();
-   }
-   
    public function fs_db_name()
    {
       return FS_DB_NAME;

@@ -167,11 +167,6 @@ class contabilidad_nuevo_asiento extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-9';
-   }
-   
    private function new_search()
    {
       /// cambiamos la plantilla HTML

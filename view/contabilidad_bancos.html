@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_nuevo_banco").click(function(event) {
+      $("#b_nuevo_banco, #b_nuevo_banco2").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nuevo_banco');
          document.f_nuevo_banco.entidad.focus();
@@ -62,11 +62,14 @@
          <td width="80"><a class="link" href="{$value->url()}">{$value->entidad}</a></td>
          <td>{$value->nombre}</td>
       </tr>
-      {else}
-      <tr>
-         <td colspan="2">No hay datos.</td>
-      </tr>
       {/loop}
+      <tr>
+         <td colspan="2">
+            <div class="new_line">
+               <a id="b_nuevo_banco" href="#">Nuevo banco</a>
+            </div>
+         </td>
+      </tr>
    </table>
 </div>
 

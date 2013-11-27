@@ -85,11 +85,6 @@ class general_agrupar_albaranes_pro extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-9';
-   }
-   
    private function agrupar()
    {
       $continuar = TRUE;

@@ -43,11 +43,6 @@ class admin_plugins extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-1';
-   }
-   
    public function plugins()
    {
       $plugins = array();

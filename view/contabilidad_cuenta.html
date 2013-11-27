@@ -2,15 +2,52 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      $("#b_nueva_subcuenta, #b_nueva_subcuenta2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nueva_subcuenta');
+         document.f_nueva_subcuenta.nsubcuenta.focus();
+      });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
          if( confirm("¿Realmente desea eliminar esta cuenta?") )
-            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->cuenta->idcuenta}';
+            window.location.href = 'index.php?page=contabilidad_epigrafes&deletec={$fsc->cuenta->idcuenta}';
       });
    });
 </script>
 
 {if condition="$fsc->cuenta"}
+<div class="popup" id="popup_nueva_subcuenta">
+   <h1>Nueva subcuenta</h1>
+   <form name="f_nueva_subcuenta" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right"><b>Cuenta:</b></td>
+            <td>
+               {$fsc->cuenta->codcuenta}
+               <input type="hidden" name="ejercicio" value="{$fsc->cuenta->codejercicio}"/>
+               <input type="hidden" name="idcuenta" value="{$fsc->cuenta->idcuenta}"/>
+               <input type="hidden" name="codcuenta" value="{$fsc->cuenta->codcuenta}"/>
+            </td>
+            <td align="right"><b>Código:</b></td>
+            <td>
+               <input type="text" name="nsubcuenta" value="{$fsc->cuenta->codcuenta}0000000" size="10" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><b>Descripción:</b></td>
+            <td colspan="3">
+               <input class="full" type="text" name="descripcion" size="30" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="4" align="right">
+               <input class="submit" type="submit" value="Guardar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
 <div class="rounded">
    <table class="list">
       <tr>
@@ -39,11 +76,14 @@
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
          <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
       </tr>
-      {else}
-      <tr>
-         <td colspan="3">No hay ninguna subcuenta asociada a esta cuenta.</td>
-      </tr>
       {/loop}
+      <tr>
+         <td colspan="3">
+            <div class="new_line">
+               <a id="b_nueva_subcuenta2" href="#">Nueva subcuenta</a>
+            </div>
+         </td>
+      </tr>
    </table>
 </div>
 {else}

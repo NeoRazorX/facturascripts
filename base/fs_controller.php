@@ -134,7 +134,7 @@ class fs_controller
    
    public function version()
    {
-      return '2013.11a';
+      return '2013.11b';
    }
    
    public function close()
@@ -185,9 +185,72 @@ class fs_controller
       return $this->page->url();
    }
    
+   private function ip_baneada(&$ips)
+   {
+      $baneada = FALSE;
+      
+      if( file_exists('tmp/ip.log') )
+      {
+         $file = fopen('tmp/ip.log', 'r');
+         if($file)
+         {
+            /// leemos las líneas
+            while( !feof($file) )
+            {
+               $linea = explode(';', trim(fgets($file)));
+               
+               if( intval($linea[2]) > time() )
+               {
+                  if($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 3)
+                     $baneada = TRUE;
+                  
+                  $ips[] = $linea;
+               }
+            }
+            
+            fclose($file);
+         }
+      }
+      
+      return $baneada;
+   }
+   
+   private function banear_ip(&$ips)
+   {
+      $file = fopen('tmp/ip.log', 'w');
+      if($file)
+      {
+         $encontrada = FALSE;
+         
+         foreach($ips as $ip)
+         {
+            if($ip[0] == $_SERVER['REMOTE_ADDR'])
+            {
+               fwrite( $file, $ip[0].';'.( 1+intval($ip[1]) ).';'.( time()+3600 ) );
+               $encontrada = TRUE;
+            }
+            else
+               fwrite( $file, join(';', $ip) );
+         }
+         
+         if(!$encontrada)
+            fwrite( $file, $_SERVER['REMOTE_ADDR'].';1;'.( time()+3600 ) );
+         
+         fclose($file);
+      }
+   }
+   
    private function log_in()
    {
-      if( isset($_POST['user']) AND isset($_POST['password']) )
+      $ips = array();
+      
+      if( $this->ip_baneada($ips) )
+      {
+         $this->banear_ip($ips);
+         $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar
+            una hora antes de volver a intentar entrar.');
+      }
+      else if( isset($_POST['user']) AND isset($_POST['password']) )
       {
          if( FS_DEMO ) /// en el modo demo nos olvidamos de la contraseña
          {
@@ -237,7 +300,10 @@ class fs_controller
                      $this->new_error_msg('Imposible guardar los datos de usuario.');
                }
                else
+               {
                   $this->new_error_msg('¡Contraseña incorrecta!');
+                  $this->banear_ip($ips);
+               }
             }
             else
             {
@@ -274,6 +340,7 @@ class fs_controller
             $this->cache->clean();
          }
       }
+      
       return $this->user->logged_on;
    }
    

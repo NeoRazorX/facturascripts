@@ -56,11 +56,6 @@ class general_clanes extends fs_controller
       
       $this->buttons[] = new fs_button_img('b_nuevo_clan', 'nuevo');
    }
-   
-   public function version()
-   {
-      return parent::version().'-2';
-   }
 }
 
 ?>

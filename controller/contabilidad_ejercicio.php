@@ -162,11 +162,6 @@ class contabilidad_ejercicio extends fs_controller
          $this->new_error_msg('Ejercicio no encontrado.');
    }
    
-   public function version()
-   {
-      return parent::version().'-9';
-   }
-   
    public function url()
    {
       if( !isset($this->ejercicio) )

@@ -80,11 +80,6 @@ class admin_users extends fs_controller
             $this->new_error_msg("¡Usuario no encontrado!");
       }
    }
-   
-   public function version()
-   {
-      return parent::version().'-5';
-   }
 }
 
 ?>

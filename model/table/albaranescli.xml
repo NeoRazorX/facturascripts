@@ -198,16 +198,16 @@
       <defecto>0</defecto>
    </columna>
    <restriccion>
-      <nombre>ca_albaranescli_series</nombre>
+      <nombre>ca_albaranescli_series2</nombre>
       <consulta>FOREIGN KEY (codserie)
-      REFERENCES series (codserie) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES series (codserie)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_albaranescli_ejercicios</nombre>
+      <nombre>ca_albaranescli_ejercicios2</nombre>
       <consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>uniq_codigo_albaranescli</nombre>

@@ -146,16 +146,16 @@
       <defecto>false</defecto>
    </columna>
    <restriccion>
-      <nombre>ca_articulos_impuestos</nombre>
+      <nombre>ca_articulos_impuestos2</nombre>
       <consulta>FOREIGN KEY (codimpuesto)
-      REFERENCES impuestos (codimpuesto) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES impuestos (codimpuesto)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_articulos_familias</nombre>
+      <nombre>ca_articulos_familias2</nombre>
       <consulta>FOREIGN KEY (codfamilia)
-      REFERENCES familias (codfamilia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES familias (codfamilia)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>articulos_pkey</nombre>

@@ -90,6 +90,8 @@ class subcuenta extends fs_model
          }
       }
       
+      /// forzamos la creación de la tabla de cuentas
+      $cuenta = new cuenta();
       return '';
    }
    
@@ -272,7 +274,13 @@ class subcuenta extends fs_model
       $this->haber = $totales['haber'];
       $this->saldo = $totales['saldo'];
       
-      return TRUE;
+      if( strlen($this->codsubcuenta)>0 AND strlen($this->descripcion)>0 )
+         return TRUE;
+      else
+      {
+         $this->new_error_msg('Faltan datos en la subcuenta.');
+         return FALSE;
+      }
    }
    
    public function save()

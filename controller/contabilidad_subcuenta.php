@@ -36,8 +36,6 @@ class contabilidad_subcuenta extends fs_controller
    
    protected function process()
    {
-      $this->ppage = $this->page->get('contabilidad_cuentas');
-      
       if( isset($_GET['id']) )
       {
          $this->subcuenta = new subcuenta();
@@ -46,6 +44,11 @@ class contabilidad_subcuenta extends fs_controller
       
       if($this->subcuenta)
       {
+         /// configuramos la página previa
+         $this->ppage = $this->page->get('contabilidad_cuenta');
+         $this->ppage->title = 'Cuenta: '.$this->subcuenta->codcuenta;
+         $this->ppage->extra_url = '&id='.$this->subcuenta->idcuenta;
+         
          $this->page->title = 'Subcuenta: '.$this->subcuenta->codsubcuenta;
          $this->cuenta = $this->subcuenta->get_cuenta();
          $this->ejercicio = $this->subcuenta->get_ejercicio();
@@ -77,16 +80,16 @@ class contabilidad_subcuenta extends fs_controller
             $this->buttons[] = new fs_button('b_libro_mayor', 'generar libro mayor', $this->url().'&genlm=TRUE');
          }
          
+         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         
          /// comprobamos la subcuenta
          $this->subcuenta->test();
       }
       else
+      {
          $this->new_error_msg("Subcuenta no encontrada.");
-   }
-   
-   public function version()
-   {
-      return parent::version().'-10';
+         $this->ppage = $this->page->get('contabilidad_cuentas');
+      }
    }
    
    public function url()

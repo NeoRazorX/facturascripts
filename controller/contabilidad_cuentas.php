@@ -19,14 +19,12 @@
 
 require_once 'model/cuenta.php';
 require_once 'model/ejercicio.php';
-require_once 'model/epigrafe.php';
 
 class contabilidad_cuentas extends fs_controller
 {
    public $cuenta;
    public $cuentas_especiales;
    public $ejercicio;
-   public $epigrafes;
    public $resultados;
    public $resultados2;
    public $offset;
@@ -40,13 +38,11 @@ class contabilidad_cuentas extends fs_controller
    {
       $this->cuenta = new cuenta();
       $this->ejercicio = new ejercicio();
-      $this->epigrafes = array();
       $this->custom_search = TRUE;
       
       $ce = new cuenta_especial();
       $this->cuentas_especiales = $ce->all();
       
-      $this->buttons[] = new fs_button_img('b_nueva_cuenta', 'nueva');
       $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales');
       $this->buttons[] = new fs_button('b_balances', 'Balances', 'index.php?page=contabilidad_balances');
       
@@ -94,11 +90,6 @@ class contabilidad_cuentas extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-6';
-   }
-   
    public function anterior_url()
    {
       $url = '';
@@ -117,47 +108,6 @@ class contabilidad_cuentas extends fs_controller
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
       return $url;
-   }
-   
-   private function nueva_cuenta()
-   {
-      if( isset($_POST['idepigrafe']) )
-      {
-         $epi = new epigrafe();
-         $epi0 = $epi->get($_POST['idepigrafe']);
-         if($epi0)
-         {
-            $cuenta = new cuenta();
-            $cuenta2 = $cuenta->get_by_codigo($_POST['codcuenta'], $_POST['codejercicio']);
-            if($cuenta2)
-               $this->new_error_msg('Ya existe la cuenta '.$cuenta2->codcuenta);
-            else
-            {
-               $cuenta->codcuenta = $_POST['codcuenta'];
-               $cuenta->codejercicio = $_POST['codejercicio'];
-               $cuenta->codepigrafe = $epi0->codepigrafe;
-               $cuenta->descripcion = $_POST['descripcion'];
-               $cuenta->idepigrafe = $epi0->idepigrafe;
-               if( $cuenta->save() )
-                  header('Location: '.$cuenta->url());
-               else
-                  $this->new_error_msg('Se ha producido un error al crear la cuenta.');
-            }
-         }
-         else
-            $this->new_error_msg('Epígrafe no encontrado.');
-         
-         $this->resultados = $this->cuenta->all($this->offset);
-         $this->resultados2 = array();
-      }
-      else
-      {
-         /// cambiamos la plantilla HTML
-         $this->template = 'ajax/contabilidad_nueva_cuenta';
-         
-         $epi = new epigrafe();
-         $this->epigrafes = $epi->all_from_ejercicio($_POST['codejercicio']);
-      }
    }
 }
 

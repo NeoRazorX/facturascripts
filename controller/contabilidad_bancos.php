@@ -69,11 +69,6 @@ class contabilidad_bancos extends fs_controller
             $this->new_error_msg('Banco no encontrado.');
       }
    }
-   
-   public function version()
-   {
-      return parent::version().'-2';
-   }
 }
 
 ?>

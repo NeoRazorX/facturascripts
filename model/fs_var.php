@@ -132,11 +132,11 @@ class fs_var extends fs_model
    {
       $done = TRUE;
       
-      foreach($data as $d)
+      foreach($data as $i => $value)
       {
          $var = new fs_var();
-         $var->name = $d['name'];
-         $var->varchar = $d['varchar'];
+         $var->name = $i;
+         $var->varchar = $value;
          if( !$var->save() )
          {
             $this->new_error_msg("Error al guardar '".$var->name."'");

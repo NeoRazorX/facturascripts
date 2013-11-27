@@ -31,7 +31,6 @@ class contabilidad_impuestos extends fs_controller
    protected function process()
    {
       $this->impuesto = new impuesto();
-      $this->buttons[] = new fs_button_img('b_nuevo_impuesto', 'nuevo');
       
       if( isset($_GET['delete']) )
       {
@@ -73,11 +72,6 @@ class contabilidad_impuestos extends fs_controller
          else
             $this->new_error_msg("¡Error al guardar el impuesto!");
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-4';
    }
 }
 

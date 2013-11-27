@@ -41,9 +41,9 @@
       <consulta>PRIMARY KEY (idsec)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_secuencias_secuenciasejercicios</nombre>
+      <nombre>ca_secuencias_secuenciasejercicios2</nombre>
       <consulta>FOREIGN KEY (id)
-      REFERENCES secuenciasejercicios (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES secuenciasejercicios (id)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

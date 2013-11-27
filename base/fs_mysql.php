@@ -442,6 +442,28 @@ class fs_mysql extends fs_db
       {
          if($c_nuevas)
          {
+            /// comprobamos una a una las viejas
+            foreach($c_old as $col)
+            {
+               $encontrado = FALSE;
+               
+               foreach($c_nuevas as $col2)
+               {
+                  if($col['restriccion'] == $col2['nombre'])
+                  {
+                     $encontrado = TRUE;
+                     break;
+                  }
+               }
+               
+               if(!$encontrado)
+               {
+                  /// eliminamos la restriccion
+                  if($col['tipo'] == 'FOREIGN KEY')
+                     $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
+               }
+            }
+            
             /// comprobamos una a una las nuevas
             foreach($c_nuevas as $col)
             {
@@ -454,14 +476,10 @@ class fs_mysql extends fs_db
                      break;
                   }
                }
+               
+               /// añadimos la restriccion
                if( !$encontrado AND substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
-               {
-                  /// quitamos el match simple que sólo sirve para postgresql
-                  $sql_aux = str_replace('MATCH SIMPLE', '', $col['consulta']);
-                  
-                  /// añadimos la restriccion
-                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$sql_aux.';';
-               }
+                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
             }
          }
       }
@@ -471,12 +489,7 @@ class fs_mysql extends fs_db
          foreach($c_nuevas as $col)
          {
             if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
-            {
-               /// quitamos el match simple que sólo sirve para postgresql
-               $sql_aux = str_replace('MATCH SIMPLE', '', $col['consulta']);
-               
-               $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$sql_aux.';';
-            }
+               $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
          }
       }
       
@@ -529,13 +542,8 @@ class fs_mysql extends fs_db
          {
             if( strstr(strtolower($res['consulta']), 'primary key') )
                $consulta .= ', '.$res['consulta'];
-            else if( strstr(strtolower($res['consulta']), 'unique') )
+            else
                $consulta .= ', CONSTRAINT '.$res['nombre'].' '.$res['consulta'];
-            else if( strstr(strtolower($res['consulta']), 'foreign key') )
-            {
-               $consulta .= ', CONSTRAINT '.$res['nombre'].' '.
-                    str_replace (' MATCH SIMPLE', '', $res['consulta']); /// match simple sólo sirve para postgresql
-            }
          }
       }
       

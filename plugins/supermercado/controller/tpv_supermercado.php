@@ -100,11 +100,6 @@ class tpv_supermercado extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-1';
-   }
-   
    public function url()
    {
       if( isset($this->cliente_url) )

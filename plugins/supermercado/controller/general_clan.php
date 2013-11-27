@@ -94,11 +94,6 @@ class general_clan extends fs_controller
          $this->new_error_msg('Clan familiar no encontrado.');
    }
    
-   public function version()
-   {
-      return parent::version().'-1';
-   }
-   
    public function url()
    {
       if( !isset($this->clan) )

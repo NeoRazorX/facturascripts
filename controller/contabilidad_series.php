@@ -31,7 +31,6 @@ class contabilidad_series extends fs_controller
    protected function process()
    {
       $this->serie = new serie();
-      $this->buttons[] = new fs_button_img('b_nueva_serie', 'nueva');
       
       if( isset($_GET['delete']) )
       {
@@ -73,11 +72,6 @@ class contabilidad_series extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar la serie!");
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-4';
    }
 }
 

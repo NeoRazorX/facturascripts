@@ -21,6 +21,7 @@ require_once 'model/almacen.php';
 require_once 'model/divisa.php';
 require_once 'model/ejercicio.php';
 require_once 'model/forma_pago.php';
+require_once 'model/fs_var.php';
 require_once 'model/serie.php';
 require_once 'model/pais.php';
 
@@ -30,6 +31,7 @@ class admin_empresa extends fs_controller
    public $divisa;
    public $ejercicio;
    public $forma_pago;
+   public $mail;
    public $serie;
    public $pais;
    
@@ -47,6 +49,17 @@ class admin_empresa extends fs_controller
       $this->serie = new serie();
       $this->pais = new pais();
       
+      /// obtenemos los datos de configuración del email
+      $this->mail = array(
+          'mail_host' => 'smtp.gmail.com',
+          'mail_port' => '465',
+          'mail_enc' => 'ssl',
+          'mail_user' => ''
+      );
+      $fsvar = new fs_var();
+      foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
+         $this->mail[$var->name] = $var->varchar;
+      
       if( isset($_POST['nombre']) )
       {
          /*
@@ -59,6 +72,7 @@ class admin_empresa extends fs_controller
          $this->save_codserie( $_POST['codserie'] );
          $this->save_codpais( $_POST['codpais'] );
          
+         /// guardamos los datos de la empresa
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->cifnif = $_POST['cifnif'];
          $this->empresa->administrador = $_POST['administrador'];
@@ -82,7 +96,6 @@ class admin_empresa extends fs_controller
          $this->empresa->codpago = $_POST['codpago'];
          $this->empresa->codalmacen = $_POST['codalmacen'];
          $this->empresa->pie_factura = $_POST['pie_factura'];
-         
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
@@ -96,12 +109,18 @@ class admin_empresa extends fs_controller
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
+         
+         /// guardamos los datos del email
+         if( isset($_POST['mail_host']) )
+         {
+            $this->mail['mail_host'] = $_POST['mail_host'];
+            $this->mail['mail_port'] = $_POST['mail_port'];
+            $this->mail['mail_enc'] = $_POST['mail_enc'];
+            $this->mail['mail_user'] = $_POST['mail_user'];
+            if( !$fsvar->multi_save($this->mail) )
+               $this->new_error_msg('Error al guardar los datos del email.');
+         }
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-9';
    }
 }
 

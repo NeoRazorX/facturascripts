@@ -74,11 +74,6 @@ class admin_pages extends fs_controller
       $this->load_menu(TRUE);
    }
    
-   public function version()
-   {
-      return parent::version().'-8';
-   }
-   
    private function all_pages()
    {
       $pages = array();

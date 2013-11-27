@@ -116,8 +116,8 @@
       </tr>
       {loop="$fsc->listado"}
       <tr>
-         <td>{$value->codgrupo}</td>
-         <td>{$value->descripcion}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codgrupo}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
       <tr>
@@ -146,8 +146,8 @@
       {loop="$fsc->listado"}
       <tr>
          <td>{$value->codgrupo}</td>
-         <td>{$value->codepigrafe}</td>
-         <td>{$value->descripcion}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
       </tr>
       {else}
       <tr>

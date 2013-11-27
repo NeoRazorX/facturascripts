@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_once 'model/epigrafe.php';
 require_once 'model/subcuenta.php';
 
 class cuenta_especial extends fs_model
@@ -133,12 +134,7 @@ class cuenta extends fs_model
          $this->codejercicio = $c['codejercicio'];
          $this->idepigrafe = $this->intval($c['idepigrafe']);
          $this->codepigrafe = $c['codepigrafe'];
-         
-         if($c['descripcion'] == '')
-            $this->descripcion = '---';
-         else
-            $this->descripcion = $c['descripcion'];
-         
+         $this->descripcion = $c['descripcion'];
          $this->idcuentaesp = $c['idcuentaesp'];
       }
       else
@@ -155,6 +151,9 @@ class cuenta extends fs_model
    
    protected function install()
    {
+      /// forzamos la creación de la tabla epigrafes
+      $epi = new epigrafe();
+      
       return '';
    }
    
@@ -211,13 +210,13 @@ class cuenta extends fs_model
    {
       $this->descripcion = $this->no_html($this->descripcion);
       
-      if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcuenta) )
+      if( strlen($this->codcuenta)>0 AND strlen($this->descripcion)>0 )
+         return TRUE;
+      else
       {
-         $this->new_error_msg("Código de cuenta no válido.");
+         $this->new_error_msg('Faltan datos en la cuenta');
          return FALSE;
       }
-      else
-         return TRUE;
    }
    
    public function save()

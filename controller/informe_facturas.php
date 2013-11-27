@@ -49,11 +49,6 @@ class informe_facturas extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-5';
-   }
-   
    private function listar_facturas_cli()
    {
       /// desactivamos el motor de plantillas

@@ -60,11 +60,6 @@ class general_familias extends fs_controller
       else
          $this->resultados = $this->familia->all();
    }
-   
-   public function version()
-   {
-      return parent::version().'-5';
-   }
 }
 
 ?>

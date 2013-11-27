@@ -97,11 +97,6 @@ class general_nuevo_albaran extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-19';
-   }
-   
    private function new_articulo()
    {
       $art0 = new articulo();

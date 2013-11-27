@@ -86,11 +86,6 @@ class contabilidad_caja extends fs_controller
       $this->resultados = $this->caja->all($this->offset);
    }
    
-   public function version()
-   {
-      return parent::version().'-4';
-   }
-   
    public function anterior_url()
    {
       $url = '';

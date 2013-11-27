@@ -58,10 +58,10 @@
       <defecto>0</defecto>
    </columna>
    <restriccion>
-      <nombre>ca_lineaiva_facturascli</nombre>
+      <nombre>ca_lineaiva_facturascli2</nombre>
       <consulta>FOREIGN KEY (idfactura)
-      REFERENCES facturascli (idfactura) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES facturascli (idfactura)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>lineasivafactcli_pkey</nombre>

@@ -1,6 +1,16 @@
 {include="header"}
 
-<form action="{$fsc->page->url()}" method="POST">
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_mail_options").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_mail_options');
+         document.f_empresa.mail_host.select();
+      });
+   });
+</script>
+
+<form name="f_empresa" action="{$fsc->page->url()}" method="POST">
    <div class="rounded">
       <h1>
          Datos generales:
@@ -139,12 +149,39 @@
          Email:
          <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
          <input type="password" name="email_password" size="20" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
-         Si usas Gmail y proporcionas una contraseña podrás usar las funciones de enviar por email.
+         Si no usas Gmail o Google Apps, haz clic <a id="b_mail_options" href="#">aquí</a>.
       </div>
       <div>
          <br/>Firma:<br/>
          <textarea name="email_firma">{$fsc->empresa->email_firma}</textarea>
       </div>
+   </div>
+   
+   <div class="popup" id="popup_mail_options">
+      <h1>Opciones de email</h1>
+      <table>
+         <tr>
+            <td align="right"><b>Host:</b></td>
+            <td><input type="text" name="mail_host" size="30" value="{$fsc->mail['mail_host']}" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right"><b>Puerto:</b></td>
+            <td><input type="text" name="mail_port" size="30" value="{$fsc->mail['mail_port']}" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right"><b>Encriptación (ssl ó tls):</b></td>
+            <td><input type="text" name="mail_enc" size="30" value="{$fsc->mail['mail_enc']}" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right"><b>Usuario:</b></td>
+            <td><input type="text" name="mail_user" size="30" value="{$fsc->mail['mail_user']}" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
    </div>
    
    <div class="rounded">

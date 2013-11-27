@@ -41,15 +41,15 @@
       <consulta>UNIQUE (codtarifa,referencia)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_articulostarifas_articulos</nombre>
+      <nombre>ca_articulostarifas_articulos2</nombre>
       <consulta>FOREIGN KEY (referencia)
-      REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES articulos (referencia)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_articulostarifas_tarifas</nombre>
+      <nombre>ca_articulostarifas_tarifas2</nombre>
       <consulta>FOREIGN KEY (codtarifa)
-      REFERENCES tarifas (codtarifa) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES tarifas (codtarifa)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

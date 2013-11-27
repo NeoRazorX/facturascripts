@@ -61,15 +61,15 @@
       <consulta>PRIMARY KEY (id)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_secuenciasejercicios_ejercicios</nombre>
+      <nombre>ca_secuenciasejercicios_ejercicios2</nombre>
       <consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_secuenciasejercicios_series</nombre>
+      <nombre>ca_secuenciasejercicios_series2</nombre>
       <consulta>FOREIGN KEY (codserie)
-      REFERENCES series (codserie) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES series (codserie)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

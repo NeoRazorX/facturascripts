@@ -57,11 +57,6 @@ class general_paquetes extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-5';
-   }
-   
    private function new_search()
    {
       /// cambiamos la plantilla HTML

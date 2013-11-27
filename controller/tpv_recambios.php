@@ -156,11 +156,6 @@ class tpv_recambios extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-23';
-   }
-   
    private function new_search()
    {
       /// cambiamos la plantilla HTML

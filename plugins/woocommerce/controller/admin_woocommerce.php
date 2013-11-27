@@ -31,32 +31,10 @@ class admin_woocommerce extends fs_controller
       parent::__construct('admin_woocommerce', 'WooCommerce', 'admin', TRUE, TRUE);
    }
    
-   public function version()
-   {
-      return parent::version().'-3';
-   }
-   
    protected function process()
    {
       $this->mysql = new fs_mysql_x();
       $fs_var = new fs_var();
-      
-      if( isset($_POST['woo_server']) )
-      {
-         $data = array(
-             array('name'=>'woo_server', 'varchar'=>$_POST['woo_server']),
-             array('name'=>'woo_port', 'varchar'=>$_POST['woo_port']),
-             array('name'=>'woo_dbname', 'varchar'=>$_POST['woo_dbname']),
-             array('name'=>'woo_user', 'varchar'=>$_POST['woo_user']),
-             array('name'=>'woo_password', 'varchar'=>$_POST['woo_password'])
-         );
-         
-         if( $fs_var->multi_save($data) )
-            $this->new_message("Datos guardados correctamente.");
-         else
-            $this->new_error_msg("Error al guardar los datos.");
-      }
-      
       $this->woo_setup = array(
           'woo_server' => '',
           'woo_port' => '',
@@ -65,6 +43,20 @@ class admin_woocommerce extends fs_controller
           'woo_password' => '',
           'connected' => FALSE
       );
+      
+      if( isset($_POST['woo_server']) )
+      {
+         $this->woo_setup['woo_server'] = $_POST['woo_server'];
+         $this->woo_setup['woo_port'] = $_POST['woo_port'];
+         $this->woo_setup['woo_dbname'] = $_POST['woo_dbname'];
+         $this->woo_setup['woo_user'] = $_POST['woo_user'];
+         $this->woo_setup['woo_password'] = $_POST['woo_password'];
+         
+         if( $fs_var->multi_save($this->woo_setup) )
+            $this->new_message("Datos guardados correctamente.");
+         else
+            $this->new_error_msg("Error al guardar los datos.");
+      }
       
       $num = 0;
       foreach($fs_var->multi_get(array('woo_server','woo_port','woo_dbname','woo_user','woo_password')) as $fv)

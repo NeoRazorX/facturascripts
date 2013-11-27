@@ -51,9 +51,15 @@
       <consulta>PRIMARY KEY (idcuenta)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_co_cuentas_ejercicios</nombre>
+      <nombre>ca_co_cuentas_ejercicios2</nombre>
       <consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_co_cuentas_epigrafes2</nombre>
+      <consulta>FOREIGN KEY (idepigrafe)
+      REFERENCES co_epigrafes (idepigrafe)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

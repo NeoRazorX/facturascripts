@@ -145,11 +145,6 @@ class admin_user extends fs_controller
          $this->new_error_msg("Usuario no encontrado.");
    }
    
-   public function version()
-   {
-      return parent::version().'-10';
-   }
-   
    public function url()
    {
       if( !isset($this->suser) )

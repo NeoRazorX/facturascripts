@@ -16,16 +16,16 @@
       <nulo>NO</nulo>
    </columna>
    <restriccion>
-      <nombre>ca_cliente2clan_clan</nombre>
+      <nombre>ca_cliente2clan_clan2</nombre>
       <consulta>FOREIGN KEY (codclan)
-      REFERENCES clanes (codclan) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES clanes (codclan)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_cliente2clan_clientes</nombre>
+      <nombre>ca_cliente2clan_clientes2</nombre>
       <consulta>FOREIGN KEY (codcliente)
-      REFERENCES clientes (codcliente) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES clientes (codcliente)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>cliente2clan_pkey</nombre>

@@ -22,7 +22,7 @@
    $(document).ready(function() {
       $("#b_nueva_divisa").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_divisa', 50);
+         fs_show_popup('popup_nueva_divisa');
          document.f_nueva_divisa.coddivisa.focus();
       });
    });
@@ -99,6 +99,13 @@
             </td>
          </tr>
          {/loop}
+         <tr>
+            <td colspan="6">
+               <div class="new_line">
+                  <a id="b_nueva_divisa" href="#">Nueva divisa</a>
+               </div>
+            </td>
+         </tr>
       </table>
       
       <br/>

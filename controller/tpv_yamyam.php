@@ -141,11 +141,6 @@ class tpv_yamyam extends fs_controller
       }
    }
    
-   public function version()
-   {
-      return parent::version().'-18';
-   }
-   
    private function cargar_datos_tpv()
    {
       /// cargamos todos los paquetes

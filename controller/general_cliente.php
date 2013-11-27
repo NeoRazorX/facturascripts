@@ -128,11 +128,6 @@ class general_cliente extends fs_controller
          $this->new_error_msg("¡Cliente no encontrado!");
    }
    
-   public function version()
-   {
-      return parent::version().'-6';
-   }
-   
    public function url()
    {
       if( !isset($this->cliente) )

@@ -22,11 +22,11 @@
       <consulta>PRIMARY KEY (fs_user,fs_page)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>fs_access_user</nombre>
-      <consulta>FOREIGN KEY (fs_user) REFERENCES fs_users (nick) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      <nombre>fs_access_user2</nombre>
+      <consulta>FOREIGN KEY (fs_user) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>fs_access_page</nombre>
-      <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      <nombre>fs_access_page2</nombre>
+      <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

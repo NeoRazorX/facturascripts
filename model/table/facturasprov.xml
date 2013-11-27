@@ -168,15 +168,15 @@
       <tipo>double precision</tipo>
       <nulo>YES</nulo>
    </columna>
-   <restriccion><nombre>ca_facturasprov_series</nombre><consulta>FOREIGN KEY (codserie)
-      REFERENCES series (codserie) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
-   <restriccion><nombre>ca_facturasprov_ejercicios</nombre><consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta></restriccion>
-   <restriccion><nombre>ca_facturasprov_asiento</nombre><consulta>FOREIGN KEY (idasiento)
-      REFERENCES co_asientos (idasiento) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE SET NULL</consulta></restriccion>
+   <restriccion><nombre>ca_facturasprov_series2</nombre><consulta>FOREIGN KEY (codserie)
+      REFERENCES series (codserie)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta></restriccion>
+   <restriccion><nombre>ca_facturasprov_ejercicios2</nombre><consulta>FOREIGN KEY (codejercicio)
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta></restriccion>
+   <restriccion><nombre>ca_facturasprov_asiento2</nombre><consulta>FOREIGN KEY (idasiento)
+      REFERENCES co_asientos (idasiento)
+      ON DELETE SET NULL ON UPDATE CASCADE</consulta></restriccion>
    <restriccion><nombre>uniq_codigo_facturasprov</nombre><consulta>UNIQUE (codigo)</consulta></restriccion>
    <restriccion><nombre>facturasprov_pkey</nombre><consulta>PRIMARY KEY (idfactura)</consulta></restriccion>
 </tabla>

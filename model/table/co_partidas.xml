@@ -125,10 +125,10 @@
       <nulo>YES</nulo>
    </columna>
    <restriccion>
-      <nombre>ca_co_partidas_co_asientos</nombre>
+      <nombre>ca_co_partidas_co_asientos2</nombre>
       <consulta>FOREIGN KEY (idasiento)
-      REFERENCES co_asientos (idasiento) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES co_asientos (idasiento)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>co_partidas_pkey</nombre>

@@ -31,7 +31,6 @@ class admin_paises extends fs_controller
    protected function process()
    {
       $this->pais = new pais();
-      $this->buttons[] = new fs_button_img('b_nuevo_pais', 'nuevo');
       
       if( isset($_POST['scodpais']) )
       {
@@ -68,11 +67,6 @@ class admin_paises extends fs_controller
                $this->new_error_msg("¡País no encontrado!");
          }
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-4';
    }
 }
 

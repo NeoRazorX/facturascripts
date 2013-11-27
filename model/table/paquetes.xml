@@ -19,9 +19,9 @@
       <consulta>UNIQUE (referencia)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_paquetes_articulos</nombre>
+      <nombre>ca_paquetes_articulos2</nombre>
       <consulta>FOREIGN KEY (referencia)
-      REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES articulos (referencia)
+      ON DELETE RESTRICT ON UPDATE CASCADE </consulta>
    </restriccion>
 </tabla>

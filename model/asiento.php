@@ -257,11 +257,22 @@ class asiento extends fs_model
          {
             foreach($asientos as $as)
             {
-               /// comprobamos las líneas
-               $aux = $this->db->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                  FROM co_partidas WHERE idasiento = ".$this->var2str($this->idasiento)."
-                  EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                  WHERE idasiento = ".$this->var2str($as['idasiento']).";");
+               /// comprobamos las líneas 
+               if( strtolower(FS_DB_TYPE) == 'mysql' )
+               {
+                  $aux = $this->db->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
+                     FROM co_partidas WHERE idasiento = ".$this->var2str($this->idasiento)."
+                     AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
+                     WHERE idasiento = ".$this->var2str($as['idasiento']).");");
+               }
+               else
+               {
+                  $aux = $this->db->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
+                     FROM co_partidas WHERE idasiento = ".$this->var2str($this->idasiento)."
+                     EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
+                     WHERE idasiento = ".$this->var2str($as['idasiento']).";");
+               }
+               
                if( !$aux )
                {
                   $this->new_error_msg("Este asiento es un posible duplicado de

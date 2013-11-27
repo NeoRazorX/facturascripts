@@ -22,6 +22,7 @@ require_once 'model/asiento.php';
 require_once 'model/cliente.php';
 require_once 'model/ejercicio.php';
 require_once 'model/factura_cliente.php';
+require_once 'model/fs_var.php';
 require_once 'model/partida.php';
 require_once 'model/subcuenta.php';
 require_once 'extras/phpmailer/class.phpmailer.php';
@@ -124,11 +125,6 @@ class contabilidad_factura_cli extends fs_controller
       }
       else
          $this->new_error_msg("¡Factura de cliente no encontrada!");
-   }
-   
-   public function version()
-   {
-      return parent::version().'-14';
    }
    
    public function url()
@@ -274,7 +270,7 @@ class contabilidad_factura_cli extends fs_controller
                       'dato1' => $this->factura->direccion.' - '.$this->factura->ciudad.
                                  ' ('.$this->factura->provincia.')',
                       'campo2' => "<b>Teléfonos:</b>",
-                      'dato2' => $this->factura->telefono1.'  '.$this->factura->telefono2
+                      'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
                    )
                );
                $pdf_doc->save_table(
@@ -525,6 +521,17 @@ class contabilidad_factura_cli extends fs_controller
             $this->cliente->save();
          }
          
+         /// obtenemos la configuración extra del email
+         $mailop = array(
+             'mail_host' => 'smtp.gmail.com',
+             'mail_port' => '465',
+             'mail_user' => '',
+             'mail_enc' => 'ssl'
+         );
+         $fsvar = new fs_var();
+         foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
+            $mailop[$var->name] = $var->varchar;
+         
          $filename = 'factura_'.$this->factura->codigo.'.pdf';
          $this->generar_pdf('simple', $filename);
          if( file_exists('tmp/enviar/'.$filename) )
@@ -532,10 +539,15 @@ class contabilidad_factura_cli extends fs_controller
             $mail = new PHPMailer();
             $mail->IsSMTP();
             $mail->SMTPAuth = TRUE;
-            $mail->SMTPSecure = "ssl";
-            $mail->Host = "smtp.gmail.com";
-            $mail->Port = 465;
-            $mail->Username = $this->empresa->email;
+            $mail->SMTPSecure = $mailop['mail_enc'];
+            $mail->Host = $mailop['mail_host'];
+            $mail->Port = intval($mailop['mail_port']);
+            
+            if($mailop['mail_user'] != '')
+               $mail->Username = $mailop['mail_user'];
+            else
+               $mail->Username = $this->empresa->email;
+            
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;

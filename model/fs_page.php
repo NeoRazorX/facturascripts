@@ -29,6 +29,8 @@ class fs_page extends fs_model
    public $exists;
    public $enabled;
    
+   public $extra_url;
+   
    /*
     * Cuando un usuario no tiene asignada una página por defecto, se selecciona
     * la primera página importante a la que tiene acceso.
@@ -64,6 +66,7 @@ class fs_page extends fs_model
       
       $this->exists = FALSE;
       $this->enabled = FALSE;
+      $this->extra_url = '';
    }
    
    protected function install()
@@ -78,7 +81,7 @@ class fs_page extends fs_model
       if( is_null($this->name) )
          return 'index.php?page=admin_pages';
       else
-         return 'index.php?page='.$this->name;
+         return 'index.php?page='.$this->name.$this->extra_url;
    }
    
    public function is_default()

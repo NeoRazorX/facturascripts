@@ -110,11 +110,6 @@ class general_albaran_prov extends fs_controller
          $this->new_error_msg("¡Albarán de proveedor no encontrado!");
    }
    
-   public function version()
-   {
-      return parent::version().'-20';
-   }
-   
    public function url()
    {
       if( !isset($this->albaran) )

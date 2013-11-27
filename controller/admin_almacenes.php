@@ -35,8 +35,6 @@ class admin_almacenes extends fs_controller
       $this->almacen = new almacen();
       $this->pais = new pais();
       
-      $this->buttons[] = new fs_button_img('b_nuevo_almacen', 'nuevo');
-      
       if( isset($_POST['scodalmacen']) )
       {
          $al0 = $this->almacen->get($_POST['scodalmacen']);
@@ -72,11 +70,6 @@ class admin_almacenes extends fs_controller
          else
             $this->new_error_msg("¡Almacén no encontrado!");
       }
-   }
-   
-   public function version()
-   {
-      return parent::version().'-4';
    }
 }
 

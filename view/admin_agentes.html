@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_nuevo_agente").click(function(event) {
+      $("#b_nuevo_agente, #b_nuevo_agente2").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nuevo_agente');
          document.f_nuevo_agente.snombre.focus();
@@ -64,11 +64,14 @@
          <td align="center">{$value->dnicif}</td>
          <td align="right">{$value->telefono}</td>
       </tr>
-      {else}
-      <tr>
-         <td colspan="4">No hay ningún agente creado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
       {/loop}
+      <tr>
+         <td colspan="4">
+            <div class="new_line">
+               <a id="b_nuevo_agente2" href="#">Nuevo agente</a>
+            </div>
+         </td>
+      </tr>
    </table>
 </div>
 

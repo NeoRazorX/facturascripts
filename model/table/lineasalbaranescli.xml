@@ -102,16 +102,16 @@
       <nulo>NO</nulo>
    </columna>
    <restriccion>
-      <nombre>ca_lineasalbaranescli_articulos</nombre>
+      <nombre>ca_lineasalbaranescli_articulos2</nombre>
       <consulta>FOREIGN KEY (referencia)
-      REFERENCES articulos (referencia) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES articulos (referencia)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_lineasalbaranescli_albaranescli</nombre>
+      <nombre>ca_lineasalbaranescli_albaranescli2</nombre>
       <consulta>FOREIGN KEY (idalbaran)
-      REFERENCES albaranescli (idalbaran) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE</consulta>
+      REFERENCES albaranescli (idalbaran)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>lineasalbaranescli_pkey</nombre>

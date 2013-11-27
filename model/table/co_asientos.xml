@@ -62,10 +62,10 @@
       <nulo>YES</nulo>
    </columna>
    <restriccion>
-      <nombre>ca_co_asientos_ejercicios</nombre>
+      <nombre>ca_co_asientos_ejercicios2</nombre>
       <consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE RESTRICT</consulta>
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>co_asientos_pkey</nombre>

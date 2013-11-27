@@ -121,11 +121,6 @@ class admin_agente extends fs_controller
          FALSE;
    }
    
-   public function version()
-   {
-      return parent::version().'-6';
-   }
-   
    public function url()
    {
       if( !isset($this->agente) )
