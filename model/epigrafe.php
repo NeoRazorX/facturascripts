@@ -214,17 +214,6 @@ class epigrafe extends fs_model
       return '';
    }
    
-   /*
-    * Sobreescribimos check_table para poder ejecutar el código necesario
-    * para enlazar los epigrafes con su grupo correspondiente, y así solucionar
-    * este bug de los tiempos de facturalux
-    */
-   public function check_table($table_name)
-   {
-      $this->db->select("UPDATE co_epigrafes SET idgrupo = NULL WHERE idgrupo = '0';");
-      parent::check_table($table_name);
-   }
-   
    public function url()
    {
       if( isset($this->idepigrafe) )
