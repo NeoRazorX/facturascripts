@@ -33,7 +33,7 @@ class fs_printer
       else if( substr($printer, 0, 5) == '/dev/' )
          $this->print_command = ' > '.$printer;
       else
-         $this->print_command = ' | -d '.$printer;
+         $this->print_command = ' | lp -d '.$printer;
    }
    
    public function __destruct()
@@ -52,7 +52,7 @@ class fs_printer
       else if( substr($printer, 0, 5) == '/dev/' )
          $this->print_command = ' > '.$printer;
       else
-         $this->print_command = ' | -d '.$printer;
+         $this->print_command = ' | lp -d '.$printer;
    }
    
    public function add($linea)

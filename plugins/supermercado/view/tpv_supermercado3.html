@@ -113,9 +113,18 @@
    }
    function save_albaran()
    {
-      document.f_albaran.total2.disabled = false;
-      document.f_albaran.numlineas.value = numlineas;
-      document.f_albaran.submit();
+      if(numlineas > 1)
+      {
+         document.f_albaran.total2.disabled = false;
+         document.f_albaran.numlineas.value = numlineas;
+         document.f_albaran.submit();
+      }
+      else
+      {
+         alert('No has vendido nada.');
+         fs_hide_popups();
+         document.f_albaran.codbar.focus();
+      }
    }
    $(document).ready(function() {
       document.f_albaran.codbar.focus();
