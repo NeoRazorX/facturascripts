@@ -150,6 +150,8 @@
          <th align="left">Ejercicio</th>
          <th align="left">Código</th>
          <th align="left">Descripción</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
          <th align="right">Saldo</th>
       </tr>
       {loop="$fsc->resultados2"}
@@ -157,10 +159,12 @@
          <td>{$value->codejercicio}</td>
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
          <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
       </tr>
       {else}
-      <tr><td colspan="4">Sin resultados.</td></tr>
+      <tr><td colspan="6">Sin resultados.</td></tr>
       {/loop}
    </table>
 </div>

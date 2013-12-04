@@ -59,25 +59,19 @@ define('FS_ID', 1);
 
 /*
  * Nombre o dirección de la impresora de tickets.
- * Sólo disponible en Linux.
- * 
- * Ejemplo: 'Generic-text-only' ó '/dev/usb/lp0'
- * 
- * Nota: si escribes directamente sobre el puerto de la impresora,
- * asegurate de añadir apache al grupo de impresoras:
- * $ sudo usermod -a -G lp www-data
+ * '' -> impresora predefinida.
+ * 'epson234' -> impresora con nombre epson234.
+ * '/dev/usb/lp0' -> escribir diectamente sobre ese archivo.
+ * 'remote-printer' -> permite imprimir mediante el programa fs_remote_printer.py
  */
 define('FS_PRINTER', '');
 
 /*
  * Nombre o dirección de la impresora que representa el dispositivo
  * LCD del terminal POS.
- * Sólo disponible en Linux. Además el LCD tiene que ser
- * de dos líneas de 20 caracteres cada una (GLANCETRON 8035).
+ * El LCD tiene que ser de dos líneas de 20 caracteres cada una (GLANCETRON 8035).
  * Si tienes alguna duda, escríbela
- * aquí -> http://code.google.com/p/facturascripts/issues/list
- * 
- * Ejemplo: 'Generic-text-only' ó '/dev/ttyUSB0'
+ * aquí -> http://www.facturascripts.com
  */
 define('FS_LCD', '');
 

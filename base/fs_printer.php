@@ -25,15 +25,24 @@ class fs_printer
    
    public function __construct($printer = FS_PRINTER)
    {
-      $this->filename = 'tmp/ticket_'.$this->random_string().'.txt';
-      $this->file = fopen($this->filename, 'w');
-      
-      if($printer == '')
-         $this->print_command = ' | lp';
-      else if( substr($printer, 0, 5) == '/dev/' )
-         $this->print_command = ' > '.$printer;
+      if($printer == 'remote-printer')
+      {
+         $this->filename = 'tmp/remote-printer.txt';
+         $this->file = fopen($this->filename, 'a');
+         $this->print_command = 'remote-printer';
+      }
       else
-         $this->print_command = ' | lp -d '.$printer;
+      {
+         $this->filename = 'tmp/ticket_'.$this->random_string().'.txt';
+         $this->file = fopen($this->filename, 'w');
+         
+         if($printer == '')
+            $this->print_command = ' | lp';
+         else if( substr($printer, 0, 5) == '/dev/' )
+            $this->print_command = ' > '.$printer;
+         else
+            $this->print_command = ' | lp -d '.$printer;
+      }
    }
    
    public function __destruct()
@@ -41,7 +50,7 @@ class fs_printer
       if( $this->file )
          fclose($this->file);
       
-      if( file_exists( $this->filename ) )
+      if( file_exists($this->filename) AND $this->print_command != 'remote-printer' )
          unlink($this->filename);
    }
    
@@ -51,29 +60,35 @@ class fs_printer
          $this->print_command = ' | lp';
       else if( substr($printer, 0, 5) == '/dev/' )
          $this->print_command = ' > '.$printer;
+      else if($printer == 'remote-printer')
+         $this->print_command = 'remote-printer';
       else
          $this->print_command = ' | lp -d '.$printer;
    }
    
    public function add($linea)
    {
-      fwrite($this->file, $linea);
+      if($this->file)
+         fwrite($this->file, $linea);
    }
    
    /// añade la línea de texto en letras grandes
    public function add_big($linea)
    {
-      fwrite($this->file, chr(27).chr(33).chr(56).$linea.chr(27).chr(33).chr(1));
+      if($this->file)
+         fwrite($this->file, chr(27).chr(33).chr(56).$linea.chr(27).chr(33).chr(1));
    }
    
    public function imprimir()
    {
-      shell_exec("cat " . $this->filename . $this->print_command);
+      if($this->print_command != 'remote-printer')
+         shell_exec("cat " . $this->filename . $this->print_command);
    }
    
    public function abrir_cajon()
    {
-      shell_exec("echo '" . chr(27) . chr(112) . chr(48) . " '" . $this->print_command);
+      if($this->print_command != 'remote-printer')
+         shell_exec("echo '" . chr(27) . chr(112) . chr(48) . " '" . $this->print_command);
    }
    
    public function center_text($word='', $tot_width=40)
