@@ -82,13 +82,15 @@ class fs_printer
    public function imprimir()
    {
       if($this->print_command != 'remote-printer')
-         shell_exec("cat " . $this->filename . $this->print_command);
+         shell_exec("cat ".$this->filename.$this->print_command);
    }
    
    public function abrir_cajon()
    {
-      if($this->print_command != 'remote-printer')
-         shell_exec("echo '" . chr(27) . chr(112) . chr(48) . " '" . $this->print_command);
+      if($this->print_command == 'remote-printer')
+         fwrite($this->file, chr(27).chr(112).chr(48).' ');
+      else
+         shell_exec("echo '".chr(27).chr(112).chr(48)." '".$this->print_command);
    }
    
    public function center_text($word='', $tot_width=40)

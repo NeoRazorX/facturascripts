@@ -231,17 +231,18 @@
    }
    function fs_marcar_todo()
    {
-      $('#f_precios input:checkbox').attr('checked', true);
+      $('#f_precios input.cb_update').attr('checked', true);
    }
    function fs_marcar_nada()
    {
-      $('#f_precios input:checkbox').attr('checked', false);
+      $('#f_precios input.cb_update').attr('checked', false);
    }
    $(document).ready(function() {
       recalcular();
       $("#b_precios").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_precios');
+         fs_show_popup('popup_precios', 60);
+         document.f_precios.codbar_0.focus();
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
@@ -282,52 +283,57 @@
 </div>
 
 <div class="popup" id="popup_precios" style="min-width: 70%;">
-   <form id="f_precios" action="{$fsc->url()}" method="post">
+   <form id="f_precios" name="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
       <h1>Actualizar precios de los artículos</h1>
-      
-      <div>
-         <input class="submit" type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
-         <div class="pull_right">
-            <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-            <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-         </div>
-      </div>
-      
-      <br/>
-      
       <table class="list">
          <tr>
+            <th width="100">Actualizar</th>
             <th align="left">Artículo</th>
+            <th>Código de barras</th>
             <th align="right">PVP</th>
-            <th align="right">PVP+IVA</th>
-            <th>Actualizar</th>
+            <th width="100" align="right">PVP+IVA</th>
          </tr>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
+            <td align="center">
+               <input class="cb_update" type="checkbox" name="referencia_{$counter}" value="{$value->referencia}" checked="checked"/>
+            </td>
             <td>
                <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
                {$value->descripcion}
             </td>
-            <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="right">{$value->show_pvp_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="center">
-               <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
-               <input type="checkbox" name="pvp_{$counter}" value="{$value->pvpunitario}" checked="checked"/>
+            <td>
+               <input class="full" type="text" name="codbar_{$counter}" autocomplete="off"/>
+            </td>
+            <td align="right">
+               {$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}
+            </td>
+            <td align="right">
+               <input class="full" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->show_pvp_iva()}" autocomplete="off"/>
             </td>
          </tr>
          {/loop}
       </table>
       
       <br/>
-      
-      <div>
-         <input class="submit" type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
-         <div class="pull_right">
-            <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-            <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
-         </div>
-      </div>
+      <table width="100%">
+         <tr>
+            <td>
+               <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
+               <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="center">
+               <label>
+                  <input type="checkbox" name="update_all" value="TRUE"/>
+                  Actualizar descripción y código de barras
+               </label>
+            </td>
+            <td align="right">
+               <input class="submit" type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
    </form>
 </div>
 

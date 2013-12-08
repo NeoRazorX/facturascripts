@@ -427,7 +427,8 @@ class general_importar_familia extends fs_controller
             $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
             $articulo->codfamilia = $this->familia->codfamilia;
-            $articulo->codimpuesto = $this->family_data->codimpuesto;
+            $articulo->set_impuesto($this->family_data->codimpuesto);
+            
             if( $this->family_data->con_iva )
                $articulo->set_pvp_iva($tarifa[1]);
             else
@@ -578,7 +579,8 @@ class general_importar_familia extends fs_controller
             $articulo->descripcion = $tarifa[2];
             $articulo->codbarras = $tarifa[3];
             $articulo->codfamilia = $this->familia->codfamilia;
-            $articulo->codimpuesto = $this->family_data->codimpuesto;
+            $articulo->set_impuesto($this->family_data->codimpuesto);
+            
             if( $this->family_data->con_iva )
                $articulo->set_pvp_iva($tarifa[1]);
             else

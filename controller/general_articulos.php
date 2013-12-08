@@ -106,7 +106,7 @@ class general_articulos extends fs_controller
          $articulo->referencia = $_POST['referencia'];
          $articulo->descripcion = $_POST['referencia'];
          $articulo->codfamilia = $_POST['codfamilia'];
-         $articulo->codimpuesto = $_POST['codimpuesto'];
+         $articulo->set_impuesto($_POST['codimpuesto']);
          if( $articulo->save() )
             header('location: '.$articulo->url());
          else

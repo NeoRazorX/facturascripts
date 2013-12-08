@@ -103,7 +103,7 @@ class general_nuevo_albaran extends fs_controller
       $art0->referencia = $_POST['referencia'];
       $art0->descripcion = $_POST['referencia'];
       $art0->codfamilia = $_POST['codfamilia'];
-      $art0->codimpuesto = $_POST['codimpuesto'];
+      $art0->set_impuesto($_POST['codimpuesto']);
       
       if( $art0->save() )
          $this->results[] = $art0;

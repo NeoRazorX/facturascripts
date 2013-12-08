@@ -71,6 +71,11 @@ class clan_familiar extends fs_model
          return 0;
    }
    
+   public function pendiente()
+   {
+      return $this->limite - $this->gastado();
+   }
+   
    public function get($cod)
    {
       $c = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codclan = ".$this->var2str($cod).";");

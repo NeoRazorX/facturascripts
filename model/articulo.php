@@ -366,6 +366,37 @@ class articulo extends fs_model
       $this->pvp = round((100*$p)/(100+$this->get_iva()), 3);
    }
    
+   public function set_impuesto($codimpuesto)
+   {
+      if($codimpuesto != $this->codimpuesto)
+      {
+         $this->codimpuesto = $codimpuesto;
+         
+         $encontrado = FALSE;
+         foreach(self::$impuestos as $i)
+         {
+            if($i->codimpuesto == $this->codimpuesto)
+            {
+               $this->iva = floatval($i->iva);
+               $encontrado = TRUE;
+               break;
+            }
+         }
+         if( !$encontrado )
+         {
+            $imp = new impuesto();
+            $imp0 = $imp->get($this->codimpuesto);
+            if($imp0)
+            {
+               $this->iva = floatval($imp0->iva);
+               self::$impuestos[] = $imp0;
+            }
+            else
+               $this->iva = 0;
+         }
+      }
+   }
+   
    public function set_stock($almacen, $cantidad=1)
    {
       $result = FALSE;

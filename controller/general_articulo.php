@@ -55,7 +55,7 @@ class general_articulo extends fs_controller
          if($this->articulo)
          {
             $continuar = TRUE;
-            $this->articulo->codimpuesto = $_POST['codimpuesto'];
+            $this->articulo->set_impuesto( $_POST['codimpuesto'] );
             $this->articulo->set_pvp_iva( $_POST['pvpiva'] );
             if( !$this->articulo->save() )
             {

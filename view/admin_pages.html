@@ -14,13 +14,11 @@
 <div class="rounded">
    <form id="f_enable_pages" action="{$fsc->url()}" method="post">
       <input type="hidden" name="modpages" value="TRUE"/>
-      
       <div>
-         <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+         <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
          <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
-      
       <br/>
       
       <table class="list">
@@ -58,10 +56,9 @@
       </table>
       
       <br/>
-      
       <div>
-         <input class="button" type="button" value="marcar todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="desmarcar todo" onclick="fs_marcar_nada()"/>
+         <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
          <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>

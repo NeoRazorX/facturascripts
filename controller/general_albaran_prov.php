@@ -522,18 +522,34 @@ class general_albaran_prov extends fs_controller
    private function actualizar_precios()
    {
       $articulo = new articulo();
-      $num_lineas = count($this->albaran->get_lineas());
+      $lineas = $this->albaran->get_lineas();
       
-      for($i=0; $i<$num_lineas; $i++)
+      foreach($lineas as $linea)
       {
-         if( isset($_POST['pvp_'.$i]) )
+         for($i = 0; $i < count($lineas); $i++)
          {
-            $art0 = $articulo->get($_POST['referencia_'.$i]);
-            if( $art0 )
+            if( !isset($_POST['referencia_'.$i]) )
             {
-               $art0->set_pvp($_POST['pvp_'.$i]);
-               if( !$art0->save() )
-                  $this->new_error_msg('Imposible actualizar el artículo '.$art0->referencia);
+               
+            }
+            else if($_POST['referencia_'.$i] == $linea->referencia)
+            {
+               $art0 = $articulo->get($_POST['referencia_'.$i]);
+               if($art0)
+               {
+                  if( isset($_POST['update_all']) )
+                  {
+                     $art0->descripcion = $linea->descripcion;
+                     $art0->codbarras = $_POST['codbar_'.$i];
+                  }
+                  
+                  $art0->set_impuesto($linea->codimpuesto);
+                  $art0->set_pvp_iva($_POST['pvpiva_'.$i]);
+                  if( !$art0->save() )
+                     $this->new_error_msg('Imposible actualizar el artículo '.$art0->referencia);
+               }
+               
+               break;
             }
          }
       }

@@ -136,21 +136,20 @@ class tpv_supermercado extends fs_controller
       if( $this->caja->save() )
       {
          $fpt = new fs_printer();
-         $fpt->add("\n\n");
+         $fpt->abrir_cajon();
+         $fpt->add( chr(27).chr(64)."\n\n" );
          $fpt->add( $fpt->center_text("CIERRE DE CAJA:", 42) );
          $fpt->add("\n\nAgente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
          $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
-         $fpt->add("Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
+         $fpt->add("Cambio inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
          $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
          $fpt->add("Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n");
          $fpt->add("Diferencia: ".$this->caja->show_diferencia()." Eur.\n");
          $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
-         $fpt->add("Dinero pesado:\n\n\n");
          $fpt->add("Observaciones:\n\n\n\n");
-         $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n\n\n");
+         $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
          $fpt->imprimir();
-         $fpt->abrir_cajon();
          
          /// recargamos la página
          header('location: '.$this->url());
@@ -358,7 +357,10 @@ class tpv_supermercado extends fs_controller
    private function imprimir_ticket($albaran)
    {
       $fpt = new fs_printer();
-      $fpt->add( $fpt->center_text($this->empresa->nombre, 42)."\n");
+      $fpt->abrir_cajon();
+      
+      $fpt->add( chr(27).chr(64)."\n" );
+      $fpt->add( $fpt->center_text($this->empresa->nombre, 42)."\n" );
       $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad, 42) . "\n");
       $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . "\n\n", 42);
       $linea = "\nTicket: " . $albaran->codigo;
@@ -381,11 +383,12 @@ class tpv_supermercado extends fs_controller
       }
       
       $linea = "----------------------------------------\n".
-              $fpt->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
-                      "Total: " . $albaran->show_total() . " Eur.", 42) . "\n\n\n\n\n\n\n\n\n\n\n\n\n";
+         $fpt->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
+         "Total: " . $albaran->show_total() . " Eur.", 42)."\n".
+         $fpt->center_text('Pendiente: '.$this->clan->pendiente()." Eur.", 42)."\n\n\n\n\n\n\n\n".
+         chr(29).chr(86).chr(66).chr(0)."\n\n";
       $fpt->add($linea);
       $fpt->imprimir();
-      $fpt->abrir_cajon();
    }
    
    private function borrar_ticket()
