@@ -115,8 +115,8 @@ class general_cliente extends fs_controller
          $this->listar = 'albaranes';
          if( isset($_GET['listar']) )
          {
-            if($_GET['listar'] == 'facturas')
-               $this->listar = 'facturas';
+            if( in_array($_GET['listar'], array('albaranes','facturas','stats')) )
+               $this->listar = $_GET['listar'];
          }
          
          if($this->listar == 'facturas')
@@ -162,6 +162,22 @@ class general_cliente extends fs_controller
       $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
       $linea = new linea_albaran_cliente();
       $this->lineas = $linea->search_from_cliente($_POST['codcliente'], $this->buscar_lineas);
+   }
+   
+   public function stats_last_months()
+   {
+      $albaran = new albaran_cliente();
+      return $albaran->stats_from_cli($this->cliente->codcliente);
+   }
+   
+   public function this_year()
+   {
+      return intval(Date('Y'));
+   }
+   
+   public function previous_year()
+   {
+      return $this->this_year()-1;
    }
 }
 

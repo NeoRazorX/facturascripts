@@ -1144,6 +1144,42 @@ class albaran_cliente extends fs_model
       }
       return $stats;
    }
+   
+   /*
+    * Devuelve un array con los datos estadísticos de las compras del cliente
+    * en los dos últimos años.
+    */
+   public function stats_from_cli($codcliente)
+   {
+      $stats = array();
+      $years = array( intval(Date('Y')), intval(Date('Y'))-1 );
+      
+      foreach($years as $year)
+      {
+         for($i = 1; $i <= 12; $i++)
+         {
+            $stats[$i]['month'] = $i;
+            $stats[$i][$year] = 0;
+         }
+         
+         if( strtolower(FS_DB_TYPE) == 'postgresql')
+            $sql_aux = "to_char(fecha,'FMMM')";
+         else
+            $sql_aux = "DATE_FORMAT(fecha, '%m')";
+         
+         $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+            FROM ".$this->table_name." WHERE fecha >= ".$this->var2str(Date('1-1-'.$year))."
+            AND fecha <= ".$this->var2str(Date('31-12-'.$year))." AND codcliente = ".$this->var2str($codcliente)."
+            GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+         if($data)
+         {
+            foreach($data as $d)
+               $stats[ intval($d['mes']) ][$year] = number_format($d['total'], 2, '.', '');
+         }
+      }
+      
+      return $stats;
+   }
 }
 
 ?>

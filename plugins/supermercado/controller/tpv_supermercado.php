@@ -60,6 +60,10 @@ class tpv_supermercado extends fs_controller
       {
          $this->buscar_cliente();
       }
+      else if( isset($_POST['buscar_articulo']) )
+      {
+         $this->buscar_articulo(TRUE);
+      }
       else if( isset($_POST['codbar2']) )
       {
          $this->buscar_articulo();
@@ -72,6 +76,11 @@ class tpv_supermercado extends fs_controller
          {
             if($this->caja->codagente == $this->user->codagente)
                $this->caja_iniciada();
+            else
+            {
+               $this->new_error_msg("Esta caja está bloqueada por el agente ".$this->caja->agente->get_fullname().
+                       ". Puedes cerrarla desde Contabilidad &gt; Caja.");
+            }
          }
          else if( isset($_POST['d_inicial']) )
          {
@@ -112,7 +121,7 @@ class tpv_supermercado extends fs_controller
    {
       $this->template = 'tpv_supermercado2';
       
-      if( isset($_GET['cerrar_caja']) )
+      if( isset($_POST['cerrar_caja']) )
       {
          $this->cerrar_caja();
       }
@@ -132,6 +141,23 @@ class tpv_supermercado extends fs_controller
    
    private function cerrar_caja()
    {
+      $dinero_contado = 0;
+      $dinero_contado += intval($_POST['m1c'])*0.01;
+      $dinero_contado += intval($_POST['m2c'])*0.02;
+      $dinero_contado += intval($_POST['m5c'])*0.05;
+      $dinero_contado += intval($_POST['m10c'])*0.1;
+      $dinero_contado += intval($_POST['m20c'])*0.2;
+      $dinero_contado += intval($_POST['m50c'])*0.5;
+      $dinero_contado += intval($_POST['m1e']);
+      $dinero_contado += intval($_POST['m2e'])*2;
+      $dinero_contado += intval($_POST['b5e'])*5;
+      $dinero_contado += intval($_POST['b10e'])*10;
+      $dinero_contado += intval($_POST['b20e'])*20;
+      $dinero_contado += intval($_POST['b50e'])*50;
+      $dinero_contado += intval($_POST['b100e'])*100;
+      $dinero_contado += intval($_POST['b200e'])*200;
+      $dinero_contado += intval($_POST['b500e'])*500;
+      
       $this->caja->fecha_fin = Date('d-m-Y H:i:s');
       if( $this->caja->save() )
       {
@@ -144,8 +170,9 @@ class tpv_supermercado extends fs_controller
          $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
          $fpt->add("Cambio inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
          $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
-         $fpt->add("Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n");
-         $fpt->add("Diferencia: ".$this->caja->show_diferencia()." Eur.\n");
+         $fpt->add("Dinero fin estimado: ".$this->caja->show_dinero_fin()." Eur.\n");
+         $fpt->add("Dinero fin contado: ".number_format($dinero_contado, 2, ',', '.')." Eur.\n");
+         $fpt->add("Diferencia: ".number_format($this->caja->dinero_fin-$dinero_contado, 2, ',', '.')." Eur.\n");
          $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
          $fpt->add("Observaciones:\n\n\n\n");
          $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
@@ -189,18 +216,29 @@ class tpv_supermercado extends fs_controller
       }
    }
    
-   private function buscar_articulo()
+   private function buscar_articulo($full_data = FALSE)
    {
-      $this->template = 'ajax_buscar_articulo';
-      $articulo = new articulo();
+      if($full_data)
+         $this->template = 'ajax_buscar_articulo2';
+      else
+         $this->template = 'ajax_buscar_articulo';
       
-      foreach($articulo->search_by_codbar($_POST['codbar2']) as $a)
+      if( isset($_POST['codbar2']) )
+         $codbar = $_POST['codbar2'];
+      else
+         $codbar = $_POST['buscar_articulo'];
+      
+      $articulo = new articulo();
+      foreach($articulo->search_by_codbar($codbar) as $a)
       {
          $this->articulo = $a;
          break;
       }
       
-      $this->numlineas = $_POST['numlineas'];
+      if( isset($_POST['numlineas']) )
+         $this->numlineas = $_POST['numlineas'];
+      else
+         $this->numlineas = 0;
    }
    
    private function guardar_ticket()

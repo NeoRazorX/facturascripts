@@ -309,7 +309,7 @@ $(document).ready(function() {
          $('#user_list').show();
       }
    });
-   $("#header_logo, #header_buttons, #header_search, div.main_div, div.footer").click(function() {
+   $("#header_logo, #header_buttons, #header_search, div.advice, div.message, div.error, div.main_div, div.footer").click(function() {
       fs_select_folder('');
    });
    $("#shadow").click(function() {

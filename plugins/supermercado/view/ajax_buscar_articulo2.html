@@ -1,0 +1,11 @@
+{if condition="$fsc->articulo"}
+<div class="grupo">
+   <h2>
+      <div class="pull_right">{$fsc->articulo->show_pvp_iva()} {$fsc->simbolo_divisa()}</div>
+      {$fsc->articulo->referencia}
+   </h2>
+   <p>{$fsc->articulo->descripcion}</p>
+</div>
+{else}
+<div class="message">Ningún artículo encontrado.</div>
+{/if}
