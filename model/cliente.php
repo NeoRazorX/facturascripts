@@ -586,6 +586,21 @@ class cliente extends fs_model
       }
       return $clilist;
    }
+   
+   public function search_by_dni($dni, $offset=0)
+   {
+      $clilist = array();
+      $query = strtolower( $this->no_html($dni) );
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE cifnif LIKE '".$query."%' ORDER BY nombre ASC";
+      $clientes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+      if($clientes)
+      {
+         foreach($clientes as $c)
+            $clilist[] = new cliente($c);
+      }
+      
+      return $clilist;
+   }
 }
 
 ?>

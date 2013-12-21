@@ -116,7 +116,12 @@ class caja extends fs_model
    
    public function show_diferencia()
    {
-      return number_format ($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
+      return number_format($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
+   }
+   
+   public function diferencia()
+   {
+      return ($this->dinero_fin - $this->dinero_inicial);
    }
    
    public function exists()

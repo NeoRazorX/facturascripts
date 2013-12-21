@@ -121,7 +121,13 @@ class tpv_supermercado extends fs_controller
    {
       $this->template = 'tpv_supermercado2';
       
-      if( isset($_POST['cerrar_caja']) )
+      if( isset($_GET['cerrando']) )
+      {
+         $this->template = 'tpv_supermercado_cierre';
+         $fpt = new fs_printer();
+         $fpt->abrir_cajon();
+      }
+      else if( isset($_POST['cerrar_caja']) )
       {
          $this->cerrar_caja();
       }
@@ -161,22 +167,25 @@ class tpv_supermercado extends fs_controller
       $this->caja->fecha_fin = Date('d-m-Y H:i:s');
       if( $this->caja->save() )
       {
-         $fpt = new fs_printer();
-         $fpt->abrir_cajon();
-         $fpt->add( chr(27).chr(64)."\n\n" );
-         $fpt->add( $fpt->center_text("CIERRE DE CAJA:", 42) );
-         $fpt->add("\n\nAgente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
-         $fpt->add("Caja: ".$this->caja->fs_id."\n");
-         $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
-         $fpt->add("Cambio inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
-         $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
-         $fpt->add("Dinero fin estimado: ".$this->caja->show_dinero_fin()." Eur.\n");
-         $fpt->add("Dinero fin contado: ".number_format($dinero_contado, 2, ',', '.')." Eur.\n");
-         $fpt->add("Diferencia: ".number_format($this->caja->dinero_fin-$dinero_contado, 2, ',', '.')." Eur.\n");
-         $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
-         $fpt->add("Observaciones:\n\n\n\n");
-         $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
-         $fpt->imprimir();
+         /// imprimimos dos veces
+         for($i = 0; $i < 2; $i++)
+         {
+            $fpt = new fs_printer();
+            $fpt->add( chr(27).chr(64)."\n\n" );
+            $fpt->add( $fpt->center_text("CIERRE DE CAJA:", 42) );
+            $fpt->add("\n\nAgente: ".$this->agente->nombre."\n");
+            $fpt->add("Caja: ".$this->caja->fs_id."\n");
+            $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
+            $fpt->add("Cambio inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
+            $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
+            $fpt->add("Ingresos estimados: ".$this->caja->show_diferencia()." Eur.\n");
+            $fpt->add("Ingresos contado: ".number_format($dinero_contado, 2, ',', '.')." Eur.\n");
+            $fpt->add("Diferencia: ".number_format($this->caja->diferencia()-$dinero_contado, 2, ',', '.')." Eur.\n");
+            $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
+            $fpt->add("Observaciones:\n\n\n\n");
+            $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0));
+            $fpt->imprimir();
+         }
          
          /// recargamos la página
          header('location: '.$this->url());
@@ -199,7 +208,17 @@ class tpv_supermercado extends fs_controller
       
       $cliente2clan = new cliente2clan();
       $this->clan = $cliente2clan->get_clan($codcliente);
-      if($this->clan)
+      if(!$this->clan)
+      {
+         $this->template = 'tpv_supermercado_no_clan';
+         $this->new_message('Este cliente no está en ningún clan familiar. Avisa a administración.');
+      }
+      else if($this->clan->restringido AND !$this->user->admin)
+      {
+         $this->template = 'tpv_supermercado_no_clan';
+         $this->new_message('Sólo un administrador puede hacer un ticket a este cliente.');
+      }
+      else
       {
          $this->template = 'tpv_supermercado3';
          if( isset($_POST['numlineas']) )
@@ -208,11 +227,6 @@ class tpv_supermercado extends fs_controller
             $this->cliente_url = 'index.php?page=tpv_supermercado';
             $this->template = 'tpv_supermercado2';
          }
-      }
-      else
-      {
-         $this->template = 'tpv_supermercado_no_clan';
-         $this->new_message('Este cliente no está en ningún clan familiar. Avisa a administración.');
       }
    }
    
@@ -397,16 +411,16 @@ class tpv_supermercado extends fs_controller
       $fpt = new fs_printer();
       $fpt->abrir_cajon();
       
-      $fpt->add( chr(27).chr(64)."\n" );
+      $fpt->add( chr(27).chr(64) );
       $fpt->add( $fpt->center_text($this->empresa->nombre, 42)."\n" );
-      $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad, 42) . "\n");
-      $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . "\n\n", 42);
-      $linea = "\nTicket: " . $albaran->codigo;
-      $linea .= " " . $albaran->fecha;
-      $linea .= " " . $albaran->show_hora(FALSE) . "\n";
-      $fpt->add($linea);
-      $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
-      $fpt->add("Agente: " . $albaran->codagente . "\n\n");
+      $fpt->add( $fpt->center_text($this->empresa->direccion.' - CP: '.$this->empresa->codpostal.' - '.$this->empresa->ciudad, 42)."\n" );
+      $fpt->add( $fpt->center_text('CIF: '.$this->empresa->cifnif, 42)."\n\n" );
+      $fpt->add( 'Ticket: '.$albaran->codigo.' '.$albaran->fecha.' '.$albaran->show_hora(FALSE)."\n" );
+      $fpt->add( 'Cliente: '.$albaran->nombrecliente."\n" );
+      
+      $agente = new agente();
+      $age0 = $agente->get($albaran->codagente);
+      $fpt->add("Agente: ".$age0->nombre."\n\n");
       
       $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n");
       $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
@@ -415,17 +429,17 @@ class tpv_supermercado extends fs_controller
       
       foreach($albaran->get_lineas() as $col)
       {
-         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
+         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->descripcion) . " ".
                  sprintf("%10s", $col->show_total_iva()) . "\n";
          $fpt->add($linea);
       }
       
-      $linea = "----------------------------------------\n".
-         $fpt->center_text("IVA: " . number_format($albaran->totaliva,2,',','.') . " Eur.  ".
-         "Total: " . $albaran->show_total() . " Eur.", 42)."\n".
-         $fpt->center_text('Pendiente: '.$this->clan->pendiente()." Eur.", 42)."\n\n\n\n\n\n\n\n".
-         chr(29).chr(86).chr(66).chr(0)."\n\n";
-      $fpt->add($linea);
+      $fpt->add("----------------------------------------\n");
+      $fpt->add( $fpt->center_text("IVA: ".number_format($albaran->totaliva, 2, ',', '.')." Eur.  ".
+         "Total: ".$albaran->show_total()." Eur.", 42)."\n" );
+      $fpt->add( $fpt->center_text("Entregado: ".$_POST['efectivo']." Eur. Cambio: ".$_POST['cambio']." Eur.", 42)."\n" );
+      $fpt->add( $fpt->center_text('Pendiente: '.$this->clan->pendiente()." Eur.", 42).
+              "\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
       $fpt->imprimir();
    }
    

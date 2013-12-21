@@ -26,6 +26,7 @@ class clan_familiar extends fs_model
    public $codclan;
    public $nombre;
    public $limite;
+   public $restringido;
    
    public function __construct($c = FALSE)
    {
@@ -35,12 +36,14 @@ class clan_familiar extends fs_model
          $this->codclan = $c['codclan'];
          $this->nombre = $c['nombre'];
          $this->limite = floatval($c['limite']);
+         $this->restringido = ($c['restringido'] == 't');
       }
       else
       {
          $this->codclan = NULL;
          $this->nombre = NULL;
          $this->limite = 0;
+         $this->restringido = FALSE;
       }
    }
    
@@ -106,13 +109,14 @@ class clan_familiar extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-               limite = ".$this->var2str($this->limite)." WHERE codclan = ".$this->var2str($this->codclan).";";
+               limite = ".$this->var2str($this->limite).", restringido = ".$this->var2str($this->restringido)."
+               WHERE codclan = ".$this->var2str($this->codclan).";";
             return $this->db->exec($sql);
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (nombre,limite) VALUES
-               (".$this->var2str($this->nombre).",".$this->var2str($this->limite).");";
+            $sql = "INSERT INTO ".$this->table_name." (nombre,limite,restringido) VALUES
+               (".$this->var2str($this->nombre).",".$this->var2str($this->limite).",".$this->var2str($this->restringido).");";
             if( $this->db->exec($sql) )
             {
                $this->codclan = $this->db->lastval();

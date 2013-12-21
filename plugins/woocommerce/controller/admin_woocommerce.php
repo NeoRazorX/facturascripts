@@ -61,30 +61,33 @@ class admin_woocommerce extends fs_controller
       $num = 0;
       foreach($fs_var->multi_get(array('woo_server','woo_port','woo_dbname','woo_user','woo_password')) as $fv)
       {
-         if($fv->name == 'woo_server')
+         if($fv->varchar != '')
          {
-            $this->woo_setup['woo_server'] = $fv->varchar;
-            $num++;
-         }
-         else if($fv->name == 'woo_port')
-         {
-            $this->woo_setup['woo_port'] = $fv->varchar;
-            $num++;
-         }
-         else if($fv->name == 'woo_dbname')
-         {
-            $this->woo_setup['woo_dbname'] = $fv->varchar;
-            $num++;
-         }
-         else if($fv->name == 'woo_user')
-         {
-            $this->woo_setup['woo_user'] = $fv->varchar;
-            $num++;
-         }
-         else if($fv->name == 'woo_password')
-         {
-            $this->woo_setup['woo_password'] = $fv->varchar;
-            $num++;
+            if($fv->name == 'woo_server')
+            {
+               $this->woo_setup['woo_server'] = $fv->varchar;
+               $num++;
+            }
+            else if($fv->name == 'woo_port')
+            {
+               $this->woo_setup['woo_port'] = $fv->varchar;
+               $num++;
+            }
+            else if($fv->name == 'woo_dbname')
+            {
+               $this->woo_setup['woo_dbname'] = $fv->varchar;
+               $num++;
+            }
+            else if($fv->name == 'woo_user')
+            {
+               $this->woo_setup['woo_user'] = $fv->varchar;
+               $num++;
+            }
+            else if($fv->name == 'woo_password')
+            {
+               $this->woo_setup['woo_password'] = $fv->varchar;
+               $num++;
+            }
          }
       }
       

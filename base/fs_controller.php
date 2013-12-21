@@ -185,6 +185,9 @@ class fs_controller
       return $this->page->url();
    }
    
+   /*
+    * Una IP será baneada si falla más de 5 intentos de login en menos de 10 minutos
+    */
    private function ip_baneada(&$ips)
    {
       $baneada = FALSE;
@@ -201,7 +204,7 @@ class fs_controller
                
                if( intval($linea[2]) > time() )
                {
-                  if($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 3)
+                  if($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 5)
                      $baneada = TRUE;
                   
                   $ips[] = $linea;
@@ -215,6 +218,9 @@ class fs_controller
       return $baneada;
    }
    
+   /*
+    * Baneamos las IPs que fallan más de 5 intentos de login en 10 minutos
+    */
    private function banear_ip(&$ips)
    {
       $file = fopen('tmp/ip.log', 'w');
@@ -226,7 +232,7 @@ class fs_controller
          {
             if($ip[0] == $_SERVER['REMOTE_ADDR'])
             {
-               fwrite( $file, $ip[0].';'.( 1+intval($ip[1]) ).';'.( time()+3600 ) );
+               fwrite( $file, $ip[0].';'.( 1+intval($ip[1]) ).';'.( time()+600 ) );
                $encontrada = TRUE;
             }
             else
@@ -234,7 +240,7 @@ class fs_controller
          }
          
          if(!$encontrada)
-            fwrite( $file, $_SERVER['REMOTE_ADDR'].';1;'.( time()+3600 ) );
+            fwrite( $file, $_SERVER['REMOTE_ADDR'].';1;'.( time()+600 ) );
          
          fclose($file);
       }
@@ -248,7 +254,7 @@ class fs_controller
       {
          $this->banear_ip($ips);
          $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar
-            una hora antes de volver a intentar entrar.');
+            10 minutos antes de volver a intentar entrar.');
       }
       else if( isset($_POST['user']) AND isset($_POST['password']) )
       {

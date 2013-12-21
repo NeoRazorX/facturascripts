@@ -1,0 +1,177 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_cerrar_caja.m1c.focus();
+      $("#f_cerrar_caja").submit(function(event) {
+         event.preventDefault();
+         
+         if( !$.isNumeric(document.f_cerrar_caja.m1c.value) )
+         {
+            alert('Cuenta las monedas de 1 céntimo.');
+            document.f_cerrar_caja.m1c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m2c.value) )
+         {
+            alert('Cuenta las monedas de 2 céntimos.');
+            document.f_cerrar_caja.m2c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m5c.value) )
+         {
+            alert('Cuenta las monedas de 5 céntimos.');
+            document.f_cerrar_caja.m5c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m10c.value) )
+         {
+            alert('Cuenta las monedas de 10 céntimos.');
+            document.f_cerrar_caja.m10c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m20c.value) )
+         {
+            alert('Cuenta las monedas de 20 céntimos.');
+            document.f_cerrar_caja.m20c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m50c.value) )
+         {
+            alert('Cuenta las monedas de 50 céntimos.');
+            document.f_cerrar_caja.m50c.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m1e.value) )
+         {
+            alert('Cuenta las monedas de 1 euro.');
+            document.f_cerrar_caja.m1e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.m2e.value) )
+         {
+            alert('Cuenta las monedas de 2 euros.');
+            document.f_cerrar_caja.m2e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b5e.value) )
+         {
+            alert('Cuenta los billetes de 5 euros.');
+            document.f_cerrar_caja.b5e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b10e.value) )
+         {
+            alert('Cuenta los billetes de 10 euros.');
+            document.f_cerrar_caja.b10e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b20e.value) )
+         {
+            alert('Cuenta los billetes de 20 euros.');
+            document.f_cerrar_caja.b20e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b50e.value) )
+         {
+            alert('Cuenta los billetes de 50 euros.');
+            document.f_cerrar_caja.b50e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b100e.value) )
+         {
+            alert('Cuenta los billetes de 100 euros.');
+            document.f_cerrar_caja.b100e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b200e.value) )
+         {
+            alert('Cuenta los billetes de 200 euros.');
+            document.f_cerrar_caja.b200e.focus();
+         }
+         else if( !$.isNumeric(document.f_cerrar_caja.b500e.value) )
+         {
+            alert('Cuenta los billetes de 500 euros.');
+            document.f_cerrar_caja.b500e.focus();
+         }
+         else
+            document.f_cerrar_caja.submit();
+      });
+   });
+</script>
+
+<div class="rounded">
+   <h1>Saca el cambio y cuenta las monedas y billetes que tienes en la caja</h1>
+   <form id="f_cerrar_caja" name="f_cerrar_caja" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="cerrar_caja" value="TRUE"/>
+      <ul class="items">
+         <li>
+            1 céntimo<br/>
+            <input type="text" name="m1c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            2 céntimos<br/>
+            <input type="text" name="m2c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            5 céntimos<br/>
+            <input type="text" name="m5c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            10 céntimos<br/>
+            <input type="text" name="m10c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            20 céntimos<br/>
+            <input type="text" name="m20c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            50 céntimos<br/>
+            <input type="text" name="m50c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            1 euro<br/>
+            <input type="text" name="m1e" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+         <li>
+            2 euros<br/>
+            <input type="text" name="m2e" size="6" autocomplete="off" placeholder="¿cuantas?"/>
+         </li>
+      </ul>
+      <br/>
+      <ul class="items">
+         <li>
+            5 euros<br/>
+            <input type="text" name="b5e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            10 euros<br/>
+            <input type="text" name="b10e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            20 euros<br/>
+            <input type="text" name="b20e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            50 euros<br/>
+            <input type="text" name="b50e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            100 euros<br/>
+            <input type="text" name="b100e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            200 euros<br/>
+            <input type="text" name="b200e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+         <li>
+            500 euros<br/>
+            <input type="text" name="b500e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
+         </li>
+      </ul>
+      <br/>
+      <table width="100%">
+         <tr>
+            <td>
+               <a href="index.php?page=tpv_supermercado" class="delete">cancelar</a>
+            </td>
+            <td align="right">
+               <input class="submit" type="submit" value="finalizar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<center>
+   <iframe src="http://localhost:10080" height="0"></iframe>
+</center>
+
+{include="footer"}

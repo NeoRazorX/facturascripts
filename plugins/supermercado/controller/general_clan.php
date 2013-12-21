@@ -55,6 +55,7 @@ class general_clan extends fs_controller
          {
             $this->clan->nombre = $_POST['nombre'];
             $this->clan->limite = floatval($_POST['limite']);
+            $this->clan->restringido = isset($_POST['restringido']);
             if( $this->clan->save() )
                $this->new_message('Datos modificados correctamente.');
             else

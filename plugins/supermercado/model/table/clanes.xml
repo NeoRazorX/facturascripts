@@ -22,6 +22,12 @@
       <nulo>NO</nulo>
       <defecto>0</defecto>
    </columna>
+   <columna>
+      <nombre>restringido</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
    <restriccion>
       <nombre>clanes_pkey</nombre>
       <consulta>PRIMARY KEY (codclan)</consulta>

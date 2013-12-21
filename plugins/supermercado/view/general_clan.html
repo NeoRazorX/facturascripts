@@ -75,6 +75,12 @@
       <div class="bloque">
          Gastados: {$fsc->clan->gastado()} €
       </div>
+      <div class="bloque">
+         <label>
+            <input type="checkbox" name="restringido" value="TRUE"{if condition="$fsc->clan->restringido"} checked="checked"{/if}/>
+            sólo un administrador puede vender a estos clientes
+         </label>
+      </div>
    </div>
    
    <div class="rounded">
