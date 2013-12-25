@@ -198,7 +198,7 @@ class tpv_supermercado extends fs_controller
    {
       $this->template = 'ajax_buscar_cliente';
       $this->busqueda = trim($_POST['buscar_cliente']);
-      $this->resultado = $this->cliente->search($this->busqueda);
+      $this->resultado = $this->cliente->search_by_dni($this->busqueda);
    }
    
    private function seleccionar_cliente($codcliente)
@@ -437,7 +437,10 @@ class tpv_supermercado extends fs_controller
       $fpt->add("----------------------------------------\n");
       $fpt->add( $fpt->center_text("IVA: ".number_format($albaran->totaliva, 2, ',', '.')." Eur.  ".
          "Total: ".$albaran->show_total()." Eur.", 42)."\n" );
-      $fpt->add( $fpt->center_text("Entregado: ".$_POST['efectivo']." Eur. Cambio: ".$_POST['cambio']." Eur.", 42)."\n" );
+      
+      if( isset($_POST['efectivo']) AND isset($_POST['cambio']) )
+         $fpt->add( $fpt->center_text("Entregado: ".$_POST['efectivo']." Eur. Cambio: ".$_POST['cambio']." Eur.", 42)."\n" );
+      
       $fpt->add( $fpt->center_text('Pendiente: '.$this->clan->pendiente()." Eur.", 42).
               "\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
       $fpt->imprimir();
@@ -451,6 +454,17 @@ class tpv_supermercado extends fs_controller
       {
          if($alb->ptefactura)
          {
+            /// imprimimos
+            $fpt = new fs_printer();
+            $fpt->add( chr(27).chr(64) );
+            $fpt->add("----------------------------------------\n");
+            $fpt->add( $fpt->center_text('*** TICKET BORRADO ***', 42)."\n" );
+            $fpt->add("----------------------------------------\n");
+            $fpt->imprimir();
+            unset($fpt);
+            $this->imprimir_ticket($alb);
+            
+            /// actualizamos el stock
             $articulo = new articulo();
             foreach($alb->get_lineas() as $linea)
             {
