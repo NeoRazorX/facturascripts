@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,11 +18,11 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/ejercicio.php';
-require_once 'model/factura_cliente.php';
-require_once 'model/factura_proveedor.php';
-require_once 'model/partida.php';
-require_once 'model/secuencia.php';
+require_model('ejercicio.php');
+require_model('factura_cliente.php');
+require_model('factura_proveedor.php');
+require_model('partida.php');
+require_model('secuencia.php');
 
 class asiento extends fs_model
 {
@@ -83,7 +83,7 @@ class asiento extends fs_model
    
    public function show_importe()
    {
-      return number_format($this->importe, 2, '.', ' ');
+      return number_format($this->importe, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function url()

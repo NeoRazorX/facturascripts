@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,18 +18,18 @@
  */
 
 require_once 'base/fs_printer.php';
-require_once 'model/agente.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/almacen.php';
-require_once 'model/articulo.php';
-require_once 'model/caja.php';
-require_once 'model/cliente.php';
-require_once 'model/divisa.php';
-require_once 'model/ejercicio.php';
-require_once 'model/familia.php';
-require_once 'model/forma_pago.php';
-require_once 'model/paquete.php';
-require_once 'model/serie.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('almacen.php');
+require_model('articulo.php');
+require_model('caja.php');
+require_model('cliente.php');
+require_model('divisa.php');
+require_model('ejercicio.php');
+require_model('familia.php');
+require_model('forma_pago.php');
+require_model('paquete.php');
+require_model('serie.php');
 
 class tpv_yamyam extends fs_controller
 {
@@ -79,7 +79,7 @@ class tpv_yamyam extends fs_controller
          {
             $fpt = new fs_printer(FS_LCD);
             $fpt->add( chr(12).'TOTAL               ');
-            $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], 2, ',', '.').' EUROS'), 0, 20) );
+            $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], FS_NF0, ',', '.').' EUROS'), 0, 20) );
             $fpt->imprimir();
          }
       }
@@ -476,17 +476,17 @@ class tpv_yamyam extends fs_controller
       }
       
       $linea = "----------------------------------------\n".
-              $fpt->center_text("IVA: " . number_format($this->albaran->totaliva,2,',','.') . " Eur.  ".
+              $fpt->center_text("IVA: " . number_format($this->albaran->totaliva, FS_NF0, ',', '.') . " Eur.  ".
                       "Total: " . $this->albaran->show_total() . " Eur.") . "\n\n";
       if( isset($_POST['efectivo']) )
       {
          $linea .= $fpt->center_text("Efectivo..........: ".
-                 sprintf("%12s",number_format($_POST['efectivo'],2,',','.')." Eur."))."\n";
+                 sprintf("%12s",number_format($_POST['efectivo'], FS_NF0, ',', '.')." Eur."))."\n";
       }
       if( isset($_POST['cambio']) )
       {
          $linea .= $fpt->center_text("Cambio............: ".
-                 sprintf("%12s",number_format($_POST['cambio'],2,',','.')." Eur."))."\n";
+                 sprintf("%12s",number_format($_POST['cambio'], FS_NF0, ',', '.')." Eur."))."\n";
       }
       $linea .= "\n\n\n";
       $fpt->add($linea);

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,8 +18,8 @@
  */
 
 require_once 'plugins/woocommerce/model/fs_mysql_x.php';
-require_once 'model/articulo.php';
 require_once 'model/fs_var.php';
+require_model('articulo.php');
 
 class admin_woocommerce extends fs_controller
 {

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -81,7 +81,7 @@ class forma_pago extends fs_model
    public function test()
    {
       $this->descripcion = $this->no_html($this->descripcion);
-      return preg_match("/^[A-Z0-9_]{1,10}$/i", $this->codpago);
+      return TRUE;
    }
    
    public function save()
@@ -89,6 +89,7 @@ class forma_pago extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
@@ -102,6 +103,7 @@ class forma_pago extends fs_model
                ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
                ".$this->var2str($this->domiciliado).");";
          }
+         
          return $this->db->exec($sql);
       }
       else

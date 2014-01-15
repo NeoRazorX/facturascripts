@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,16 +18,16 @@
  */
 
 require_once 'base/fs_printer.php';
-require_once 'model/agente.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/articulo.php';
-require_once 'model/caja.php';
-require_once 'model/cliente.php';
-require_once 'model/divisa.php';
-require_once 'model/ejercicio.php';
-require_once 'model/pais.php';
-require_once 'model/serie.php';
-require_once 'plugins/supermercado/model/clan_familiar.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('articulo.php');
+require_model('caja.php');
+require_model('cliente.php');
+require_model('divisa.php');
+require_model('ejercicio.php');
+require_model('pais.php');
+require_model('serie.php');
+require_model('clan_familiar.php');
 
 class tpv_supermercado extends fs_controller
 {
@@ -180,7 +180,7 @@ class tpv_supermercado extends fs_controller
             $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
             $fpt->add("Ingresos estimados: ".$this->caja->show_diferencia()." Eur.\n");
             $fpt->add("Ingresos contado: ".number_format($dinero_contado, 2, ',', '.')." Eur.\n");
-            $fpt->add("Diferencia: ".number_format($this->caja->diferencia()-$dinero_contado, 2, ',', '.')." Eur.\n");
+            $fpt->add("Diferencia: ".number_format($dinero_contado-$this->caja->diferencia(), 2, ',', '.')." Eur.\n");
             $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
             $fpt->add("Observaciones:\n\n\n\n");
             $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0));
@@ -429,7 +429,7 @@ class tpv_supermercado extends fs_controller
       
       foreach($albaran->get_lineas() as $col)
       {
-         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->descripcion) . " ".
+         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", substr($col->descripcion,0,24)) . " ".
                  sprintf("%10s", $col->show_total_iva()) . "\n";
          $fpt->add($linea);
       }

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/agente.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/albaran_proveedor.php';
-require_once 'model/almacen.php';
-require_once 'model/articulo.php';
-require_once 'model/cliente.php';
-require_once 'model/divisa.php';
-require_once 'model/ejercicio.php';
-require_once 'model/familia.php';
-require_once 'model/forma_pago.php';
-require_once 'model/impuesto.php';
-require_once 'model/proveedor.php';
-require_once 'model/serie.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('albaran_proveedor.php');
+require_model('almacen.php');
+require_model('articulo.php');
+require_model('cliente.php');
+require_model('divisa.php');
+require_model('ejercicio.php');
+require_model('familia.php');
+require_model('forma_pago.php');
+require_model('impuesto.php');
+require_model('proveedor.php');
+require_model('serie.php');
 
 class general_nuevo_albaran extends fs_controller
 {

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,6 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/// Definimos algunas constantes
+if( !defined('FS_NF0') )
+   define('FS_NF0', 2);
+if( !defined('FS_NF1') )
+   define('FS_NF1', '.');
+if( !defined('FS_NF2') )
+   define('FS_NF2', ' ');
+
 require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
 
@@ -26,6 +34,58 @@ else
    require_once 'base/fs_postgresql.php';
 
 require_once 'base/fs_default_items.php';
+
+
+/*
+ * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
+ * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
+ * de FacturaScripts.
+ */
+function require_model($name)
+{
+   if( !isset($GLOBALS['plugins']) )
+   {
+      /// Cargamos la lista de plugins activos
+      $GLOBALS['plugins'] = array();
+      if( file_exists('tmp/enabled_plugins') )
+      {
+         foreach(scandir('tmp/enabled_plugins') as $f)
+         {
+            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+            {
+               if( file_exists('plugins/'.$f) )
+                  $GLOBALS['plugins'][] = $f;
+               else
+                  unlink('tmp/enabled_plugins/'.$f);
+            }
+         }
+      }
+   }
+   
+   if( !isset($GLOBALS['models']) )
+      $GLOBALS['models'] = array();
+   
+   if( !in_array($name, $GLOBALS['models']) )
+   {
+      /// primero buscamos en los plugins
+      $found = FALSE;
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/model/'.$name) )
+         {
+            require_once 'plugins/'.$plugin.'/model/'.$name;
+            $found = TRUE;
+            break;
+         }
+      }
+      
+      if( !$found )
+         require_once 'model/'.$name;
+      
+      $GLOBALS['models'][] = $name;
+   }
+}
+
 
 abstract class fs_model
 {

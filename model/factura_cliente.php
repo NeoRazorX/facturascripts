@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,13 +18,13 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/agente.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/articulo.php';
-require_once 'model/asiento.php';
-require_once 'model/cliente.php';
-require_once 'model/ejercicio.php';
-require_once 'model/secuencia.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('articulo.php');
+require_model('asiento.php');
+require_model('cliente.php');
+require_model('ejercicio.php');
+require_model('secuencia.php');
 
 class linea_factura_cliente extends fs_model
 {
@@ -197,22 +197,22 @@ class linea_factura_cliente extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvpunitario, 2, '.', ' ');
+      return number_format($this->pvpunitario, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_dto()
    {
-      return number_format($this->dtopor, 2, '.', ' ');
+      return number_format($this->dtopor, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total()
    {
-      return number_format($this->pvptotal, 2, '.', ' ');
+      return number_format($this->pvptotal, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total_iva()
    {
-      return number_format($this->pvptotal*(100+$this->iva)/100, 2, '.', ' ');
+      return number_format($this->pvptotal*(100+$this->iva)/100, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_codigo()
@@ -484,22 +484,22 @@ class linea_iva_factura_cliente extends fs_model
    
    public function show_neto()
    {
-      return number_format($this->neto, 2, '.', ' ');
+      return number_format($this->neto, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_iva()
    {
-      return number_format($this->iva, 2, '.', ' ');
+      return number_format($this->iva, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_totaliva()
    {
-      return number_format($this->totaliva, 2, '.', ' ');
+      return number_format($this->totaliva, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total()
    {
-      return number_format($this->totallinea, 2, '.', ' ');
+      return number_format($this->totallinea, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function exists()
@@ -714,17 +714,17 @@ class factura_cliente extends fs_model
    
    public function show_neto()
    {
-      return number_format($this->neto, 2, '.', ' ');
+      return number_format($this->neto, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_iva()
    {
-      return number_format($this->totaliva, 2, '.', ' ');
+      return number_format($this->totaliva, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total()
    {
-      return number_format($this->total, 2, '.', ' ');
+      return number_format($this->total, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function observaciones_resume()
@@ -1471,7 +1471,7 @@ class factura_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_years($num = 3)
+   public function stats_last_years($num = 4)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));

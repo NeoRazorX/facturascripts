@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,12 +18,12 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/agente.php';
-require_once 'model/articulo.php';
-require_once 'model/cliente.php';
-require_once 'model/ejercicio.php';
-require_once 'model/factura_cliente.php';
-require_once 'model/secuencia.php';
+require_model('agente.php');
+require_model('articulo.php');
+require_model('cliente.php');
+require_model('ejercicio.php');
+require_model('factura_cliente.php');
+require_model('secuencia.php');
 
 class linea_albaran_cliente extends fs_model
 {
@@ -152,27 +152,27 @@ class linea_albaran_cliente extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvpunitario, 2, '.', ' ');
+      return number_format($this->pvpunitario, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_pvp_iva()
    {
-      return number_format($this->pvpunitario*(100+$this->iva)/100, 2, '.', ' ');
+      return number_format($this->pvpunitario*(100+$this->iva)/100, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_dto()
    {
-      return number_format($this->dtopor, 2, '.', ' ');
+      return number_format($this->dtopor, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total()
    {
-      return number_format($this->pvptotal, 2, '.', ' ');
+      return number_format($this->pvptotal, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total_iva()
    {
-      return number_format($this->pvptotal*(100+$this->iva)/100, 2, '.', ' ');
+      return number_format($this->pvptotal*(100+$this->iva)/100, FS_NF0, FS_NF1, FS_NF2);
    }
    
    /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
@@ -181,7 +181,7 @@ class linea_albaran_cliente extends fs_model
       if($this->cantidad == 0)
          return 0;
       else
-         return number_format($this->pvptotal*(100+$this->iva)/100/$this->cantidad,2,'.',' ');
+         return number_format($this->pvptotal*(100+$this->iva)/100/$this->cantidad, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_codigo()
@@ -547,17 +547,17 @@ class albaran_cliente extends fs_model
    
    public function show_neto()
    {
-      return number_format($this->neto, 2, '.', ' ');
+      return number_format($this->neto, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_iva()
    {
-      return number_format($this->totaliva, 2, '.', ' ');
+      return number_format($this->totaliva, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_total()
    {
-      return number_format($this->total, 2, '.', ' ');
+      return number_format($this->total, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_hora($s=TRUE)
@@ -919,30 +919,6 @@ class albaran_cliente extends fs_model
       return $albalist;
    }
    
-   public function all_from_day($offset=0)
-   {
-      $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT fecha,codagente,COUNT(idalbaran) as num,
-         AVG(totaleuros) as media,SUM(totaleuros) as total
-         FROM ".$this->table_name." GROUP BY fecha,codagente
-         ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
-      if($albaranes)
-      {
-         $agente = new agente();
-         foreach($albaranes as $a)
-         {
-            $albalist[] = array(
-                'fecha' => Date('j-n-Y', strtotime($a['fecha'])),
-                'agente' => $agente->get($a['codagente']),
-                'albaranes' => number_format($a['num'], 0, ',', '.'),
-                'media' => number_format($a['media'], 2, ',', '.'),
-                'total' => number_format($a['total'], 2, ',', '.')
-            );
-         }
-      }
-      return $albalist;
-   }
-   
    public function all_from_cliente($codcliente, $offset=0)
    {
       $albalist = array();
@@ -1111,7 +1087,7 @@ class albaran_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_years($num = 3)
+   public function stats_last_years($num = 4)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
@@ -1174,7 +1150,7 @@ class albaran_cliente extends fs_model
          if($data)
          {
             foreach($data as $d)
-               $stats[ intval($d['mes']) ][$year] = number_format($d['total'], 2, '.', '');
+               $stats[ intval($d['mes']) ][$year] = number_format($d['total'], FS_NF0, '.', '');
          }
       }
       

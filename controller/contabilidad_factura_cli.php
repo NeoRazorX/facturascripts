@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,13 +18,13 @@
  */
 
 require_once 'base/fs_pdf.php';
-require_once 'model/asiento.php';
-require_once 'model/cliente.php';
-require_once 'model/ejercicio.php';
-require_once 'model/factura_cliente.php';
+require_model('asiento.php');
+require_model('cliente.php');
+require_model('ejercicio.php');
+require_model('factura_cliente.php');
 require_once 'model/fs_var.php';
-require_once 'model/partida.php';
-require_once 'model/subcuenta.php';
+require_model('partida.php');
+require_model('subcuenta.php');
 require_once 'extras/phpmailer/class.phpmailer.php';
 require_once 'extras/phpmailer/class.smtp.php';
 
@@ -308,10 +308,10 @@ class contabilidad_factura_cli extends fs_controller
                $fila = array(
                    'albaran' => $lineas[$linea_actual]->albaran_numero(),
                    'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
-                   'pvp' => number_format($lineas[$linea_actual]->pvpunitario, 2) . " !",
+                   'pvp' => number_format($lineas[$linea_actual]->pvpunitario, FS_NF0) . " !",
                    'dto' => number_format($lineas[$linea_actual]->dtopor, 0) . " %",
                    'cantidad' => $lineas[$linea_actual]->cantidad,
-                   'importe' => number_format($lineas[$linea_actual]->pvptotal, 2) . " !"
+                   'importe' => number_format($lineas[$linea_actual]->pvptotal, FS_NF0) . " !"
                );
                
                if($lineas[$linea_actual]->referencia != '0')
@@ -363,7 +363,7 @@ class contabilidad_factura_cli extends fs_controller
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
             $fila = array(
                 'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
-                'neto' => number_format($this->factura->neto, 2) . ' !',
+                'neto' => number_format($this->factura->neto, FS_NF0) . ' !',
             );
             $opciones = array(
                 'cols' => array(
@@ -375,11 +375,11 @@ class contabilidad_factura_cli extends fs_controller
             foreach($lineas_iva as $li)
             {
                $titulo['iva'.$li->iva] = '<b>IVA'.$li->iva.'%</b>';
-               $fila['iva'.$li->iva] = number_format($li->totaliva, 2) . ' !';
+               $fila['iva'.$li->iva] = number_format($li->totaliva, FS_NF0) . ' !';
                $opciones['cols']['iva'.$li->iva] = array('justification' => 'right');
             }
             $titulo['liquido'] = '<b>Total</b>';
-            $fila['liquido'] = number_format($this->factura->total, 2) . ' !';
+            $fila['liquido'] = number_format($this->factura->total, FS_NF0) . ' !';
             $opciones['cols']['liquido'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
             $pdf_doc->add_table_row($fila);

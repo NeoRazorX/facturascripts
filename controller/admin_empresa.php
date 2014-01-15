@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,13 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/almacen.php';
-require_once 'model/divisa.php';
-require_once 'model/ejercicio.php';
-require_once 'model/forma_pago.php';
 require_once 'model/fs_var.php';
-require_once 'model/serie.php';
-require_once 'model/pais.php';
+
+require_model('almacen.php');
+require_model('divisa.php');
+require_model('ejercicio.php');
+require_model('forma_pago.php');
+require_model('serie.php');
+require_model('pais.php');
 
 class admin_empresa extends fs_controller
 {

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,10 +27,6 @@ else
 {
    /// cargamos las constantes de configuración
    require_once 'config.php';
-   if( !defined('FS_DB_TYPE') )
-      define('FS_DB_TYPE', 'POSTGRESQL');
-   if( !defined('FS_DEMO') )
-      define('FS_DEMO', FALSE);
    if( !defined('FS_COMMUNITY_URL') )
       define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
    
@@ -38,7 +34,7 @@ else
    require_once 'raintpl/rain.tpl.class.php';
    
    /// Cargamos la lista de plugins activos
-   $plugins = array();
+   $GLOBALS['plugins'] = array();
    if( file_exists('tmp/enabled_plugins') )
    {
       foreach(scandir('tmp/enabled_plugins') as $f)
@@ -46,7 +42,7 @@ else
          if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
          {
             if( file_exists('plugins/'.$f) )
-               $plugins[] = $f;
+               $GLOBALS['plugins'][] = $f;
             else
                unlink('tmp/enabled_plugins/'.$f);
          }
@@ -60,7 +56,7 @@ else
    {
       /// primero buscamos en los plugins
       $found = FALSE;
-      foreach($plugins as $plugin)
+      foreach($GLOBALS['plugins'] as $plugin)
       {
          if( file_exists('plugins/'.$plugin.'/controller/'.$_GET['page'].'.php') )
          {

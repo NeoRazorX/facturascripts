@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,7 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/articulo.php';
+require_model('articulo.php');
 
 class tarifa extends fs_model
 {
@@ -192,23 +192,23 @@ class tarifa_articulo extends fs_model
    
    public function show_descuento()
    {
-      return number_format($this->descuento, 2, '.', '');
+      return number_format($this->descuento, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_pvp($coma=TRUE)
    {
       if( $coma )
-         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', ' ');
+         return number_format($this->pvp*(100-$this->descuento)/100, FS_NF0, FS_NF1, FS_NF2);
       else
-         return number_format($this->pvp*(100-$this->descuento)/100, 2, '.', '');
+         return number_format($this->pvp*(100-$this->descuento)/100, FS_NF0, FS_NF1, '');
    }
    
    public function show_pvp_iva($coma=TRUE)
    {
       if( $coma )
-         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', ' ');
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, FS_NF0, FS_NF1, FS_NF2);
       else
-         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, 2, '.', '');
+         return number_format($this->pvp*(100-$this->descuento)/100*(100+$this->iva)/100, FS_NF0, FS_NF1, '');
    }
    
    public function set_pvp_iva($p)

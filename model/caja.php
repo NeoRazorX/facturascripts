@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,7 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/agente.php';
+require_model('agente.php');
 
 class caja extends fs_model
 {
@@ -103,20 +103,20 @@ class caja extends fs_model
    
    public function show_dinero_inicial()
    {
-      return number_format($this->dinero_inicial, 2, ',', '.');
+      return number_format($this->dinero_inicial, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_dinero_fin()
    {
       if( isset($this->fecha_fin) )
-         return number_format($this->dinero_fin, 2, ',', '.');
+         return number_format($this->dinero_fin, FS_NF0, FS_NF1, FS_NF2);
       else
          return '-';
    }
    
    public function show_diferencia()
    {
-      return number_format($this->dinero_fin - $this->dinero_inicial, 2, ',', '.');
+      return number_format($this->dinero_fin - $this->dinero_inicial, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function diferencia()

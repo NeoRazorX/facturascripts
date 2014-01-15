@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -156,7 +156,7 @@ class fs_page extends fs_model
       $pagelist = $this->cache->get_array('m_fs_page_all');
       if( !$pagelist )
       {
-         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY name ASC;");
+         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, title ASC;");
          if($pages)
          {
             foreach($pages as $p)

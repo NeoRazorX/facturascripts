@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,10 +18,10 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/cuenta.php';
-require_once 'model/divisa.php';
-require_once 'model/ejercicio.php';
-require_once 'model/partida.php';
+require_model('cuenta.php');
+require_model('divisa.php');
+require_model('ejercicio.php');
+require_model('partida.php');
 
 class subcuenta extends fs_model
 {
@@ -97,17 +97,17 @@ class subcuenta extends fs_model
    
    public function show_debe()
    {
-      return number_format($this->debe, 2, '.', ' ');
+      return number_format($this->debe, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_haber()
    {
-      return number_format($this->haber, 2, '.', ' ');
+      return number_format($this->haber, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_saldo()
    {
-      return number_format($this->saldo, 2, '.', ' ');
+      return number_format($this->saldo, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function tasaconv()

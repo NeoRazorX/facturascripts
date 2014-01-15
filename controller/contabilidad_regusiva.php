@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/asiento.php';
-require_once 'model/ejercicio.php';
-require_once 'model/partida.php';
-require_once 'model/regularizacion_iva.php';
-require_once 'model/subcuenta.php';
+require_model('asiento.php');
+require_model('ejercicio.php');
+require_model('partida.php');
+require_model('regularizacion_iva.php');
+require_model('subcuenta.php');
 
 class contabilidad_regusiva extends fs_controller
 {
@@ -144,8 +144,8 @@ class contabilidad_regusiva extends fs_controller
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
                 'subcuenta' => $scta_ivasop->codsubcuenta,
-                'debe' => number_format($tot_sop['haber'], 2, '.', ' '),
-                'haber' => number_format($tot_sop['debe'], 2, '.', ' ')
+                'debe' => number_format($tot_sop['haber'], FS_NF0, FS_NF1, FS_NF2),
+                'haber' => number_format($tot_sop['debe'], FS_NF0, FS_NF1, FS_NF2)
             );
             $saldo += $tot_sop['haber'] - $tot_sop['debe'];
          }
@@ -165,8 +165,8 @@ class contabilidad_regusiva extends fs_controller
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
                 'subcuenta' => $scta_ivarep->codsubcuenta,
-                'debe' => number_format($tot_rep['haber'], 2, '.', ' '),
-                'haber' => number_format($tot_rep['debe'], 2, '.', ' ')
+                'debe' => number_format($tot_rep['haber'], FS_NF0, FS_NF1, FS_NF2),
+                'haber' => number_format($tot_rep['debe'], FS_NF0, FS_NF1, FS_NF2)
             );
             $saldo += $tot_rep['haber'] - $tot_rep['debe'];
          }
@@ -186,7 +186,7 @@ class contabilidad_regusiva extends fs_controller
                   $this->aux_regiva[] = array(
                       'subcuenta' => $scta_ivaacr->codsubcuenta,
                       'debe' => 0,
-                      'haber' => number_format($saldo, 2, '.', ' ')
+                      'haber' => number_format($saldo, FS_NF0, FS_NF1, FS_NF2)
                   );
                }
                else
@@ -199,7 +199,7 @@ class contabilidad_regusiva extends fs_controller
                {
                   $this->aux_regiva[] = array(
                       'subcuenta' => $scta_ivadeu->codsubcuenta,
-                      'debe' => number_format( abs($saldo), 2, '.', ' '),
+                      'debe' => number_format( abs($saldo), FS_NF0, FS_NF1, FS_NF2),
                       'haber' => 0
                   );
                }

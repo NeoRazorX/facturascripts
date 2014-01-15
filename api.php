@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,8 +21,6 @@ date_default_timezone_set('Europe/Madrid');
 
 /// cargamos las constantes de configuración
 require_once 'config.php';
-if( !defined('FS_DB_TYPE') )
-   define('FS_DB_TYPE', 'POSTGRESQL');
 
 if(strtolower(FS_DB_TYPE) == 'mysql')
 {

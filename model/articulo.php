@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,12 +18,12 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/albaran_proveedor.php';
-require_once 'model/familia.php';
-require_once 'model/impuesto.php';
-require_once 'model/tarifa.php';
-require_once 'model/stock.php';
+require_model('albaran_cliente.php');
+require_model('albaran_proveedor.php');
+require_model('familia.php');
+require_model('impuesto.php');
+require_model('tarifa.php');
+require_model('stock.php');
 
 class articulo extends fs_model
 {
@@ -151,15 +151,15 @@ class articulo extends fs_model
    
    public function show_pvp()
    {
-      return number_format($this->pvp, 2, '.', ' ');
+      return number_format($this->pvp, FS_NF0, FS_NF1, FS_NF2);
    }
    
    public function show_pvp_iva($coma=TRUE)
    {
       if($coma)
-         return number_format($this->pvp * (100+$this->get_iva()) / 100, 2, '.', ' ');
+         return number_format($this->pvp * (100+$this->get_iva()) / 100, FS_NF0, FS_NF1, FS_NF2);
       else
-         return number_format($this->pvp * (100+$this->get_iva()) / 100, 2, '.', '');
+         return number_format($this->pvp * (100+$this->get_iva()) / 100, FS_NF0, FS_NF1, '');
    }
    
    public function url()

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,8 +18,8 @@
  */
 
 require_once 'base/fs_pdf.php';
-require_once 'model/factura_cliente.php';
-require_once 'model/factura_proveedor.php';
+require_model('factura_cliente.php');
+require_model('factura_proveedor.php');
 
 class informe_facturas extends fs_controller
 {
@@ -170,7 +170,7 @@ class informe_facturas extends fs_controller
             $pdf_doc->new_table();
             $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
             $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => number_format($base, 2) . ' !');
+                'base' => number_format($base, FS_NF0) . ' !');
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
@@ -179,13 +179,13 @@ class informe_facturas extends fs_controller
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = number_format($value, 2) . ' !';
+               $fila['iva'.$i] = number_format($value, FS_NF0) . ' !';
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['re'] = number_format($re, 2) . ' !';
-            $fila['total'] = number_format($total, 2) . ' !';
+            $fila['re'] = number_format($re, FS_NF0) . ' !';
+            $fila['total'] = number_format($total, FS_NF0) . ' !';
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
@@ -325,7 +325,7 @@ class informe_facturas extends fs_controller
             $pdf_doc->new_table();
             $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
             $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => number_format($base, 2) . ' !');
+                'base' => number_format($base, FS_NF0) . ' !');
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
@@ -334,13 +334,13 @@ class informe_facturas extends fs_controller
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = number_format($value, 2) . ' !';
+               $fila['iva'.$i] = number_format($value, FS_NF0) . ' !';
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['re'] = number_format($re, 2) . ' !';
-            $fila['total'] = number_format($total, 2) . ' !';
+            $fila['re'] = number_format($re, FS_NF0) . ' !';
+            $fila['total'] = number_format($total, FS_NF0) . ' !';
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);

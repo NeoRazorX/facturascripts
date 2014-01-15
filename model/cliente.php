@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,10 +18,10 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/cuenta.php';
-require_once 'model/factura_cliente.php';
-require_once 'model/subcuenta.php';
+require_model('albaran_cliente.php');
+require_model('cuenta.php');
+require_model('factura_cliente.php');
+require_model('subcuenta.php');
 
 class subcuenta_cliente extends fs_model
 {
@@ -591,7 +591,7 @@ class cliente extends fs_model
    {
       $clilist = array();
       $query = strtolower( $this->no_html($dni) );
-      $consulta = "SELECT * FROM ".$this->table_name." WHERE cifnif LIKE '".$query."%' ORDER BY nombre ASC";
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE lower(cifnif) LIKE '".$query."%' ORDER BY nombre ASC";
       $clientes = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($clientes)
       {

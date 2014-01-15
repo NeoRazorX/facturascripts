@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,7 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/cuenta.php';
+require_model('cuenta.php');
 
 class grupo_epigrafes extends fs_model
 {
@@ -212,6 +212,29 @@ class epigrafe extends fs_model
       /// forzamos los creación de la tabla de grupos
       $grupo = new grupo_epigrafes();
       return '';
+   }
+   
+   /*
+    * Sobreescribimos check_table para poder ejecutar el código necesario
+    * para enlazar los epigrafes con su grupo correspondiente, y así solucionar
+    * este bug de los tiempos de facturalux
+    */
+   public function check_table($table_name)
+   {
+      if( $this->db->table_exists($table_name) )
+      {
+         $cols = $this->db->get_columns($table_name);
+         foreach($cols as $col)
+         {
+            if($col['column_name'] == 'idgrupo')
+            {
+               $this->db->exec("UPDATE ".$table_name." SET idgrupo = NULL WHERE idgrupo = '0';");
+               break;
+            }
+         }
+      }
+      
+      parent::check_table($table_name);
    }
    
    public function url()

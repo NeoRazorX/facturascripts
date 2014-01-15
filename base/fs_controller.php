@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,12 +25,13 @@ else
 require_once 'base/fs_button.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_default_items.php';
-require_once 'model/agente.php';
-require_once 'model/divisa.php';
-require_once 'model/empresa.php';
 require_once 'model/fs_access.php';
 require_once 'model/fs_page.php';
 require_once 'model/fs_user.php';
+
+require_model('agente.php');
+require_model('divisa.php');
+require_model('empresa.php');
 
 class fs_controller
 {
@@ -134,7 +135,7 @@ class fs_controller
    
    public function version()
    {
-      return '2013.12';
+      return '2014';
    }
    
    public function close()

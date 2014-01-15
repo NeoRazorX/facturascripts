@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -74,7 +74,7 @@ class admin_plugins extends fs_controller
    {
       if( touch('tmp/enabled_plugins/'.$name) )
       {
-         $this->new_message('Módulo <b>'.$name.'</b> activado correctamente.');
+         $GLOBALS['plugins'][] = $name;
          
          /// activamos las páginas del plugin
          $page_list = array();
@@ -95,8 +95,8 @@ class admin_plugins extends fs_controller
             }
          }
          
-         $this->new_message('Se han activado automáticamente las siguientes páginas: '.
-                 join(', ', $page_list) . '.');
+         $this->new_message('Módulo <b>'.$name.'</b> activado correctamente.');
+         $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
          $this->load_menu(TRUE);
       }
       else
@@ -106,9 +106,7 @@ class admin_plugins extends fs_controller
    private function disable_plugin($name)
    {
       if( unlink('tmp/enabled_plugins/'.$name) )
-      {
          $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
-      }
       else
          $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
    }

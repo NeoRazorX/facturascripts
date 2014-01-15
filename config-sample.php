@@ -75,4 +75,13 @@ define('FS_PRINTER', '');
  */
 define('FS_LCD', '');
 
+/*
+ * ¿Cuantos decimales quieres usar?
+ * ¿Qué separador usar para los decimales?
+ * ¿Qué separador usar para miles?
+ */
+define('FS_NF0', 2);
+define('FS_NF1', '.');
+define('FS_NF2', ' ');
+
 ?>

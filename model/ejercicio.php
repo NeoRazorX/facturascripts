@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,8 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
-require_once 'model/asiento.php';
-require_once 'model/subcuenta.php';
+require_model('asiento.php');
+require_model('subcuenta.php');
 
 class ejercicio extends fs_model
 {
@@ -77,6 +77,11 @@ class ejercicio extends fs_model
    public function abierto()
    {
       return ($this->estado == 'ABIERTO');
+   }
+   
+   public function year()
+   {
+      return Date('Y', strtotime($this->fechainicio));
    }
    
    public function get_new_codigo()

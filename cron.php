@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2012  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,10 +24,6 @@ $uptime = $tiempo[1] + $tiempo[0];
 
 /// cargamos las constantes de configuración
 require_once 'config.php';
-if( !defined('FS_DB_TYPE') )
-   define('FS_DB_TYPE', 'POSTGRESQL');
-if( !defined('FS_DEMO') )
-   define('FS_DEMO', FALSE);
 
 if(strtolower(FS_DB_TYPE) == 'mysql')
 {
@@ -41,11 +37,13 @@ else
 }
 
 require_once 'base/fs_default_items.php';
-require_once 'model/albaran_cliente.php';
-require_once 'model/albaran_proveedor.php';
-require_once 'model/articulo.php';
-require_once 'model/asiento.php';
-require_once 'model/empresa.php';
+
+require_model('albaran_cliente.php');
+require_model('albaran_proveedor.php');
+require_model('articulo.php');
+require_model('asiento.php');
+require_model('/empresa.php');
+
 require_once 'extras/libromayor.php';
 
 
