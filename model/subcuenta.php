@@ -151,16 +151,16 @@ class subcuenta extends fs_model
       return $part->all_from_subcuenta($this->idsubcuenta, $offset);
    }
    
-   public function count_partidas()
-   {
-      $part = new partida();
-      return $part->count_from_subcuenta($this->idsubcuenta);
-   }
-   
    public function get_partidas_full()
    {
       $part = new partida();
       return $part->full_from_subcuenta($this->idsubcuenta);
+   }
+   
+   public function count_partidas()
+   {
+      $part = new partida();
+      return $part->count_from_subcuenta($this->idsubcuenta);
    }
    
    public function get_totales()
@@ -338,6 +338,9 @@ class subcuenta extends fs_model
    {
       if( file_exists('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf') )
          unlink('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf');
+      
+      if( file_exists('tmp/libro_diario/'.$this->codejercicio.'.pdf') )
+         unlink('tmp/libro_diario/'.$this->codejercicio.'.pdf');
    }
    
    public function all()

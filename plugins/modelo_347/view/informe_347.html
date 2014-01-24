@@ -17,7 +17,7 @@
    </h1>
    <table class="list">
       <tr>
-         <th align="left">CIF/NIF</th>
+         <th align="left">Cliente</th>
          <th align="right">1º trimestre</th>
          <th align="right">2º trimestre</th>
          <th align="right">3º trimestre</th>
@@ -26,7 +26,7 @@
       </tr>
       {loop="$fsc->datos_cli['filas']"}
       <tr>
-         <td><a class="link" href="{$value['url']}">{$value['cifnif']}</a></td>
+         <td><a class="link" href="{$value['cliente']->url()}">{$value['cliente']->nombre}</a></td>
          <td align="right">{$fsc->show_float($value['t1'])} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$fsc->show_float($value['t2'])} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$fsc->show_float($value['t3'])} {$fsc->simbolo_divisa()}</td>
@@ -51,7 +51,7 @@
    </h1>
    <table class="list">
       <tr>
-         <th align="left">CIF/NIF</th>
+         <th align="left">Proveedor</th>
          <th align="right">1º trimestre</th>
          <th align="right">2º trimestre</th>
          <th align="right">3º trimestre</th>
@@ -60,7 +60,7 @@
       </tr>
       {loop="$fsc->datos_pro['filas']"}
       <tr>
-         <td><a class="link" href="{$value['url']}">{$value['cifnif']}</a></td>
+         <td><a class="link" href="{$value['proveedor']->url()}">{$value['proveedor']->nombre}</a></td>
          <td align="right">{$fsc->show_float($value['t1'])} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$fsc->show_float($value['t2'])} {$fsc->simbolo_divisa()}</td>
          <td align="right">{$fsc->show_float($value['t3'])} {$fsc->simbolo_divisa()}</td>

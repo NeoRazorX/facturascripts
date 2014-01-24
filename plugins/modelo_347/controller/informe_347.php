@@ -41,11 +41,18 @@ class informe_347 extends fs_controller
       
       if( isset($_POST['ejercicio']) )
          $this->sejercicio = $_POST['ejercicio'];
+      else if( isset($_GET['eje']) )
+         $this->sejercicio = $_GET['eje'];
       else
          $this->sejercicio = Date('Y');
       
       $this->datos_cli = $this->informe_clientes();
       $this->datos_pro = $this->informe_proveedores();
+      
+      if( isset($_GET['eje']) )
+         $this->excel();
+      else
+         $this->buttons[] = new fs_button('b_download', 'descargar', $this->url().'&eje='.$this->sejercicio);
    }
    
    private function informe_clientes()
@@ -70,8 +77,7 @@ class informe_347 extends fs_controller
       
       $fila = array(
           'codcliente' => '',
-          'cifnif' => '',
-          'url' => '',
+          'cliente' => '',
           't1' => 0,
           't2' => 0,
           't3' => 0,
@@ -117,10 +123,7 @@ class informe_347 extends fs_controller
          {
             $cli0 = $cliente->get($value['codcliente']);
             if($cli0)
-            {
-               $informe['filas'][$i]['cifnif'] = $cli0->cifnif;
-               $informe['filas'][$i]['url'] = $cli0->url();
-            }
+               $informe['filas'][$i]['cliente'] = $cli0;
             
             $informe['totales'][0] += $value['t1'];
             $informe['totales'][1] += $value['t2'];
@@ -156,8 +159,7 @@ class informe_347 extends fs_controller
       
       $fila = array(
           'codproveedor' => '',
-          'cifnif' => '',
-          'url' => '',
+          'proveedor' => '',
           't1' => 0,
           't2' => 0,
           't3' => 0,
@@ -203,10 +205,7 @@ class informe_347 extends fs_controller
          {
             $pro0 = $proveedor->get($value['codproveedor']);
             if($pro0)
-            {
-               $informe['filas'][$i]['cifnif'] = $pro0->cifnif;
-               $informe['filas'][$i]['url'] = $pro0->url();
-            }
+               $informe['filas'][$i]['proveedor'] = $pro0;
             
             $informe['totales'][0] += $value['t1'];
             $informe['totales'][1] += $value['t2'];
@@ -222,6 +221,83 @@ class informe_347 extends fs_controller
    public function show_float($num)
    {
       return number_format($num, FS_NF0, FS_NF1, FS_NF2);
+   }
+   
+   private function excel()
+   {
+      $this->template = FALSE;
+      header("Content-Disposition: attachment; filename=\"modelo_347_".$this->sejercicio.".xls\"");
+      header("Content-Type: application/vnd.ms-excel");
+      
+      echo "<table>
+         <tr>
+            <td>Clientes que han comprado mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
+         </tr>
+         <tr>
+            <td>Cliente</td>
+            <td>T.1</td>
+            <td>T.2</td>
+            <td>T.3</td>
+            <td>T.4</td>
+            <td>Total</td>
+         </tr>";
+      
+      foreach($this->datos_cli['filas'] as $d)
+      {
+         echo "<tr>
+            <td>".$d['cliente']->nombre."</td>
+            <td>".number_format($d['t1'], 2, ',', '')."</td>
+            <td>".number_format($d['t2'], 2, ',', '')."</td>
+            <td>".number_format($d['t3'], 2, ',', '')."</td>
+            <td>".number_format($d['t4'], 2, ',', '')."</td>
+            <td>".number_format($d['total'], 2, ',', '')."</td>
+         </tr>";
+      }
+      
+      echo "<tr>
+            <td></td>
+            <td>".number_format($this->datos_cli['totales'][0], 2, ',', '')."</td>
+            <td>".number_format($this->datos_cli['totales'][1], 2, ',', '')."</td>
+            <td>".number_format($this->datos_cli['totales'][2], 2, ',', '')."</td>
+            <td>".number_format($this->datos_cli['totales'][3], 2, ',', '')."</td>
+            <td>".number_format($this->datos_cli['totales'][4], 2, ',', '')."</td>
+         </tr>";
+      
+      echo "<tr><td></td></tr>
+         <tr>
+            <td colspan='6'>Proveedores que nos han vendido mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
+         </tr>
+         <tr>
+            <td>Proveedor</td>
+            <td>T.1</td>
+            <td>T.2</td>
+            <td>T.3</td>
+            <td>T.4</td>
+            <td>Total</td>
+         </tr>";
+      
+      foreach($this->datos_pro['filas'] as $d)
+      {
+         echo "<tr>
+            <td>".$d['proveedor']->nombre."</td>
+            <td>".number_format($d['t1'], 2, ',', '')."</td>
+            <td>".number_format($d['t2'], 2, ',', '')."</td>
+            <td>".number_format($d['t3'], 2, ',', '')."</td>
+            <td>".number_format($d['t4'], 2, ',', '')."</td>
+            <td>".number_format($d['total'], 2, ',', '')."</td>
+         </tr>";
+      }
+      
+      echo "<tr>
+            <td></td>
+            <td>".number_format($this->datos_pro['totales'][0], 2, ',', '')."</td>
+            <td>".number_format($this->datos_pro['totales'][1], 2, ',', '')."</td>
+            <td>".number_format($this->datos_pro['totales'][2], 2, ',', '')."</td>
+            <td>".number_format($this->datos_pro['totales'][3], 2, ',', '')."</td>
+            <td>".number_format($this->datos_pro['totales'][4], 2, ',', '')."</td>
+         </tr>";
+      
+      echo "</table>";
    }
 }
 

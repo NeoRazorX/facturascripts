@@ -18,16 +18,20 @@
  */
 
 require_once 'base/fs_pdf.php';
+require_model('ejercicio.php');
 require_model('empresa.php');
+require_model('partida.php');
 require_model('subcuenta.php');
 
 class libro_mayor
 {
+   private $ejercicio;
    private $empresa;
    private $subcuenta;
    
    public function __construct()
    {
+      $this->ejercicio = new ejercicio();
       $this->empresa = new empresa();
       $this->subcuenta = new subcuenta();
    }
@@ -42,9 +46,12 @@ class libro_mayor
          
          $this->libro_mayor($subc, TRUE);
       }
+      
+      foreach($this->ejercicio->all() as $eje)
+         $this->libro_diario($eje);
    }
    
-   public function libro_mayor($subc=FALSE, $echos=FALSE)
+   public function libro_mayor(&$subc, $echos=FALSE)
    {
       if($subc)
       {
@@ -68,7 +75,6 @@ class libro_mayor
                $lineasfact = count($partidas);
                $linea_actual = 0;
                $lppag = 49;
-               $pagina = 1;
                
                // Imprimimos las páginas necesarias
                while($linea_actual < $lineasfact)
@@ -76,7 +82,6 @@ class libro_mayor
                   /// salto de página
                   if($linea_actual > 0)
                      $pdf_doc->pdf->ezNewPage();
-                  
                   
                   /// Creamos la tabla del encabezado
                   $pdf_doc->new_table();
@@ -149,12 +154,107 @@ class libro_mayor
                          'shaded' => 0
                      )
                   );
-                  
-                  $pagina++;
                }
             }
             
             $pdf_doc->save('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf');
+         }
+      }
+   }
+   
+   private function libro_diario(&$eje)
+   {
+      if($eje)
+      {
+         if( !file_exists('tmp/libro_diario') )
+            mkdir('tmp/libro_diario');
+         
+         if( !file_exists('tmp/libro_diario/'.$eje->codejercicio.'.pdf') )
+         {
+            echo ' '.$eje->codejercicio;
+            
+            $pdf_doc = new fs_pdf('a4', 'landscape', 'Courier');
+            $pdf_doc->pdf->addInfo('Title', 'Libro diario de ' . $eje->codejercicio);
+            $pdf_doc->pdf->addInfo('Subject', 'Libro mayor de ' . $eje->codejercicio);
+            $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+            $pdf_doc->pdf->ezStartPageNumbers(800, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
+            
+            $partida = new partida();
+            $sum_debe = 0;
+            $sum_haber = 0;
+            
+            /// leemos todas las partidas del ejercicio
+            $lppag = 33;
+            $lactual = 0;
+            $lineas = $partida->full_from_ejercicio($eje->codejercicio, $lactual, $lppag);
+            while( count($lineas) > 0 )
+            {
+               if($lactual > 0)
+               {
+                  $pdf_doc->pdf->ezNewPage();
+                  echo '+';
+               }
+               
+               $pdf_doc->pdf->ezText($this->empresa->nombre." - libro diario ".$eje->year()."\n\n", 12);
+               
+               /// Creamos la tabla con las lineas
+               $pdf_doc->new_table();
+               $pdf_doc->add_table_header(
+                  array(
+                      'asiento' => '<b>Asiento</b>',
+                      'fecha' => '<b>Fecha</b>',
+                      'subcuenta' => '<b>Subcuenta</b>',
+                      'concepto' => '<b>Concepto</b>',
+                      'debe' => '<b>Debe</b>',
+                      'haber' => '<b>Haber</b>'
+                  )
+               );
+               
+               foreach($lineas as $linea)
+               {
+                  $pdf_doc->add_table_row(
+                     array(
+                         'asiento' => $linea['numero'],
+                         'fecha' => $linea['fecha'],
+                         'subcuenta' => $linea['codsubcuenta'].' '.substr($linea['descripcion'], 0, 35),
+                         'concepto' => substr($linea['concepto'], 0, 45),
+                         'debe' => number_format($linea['debe'], FS_NF0, FS_NF1, FS_NF2),
+                         'haber' => number_format($linea['haber'], FS_NF0, FS_NF1, FS_NF2)
+                     )
+                  );
+                  
+                  $sum_debe += floatval($linea['debe']);
+                  $sum_haber += floatval($linea['haber']);
+                  $lactual++;
+               }
+               
+               /// añadimos las sumas de la línea actual
+               $pdf_doc->add_table_row(
+                  array(
+                      'asiento' => '',
+                      'fecha' => '',
+                      'subcuenta' => '',
+                      'concepto' => '',
+                      'debe' => '<b>'.number_format($sum_debe, FS_NF0, FS_NF1, FS_NF2).'</b>',
+                      'haber' => '<b>'.number_format($sum_haber, FS_NF0, FS_NF1, FS_NF2).'</b>'
+                  )
+               );
+               $pdf_doc->save_table(
+                  array(
+                      'fontSize' => 9,
+                      'cols' => array(
+                          'debe' => array('justification' => 'right'),
+                          'haber' => array('justification' => 'right')
+                      ),
+                      'width' => 780,
+                      'shaded' => 0
+                  )
+               );
+               
+               $lineas = $partida->full_from_ejercicio($eje->codejercicio, $lactual, $lppag);
+            }
+            
+            $pdf_doc->save('tmp/libro_diario/'.$eje->codejercicio.'.pdf');
          }
       }
    }

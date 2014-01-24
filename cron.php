@@ -38,11 +38,12 @@ else
 
 require_once 'base/fs_default_items.php';
 
+require_once 'base/fs_model.php';
 require_model('albaran_cliente.php');
 require_model('albaran_proveedor.php');
 require_model('articulo.php');
 require_model('asiento.php');
-require_model('/empresa.php');
+require_model('empresa.php');
 
 require_once 'extras/libromayor.php';
 
@@ -76,7 +77,7 @@ if( $db->connect() )
    $asiento->cron_job();
    
    $libro = new libro_mayor();
-   echo "Generamos el libro mayor para cada subcuenta...\n";
+   echo "Generamos el libro mayor para cada subcuenta y el libro diario para cada ejercicio...\n";
    $libro->cron_job();
    
    $db->close();

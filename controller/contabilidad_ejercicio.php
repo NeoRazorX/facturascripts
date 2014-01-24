@@ -78,6 +78,13 @@ class contabilidad_ejercicio extends fs_controller
          {
             $this->ppage = $this->page->get('contabilidad_ejercicios');
             $this->page->title = $this->ejercicio->codejercicio.' ('.$this->ejercicio->nombre.')';
+            
+            if( file_exists('tmp/libro_diario/'.$this->ejercicio->codejercicio.'.pdf') )
+            {
+               $this->buttons[] = new fs_button('b_diario', 'libro diario',
+                       'tmp/libro_diario/'.$this->ejercicio->codejercicio.'.pdf', TRUE);
+            }
+            
             $this->buttons[] = new fs_button('b_importar', 'importar');
             $this->buttons[] = new fs_button('b_exportar', 'exportar', $this->url().'&export=TRUE');
             $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);

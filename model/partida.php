@@ -272,12 +272,12 @@ class partida extends fs_model
    
    public function delete()
    {
-      if( $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idpartida = ".$this->var2str($this->idpartida).";") )
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpartida = ".$this->var2str($this->idpartida).";") )
       {
          $subc = $this->get_subcuenta();
          if($subc)
             $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+         
          return TRUE;
       }
       else
@@ -365,6 +365,18 @@ class partida extends fs_model
          }
       }
       return $plist;
+   }
+   
+   public function full_from_ejercicio($eje, $offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $data = $this->db->select_limit("SELECT a.numero,a.fecha,s.codsubcuenta,s.descripcion,
+         p.concepto,p.debe,p.haber FROM co_asientos a, co_subcuentas s, co_partidas p
+         WHERE a.codejercicio = ".$this->var2str($eje)." AND p.idasiento = a.idasiento AND p.idsubcuenta = s.idsubcuenta
+         ORDER BY a.numero ASC, p.codsubcuenta ASC", $limit, $offset);
+      if($data)
+         return $data;
+      else
+         return array();
    }
    
    public function count_from_subcuenta($id)

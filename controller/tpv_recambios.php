@@ -516,7 +516,7 @@ class tpv_recambios extends fs_controller
       {
          if( $this->imprimir_descripciones )
          {
-            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->descripcion) . " ".
+            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", substr($col->descripcion, 0, 20)) . " ".
                     sprintf("%10s", $col->show_total_iva()) . "\n";
          }
          else

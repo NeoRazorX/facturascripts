@@ -259,6 +259,7 @@ function fs_resize_popup(id, top)
 
 function fs_hide_popups()
 {
+   $("#tcal").hide();
    $("#b_close_popup").hide();
    $('div.popup').each(function() {
       $(this).hide();

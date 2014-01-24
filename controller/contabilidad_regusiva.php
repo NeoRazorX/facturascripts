@@ -44,8 +44,8 @@ class contabilidad_regusiva extends fs_controller
       switch( Date('n') )
       {
          case '1':
-            $this->fecha_desde = Date('01-10-Y', strtotime( Date('Y').'-1 year') );
-            $this->fecha_hasta = Date('31-12-Y', strtotime( Date('Y').'-1 year') );
+            $this->fecha_desde = Date('01-10-Y', strtotime( Date('Y').' -1 year') );
+            $this->fecha_hasta = Date('31-12-Y', strtotime( Date('Y').' -1 year') );
             $this->periodo = 'T4';
             break;
          
