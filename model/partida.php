@@ -423,14 +423,26 @@ class partida extends fs_model
       return $totales;
    }
    
-   public function totales_from_subcuenta_fechas($id, $fechaini, $fechafin)
+   public function totales_from_subcuenta_fechas($id, $fechaini, $fechafin, $excluir=FALSE)
    {
       $totales = array( 'debe' => 0, 'haber' => 0, 'saldo' => 0 );
-      $resultados = $this->db->select("SELECT COALESCE(SUM(p.debe), 0) as debe,
-         COALESCE(SUM(p.haber), 0) as haber
-         FROM co_partidas p, co_asientos a
-         WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ".$this->var2str($id)."
-            AND a.fecha BETWEEN ".$this->var2str($fechaini)." AND ".$this->var2str($fechafin).";");
+      
+      if($excluir)
+      {
+         $resultados = $this->db->select("SELECT COALESCE(SUM(p.debe), 0) as debe,
+            COALESCE(SUM(p.haber), 0) as haber FROM co_partidas p, co_asientos a
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ".$this->var2str($id)."
+               AND a.fecha BETWEEN ".$this->var2str($fechaini)." AND ".$this->var2str($fechafin)."
+               AND p.idasiento NOT IN ('".implode("','", $excluir)."');");
+      }
+      else
+      {
+         $resultados = $this->db->select("SELECT COALESCE(SUM(p.debe), 0) as debe,
+            COALESCE(SUM(p.haber), 0) as haber FROM co_partidas p, co_asientos a
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ".$this->var2str($id)."
+               AND a.fecha BETWEEN ".$this->var2str($fechaini)." AND ".$this->var2str($fechafin).";");
+      }
+      
       if( $resultados )
       {
          $totales['debe'] = floatval($resultados[0]['debe']);

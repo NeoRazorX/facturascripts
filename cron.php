@@ -46,7 +46,7 @@ require_model('asiento.php');
 require_model('empresa.php');
 
 require_once 'extras/libromayor.php';
-
+require_once 'extras/inventarios_balances.php';
 
 if( $db->connect() )
 {
@@ -77,8 +77,12 @@ if( $db->connect() )
    $asiento->cron_job();
    
    $libro = new libro_mayor();
-   echo "Generamos el libro mayor para cada subcuenta y el libro diario para cada ejercicio...\n";
+   echo "Generamos el libro mayor para cada subcuenta y el libro diario para cada ejercicio...";
    $libro->cron_job();
+   
+   $inventarios_balances = new inventarios_balances();
+   echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...\n";
+   $inventarios_balances->cron_job();
    
    $db->close();
 }

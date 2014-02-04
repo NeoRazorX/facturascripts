@@ -19,6 +19,8 @@
 
 require_model('asiento.php');
 require_model('ejercicio.php');
+require_model('factura_cliente.php');
+require_model('factura_proveedor.php');
 require_model('partida.php');
 require_model('regularizacion_iva.php');
 require_model('subcuenta.php');
@@ -30,6 +32,8 @@ class contabilidad_regusiva extends fs_controller
    public $aux_regiva;
    public $periodo;
    public $regiva;
+   public $factura_cli;
+   public $factura_pro;
    
    public function __construct()
    {
@@ -40,6 +44,8 @@ class contabilidad_regusiva extends fs_controller
    protected function process()
    {
       $this->regiva = new regularizacion_iva();
+      $this->factura_cli = new factura_cliente();
+      $this->factura_pro = new factura_proveedor();
       
       switch( Date('n') )
       {
@@ -81,7 +87,11 @@ class contabilidad_regusiva extends fs_controller
             break;
       }
       
-      if( isset($_POST['idregiva']) )
+      if( $this->factura_cli->huecos() OR $this->factura_pro->huecos() )
+      {
+         $this->new_error_msg('Tienes huecos en la facturación y por tanto no puedes regularizar el iva.');
+      }
+      else if( isset($_POST['idregiva']) )
       {
          $this->full_regularizacion();
       }

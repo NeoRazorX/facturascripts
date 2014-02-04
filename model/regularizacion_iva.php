@@ -88,6 +88,24 @@ class regularizacion_iva extends fs_model
          return FALSE;
    }
    
+   /*
+    * Devuelve la regularización de IVA correspondiente a esa fecha,
+    * es decir, la regularización cuya fecha de inicio sea anterior
+    * a la fecha proporcionada y su fecha de fin sea posterior a la fecha
+    * proporcionada. Así puedes saber si el periodo sigue abierto para poder
+    * facturar.
+    */
+   public function get_fecha_inside($fecha)
+   {
+      $reg = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE fechainicio <= ".$this->var2str($fecha).
+              " AND fechafin >= ".$this->var2str($fecha).";");
+      if($reg)
+         return new regularizacion_iva($reg[0]);
+      else
+         return FALSE;
+   }
+   
    public function get($id)
    {
       $reg = $this->db->select("SELECT * FROM ".$this->table_name.

@@ -1014,11 +1014,21 @@ class factura_cliente extends fs_model
       }
    }
    
-   public function full_test()
+   public function full_test($duplicados = TRUE)
    {
       $status = TRUE;
       
       /// comprobamos la fecha de la factura
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($this->codejercicio);
+      if($eje0)
+      {
+         if( strtotime($this->fecha) < strtotime($eje0->fechainicio) OR strtotime($this->fecha) > strtotime($eje0->fechafin) )
+         {
+            $status = FALSE;
+            $this->new_error_msg("La fecha de esta factura está fuera del rango del <a target='_blank' href='".$eje0->url()."'>ejercicio</a>.");
+         }
+      }
       $numero0 = intval($this->numero)-1;
       if( $numero0 > 0 )
       {
@@ -1160,7 +1170,7 @@ class factura_cliente extends fs_model
          }
       }
       
-      if($status)
+      if($status AND $duplicados)
       {
          /// comprobamos si es un duplicado
          $facturas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
@@ -1376,11 +1386,16 @@ class factura_cliente extends fs_model
                   
                   if( intval($n['numero']) != $num )
                   {
-                     $huecolist[] = array(
-                         'codigo' => $eje->codejercicio . sprintf('%02s', $codserie) . sprintf('%06s', $num),
-                         'fecha' => Date('d-m-Y', strtotime($n['fecha']))
-                     );
+                     while($num < intval($n['numero']))
+                     {
+                        $huecolist[] = array(
+                            'codigo' => $eje->codejercicio . sprintf('%02s', $codserie) . sprintf('%06s', $num),
+                            'fecha' => Date('d-m-Y', strtotime($n['fecha']))
+                        );
+                        $num++;
+                     }
                   }
+                  
                   $num++;
                }
             }

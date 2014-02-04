@@ -67,6 +67,38 @@
    });
 </script>
 
+{if condition="$fsc->listar=='stats'"}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+   // Load the Visualization API and the piechart package.
+   google.load('visualization', '1.0', {'packages':['corechart']});
+   
+   // Set a callback to run when the Google Visualization API is loaded.
+   google.setOnLoadCallback(drawChart);
+   
+   // Callback that creates and populates a data table,
+   // instantiates the pie chart, passes in the data and
+   // draws it.
+   function drawChart()
+   {
+      // Create the data table.
+      var data2 = new google.visualization.DataTable();
+      data2.addColumn('string', 'mes');
+      data2.addColumn('number', '{$fsc->previous_year()}');
+      data2.addColumn('number', '{$fsc->this_year()}');
+      data2.addRows([
+      {loop="$fsc->stats_last_months()"}
+         ['{$value['month']}', {$value[$fsc->previous_year()]}, {$value[$fsc->this_year()]}],
+      {/loop}
+      ]);
+      
+      // Instantiate and draw our chart, passing in some options.
+      var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_albaranes_month'));
+      chart2.draw(data2);
+   }
+</script>
+{/if}
+
 <div class="rounded" id="div_datos_generales">
    <div class="select">
       <a href="#" class="selected">Datos generales</a>
@@ -304,9 +336,15 @@
       {if condition="$fsc->listar=='albaranes'"}
          <a href="{$fsc->url()}&listar=albaranes#listado" class="selected">Albaranes</a>
          <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
-      {else}
+         <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
+      {elseif condition="$fsc->listar=='facturas'"}
          <a href="{$fsc->url()}&listar=albaranes#listado">Albaranes</a>
          <a href="{$fsc->url()}&listar=facturas#listado" class="selected">Facturas</a>
+         <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
+      {else}
+         <a href="{$fsc->url()}&listar=albaranes#listado">Albaranes</a>
+         <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
+         <a href="{$fsc->url()}&listar=stats#listado" class="selected">Estadísticas</a>
       {/if}
    </div>
    &nbsp; <img id="b_buscar_lineas" class="search touch" src="view/img/zoom2.png" alt="buscar"/>
@@ -345,7 +383,7 @@
             {/if}
             </td>
          </tr>
-      {else}
+      {elseif condition="$fsc->listar=='facturas'"}
          <tr>
             <th></th>
             <th align="left">código + num. proveedor</th>
@@ -378,6 +416,8 @@
             {/if}
             </td>
          </tr>
+      {else}
+         <div id="chart_albaranes_month" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
       {/if}
    </table>
 </div>

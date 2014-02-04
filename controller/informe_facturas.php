@@ -110,12 +110,12 @@ class informe_facturas extends fs_controller
                    'subcuenta' => '-',
                    'descripcion' => $facturas[$linea_actual]->nombrecliente,
                    'cifnif' => $facturas[$linea_actual]->cifnif,
-                   'base' => $facturas[$linea_actual]->show_neto(),
+                   'base' => 0,
                    'iva' => 0,
                    'totaliva' => 0,
                    're' => $facturas[$linea_actual]->recfinanciero,
                    'totalre' => $facturas[$linea_actual]->totalrecargo,
-                   'total' => $facturas[$linea_actual]->show_total()
+                   'total' => 0
                );
                $asiento = $facturas[$linea_actual]->get_asiento();
                if($asiento)
@@ -136,9 +136,11 @@ class informe_facturas extends fs_controller
                      else
                         $impuestos[$liva->iva] += $liva->totaliva;
                      
-                     /// Ponemos el iva y añadimos la línea al PDF
-                     $linea['iva'] = $liva->iva;
+                     /// completamos y añadimos la línea al PDF
+                     $linea['base'] = $liva->show_neto();
+                     $linea['iva'] = $liva->show_iva();
                      $linea['totaliva'] = $liva->show_totaliva();
+                     $linea['total'] = $liva->show_total();
                      $pdf_doc->add_table_row($linea);
                   }
                }
@@ -265,12 +267,12 @@ class informe_facturas extends fs_controller
                    'subcuenta' => '-',
                    'descripcion' => $facturas[$linea_actual]->nombre,
                    'cifnif' => $facturas[$linea_actual]->cifnif,
-                   'base' => $facturas[$linea_actual]->show_neto(),
+                   'base' => 0,
                    'iva' => 0,
                    'totaliva' => 0,
                    're' => $facturas[$linea_actual]->recfinanciero,
                    'totalre' => $facturas[$linea_actual]->totalrecargo,
-                   'total' => $facturas[$linea_actual]->show_total()
+                   'total' => 0
                );
                $asiento = $facturas[$linea_actual]->get_asiento();
                if($asiento)
@@ -291,9 +293,11 @@ class informe_facturas extends fs_controller
                      else
                         $impuestos[$liva->iva] += $liva->totaliva;
                      
-                     /// ponemos el iva y añadimos la línea al pdf
-                     $linea['iva'] = $liva->iva;
+                     /// completamos y añadimos la línea al pdf
+                     $linea['base'] = $liva->show_neto();
+                     $linea['iva'] = $liva->show_iva();
                      $linea['totaliva'] = $liva->show_totaliva();
+                     $linea['total'] = $liva->show_total();
                      $pdf_doc->add_table_row($linea);
                   }
                }

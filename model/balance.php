@@ -305,10 +305,25 @@ class balance_cuenta_a extends fs_model
       return '';
    }
    
+   /*
+    * A partir de un asiento devuelve el saldo de las líneas que pertenecen a las
+    * subcuentas que pertenecen a la cuenta de este balance.
+    */
+   public function saldo($idasiento)
+   {
+      $data = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber
+         FROM co_partidas WHERE idasiento = ".$this->var2str($idasiento).
+         " AND idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
+            WHERE codcuenta LIKE '".$this->codcuenta."%');");
+      if($data)
+         return floatval($data[0]['debe']) - floatval($data[0]['haber']);
+      else
+         return 0;
+   }
+   
    public function get($id)
    {
-      $bca = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE id = ".$this->var2str($id).";");
+      $bca = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if($bca)
          return new balance_cuenta_a($bca[0]);
       else
@@ -320,8 +335,7 @@ class balance_cuenta_a extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -334,8 +348,7 @@ class balance_cuenta_a extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET codbalance = ".$this->var2str($this->codbalance).",
-            codcuenta = ".$this->var2str($this->codcuenta).",
-            desccuenta = ".$this->var2str($this->desccuenta)."
+            codcuenta = ".$this->var2str($this->codcuenta).", desccuenta = ".$this->var2str($this->desccuenta)."
             WHERE id = ".$this->var2str($this->id).";";
          return $this->db->exec($sql);
       }
@@ -357,8 +370,7 @@ class balance_cuenta_a extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".
-              $this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all()
@@ -378,6 +390,19 @@ class balance_cuenta_a extends fs_model
       $balist = array();
       $balances = $this->db->select("SELECT * FROM ".$this->table_name.
          " WHERE codbalance = ".$this->var2str($cod)." ORDER BY codcuenta ASC;");
+      if($balances)
+      {
+         foreach($balances as $b)
+            $balist[] = new balance_cuenta_a($b);
+      }
+      return $balist;
+   }
+   
+   public function search_by_codbalance($cod)
+   {
+      $balist = array();
+      $balances = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE codbalance LIKE '".$cod."%' ORDER BY codcuenta ASC;");
       if($balances)
       {
          foreach($balances as $b)

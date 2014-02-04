@@ -146,7 +146,7 @@ class ejercicio extends fs_model
     * Devuelve el ejercicio para la fecha indicada.
     * Si no existe, lo crea.
     */
-   public function get_by_fecha($fecha, $solo_abierto=TRUE)
+   public function get_by_fecha($fecha, $solo_abierto=TRUE, $crear=TRUE)
    {
       $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name.
          " WHERE fechainicio <= ".$this->var2str($fecha)." AND fechafin >= ".$this->var2str($fecha).";");
@@ -158,7 +158,7 @@ class ejercicio extends fs_model
          else
             return FALSE;
       }
-      else
+      else if($crear)
       {
          $eje = new ejercicio();
          $eje->codejercicio = $this->get_new_codigo();
@@ -170,6 +170,8 @@ class ejercicio extends fs_model
          else
             return FALSE;
       }
+      else
+         return FALSE;
    }
    
    public function exists()

@@ -21,15 +21,21 @@ require_model('albaran_cliente.php');
 require_model('albaran_proveedor.php');
 require_model('asiento.php');
 require_model('cliente.php');
+require_model('ejercicio.php');
 require_model('factura_cliente.php');
 require_model('factura_proveedor.php');
 require_model('partida.php');
 require_model('proveedor.php');
+require_model('regularizacion_iva.php');
 require_model('serie.php');
 require_model('subcuenta.php');
 
 class megafacturador extends fs_controller
 {
+   private $ejercicio;
+   private $regularizacion;
+   private $total;
+   
    public function __construct()
    {
       parent::__construct('megafacturador', 'MegaFacturador', 'general', FALSE, TRUE);
@@ -37,25 +43,26 @@ class megafacturador extends fs_controller
    
    protected function process()
    {
+      $this->ejercicio = new ejercicio();
+      $this->regularizacion = new regularizacion_iva();
+      
       if( isset($_GET['start']) )
       {
-         $total = 0;
+         $this->total = 0;
          $albaran_cli = new albaran_cliente();
-         foreach($albaran_cli->all_ptefactura() as $alb)
+         foreach($albaran_cli->all_ptefactura(0, 'ASC') as $alb)
          {
             $this->generar_factura_cliente( array($alb) );
-            $total++;
          }
-         $this->new_message($total.' albaranes de cliente facturados.');
+         $this->new_message($this->total.' albaranes de cliente facturados.');
          
-         $total = 0;
+         $this->total = 0;
          $albaran_pro = new albaran_proveedor();
-         foreach($albaran_pro->all_ptefactura() as $alb)
+         foreach($albaran_pro->all_ptefactura(0, 'ASC') as $alb)
          {
             $this->generar_factura_proveedor( array($alb) );
-            $total++;
          }
-         $this->new_message($total.' albaranes de proveedor facturados.');
+         $this->new_message($this->total.' albaranes de proveedor facturados.');
       }
    }
    
@@ -80,7 +87,6 @@ class megafacturador extends fs_controller
       $factura->codserie = $albaranes[0]->codserie;
       $factura->direccion = $albaranes[0]->direccion;
       $factura->editable = FALSE;
-      $factura->fecha = $albaranes[0]->fecha;
       $factura->nombrecliente = $albaranes[0]->nombrecliente;
       $factura->provincia = $albaranes[0]->provincia;
       
@@ -98,7 +104,20 @@ class megafacturador extends fs_controller
       $factura->totaliva = round($factura->totaliva, 2);
       $factura->total = $factura->neto + $factura->totaliva;
       
-      if( $factura->save() )
+      /// asignamos la mejor fecha posible, pero dentro del ejercicio
+      $eje0 = $this->ejercicio->get($factura->codejercicio);
+      $factura->fecha = $eje0->get_best_fecha($factura->fecha);
+      
+      if( !$eje0->abierto() )
+      {
+         $this->new_error_msg('El ejercicio '.$eje0->codejercicio.' está cerrado.');
+      }
+      else if( $this->regularizacion->get_fecha_inside($factura->fecha) )
+      {
+         $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado.
+            No se pueden añadir más facturas en esa fecha.');
+      }
+      else if( $factura->save() )
       {
          foreach($albaranes as $alb)
          {
@@ -145,7 +164,10 @@ class megafacturador extends fs_controller
             }
             
             if( $continuar )
+            {
                $this->generar_asiento_cliente($factura);
+               $this->total++;
+            }
             else
             {
                if( $factura->delete() )
@@ -173,10 +195,14 @@ class megafacturador extends fs_controller
       $subcuenta_cli = $cliente->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )
-         $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+      {
+         
+      }
       else if( !$subcuenta_cli )
+      {
          $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará
             un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      }
       else
       {
          $asiento = new asiento();
@@ -257,9 +283,7 @@ class megafacturador extends fs_controller
             if($asiento_correcto)
             {
                $factura->idasiento = $asiento->idasiento;
-               if( $factura->save() )
-                  $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-               else
+               if( !$factura->save() )
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }
             else
@@ -302,7 +326,6 @@ class megafacturador extends fs_controller
       $factura->codpago = $albaranes[0]->codpago;
       $factura->codproveedor = $albaranes[0]->codproveedor;
       $factura->codserie = $albaranes[0]->codserie;
-      $factura->fecha = $albaranes[0]->fecha;
       $factura->irpf = $albaranes[0]->irpf;
       $factura->nombre = $albaranes[0]->nombre;
       $factura->numproveedor = $albaranes[0]->numproveedor;
@@ -325,7 +348,20 @@ class megafacturador extends fs_controller
       $factura->totaliva = round($factura->totaliva, 2);
       $factura->total = $factura->neto + $factura->totaliva;
       
-      if( $factura->save() )
+      /// asignamos la mejor fecha posible, pero dentro del ejercicio
+      $eje0 = $this->ejercicio->get($factura->codejercicio);
+      $factura->fecha = $eje0->get_best_fecha($factura->fecha);
+      
+      if( !$eje0->abierto() )
+      {
+         $this->new_error_msg('El ejercicio '.$eje0->codejercicio.' está cerrado.');
+      }
+      else if( $this->regularizacion->get_fecha_inside($factura->fecha) )
+      {
+         $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado.
+            No se pueden añadir más facturas en esa fecha.');
+      }
+      else if( $factura->save() )
       {
          foreach($albaranes as $alb)
          {
@@ -372,7 +408,10 @@ class megafacturador extends fs_controller
             }
             
             if( $continuar )
+            {
                $this->generar_asiento_proveedor($factura);
+               $this->total++;
+            }
             else
             {
                if( $factura->delete() )
@@ -400,10 +439,14 @@ class megafacturador extends fs_controller
       $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )
-         $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+      {
+         
+      }
       else if( !$subcuenta_prov )
+      {
          $this->new_message("El proveedor no tiene asociada una subcuenta, y por tanto no se generará
             un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      }
       else
       {
          $asiento = new asiento();
@@ -484,9 +527,7 @@ class megafacturador extends fs_controller
             if( $asiento_correcto )
             {
                $factura->idasiento = $asiento->idasiento;
-               if( $factura->save() )
-                  $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-               else
+               if( !$factura->save() )
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }
             else

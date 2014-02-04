@@ -122,7 +122,7 @@ class libro_mayor
                         array(
                             'asiento' => $partidas[$linea_actual]->numero,
                             'fecha' => $partidas[$linea_actual]->fecha,
-                            'concepto' => $partidas[$linea_actual]->concepto,
+                            'concepto' => substr($partidas[$linea_actual]->concepto, 0, 60),
                             'debe' => $partidas[$linea_actual]->show_debe(),
                             'haber' => $partidas[$linea_actual]->show_haber(),
                             'saldo' => $partidas[$linea_actual]->show_saldo()

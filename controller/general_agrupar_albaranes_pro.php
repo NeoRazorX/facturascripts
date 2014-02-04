@@ -19,9 +19,11 @@
 
 require_model('albaran_proveedor.php');
 require_model('asiento.php');
+require_model('ejercicio.php');
 require_model('factura_proveedor.php');
 require_model('partida.php');
 require_model('proveedor.php');
+require_model('regularizacion_iva.php');
 require_model('serie.php');
 require_model('subcuenta.php');
 
@@ -102,13 +104,37 @@ class general_agrupar_albaranes_pro extends fs_controller
          foreach($_POST['idalbaran'] as $id)
             $albaranes[] = $this->albaran->get($id);
          
+         $codejercicio = NULL;
          foreach($albaranes as $alb)
          {
+            if( !isset($codejercicio) )
+               $codejercicio = $alb->codejercicio;
+            
             if( !$alb->ptefactura )
             {
                $this->new_error_msg("El albarán <a href='".$alb->url()."'>".$alb->codigo."</a> ya está facturado.");
                $continuar = FALSE;
                break;
+            }
+            else if($alb->codejercicio != $codejercicio)
+            {
+               $this->new_error_msg("Los ejercicios de los albaranes no coinciden.");
+               $continuar = FALSE;
+               break;
+            }
+         }
+         
+         if( isset($codejercicio) )
+         {
+            $ejercicio = new ejercicio();
+            $eje0 = $ejercicio->get($codejercicio);
+            if($eje0)
+            {
+               if( !$eje0->abierto() )
+               {
+                  $this->new_error_msg("El ejercicio está cerrado.");
+                  $continuar = FALSE;
+               }
             }
          }
       }
@@ -162,7 +188,23 @@ class general_agrupar_albaranes_pro extends fs_controller
       $factura->totaliva = round($factura->totaliva, 2);
       $factura->total = $factura->neto + $factura->totaliva;
       
-      if( $factura->save() )
+      /// asignamos la mejor fecha posible, pero dentro del ejercicio
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($factura->codejercicio);
+      $factura->fecha = $eje0->get_best_fecha($factura->fecha);
+      
+      /*
+       * comprobamos que la fecha de la factura no esté dentro de un periodo de
+       * IVA regularizado.
+       */
+      $regularizacion = new regularizacion_iva();
+      
+      if( $regularizacion->get_fecha_inside($factura->fecha) )
+      {
+         $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado.
+            No se pueden añadir más facturas en esa fecha.');
+      }
+      else if( $factura->save() )
       {
          foreach($albaranes as $alb)
          {

@@ -37,10 +37,7 @@ class informe_errores extends fs_controller
    protected function process()
    {
       if( $this->cache->error() )
-      {
-         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.
-                 $this->cache->error_msg() );
-      }
+         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.$this->cache->error_msg() );
       else
          $this->process2();
    }
@@ -60,6 +57,7 @@ class informe_errores extends fs_controller
          
          $this->informe = array(
              'model' => 'asiento',
+             'duplicados' => isset($_POST['duplicados']),
              'offset' => 0,
              'pages' => 0,
              'show_page' => 0,
@@ -107,7 +105,7 @@ class informe_errores extends fs_controller
                   {
                      foreach($asientos as $asi)
                      {
-                        if( !$asi->full_test() )
+                        if( !$asi->full_test($this->informe['duplicados']) )
                         {
                            $last_errores[] = array(
                                'model' => $this->informe['model'],
@@ -140,7 +138,7 @@ class informe_errores extends fs_controller
                   {
                      foreach($facturas as $fac)
                      {
-                        if( !$fac->full_test() )
+                        if( !$fac->full_test($this->informe['duplicados']) )
                         {
                            $last_errores[] = array(
                                'model' => $this->informe['model'],
@@ -173,7 +171,7 @@ class informe_errores extends fs_controller
                   {
                      foreach($facturas as $fac)
                      {
-                        if( !$fac->full_test() )
+                        if( !$fac->full_test($this->informe['duplicados']) )
                         {
                            $last_errores[] = array(
                                'model' => $this->informe['model'],
@@ -206,7 +204,7 @@ class informe_errores extends fs_controller
                   {
                      foreach($albaranes as $alb)
                      {
-                        if( !$alb->full_test() )
+                        if( !$alb->full_test($this->informe['duplicados']) )
                         {
                            $last_errores[] = array(
                                'model' => $this->informe['model'],
@@ -239,7 +237,7 @@ class informe_errores extends fs_controller
                   {
                      foreach($albaranes as $alb)
                      {
-                        if( !$alb->full_test() )
+                        if( !$alb->full_test($this->informe['duplicados']) )
                         {
                            $last_errores[] = array(
                                'model' => $this->informe['model'],

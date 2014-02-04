@@ -27,6 +27,7 @@ require_model('factura_cliente.php');
 require_model('familia.php');
 require_model('impuesto.php');
 require_model('partida.php');
+require_model('regularizacion_iva.php');
 require_model('serie.php');
 require_model('subcuenta.php');
 
@@ -363,7 +364,23 @@ class general_albaran_cli extends fs_controller
       $factura->provincia = $this->albaran->provincia;
       $factura->total = $this->albaran->total;
       $factura->totaliva = $this->albaran->totaliva;
-      if( $factura->save() )
+      
+      /// asignamos la mejor fecha posible, pero dentro del ejercicio
+      $eje0 = $this->ejercicio->get($factura->codejercicio);
+      $factura->fecha = $eje0->get_best_fecha($factura->fecha);
+      
+      $regularizacion = new regularizacion_iva();
+      
+      if( !$eje0->abierto() )
+      {
+         $this->new_error_msg("El ejercicio está cerrado.");
+      }
+      else if( $regularizacion->get_fecha_inside($factura->fecha) )
+      {
+         $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado.
+            No se pueden añadir más facturas en esa fecha.");
+      }
+      else if( $factura->save() )
       {
          $continuar = TRUE;
          foreach($this->albaran->get_lineas() as $l)

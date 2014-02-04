@@ -208,10 +208,14 @@ class asiento extends fs_model
          return TRUE;
    }
    
-   public function full_test()
+   public function full_test($duplicados = TRUE)
    {
       $status = TRUE;
       
+      /*
+       * Comprobamos que el asiento no esté vacío o descuadrado.
+       * También comprobamos que las subcuentas pertenezcan al mismo ejercicio.
+       */
       $debe = 0;
       $haber = 0;
       $partidas = $this->get_partidas();
@@ -221,6 +225,21 @@ class asiento extends fs_model
          {
             $debe += $p->debe;
             $haber += $p->haber;
+            
+            $sc = $p->get_subcuenta();
+            if($sc)
+            {
+               if($sc->codejercicio != $this->codejercicio)
+               {
+                  $this->new_error_msg('La subcuenta '.$sc->codsubcuenta.' pertenece a otro ejercicio.');
+                  $status = FALSE;
+               }
+            }
+            else
+            {
+               $this->new_error_msg('Subcuenta '.$p->codsubcuenta.' no encontrada.');
+               $status = FALSE;
+            }
          }
       }
       else
@@ -235,6 +254,20 @@ class asiento extends fs_model
          $status = FALSE;
       }
       
+      
+      /// comprobamos que la fecha sea correcta
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($this->codejercicio);
+      if($eje0)
+      {
+         if( strtotime($this->fecha) < strtotime($eje0->fechainicio) OR strtotime($this->fecha) > strtotime($eje0->fechafin) )
+         {
+            $this->new_error_msg("La fecha de este asiento está fuera del rango del <a target='_blank' href='".$eje0->url()."'>ejercicio</a>.");
+            $status = FALSE;
+         }
+      }
+      
+      
       /// comprobamos la factura asociada
       $fac = $this->get_factura();
       if($fac)
@@ -247,7 +280,7 @@ class asiento extends fs_model
          }
       }
       
-      if($status)
+      if($status AND $duplicados)
       {
          /// comprobamos si es un duplicado
          $asientos = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."

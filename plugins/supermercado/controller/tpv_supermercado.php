@@ -74,7 +74,7 @@ class tpv_supermercado extends fs_controller
          $this->caja = $this->caja->get_last_from_this_server();
          if($this->caja)
          {
-            if($this->caja->codagente == $this->user->codagente)
+            if($this->caja->codagente == $this->user->codagente OR $this->user->admin)
                $this->caja_iniciada();
             else
             {
@@ -427,16 +427,33 @@ class tpv_supermercado extends fs_controller
               sprintf("%10s", "----------") . "\n";
       $fpt->add($linea);
       
+      $impuestos = array();
+      $totales = array();
       foreach($albaran->get_lineas() as $col)
       {
+         /// desglosamos el iva
+         if( !in_array($col->iva, $impuestos) )
+         {
+            $impuestos[] = $col->iva;
+            $totales[$col->iva] = $col->pvptotal*$col->iva/100;
+         }
+         else
+            $totales[$col->iva] += $col->pvptotal*$col->iva/100;
+         
          $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", substr($col->descripcion,0,24)) . " ".
                  sprintf("%10s", $col->show_total_iva()) . "\n";
          $fpt->add($linea);
       }
       
       $fpt->add("----------------------------------------\n");
-      $fpt->add( $fpt->center_text("IVA: ".number_format($albaran->totaliva, 2, ',', '.')." Eur.  ".
-         "Total: ".$albaran->show_total()." Eur.", 42)."\n" );
+      
+      /// imprimimos los impuestos desglosados
+      $impuestos_txt = 'IVA ';
+      foreach($impuestos as $imp)
+         $impuestos_txt .= $imp.'%: '.number_format($totales[$imp], 2, '.', ' ').'  ';
+      $fpt->add( $fpt->center_text($impuestos_txt, 42)."\n" );
+      
+      $fpt->add( $fpt->center_text("Total: ".$albaran->show_total()." Eur.", 42)."\n" );
       
       if( isset($_POST['efectivo']) AND isset($_POST['cambio']) )
          $fpt->add( $fpt->center_text("Entregado: ".$_POST['efectivo']." Eur. Cambio: ".$_POST['cambio']." Eur.", 42)."\n" );

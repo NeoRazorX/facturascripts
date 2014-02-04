@@ -114,8 +114,8 @@ class general_proveedor extends fs_controller
          $this->listar = 'albaranes';
          if( isset($_GET['listar']) )
          {
-            if($_GET['listar'] == 'facturas')
-               $this->listar = 'facturas';
+            if( in_array($_GET['listar'], array('albaranes', 'facturas', 'stats')) )
+               $this->listar = $_GET['listar'];
          }
          
          if($this->listar == 'albaranes')
@@ -161,6 +161,22 @@ class general_proveedor extends fs_controller
       $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
       $linea = new linea_albaran_proveedor();
       $this->lineas = $linea->search_from_proveedor($_POST['codproveedor'], $this->buscar_lineas);
+   }
+   
+   public function stats_last_months()
+   {
+      $albaran = new albaran_proveedor();
+      return $albaran->stats_from_prov($this->proveedor->codproveedor);
+   }
+   
+   public function this_year()
+   {
+      return intval(Date('Y'));
+   }
+   
+   public function previous_year()
+   {
+      return $this->this_year()-1;
    }
 }
 

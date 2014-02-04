@@ -80,10 +80,26 @@ class subcuenta extends fs_model
    {
       $this->clean_cache();
       
-      /// eliminamos todos los PDFs de las subcuentas
+      /// eliminamos todos los PDFs relacionados
       if( file_exists('tmp/libro_mayor') )
       {
          foreach(glob('tmp/libro_mayor/*') as $file)
+         {
+            if( is_file($file) )
+               unlink($file);
+         }
+      }
+      if( file_exists('tmp/libro_diario') )
+      {
+         foreach(glob('tmp/libro_diario/*') as $file)
+         {
+            if( is_file($file) )
+               unlink($file);
+         }
+      }
+      if( file_exists('tmp/inventarios_balances') )
+      {
+         foreach(glob('tmp/inventarios_balances/*') as $file)
          {
             if( is_file($file) )
                unlink($file);
@@ -341,6 +357,9 @@ class subcuenta extends fs_model
       
       if( file_exists('tmp/libro_diario/'.$this->codejercicio.'.pdf') )
          unlink('tmp/libro_diario/'.$this->codejercicio.'.pdf');
+      
+      if( file_exists('tmp/inventarios_balances/'.$this->codejercicio.'.pdf') )
+         unlink('tmp/inventarios_balances/'.$this->codejercicio.'.pdf');
    }
    
    public function all()

@@ -715,7 +715,7 @@ class albaran_cliente extends fs_model
       }
    }
    
-   public function full_test()
+   public function full_test($duplicados = TRUE)
    {
       $status = TRUE;
       
@@ -783,7 +783,7 @@ class albaran_cliente extends fs_model
          $status = FALSE;
       }
       
-      if($status)
+      if($status AND $duplicados)
       {
          /// comprobamos si es un duplicado
          $albaranes = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
@@ -906,11 +906,11 @@ class albaran_cliente extends fs_model
       return $albalist;
    }
    
-   public function all_ptefactura($offset=0)
+   public function all_ptefactura($offset=0, $order='DESC')
    {
       $albalist = array();
       $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " WHERE ptefactura = true ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+              " WHERE ptefactura = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)

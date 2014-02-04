@@ -97,7 +97,13 @@ class contabilidad_factura_cli extends fs_controller
                   $this->generar_asiento();
             }
             else if( isset($_POST['email']) )
+            {
                $this->enviar_email();
+            }
+            else if( isset($_GET['updatedir']) )
+            {
+               $this->actualizar_direccion();
+            }
             
             /// comprobamos la factura
             $this->factura->full_test();
@@ -163,6 +169,30 @@ class contabilidad_factura_cli extends fs_controller
                $this->factura->numero = $new_numero;
                $this->factura->codigo = $new_codigo;
             }
+         }
+      }
+   }
+   
+   private function actualizar_direccion()
+   {
+      foreach($this->cliente->get_direcciones() as $dir)
+      {
+         if($dir->domfacturacion)
+         {
+            $this->factura->apartado = $dir->apartado;
+            $this->factura->ciudad = $dir->ciudad;
+            $this->factura->coddir = $dir->id;
+            $this->factura->codpais = $dir->codpais;
+            $this->factura->codpostal = $dir->codpostal;
+            $this->factura->direccion = $dir->direccion;
+            $this->factura->provincia = $dir->provincia;
+            
+            if( $this->factura->save() )
+               $this->new_message('Dirección actualizada correctamente.');
+            else
+               $this->new_error_msg('Imposible actualizar la dirección de la factura.');
+            
+            break;
          }
       }
    }
@@ -267,7 +297,7 @@ class contabilidad_factura_cli extends fs_controller
                $pdf_doc->add_table_row(
                   array(
                       'campo1' => "<b>Dirección:</b>",
-                      'dato1' => $this->factura->direccion.' - '.$this->factura->ciudad.
+                      'dato1' => $this->factura->direccion.' CP: '.$this->factura->codpostal.' - '.$this->factura->ciudad.
                                  ' ('.$this->factura->provincia.')',
                       'campo2' => "<b>Teléfonos:</b>",
                       'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
