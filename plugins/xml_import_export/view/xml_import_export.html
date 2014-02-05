@@ -1,0 +1,27 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>Exportar:</h1>
+   <form action="{$fsc->url()}" method="post" target="_blank">
+      SELECT * FROM
+      <select name="tabla">
+      {loop="$fsc->tablas()"}
+         <option value="{$value['name']}">{$value['name']}</option>
+      {/loop}
+      </select>
+      WHERE
+      <input type="text" name="where" value="1 = 1" size="80" autocomplete="off"/>;
+      <input class="submit" type="submit" value="exportar"/>
+   </form>
+</div>
+
+<div class="rounded">
+   <h1>Importar:</h1>
+   <form action="{$fsc->url()}" method="post" enctype='multipart/form-data'>
+      <input name='archivo' type='hidden' value='TRUE'/>
+      <input name='farchivo' type='file'/>
+      <input class="submit" type="submit" value="importar"/>
+   </form>
+</div>
+
+{include="footer"}

@@ -31,7 +31,6 @@ class admin_table2xml extends fs_controller
    {
       if( isset($_GET['table']) )
       {
-         $this->template = FALSE; /// desactivamos la renderización del template
          $this->generate_xml($_GET['table']);
       }
       else
@@ -47,6 +46,9 @@ class admin_table2xml extends fs_controller
    
    public function generate_xml($table)
    {
+      /// desactivamos la renderización del template
+      $this->template = FALSE;
+      
       $this->cadena_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!--
     Document   : " . $table . ".xml
@@ -131,7 +133,9 @@ class admin_table2xml extends fs_controller
             }
          }
       }
+      
       header("content-type: application/xml; charset=UTF-8");
+      header('Content-Disposition: attachment; filename="'.$table.'.xml"');
       echo $this->archivo_xml->asXML();
    }
 }

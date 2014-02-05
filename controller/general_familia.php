@@ -125,8 +125,12 @@ class general_familia extends fs_controller
    
    private function download()
    {
+      /// desactivamos el motor de plantillas
       $this->template = FALSE;
+      
       header( "content-type: text/plain; charset=UTF-8" );
+      header('Content-Disposition: attachment; filename="familia_'.$this->familia->codfamilia.'.csv"');
+      
       echo "REF;PVP;DESC;CODBAR;\n";
       $num = 0;
       $articulos = $this->familia->get_articulos($num);

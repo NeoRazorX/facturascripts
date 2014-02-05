@@ -297,6 +297,7 @@ class contabilidad_ejercicio extends fs_controller
       
       /// volcamos el XML
       header("content-type: application/xml; charset=UTF-8");
+      header('Content-Disposition: attachment; filename="ejercicio_'.$this->ejercicio->codejercicio.'.xml"');
       echo $archivo_xml->asXML();
    }
    
