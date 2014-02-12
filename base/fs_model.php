@@ -226,7 +226,7 @@ abstract class fs_model
    
    public function hex2bin($data)
    {
-      $bin = "";
+      $bin = '';
       $i = 0;
       do {
          $bin .= chr(hexdec($data{$i}.$data{($i + 1)}));

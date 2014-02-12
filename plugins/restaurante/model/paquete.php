@@ -70,7 +70,7 @@ class subpaquete extends fs_model
    
    public function __construct($s=FALSE)
    {
-      parent::__construct('subpaquetes');
+      parent::__construct('subpaquetes', 'plugins/restaurante/');
       if($s)
       {
          $this->id = $this->intval($s['id']);
@@ -172,7 +172,7 @@ class paquete extends fs_model
 
    public function __construct($p=FALSE)
    {
-      parent::__construct('paquetes');
+      parent::__construct('paquetes', 'plugins/restaurante/');
       if($p)
       {
          $this->set_articulo( $p['referencia'] );

@@ -118,6 +118,16 @@ class general_articulo extends fs_controller
                $this->new_error_msg("¡Error al guardar la imagen del articulo!");
          }
       }
+      else if( isset($_GET['delete_img']) )
+      {
+         $this->articulo = new articulo();
+         $this->articulo = $this->articulo->get($_GET['ref']);
+         $this->articulo->set_imagen(NULL);
+         if( $this->articulo->save() )
+               $this->new_message("Imagen del articulo eliminada correctamente");
+            else
+               $this->new_error_msg("¡Error al eliminar la imagen del articulo!");
+      }
       else if( isset($_POST['referencia']) )
       {
          $this->articulo = new articulo();

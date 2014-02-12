@@ -60,7 +60,7 @@ class general_paquetes extends fs_controller
    private function new_search()
    {
       /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_paquetes';
+      $this->template = 'ajax_paquetes';
       
       $art = new articulo();
       $this->results = $art->search($this->query);

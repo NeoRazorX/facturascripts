@@ -159,7 +159,11 @@
    <h1>Imagen</h1>
    Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
    {if condition="$fsc->articulo->imagen_url()"}
-      <center><img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/></center>
+      <center>
+         <img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/>
+         <br/>
+         <a class="link" href="{$fsc->url()}&delete_img=TRUE">eliminar imagen</a>
+      </center>
    {/if}
    <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
       <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>

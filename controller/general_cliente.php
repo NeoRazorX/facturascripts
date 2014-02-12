@@ -170,14 +170,9 @@ class general_cliente extends fs_controller
       return $albaran->stats_from_cli($this->cliente->codcliente);
    }
    
-   public function this_year()
+   public function this_year($previous = 0)
    {
-      return intval(Date('Y'));
-   }
-   
-   public function previous_year()
-   {
-      return $this->this_year()-1;
+      return intval(Date('Y')) - $previous;
    }
 }
 

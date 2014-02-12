@@ -82,18 +82,39 @@
    function drawChart()
    {
       // Create the data table.
-      var data2 = new google.visualization.DataTable();
-      data2.addColumn('string', 'mes');
-      data2.addColumn('number', '{$fsc->previous_year()}');
-      data2.addColumn('number', '{$fsc->this_year()}');
-      data2.addRows([
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'mes');
+      data.addColumn('number', '{$fsc->this_year(4)}');
+      data.addColumn('number', '{$fsc->this_year(3)}');
+      data.addColumn('number', '{$fsc->this_year(2)}');
+      data.addColumn('number', '{$fsc->this_year(1)}');
+      data.addColumn('number', '{$fsc->this_year()}');
+      data.addRows([
       {loop="$fsc->stats_last_months()"}
-         ['{$value['month']}', {$value[$fsc->previous_year()]}, {$value[$fsc->this_year()]}],
+         ['{$value['month']}', {$value[$fsc->this_year(4)]}, {$value[$fsc->this_year(3)]}, {$value[$fsc->this_year(2)]}, {$value[$fsc->this_year(1)]}, {$value[$fsc->this_year()]}],
       {/loop}
       ]);
       
       // Instantiate and draw our chart, passing in some options.
-      var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_albaranes_month'));
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_albaranes_month'));
+      chart.draw(data);
+      
+      // Create the data table.
+      var data2 = new google.visualization.DataTable();
+      data2.addColumn('string', 'mes');
+      data2.addColumn('number', '{$fsc->this_year(4)}');
+      data2.addColumn('number', '{$fsc->this_year(3)}');
+      data2.addColumn('number', '{$fsc->this_year(2)}');
+      data2.addColumn('number', '{$fsc->this_year(1)}');
+      data2.addColumn('number', '{$fsc->this_year()}');
+      data2.addRows([
+      {loop="$fsc->stats_last_months()"}
+         ['{$value['month']}', {$value[$fsc->this_year(4)]}, {$value[$fsc->this_year(3)]}, {$value[$fsc->this_year(2)]}, {$value[$fsc->this_year(1)]}, {$value[$fsc->this_year()]}],
+      {/loop}
+      ]);
+      
+      // Instantiate and draw our chart, passing in some options.
+      var chart2 = new google.visualization.AreaChart(document.getElementById('chart_albaranes_month2'));
       chart2.draw(data2);
    }
 </script>
@@ -432,7 +453,9 @@
          </tr>
       </table>
    {else}
-      <div id="chart_albaranes_month" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
+      <div id="chart_albaranes_month" style="width: 95%; margin-left: auto; margin-right: auto; height: 400px;"></div>
+      <br/>
+      <div id="chart_albaranes_month2" style="width: 95%; margin-left: auto; margin-right: auto; height: 400px;"></div>
    {/if}
 </div>
 {else}

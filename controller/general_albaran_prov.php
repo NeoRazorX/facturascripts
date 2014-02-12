@@ -95,6 +95,8 @@ class general_albaran_prov extends fs_controller
          if( isset($_POST['actualizar_precios']) )
             $this->actualizar_precios();
          
+         $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbpro='.$this->albaran->idalbaran, TRUE);
+         
          if( $this->albaran->ptefactura )
          {
             $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());

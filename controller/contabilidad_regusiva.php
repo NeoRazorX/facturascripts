@@ -87,17 +87,17 @@ class contabilidad_regusiva extends fs_controller
             break;
       }
       
-      if( $this->factura_cli->huecos() OR $this->factura_pro->huecos() )
-      {
-         $this->new_error_msg('Tienes huecos en la facturación y por tanto no puedes regularizar el iva.');
-      }
-      else if( isset($_POST['idregiva']) )
+      if( isset($_POST['idregiva']) )
       {
          $this->full_regularizacion();
       }
       else if( isset($_POST['proceso']) )
       {
-         if($_POST['proceso'] == 'guardar')
+         if( $this->factura_cli->huecos() OR $this->factura_pro->huecos() )
+         {
+            $this->new_error_msg('Tienes huecos en la facturación y por tanto no puedes regularizar el iva.');
+         }
+         else if($_POST['proceso'] == 'guardar')
             $this->guardar_regiva();
          else
             $this->completar_regiva();

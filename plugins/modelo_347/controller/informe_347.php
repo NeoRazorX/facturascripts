@@ -25,6 +25,7 @@ require_model('proveedor.php');
 
 class informe_347 extends fs_controller
 {
+   public $cantidad;
    public $datos_cli;
    public $datos_pro;
    public $ejercicio;
@@ -39,6 +40,13 @@ class informe_347 extends fs_controller
    {
       $this->ejercicio = new ejercicio();
       
+      if( isset($_POST['cantidad']) )
+         $this->cantidad = floatval($_POST['cantidad']);
+      else if( isset($_GET['cantidad']) )
+         $this->cantidad = floatval($_GET['cantidad']);
+      else
+         $this->cantidad = 3005.06;
+      
       if( isset($_POST['ejercicio']) )
          $this->sejercicio = $_POST['ejercicio'];
       else if( isset($_GET['eje']) )
@@ -52,7 +60,7 @@ class informe_347 extends fs_controller
       if( isset($_GET['eje']) )
          $this->excel();
       else
-         $this->buttons[] = new fs_button('b_download', 'descargar', $this->url().'&eje='.$this->sejercicio);
+         $this->buttons[] = new fs_button('b_download', 'descargar', $this->url().'&eje='.$this->sejercicio.'&cantidad='.$this->cantidad);
    }
    
    private function informe_clientes()
@@ -93,7 +101,7 @@ class informe_347 extends fs_controller
                $fila['codcliente'] = $d['codcliente'];
             else if($d['codcliente'] != $fila['codcliente'])
             {
-               if($fila['total'] > 3005.06)
+               if($fila['total'] > $this->cantidad)
                   $informe['filas'][] = $fila;
                
                $fila['codcliente'] = $d['codcliente'];
@@ -115,7 +123,7 @@ class informe_347 extends fs_controller
             
             $fila['total'] = $fila['t1'] + $fila['t2'] + $fila['t3'] + $fila['t4'];
          }
-         if($fila['total'] > 3005.06)
+         if($fila['total'] > $this->cantidad)
             $informe['filas'][] = $fila;
          
          $cliente = new cliente();
@@ -175,7 +183,7 @@ class informe_347 extends fs_controller
                $fila['codproveedor'] = $d['codproveedor'];
             else if($d['codproveedor'] != $fila['codproveedor'])
             {
-               if($fila['total'] > 3005.06)
+               if($fila['total'] > $this->cantidad)
                   $informe['filas'][] = $fila;
                
                $fila['codproveedor'] = $d['codproveedor'];
@@ -197,7 +205,7 @@ class informe_347 extends fs_controller
             
             $fila['total'] = $fila['t1'] + $fila['t2'] + $fila['t3'] + $fila['t4'];
          }
-         if($fila['total'] > 3005.06)
+         if($fila['total'] > $this->cantidad)
             $informe['filas'][] = $fila;
          
          $proveedor = new proveedor();
@@ -231,7 +239,7 @@ class informe_347 extends fs_controller
       
       echo "<table>
          <tr>
-            <td>Clientes que han comprado mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
+            <td>Clientes que han comprado mas de ".$this->cantidad." euros en el ejercicio ".$this->sejercicio.".</td>
          </tr>
          <tr>
             <td>Cliente</td>

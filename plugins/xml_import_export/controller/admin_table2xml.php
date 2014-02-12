@@ -24,7 +24,7 @@ class admin_table2xml extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_table2xml', 'Tabla a XML', 'admin', TRUE, FALSE);
+      parent::__construct('admin_table2xml', 'Estructura a XML', 'admin', TRUE, FALSE);
    }
    
    protected function process()
@@ -35,7 +35,7 @@ class admin_table2xml extends fs_controller
       }
       else
       {
-         $this->ppage = $this->page->get('admin_info');
+         $this->ppage = $this->page->get('xml_import_export');
       }
    }
    

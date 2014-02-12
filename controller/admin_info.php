@@ -28,7 +28,6 @@ class admin_info extends fs_controller
    
    protected function process()
    {
-      $this->buttons[] = new fs_button('b_tablas', 'Tablas', 'index.php?page=admin_table2xml');
       $this->buttons[] = new fs_button_img('b_clean_cache', 'limpiar la cache', 'trash.png',
               $this->url()."&clean_cache=TRUE", TRUE);
       

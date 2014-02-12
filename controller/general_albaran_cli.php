@@ -95,6 +95,7 @@ class general_albaran_cli extends fs_controller
                $this->generar_factura();
          }
          
+         $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
          $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png', $this->url()."&imprimir=TRUE", FALSE, TRUE);
          
          if( $this->albaran->ptefactura )

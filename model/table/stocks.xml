@@ -84,10 +84,10 @@
       ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_stocks_almacenes2</nombre>
+      <nombre>ca_stocks_almacenes3</nombre>
       <consulta>FOREIGN KEY (codalmacen)
       REFERENCES almacenes (codalmacen)
-      ON DELETE RESTRICT ON UPDATE CASCADE </consulta>
+      ON DELETE CASCADE ON UPDATE CASCADE </consulta>
    </restriccion>
    <restriccion>
       <nombre>uniq_stocks_almacen_referencia</nombre>

@@ -1,0 +1,19 @@
+{include="header"}
+
+<div class="rounded">
+   <h1>
+      Selecciona una tabla para obtener su estructura en XML (no los datos):
+   </h1>
+   <ul class="horizontal">
+   {loop="$fsc->all()"}
+      <li><a class="link" target="_blank" href='{$fsc->page->url()}&amp;table={$value.name}'>{$value.name}</a></li>
+   {/loop}
+   </ul>
+</div>
+
+<div class="advice">
+   Si lo que deseas es extraer los datos de una tabla, entonces puedes usar el plugin
+   <a class="link" href="index.php?page=xml_import_export">XML_import_export</a>.
+</div>
+
+{include="footer"}

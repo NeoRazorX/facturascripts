@@ -1128,7 +1128,9 @@ class albaran_cliente extends fs_model
    public function stats_from_cli($codcliente)
    {
       $stats = array();
-      $years = array( intval(Date('Y')), intval(Date('Y'))-1 );
+      $years = array();
+      for($i=0; $i<5; $i++)
+         $years[] = intval(Date('Y')) - $i;
       
       foreach($years as $year)
       {

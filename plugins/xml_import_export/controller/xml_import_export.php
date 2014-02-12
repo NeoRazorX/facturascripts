@@ -21,7 +21,7 @@ class xml_import_export extends fs_controller
 {
    public function __construct()
    {
-      parent::__construct('xml_import_export', 'XML import/export', 'admin', TRUE, TRUE);
+      parent::__construct('xml_import_export', 'Importar/exportar XML', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -117,6 +117,7 @@ class xml_import_export extends fs_controller
             if($xml->fila)
             {
                $total = 0;
+               $fail = 0;
                
                foreach($xml->fila as $f)
                {
@@ -126,14 +127,17 @@ class xml_import_export extends fs_controller
                      if( in_array($f->$col, array('NULL', 'FALSE', 'TRUE')) )
                         $filas[] = $f->$col;
                      else
-                        $filas[] = "'".base64_decode($f->$col)."'";
+                        $filas[] = $this->empresa->var2str( base64_decode($f->$col) );
                   }
                   
                   if( $this->db->exec("INSERT INTO ".$tabla." (".join(',', $columnas).") VALUES (".join(',',$filas).");") )
                      $total++;
+                  else
+                     $fail++;
                }
                
-               $this->new_message($total.' filas insertadas.');
+               $this->new_message($total.' filas insertadas. '.$fail.' errores.');
+               $this->cache->clean();
             }
          }
       }

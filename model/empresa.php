@@ -101,8 +101,8 @@ class empresa extends fs_model
       return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
          codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,
          ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES
-         (NULL,FALSE,NULL,NULL,NULL,NULL,NULL,NULL,'http://code.google.com/p/facturascripts/',NULL,NULL,
-         NULL,NULL,NULL,NULL,NULL,NULL,'','',NULL,'','Empresa S.L.','','');";
+         (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','http://code.google.com/p/facturascripts/',NULL,NULL,
+         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa S.L.','','');";
    }
    
    public function url()

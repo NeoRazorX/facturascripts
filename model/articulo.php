@@ -348,8 +348,17 @@ class articulo extends fs_model
    
    public function set_imagen($img)
    {
-      $this->imagen = $img;
-      $this->has_imagen = TRUE;
+      if( is_null($img) )
+      {
+         $this->imagen = NULL;
+         $this->has_imagen = FALSE;
+         $this->clean_image_cache();
+      }
+      else
+      {
+         $this->imagen = $img;
+         $this->has_imagen = TRUE;
+      }
    }
    
    public function set_pvp($p)
@@ -604,7 +613,7 @@ class articulo extends fs_model
       $encontrado = FALSE;
       $actualizar = FALSE;
       
-      if( strlen($tag) > 0 )
+      if( strlen($tag) > 1 )
       {
          /// obtenemos los datos de memcache
          $this->get_search_tags();

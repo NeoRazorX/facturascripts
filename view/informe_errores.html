@@ -48,7 +48,7 @@
                else if(m[1] == show_page)
                {
                   $("#informe_errores").html(datos);
-                  timeout = setTimeout("load_errors(show_page);", 1500);
+                  timeout = setTimeout("load_errors(show_page);", 500);
                }
             }
          });
@@ -71,7 +71,10 @@
       <div class="advice">Comprobación finalizada.</div>
    {else}
       <!--{$fsc->informe['show_page']}-->
-      <div class="advice">Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...</div>
+      <div class="advice">
+         Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...
+         {$fsc->duration()}
+      </div>
    {/if}
    
    <div class="rounded">

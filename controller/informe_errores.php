@@ -36,37 +36,100 @@ class informe_errores extends fs_controller
    
    protected function process()
    {
-      if( $this->cache->error() )
-         $this->new_error_msg( 'Memcache está deshabilitado y es necesario para continuar. '.$this->cache->error_msg() );
-      else
-         $this->process2();
-   }
-   
-   private function process2()
-   {
       $this->ajax = FALSE;
+      $this->informe = array(
+          'model' => 'asiento',
+          'duplicados' => isset($_POST['duplicados']),
+          'offset' => 0,
+          'pages' => 0,
+          'show_page' => 0,
+          'started' => FALSE,
+          'all' => FALSE
+      );
+      $this->errores = array();
       
-      $this->informe = $this->cache->get('informe_errores');
-      if( !$this->informe OR isset($_GET['cancelar']) OR isset($_POST['modelo']) )
+      if( isset($_GET['cancelar']) )
       {
-         $this->cache->delete('informe_errores');
-         
-         /// borramos todas las páginas de errores
-         for($i=0; $this->cache->get('informe_errores_'.$i); $i++)
-            $this->cache->delete('informe_errores_'.$i);
-         
-         $this->informe = array(
-             'model' => 'asiento',
-             'duplicados' => isset($_POST['duplicados']),
-             'offset' => 0,
-             'pages' => 0,
-             'show_page' => 0,
-             'started' => FALSE,
-             'all' => FALSE
-         );
-         
-         if( isset($_POST['modelo']) )
+         unlink('tmp/informe_errores.txt');
+      }
+      else if( file_exists('tmp/informe_errores.txt') ) /// continua examinando
+      {
+         $file = fopen('tmp/informe_errores.txt', 'r+');
+         if($file)
          {
+            /*
+             * leemos el archivo tmp/informe_errores.txt donde guardamos los datos
+             * y extraemos la configuración y los errores de la "página" seleccionada
+             */
+            $linea = explode( ';', fgets($file) );
+            if( count($linea) == 7 )
+            {
+               $this->informe['model'] = $linea[0];
+               $this->informe['duplicados'] = ($linea[1]==1);
+               $this->informe['offset'] = intval($linea[2]);
+               $this->informe['pages'] = intval($linea[3]);
+               $this->informe['show_page'] = intval($linea[4]);
+               $this->informe['started'] = ($linea[5]==1);
+               $this->informe['all'] = ($linea[6]==1);
+            }
+            
+            if( isset($_POST['ajax']) )
+            {
+               $this->informe['show_page'] = intval($_POST['show_page']);
+               $this->ajax = TRUE;
+               
+               /// leemos los errores de la "página" seleccionada
+               $numlinea = 0;
+               while( !feof($file) )
+               {
+                  $linea = explode( ';', fgets($file) );
+                  if( count($linea) == 6 )
+                  {
+                     if($numlinea > $this->informe['show_page']*FS_ITEM_LIMIT AND $numlinea <= (1+$this->informe['show_page'])*FS_ITEM_LIMIT)
+                     {
+                        $this->errores[] = array(
+                            'model' => $linea[0],
+                            'ejercicio' => $linea[1],
+                            'id' => $linea[2],
+                            'url' => $linea[3],
+                            'fecha' => $linea[4],
+                            'fix' => ($linea[5]==1)
+                        );
+                     }
+                     
+                     $numlinea++;
+                  }
+               }
+               
+               $new_results = $this->test_models();
+               if($new_results)
+               {
+                  foreach($new_results as $nr)
+                  {
+                     fwrite($file, join(';', $nr)."\n" );
+                     $numlinea++;
+                  }
+               }
+               
+               $this->informe['pages'] = intval($numlinea/FS_ITEM_LIMIT);
+               
+               /// guardamos la configuración
+               rewind($file);
+               fwrite($file, join(';', $this->informe)."\n------\n" );
+            }
+            else
+               $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+            
+            fclose($file);
+         }
+      }
+      else if( isset($_POST['modelo']) ) /// empieza a examinar
+      {
+         $file = fopen('tmp/informe_errores.txt', 'w');
+         if($file)
+         {
+            $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+            
             if($_POST['modelo'] == 'todo')
             {
                $this->informe['model'] = 'asiento';
@@ -78,214 +141,186 @@ class informe_errores extends fs_controller
                $this->informe['model'] = $_POST['modelo'];
                $this->informe['started'] = TRUE;
             }
+            
+            /// guardamos esta configuración
+            fwrite($file, join(';', $this->informe)."\n------\n" );
+            fclose($file);
          }
+      }
+   }
+   
+   private function test_models()
+   {
+      $mpp = 100;
+      $last_errores = array();
+      
+      switch( $this->informe['model'] )
+      {
+         default:
+            $asiento = new asiento();
+            $asientos = $asiento->all($this->informe['offset'], $mpp);
+            if($asientos)
+            {
+               foreach($asientos as $asi)
+               {
+                  if( !$asi->full_test($this->informe['duplicados']) )
+                  {
+                     $last_errores[] = array(
+                         'model' => $this->informe['model'],
+                         'ejercicio' => $asi->codejercicio,
+                         'id' => $asi->numero,
+                         'url' => $asi->url(),
+                         'fecha' => $asi->fecha,
+                         'fix' => $asi->fix()
+                     );
+                  }
+               }
+               $this->informe['offset'] += $mpp;
+            }
+            else if($this->informe['all'])
+            {
+               $this->informe['model'] = 'factura cliente';
+               $this->informe['offset'] = 0;
+            }
+            else
+            {
+               $this->informe['model'] = 'fin';
+               $this->informe['offset'] = 0;
+            }
+            break;
+         
+         case 'factura cliente':
+            $factura = new factura_cliente();
+            $facturas = $factura->all($this->informe['offset'], $mpp);
+            if($facturas)
+            {
+               foreach($facturas as $fac)
+               {
+                  if( !$fac->full_test($this->informe['duplicados']) )
+                  {
+                     $last_errores[] = array(
+                         'model' => $this->informe['model'],
+                         'ejercicio' => $fac->codejercicio,
+                         'id' => $fac->codigo,
+                         'url' => $fac->url(),
+                         'fecha' => $fac->fecha,
+                         'fix' => FALSE
+                     );
+                  }
+               }
+               $this->informe['offset'] += $mpp;
+            }
+            else if($this->informe['all'])
+            {
+               $this->informe['model'] = 'factura proveedor';
+               $this->informe['offset'] = 0;
+            }
+            else
+            {
+               $this->informe['model'] = 'fin';
+               $this->informe['offset'] = 0;
+            }
+            break;
+         
+         case 'factura proveedor':
+            $factura = new factura_proveedor();
+            $facturas = $factura->all($this->informe['offset'], $mpp);
+            if($facturas)
+            {
+               foreach($facturas as $fac)
+               {
+                  if( !$fac->full_test($this->informe['duplicados']) )
+                  {
+                     $last_errores[] = array(
+                         'model' => $this->informe['model'],
+                         'ejercicio' => $fac->codejercicio,
+                         'id' => $fac->codigo,
+                         'url' => $fac->url(),
+                         'fecha' => $fac->fecha,
+                         'fix' => FALSE
+                     );
+                  }
+               }
+               $this->informe['offset'] += $mpp;
+            }
+            else if($this->informe['all'])
+            {
+               $this->informe['model'] = 'albaran cliente';
+               $this->informe['offset'] = 0;
+            }
+            else
+            {
+               $this->informe['model'] = 'fin';
+               $this->informe['offset'] = 0;
+            }
+            break;
+         
+         case 'albaran cliente':
+            $albaran = new albaran_cliente();
+            $albaranes = $albaran->all($this->informe['offset'], $mpp);
+            if($albaranes)
+            {
+               foreach($albaranes as $alb)
+               {
+                  if( !$alb->full_test($this->informe['duplicados']) )
+                  {
+                     $last_errores[] = array(
+                         'model' => $this->informe['model'],
+                         'ejercicio' => $alb->codejercicio,
+                         'id' => $alb->codigo,
+                         'url' => $alb->url(),
+                         'fecha' => $alb->fecha,
+                         'fix' => FALSE
+                     );
+                  }
+               }
+               $this->informe['offset'] += $mpp;
+            }
+            else if($this->informe['all'])
+            {
+               $this->informe['model'] = 'albaran proveedor';
+               $this->informe['offset'] = 0;
+            }
+            else
+            {
+               $this->informe['model'] = 'fin';
+               $this->informe['offset'] = 0;
+            }
+            break;
+         
+         case 'albaran proveedor':
+            $albaran = new albaran_proveedor();
+            $albaranes = $albaran->all($this->informe['offset'], $mpp);
+            if($albaranes)
+            {
+               foreach($albaranes as $alb)
+               {
+                  if( !$alb->full_test($this->informe['duplicados']) )
+                  {
+                     $last_errores[] = array(
+                         'model' => $this->informe['model'],
+                         'ejercicio' => $alb->codejercicio,
+                         'id' => $alb->codigo,
+                         'url' => $alb->url(),
+                         'fecha' => $alb->fecha,
+                         'fix' => FALSE
+                     );
+                  }
+               }
+               $this->informe['offset'] += $mpp;
+            }
+            else
+            {
+               $this->informe['model'] = 'fin';
+               $this->informe['offset'] = 0;
+            }
+            break;
+         
+         case 'fin':
+            break;
       }
       
-      if( $this->informe['started'] )
-      {
-         $mpp = 75;
-         
-         $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
-         
-         if( isset($_GET['show_page']) )
-            $this->informe['show_page'] = intval($_GET['show_page']);
-         
-         if( isset($_POST['ajax']) )
-         {
-            $this->ajax = TRUE;
-            $this->informe['show_page'] = intval($_POST['show_page']);
-            
-            $last_errores = $this->get_errores_page( $this->informe['pages'] );
-            switch( $this->informe['model'] )
-            {
-               default:
-                  $asiento = new asiento();
-                  $asientos = $asiento->all($this->informe['offset'], $mpp);
-                  if($asientos)
-                  {
-                     foreach($asientos as $asi)
-                     {
-                        if( !$asi->full_test($this->informe['duplicados']) )
-                        {
-                           $last_errores[] = array(
-                               'model' => $this->informe['model'],
-                               'ejercicio' => $asi->codejercicio,
-                               'id' => $asi->numero,
-                               'url' => $asi->url(),
-                               'fecha' => $asi->fecha,
-                               'fix' => $asi->fix()
-                           );
-                        }
-                     }
-                     $this->informe['offset'] += $mpp;
-                  }
-                  else if($this->informe['all'])
-                  {
-                     $this->informe['model'] = 'factura cliente';
-                     $this->informe['offset'] = 0;
-                  }
-                  else
-                  {
-                     $this->informe['model'] = 'fin';
-                     $this->informe['offset'] = 0;
-                  }
-                  break;
-                  
-               case 'factura cliente':
-                  $factura = new factura_cliente();
-                  $facturas = $factura->all($this->informe['offset'], $mpp);
-                  if($facturas)
-                  {
-                     foreach($facturas as $fac)
-                     {
-                        if( !$fac->full_test($this->informe['duplicados']) )
-                        {
-                           $last_errores[] = array(
-                               'model' => $this->informe['model'],
-                               'ejercicio' => $fac->codejercicio,
-                               'id' => $fac->codigo,
-                               'url' => $fac->url(),
-                               'fecha' => $fac->fecha,
-                               'fix' => FALSE
-                           );
-                        }
-                     }
-                     $this->informe['offset'] += $mpp;
-                  }
-                  else if($this->informe['all'])
-                  {
-                     $this->informe['model'] = 'factura proveedor';
-                     $this->informe['offset'] = 0;
-                  }
-                  else
-                  {
-                     $this->informe['model'] = 'fin';
-                     $this->informe['offset'] = 0;
-                  }
-                  break;
-                  
-               case 'factura proveedor':
-                  $factura = new factura_proveedor();
-                  $facturas = $factura->all($this->informe['offset'], $mpp);
-                  if($facturas)
-                  {
-                     foreach($facturas as $fac)
-                     {
-                        if( !$fac->full_test($this->informe['duplicados']) )
-                        {
-                           $last_errores[] = array(
-                               'model' => $this->informe['model'],
-                               'ejercicio' => $fac->codejercicio,
-                               'id' => $fac->codigo,
-                               'url' => $fac->url(),
-                               'fecha' => $fac->fecha,
-                               'fix' => FALSE
-                           );
-                        }
-                     }
-                     $this->informe['offset'] += $mpp;
-                  }
-                  else if($this->informe['all'])
-                  {
-                     $this->informe['model'] = 'albaran cliente';
-                     $this->informe['offset'] = 0;
-                  }
-                  else
-                  {
-                     $this->informe['model'] = 'fin';
-                     $this->informe['offset'] = 0;
-                  }
-                  break;
-
-               case 'albaran cliente':
-                  $albaran = new albaran_cliente();
-                  $albaranes = $albaran->all($this->informe['offset'], $mpp);
-                  if($albaranes)
-                  {
-                     foreach($albaranes as $alb)
-                     {
-                        if( !$alb->full_test($this->informe['duplicados']) )
-                        {
-                           $last_errores[] = array(
-                               'model' => $this->informe['model'],
-                               'ejercicio' => $alb->codejercicio,
-                               'id' => $alb->codigo,
-                               'url' => $alb->url(),
-                               'fecha' => $alb->fecha,
-                               'fix' => FALSE
-                           );
-                        }
-                     }
-                     $this->informe['offset'] += $mpp;
-                  }
-                  else if($this->informe['all'])
-                  {
-                     $this->informe['model'] = 'albaran proveedor';
-                     $this->informe['offset'] = 0;
-                  }
-                  else
-                  {
-                     $this->informe['model'] = 'fin';
-                     $this->informe['offset'] = 0;
-                  }
-                  break;
-               
-               case 'albaran proveedor':
-                  $albaran = new albaran_proveedor();
-                  $albaranes = $albaran->all($this->informe['offset'], $mpp);
-                  if($albaranes)
-                  {
-                     foreach($albaranes as $alb)
-                     {
-                        if( !$alb->full_test($this->informe['duplicados']) )
-                        {
-                           $last_errores[] = array(
-                               'model' => $this->informe['model'],
-                               'ejercicio' => $alb->codejercicio,
-                               'id' => $alb->codigo,
-                               'url' => $alb->url(),
-                               'fecha' => $alb->fecha,
-                               'fix' => FALSE
-                           );
-                        }
-                     }
-                     $this->informe['offset'] += $mpp;
-                  }
-                  else
-                  {
-                     $this->informe['model'] = 'fin';
-                     $this->informe['offset'] = 0;
-                  }
-                  break;
-
-               case 'fin':
-                  break;
-            }
-            
-            /// si ya no existe informe_errores, entonces no guardamos
-            if( $this->cache->get('informe_errores') )
-            {
-               $this->set_errores_page($this->informe['pages'], $last_errores);
-               if( count($last_errores) > FS_ITEM_LIMIT )
-                  $this->informe['pages']++;
-               $this->cache->set('informe_errores', $this->informe, 86400);
-            }
-            
-            $this->errores = $this->get_errores_page( $this->informe['show_page'] );
-         }
-         else
-            $this->cache->set('informe_errores', $this->informe, 86400);
-      }
-   }
-   
-   private function get_errores_page($page)
-   {
-      return $this->cache->get_array('informe_errores_'.$page);
-   }
-   
-   private function set_errores_page($page, $value)
-   {
-      $this->cache->set('informe_errores_'.$page, $value, 86400);
+      return $last_errores;
    }
    
    public function all_pages()

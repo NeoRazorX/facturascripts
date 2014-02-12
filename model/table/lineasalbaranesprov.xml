@@ -97,12 +97,6 @@
       <nulo>NO</nulo>
    </columna>
    <restriccion>
-      <nombre>ca_lineasalbaranesprov_articulos2</nombre>
-      <consulta>FOREIGN KEY (referencia)
-      REFERENCES articulos (referencia)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
       <nombre>ca_lineasalbaranesprov_albaranesprov2</nombre>
       <consulta>FOREIGN KEY (idalbaran)
       REFERENCES albaranesprov (idalbaran)

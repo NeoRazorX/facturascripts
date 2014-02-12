@@ -3,7 +3,9 @@
 <div class="rounded">
    <h1>
       <form name="f_347" action="{$fsc->url()}" method="post">
-         Clientes que han comprado más de 3 005.06 {$fsc->simbolo_divisa()} en el año
+         Clientes que han comprado más de
+         <input type="text" name="cantidad" value="{$fsc->cantidad}" size="8" autocomplete="off"/>
+         {$fsc->simbolo_divisa()} en el año
          <select name="ejercicio" onchange="document.f_347.submit()">
          {loop="$fsc->ejercicio->all()"}
             {if condition="$fsc->sejercicio==$value->year()"}

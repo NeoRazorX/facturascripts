@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('agente.php');
 require_model('albaran_cliente.php');
 require_model('albaran_proveedor.php');
 require_model('almacen.php');
@@ -25,104 +24,93 @@ require_model('articulo.php');
 require_model('cliente.php');
 require_model('divisa.php');
 require_model('ejercicio.php');
-require_model('familia.php');
 require_model('forma_pago.php');
 require_model('impuesto.php');
 require_model('proveedor.php');
 require_model('serie.php');
 
-class general_nuevo_albaran extends fs_controller
+class general_copy_albaran extends fs_controller
 {
-   public $agente;
+   public $albaran;
    public $almacen;
-   public $articulo;
    public $cliente;
    public $divisa;
    public $ejercicio;
-   public $familia;
    public $forma_pago;
-   public $impuesto;
    public $proveedor;
-   public $results;
    public $serie;
+   public $tipo_albaran;
    
    public function __construct()
    {
-      parent::__construct('general_nuevo_albaran', 'nuevo albarán', 'general', FALSE, FALSE);
+      parent::__construct('general_copy_albaran', 'Copiar albarán', 'general', FALSE, FALSE);
    }
    
    protected function process()
    {
-      $this->articulo = new articulo();
-      $this->familia = new familia();
-      $this->impuesto = new impuesto();
-      $this->results = array();
+      $albaran_cliente = new albaran_cliente();
+      $albaran_proveedor = new albaran_proveedor();
+      $this->almacen = new almacen();
+      $this->cliente = new cliente();
+      $this->divisa = new divisa();
+      $this->ejercicio = new ejercicio();
+      $this->forma_pago = new forma_pago();
+      $this->proveedor = new proveedor();
+      $this->serie = new serie();
       
-      if( isset($_GET['new_articulo']) )
-         $this->new_articulo();
-      else if( $this->query != '' )
-         $this->new_search();
-      else if( isset($_POST['referencia4precios']) )
-         $this->get_precios_articulo();
+      if( isset($_GET['idalbcli']) )
+      {
+         $this->albaran = $albaran_cliente->get($_GET['idalbcli']);
+         $this->tipo_albaran = 'cliente';
+      }
+      else if( isset($_GET['idalbpro']) )
+      {
+         $this->albaran = $albaran_proveedor->get($_GET['idalbpro']);
+         $this->tipo_albaran = 'proveedor';
+      }
       else
       {
-         if( isset($_POST['codagente']) )
-         {
-            $agente = new agente();
-            $this->agente = $agente->get($_POST['codagente']);
-         }
+         $this->albaran = FALSE;
+         $this->tipo_albaran = 'cliente';
+         $this->new_error_msg('Ningún albaran seleccionado.');
+      }
+      
+      if($this->albaran)
+      {
+         if($this->tipo_albaran == 'cliente')
+            $this->ppage = $this->page->get('general_albaran_cli');
          else
-            $this->agente = $this->user->get_agente();
+            $this->ppage = $this->page->get('general_albaran_prov');
          
-         $this->almacen = new almacen();
-         $this->cliente = new cliente();
-         $this->divisa = new divisa();
-         $this->ejercicio = new ejercicio();
-         $this->forma_pago = new forma_pago();
-         $this->proveedor = new proveedor();
-         $this->serie = new serie();
-         
-         if( !$this->agente )
+         if($this->ppage)
          {
-            $this->new_error_msg('No tienes un <a href="'.$this->user->url().'">agente asociado</a>
-               a tu usuario, y por tanto no puedes hacer tickets.');
+            $this->ppage->title = $this->albaran->codigo;
+            $this->ppage->extra_url = '&id='.$this->albaran->idalbaran;
          }
-         else if( isset($_POST['tipoalbaran']) )
+         
+         if( isset($_POST['tipo']) )
          {
-            if($_POST['tipoalbaran'] == 'cliente')
+            if($_POST['tipo'] == 'cliente')
                $this->nuevo_albaran_cliente();
-            else if($_POST['tipoalbaran'] == 'proveedor')
+            else
                $this->nuevo_albaran_proveedor();
          }
       }
    }
    
-   private function new_articulo()
+   public function url()
    {
-      $art0 = new articulo();
-      $art0->referencia = $_POST['referencia'];
-      $art0->descripcion = $_POST['referencia'];
-      $art0->codfamilia = $_POST['codfamilia'];
-      $art0->set_impuesto($_POST['codimpuesto']);
-      
-      if( $art0->save() )
-         $this->results[] = $art0;
-      
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_nuevo_albaran';
-   }
-   
-   private function new_search()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_nuevo_albaran';
-      
-      $codfamilia = '';
-      if( isset($_POST['codfamilia']) )
-         $codfamilia = $_POST['codfamilia'];
-      
-      $con_stock = isset($_POST['con_stock']);
-      $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
+      if( !isset($this->albaran) )
+         return parent::url();
+      else if($this->albaran)
+      {
+         if($this->tipo_albaran == 'cliente')
+            return $this->page->url().'&idalbcli='.$this->albaran->idalbaran;
+         else
+            return $this->page->url().'&idalbpro='.$this->albaran->idalbaran;
+      }
+      else
+         return $this->page->url();
    }
    
    private function nuevo_albaran_cliente()
@@ -203,9 +191,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $this->agente->codagente;
-         if( isset($_POST['numero2']) )
-            $albaran->numero2 = $_POST['numero2'];
+         $albaran->codagente = $this->user->codagente;
          $albaran->observaciones = $_POST['observaciones'];
          
          foreach($cliente->get_direcciones() as $d)
@@ -230,68 +216,63 @@ class general_nuevo_albaran extends fs_controller
             $this->new_error_msg("No hay ninguna dirección asociada al cliente.");
          else if( $albaran->save() )
          {
-            $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            $articulo = new articulo();
+            $impuesto = new impuesto();
+            
+            foreach($this->albaran->get_lineas() as $lin)
             {
-               if( isset($_POST['referencia_'.$i]) )
+               $art0 = $articulo->get($lin->referencia);
+               if($art0)
                {
-                  $articulo = $this->articulo->get($_POST['referencia_'.$i]);
-                  if($articulo)
+                  $linea = new linea_albaran_cliente();
+                  $linea->idalbaran = $albaran->idalbaran;
+                  $linea->referencia = $lin->referencia;
+                  $linea->descripcion = $lin->descripcion;
+                  
+                  if( $serie->siniva )
                   {
-                     $linea = new linea_albaran_cliente();
-                     $linea->idalbaran = $albaran->idalbaran;
-                     $linea->referencia = $articulo->referencia;
-                     
-                     if( isset($_POST['desc_'.$i]) )
-                        $linea->descripcion = $_POST['desc_'.$i];
-                     else
-                        $linea->descripcion = $articulo->descripcion;
-                     
-                     if( $serie->siniva )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
-                     {
-                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
-                        if($imp0)
-                        {
-                           $linea->codimpuesto = $imp0->codimpuesto;
-                           $linea->iva = $imp0->iva;
-                        }
-                        else
-                        {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = floatval($_POST['iva_'.$i]);
-                        }
-                     }
-                     
-                     $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
-                     $linea->cantidad = floatval($_POST['cantidad_'.$i]);
-                     $linea->dtopor = floatval($_POST['dto_'.$i]);
-                     $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
-                     $linea->pvptotal = floatval($_POST['total_'.$i]);
-                     
-                     if( $linea->save() )
-                     {
-                        /// descontamos del stock
-                        $articulo->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
-                        
-                        $albaran->neto += $linea->pvptotal;
-                        $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                     }
-                     else
-                     {
-                        $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
-                        $continuar = FALSE;
-                     }
+                     $linea->codimpuesto = NULL;
+                     $linea->iva = 0;
                   }
                   else
                   {
-                     $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                     $imp0 = $impuesto->get_by_iva($lin->iva);
+                     if($imp0)
+                     {
+                        $linea->codimpuesto = $imp0->codimpuesto;
+                        $linea->iva = $imp0->iva;
+                     }
+                     else
+                     {
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = $lin->iva;
+                     }
+                  }
+                  
+                  $linea->pvpunitario = $lin->pvpunitario;
+                  $linea->cantidad = $lin->cantidad;
+                  $linea->dtopor = $lin->dtopor;
+                  $linea->pvpsindto = $lin->pvpsindto;
+                  $linea->pvptotal = $lin->pvptotal;
+                  
+                  if( $linea->save() )
+                  {
+                     /// descontamos del stock
+                     $art0->sum_stock($albaran->codalmacen, 0 - $linea->cantidad);
+                     
+                     $albaran->neto += $linea->pvptotal;
+                     $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
+                  }
+                  else
+                  {
+                     $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                      $continuar = FALSE;
                   }
+               }
+               else
+               {
+                  $this->new_error_msg("Artículo no encontrado: ".$lin->referencia);
+                  $continuar = FALSE;
                }
             }
             
@@ -398,75 +379,68 @@ class general_nuevo_albaran extends fs_controller
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
-         $albaran->codagente = $this->agente->codagente;
-         if( isset($_POST['numproveedor']) )
-            $albaran->numproveedor = $_POST['numproveedor'];
+         $albaran->codagente = $this->user->codagente;
          $albaran->observaciones = $_POST['observaciones'];
          
          if( $albaran->save() )
          {
-            $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            foreach($this->albaran->get_lineas() as $lin)
             {
-               if( isset($_POST['referencia_'.$i]) )
+               $articulo = new articulo();
+               $impuesto = new impuesto();
+               
+               $art0 = $articulo->get($lin->referencia);
+               if($art0)
                {
-                  $articulo = $this->articulo->get($_POST['referencia_'.$i]);
-                  if($articulo)
+                  $linea = new linea_albaran_proveedor();
+                  $linea->idalbaran = $albaran->idalbaran;
+                  $linea->referencia = $art0->referencia;
+                  $linea->descripcion = $lin->descripcion;
+                  
+                  if( $serie->siniva )
                   {
-                     $linea = new linea_albaran_proveedor();
-                     $linea->idalbaran = $albaran->idalbaran;
-                     $linea->referencia = $articulo->referencia;
-                     
-                     if( isset($_POST['desc_'.$i]) )
-                        $linea->descripcion = $_POST['desc_'.$i];
-                     else
-                        $linea->descripcion = $articulo->descripcion;
-                     
-                     if( $serie->siniva )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
-                     {
-                        $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
-                        if($imp0)
-                        {
-                           $linea->codimpuesto = $imp0->codimpuesto;
-                           $linea->iva = $imp0->iva;
-                        }
-                        else
-                        {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = floatval($_POST['iva_'.$i]);
-                        }
-                     }
-                     
-                     $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
-                     $linea->cantidad = floatval($_POST['cantidad_'.$i]);
-                     $linea->dtopor = floatval($_POST['dto_'.$i]);
-                     $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
-                     $linea->pvptotal = floatval($_POST['total_'.$i]);
-                     
-                     if( $linea->save() )
-                     {
-                        /// sumamos al stock
-                        $articulo->sum_stock($albaran->codalmacen, $linea->cantidad);
-                        
-                        $albaran->neto += $linea->pvptotal;
-                        $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
-                     }
-                     else
-                     {
-                        $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
-                        $continuar = FALSE;
-                     }
+                     $linea->codimpuesto = NULL;
+                     $linea->iva = 0;
                   }
                   else
                   {
-                     $this->new_error_msg("Artículo no encontrado: ".$_POST['referencia_'.$i]);
+                     $imp0 = $impuesto->get_by_iva($lin->iva);
+                     if($imp0)
+                     {
+                        $linea->codimpuesto = $imp0->codimpuesto;
+                        $linea->iva = $imp0->iva;
+                     }
+                     else
+                     {
+                        $linea->codimpuesto = NULL;
+                        $linea->iva = $lin->iva;
+                     }
+                  }
+                  
+                  $linea->pvpunitario = $lin->pvpunitario;
+                  $linea->cantidad = $lin->cantidad;
+                  $linea->dtopor = $lin->dtopor;
+                  $linea->pvpsindto = $lin->pvpsindto;
+                  $linea->pvptotal = $lin->pvptotal;
+                  
+                  if( $linea->save() )
+                  {
+                     /// sumamos al stock
+                     $art0->sum_stock($albaran->codalmacen, $linea->cantidad);
+                     
+                     $albaran->neto += $linea->pvptotal;
+                     $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
+                  }
+                  else
+                  {
+                     $this->new_error_msg("¡Imposible guardar la linea con referencia: ".$linea->referencia);
                      $continuar = FALSE;
                   }
+               }
+               else
+               {
+                  $this->new_error_msg("Artículo no encontrado: ".$lin->referencia);
+                  $continuar = FALSE;
                }
             }
             
@@ -489,21 +463,6 @@ class general_nuevo_albaran extends fs_controller
          }
          else
             $this->new_error_msg("¡Imposible guardar el albarán!");
-      }
-   }
-   
-   private function get_precios_articulo()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_nuevo_albaran_precios';
-      
-      $this->articulo = $this->articulo->get($_POST['referencia4precios']);
-      if( $this->articulo )
-      {
-         $this->tarifas = $this->articulo->get_tarifas();
-         $this->equivalentes = $this->articulo->get_equivalentes();
-         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 10);
-         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 10);
       }
    }
 }

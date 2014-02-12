@@ -1065,7 +1065,9 @@ class albaran_proveedor extends fs_model
    public function stats_from_prov($codproveedor)
    {
       $stats = array();
-      $years = array( intval(Date('Y')), intval(Date('Y'))-1 );
+      $years = array();
+      for($i=0; $i<5; $i++)
+         $years[] = intval(Date('Y')) - $i;
       
       foreach($years as $year)
       {

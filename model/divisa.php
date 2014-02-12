@@ -58,7 +58,19 @@ class divisa extends fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('EUR','EUROS','1','978','€');";
+         VALUES ('EUR','EUROS','1','978','€');".
+         "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('ARS','PESOS (ARG)','10.83','32','$');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('CLP','PESOS (CLP)','755.73','152','$');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('USD','DÓLARES EE.UU.','1.36','840','$');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('MXN','PESOS (MXN)','18.1','484','$');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('PAB','BALBOAS','38.17','590','B');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('VEF','BOLÍVARES','38.17','937','Bs');";
    }
    
    public function show_tasa()
