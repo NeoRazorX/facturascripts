@@ -62,7 +62,7 @@
             else
             {
                l_dto = 0;
-               l_pvp = 100*l_total/l_uds*(100-l_dto);
+               l_pvp = 100*l_total/(l_uds*(100-l_dto));
                if( isNaN(l_pvp) )
                   l_pvp = 0;
             }

@@ -76,7 +76,7 @@
             else
             {
                l_dto = 0;
-               l_pvp = 100*l_total/l_uds*(100-l_dto);
+               l_pvp = 100*l_total/(l_uds*(100-l_dto));
                if( isNaN(l_pvp) )
                   l_pvp = 0;
             }
@@ -161,6 +161,20 @@
             html += "<option value=\""+all_impuestos[i]+"\">"+all_impuestos[i]+" %</option>";
       }
       return html+"</select>";
+   }
+   function get_precios(ref)
+   {
+      fs_hide_popups();
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->nuevo_albaran_url}',
+         dataType: 'html',
+         data: "referencia4precios="+ref,
+         success: function(datos) {
+            $("#precios_articulo").html(datos);
+            fs_show_popup('popup_precios', 40);
+         }
+      });
    }
    function add_articulo(ref,desc,pvp,dto,iva)
    {
@@ -270,6 +284,10 @@
       </div>
    </form>
    <div id="search_results"></div>
+</div>
+
+<div class="popup" id="popup_precios" style="min-width: 60%">
+   <div id="precios_articulo"></div>
 </div>
 
 <div class="popup" id="popup_eliminar">

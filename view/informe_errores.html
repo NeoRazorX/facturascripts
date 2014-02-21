@@ -4,6 +4,7 @@
    <div class="rounded">
       <form action="{$fsc->url()}" method="post">
          <div class="bloque">
+            Comprobar
             <select name="modelo">
                <option value="todo">Todo</option>
                <option value="">-------</option>
@@ -12,6 +13,14 @@
                <option value="factura proveedor">Facturas de proveedor</option>
                <option value="albaran cliente">Albaranes de cliente</option>
                <option value="albaran proveedor">Albaranes de proveedor</option>
+            </select>
+            hasta el ejercicio
+            <select name="ejercicio">
+            {loop="$fsc->ejercicio->all()"}
+               <option value="{$value->codejercicio}">{$value->nombre}</option>
+            {/loop}
+               <option value="">---</option>
+               <option value="">Todos</option>
             </select>
             <label>
                <input type="checkbox" name="duplicados" value="TRUE"/>

@@ -205,6 +205,7 @@ class contabilidad_factura_cli extends fs_controller
          $this->template = FALSE;
       }
       
+      /// Creamos el PDF y escribimos sus metadatos
       $pdf_doc = new fs_pdf();
       $pdf_doc->pdf->addInfo('Title', 'Factura ' . $this->factura->codigo);
       $pdf_doc->pdf->addInfo('Subject', 'Factura de cliente ' . $this->factura->codigo);
@@ -216,11 +217,8 @@ class contabilidad_factura_cli extends fs_controller
       {
          $lineasfact = count($lineas);
          $linea_actual = 0;
-         $lppag = 42;
+         $lppag = 42; /// líneas por página
          $pagina = 1;
-         
-         if($tipo == 'carta')
-            $lppag = 40;
          
          // Imprimimos las páginas necesarias
          while($linea_actual < $lineasfact)
@@ -229,9 +227,13 @@ class contabilidad_factura_cli extends fs_controller
             if($linea_actual > 0)
                $pdf_doc->pdf->ezNewPage();
             
-            /// Creamos la tabla del encabezado
+            /*
+             * Creamos la cabecera de la página, en este caso para el modelo carta
+             */
             if($tipo == 'carta')
             {
+               $lppag = 40; /// en el modelo carta caben menos líneas
+               
                $direccion = $this->factura->nombrecliente."\n".$this->factura->direccion;
                if($this->factura->codpostal AND $this->factura->ciudad)
                   $direccion .= "\n CP: " . $this->factura->codpostal . ' ' . $this->factura->ciudad;
@@ -262,86 +264,110 @@ class contabilidad_factura_cli extends fs_controller
                );
                $pdf_doc->pdf->ezText("\n\n\n", 14);
             }
-            else
+            else /// esta es la cabecera de la página para los modelos 'simple' y 'firma'
             {
-               $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-               $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               /// ¿Añadimos el logo?
+               if( file_exists('tmp/logo.png') )
+               {
+                  $pdf_doc->pdf->ezImage('tmp/logo.png');
+                  $lppag -= 2; /// si metemos el logo, caben menos líneas
+               }
+               else
+               {
+                  $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
+                  $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+                  
+                  $direccion = $this->empresa->direccion;
+                  if($this->empresa->codpostal)
+                     $direccion .= ' - ' . $this->empresa->codpostal;
+                  if($this->empresa->ciudad)
+                     $direccion .= ' - ' . $this->empresa->ciudad;
+                  if($this->empresa->provincia)
+                     $direccion .= ' (' . $this->empresa->provincia . ')';
+                  if($this->empresa->telefono)
+                     $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
+                  $pdf_doc->pdf->ezText($direccion, 9, array('justification' => 'center'));
+               }
                
-               $direccion = $this->empresa->direccion;
-               if($this->empresa->codpostal)
-                  $direccion .= ' - ' . $this->empresa->codpostal;
-               if($this->empresa->ciudad)
-                  $direccion .= ' - ' . $this->empresa->ciudad;
-               if($this->empresa->provincia)
-                  $direccion .= ' (' . $this->empresa->provincia . ')';
-               if($this->empresa->telefono)
-                  $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
-               $pdf_doc->pdf->ezText($direccion, 9, array('justification' => 'center'));
-               
+               /*
+                * Esta es la tabla con los datos del cliente:
+                * Factura:             Fecha:
+                * Cliente:             CIF/NIF:
+                * Dirección:           Teléfonos:
+                */
                $pdf_doc->new_table();
                $pdf_doc->add_table_row(
                   array(
-                      'campo1' => "<b>Factura:</b>",
-                      'dato1' => $this->factura->codigo,
-                      'campo2' => "<b>Fecha:</b>",
-                      'dato2' => $this->factura->fecha
-                   ));
-               $pdf_doc->add_table_row(
-                  array(
-                      'campo1' => "<b>Cliente:</b>",
-                      'dato1' => $this->factura->nombrecliente,
-                      'campo2' => "<b>CIF/NIF:</b>",
-                      'dato2' => $this->factura->cifnif
-                   )
+                     'campo1' => "<b>Factura:</b>",
+                     'dato1' => $this->factura->codigo,
+                     'campo2' => "<b>Fecha:</b>",
+                     'dato2' => $this->factura->fecha
+                  )
                );
                $pdf_doc->add_table_row(
                   array(
-                      'campo1' => "<b>Dirección:</b>",
-                      'dato1' => $this->factura->direccion.' CP: '.$this->factura->codpostal.' - '.$this->factura->ciudad.
+                     'campo1' => "<b>Cliente:</b>",
+                     'dato1' => $this->factura->nombrecliente,
+                     'campo2' => "<b>CIF/NIF:</b>",
+                     'dato2' => $this->factura->cifnif
+                  )
+               );
+               $pdf_doc->add_table_row(
+                  array(
+                     'campo1' => "<b>Dirección:</b>",
+                     'dato1' => $this->factura->direccion.' CP: '.$this->factura->codpostal.' - '.$this->factura->ciudad.
                                  ' ('.$this->factura->provincia.')',
-                      'campo2' => "<b>Teléfonos:</b>",
-                      'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
-                   )
+                     'campo2' => "<b>Teléfonos:</b>",
+                     'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
+                  )
                );
                $pdf_doc->save_table(
                   array(
-                      'cols' => array(
-                          'campo1' => array('justification' => 'right'),
-                          'dato1' => array('justification' => 'left'),
-                          'campo2' => array('justification' => 'right'),
-                          'dato2' => array('justification' => 'left')
-                      ),
-                      'showLines' => 0,
-                      'width' => 540,
-                      'shaded' => 0
+                     'cols' => array(
+                        'campo1' => array('justification' => 'right'),
+                        'dato1' => array('justification' => 'left'),
+                        'campo2' => array('justification' => 'right'),
+                        'dato2' => array('justification' => 'left')
+                     ),
+                     'showLines' => 0,
+                     'width' => 540,
+                     'shaded' => 0
                   )
                );
                $pdf_doc->pdf->ezText("\n", 10);
+               
+               /// en el tipo 'firma' caben menos líneas
+               if($tipo == 'firma')
+                  $lppag -= 10;
             }
             
             
-            /// Creamos la tabla con las lineas de la factura
+            /*
+             * Creamos la tabla con las lineas de la factura:
+             * 
+             * Albarán  Descripción    PVP   DTO   Cantidad    Importe
+             */
             $pdf_doc->new_table();
             $pdf_doc->add_table_header(
                array(
-                   'albaran' => '<b>Albarán</b>',
-                   'descripcion' => '<b>Descripción</b>',
-                   'pvp' => '<b>PVP</b>',
-                   'dto' => '<b>DTO</b>',
-                   'cantidad' => '<b>Cantidad</b>',
-                   'importe' => '<b>Importe</b>'
+                  'albaran' => '<b>Albarán</b>',
+                  'descripcion' => '<b>Descripción</b>',
+                  'pvp' => '<b>PVP</b>',
+                  'dto' => '<b>DTO</b>',
+                  'cantidad' => '<b>Cantidad</b>',
+                  'importe' => '<b>Importe</b>'
                )
             );
             $saltos = 0;
             for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < $lineasfact));)
             {
                $fila = array(
-                   'albaran' => $lineas[$linea_actual]->albaran_numero(),
-                   'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
-                   'pvp' => number_format($lineas[$linea_actual]->pvpunitario, FS_NF0) . " !",
-                   'dto' => number_format($lineas[$linea_actual]->dtopor, 0) . " %",
-                   'cantidad' => $lineas[$linea_actual]->cantidad,
-                   'importe' => number_format($lineas[$linea_actual]->pvptotal, FS_NF0) . " !"
+                  'albaran' => $lineas[$linea_actual]->albaran_numero(),
+                  'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
+                  'pvp' => number_format($lineas[$linea_actual]->pvpunitario, FS_NF0) . " !",
+                  'dto' => number_format($lineas[$linea_actual]->dtopor, 0) . " %",
+                  'cantidad' => $lineas[$linea_actual]->cantidad,
+                  'importe' => number_format($lineas[$linea_actual]->pvptotal, FS_NF0) . " !"
                );
                
                if($lineas[$linea_actual]->referencia != '0')
@@ -367,9 +393,14 @@ class contabilidad_factura_cli extends fs_controller
                )
             );
             
-            /// Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
-            if($this->factura->observaciones == '')
+            
+            /*
+             * Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
+             */
+            if($this->factura->observaciones == '' OR $tipo == 'firma')
+            {
                $salto = '';
+            }
             else
             {
                $salto = "\n<b>Observaciones</b>: " . $this->factura->observaciones;
@@ -388,7 +419,11 @@ class contabilidad_factura_cli extends fs_controller
                $pdf_doc->pdf->ezText("\n", 11);
             
             
-            /// Rellenamos la última tabla
+            /*
+             * Rellenamos la última tabla de la página:
+             * 
+             * Página            Neto    IVA   Total
+             */
             $pdf_doc->new_table();
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
             $fila = array(
@@ -415,7 +450,42 @@ class contabilidad_factura_cli extends fs_controller
             $pdf_doc->add_table_row($fila);
             $pdf_doc->save_table($opciones);
             
-            if($tipo == 'simple')
+            
+            /*
+             * Añadimos la parte de la firma y las observaciones,
+             * para el tipo 'firma'
+             */
+            if($tipo == 'firma')
+            {
+               $pdf_doc->new_table();
+               $pdf_doc->add_table_row(
+                  array(
+                     'campo1' => "<b>Observaciones</b>",
+                     'campo2' => "<b>Firma</b>"
+                  )
+               );
+               $pdf_doc->add_table_row(
+                  array(
+                     'campo1' => $this->factura->observaciones,
+                     'campo2' => ""
+                  )
+               );
+               $pdf_doc->save_table(
+                  array(
+                     'cols' => array(
+                        'campo1' => array('justification' => 'left'),
+                        'campo2' => array('justification' => 'right')
+                     ),
+                     'showLines' => 0,
+                     'width' => 540,
+                     'shaded' => 0
+                  )
+               );
+            }
+            
+            
+            /// pié de página para la factura
+            if($tipo == 'simple' OR $tipo == 'firma')
                $pdf_doc->pdf->addText(10, 10, 8, $pdf_doc->center_text($this->empresa->pie_factura, 153), 0, 1.5);
             
             $pagina++;

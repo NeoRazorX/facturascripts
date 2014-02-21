@@ -141,6 +141,26 @@ class admin_user extends fs_controller
             else
                $this->new_error_msg("¡Imposible modificar los datos!");
          }
+         
+         /// si el usuario no tiene acceso a ninguna página, entonces hay que informar del problema.
+         if( !$this->suser->admin )
+         {
+            $sin_paginas = TRUE;
+            foreach($this->all_pages() as $p)
+            {
+               if($p->enabled)
+               {
+                  $sin_paginas = FALSE;
+                  break;
+               }
+            }
+            if($sin_paginas)
+            {
+               $this->new_advice('No has autorizado a este usuario a acceder a ninguna'
+                  . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
+                  . ' desde el panel de más abajo.');
+            }
+         }
       }
       else
          $this->new_error_msg("Usuario no encontrado.");

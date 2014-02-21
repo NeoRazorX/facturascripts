@@ -36,6 +36,8 @@ class admin_empresa extends fs_controller
    public $serie;
    public $pais;
    
+   public $logo;
+   
    public function __construct()
    {
       parent::__construct('admin_empresa', 'Empresa', 'admin', TRUE, TRUE);
@@ -122,6 +124,24 @@ class admin_empresa extends fs_controller
                $this->new_error_msg('Error al guardar los datos del email.');
          }
       }
+      else if( isset($_POST['logo']) )
+      {
+         if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
+         {
+            copy($_FILES['fimagen']['tmp_name'], "tmp/logo.png");
+            $this->new_message('Logotipo guardado correctamente.');
+         }
+      }
+      else if( isset($_GET['delete_logo']) )
+      {
+         if( file_exists('tmp/logo.png') )
+         {
+            unlink('tmp/logo.png');
+            $this->new_message('Logotipo borrado correctamente.');
+         }
+      }
+      
+      $this->logo = file_exists('tmp/logo.png');
    }
 }
 

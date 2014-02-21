@@ -396,6 +396,8 @@ class fs_mysql extends fs_db
                   $consulta .= " DEFAULT ".$col['defecto'].";";
                else if($col['nulo'] == 'YES')
                   $consulta .= " DEFAULT NULL;";
+               else
+                  $consulta .= ';';
             }
          }
       }

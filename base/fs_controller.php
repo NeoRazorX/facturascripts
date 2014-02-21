@@ -135,7 +135,7 @@ class fs_controller
    
    public function version()
    {
-      return '2014.2a';
+      return '2014.2b';
    }
    
    public function close()

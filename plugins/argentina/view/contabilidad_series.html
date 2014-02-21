@@ -1,0 +1,100 @@
+{include="header"}
+
+<script type="text/javascript">
+   function delete_serie(url)
+   {
+      if( confirm("¿Realmente desea eliminar esta serie?") )
+         window.location.href = url;
+   }
+   $(document).ready(function() {
+      $("#b_nueva_serie").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nueva_serie');
+         document.f_nueva_serie.codserie.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nueva_serie">
+   <form name="f_nueva_serie" action="{$fsc->url()}" method="post">
+      <h1>Nueva serie</h1>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codserie" size="2" maxlength="2" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Letra de comprobante:</td>
+            <td><input type="text" name="fac_letra" size="1" maxlength="1" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Prefijo de comprobante:</td>
+            <td><input type="text" name="fac_prefijo" size="4" maxlength="4" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Primer num comprobante:</td>
+            <td><input type="text" name="fac_inicial" size="8" maxlength="8" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right"><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
+            <td><label for="serie_sin_iva">sin IVA</label></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+{loop="$fsc->serie->all()"}
+<div class="rounded">
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codserie" value="{$value->codserie}"/>
+      <h1>
+         {$value->codserie}
+         <span>
+            <a class="delete" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">eliminar</a> &nbsp;
+            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
+      </h1>
+      <div class="bloque">
+         Descripción:
+         <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Letra comprobante:
+         <input type="text" name="fac_letra" value="{$value->fac_letra}" maxlength="1" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Prefijo comprobante:
+         <input type="text" name="fac_prefijo" value="{$value->fac_prefijo}" maxlength="4" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Numero inicial comprobante:
+         <input type="text" name="fac_inicial" value="{$value->fac_inicial}" maxlength="8" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         {if condition="$value->siniva"}
+            <input type="checkbox" name="siniva" value="TRUE" checked="checked" id="sin_iva_{$value->codserie}"/>
+         {else}
+            <input type="checkbox" name="siniva" value="TRUE" id="sin_iva_{$value->codserie}"/>
+         {/if}
+         <label for="sin_iva_{$value->codserie}">sin IVA</label>
+      </div>
+   </form>
+</div>
+{/loop}
+
+<div class="rounded">
+   <div class="new_line">
+      <a id="b_nueva_serie" href="#">Nueva serie</a>
+   </div>
+</div>
+
+{include="footer"}

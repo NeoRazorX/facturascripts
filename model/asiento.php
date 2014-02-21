@@ -463,8 +463,14 @@ class asiento extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "numero::TEXT LIKE '%".$query."%' OR concepto LIKE '%".$query."%'
+      {
+         $aux_sql = '';
+         if( strtolower(FS_DB_TYPE) == 'postgresql' )
+            $aux_sql = ':TEXT';
+         
+         $consulta .= "numero".$aux_sql." LIKE '%".$query."%' OR concepto LIKE '%".$query."%'
             OR importe BETWEEN ".($query-.01)." AND ".($query+.01);
+      }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
          $consulta .= "fecha = ".$this->var2str($query)." OR concepto LIKE '%".$query."%'";
       else

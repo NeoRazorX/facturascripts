@@ -122,7 +122,7 @@
       $("#b_eliminar_articulo").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar este articulo?") )
-            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->articulo->referencia}";
+            window.location.href = "{$fsc->ppage->url()}&delete={function="urlencode($fsc->articulo->referencia)"}";
       });
       $("#b_imagen").click(function(event) {
          event.preventDefault();

@@ -159,10 +159,9 @@
          
          <table class="list">
             <tr>
-               <th align="left">Página</th>
-               <th align="left">carpeta</th>
+               <th align="left">Páginas autorizadas</th>
+               <th align="left">Menú</th>
                <th align="left">titulo</th>
-               <th>en menú</th>
             </tr>
             {loop="$fsc->all_pages()"}
             <tr>
@@ -176,7 +175,6 @@
                </td>
                <td>{$value->folder}</td>
                <td>{$value->title}</td>
-               <td align="center">{if condition="$value->show_on_menu"}Si{else}-{/if}</td>
             </tr>
             {/loop}
          </table>

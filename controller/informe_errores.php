@@ -18,6 +18,7 @@
  */
 
 require_model('asiento.php');
+require_model('ejercicio.php');
 require_model('factura_cliente.php');
 require_model('factura_proveedor.php');
 require_model('albaran_cliente.php');
@@ -26,8 +27,9 @@ require_model('albaran_proveedor.php');
 class informe_errores extends fs_controller
 {
    public $ajax;
-   public $informe;
+   public $ejercicio;
    public $errores;
+   public $informe;
    
    public function __construct()
    {
@@ -37,6 +39,8 @@ class informe_errores extends fs_controller
    protected function process()
    {
       $this->ajax = FALSE;
+      $this->ejercicio = new ejercicio();
+      $this->errores = array();
       $this->informe = array(
           'model' => 'asiento',
           'duplicados' => isset($_POST['duplicados']),
@@ -44,9 +48,9 @@ class informe_errores extends fs_controller
           'pages' => 0,
           'show_page' => 0,
           'started' => FALSE,
-          'all' => FALSE
+          'all' => FALSE,
+          'ejercicio' => ''
       );
-      $this->errores = array();
       
       if( isset($_GET['cancelar']) )
       {
@@ -61,28 +65,35 @@ class informe_errores extends fs_controller
              * leemos el archivo tmp/informe_errores.txt donde guardamos los datos
              * y extraemos la configuración y los errores de la "página" seleccionada
              */
-            $linea = explode( ';', fgets($file) );
-            if( count($linea) == 7 )
+            $linea = explode( ';', trim(fgets($file)) );
+            if( count($linea) == 8 )
             {
                $this->informe['model'] = $linea[0];
                $this->informe['duplicados'] = ($linea[1]==1);
                $this->informe['offset'] = intval($linea[2]);
                $this->informe['pages'] = intval($linea[3]);
-               $this->informe['show_page'] = intval($linea[4]);
+               
+               if( isset($_POST['show_page']) )
+                  $this->informe['show_page'] = intval($_POST['show_page']);
+               else if( isset($_GET['show_page']) )
+                  $this->informe['show_page'] = intval($_GET['show_page']);
+               else
+                  $this->informe['show_page'] = intval($linea[4]);
+               
                $this->informe['started'] = ($linea[5]==1);
                $this->informe['all'] = ($linea[6]==1);
+               $this->informe['ejercicio'] = $linea[7];
             }
             
             if( isset($_POST['ajax']) )
             {
-               $this->informe['show_page'] = intval($_POST['show_page']);
                $this->ajax = TRUE;
                
                /// leemos los errores de la "página" seleccionada
                $numlinea = 0;
                while( !feof($file) )
                {
-                  $linea = explode( ';', fgets($file) );
+                  $linea = explode( ';', trim(fgets($file)) );
                   if( count($linea) == 6 )
                   {
                      if($numlinea > $this->informe['show_page']*FS_ITEM_LIMIT AND $numlinea <= (1+$this->informe['show_page'])*FS_ITEM_LIMIT)
@@ -142,6 +153,12 @@ class informe_errores extends fs_controller
                $this->informe['started'] = TRUE;
             }
             
+            if( isset($_POST['ejercicio']) )
+               $this->informe['ejercicio'] = $_POST['ejercicio'];
+            
+            if( isset($_GET['show_page']) )
+               $this->informe['show_page'] = intval($_GET['show_page']);
+            
             /// guardamos esta configuración
             fwrite($file, join(';', $this->informe)."\n------\n" );
             fclose($file);
@@ -163,7 +180,16 @@ class informe_errores extends fs_controller
             {
                foreach($asientos as $asi)
                {
-                  if( !$asi->full_test($this->informe['duplicados']) )
+                  if($asi->codejercicio == $this->informe['ejercicio'])
+                  {
+                     if($this->informe['all'])
+                        $this->informe['model'] = 'factura cliente';
+                     else
+                        $this->informe['model'] = 'fin';
+                     $this->informe['offset'] = 0;
+                     break;
+                  }
+                  else if( !$asi->full_test($this->informe['duplicados']) )
                   {
                      $last_errores[] = array(
                          'model' => $this->informe['model'],
@@ -196,7 +222,16 @@ class informe_errores extends fs_controller
             {
                foreach($facturas as $fac)
                {
-                  if( !$fac->full_test($this->informe['duplicados']) )
+                  if($fac->codejercicio == $this->informe['ejercicio'])
+                  {
+                     if($this->informe['all'])
+                        $this->informe['model'] = 'factura proveedor';
+                     else
+                        $this->informe['model'] = 'fin';
+                     $this->informe['offset'] = 0;
+                     break;
+                  }
+                  else if( !$fac->full_test($this->informe['duplicados']) )
                   {
                      $last_errores[] = array(
                          'model' => $this->informe['model'],
@@ -229,7 +264,16 @@ class informe_errores extends fs_controller
             {
                foreach($facturas as $fac)
                {
-                  if( !$fac->full_test($this->informe['duplicados']) )
+                  if($fac->codejercicio == $this->informe['ejercicio'])
+                  {
+                     if($this->informe['all'])
+                        $this->informe['model'] = 'albaran cliente';
+                     else
+                        $this->informe['model'] = 'fin';
+                     $this->informe['offset'] = 0;
+                     break;
+                  }
+                  else if( !$fac->full_test($this->informe['duplicados']) )
                   {
                      $last_errores[] = array(
                          'model' => $this->informe['model'],
@@ -262,7 +306,16 @@ class informe_errores extends fs_controller
             {
                foreach($albaranes as $alb)
                {
-                  if( !$alb->full_test($this->informe['duplicados']) )
+                  if($alb->codejercicio == $this->informe['ejercicio'])
+                  {
+                     if($this->informe['all'])
+                        $this->informe['model'] = 'albaran proveedor';
+                     else
+                        $this->informe['model'] = 'fin';
+                     $this->informe['offset'] = 0;
+                     break;
+                  }
+                  else if( !$alb->full_test($this->informe['duplicados']) )
                   {
                      $last_errores[] = array(
                          'model' => $this->informe['model'],
@@ -295,7 +348,13 @@ class informe_errores extends fs_controller
             {
                foreach($albaranes as $alb)
                {
-                  if( !$alb->full_test($this->informe['duplicados']) )
+                  if($alb->codejercicio == $this->informe['ejercicio'])
+                  {
+                     $this->informe['model'] = 'fin';
+                     $this->informe['offset'] = 0;
+                     break;
+                  }
+                  else if( !$alb->full_test($this->informe['duplicados']) )
                   {
                      $last_errores[] = array(
                          'model' => $this->informe['model'],

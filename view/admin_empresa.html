@@ -7,6 +7,9 @@
          fs_show_popup('popup_mail_options');
          document.f_empresa.mail_host.select();
       });
+      $("#b_add_logo").click(function(event) {
+         fs_show_popup('popup_logo');
+      });
    });
 </script>
 
@@ -149,7 +152,7 @@
          Email:
          <input type="text" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
          <input type="password" name="email_password" size="20" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
-         Si no usas Gmail o Google Apps, haz clic <a id="b_mail_options" href="#">aquí</a>.
+         Si no usas Gmail o Google Apps, haz clic <a id="b_mail_options" class="link" href="#">aquí</a>.
       </div>
       <div>
          <br/>Firma:<br/>
@@ -187,6 +190,9 @@
    <div class="rounded">
       <h1>Facturas:</h1>
       <div class="bloque">
+         <a id="b_add_logo" class="button" href="#">Añadir logotipo</a>
+      </div>
+      <div class="bloque">
          Pie de página:
          <input type="text" name="pie_factura" size="80" maxlength="255" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
       </div>
@@ -204,5 +210,40 @@
       </div>
    </div>
 </form>
+
+<div class="popup" id="popup_logo">
+   <h1>Logotipo para las facturas</h1>
+   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+      <input name='logo' type='hidden' value='TRUE'/>
+      <table>
+         <tr>
+            <td colspan="2" align="center">
+               {if condition="$fsc->logo"}
+               <img src="tmp/logo.png" alt="logotipo"/>
+               {else}
+               No hay ningún logotipo
+               {/if}
+            </td>
+         </tr>
+         <tr>
+            <td align="right">
+               <input name='fimagen' type='file'/>
+            </td>
+            <td align="left">
+               La imagen debe estar en formato PNG.
+            </td>
+         </tr>
+         <tr><td colspan="2"><br/></td></tr>
+         <tr>
+            <td>
+               <a class="delete" href="{$fsc->url()}&delete_logo=TRUE">Eliminar</a>
+            </td>
+            <td align="right">
+               <input class="submit" type="submit" value="guardar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
 
 {include="footer"}

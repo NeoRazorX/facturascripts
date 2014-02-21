@@ -76,7 +76,7 @@
             else
             {
                l_dto = 0;
-               l_pvp = 100*l_total/l_uds*(100-l_dto);
+               l_pvp = 100*l_total/(l_uds*(100-l_dto));
                if( isNaN(l_pvp) )
                   l_pvp = 0;
             }
@@ -162,6 +162,20 @@
       }
       return html+"</select>";
    }
+   function get_precios(ref)
+   {
+      fs_hide_popups();
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->nuevo_albaran_url}',
+         dataType: 'html',
+         data: "referencia4precios="+ref,
+         success: function(datos) {
+            $("#precios_articulo").html(datos);
+            fs_show_popup('popup_precios', 40);
+         }
+      });
+   }
    function add_articulo(ref,desc,pvp,dto,iva)
    {
       numlineas += 1;
@@ -241,7 +255,7 @@
       recalcular();
       $("#b_precios").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_precios', 60);
+         fs_show_popup('popup_precios2', 60);
          document.f_precios.codbar_0.focus();
       });
       $("#b_eliminar").click(function(event) {
@@ -282,7 +296,11 @@
    </form>
 </div>
 
-<div class="popup" id="popup_precios" style="min-width: 70%;">
+<div class="popup" id="popup_precios" style="min-width: 60%">
+   <div id="precios_articulo"></div>
+</div>
+
+<div class="popup" id="popup_precios2" style="min-width: 70%;">
    <form id="f_precios" name="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
       <h1>Actualizar precios de los artículos</h1>
