@@ -15,13 +15,13 @@
 <div class="popup" id="popup_nueva">
    <h1>Nueva factura:</h1>
    En lugar de crear una factura directamente, es mejor que<br/>
-   crees un albarán de cliente (que es un "borrador" de factura)<br/>
+   crees un {$albaran} de cliente (que es un "borrador" de factura)<br/>
    y después pulses el botón <b>generar factura</b>.
    <br/><br/>
-   Trabajar con albaranes es más cómodo porque puedes modificarlos<br/>
+   Trabajar con {$albaranes} es más cómodo porque puedes modificarlos<br/>
    e incluso agruparlos en una sola factura.
    <div>
-      <a class="submit pull_right" href="index.php?page=general_nuevo_albaran">crear un albarán</a>
+      <a class="submit pull_right" href="index.php?page=general_nuevo_albaran">crear un {$albaran}</a>
    </div>
 </div>
 
@@ -62,7 +62,7 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a></td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}

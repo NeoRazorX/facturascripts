@@ -93,7 +93,7 @@ class contabilidad_regusiva extends fs_controller
       }
       else if( isset($_POST['proceso']) )
       {
-         if( $this->factura_cli->huecos() OR $this->factura_pro->huecos() )
+         if( $this->factura_cli->huecos() )
          {
             $this->new_error_msg('Tienes huecos en la facturación y por tanto no puedes regularizar el iva.');
          }
@@ -154,8 +154,8 @@ class contabilidad_regusiva extends fs_controller
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
                 'subcuenta' => $scta_ivasop->codsubcuenta,
-                'debe' => number_format($tot_sop['haber'], FS_NF0, FS_NF1, FS_NF2),
-                'haber' => number_format($tot_sop['debe'], FS_NF0, FS_NF1, FS_NF2)
+                'debe' => $tot_sop['haber'],
+                'haber' => $tot_sop['debe']
             );
             $saldo += $tot_sop['haber'] - $tot_sop['debe'];
          }
@@ -175,8 +175,8 @@ class contabilidad_regusiva extends fs_controller
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
                 'subcuenta' => $scta_ivarep->codsubcuenta,
-                'debe' => number_format($tot_rep['haber'], FS_NF0, FS_NF1, FS_NF2),
-                'haber' => number_format($tot_rep['debe'], FS_NF0, FS_NF1, FS_NF2)
+                'debe' => $tot_rep['haber'],
+                'haber' => $tot_rep['debe']
             );
             $saldo += $tot_rep['haber'] - $tot_rep['debe'];
          }
@@ -196,7 +196,7 @@ class contabilidad_regusiva extends fs_controller
                   $this->aux_regiva[] = array(
                       'subcuenta' => $scta_ivaacr->codsubcuenta,
                       'debe' => 0,
-                      'haber' => number_format($saldo, FS_NF0, FS_NF1, FS_NF2)
+                      'haber' => $saldo
                   );
                }
                else
@@ -209,7 +209,7 @@ class contabilidad_regusiva extends fs_controller
                {
                   $this->aux_regiva[] = array(
                       'subcuenta' => $scta_ivadeu->codsubcuenta,
-                      'debe' => number_format( abs($saldo), FS_NF0, FS_NF1, FS_NF2),
+                      'debe' => abs($saldo),
                       'haber' => 0
                   );
                }

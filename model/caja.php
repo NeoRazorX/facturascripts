@@ -101,24 +101,6 @@ class caja extends fs_model
          return $this->fecha_fin;
    }
    
-   public function show_dinero_inicial()
-   {
-      return number_format($this->dinero_inicial, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_dinero_fin()
-   {
-      if( isset($this->fecha_fin) )
-         return number_format($this->dinero_fin, FS_NF0, FS_NF1, FS_NF2);
-      else
-         return '-';
-   }
-   
-   public function show_diferencia()
-   {
-      return number_format($this->dinero_fin - $this->dinero_inicial, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
    public function diferencia()
    {
       return ($this->dinero_fin - $this->dinero_inicial);

@@ -23,6 +23,7 @@ require_model('epigrafe.php');
 
 class contabilidad_epigrafes extends fs_controller
 {
+   public $codejercicio;
    public $ejercicio;
    public $epigrafe;
    public $grupo;
@@ -35,6 +36,7 @@ class contabilidad_epigrafes extends fs_controller
    
    protected function process()
    {
+      $this->codejercicio = $this->empresa->codejercicio;
       $this->ejercicio = new ejercicio();
       $grupo0 = new grupo_epigrafes();
       $epi0 = new epigrafe();
@@ -187,9 +189,10 @@ class contabilidad_epigrafes extends fs_controller
       }
       else if( isset($_POST['ejercicio']) ) /// mostrar grupos de este ejercicio
       {
+         $this->codejercicio = $_POST['ejercicio'];
          $this->grupo = FALSE;
          $this->epigrafe = FALSE;
-         $this->resultados = $grupo0->all_from_ejercicio($_POST['ejercicio']);
+         $this->resultados = $grupo0->all_from_ejercicio($this->codejercicio);
       }
       else
       {

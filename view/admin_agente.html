@@ -41,8 +41,8 @@
    <a name="listado"></a>
    {if condition="$fsc->listar=='albaranes_cli'"}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="selected">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="selected">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado">{$albaranes} de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
    <br/><br/>
@@ -61,11 +61,11 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="6">Ningún albarán encontrado.</td></tr>
+      <tr><td colspan="6">Ningún {$albaran} encontrado.</td></tr>
       {/loop}
       <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
@@ -84,8 +84,8 @@
    </table>
    {elseif condition="$fsc->listar=='albaranes_prov'"}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="selected">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="selected">{$albaranes} de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
    </div>
    <br/><br/>
@@ -104,11 +104,11 @@
          <td><a  class="link"href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="6">Ningún albarán encontrado.</td></tr>
+      <tr><td colspan="6">Ningún {$albaran} encontrado.</td></tr>
       {/loop}
       <tr><td colspan="6">&nbsp;</td></tr>
       <tr>
@@ -127,8 +127,8 @@
    </table>
    {else}
    <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado">Albaranes de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado">Albaranes de proveedor</a>
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado">{$albaranes} de proveedor</a>
       <a href="{$fsc->url()}&listar=caja#listado" class="selected">Caja</a>
    </div>
    <br/><br/>
@@ -145,9 +145,9 @@
       <tr>
          <td align="center">{$value->fs_id}</td>
          <td align="center">{$value->fecha_inicial}</td>
-         <td align="right">{$value->show_dinero_inicial()} {$fsc->simbolo_divisa()}</td>
+         <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
          <td align="center">{$value->show_fecha_fin()}</td>
-         <td align="right">{$value->show_diferencia()} {$fsc->simbolo_divisa()}</td>
+         <td align="right">{$fsc->show_precio($value->diferencia())}</td>
          <td align="right">{$value->tickets}</td>
       </tr>
       {else}

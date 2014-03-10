@@ -371,7 +371,7 @@
                   -
                {/if}
             </td>
-            <td align="right">{$fsc->asiento->show_importe()} {$fsc->simbolo_divisa()}</td>
+            <td align="right">{$fsc->show_precio($fsc->asiento->importe)}</td>
          </tr>
       </table>
    </div>
@@ -392,11 +392,11 @@
          <tr>
             <td>{$value->concepto}</td>
             <td align="center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
-            <td align="right"><span title="{$value->debe}">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</span></td>
-            <td align="right"><span title="{$value->haber}">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</span></td>
+            <td align="right"><span title="{$value->debe}">{$fsc->show_precio($value->debe, $value->coddivisa)}</span></td>
+            <td align="right"><span title="{$value->haber}">{$fsc->show_precio($value->haber, $value->coddivisa)}</span></td>
             <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
             <td align="right">
-               {if condition="$value->baseimponible!=0"}{$value->show_baseimponible()} {$fsc->simbolo_divisa($value->coddivisa)}{else}-{/if}
+               {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $value->coddivisa)}{else}-{/if}
             </td>
             <td align="center">
                {if condition="$value->codcontrapartida"}

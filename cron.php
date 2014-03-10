@@ -61,11 +61,11 @@ if( $db->connect() )
    $fs_default_items->set_codserie( $empresa->codserie );
    
    $alb_cli = new albaran_cliente();
-   echo "Ejecutando tareas para los albaranes de cliente...\n";
+   echo "Ejecutando tareas para los ".FS_ALBARANES." de cliente...\n";
    $alb_cli->cron_job();
    
    $alb_pro = new albaran_proveedor();
-   echo "Ejecutando tareas para los albaranes de proveedor...\n";
+   echo "Ejecutando tareas para los ".FS_ALBARANES." de proveedor...\n";
    $alb_pro->cron_job();
    
    $articulo = new articulo();
@@ -81,7 +81,7 @@ if( $db->connect() )
    $libro->cron_job();
    
    $inventarios_balances = new inventarios_balances();
-   echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...\n";
+   echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...";
    $inventarios_balances->cron_job();
    
    $db->close();

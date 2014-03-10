@@ -90,7 +90,7 @@ class tpv_supermercado extends fs_controller
             $this->caja->dinero_fin = floatval($_POST['d_inicial']);
             if( $this->caja->save() )
             {
-               $this->new_message("Caja iniciada con ".$this->caja->show_dinero_inicial()." Euros.");
+               $this->new_message( "Caja iniciada con ".$this->show_precio($this->caja->dinero_inicial) );
                $this->caja_iniciada();
             }
             else
@@ -176,11 +176,11 @@ class tpv_supermercado extends fs_controller
             $fpt->add("\n\nAgente: ".$this->agente->nombre."\n");
             $fpt->add("Caja: ".$this->caja->fs_id."\n");
             $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
-            $fpt->add("Cambio inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
+            $fpt->add("Cambio inicial: ".$this->show_precio($this->caja->dinero_inicial, FALSE, FALSE)."\n");
             $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
-            $fpt->add("Ingresos estimados: ".$this->caja->show_diferencia()." Eur.\n");
-            $fpt->add("Ingresos contado: ".number_format($dinero_contado, 2, ',', '.')." Eur.\n");
-            $fpt->add("Diferencia: ".number_format($dinero_contado-$this->caja->diferencia(), 2, ',', '.')." Eur.\n");
+            $fpt->add("Ingresos estimados: ".$this->show_precio($this->caja->diferencia(), FALSE, FALSE)."\n");
+            $fpt->add("Ingresos contado: ".$this->show_precio($dinero_contado, FALSE, FALSE)."\n");
+            $fpt->add("Diferencia: ".$this->show_precio($dinero_contado-$this->caja->diferencia(), FALSE, FALSE)."\n");
             $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
             $fpt->add("Observaciones:\n\n\n\n");
             $fpt->add("Firma:\n\n\n\n\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0));
@@ -277,8 +277,8 @@ class tpv_supermercado extends fs_controller
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
-               para ver si el albarán se ha guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">'.FS_ALBARANES.'</a>
+               para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
       }
       
@@ -294,7 +294,7 @@ class tpv_supermercado extends fs_controller
       else
       {
          $continuar = FALSE;
-         $this->new_error_msg('Falta el total del albarán.');
+         $this->new_error_msg('Falta el total del '.FS_ALBARAN);
       }
          
       
@@ -383,7 +383,7 @@ class tpv_supermercado extends fs_controller
                
                if( $albaran->save() )
                {
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
                   
                   $this->imprimir_ticket($albaran);
                   
@@ -394,15 +394,15 @@ class tpv_supermercado extends fs_controller
                      $this->new_error_msg("¡Imposible actualizar la caja!");
                }
                else
-                  $this->new_error_msg("¡Imposible actualizar el albarán!");
+                  $this->new_error_msg("¡Imposible actualizar el ".FS_ALBARAN."!");
             }
             else if( $albaran->delete() )
-               $this->new_message("Albarán eliminado correctamente.");
+               $this->new_message(FS_ALBARAN." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el albarán!");
+               $this->new_error_msg("¡Imposible eliminar el ".FS_ALBARAN."!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el albarán!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_ALBARAN."!");
       }
    }
    
@@ -422,11 +422,8 @@ class tpv_supermercado extends fs_controller
       $age0 = $agente->get($albaran->codagente);
       $fpt->add("Agente: ".$age0->nombre."\n\n");
       
-      $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n");
-      $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
-              sprintf("%10s", "----------") . "\n";
-      $fpt->add($linea);
-      
+      $fpt->add(sprintf("%3s", "Ud.")." ".sprintf("%-25s", "Articulo")." ".sprintf("%10s", "TOTAL")."\n");
+      $fpt->add(sprintf("%3s", "---")." ".sprintf("%-25s", "-------------------------")." ".sprintf("%10s", "----------")."\n");
       $impuestos = array();
       $totales = array();
       foreach($albaran->get_lineas() as $col)
@@ -440,9 +437,7 @@ class tpv_supermercado extends fs_controller
          else
             $totales[$col->iva] += $col->pvptotal*$col->iva/100;
          
-         $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", substr($col->descripcion,0,24)) . " ".
-                 sprintf("%10s", $col->show_total_iva()) . "\n";
-         $fpt->add($linea);
+         $fpt->add(sprintf("%3s", $col->cantidad)." ".sprintf("%-25s", substr($col->descripcion,0,24))." ".sprintf("%10s", $this->show_numero($col->total_iva()))."\n");
       }
       
       $fpt->add("----------------------------------------\n");
@@ -450,16 +445,27 @@ class tpv_supermercado extends fs_controller
       /// imprimimos los impuestos desglosados
       $impuestos_txt = 'IVA ';
       foreach($impuestos as $imp)
-         $impuestos_txt .= $imp.'%: '.number_format($totales[$imp], 2, '.', ' ').'  ';
+         $impuestos_txt .= $imp.'%: '.  $this->show_precio($totales[$imp], $albaran->coddivisa, FALSE).'  ';
       $fpt->add( $fpt->center_text($impuestos_txt, 42)."\n" );
       
-      $fpt->add( $fpt->center_text("Total: ".$albaran->show_total()." Eur.", 42)."\n" );
+      $fpt->add( $fpt->center_text("Total: ".$this->show_precio($albaran->total, $albaran->coddivisa, FALSE), 42)."\n" );
       
       if( isset($_POST['efectivo']) AND isset($_POST['cambio']) )
-         $fpt->add( $fpt->center_text("Entregado: ".$_POST['efectivo']." Eur. Cambio: ".$_POST['cambio']." Eur.", 42)."\n" );
+      {
+         $fpt->add(
+            $fpt->center_text(
+               "Entregado: ".$this->show_precio($_POST['efectivo'], $albaran->coddivisa, FALSE).
+               "  Cambio: ".$this->show_precio($_POST['cambio'], $albaran->coddivisa, FALSE),
+               42
+            )."\n"
+         );
+      }
       
-      $fpt->add( $fpt->center_text('Pendiente: '.$this->clan->pendiente()." Eur.", 42).
-              "\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n");
+      $fpt->add(
+         $fpt->center_text('Pendiente: '.$this->show_precio($this->clan->pendiente(), $albaran->coddivisa, FALSE), 42).
+         "\n\n\n\n\n\n\n".chr(29).chr(86).chr(66).chr(0)."\n\n"
+      );
+      
       $fpt->imprimir();
    }
    
@@ -507,7 +513,7 @@ class tpv_supermercado extends fs_controller
                $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
          }
          else
-            $this->new_error_msg('No se ha podido borrar este albarán porque ya está facturado.');
+            $this->new_error_msg('No se ha podido borrar este '.FS_ALBARAN.' porque ya está facturado.');
       }
       else
          $this->new_error_msg("Ticket no encontrado.");

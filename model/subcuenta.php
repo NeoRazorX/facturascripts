@@ -111,21 +111,6 @@ class subcuenta extends fs_model
       return '';
    }
    
-   public function show_debe()
-   {
-      return number_format($this->debe, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_haber()
-   {
-      return number_format($this->haber, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_saldo()
-   {
-      return number_format($this->saldo, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
    public function tasaconv()
    {
       if( isset($this->coddivisa) )

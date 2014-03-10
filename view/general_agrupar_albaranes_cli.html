@@ -83,15 +83,15 @@
                <a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}
             </td>
             <td>{$value->observaciones_resume()}</td>
-            <td align="right">{$value->show_neto()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
-            <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {/loop}
          <tr>
             <td colspan="2"></td>
-            <td align="right"><b>{$fsc->neto}</b> {$fsc->simbolo_divisa()}</td>
-            <td align="right"><b>{$fsc->total}</b> {$fsc->simbolo_divisa()}</td>
+            <td align="right"><b>{$fsc->show_precio($fsc->neto)}</b></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->total)}</b></td>
             <td></td>
          </tr>
       </table>

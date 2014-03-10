@@ -121,36 +121,6 @@ class partida extends fs_model
       return '';
    }
    
-   public function show_debe()
-   {
-      return number_format($this->debe, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_haber()
-   {
-      return number_format($this->haber, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_saldo()
-   {
-      return number_format($this->saldo, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_sumdebe()
-   {
-      return number_format($this->sum_debe, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_sumhaber()
-   {
-      return number_format($this->sum_haber, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
-   public function show_baseimponible()
-   {
-      return number_format($this->baseimponible, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
    public function url()
    {
       if( is_null($this->idasiento) )

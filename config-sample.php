@@ -79,9 +79,17 @@ define('FS_LCD', '');
  * ¿Cuantos decimales quieres usar?
  * ¿Qué separador usar para los decimales?
  * ¿Qué separador usar para miles?
+ * ¿A qué lado quieres el símbolo de la divisa?
  */
 define('FS_NF0', 2);
 define('FS_NF1', '.');
 define('FS_NF2', ' ');
+define('FS_POS_DIVISA', 'right');
+
+/*
+ * ¿Como se llama al albarán en tu país?
+ */
+define('FS_ALBARAN', 'albarán');
+define('FS_ALBARANES', 'albaranes');
 
 ?>

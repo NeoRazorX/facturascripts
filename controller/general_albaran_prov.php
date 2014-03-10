@@ -43,7 +43,7 @@ class general_albaran_prov extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_albaran_prov', 'Albaran de proveedor', 'general', FALSE, FALSE);
+      parent::__construct('general_albaran_prov', FS_ALBARAN.' de proveedor', 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -110,7 +110,7 @@ class general_albaran_prov extends fs_controller
          $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
       }
       else
-         $this->new_error_msg("¡Albarán de proveedor no encontrado!");
+         $this->new_error_msg("¡".FS_ALBARAN." de proveedor no encontrado!");
    }
    
    public function url()
@@ -135,7 +135,7 @@ class general_albaran_prov extends fs_controller
          if($eje0)
             $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
          else
-            $this->new_error_msg('No se encuentra el ejercicio asociado al albarán.');
+            $this->new_error_msg('No se encuentra el ejercicio asociado al '.FS_ALBARAN.'.');
          
          /// ¿Cambiamos el proveedor?
          if($_POST['proveedor'] != $this->albaran->codproveedor)
@@ -319,9 +319,9 @@ class general_albaran_prov extends fs_controller
       }
       
       if( $this->albaran->save() )
-         $this->new_message("Albarán modificado correctamente.");
+         $this->new_message(FS_ALBARAN." modificado correctamente.");
       else
-         $this->new_error_msg("¡Imposible modificar el albarán!");
+         $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
    }
    
    private function generar_factura()
@@ -399,7 +399,7 @@ class general_albaran_prov extends fs_controller
                $this->generar_asiento($factura);
             else
             {
-               $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+               $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
                if( $factura->delete() )
                   $this->new_error_msg("La factura se ha borrado.");
                else

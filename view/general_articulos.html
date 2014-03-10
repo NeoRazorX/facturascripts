@@ -185,8 +185,8 @@
          {else}
             <td><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
-         <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp()} {$fsc->simbolo_divisa()}</span></td>
-         <td align="right"><span title="actualizado el {$value->factualizado}">{$value->show_pvp_iva()} {$fsc->simbolo_divisa()}</span></td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
          <td align="right">{$value->stockfis}</td>
       </tr>
       {else}

@@ -29,8 +29,8 @@
          </span>
       </h1>
       <select name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
-         <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>Albarán de cliente</option>
-         <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>Albarán de proveedor</option>
+         <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>{$albaran} de cliente</option>
+         <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>{$albaran} de proveedor</option>
       </select>
       <div class="bloque" id="clientes">
          de
@@ -120,7 +120,7 @@
       </div>
       <div>
          observaciones:
-         <textarea name="observaciones" cols="50">Copia del albarán de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
+         <textarea name="observaciones" cols="50">Copia del {$albaran} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
       </div>
    </form>
 </div>
@@ -140,20 +140,20 @@
       <tr>
          <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
          <td align="right">{$value->cantidad}</td>
-         <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-         <td align="right">{$value->show_dto()} %</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-         <td align="right">{$value->iva} %</td>
-         <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+         <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+         <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+         <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+         <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
       </tr>
       {/loop}
    </table>
    <br/><br/>
    <table class="list">
       <tr>
-         <td><b>Neto:</b> {$fsc->albaran->show_neto()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-         <td align="center"><b>IVA:</b> {$fsc->albaran->show_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-         <td align="right"><b>Total:</b> {$fsc->albaran->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+         <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+         <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+         <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
       </tr>
    </table>
 </div>

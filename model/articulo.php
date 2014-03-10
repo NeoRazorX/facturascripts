@@ -22,7 +22,7 @@ require_model('albaran_cliente.php');
 require_model('albaran_proveedor.php');
 require_model('familia.php');
 require_model('impuesto.php');
-require_model('tarifa.php');
+require_model('tarifa_articulo.php');
 require_model('stock.php');
 
 class articulo extends fs_model
@@ -33,6 +33,7 @@ class articulo extends fs_model
    public $pvp;
    public $pvp_ant;
    public $factualizado;
+   public $costemedio;
    public $codimpuesto;
    public $iva;
    public $destacado;
@@ -70,6 +71,7 @@ class articulo extends fs_model
          $this->descripcion = $this->no_html($a['descripcion']);
          $this->pvp = floatval($a['pvp']);
          $this->factualizado = Date('d-m-Y', strtotime($a['factualizado']));
+         $this->costemedio = floatval($a['costemedio']);
          $this->codimpuesto = $a['codimpuesto'];
          $this->stockfis = floatval($a['stockfis']);
          $this->stockmin = floatval($a['stockmin']);
@@ -86,11 +88,7 @@ class articulo extends fs_model
          
          /// no cargamos la imágen directamente por cuestión de rendimiento
          $this->imagen = NULL;
-         if( isset($a['imagen']) )
-            $this->has_imagen = TRUE;
-         else
-            $this->has_imagen = FALSE;
-         
+         $this->has_imagen = isset($a['imagen']);
          $this->exists = TRUE;
       }
       else
@@ -100,6 +98,7 @@ class articulo extends fs_model
          $this->descripcion = '';
          $this->pvp = 0;
          $this->factualizado = Date('d-m-Y');
+         $this->costemedio = 0;
          $this->codimpuesto = NULL;
          $this->stockfis = 0;
          $this->stockmin = 0;
@@ -113,7 +112,6 @@ class articulo extends fs_model
          $this->equivalencia = NULL;
          $this->codbarras = '';
          $this->observaciones = '';
-         
          $this->imagen = NULL;
          $this->has_imagen = FALSE;
          $this->exists = FALSE;
@@ -149,17 +147,14 @@ class articulo extends fs_model
       return base64_encode($this->descripcion);
    }
    
-   public function show_pvp()
+   public function pvp_iva($coma=TRUE)
    {
-      return number_format($this->pvp, FS_NF0, FS_NF1, FS_NF2);
+      return $this->pvp * (100+$this->get_iva()) / 100;
    }
    
-   public function show_pvp_iva($coma=TRUE)
+   public function costemedio_iva()
    {
-      if($coma)
-         return number_format($this->pvp * (100+$this->get_iva()) / 100, FS_NF0, FS_NF1, FS_NF2);
-      else
-         return number_format($this->pvp * (100+$this->get_iva()) / 100, FS_NF0, FS_NF1, '');
+      return $this->costemedio * (100+$this->get_iva()) / 100;
    }
    
    public function url()
@@ -308,6 +303,12 @@ class articulo extends fs_model
    {
       $linea = new linea_albaran_proveedor();
       return $linea->all_from_articulo($this->referencia, $offset, $limit);
+   }
+   
+   public function get_costemedio()
+   {
+      foreach($this->get_lineas_albaran_prov(0, 1) as $linea)
+         $this->costemedio = $linea->pvptotal/$linea->cantidad;
    }
    
    public function imagen_url()
@@ -548,9 +549,10 @@ class articulo extends fs_model
          
          if( $this->exists() )
          {
+            $this->get_costemedio();
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
                codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
-               factualizado = ".$this->var2str($this->factualizado).",
+               factualizado = ".$this->var2str($this->factualizado).", costemedio = ".$this->var2str($this->costemedio).",
                codimpuesto = ".$this->var2str($this->codimpuesto).",
                stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
                stockmax = ".$this->var2str($this->stockmax).",
@@ -567,12 +569,12 @@ class articulo extends fs_model
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,
-               factualizado,codimpuesto,stockfis,stockmin,stockmax,controlstock,destacado,bloqueado,
+               factualizado,costemedio,codimpuesto,stockfis,stockmin,stockmax,controlstock,destacado,bloqueado,
                secompra,sevende,equivalencia,codbarras,observaciones,imagen,publico)
                VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",
                ".$this->var2str($this->descripcion).",".$this->var2str($this->pvp).",
-               ".$this->var2str($this->factualizado).",".$this->var2str($this->codimpuesto).",
-               ".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",
+               ".$this->var2str($this->factualizado).",".$this->var2str($this->costemedio).",
+               ".$this->var2str($this->codimpuesto).",".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",
                ".$this->var2str($this->stockmax).",".$this->var2str($this->controlstock).",
                ".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",
                ".$this->var2str($this->secompra).",".$this->var2str($this->sevende).",

@@ -69,11 +69,11 @@
          <input type="text" name="nombre" value="{$fsc->clan->nombre}" size="50" maxlength="100" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Límite de gasto (euros):
+         Límite de gasto ({$fsc->simbolo_divisa()}):
          <input type="text" name="limite" value="{$fsc->clan->limite}" size="8" autocomplete="off" onclick="this.select()"/>
       </div>
       <div class="bloque">
-         Gastados: {$fsc->clan->gastado()} €
+         Gastados: {$fsc->show_precio($fsc->clan->gastado())}
       </div>
       <div class="bloque">
          <label>
@@ -100,7 +100,7 @@
 </form>
 
 <div class="rounded">
-   <h1>Últimos albaranes</h1>
+   <h1>Últimos {$albaranes}</h1>
    <table class="list">
       <tr>
          <th></th>
@@ -116,7 +116,7 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} €</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}

@@ -81,11 +81,6 @@ class asiento extends fs_model
       return '';
    }
    
-   public function show_importe()
-   {
-      return number_format($this->importe, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
    public function url()
    {
       if( is_null($this->idasiento) )
@@ -466,7 +461,7 @@ class asiento extends fs_model
       {
          $aux_sql = '';
          if( strtolower(FS_DB_TYPE) == 'postgresql' )
-            $aux_sql = ':TEXT';
+            $aux_sql = '::TEXT';
          
          $consulta .= "numero".$aux_sql." LIKE '%".$query."%' OR concepto LIKE '%".$query."%'
             OR importe BETWEEN ".($query-.01)." AND ".($query+.01);

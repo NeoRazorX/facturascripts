@@ -31,11 +31,7 @@ class fs_pdf
          mkdir('tmp/pdf');
       
       $this->pdf = new Cezpdf($paper, $orientation);
-      
-      /// cambiamos ! por el simbolo del euro
-      $euro_diff = array(33 => 'Euro');
-      $this->pdf->selectFont("extras/ezpdf/fonts/".$font.".afm",
-              array('encoding' => 'WinAnsiEncoding', 'differences' => $euro_diff));
+      $this->pdf->selectFont("extras/ezpdf/fonts/".$font.".afm");
    }
    
    public function show()

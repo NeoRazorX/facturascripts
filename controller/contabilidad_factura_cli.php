@@ -350,7 +350,7 @@ class contabilidad_factura_cli extends fs_controller
             $pdf_doc->new_table();
             $pdf_doc->add_table_header(
                array(
-                  'albaran' => '<b>Albarán</b>',
+                  'albaran' => '<b>'.ucfirst(FS_ALBARAN).'</b>',
                   'descripcion' => '<b>Descripción</b>',
                   'pvp' => '<b>PVP</b>',
                   'dto' => '<b>DTO</b>',
@@ -364,15 +364,14 @@ class contabilidad_factura_cli extends fs_controller
                $fila = array(
                   'albaran' => $lineas[$linea_actual]->albaran_numero(),
                   'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
-                  'pvp' => number_format($lineas[$linea_actual]->pvpunitario, FS_NF0) . " !",
-                  'dto' => number_format($lineas[$linea_actual]->dtopor, 0) . " %",
+                  'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->factura->coddivisa),
+                  'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 0) . " %",
                   'cantidad' => $lineas[$linea_actual]->cantidad,
-                  'importe' => number_format($lineas[$linea_actual]->pvptotal, FS_NF0) . " !"
+                  'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->factura->coddivisa)
                );
                
                if($lineas[$linea_actual]->referencia != '0')
-                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia." - ".
-                          $lineas[$linea_actual]->descripcion, 0, 40);
+                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 40);
                
                $pdf_doc->add_table_row($fila);
                $saltos++;
@@ -428,7 +427,7 @@ class contabilidad_factura_cli extends fs_controller
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
             $fila = array(
                 'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
-                'neto' => number_format($this->factura->neto, FS_NF0) . ' !',
+                'neto' => $this->show_precio($this->factura->neto, $this->factura->coddivisa),
             );
             $opciones = array(
                 'cols' => array(
@@ -440,11 +439,11 @@ class contabilidad_factura_cli extends fs_controller
             foreach($lineas_iva as $li)
             {
                $titulo['iva'.$li->iva] = '<b>IVA'.$li->iva.'%</b>';
-               $fila['iva'.$li->iva] = number_format($li->totaliva, FS_NF0) . ' !';
+               $fila['iva'.$li->iva] = $this->show_precio($li->totaliva, $this->factura->coddivisa);
                $opciones['cols']['iva'.$li->iva] = array('justification' => 'right');
             }
             $titulo['liquido'] = '<b>Total</b>';
-            $fila['liquido'] = number_format($this->factura->total, FS_NF0) . ' !';
+            $fila['liquido'] = $this->show_precio($this->factura->total, $this->factura->coddivisa);
             $opciones['cols']['liquido'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
             $pdf_doc->add_table_row($fila);

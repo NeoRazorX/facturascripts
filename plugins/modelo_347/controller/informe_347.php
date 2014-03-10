@@ -226,11 +226,6 @@ class informe_347 extends fs_controller
       return $informe;
    }
    
-   public function show_float($num)
-   {
-      return number_format($num, FS_NF0, FS_NF1, FS_NF2);
-   }
-   
    private function excel()
    {
       $this->template = FALSE;

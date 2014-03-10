@@ -28,7 +28,7 @@ class general_albaranes_cli extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('general_albaranes_cli', 'Albaranes de cliente', 'general', FALSE, TRUE, TRUE);
+      parent::__construct('general_albaranes_cli', FS_ALBARANES.' de cliente', 'general', FALSE, TRUE, TRUE);
    }
    
    protected function process()
@@ -67,7 +67,7 @@ class general_albaranes_cli extends fs_controller
             $this->resultados = $albaran->search($this->query, $this->offset);
          else if( isset($_GET['ptefactura']) )
          {
-            $this->new_advice('Estos son los albaranes pendientes de facturar. Haz clic <a class="link" href="'.$this->url().
+            $this->new_advice('Estos son los '.FS_ALBARANES.' pendientes de facturar. Haz clic <a class="link" href="'.$this->url().
                  '">aquí</a> para volver a la vista normal.');
             $this->resultados = $albaran->all_ptefactura($this->offset);
          }
@@ -141,12 +141,12 @@ class general_albaranes_cli extends fs_controller
          }
          
          if( $alb1->delete() )
-            $this->new_message("Albarán ".$alb1->codigo." borrado correctamente.");
+            $this->new_message(FS_ALBARAN." ".$alb1->codigo." borrado correctamente.");
          else
-            $this->new_error_msg("¡Imposible borrar el albarán!");
+            $this->new_error_msg("¡Imposible borrar el ".FS_ALBARAN."!");
       }
       else
-         $this->new_error_msg("¡Albarán no encontrado!");
+         $this->new_error_msg("¡".FS_ALBARAN." no encontrado!");
    }
 }
 

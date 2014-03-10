@@ -137,10 +137,10 @@ class informe_facturas extends fs_controller
                         $impuestos[$liva->iva] += $liva->totaliva;
                      
                      /// completamos y añadimos la línea al PDF
-                     $linea['base'] = $liva->show_neto();
-                     $linea['iva'] = $liva->show_iva();
-                     $linea['totaliva'] = $liva->show_totaliva();
-                     $linea['total'] = $liva->show_total();
+                     $linea['base'] = $this->show_numero($liva->neto);
+                     $linea['iva'] = $this->show_numero($liva->iva);
+                     $linea['totaliva'] = $this->show_numero($liva->totaliva);
+                     $linea['total'] = $this->show_numero($liva->totallinea);
                      $pdf_doc->add_table_row($linea);
                   }
                }
@@ -172,7 +172,7 @@ class informe_facturas extends fs_controller
             $pdf_doc->new_table();
             $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
             $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => number_format($base, FS_NF0) . ' !');
+                'base' => $this->show_precio($base));
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
@@ -181,13 +181,13 @@ class informe_facturas extends fs_controller
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = number_format($value, FS_NF0) . ' !';
+               $fila['iva'.$i] = $this->show_precio($value);
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['re'] = number_format($re, FS_NF0) . ' !';
-            $fila['total'] = number_format($total, FS_NF0) . ' !';
+            $fila['re'] = $this->show_precio($re);
+            $fila['total'] = $this->show_precio($total);
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
@@ -294,10 +294,10 @@ class informe_facturas extends fs_controller
                         $impuestos[$liva->iva] += $liva->totaliva;
                      
                      /// completamos y añadimos la línea al pdf
-                     $linea['base'] = $liva->show_neto();
-                     $linea['iva'] = $liva->show_iva();
-                     $linea['totaliva'] = $liva->show_totaliva();
-                     $linea['total'] = $liva->show_total();
+                     $linea['base'] = $this->show_numero($liva->neto);
+                     $linea['iva'] = $this->show_numero($liva->iva);
+                     $linea['totaliva'] = $this->show_numero($liva->totaliva);
+                     $linea['total'] = $this->show_numero($liva->totallinea);
                      $pdf_doc->add_table_row($linea);
                   }
                }
@@ -329,7 +329,7 @@ class informe_facturas extends fs_controller
             $pdf_doc->new_table();
             $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
             $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => number_format($base, FS_NF0) . ' !');
+                'base' => $this->show_precio($base));
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
@@ -338,13 +338,13 @@ class informe_facturas extends fs_controller
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = number_format($value, FS_NF0) . ' !';
+               $fila['iva'.$i] = $this->show_precio($value);
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['re'] = '<b>RE</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['re'] = number_format($re, FS_NF0) . ' !';
-            $fila['total'] = number_format($total, FS_NF0) . ' !';
+            $fila['re'] = $this->show_precio($re);
+            $fila['total'] = $this->show_precio($total);
             $opciones['cols']['re'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);

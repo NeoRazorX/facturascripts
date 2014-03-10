@@ -156,7 +156,7 @@ class fs_page extends fs_model
       $pagelist = $this->cache->get_array('m_fs_page_all');
       if( !$pagelist )
       {
-         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, title ASC;");
+         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, lower(title) ASC;");
          if($pages)
          {
             foreach($pages as $p)

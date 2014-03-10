@@ -80,6 +80,44 @@ class inventarios_balances
       }
    }
    
+   public function generar_pyg($codeje)
+   {
+      $ejercicio = new ejercicio();
+      
+      $eje0 = $ejercicio->get($codeje);
+      if($eje0)
+      {
+         $pdf_doc = new fs_pdf();
+         $pdf_doc->pdf->addInfo('Title', 'Balance de pérdidas y ganancias de ' . $this->empresa->nombre);
+         $pdf_doc->pdf->addInfo('Subject', 'Balance de pérdidas y ganancias de ' . $this->empresa->nombre);
+         $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+         $pdf_doc->pdf->ezStartPageNumbers(580, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
+         
+         $this->perdidas_y_ganancias($pdf_doc, $eje0, FALSE);
+         
+         $pdf_doc->show();
+      }
+   }
+   
+   public function generar_sit($codeje)
+   {
+      $ejercicio = new ejercicio();
+      
+      $eje0 = $ejercicio->get($codeje);
+      if($eje0)
+      {
+         $pdf_doc = new fs_pdf();
+         $pdf_doc->pdf->addInfo('Title', 'Balance de pérdidas y ganancias de ' . $this->empresa->nombre);
+         $pdf_doc->pdf->addInfo('Subject', 'Balance de pérdidas y ganancias de ' . $this->empresa->nombre);
+         $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+         $pdf_doc->pdf->ezStartPageNumbers(580, 10, 10, 'left', '{PAGENUM} de {TOTALPAGENUM}');
+         
+         $this->situacion($pdf_doc, $eje0, FALSE);
+         
+         $pdf_doc->show();
+      }
+   }
+   
    /*
     * Este informe muestra los saldos (distintos de cero) de cada cuenta y subcuenta
     * por periodos, pero siempre excluyendo los asientos de cierre y pérdidas y ganancias.
@@ -184,9 +222,9 @@ class inventarios_balances
                array(
                    'subcuenta' => $a.$auxlist[$i]['codigo'].$b,
                    'descripcion' => $a.substr($auxlist[$i]['descripcion'], 0, 50).$b,
-                   'debe' => $a.number_format($auxlist[$i]['debe'], FS_NF0, FS_NF1, FS_NF2).$b,
-                   'haber' => $a.number_format($auxlist[$i]['haber'], FS_NF0, FS_NF1, FS_NF2).$b,
-                   'saldo' => $a.number_format($auxlist[$i]['saldo'], FS_NF0, FS_NF1, FS_NF2).$b
+                   'debe' => $a.$this->show_numero($auxlist[$i]['debe']).$b,
+                   'haber' => $a.$this->show_numero($auxlist[$i]['haber']).$b,
+                   'saldo' => $a.$this->show_numero($auxlist[$i]['saldo']).$b
                )
             );
          }
@@ -197,9 +235,9 @@ class inventarios_balances
             array(
                 'subcuenta' => '',
                 'descripcion' => '<b>Suma y sigue</b>',
-                'debe' => '<b>'.number_format($tdebe, FS_NF0, FS_NF1, FS_NF2).'</b>',
-                'haber' => '<b>'.number_format($thaber, FS_NF0, FS_NF1, FS_NF2).'</b>',
-                'saldo' => '<b>'.number_format($tdebe-$thaber, FS_NF0, FS_NF1, FS_NF2).'</b>'
+                'debe' => '<b>'.$this->show_numero($tdebe).'</b>',
+                'haber' => '<b>'.$this->show_numero($thaber).'</b>',
+                'saldo' => '<b>'.$this->show_numero($tdebe-$thaber).'</b>'
             )
          );
          $pdf_doc->save_table(
@@ -221,13 +259,15 @@ class inventarios_balances
     * Este informe se confecciona a partir de las cuentas que señalan los códigos
     * de balance que empiezan por PG.
     */
-   private function perdidas_y_ganancias(&$pdf_doc, &$eje)
+   private function perdidas_y_ganancias(&$pdf_doc, &$eje, $np=TRUE)
    {
       /// necesitamos el ejercicio anterior
       $eje0 = $eje->get_by_fecha( '1-1-'.(intval($eje->year())-1), FALSE, FALSE );
       if($eje0)
       {
-         $pdf_doc->pdf->ezNewPage();
+         if($np)
+            $pdf_doc->pdf->ezNewPage();
+         
          $pdf_doc->pdf->ezText($this->empresa->nombre." - Cuenta de pérdidas y ganancias abreviada del ejercicio ".$eje->year().".\n\n", 13);
          
          /// creamos las cabeceras de la tabla
@@ -254,8 +294,8 @@ class inventarios_balances
                $pdf_doc->add_table_row(
                   array(
                       'descripcion' => "\n<b>A) RESULTADOS DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11)</b>",
-                      'actual' => "\n<b>".number_format($totales[$eje->year()]['a'], FS_NF0, FS_NF1, FS_NF2).'</b>',
-                      'anterior' => "\n<b>".number_format($totales[$eje0->year()]['a'], FS_NF0, FS_NF1, FS_NF2).'</b>'
+                      'actual' => "\n<b>".$this->show_numero($totales[$eje->year()]['a']).'</b>',
+                      'anterior' => "\n<b>".$this->show_numero($totales[$eje0->year()]['a']).'</b>'
                   )
                );
             }
@@ -264,15 +304,15 @@ class inventarios_balances
                $pdf_doc->add_table_row(
                   array(
                       'descripcion' => "\n<b>B) RESULTADO FINANCIERO (12+13+14+15+16)</b>",
-                      'actual' => "\n<b>".number_format($totales[$eje->year()]['b'], FS_NF0, FS_NF1, FS_NF2).'</b>',
-                      'anterior' => "\n<b>".number_format($totales[$eje0->year()]['b'], FS_NF0, FS_NF1, FS_NF2).'</b>'
+                      'actual' => "\n<b>".$this->show_numero($totales[$eje->year()]['b']).'</b>',
+                      'anterior' => "\n<b>".$this->show_numero($totales[$eje0->year()]['b']).'</b>'
                   )
                );
                $pdf_doc->add_table_row(
                   array(
                       'descripcion' => "<b>C) RESULTADO ANTES DE IMPUESTOS (A+B)</b>",
-                      'actual' => '<b>'.number_format($totales[$eje->year()]['c'], FS_NF0, FS_NF1, FS_NF2).'</b>',
-                      'anterior' => '<b>'.number_format($totales[$eje0->year()]['c'], FS_NF0, FS_NF1, FS_NF2).'</b>'
+                      'actual' => '<b>'.$this->show_numero($totales[$eje->year()]['c']).'</b>',
+                      'anterior' => '<b>'.$this->show_numero($totales[$eje0->year()]['c']).'</b>'
                   )
                );
             }
@@ -289,8 +329,8 @@ class inventarios_balances
                   $pdf_doc->add_table_row(
                      array(
                          'descripcion' => $bal->descripcion2,
-                         'actual' => number_format($saldo1, FS_NF0, FS_NF1, FS_NF2),
-                         'anterior' => number_format($saldo0, FS_NF0, FS_NF1, FS_NF2)
+                         'actual' => $this->show_numero($saldo1),
+                         'anterior' => $this->show_numero($saldo0)
                      )
                   );
                   
@@ -326,8 +366,8 @@ class inventarios_balances
          $pdf_doc->add_table_row(
             array(
                 'descripcion' => "\n<b>D) RESULTADO DEL EJERCICIO (C+17)</b>",
-                'actual' => "\n<b>".number_format($totales[$eje->year()]['d'], FS_NF0, FS_NF1, FS_NF2).'</b>',
-                'anterior' => "\n<b>".number_format($totales[$eje0->year()]['d'], FS_NF0, FS_NF1, FS_NF2).'</b>'
+                'actual' => "\n<b>".$this->show_numero($totales[$eje->year()]['d']).'</b>',
+                'anterior' => "\n<b>".$this->show_numero($totales[$eje0->year()]['d']).'</b>'
             )
          );
          
@@ -360,7 +400,7 @@ class inventarios_balances
     * en orden. Pero como era demasiado sencillo, los hijos de puta de facturalux decidieron
     * añadir números romanos, para que no puedas ordenarlos fácilemnte.
     */
-   private function situacion(&$pdf_doc, &$eje)
+   private function situacion(&$pdf_doc, &$eje, $np=TRUE)
    {
       /// necesitamos el ejercicio anterior
       $eje0 = $eje->get_by_fecha( '1-1-'.(intval($eje->year())-1), FALSE, FALSE );
@@ -375,7 +415,11 @@ class inventarios_balances
          
          foreach($nivel0 as $nv0)
          {
-            $pdf_doc->pdf->ezNewPage();
+            if($np)
+               $pdf_doc->pdf->ezNewPage();
+            else
+               $np = TRUE;
+            
             $pdf_doc->pdf->ezText($this->empresa->nombre." - Balance de situación del ejercicio ".$eje->year().".\n\n", 13);
             
             /// creamos las cabeceras de la tabla
@@ -493,9 +537,14 @@ class inventarios_balances
          $total += $bca->saldo($idasiento);
       
       if($naturaleza == 'A')
-         return number_format( 0-$total, FS_NF0, FS_NF1, FS_NF2 );
+         return $this->show_numero(0-$total);
       else
-         return number_format( $total, FS_NF0, FS_NF1, FS_NF2 );
+         return $this->show_numero($total);
+   }
+   
+   private function show_numero($num)
+   {
+      return number_format($num, FS_NF0, FS_NF1, FS_NF2);
    }
 }
 

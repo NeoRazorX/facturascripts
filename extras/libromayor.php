@@ -123,9 +123,9 @@ class libro_mayor
                             'asiento' => $partidas[$linea_actual]->numero,
                             'fecha' => $partidas[$linea_actual]->fecha,
                             'concepto' => substr($partidas[$linea_actual]->concepto, 0, 60),
-                            'debe' => $partidas[$linea_actual]->show_debe(),
-                            'haber' => $partidas[$linea_actual]->show_haber(),
-                            'saldo' => $partidas[$linea_actual]->show_saldo()
+                            'debe' => $this->show_numero($partidas[$linea_actual]->debe),
+                            'haber' => $this->show_numero($partidas[$linea_actual]->haber),
+                            'saldo' => $this->show_numero($partidas[$linea_actual]->saldo)
                         )
                      );
                      
@@ -137,8 +137,8 @@ class libro_mayor
                             'asiento' => '',
                             'fecha' => '',
                             'concepto' => '',
-                            'debe' => '<b>'.$partidas[$linea_actual-1]->show_sumdebe().'</b>',
-                            'haber' => '<b>'.$partidas[$linea_actual-1]->show_sumhaber().'</b>',
+                            'debe' => '<b>'.$this->show_numero($partidas[$linea_actual-1]->sum_debe).'</b>',
+                            'haber' => '<b>'.$this->show_numero($partidas[$linea_actual-1]->sum_haber).'</b>',
                             'saldo' => ''
                         )
                   );
@@ -218,8 +218,8 @@ class libro_mayor
                          'fecha' => $linea['fecha'],
                          'subcuenta' => $linea['codsubcuenta'].' '.substr($linea['descripcion'], 0, 35),
                          'concepto' => substr($linea['concepto'], 0, 45),
-                         'debe' => number_format($linea['debe'], FS_NF0, FS_NF1, FS_NF2),
-                         'haber' => number_format($linea['haber'], FS_NF0, FS_NF1, FS_NF2)
+                         'debe' => $this->show_numero($linea['debe']),
+                         'haber' => $this->show_numero($linea['haber'])
                      )
                   );
                   
@@ -235,8 +235,8 @@ class libro_mayor
                       'fecha' => '',
                       'subcuenta' => '',
                       'concepto' => '',
-                      'debe' => '<b>'.number_format($sum_debe, FS_NF0, FS_NF1, FS_NF2).'</b>',
-                      'haber' => '<b>'.number_format($sum_haber, FS_NF0, FS_NF1, FS_NF2).'</b>'
+                      'debe' => '<b>'.$this->show_numero($sum_debe).'</b>',
+                      'haber' => '<b>'.$this->show_numero($sum_haber).'</b>'
                   )
                );
                $pdf_doc->save_table(
@@ -257,6 +257,11 @@ class libro_mayor
             $pdf_doc->save('tmp/libro_diario/'.$eje->codejercicio.'.pdf');
          }
       }
+   }
+   
+   private function show_numero($num)
+   {
+      return number_format($num, FS_NF0, FS_NF1, FS_NF2);
    }
 }
 

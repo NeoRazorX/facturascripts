@@ -135,7 +135,7 @@ class fs_controller
    
    public function version()
    {
-      return '2014.2b';
+      return '2014.3';
    }
    
    public function close()
@@ -701,6 +701,35 @@ class fs_controller
          else
             return '?';
       }
+   }
+   
+   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
+   {
+      if($coddivisa === FALSE)
+         $coddivisa = $this->empresa->coddivisa;
+      
+      if(FS_POS_DIVISA == 'right')
+      {
+         if($simbolo)
+            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
+         else
+            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$coddivisa;
+      }
+      else
+      {
+         if($simbolo)
+            return $this->simbolo_divisa($coddivisa).number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+         else
+            return $coddivisa.' '.number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+      }
+   }
+   
+   public function show_numero($num=0, $decimales=FS_NF0, $js=FALSE)
+   {
+      if($js)
+         return number_format($num, $decimales, '.', '');
+      else
+         return number_format($num, $decimales, FS_NF1, FS_NF2);
    }
 }
 

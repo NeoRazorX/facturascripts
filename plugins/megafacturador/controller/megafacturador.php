@@ -54,7 +54,7 @@ class megafacturador extends fs_controller
          {
             $this->generar_factura_cliente( array($alb) );
          }
-         $this->new_message($this->total.' albaranes de cliente facturados.');
+         $this->new_message($this->total.' '.FS_ALBARANES.' de cliente facturados.');
          
          $this->total = 0;
          $albaran_pro = new albaran_proveedor();
@@ -62,7 +62,7 @@ class megafacturador extends fs_controller
          {
             $this->generar_factura_proveedor( array($alb) );
          }
-         $this->new_message($this->total.' albaranes de proveedor facturados.');
+         $this->new_message($this->total.' '.FS_ALBARANES.' de proveedor facturados.');
       }
    }
    
@@ -157,7 +157,7 @@ class megafacturador extends fs_controller
                
                if( !$alb->save() )
                {
-                  $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+                  $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
                   $continuar = FALSE;
                   break;
                }
@@ -401,7 +401,7 @@ class megafacturador extends fs_controller
                
                if( !$alb->save() )
                {
-                  $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+                  $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
                   $continuar = FALSE;
                   break;
                }

@@ -339,9 +339,9 @@
          <td>{$value->codejercicio}</td>
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td>{$value->descripcion}</td>
-         <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
-         <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
-         <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
       <tr>
@@ -353,7 +353,7 @@
 
 <div class="popup" id="popup_buscar_lineas" style="min-width: 75%">
    <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-      <h1>Buscar en las líneas de los albaranes</h1>
+      <h1>Buscar en las líneas de los {$albaranes}</h1>
       <div style="text-align: center;">
          <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
          <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
@@ -367,15 +367,15 @@
    <a name="listado"></a>
    <div class="select">
       {if condition="$fsc->listar=='albaranes'"}
-         <a href="{$fsc->url()}&listar=albaranes#listado" class="selected">Albaranes</a>
+         <a href="{$fsc->url()}&listar=albaranes#listado" class="selected">{$albaranes}</a>
          <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
          <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
       {elseif condition="$fsc->listar=='facturas'"}
-         <a href="{$fsc->url()}&listar=albaranes#listado">Albaranes</a>
+         <a href="{$fsc->url()}&listar=albaranes#listado">{$albaranes}</a>
          <a href="{$fsc->url()}&listar=facturas#listado" class="selected">Facturas</a>
          <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
       {else}
-         <a href="{$fsc->url()}&listar=albaranes#listado">Albaranes</a>
+         <a href="{$fsc->url()}&listar=albaranes#listado">{$albaranes}</a>
          <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
          <a href="{$fsc->url()}&listar=stats#listado" class="selected">Estadísticas</a>
       {/if}
@@ -396,7 +396,7 @@
             <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
             <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
             <td>{$value->observaciones_resume()}</td>
-            <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {else}
@@ -431,7 +431,7 @@
             <td align="center">{if condition="$value->idasiento"}A{/if}</td>
             <td><a class="link" href="{$value->url()}">{$value->codigo}</a></td>
             <td>{$value->observaciones_resume()}</td>
-            <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
             <td align="right">{$value->fecha}</td>
          </tr>
          {else}

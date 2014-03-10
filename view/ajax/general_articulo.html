@@ -11,10 +11,10 @@
 
 {if condition="$fsc->articulo"}
    {if condition="$fsc->buscar_tipo=='albcli'"}
-      <h1>Albaranes de cliente</h1>
+      <h1>{$albaranes} de cliente</h1>
       <table class="list">
          <tr>
-            <th align="left">Albarán</th>
+            <th align="left">{$albaran}</th>
             <th align="left">Descripción</th>
             <th align="right">Cantidad</th>
             <th align="right">Total+IVA</th>
@@ -25,7 +25,7 @@
             <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa()}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
@@ -47,10 +47,10 @@
          </tr>
       </table>
    {elseif condition="$fsc->buscar_tipo=='albpro'"}
-      <h1>Albaranes de proveedor</h1>
+      <h1>{$albaranes} de proveedor</h1>
       <table class="list">
          <tr>
-            <th align="left">Albarán</th>
+            <th align="left">{$albaran}</th>
             <th align="left">Descripción</th>
             <th align="right">Cantidad</th>
             <th align="right">Total+IVA</th>
@@ -61,7 +61,7 @@
             <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa()}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
@@ -97,7 +97,7 @@
             <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa()}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
@@ -133,7 +133,7 @@
             <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa()}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}

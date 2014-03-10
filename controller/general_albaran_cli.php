@@ -44,7 +44,7 @@ class general_albaran_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_albaran_cli', 'Albarán de cliente', 'general', FALSE, FALSE);
+      parent::__construct('general_albaran_cli', FS_ALBARAN.' de cliente', 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -110,7 +110,7 @@ class general_albaran_cli extends fs_controller
          $this->buttons[] = new fs_button_img('b_remove_albaran', 'eliminar', 'trash.png', '#', TRUE);
       }
       else
-         $this->new_error_msg("¡Albarán de cliente no encontrado!");
+         $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");
    }
    
    public function url()
@@ -136,7 +136,7 @@ class general_albaran_cli extends fs_controller
          if($eje0)
             $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
          else
-            $this->new_error_msg('No se encuentra el ejercicio asociado al albarán.');
+            $this->new_error_msg('No se encuentra el ejercicio asociado al '.FS_ALBARAN);
          
          /// ¿cambiamos el cliente?
          if($_POST['cliente'] != $this->albaran->codcliente)
@@ -334,9 +334,9 @@ class general_albaran_cli extends fs_controller
       }
       
       if( $this->albaran->save() )
-         $this->new_message("Albarán modificado correctamente.");
+         $this->new_message(FS_ALBARAN." modificado correctamente.");
       else
-         $this->new_error_msg("¡Imposible modificar el albarán!");
+         $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
    }
    
    private function generar_factura()
@@ -417,7 +417,7 @@ class general_albaran_cli extends fs_controller
                $this->generar_asiento($factura);
             else
             {
-               $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+               $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
                if( $factura->delete() )
                   $this->new_error_msg("La factura se ha borrado.");
                else
@@ -564,8 +564,8 @@ class general_albaran_cli extends fs_controller
       $this->template = FALSE;
       
       $pdf_doc = new fs_pdf();
-      $pdf_doc->pdf->addInfo('Title', 'Albaran ' . $this->albaran->codigo);
-      $pdf_doc->pdf->addInfo('Subject', 'Albaran de cliente ' . $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Title', FS_ALBARAN.' '. $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Subject', FS_ALBARAN.' de cliente ' . $this->albaran->codigo);
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->albaran->get_lineas();
@@ -583,7 +583,7 @@ class general_albaran_cli extends fs_controller
                $pdf_doc->pdf->ezNewPage();
             
             /// encabezado
-            $texto = "<b>Albaran:</b> ".$this->albaran->codigo."\n".
+            $texto = "<b>".ucfirst(FS_ALBARAN).":</b> ".$this->albaran->codigo."\n".
                     "<b>Fecha:</b> ".$this->albaran->fecha."\n".
                     "<b>SR. D:</b> ".$this->albaran->nombrecliente;
             $pdf_doc->pdf->ezText($texto, 12, array('justification' => 'right'));
@@ -607,10 +607,10 @@ class general_albaran_cli extends fs_controller
                $pdf_doc->add_table_row(
                   Array(
                       'unidades' => $lineas[$linea_actual]->cantidad,
-                      'descripcion' => substr($lineas[$linea_actual]->referencia." - ".$lineas[$linea_actual]->descripcion, 0, 40),
-                      'dto' => $lineas[$linea_actual]->show_dto() . " %",
-                      'pvp' => $lineas[$linea_actual]->show_pvp() . " !",
-                      'importe' => $lineas[$linea_actual]->show_total() . " !"
+                      'descripcion' => substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 40),
+                      'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 2).' %',
+                      'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->albaran->coddivisa),
+                      'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->albaran->coddivisa)
                   )
                );
                
@@ -652,9 +652,9 @@ class general_albaran_cli extends fs_controller
             /// Escribimos los totales
             $opciones = array('justification' => 'right');
             $neto = '<b>Pag</b>: ' . $pagina . '/' . ceil(count($lineas) / $lppag);
-            $neto .= '        <b>Neto</b>: ' . $this->albaran->show_neto() . ' !';
-            $neto .= '    <b>IVA</b>: ' . $this->albaran->show_iva() . ' !';
-            $neto .= '    <b>Total</b>: ' . $this->albaran->show_total() . ' !';
+            $neto .= '        <b>Neto</b>: ' . $this->show_precio($this->albaran->neto, $this->albaran->coddivisa);
+            $neto .= '    <b>IVA</b>: ' . $this->show_precio($this->albaran->totaliva, $this->albaran->coddivisa);
+            $neto .= '    <b>Total</b>: ' . $this->show_precio($this->albaran->total, $this->albaran->coddivisa);
             $pdf_doc->pdf->ezText($neto, 12, $opciones);
             
             $pagina++;

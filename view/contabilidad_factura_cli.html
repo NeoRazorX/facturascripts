@@ -112,7 +112,7 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th align="left">Albarán</th>
+         <th align="left">{$albaran}</th>
          <th align="left">Artículo</th>
          <th align="right">Cantidad</th>
          <th align="right">PVP</th>
@@ -132,11 +132,11 @@
             {$value->descripcion}
          </td>
          <td align="right">{$value->cantidad}</td>
-         <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
-         <td align="right">{$value->show_dto()} %</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
+         <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+         <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
          <td align="right">{$value->iva} %</td>
-         <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
       </tr>
       {/loop}
    </table>
@@ -157,10 +157,10 @@
             {loop="$fsc->factura->get_lineas_iva()"}
             <tr>
                <td>{$value->codimpuesto}</td>
-               <td align="right">{$value->show_neto()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
-               <td align="right">{$value->show_iva()} %</td>
-               <td align="right">{$value->show_totaliva()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
-               <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($value->neto, $fsc->factura->coddivisa)}</td>
+               <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+               <td align="right">{$fsc->show_precio($value->totaliva, $fsc->factura->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($value->totallinea, $fsc->factura->coddivisa)}</td>
             </tr>
             {/loop}
          </table>
@@ -175,9 +175,9 @@
                <th>Total:</th>
             </tr>
             <tr>
-               <td align="center">{$fsc->factura->show_neto()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
-               <td align="center">{$fsc->factura->show_iva()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
-               <td align="center">{$fsc->factura->show_total()} {$fsc->simbolo_divisa($fsc->factura->coddivisa)}</td>
+               <td align="center">{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</td>
+               <td align="center">{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</td>
+               <td align="center">{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</td>
             </tr>
          </table>
       </div>

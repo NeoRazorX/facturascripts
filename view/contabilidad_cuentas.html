@@ -159,9 +159,9 @@
          <td>{$value->codejercicio}</td>
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
-         <td align="right">{$value->show_debe()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
-         <td align="right">{$value->show_haber()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
-         <td align="right">{$value->show_saldo()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
       <tr><td colspan="6">Sin resultados.</td></tr>

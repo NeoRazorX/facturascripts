@@ -40,7 +40,7 @@ class general_agrupar_albaranes_pro extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_agrupar_albaranes_pro', 'Agrupar albaranes', 'general', FALSE, FALSE);
+      parent::__construct('general_agrupar_albaranes_pro', 'Agrupar '.FS_ALBARANES, 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -81,9 +81,6 @@ class general_agrupar_albaranes_pro extends fs_controller
          }
          else
             $this->new_message("Sin resultados.");
-         
-         $this->neto = number_format($this->neto, FS_NF0, FS_NF1, FS_NF2);
-         $this->total = number_format($this->total, FS_NF0, FS_NF1, FS_NF2);
       }
    }
    
@@ -95,8 +92,8 @@ class general_agrupar_albaranes_pro extends fs_controller
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">albaranes</a>
-               para ver si los albaranes se han guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">'.FS_ALBARANES.'</a>
+               para ver si los '.FS_ALBARANES.' se han guardado correctamente.');
          $continuar = FALSE;
       }
       else
@@ -112,13 +109,13 @@ class general_agrupar_albaranes_pro extends fs_controller
             
             if( !$alb->ptefactura )
             {
-               $this->new_error_msg("El albarán <a href='".$alb->url()."'>".$alb->codigo."</a> ya está facturado.");
+               $this->new_error_msg("El ".FS_ALBARAN." <a href='".$alb->url()."'>".$alb->codigo."</a> ya está facturado.");
                $continuar = FALSE;
                break;
             }
             else if($alb->codejercicio != $codejercicio)
             {
-               $this->new_error_msg("Los ejercicios de los albaranes no coinciden.");
+               $this->new_error_msg("Los ejercicios de los ".FS_ALBARANES." no coinciden.");
                $continuar = FALSE;
                break;
             }
@@ -244,7 +241,7 @@ class general_agrupar_albaranes_pro extends fs_controller
                
                if( !$alb->save() )
                {
-                  $this->new_error_msg("¡Imposible vincular el albarán con la nueva factura!");
+                  $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
                   $continuar = FALSE;
                   break;
                }

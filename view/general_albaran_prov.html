@@ -32,9 +32,9 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#aneto").html( number_format(neto, 2, ',', ' ') );
-      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
-      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
+      $("#aneto").html( show_precio(neto) );
+      $("#aiva").html( show_precio(total_iva) );
+      $("#atotal").html( show_precio(neto + total_iva) );
    }
    function linea_sum_ud(num,value)
    {
@@ -91,9 +91,9 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#aneto").html( number_format(neto, 2, ',', ' ') );
-      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
-      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
+      $("#aneto").html( show_precio(neto) );
+      $("#aiva").html( show_precio(total_iva) );
+      $("#atotal").html( show_precio(neto + total_iva) );
    }
    function ajustar_totiva()
    {
@@ -141,9 +141,9 @@
       }
       neto = fs_round(neto, 2);
       total_iva = fs_round(total_iva, 2);
-      $("#aneto").html( number_format(neto, 2, ',', ' ') );
-      $("#aiva").html( number_format(total_iva, 2, ',', ' ') );
-      $("#atotal").html( number_format(neto + total_iva, 2, ',', ' ') );
+      $("#aneto").html( show_precio(neto) );
+      $("#aiva").html( show_precio(total_iva) );
+      $("#atotal").html( show_precio(neto + total_iva) );
    }
    function aux_all_impuestos(numlinea,iva)
    {
@@ -280,13 +280,13 @@
 </script>
 
 <div class="popup" id="popup_eliminar">
-   <h1>Eliminar albarán</h1>
+   <h1>Eliminar {$albaran}</h1>
    {if condition="$fsc->albaran->idfactura"}
-      <ul><li>Hay una factura asociada que será eliminada junto con este albarán.</li></ul>
+      <ul><li>Hay una factura asociada que será eliminada junto con este {$albaran}.</li></ul>
    {/if}
    <form action="{$fsc->ppage->url()}" method="post">
       <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
-      ¿Realmente desea eliminar este albarán?
+      ¿Realmente desea eliminar este {$albaran}?
       <br/><br/>
       <label>
          <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
@@ -325,10 +325,10 @@
                <input class="full" type="text" name="codbar_{$counter}" autocomplete="off"/>
             </td>
             <td align="right">
-               {$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}
+               {$fsc->show_precio($value->pvp, $fsc->albaran->coddivisa)}
             </td>
             <td align="right">
-               <input class="full" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->show_pvp_iva()}" autocomplete="off"/>
+               <input class="full" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
             </td>
          </tr>
          {/loop}
@@ -510,14 +510,14 @@
          </tr>
          <tr>
             <td align="right"><b>Neto:</b></td>
-            <td align="center">{$fsc->albaran->show_neto()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="aneto"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center">{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="aneto"></span></td>
             <td align="right"><b>IVA:</b></td>
-            <td align="center">{$fsc->albaran->show_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="aiva"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center">{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="aiva"></span></td>
             <td align="right"><b>Total:</b></td>
-            <td align="center">{$fsc->albaran->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="atotal"></span> {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="center">{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
+            <td align="center"><span id="atotal"></span></td>
          </tr>
       </table>
    </div>
@@ -537,20 +537,20 @@
          <tr>
             <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
-            <td align="right">{$value->show_pvp()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="right">{$value->show_dto()} %</td>
-            <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="right">{$value->iva} %</td>
-            <td align="right">{$value->show_total_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
       </table>
       <br/><br/>
       <table class="list">
          <tr>
-            <td><b>Neto:</b> {$fsc->albaran->show_neto()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="center"><b>IVA:</b> {$fsc->albaran->show_iva()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
-            <td align="right"><b>Total:</b> {$fsc->albaran->show_total()} {$fsc->simbolo_divisa($fsc->albaran->coddivisa)}</td>
+            <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+            <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+            <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
          </tr>
       </table>
    </div>

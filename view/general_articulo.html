@@ -351,8 +351,8 @@
       <div class="rounded">
          <h1>Buscar en...</h1>
          <ul class="bloque">
-            <li><a id="b_buscar_albcli" href="#">Albaranes<br/>de<br/>cliente</a></li>
-            <li><a id="b_buscar_albpro" href="#">Albaranes<br/>de<br/>proveedor</a></li>
+            <li><a id="b_buscar_albcli" href="#">{$albaranes}<br/>de<br/>cliente</a></li>
+            <li><a id="b_buscar_albpro" href="#">{$albaranes}<br/>de<br/>proveedor</a></li>
             <li class="verde"><a id="b_buscar_faccli" href="#">Facturas<br/>de<br/>cliente</a></li>
             <li class="verde"><a id="b_buscar_facpro" href="#">Facturas<br/>de<br/>proveedor</a></li>
          </ul>
@@ -371,7 +371,7 @@
             <table class="list">
                <tr>
                   <th align="left">IVA</th>
-                  <th align="right">Última actualización de precio</th>
+                  <th align="right">Último cambio de precio</th>
                </tr>
                <tr>
                   <td>
@@ -392,34 +392,40 @@
             <table class="list">
                <tr>
                   <th align="left">Tarifa</th>
-                  <th>Descuento</th>
+                  <th>Dto.</th>
                   <th>PVP</th>
                   <th>PVP+IVA</th>
                </tr>
                <tr>
+                  <td>Coste</td>
+                  <td align="center">0.00</td>
+                  <td align="center">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
+                  <td align="center">{$fsc->show_precio($fsc->articulo->costemedio_iva())}</td>
+               </tr>
+               <tr>
                   <td>General</td>
-                  <td align="center">0.00 %</td>
-                  <td align="right">
+                  <td align="center">0.00</td>
+                  <td>
                      <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
-                     <input type="text" class="full" id="pvp" name="pvp" value="{$fsc->articulo->show_pvp(FALSE)}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+                     <input type="text" class="full" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
                   </td>
-                  <td align="center">
-                     <input type="text" class="full" id="pvpi" name="pvpiva" value="{$fsc->articulo->show_pvp_iva(FALSE)}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+                  <td>
+                     <input type="text" class="full" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
                   </td>
                </tr>
                {loop="$fsc->articulo->get_tarifas(TRUE)"}
                <tr>
                   <td>{$value->nombre}</td>
-                  <td align="center">
+                  <td>
                      <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                      <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
-                     <input type="text" class="full" id="dto_{$counter}" name="dto_{$counter}" value="{$value->show_descuento()}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+                     <input type="text" class="full" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
                   </td>
-                  <td align="right">
-                     <input type="text" class="full" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->show_pvp(FALSE)}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+                  <td>
+                     <input type="text" class="full" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
                   </td>
-                  <td align="center">
-                     <input type="text" class="full" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->show_pvp_iva(FALSE)}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
+                  <td>
+                     <input type="text" class="full" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
                   </td>
                </tr>
                {/loop}
@@ -439,7 +445,7 @@
             {loop="$fsc->equivalentes"}
             <tr>
                <td><a class="link" href="{$value->url()}">{$value->referencia}</a></td>
-               <td align="right">{$value->show_pvp_iva()} {$fsc->simbolo_divisa()}</td>
+               <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
                <td align="right">{$value->stockfis}</td>
             </tr>
             {/loop}

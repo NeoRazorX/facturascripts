@@ -43,7 +43,7 @@ class general_copy_albaran extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_copy_albaran', 'Copiar albarán', 'general', FALSE, FALSE);
+      parent::__construct('general_copy_albaran', 'Copiar '.FS_ALBARAN, 'general', FALSE, FALSE);
    }
    
    protected function process()
@@ -176,8 +176,8 @@ class general_copy_albaran extends fs_controller
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
-               para ver si el albarán se ha guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">'.FS_ALBARANES.'</a>
+               para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
       }
       
@@ -284,17 +284,17 @@ class general_copy_albaran extends fs_controller
                $albaran->total = $albaran->neto + $albaran->totaliva;
                
                if( $albaran->save() )
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
-               $this->new_message("Albarán eliminado correctamente.");
+               $this->new_message(FS_ALBARAN." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el albarán!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_ALBARAN."!");
       }
    }
    
@@ -361,8 +361,8 @@ class general_copy_albaran extends fs_controller
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
-               para ver si el albarán se ha guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">'.FS_ALBARANES.'</a>
+               para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
       }
       
@@ -452,17 +452,17 @@ class general_copy_albaran extends fs_controller
                $albaran->total = $albaran->neto + $albaran->totaliva;
                
                if( $albaran->save() )
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
-               $this->new_message("Albarán eliminado correctamente.");
+               $this->new_message(FS_ALBARAN." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el albarán!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_ALBARAN."!");
       }
    }
 }

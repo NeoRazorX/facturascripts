@@ -40,7 +40,7 @@
          }
          neto = fs_round(neto, 2);
          total_iva = fs_round(total_iva, 2);
-         $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" {$fsc->simbolo_divisa()}");
+         $("#tpv_total").html( show_precio(neto + total_iva) );
          update_lcd(neto + total_iva);
       }
       function ajustar_totiva()
@@ -89,7 +89,7 @@
          }
          neto = fs_round(neto, 2);
          total_iva = fs_round(total_iva, 2);
-         $("#tpv_total").html( number_format(neto + total_iva, 2, ',', ' ') +" {$fsc->simbolo_divisa()}");
+         $("#tpv_total").html( show_precio(neto + total_iva) );
          update_lcd(neto + total_iva);
       }
       function linea_sum_ud(num,value)
@@ -339,7 +339,7 @@
          </table>
       </div>
       <div class="rounded">
-         <div class="tpv_total pull_right" id="tpv_total">0,00 {$fsc->simbolo_divisa()}</div>
+         <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
          <div class="bloque">
             Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
@@ -368,3 +368,7 @@
          </table>
       </div>
    </form>
+   
+   <div class="hidden">
+      <iframe src="http://localhost:10080" height="0"></iframe>
+   </div>

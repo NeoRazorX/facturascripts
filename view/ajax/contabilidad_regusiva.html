@@ -21,8 +21,8 @@
    {loop="$fsc->aux_regiva"}
    <tr>
       <td>{$value['subcuenta']}</td>
-      <td align='right'>{$value['debe']} {$fsc->simbolo_divisa()}</td>
-      <td align='right'>{$value['haber']} {$fsc->simbolo_divisa()}</td>
+      <td align='right'>{$fsc->show_precio($value['debe'])}</td>
+      <td align='right'>{$fsc->show_precio($value['haber'])}</td>
    </tr>
    {else}
    <tr>

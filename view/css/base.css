@@ -235,6 +235,10 @@ div.pages ul li a {
    text-decoration: none;
 }
 
+div.pages ul li a:first-letter {
+   text-transform: uppercase;
+}
+
 div.pages div#user_list ul li a {
    padding-left: 10px;
    padding-right: 10px;
@@ -339,6 +343,10 @@ div.rounded h1 {
    font-size: 18px;
 }
 
+div.rounded h1:first-letter {
+   text-transform: uppercase;
+}
+
 div.rounded h1 span {
    float: right;
    clear: both;
@@ -430,6 +438,10 @@ div.select a {
    text-decoration: none;
 }
 
+div.select a:first-letter {
+   text-transform: uppercase;
+}
+
 div.select a.selected {
    background-color: #C0C7CC;
    box-shadow: inset 1px 1px 1px #999;
@@ -472,6 +484,10 @@ ul.bloque li a {
    padding: 20px 8px 20px 8px;
    text-decoration: none;
    color: #333333;
+}
+
+ul.bloque li a:first-letter {
+   text-transform: uppercase;
 }
 
 ul.items {

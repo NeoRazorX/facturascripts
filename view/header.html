@@ -22,6 +22,20 @@
       })();
    </script>
    {/if}
+   <script type="text/javascript">
+      function show_precio(precio)
+      {
+         {if condition="$pos_divisa=='right'"}
+         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}')+' {$fsc->simbolo_divisa()}';
+         {else}
+         return '{$fsc->simbolo_divisa()}'+number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+         {/if}
+      }
+      function show_numero(numero)
+      {
+         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+      }
+   </script>
 </head>
 <body>
    <div class="header">

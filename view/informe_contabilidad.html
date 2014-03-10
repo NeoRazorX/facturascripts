@@ -1,0 +1,32 @@
+{include="header"}
+
+{loop="$fsc->ejercicio->all()"}
+<div class="rounded">
+   <h1>{$value->nombre}</h1>
+   
+   <ul class="bloque">
+      <li>
+         {if condition="$fsc->existe_libro_diario($value->codejercicio)"}
+            <a href="tmp/libro_diario/{$value->codejercicio}.pdf" target="_blank">libro diario</a>
+         {else}
+            <a href="#"><s>libro diario</s></a>
+         {/if}
+      </li>
+      <li>
+         {if condition="$fsc->existe_libro_inventarios($value->codejercicio)"}
+            <a href="tmp/inventarios_balances/{$value->codejercicio}.pdf" target="_blank">libro de inventarios y balances</a>
+         {else}
+            <a href="#"><s>libro de inventarios y balances</s></a>
+         {/if}
+      </li>
+      <li class="verde">
+         <a href="{$fsc->url()}&balance=pyg&eje={$value->codejercicio}" target="_blank">Balance de pérdidas y ganancias</a>
+      </li>
+      <li class="verde">
+         <a href="{$fsc->url()}&balance=sit&eje={$value->codejercicio}" target="_blank">Balance de situación</a>
+      </li>
+   </ul>
+</div>
+{/loop}
+
+{include="footer"}

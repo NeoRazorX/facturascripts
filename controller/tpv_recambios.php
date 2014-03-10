@@ -68,7 +68,7 @@ class tpv_recambios extends fs_controller
          {
             $fpt = new fs_printer(FS_LCD);
             $fpt->add( chr(12).'TOTAL               ' );
-            $fpt->add( substr(sprintf('%20s', number_format($_POST['saldo'], FS_NF0, ',', '.').' EUROS'), 0, 20) );
+            $fpt->add( substr(sprintf('%20s', $this->show_precio($_POST['saldo'], FALSE, FALSE)), 0, 20) );
             $fpt->imprimir();
          }
       }
@@ -137,7 +137,7 @@ class tpv_recambios extends fs_controller
                   $this->buttons[] = new fs_button_img('b_borrar_ticket', 'borrar ticket', 'trash.png', '#', TRUE);
                   $this->buttons[] = new fs_button_img('b_cerrar_caja', 'cerrar caja', 'remove.png', '#', TRUE);
                   
-                  $this->new_message("Caja iniciada con ".$this->caja->show_dinero_inicial()." Euros.");
+                  $this->new_message("Caja iniciada con ".$this->show_precio($this->caja->dinero_inicial) );
                }
                else
                   $this->new_error_msg("¡Imposible guardar los datos de caja!");
@@ -258,8 +258,8 @@ class tpv_recambios extends fs_controller
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">albaranes</a>
-               para ver si el albarán se ha guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">'.FS_ALBARANES.'</a>
+               para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
       }
       
@@ -362,7 +362,7 @@ class tpv_recambios extends fs_controller
                
                if( $albaran->save() )
                {
-                  $this->new_message("<a href='".$albaran->url()."'>Albarán</a> guardado correctamente.");
+                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
                   
                   if( isset($_POST['num_tickets']) )
                      $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
@@ -374,15 +374,15 @@ class tpv_recambios extends fs_controller
                      $this->new_error_msg("¡Imposible actualizar la caja!");
                }
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>albarán</a>!");
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
-               $this->new_message("Albarán eliminado correctamente.");
+               $this->new_message(FS_ALBARAN." eliminado correctamente.");
             else
-               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>albarán</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el albarán!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_ALBARAN."!");
       }
    }
    
@@ -407,10 +407,10 @@ class tpv_recambios extends fs_controller
          $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
          $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
-         $fpt->add("Dinero inicial: ".$this->caja->show_dinero_inicial()." Eur.\n");
+         $fpt->add("Dinero inicial: ".$this->show_precio($this->caja->dinero_inicial, FALSE, FALSE)."\n");
          $fpt->add("Fecha fin: ".$this->caja->show_fecha_fin()."\n");
-         $fpt->add("Dinero fin: ".$this->caja->show_dinero_fin()." Eur.\n");
-         $fpt->add("Diferencia: ".$this->caja->show_diferencia()." Eur.\n");
+         $fpt->add("Dinero fin: ".$this->show_precio($this->caja->dinero_fin, FALSE, FALSE)."\n");
+         $fpt->add("Diferencia: ".$this->show_precio($this->caja->diferencia(), FALSE, FALSE)."\n");
          $fpt->add("Tickets: ".$this->caja->tickets."\n\n");
          $fpt->add("Dinero pesado:\n\n\n");
          $fpt->add("Observaciones:\n\n\n\n");
@@ -487,7 +487,7 @@ class tpv_recambios extends fs_controller
                $this->new_error_msg("¡Imposible borrar el ticket ".$_GET['delete']."!");
          }
          else
-            $this->new_error_msg('No se ha podido borrar este albarán porque ya está facturado.');
+            $this->new_error_msg('No se ha podido borrar este '.FS_ALBARAN.' porque ya está facturado.');
       }
       else
          $this->new_error_msg("Ticket no encontrado.");
@@ -500,54 +500,53 @@ class tpv_recambios extends fs_controller
       if($cajon)
          $fpt->abrir_cajon();
       
-      $linea = "\nTicket: " . $albaran->codigo;
-      $linea .= " " . $albaran->fecha;
-      $linea .= " " . $albaran->show_hora(FALSE) . "\n";
-      $fpt->add($linea);
-      $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
-      $fpt->add("Agente: " . $albaran->codagente . "\n\n");
-      
-      $fpt->add(sprintf("%3s", "Ud.") . " " . sprintf("%-25s", "Articulo") . " " . sprintf("%10s", "TOTAL") . "\n");
-      $linea = sprintf("%3s", "---") . " " . sprintf("%-25s", "-------------------------") . " ".
-              sprintf("%10s", "----------") . "\n";
-      $fpt->add($linea);
-      
-      foreach($albaran->get_lineas() as $col)
-      {
-         if( $this->imprimir_descripciones )
-         {
-            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", substr($col->descripcion, 0, 20)) . " ".
-                    sprintf("%10s", $col->show_total_iva()) . "\n";
-         }
-         else
-         {
-            $linea = sprintf("%3s", $col->cantidad) . " " . sprintf("%-25s", $col->referencia) . " ".
-                    sprintf("%10s", $col->show_total_iva()) . "\n";
-         }
-         
-         $fpt->add($linea);
-      }
-      
-      $linea = "----------------------------------------\n".
-              $fpt->center_text("IVA: " . number_format($albaran->totaliva, FS_NF0, ',', '.') . " Eur.  ".
-                      "Total: " . $albaran->show_total() . " Eur.") . "\n\n\n\n";
-      $fpt->add($linea);
-      
-      $fpt->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n");
-      
-      if($this->empresa->lema != '')
-         $fpt->add( $fpt->center_text($this->empresa->lema) . "\n\n");
-      else
-         $fpt->add("\n");
-      
-      $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
-      $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
-      
-      if($this->empresa->horario != '')
-         $fpt->add( $fpt->center_text($this->empresa->horario) . "\n");
-      
       while($num_tickets > 0)
       {
+         $linea = "\nTicket: " . $albaran->codigo;
+         $linea .= " " . $albaran->fecha;
+         $linea .= " " . $albaran->show_hora(FALSE) . "\n";
+         $fpt->add($linea);
+         $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
+         $fpt->add("Agente: " . $albaran->codagente . "\n\n");
+         
+         $fpt->add(sprintf("%3s", "Ud.")." ".sprintf("%-25s", "Articulo")." ".sprintf("%10s", "TOTAL")."\n");
+         $fpt->add(sprintf("%3s", "---")." ".sprintf("%-25s", "-------------------------")." ".sprintf("%10s", "----------")."\n");
+         foreach($albaran->get_lineas() as $col)
+         {
+            if( $this->imprimir_descripciones )
+            {
+               $linea = sprintf("%3s", $col->cantidad)." ".sprintf("%-25s", substr($col->descripcion, 0, 24))." "
+                  .sprintf("%10s", $this->show_numero($col->total_iva()))."\n";
+            }
+            else
+            {
+               $linea = sprintf("%3s", $col->cantidad)." ".sprintf("%-25s", $col->referencia)." "
+                  .sprintf("%10s", $this->show_numero($col->total_iva()))."\n";
+            }
+            
+            $fpt->add($linea);
+         }
+         
+         $linea = "----------------------------------------\n"
+            .$fpt->center_text(
+               "IVA: ".$this->show_precio($albaran->totaliva, $albaran->coddivisa, FALSE).'   '.
+               "Total: ".$this->show_precio($albaran->total, $albaran->coddivisa, FALSE)
+            )."\n\n\n\n";
+         $fpt->add($linea);
+         
+         $fpt->add_big( $fpt->center_text($this->empresa->nombre, 16)."\n");
+         
+         if($this->empresa->lema != '')
+            $fpt->add( $fpt->center_text($this->empresa->lema) . "\n\n");
+         else
+            $fpt->add("\n");
+         
+         $fpt->add( $fpt->center_text($this->empresa->direccion . " - " . $this->empresa->ciudad) . "\n");
+         $fpt->add( $fpt->center_text("CIF: " . $this->empresa->cifnif) . chr(27).chr(105) . "\n\n"); /// corta el papel
+         
+         if($this->empresa->horario != '')
+            $fpt->add( $fpt->center_text($this->empresa->horario) . "\n");
+         
          $fpt->imprimir();
          $num_tickets--;
       }

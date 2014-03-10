@@ -72,12 +72,12 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$value->show_total()} {$fsc->simbolo_divisa($value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right"><span title="{$value->hora}">{$value->fecha}</span></td>
       </tr>
       {else}
       <tr>
-         <td colspan="6">Ningún albarán encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6">Ningún {$albaran} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
       <tr><td colspan="6">&nbsp;</td></tr>
