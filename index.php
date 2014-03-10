@@ -29,6 +29,8 @@ else
    require_once 'config.php';
    if( !defined('FS_COMMUNITY_URL') )
       define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
+   if( !defined('FS_POS_DIVISA') )
+      define('FS_POS_DIVISA', 'right');
    if( !defined('FS_ALBARAN') )
       define('FS_ALBARAN', 'albarán');
    if( !defined('FS_ALBARANES') )
