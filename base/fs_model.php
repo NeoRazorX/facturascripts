@@ -402,7 +402,7 @@ abstract class fs_model
    protected function get_xml_table($table_name, &$columnas, &$restricciones)
    {
       $retorno = FALSE;
-      $filename = $this->base_dir.'model/table/'.$table_name.'.xml';
+      $filename = getcwd().'/'.$this->base_dir.'model/table/'.$table_name.'.xml';
       
       if( file_exists($filename) )
       {
