@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_analiticas.xml
+    Description:
+        Estructura de la tabla fbm_analiticas.
+-->
+<tabla>
+	<columna>
+		<nombre>id_tipo_analitica</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>nombre_analitica</nombre>
+		<tipo>varchar(25)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<restriccion>
+		<nombre>fbm_analitica_pkey</nombre>
+		<consulta>PRIMARY KEY (id_tipo_analitica)</consulta>
+	</restriccion>
+</tabla>

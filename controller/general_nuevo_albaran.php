@@ -496,15 +496,7 @@ class general_nuevo_albaran extends fs_controller
    {
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/general_nuevo_albaran_precios';
-      
       $this->articulo = $this->articulo->get($_POST['referencia4precios']);
-      if( $this->articulo )
-      {
-         $this->tarifas = $this->articulo->get_tarifas();
-         $this->equivalentes = $this->articulo->get_equivalentes();
-         $this->ultimas_compras = $this->articulo->get_lineas_albaran_prov(0, 10);
-         $this->ultimas_ventas = $this->articulo->get_lineas_albaran_cli(0, 10);
-      }
    }
 }
 

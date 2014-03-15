@@ -28,6 +28,17 @@ class admin_plugins extends fs_controller
    {
       $this->ppage = $this->page->get('admin_pages');
       
+      if( isset($_GET['unstable']) )
+      {
+         $this->buttons[] = new fs_button('b_stable', 'estables', $this->url());
+         $this->new_message('Estás viendo los plugins <b>inestables</b>.');
+      }
+      else
+      {
+         $this->buttons[] = new fs_button('b_unstable', 'inestables', $this->url().'&unstable=TRUE');
+         $this->new_advice('Estás viendo los plugins estables.');
+      }
+      
       if(FS_DEMO)
       {
          $this->new_error_msg('En el modo demo no se pueden activar/desactivar plugins.
@@ -45,6 +56,7 @@ class admin_plugins extends fs_controller
    
    public function plugins()
    {
+      $unstable = isset($_GET['unstable']);
       $plugins = array();
       
       if( !file_exists('tmp/enabled_plugins') )
@@ -63,7 +75,8 @@ class admin_plugins extends fs_controller
             if( file_exists('plugins/'.$f.'/description') )
                $plugin['description'] = file_get_contents('plugins/'.$f.'/description');
             
-            $plugins[] = $plugin;
+            if( $unstable == file_exists('plugins/'.$f.'/unstable') )
+               $plugins[] = $plugin;
          }
       }
       

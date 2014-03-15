@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_mascotas.xml
+    Description:
+        Estructura de la tabla fbm_mascotas.
+-->
+<tabla>
+	<columna>
+		<nombre>id_mascota</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>fecha_alta</nombre>
+		<tipo>date</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>codcliente</nombre>
+		<tipo>character varying(6)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>nombre</nombre>
+		<tipo>varchar(50)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>chip</nombre>
+		<tipo>varchar(50)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>id_especie</nombre>
+		<tipo>integer</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>id_raza</nombre>
+		<tipo>integer</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>fecha_nac</nombre>
+		<tipo>date</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>sexo</nombre>
+		<tipo>char(1)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>color</nombre>
+		<tipo>varchar(50)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>esterilizado</nombre>
+		<tipo>char(1)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>fallecido</nombre>
+		<tipo>char(1)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>observaciones</nombre>
+		<tipo>text</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<restriccion>
+		<nombre>fbm_mascotas_pkey</nombre>
+		<consulta>PRIMARY KEY (id_mascota)</consulta>
+	</restriccion>
+</tabla>

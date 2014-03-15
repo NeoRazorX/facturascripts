@@ -51,6 +51,11 @@ class tarifa extends fs_model
       return '';
    }
    
+   public function dtopor()
+   {
+      return 0-$this->incporcentual;
+   }
+   
    public function get($cod)
    {
       $tarifa = $this->db->select("SELECT * FROM ".$this->table_name.

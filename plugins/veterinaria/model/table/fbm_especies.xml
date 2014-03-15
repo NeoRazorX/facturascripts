@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_especies.xml
+    Description:
+        Estructura de la tabla fbm_especies.
+-->
+<tabla>
+	<columna>
+		<nombre>id_especie</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>nombre_especie</nombre>
+		<tipo>varchar(25)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<restriccion>
+		<nombre>fbm_especies_pkey</nombre>
+		<consulta>PRIMARY KEY (id_especie)</consulta>
+	</restriccion>
+</tabla>

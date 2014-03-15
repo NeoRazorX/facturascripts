@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_razas.xml
+    Description:
+        Estructura de la tabla fbm_razas.
+-->
+<tabla>
+	<columna>
+		<nombre>id_raza</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<columna>
+		<nombre>nombre_raza</nombre>
+		<tipo>varchar(25)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+	<restriccion>
+		<nombre>fbm_razas_pkey</nombre>
+		<consulta>PRIMARY KEY (id_raza)</consulta>
+	</restriccion>
+</tabla>

@@ -435,6 +435,7 @@ class articulo extends fs_model
          if($this->stockfis != $nuevo_stock)
          {
             $this->stockfis =  $nuevo_stock;
+            $this->get_costemedio();
             if( !$this->save() )
                $this->new_error_msg("Error al actualizar el stock del artículo");
          }
@@ -473,6 +474,7 @@ class articulo extends fs_model
          if($this->stockfis != $nuevo_stock)
          {
             $this->stockfis =  $nuevo_stock;
+            $this->get_costemedio();
             if( !$this->save() )
                $this->new_error_msg("¡Error al actualizar el stock del artículo!");
          }
@@ -549,7 +551,6 @@ class articulo extends fs_model
          
          if( $this->exists() )
          {
-            $this->get_costemedio();
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
                codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
                factualizado = ".$this->var2str($this->factualizado).", costemedio = ".$this->var2str($this->costemedio).",

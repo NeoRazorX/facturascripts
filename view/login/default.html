@@ -21,7 +21,16 @@
       })();
 {/if}
       $(document).ready(function() {
-         {if condition="$demo"}document.f_login.user.focus();{else}document.f_login.password.focus();{/if}
+         {if condition="$demo"}
+         document.f_login.user.focus();
+         {else}
+         document.f_login.password.focus();
+         {/if}
+         {if condition="!$demo"}
+         $("#b_new_password").click(function() {
+            $("#popup_new_password").show();
+         });
+         {/if}
          $("#b_feedback").click(function() {
             $("#b_feedback").hide();
             $("#popup_feedback").show();
@@ -80,7 +89,8 @@
                {/loop}
                </select>
                <input type="password" name="password" maxlength="20" placeholder="contraseña"/>
-               <br/>
+               <a id="b_new_password" class="link" href="#new_password">¿Has olvidado la contraseña?</a>
+               <br/><br/>
                <input type="submit" class="full" value="entrar"/>
             </form>
          {/if}
@@ -98,9 +108,32 @@
       {if condition="$db_history"}<a id="b_sql" href="#sql">SQL</a>{/if}
    </div>
    
+   {if condition="!$demo"}
+   <a name="new_password"></a>
+   <div class="popup" id="popup_new_password" style="display: none;">
+      <h1>¿Has olvidado la contraseña?</h1>
+      <form action="index.php" method="post">
+         <select name="user" onchange="document.f_login.password.focus()">
+            {loop name="$fsc->user->all()"}
+               {if condition="$value->nick == $nlogin"}
+               <option value="{$value->nick}" selected>{$value->nick}</option>
+               {else}
+               <option value="{$value->nick}">{$value->nick}</option>
+               {/if}
+            {/loop}
+         </select>
+         <input type="password" name="new_password" maxlength="20" placeholder="nueva contraseña"/>
+         <input type="password" name="new_password2" maxlength="20" placeholder="repite la nueva contraseña"/>
+         <input type="password" name="db_password" maxlength="20" placeholder="contraseña de la base de datos"/>
+         <br/>
+         <input type="submit" class="full" value="cambiar"/>
+      </form>
+   </div>
+   <br/>
+   {/if}
+   
    <a name="feedback"></a>
    {include="feedback"}
-   
    <br/>
    
    {if condition="$db_history"}

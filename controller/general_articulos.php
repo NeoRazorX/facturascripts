@@ -70,7 +70,7 @@ class general_articulos extends fs_controller
             $tar0->codtarifa = $_POST['codtarifa'];
          }
          $tar0->nombre = $_POST['nombre'];
-         $tar0->incporcentual = floatval( $_POST['incporcentual'] );
+         $tar0->incporcentual = 0-floatval($_POST['dtopor']);
          if( $tar0->save() )
             $this->new_message("Tarifa guardada correctamente.");
          else

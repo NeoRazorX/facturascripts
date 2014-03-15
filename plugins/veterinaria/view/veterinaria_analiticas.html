@@ -1,0 +1,58 @@
+{include="header"}
+
+<script type="text/javascript">
+   function delete_analitica(url)
+   {
+      if( confirm("¿Realmente desea eliminar este tipo de analitica?") )
+         window.location.href = url;
+   }
+   $(document).ready(function() {
+      $("#b_nueva_analitica").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_tipo_analitica');
+         document.f_nueva_analitica.id_analitica.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_tipo_analitica">
+   <h1>Nuevo tipo de analitica</h1>
+   <form name="f_nueva_analitica" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre" size="18" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+{loop="$fsc->analiticas->all()"}
+<div class="rounded">
+   <form action="{$fsc->url()}" method="POST">
+      <h1>
+         Código: {$value->id_tipo_ana}
+         <span>
+            <a class="delete" href="#" onclick="delete_analitica('{$fsc->url()}&delete={$value->id_tipo_ana}')">eliminar</a> &nbsp;
+            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </span>
+      </h1>
+      Nombre tipo vacuna:
+      <input type="hidden" name="scodanalitica" value="{$value->id_tipo_ana}"/>
+      <input type="text" name="snombre" value="{$value->nombre_ana}" autocomplete="off"/>
+   </form>
+</div>
+{/loop}
+
+<div class="rounded">
+   <div class="new_line">
+      <a id="b_nueva_analitica" href="#">Nuevo tipo analitica</a>
+   </div>
+</div>
+
+{include="footer"}

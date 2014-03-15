@@ -51,7 +51,7 @@ div.header h2 {
    font-size: 2em;
 }
 
-div.header a {
+div.header h1 a {
    color: white;
 }
 
@@ -212,4 +212,8 @@ input[type='submit']:hover {
    background-image: -o-linear-gradient(top, #40bf40, #005900);
    background-image: linear-gradient(to bottom, #40bf40, #005900);
    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#40bf40, endColorstr=#005900);
+}
+
+.link {
+   color: #0062DD;
 }
