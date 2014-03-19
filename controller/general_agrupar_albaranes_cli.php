@@ -153,24 +153,37 @@ class general_agrupar_albaranes_cli extends fs_controller
       $continuar = TRUE;
       
       $factura = new factura_cliente();
-      $factura->apartado = $albaranes[0]->apartado;
       $factura->automatica = TRUE;
-      $factura->cifnif = $albaranes[0]->cifnif;
-      $factura->ciudad = $albaranes[0]->ciudad;
       $factura->codalmacen = $albaranes[0]->codalmacen;
-      $factura->codcliente = $albaranes[0]->codcliente;
-      $factura->coddir = $albaranes[0]->coddir;
       $factura->coddivisa = $albaranes[0]->coddivisa;
       $factura->tasaconv = $albaranes[0]->tasaconv;
       $factura->codejercicio = $albaranes[0]->codejercicio;
       $factura->codpago = $albaranes[0]->codpago;
-      $factura->codpais = $albaranes[0]->codpais;
-      $factura->codpostal = $albaranes[0]->codpostal;
       $factura->codserie = $albaranes[0]->codserie;
-      $factura->direccion = $albaranes[0]->direccion;
       $factura->editable = FALSE;
-      $factura->nombrecliente = $albaranes[0]->nombrecliente;
-      $factura->provincia = $albaranes[0]->provincia;
+      
+      /// obtenemos los datos actuales del cliente, por si ha habido cambios
+      $cliente = $this->cliente->get($albaranes[0]->codcliente);
+      if($cliente)
+      {
+         foreach($cliente->get_direcciones() as $dir)
+         {
+            if($dir->domfacturacion)
+            {
+               $factura->apartado = $dir->apartado;
+               $factura->cifnif = $cliente->cifnif;
+               $factura->ciudad = $dir->ciudad;
+               $factura->codcliente = $cliente->codcliente;
+               $factura->coddir = $dir->id;
+               $factura->codpais = $dir->codpais;
+               $factura->codpostal = $dir->codpostal;
+               $factura->direccion = $dir->direccion;
+               $factura->nombrecliente = $cliente->nombrecomercial;
+               $factura->provincia = $dir->provincia;
+               break;
+            }
+         }
+      }
       
       /// calculamos neto e iva
       foreach($albaranes as $alb)

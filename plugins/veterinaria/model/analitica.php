@@ -19,23 +19,20 @@
 
 require_once 'base/fs_model.php';
 
-class analiticas extends fs_model
+class analitica extends fs_model
 {
-   public $id_tipo_analitica; /// pkey
-   public $nombre_analitica;
+   public $nombre;
    
    public function __construct($p=FALSE)
    {
       parent::__construct('fbm_analiticas', 'plugins/veterinaria/');
       if($p)
       {
-         $this->id_tipo_ana = $p['id_tipo_analitica'];
-         $this->nombre_ana = $p['nombre_analitica'];
+         $this->nombre_ana = $p['nombre'];
       }
       else
       {
-         $this->id_tipo_ana = '';
-         $this->nombre_ana = '';
+         $this->nombre = NULL;
       }
    }
 
@@ -46,27 +43,24 @@ class analiticas extends fs_model
    
    public function url()
    {
-      if( is_null($this->id_tipo_vac) )
-         return 'index.php?page=veterinaria_analiticas';
-      else
-         return 'index.php?page=veterinaria_analiticas#'.$this->id_tipo_ana;
+      return 'index.php?page=veterinaria_analiticas';
    }
    
    public function get($cod)
    {
-      $analitica = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_tipo_analitica = ".$this->var2str($cod).";");
+      $analitica = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nombre = ".$this->var2str($cod).";");
       if($analitica)
-         return new analiticas($analitica[0]);
+         return new analitica($analitica[0]);
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->id_tipo_ana) )
+      if( is_null($this->nombre) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_tipo_analitica = ".$this->var2str($this->id_tipo_ana).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre).";");
    }
    
    public function test()
@@ -78,12 +72,12 @@ class analiticas extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre_analitica = ".$this->var2str($this->nombre_ana)
-            ." WHERE id_tipo_analitica = ".$this->var2str($this->id_tipo_ana).";";
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
+            ." WHERE nombre = ".$this->var2str($this->nombre).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (nombre_analitica) VALUES (".$this->var2str($this->nombre_ana).");";
+         $sql = "INSERT INTO ".$this->table_name." (nombre) VALUES (".$this->var2str($this->nombre).");";
       }
       
       return $this->db->exec($sql);
@@ -91,17 +85,17 @@ class analiticas extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_tipo_analitica = ".$this->var2str($this->id_tipo_ana).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre).";");
    }
    
    public function all()
    {
       $listaa = array();
-      $analiticas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY id_tipo_analitica ASC;");
+      $analiticas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
       if($analiticas)
       {
          foreach($analiticas as $p)
-            $listaa[] = new analiticas($p);
+            $listaa[] = new analitica($p);
       }
       return $listaa;
    }

@@ -19,23 +19,20 @@
 
 require_once 'base/fs_model.php';
 
-class vacunas extends fs_model
+class vacuna extends fs_model
 {
-   public $id_tipo_vacuna; /// pkey
-   public $nombre_vacuna;
+   public $nombre;
    
    public function __construct($p=FALSE)
    {
       parent::__construct('fbm_vacunas','plugins/veterinaria/');
       if($p)
       {
-         $this->id_tipo_vac = $p['id_tipo_vacuna'];
-         $this->nombre_vac = $p['nombre_vacuna'];
+         $this->nombre_vac = $p['nombre'];
       }
       else
       {
-         $this->id_tipo_vac = '';
-         $this->nombre_vac = '';
+         $this->nombre = NULL;
       }
    }
 
@@ -46,27 +43,24 @@ class vacunas extends fs_model
    
    public function url()
    {
-      if( is_null($this->id_tipo_vac) )
-         return 'index.php?page=veterinaria_vacunas';
-      else
-         return 'index.php?page=veterinaria_vacunas#'.$this->id_tipo_vac;
+      return 'index.php?page=veterinaria_vacunas';
    }
    
    public function get($cod)
    {
-      $vacuna = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_tipo_vacuna = ".$this->var2str($cod).";");
+      $vacuna = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nombre = ".$this->var2str($cod).";");
       if($vacuna)
-         return new vacunas($vacuna[0]);
+         return new vacuna($vacuna[0]);
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->id_tipo_vac) )
+      if( is_null($this->nombre) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_tipo_vacuna = ".$this->var2str($this->id_tipo_vac).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre).";");
    }
    
    public function test()
@@ -78,12 +72,12 @@ class vacunas extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre_vacuna = ".$this->var2str($this->nombre_vac)
-            ." WHERE id_tipo_vacuna = ".$this->var2str($this->id_tipo_vac).";";
+         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
+            ." WHERE nombre = ".$this->var2str($this->nombre).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (nombre_vacuna) VALUES (".$this->var2str($this->nombre_vac).");";
+         $sql = "INSERT INTO ".$this->table_name." (nombre) VALUES (".$this->var2str($this->nombre).");";
       }
       
       return $this->db->exec($sql);
@@ -91,17 +85,17 @@ class vacunas extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_tipo_vacuna = ".$this->var2str($this->id_tipo_vac).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre).";");
    }
    
    public function all()
    {
       $listav = array();
-      $vacunas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY id_tipo_vacuna ASC;");
+      $vacunas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
       if($vacunas)
       {
          foreach($vacunas as $p)
-            $listav[] = new vacunas($p);
+            $listav[] = new vacuna($p);
       }
       return $listav;
    }

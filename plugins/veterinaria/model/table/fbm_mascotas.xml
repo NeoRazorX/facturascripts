@@ -9,6 +9,7 @@
 		<nombre>id_mascota</nombre>
 		<tipo>serial</tipo>
 		<nulo>NO</nulo>
+      <defecto>nextval('fbm_mascotas_id_mascota_seq'::regclass)</defecto>
 	</columna>
 	<columna>
 		<nombre>fecha_alta</nombre>
@@ -31,13 +32,13 @@
 		<nulo>NO</nulo>
 	</columna>
 	<columna>
-		<nombre>id_especie</nombre>
-		<tipo>integer</tipo>
+		<nombre>especio</nombre>
+		<tipo>varchar(25)</tipo>
 		<nulo>NO</nulo>
 	</columna>
 	<columna>
-		<nombre>id_raza</nombre>
-		<tipo>integer</tipo>
+		<nombre>raza</nombre>
+		<tipo>varchar(25)</tipo>
 		<nulo>NO</nulo>
 	</columna>
 	<columna>

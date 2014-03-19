@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('vacunas.php');
+require_model('vacuna.php');
 
 class veterinaria_vacunas extends fs_controller
 {
-   public $vacunas;
+   public $vacuna;
 
    public function __construct()
    {
@@ -30,35 +30,7 @@ class veterinaria_vacunas extends fs_controller
    
    protected function process()
    {
-      $this->vacunas = new vacunas();
-      
-      if( isset($_POST['snombre']) )
-      {
-         
-            $vacunas = new vacunas();
-            
-         
-         $vacunas->nombre_vac = $_POST['snombre'];
-         if( $vacunas->save() )
-            $this->new_message("Tipo de vacuna guardada correctamente.");
-         else
-            $this->new_error_msg("¡Imposible guardar el tipo de vacuna!");
-      }
-      else if( isset($_GET['delete']) )
-      {
-         
-            $vacunas = $this->vacunas->get($_GET['delete']);
-            if( $vacunas )
-            {
-               if( $vacunas->delete() )
-                  $this->new_message("Tipo de vacuna eliminada correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar el tipo de vacuna!");
-            }
-            else
-               $this->new_error_msg("¡Tipo de vacuna no encontrada!");
-         
-      }
+      $this->vacuna = new vacuna();
    }
 }
 

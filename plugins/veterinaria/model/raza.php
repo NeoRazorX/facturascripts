@@ -19,23 +19,26 @@
 
 require_once 'base/fs_model.php';
 
-class especies extends fs_model
+class raza extends fs_model
 {
-   public $id_especie; /// pkey
-   public $nombre_especie;
+   public $id_raza; /// pkey
+   public $especie;
+   public $nombre;
    
    public function __construct($p=FALSE)
    {
-      parent::__construct('fbm_especies', 'plugins/veterinaria/');
+      parent::__construct('fbm_razas','plugins/veterinaria/');
       if($p)
       {
-         $this->id_especie = $p['id_especie'];
-         $this->nombre_especie = $p['nombre_especie'];
+         $this->id_raza = $p['id_raza'];
+         $this->especie = $p['especie'];
+         $this->nombre = $p['nombre'];
       }
       else
       {
-         $this->id_especie = '';
-         $this->nombre_especie = '';
+         $this->id_raza = NULL;
+         $this->especie = NULL;
+         $this->nombre = NULL;
       }
    }
 
@@ -46,28 +49,25 @@ class especies extends fs_model
    
    public function url()
    {
-      if( is_null($this->id_especie) )
-         return 'index.php?page=veterinaria_especies';
-      else
-         return 'index.php?page=veterinaria_especies#'.$this->id_especie;
+      return 'index.php?page=veterinaria_razas';
    }
    
    public function get($cod)
    {
-      $especies = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_especie = ".$this->var2str($cod).";");
-      if($especies)
-         return new especies($especies[0]);
+      $raza = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($cod).";");
+      if($raza)
+         return new raza($raza[0]);
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->id_especie) )
+      if( is_null($this->id_raza) )
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE id_especie = ".$this->var2str($this->id_especie).";");
+            WHERE id_raza = ".$this->var2str($this->id_raza).";");
    }
    
    public function test()
@@ -79,12 +79,13 @@ class especies extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET nombre_especie = ".$this->var2str($this->nombre_especie)
-            ." WHERE id_especie = ".$this->var2str($this->id_especie).";";
+         $sql = "UPDATE ".$this->table_name." SET especie = ".$this->var2str($this->especie).", "
+            . "nombre = ".$this->var2str($this->nombre)." WHERE id_raza = ".$this->var2str($this->id_raza).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (nombre_especie) VALUES (".$this->var2str($this->nombre_especie).");";
+         $sql = "INSERT INTO ".$this->table_name." (especie,nombre) VALUES "
+            . "(".$this->var2str($this->especie).",".$this->var2str($this->nombre).");";
       }
       
       return $this->db->exec($sql);
@@ -92,19 +93,19 @@ class especies extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_especie = ".$this->var2str($this->id_especie).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($this->id_raza).";");
    }
    
    public function all()
    {
-      $listae = array();
-      $especies = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY id_especie ASC;");
-      if($especies)
+      $listar=array();
+      $razas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY id_raza ASC;");
+      if($razas)
       {
-         foreach($especies as $p)
-            $listae[] = new especies($p);
+         foreach($razas as $p)
+            $listar[] = new raza($p);
       }
-      return $listae;
+      return $listar;
    }
 }
 

@@ -144,7 +144,7 @@ class general_albaran_prov extends fs_controller
             if($proveedor)
             {
                $this->albaran->codproveedor = $proveedor->codproveedor;
-               $this->albaran->nombre = $proveedor->nombre;
+               $this->albaran->nombre = $proveedor->nombrecomercial;
                $this->albaran->cifnif = $proveedor->cifnif;
             }
          }

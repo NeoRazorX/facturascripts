@@ -19,25 +19,17 @@
 
 class admin_plugins extends fs_controller
 {
+   public $unstables;
+   
    public function __construct()
    {
-      parent::__construct('admin_plugins', 'Plugins', 'admin', TRUE, FALSE);
+      parent::__construct('admin_plugins', 'Plugins', 'admin', TRUE, TRUE);
    }
    
    protected function process()
    {
       $this->ppage = $this->page->get('admin_pages');
-      
-      if( isset($_GET['unstable']) )
-      {
-         $this->buttons[] = new fs_button('b_stable', 'estables', $this->url());
-         $this->new_message('Estás viendo los plugins <b>inestables</b>.');
-      }
-      else
-      {
-         $this->buttons[] = new fs_button('b_unstable', 'inestables', $this->url().'&unstable=TRUE');
-         $this->new_advice('Estás viendo los plugins estables.');
-      }
+      $this->unstables = isset($_GET['unstable']);
       
       if(FS_DEMO)
       {
@@ -56,7 +48,6 @@ class admin_plugins extends fs_controller
    
    public function plugins()
    {
-      $unstable = isset($_GET['unstable']);
       $plugins = array();
       
       if( !file_exists('tmp/enabled_plugins') )
@@ -75,7 +66,7 @@ class admin_plugins extends fs_controller
             if( file_exists('plugins/'.$f.'/description') )
                $plugin['description'] = file_get_contents('plugins/'.$f.'/description');
             
-            if( $unstable == file_exists('plugins/'.$f.'/unstable') )
+            if( $this->unstables == file_exists('plugins/'.$f.'/unstable') )
                $plugins[] = $plugin;
          }
       }

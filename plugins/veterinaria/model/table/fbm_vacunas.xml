@@ -6,17 +6,12 @@
 -->
 <tabla>
 	<columna>
-		<nombre>id_tipo_vacuna</nombre>
-		<tipo>serial</tipo>
-		<nulo>NO</nulo>
-	</columna>
-	<columna>
-		<nombre>nombre_vacuna</nombre>
+		<nombre>nombre</nombre>
 		<tipo>varchar(25)</tipo>
 		<nulo>NO</nulo>
 	</columna>
 	<restriccion>
 		<nombre>fbm_vacunas_pkey</nombre>
-		<consulta>PRIMARY KEY (id_tipo_vacuna)</consulta>
+		<consulta>PRIMARY KEY (nombre)</consulta>
 	</restriccion>
 </tabla>

@@ -9,9 +9,15 @@
 		<nombre>id_raza</nombre>
 		<tipo>serial</tipo>
 		<nulo>NO</nulo>
+      <defecto>nextval('fbm_razas_id_raza_seq'::regclass)</defecto>
 	</columna>
 	<columna>
-		<nombre>nombre_raza</nombre>
+		<nombre>especie</nombre>
+		<tipo>varchar(25)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+   <columna>
+		<nombre>nombre</nombre>
 		<tipo>varchar(25)</tipo>
 		<nulo>NO</nulo>
 	</columna>

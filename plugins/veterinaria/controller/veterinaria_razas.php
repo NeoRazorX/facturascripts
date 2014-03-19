@@ -17,11 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('razas.php');
+require_model('especie.php');
+require_model('raza.php');
 
 class veterinaria_razas extends fs_controller
 {
-   public $razas;
+   public $especie;
+   public $raza;
 
    public function __construct()
    {
@@ -30,34 +32,45 @@ class veterinaria_razas extends fs_controller
    
    protected function process()
    {
-      $this->razas = new razas();
+      $this->especie = new especie();
+      $this->raza = new raza();
       
-      if( isset($_POST['snombre']) )
+      if( isset($_POST['idraza']) ) /// modificar una raza
       {
-         
-            $razas = new razas();
-            
-         
-         $razas->nombre_raza = $_POST['snombre'];
-         if( $razas->save() )
-            $this->new_message("Raza guardada correctamente.");
-         else
-            $this->new_error_msg("¡Imposible guardar la raza!");
-      }
-      else if( isset($_GET['delete']) )
-      {
-         
-            $razas = $this->razas->get($_GET['delete']);
-            if( $razas )
-            {
-               if( $razas->delete() )
-                  $this->new_message("Raza eliminada correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar la raza!");
-            }
+         $raza0 = $this->raza->get($_POST['idraza']);
+         if($raza0)
+         {
+            $raza0->especie = $_POST['sespecie'];
+            $raza0->nombre = $_POST['snombre'];
+            if( $raza0->save() )
+               $this->new_message('Raza guardada correctamente.');
             else
-               $this->new_error_msg("¡Raza no encontrada!");
-         
+               $this->new_error_msg('Imposible guardar la raza.');
+         }
+         else
+            $this->new_error_msg('Raza no encontrada.');
+      }
+      else if( isset($_POST['snombre']) ) /// añadir una raza
+      {
+         $this->raza->especie = $_POST['sespecie'];
+         $this->raza->nombre = $_POST['snombre'];
+         if( $this->raza->save() )
+            $this->new_message('Raza guardada correctamente.');
+         else
+            $this->new_error_msg('Imposible guardar la raza.');
+      }
+      else if( isset($_GET['delete']) ) /// eliminar una raza
+      {
+         $raza0 = $this->raza->get($_GET['delete']);
+         if($raza0)
+         {
+            if( $raza0->delete() )
+               $this->new_message('Raza eliminada correctamente.');
+            else
+               $this->new_error_msg('Error al eliminar la raza.');
+         }
+         else
+            $this->new_error_msg('Raza no encontrada.');
       }
    }
 }

@@ -6,17 +6,12 @@
 -->
 <tabla>
 	<columna>
-		<nombre>id_tipo_desp</nombre>
-		<tipo>serial</tipo>
-		<nulo>NO</nulo>
-	</columna>
-	<columna>
-		<nombre>nombre_desp</nombre>
+		<nombre>nombre</nombre>
 		<tipo>varchar(25)</tipo>
 		<nulo>NO</nulo>
 	</columna>
 	<restriccion>
 		<nombre>fbm_desparasitaciones_pkey</nombre>
-		<consulta>PRIMARY KEY (id_tipo_desp)</consulta>
+		<consulta>PRIMARY KEY (nombre)</consulta>
 	</restriccion>
 </tabla>

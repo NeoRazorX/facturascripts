@@ -179,6 +179,9 @@ class contabilidad_factura_cli extends fs_controller
       {
          if($dir->domfacturacion)
          {
+            $this->factura->cifnif = $this->cliente->cifnif;
+            $this->factura->nombrecliente = $this->cliente->nombrecomercial;
+            
             $this->factura->apartado = $dir->apartado;
             $this->factura->ciudad = $dir->ciudad;
             $this->factura->coddir = $dir->id;

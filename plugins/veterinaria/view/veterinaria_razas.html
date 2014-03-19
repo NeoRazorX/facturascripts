@@ -10,7 +10,7 @@
       $("#b_nueva_raza").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nueva_raza');
-         document.f_nueva_raza.id_raza.focus();
+         document.f_nueva_raza.sespecie.focus();
       });
    });
 </script>
@@ -19,6 +19,16 @@
    <h1>Nueva raza</h1>
    <form name="f_nueva_raza" action="{$fsc->url()}" method="post">
       <table>
+         <tr>
+            <td align="right">Especie:</td>
+            <td>
+               <select name="sespecie">
+                  {loop="$fsc->especie->all()"}
+                  <option value="{$value->nombre}">{$value->nombre}</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
          <tr>
             <td align="right">Nombre:</td>
             <td><input type="text" name="snombre" size="18" autocomplete="off"/></td>
@@ -32,9 +42,10 @@
    </form>
 </div>
 
-{loop="$fsc->razas->all()"}
+{loop="$fsc->raza->all()"}
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
+      <input type="hidden" name="idraza" value="{$value->id_raza}"/>
       <h1>
          Código: {$value->id_raza}
          <span>
@@ -42,9 +53,22 @@
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
-      Raza:
-      <input type="hidden" name="scodraza" value="{$value->id_raza}"/>
-      <input type="text" name="snombre" value="{$value->nombre_raza}" autocomplete="off"/>
+      <div class="bloque">
+         Especie:
+         <select name="sespecie">
+            {loop="$fsc->especie->all()"}
+               {if condition="$value2->nombre==$value1->nombre"}
+               <option value="{$value2->nombre}" selected="selected">{$value2->nombre}</option>
+               {else}
+               <option value="{$value2->nombre}">{$value2->nombre}</option>
+               {/if}
+            {/loop}
+         </select>
+      </div>
+      <div class="bloque">
+         Nombre:
+         <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
+      </div>
    </form>
 </div>
 {/loop}

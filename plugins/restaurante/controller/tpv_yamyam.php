@@ -276,7 +276,7 @@ class tpv_yamyam extends fs_controller
             {
                $this->albaran->codcliente = $cliente->codcliente;
                $this->albaran->cifnif = $cliente->cifnif;
-               $this->albaran->nombrecliente = $cliente->nombre;
+               $this->albaran->nombrecliente = $cliente->nombrecomercial;
                $this->albaran->apartado = $d->apartado;
                $this->albaran->ciudad = $d->ciudad;
                $this->albaran->coddir = $d->id;

@@ -5,23 +5,37 @@
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {else}
+<div class="rounded">
+   <div class="select">
+      <a href="{$fsc->url()}"{if condition="!$fsc->unstables"} class="selected"{/if}>Estables</a>
+      <a href="{$fsc->url()}&unstable=TRUE"{if condition="$fsc->unstables"} class="selected"{/if}>Inestables</a>
+   </div>
    {loop="$fsc->plugins()"}
-   <div class="rounded">
+   <div class="grupo">
       <h1>
          {$value['name']}
          <span>
+         {if condition="$fsc->unstables"}
             {if condition="$value['enabled']"}
-            <a class="delete" href="{$fsc->url()}&amp;disable={$value['name']}">Desctivar</a>
+            <a class="delete" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">Desctivar</a>
             {else}
-            <a class="button" href="{$fsc->url()}&amp;enable={$value['name']}">Activar</a>
+            <a class="button" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">Activar</a>
             {/if}
+         {else}
+            {if condition="$value['enabled']"}
+            <a class="delete" href="{$fsc->url()}&disable={$value['name']}">Desctivar</a>
+            {else}
+            <a class="button" href="{$fsc->url()}&enable={$value['name']}">Activar</a>
+            {/if}
+         {/if}
          </span>
       </h1>
       <p>{$value['description']}</p>
    </div>
    {else}
-   <div class="advice">Ningún plugin encontrado.</div>
+   <div>Ningún plugin encontrado.</div>
    {/loop}
+</div>
 {/if}
 
 {include="footer"}

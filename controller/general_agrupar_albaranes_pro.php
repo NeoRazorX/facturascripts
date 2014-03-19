@@ -155,21 +155,27 @@ class general_agrupar_albaranes_pro extends fs_controller
       $factura = new factura_proveedor();
       $factura->automatica = TRUE;
       $factura->editable = FALSE;
-      $factura->cifnif = $albaranes[0]->cifnif;
       $factura->codalmacen = $albaranes[0]->codalmacen;
       $factura->coddivisa = $albaranes[0]->coddivisa;
       $factura->tasaconv = $albaranes[0]->tasaconv;
       $factura->codejercicio = $albaranes[0]->codejercicio;
       $factura->codpago = $albaranes[0]->codpago;
-      $factura->codproveedor = $albaranes[0]->codproveedor;
       $factura->codserie = $albaranes[0]->codserie;
       $factura->irpf = $albaranes[0]->irpf;
-      $factura->nombre = $albaranes[0]->nombre;
       $factura->numproveedor = $albaranes[0]->numproveedor;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
       $factura->totalirpf = $albaranes[0]->totalirpf;
       $factura->totalrecargo = $albaranes[0]->totalrecargo;
+      
+      /// obtenemos los datos actualizados del proveedor
+      $proveedor = $this->proveedor->get($albaranes[0]->codproveedor);
+      if($proveedor)
+      {
+         $factura->cifnif = $proveedor->cifnif;
+         $factura->codproveedor = $proveedor->codproveedor;
+         $factura->nombre = $proveedor->nombrecomercial;
+      }
       
       /// calculamos neto e iva
       foreach($albaranes as $alb)

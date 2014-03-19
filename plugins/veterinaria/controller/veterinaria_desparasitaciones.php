@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('desparasitaciones.php');
+require_model('desparasitacion.php');
 
 class veterinaria_desparasitaciones extends fs_controller
 {
-   public $desparasitaciones;
+   public $desparasitacion;
 
    public function __construct()
    {
@@ -30,35 +30,7 @@ class veterinaria_desparasitaciones extends fs_controller
    
    protected function process()
    {
-      $this->desparasitaciones = new desparasitaciones();
-      
-      if( isset($_POST['snombre']) )
-      {
-         
-            $desparasitaciones = new desparasitaciones();
-            
-         
-         $desparasitaciones->nombre_desp = $_POST['snombre'];
-         if( $desparasitaciones->save() )
-            $this->new_message("Tipo Desparasitacion guardada correctamente.");
-         else
-            $this->new_error_msg("¡Imposible guardar el tipo de desparasitacion!");
-      }
-      else if( isset($_GET['delete']) )
-      {
-         
-            $desparasitaciones = $this->desparasitaciones->get($_GET['delete']);
-            if( $desparasitaciones )
-            {
-               if( $desparasitaciones->delete() )
-                  $this->new_message("Tipo de desparasitacion eliminada correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar el tipo de desparasitacion!");
-            }
-            else
-               $this->new_error_msg("¡Tipo de desparasitacion no encontrada!");
-         
-      }
+      $this->desparasitacion = new desparasitacion();
    }
 }
 

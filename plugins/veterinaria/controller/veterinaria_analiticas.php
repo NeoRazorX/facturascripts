@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('analiticas.php');
+require_model('analitica.php');
 
 class veterinaria_analiticas extends fs_controller
 {
-   public $analiticas;
+   public $analitica;
 
    public function __construct()
    {
@@ -30,35 +30,7 @@ class veterinaria_analiticas extends fs_controller
    
    protected function process()
    {
-      $this->analiticas = new analiticas();
-      
-      if( isset($_POST['snombre']) )
-      {
-         
-            $analiticas = new analiticas();
-            
-         
-         $analiticas->nombre_ana = $_POST['snombre'];
-         if( $analiticas->save() )
-            $this->new_message("Tipo Analitica guardada correctamente.");
-         else
-            $this->new_error_msg("¡Imposible guardar el tipo de analitica!");
-      }
-      else if( isset($_GET['delete']) )
-      {
-         
-            $analiticas = $this->analiticas->get($_GET['delete']);
-            if( $analiticas )
-            {
-               if( $analiticas->delete() )
-                  $this->new_message("Tipo de analitica eliminada correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar el tipo de analitica!");
-            }
-            else
-               $this->new_error_msg("¡Tipo de analitica no encontrada!");
-         
-      }
+      $this->analitica = new analitica();
    }
 }
 

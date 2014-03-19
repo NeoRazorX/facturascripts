@@ -315,7 +315,7 @@ class tpv_supermercado extends fs_controller
             {
                $albaran->codcliente = $this->cliente->codcliente;
                $albaran->cifnif = $this->cliente->cifnif;
-               $albaran->nombrecliente = $this->cliente->nombre;
+               $albaran->nombrecliente = $this->cliente->nombrecomercial;
                $albaran->apartado = $d->apartado;
                $albaran->ciudad = $d->ciudad;
                $albaran->coddir = $d->id;

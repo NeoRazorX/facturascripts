@@ -214,7 +214,7 @@ class general_nuevo_albaran extends fs_controller
             {
                $albaran->codcliente = $cliente->codcliente;
                $albaran->cifnif = $cliente->cifnif;
-               $albaran->nombrecliente = $cliente->nombre;
+               $albaran->nombrecliente = $cliente->nombrecomercial;
                $albaran->apartado = $d->apartado;
                $albaran->ciudad = $d->ciudad;
                $albaran->coddir = $d->id;
@@ -390,7 +390,7 @@ class general_nuevo_albaran extends fs_controller
          $albaran->fecha = $_POST['fecha'];
          $albaran->hora = $_POST['hora'];
          $albaran->codproveedor = $proveedor->codproveedor;
-         $albaran->nombre = $proveedor->nombre;
+         $albaran->nombre = $proveedor->nombrecomercial;
          $albaran->cifnif = $proveedor->cifnif;
          $albaran->codalmacen = $almacen->codalmacen;
          $albaran->codejercicio = $ejercicio->codejercicio;

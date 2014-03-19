@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('ejercicio.php');
 
 class balance extends fs_model
 {
@@ -306,17 +307,36 @@ class balance_cuenta_a extends fs_model
    }
    
    /*
-    * A partir de un asiento devuelve el saldo de las líneas que pertenecen a las
-    * subcuentas que pertenecen a la cuenta de este balance.
+    * Devuelve el saldo del balance de un ejercicio
     */
-   public function saldo($idasiento)
+   public function saldo(&$ejercicio)
    {
-      $data = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber
-         FROM co_partidas WHERE idasiento = ".$this->var2str($idasiento).
-         " AND idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-            WHERE codcuenta LIKE '".$this->codcuenta."%');");
+      $extra = '';
+      if( isset($ejercicio->idasientopyg) )
+      {
+         if( isset($ejercicio->idasientocierre) )
+            $extra = " AND idasiento NOT IN (".$this->var2str($ejercicio->idasientocierre).",".$this->var2str($ejercicio->idasientopyg).");";
+         else
+            $extra = " AND idasiento != ".$this->var2str($ejercicio->idasientopyg).";";
+      }
+      else if( isset($ejercicio->idasientocierre) )
+         $extra = " AND idasiento != ".$this->var2str($ejercicio->idasientocierre).";";
+      
+      if($this->codcuenta == '129')
+      {
+         $data = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas
+            WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
+               WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%') AND codejercicio = ".$this->var2str($ejercicio->codejercicio).")".$extra.";");
+      }
+      else
+      {
+         $data = $this->db->select("SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas
+            WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
+               WHERE codcuenta LIKE '".$this->codcuenta."%' AND codejercicio = ".$this->var2str($ejercicio->codejercicio).")".$extra.";");
+      }
+      
       if($data)
-         return floatval($data[0]['debe']) - floatval($data[0]['haber']);
+         return floatval($data[0]['haber']) - floatval($data[0]['debe']);
       else
          return 0;
    }

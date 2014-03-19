@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('especies.php');
+require_model('especie.php');
 
 class veterinaria_especies extends fs_controller
 {
-   public $especies;
+   public $especie;
 
    public function __construct()
    {
@@ -30,31 +30,29 @@ class veterinaria_especies extends fs_controller
    
    protected function process()
    {
-      $this->especies = new especies();
+      $this->especie = new especie();
       
-      if( isset($_POST['snombre']) )
+      if( isset($_POST['snombre']) ) /// crear o modificar
       {
-         $especies = new especies();
-         $especies->nombre_especie = $_POST['snombre'];
-         if( $especies->save() )
+         $especie = new especie();
+         $especie->nombre = $_POST['snombre'];
+         if( $especie->save() )
             $this->new_message("Especie guardada correctamente.");
          else
             $this->new_error_msg("¡Imposible guardar la especie!");
       }
-      else if( isset($_GET['delete']) )
+      else if( isset($_GET['delete']) ) /// eliminar
       {
-         
-            $especies = $this->especies->get($_GET['delete']);
-            if( $especies )
-            {
-               if( $especies->delete() )
-                  $this->new_message("Especie eliminada correctamente.");
-               else
-                  $this->new_error_msg("¡Imposible eliminar la especie!");
-            }
+         $especie = $this->especie->get($_GET['delete']);
+         if($especie)
+         {
+            if( $especie->delete() )
+               $this->new_message("Especie eliminada correctamente.");
             else
-               $this->new_error_msg("¡Especie no encontrada!");
-         
+               $this->new_error_msg("¡Imposible eliminar la especie!");
+         }
+         else
+            $this->new_error_msg("¡Especie no encontrada!");
       }
    }
 }

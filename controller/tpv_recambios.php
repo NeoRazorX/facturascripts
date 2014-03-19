@@ -273,7 +273,7 @@ class tpv_recambios extends fs_controller
             {
                $albaran->codcliente = $cliente->codcliente;
                $albaran->cifnif = $cliente->cifnif;
-               $albaran->nombrecliente = $cliente->nombre;
+               $albaran->nombrecliente = $cliente->nombrecomercial;
                $albaran->apartado = $d->apartado;
                $albaran->ciudad = $d->ciudad;
                $albaran->coddir = $d->id;
