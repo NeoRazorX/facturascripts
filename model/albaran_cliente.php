@@ -724,21 +724,23 @@ class albaran_cliente extends fs_model
    
    /*
     * Devuelve un array con los datos estadísticos de las compras del cliente
-    * en los dos últimos años.
+    * en los cinco últimos años.
     */
    public function stats_from_cli($codcliente)
    {
       $stats = array();
       $years = array();
-      for($i=0; $i<5; $i++)
+      for($i=4; $i>=0; $i--)
          $years[] = intval(Date('Y')) - $i;
+      
+      $meses = array('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic');
       
       foreach($years as $year)
       {
          for($i = 1; $i <= 12; $i++)
          {
-            $stats[$i]['month'] = $i;
-            $stats[$i][$year] = 0;
+            $stats[$year.'-'.$i]['mes'] = $meses[$i-1].' '.$year;
+            $stats[$year.'-'.$i]['compras'] = 0;
          }
          
          if( strtolower(FS_DB_TYPE) == 'postgresql')
@@ -753,7 +755,7 @@ class albaran_cliente extends fs_model
          if($data)
          {
             foreach($data as $d)
-               $stats[ intval($d['mes']) ][$year] = number_format($d['total'], FS_NF0, '.', '');
+               $stats[$year.'-'.intval($d['mes'])]['compras'] = number_format($d['total'], FS_NF0, '.', '');
          }
       }
       
