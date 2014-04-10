@@ -73,28 +73,18 @@
          <th align="left">Código</th>
          <th align="left">Subcuenta</th>
          <th align="left">Descripción</th>
-         <th>Entidad</th>
-         <th>Oficina</th>
-         <th>Cuenta</th>
-         <th>Sufijo</th>
          <th>IBAN</th>
-         <th>SWIFT</th>
       </tr>
       {loop="$fsc->banco->get_cuentas()"}
       <tr>
          <td>{$value->codcuenta}</td>
          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
          <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
-         <td align="center">{$value->entidad}</td>
-         <td align="center">{$value->agencia}</td>
-         <td align="center">{$value->cuenta}</td>
-         <td align="center">{$value->sufijo}</td>
          <td align="center">{$value->iban}</td>
-         <td align="center">{$value->swift}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="9">No hay cuentas asociadas.</td>
+         <td colspan="4">No hay cuentas asociadas.</td>
       </tr>
       {/loop}
    </table>

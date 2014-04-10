@@ -126,8 +126,7 @@ class banco extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE entidad = ".$this->var2str($this->entidad).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE entidad = ".$this->var2str($this->entidad).";");
    }
    
    public function all()

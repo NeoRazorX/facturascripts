@@ -71,7 +71,7 @@ class agente extends fs_model
          $this->provincia = NULL;
          $this->ciudad = NULL;
          $this->direccion = NULL;
-         $this->porcomision = NULL;
+         $this->porcomision = 0;
          $this->irpf = NULL;
          $this->dnicif = '';
          $this->nombre = '';
@@ -173,15 +173,16 @@ class agente extends fs_model
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
                apellidos = ".$this->var2str($this->apellidos).", dnicif = ".$this->var2str($this->dnicif).",
-               telefono = ".$this->var2str($this->telefono).", email = ".$this->var2str($this->email)."
+               telefono = ".$this->var2str($this->telefono).", email = ".$this->var2str($this->email).",
+               porcomision = ".$this->var2str($this->porcomision)."
                WHERE codagente = ".$this->var2str($this->codagente).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email)
+            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email,porcomision)
                VALUES (".$this->var2str($this->codagente).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->apellidos).",".$this->var2str($this->dnicif).",
-               ".$this->var2str($this->telefono).",".$this->var2str($this->email).");";
+               ".$this->var2str($this->telefono).",".$this->var2str($this->email).",".$this->var2str($this->porcomision).");";
          }
          return $this->db->exec($sql);
       }

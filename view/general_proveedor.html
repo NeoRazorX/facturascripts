@@ -29,28 +29,43 @@
       }
    }
    $(document).ready(function() {
+      window.onpopstate = function(){
+         $("#b_general").removeClass('selected');
+         $("#b_direcciones").removeClass('selected');
+         $("#b_subcuentas").removeClass('selected');
+         $("#div_datos_generales").hide();
+         $("#div_cuentas_bancarias").hide();
+         $("#div_direcciones").hide();
+         $("#div_subcuentas").hide();
+         
+         if(window.location.hash.substring(1) == 'direcciones')
+         {
+            $("#b_direcciones").addClass('selected');
+            $("#div_direcciones").show();
+         }
+         else if(window.location.hash.substring(1) == 'subcuentas')
+         {
+            $("#b_subcuentas").addClass('selected');
+            $("#div_subcuentas").show();
+         }
+         else if(window.location.hash.substring(1) == 'nueva_direccion')
+         {
+            $("#b_direcciones").addClass('selected');
+            $("#div_direcciones").show();
+            
+            fs_show_popup('popup_nueva_direccion');
+            document.f_nueva_direccion.provincia.focus();
+         }
+         else
+         {
+            $("#b_general").addClass('selected');
+            $("#div_datos_generales").show();
+         }
+      }
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
          if( confirm("¿Realmente desea eliminar este proveedor?") )
             window.location.href = '{$fsc->ppage->url()}&delete={$fsc->proveedor->codproveedor}';
-      });
-      $("#b_datos_generales, #b_datos_generales2").click(function(event) {
-         event.preventDefault();
-         $("#div_datos_generales").show();
-         $("#div_direcciones").hide();
-         $("#div_subcuentas").hide();
-      });
-      $("#b_direcciones, #b_direcciones2").click(function(event) {
-         event.preventDefault();
-         $("#div_datos_generales").hide();
-         $("#div_direcciones").show();
-         $("#div_subcuentas").hide();
-      });
-      $("#b_subcuentas, #b_subcuentas2").click(function(event) {
-         event.preventDefault();
-         $("#div_datos_generales").hide();
-         $("#div_direcciones").hide();
-         $("#div_subcuentas").show();
       });
       $("#b_buscar_lineas").click(function(event) {
          event.preventDefault();
@@ -98,38 +113,88 @@
 </script>
 {/if}
 
-<div class="rounded" id="div_datos_generales">
+<div class="popup" id="popup_nueva_direccion">
+   <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
+      <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
+      <input type="hidden" name="coddir" value=""/>
+      <h1>Nueva dirección:</h1>
+      <div class="bloque">
+         <a class="link" href="">País</a>:
+         <select name="pais">
+            {loop="$fsc->pais->all()"}
+            <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+            {/loop}
+         </select>
+      </div>
+      <div class="bloque">
+         Provincia:
+         <input type="text" name="provincia" size="12"/>
+      </div>
+      <div class="bloque">
+         Ciudad:
+         <input type="text" name="ciudad" size="12"/>
+      </div>
+      <div class="bloque">
+         Código postal:
+         <input type="text" name="codpostal" size="6" autocomplete="off"/>
+      </div>
+      <br/>
+      <div class="bloque">
+         Dirección:
+         <input type="text" name="direccion" size="60" autocomplete="off"/>
+      </div>
+      <div class="bloque">
+         Apartado:
+         <input type="text" name="apartado" size="6" autocomplete="off"/>
+      </div>
+      <br/>
+      <div class="bloque">
+         <input type="checkbox" name="direccionppal" id="ndireccionppal" value="TRUE" checked="checked"/>
+         <label for="ndireccionppal">Dirección principal</label>
+      </div>
+      <div class="bloque">
+         Descripción:
+         <input type="text" name="descripcion" size="60" autocomplete="off"/>
+      </div>
+      <div style="text-align: right;">
+         <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+   </form>
+</div>
+
+<div class="rounded">
    <div class="select">
-      <a href="#" class="selected">Datos generales</a>
-      <a id="b_direcciones" href="#">Direcciones</a>
-      <a id="b_subcuentas" href="#">Subcuentas</a>
+      <a id="b_general" href="#" class="selected">Datos generales</a>
+      <a id="b_direcciones" href="#direcciones">Direcciones</a>
+      <a id="b_subcuentas" href="#subcuentas">Subcuentas</a>
    </div>
-   <br/><br/>
+   
+   <div id="div_datos_generales">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
       <div class="bloque">
-         Nombre: <input type="text" name="nombre" value="{$fsc->proveedor->nombre}" size="25"/>
+         Nombre: <input type="text" name="nombre" value="{$fsc->proveedor->nombre}" size="25" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->proveedor->nombrecomercial}" size="35"/>
+         Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->proveedor->nombrecomercial}" size="35" autocomplete="off"/>
       </div>
       <div class="bloque">
-         cif/nif: <input type="text" name="cifnif" value="{$fsc->proveedor->cifnif}" size="10"/>
+         cif/nif: <input type="text" name="cifnif" value="{$fsc->proveedor->cifnif}" size="10" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Telefono1: <input type="text" name="telefono1" value="{$fsc->proveedor->telefono1}" size="9"/>
+         Telefono1: <input type="text" name="telefono1" value="{$fsc->proveedor->telefono1}" size="9" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Telefono2: <input type="text" name="telefono2" value="{$fsc->proveedor->telefono2}" size="9"/>
+         Telefono2: <input type="text" name="telefono2" value="{$fsc->proveedor->telefono2}" size="9" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Fax: <input type="text" name="fax" value="{$fsc->proveedor->fax}" size="9"/>
+         Fax: <input type="text" name="fax" value="{$fsc->proveedor->fax}" size="9" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Email: <input type="text" name="email" value="{$fsc->proveedor->email}" size="30"/>
+         Email: <input type="text" name="email" value="{$fsc->proveedor->email}" size="30" maxlength="50" autocomplete="off"/>
       </div>
       <div class="bloque">
-         Web: <input type="text" name="web" value="{$fsc->proveedor->web}" size="50"/>
+         Web: <input type="text" name="web" value="{$fsc->proveedor->web}" size="50" autocomplete="off"/>
       </div>
       <div>
          Observaciones:
@@ -175,18 +240,12 @@
          </div>
       </div>
    </form>
-</div>
-
-<div class="rounded hidden" id="div_direcciones">
-   <div class="select">
-      <a id="b_datos_generales" href="#">Datos generales</a>
-      <a href="#" class="selected">Direcciones</a>
-      <a id="b_subcuentas2" href="#">Subcuentas</a>
    </div>
-   <br/><br/>
-   {loop="$fsc->proveedor->get_direcciones()"}
+   
+   <div id="div_direcciones" style="display: none;">
+      {loop="$fsc->proveedor->get_direcciones()"}
       <div class="grupo">
-         <form action="{$fsc->url()}" method="post"/>
+         <form action="{$fsc->url()}#direcciones" method="post"/>
             <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
             <input type="hidden" name="coddir" value="{$value->id}"/>
             <h2>Dirección {$value->id}:</h2>
@@ -212,15 +271,15 @@
             </div>
             <div class="bloque">
                Código postal:
-               <input type="text" name="codpostal" value="{$value->codpostal}" size="6"/>
+               <input type="text" name="codpostal" value="{$value->codpostal}" size="6" autocomplete="off"/>
             </div>
             <div class="bloque">
                Dirección:
-               <input type="text" name="direccion" value="{$value->direccion}" size="25"/>
+               <input type="text" name="direccion" value="{$value->direccion}" size="25" autocomplete="off"/>
             </div>
             <div class="bloque">
                Apartado:
-               <input type="text" name="apartado" value="{$value->apartado}" size="6"/>
+               <input type="text" name="apartado" value="{$value->apartado}" size="6" autocomplete="off"/>
             </div>
             <div class="bloque">
                {if condition="$value->direccionppal"}
@@ -232,89 +291,43 @@
             </div>
             <div class="bloque">
                Descripción:
-               <input type="text" name="descripcion" value="{$value->descripcion}" size="60"/>
+               <input type="text" name="descripcion" value="{$value->descripcion}" size="60" autocomplete="off"/>
             </div>
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </form>
       </div>
-   {/loop}
-   <div class="grupo">
-      <form action="{$fsc->url()}" method="post">
-         <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-         <input type="hidden" name="coddir" value=""/>
-         <h2>Nueva dirección:</h2>
-         <div class="bloque">
-            <a class="link" href="">País</a>:
-            <select name="pais">
-               {loop="$fsc->pais->all()"}
-                  <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-               {/loop}
-            </select>
-         </div>
-         <div class="bloque">
-            Provincia:
-            <input type="text" name="provincia" size="12"/>
-         </div>
-         <div class="bloque">
-            Ciudad:
-            <input type="text" name="ciudad" size="12"/>
-         </div>
-         <div class="bloque">
-            Código postal:
-            <input type="text" name="codpostal" size="6"/>
-         </div>
-         <div class="bloque">
-            Dirección:
-            <input type="text" name="direccion" size="25"/>
-         </div>
-         <div class="bloque">
-            Apartado:
-            <input type="text" name="apartado" size="6"/>
-         </div>
-         <div class="bloque">
-            <input type="checkbox" name="direccionppal" id="ndireccionppal" value="TRUE" checked="checked"/>
-            <label for="ndireccionppal">Dirección principal</label>
-         </div>
-         <div class="bloque">
-            Descripción:
-            <input type="text" name="descripcion" size="60"/>
-         </div>
-         <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-      </form>
-   </div>
-</div>
-
-<div class="rounded hidden" id="div_subcuentas">
-   <div class="select">
-      <a id="b_datos_generales2" href="#">Datos generales</a>
-      <a id="b_direcciones2" href="#">Direcciones</a>
-      <a href="#" class="selected">Subcuentas</a>
-   </div>
-   <br/><br/>
-   <table class="list">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Subcuenta</th>
-         <th align="left">Descripción</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-         <th align="right">Saldo</th>
-      </tr>
-      {loop="$fsc->proveedor->get_subcuentas()"}
-      <tr>
-         <td>{$value->codejercicio}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td>{$value->descripcion}</td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="6">Sin resultados.</td>
-      </tr>
       {/loop}
-   </table>
+      <div class="new_line">
+         <a class="new_line" href="#nueva_direccion">Nueva dirección</a>
+      </div>
+   </div>
+   
+   <div id="div_subcuentas" style="display: none;">
+      <table class="list">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Subcuenta</th>
+            <th align="left">Descripción</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         {loop="$fsc->proveedor->get_subcuentas()"}
+         <tr>
+            <td>{$value->codejercicio}</td>
+            <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
+            <td>{$value->descripcion}</td>
+            <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
+         </tr>
+         {else}
+         <tr>
+            <td colspan="6">Sin resultados.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
 </div>
 
 <div class="popup" id="popup_buscar_lineas" style="min-width: 75%">

@@ -46,10 +46,17 @@ class cliente extends fs_model
    public $observaciones;
    public $tipoidfiscal;
    public $regimeniva;
+   public $dtopor;
+   public $zona;
+   public $ruta;
+   public $tipo_portes;
+   public $agencia_transporte;
+   public $dias_pago;
+   public $i343;
 
    public function __construct($c=FALSE)
    {
-      parent::__construct('clientes');
+      parent::__construct('clientes', 'plugins/cliente_plus/');
       if($c)
       {
          $this->codcliente = $c['codcliente'];
@@ -71,6 +78,16 @@ class cliente extends fs_model
          $this->observaciones = $this->no_html($c['observaciones']);
          $this->tipoidfiscal = $c['tipoidfiscal'];
          $this->regimeniva = $c['regimeniva'];
+         $this->dtopor = $c['dtopor'];
+         $this->zona = $c['zona'];
+         $this->ruta = $c['ruta'];
+         $this->tipo_portes = $c['tipo_portes'];
+         $this->agencia_transporte = $c['agenciat'];
+         $this->dias_pago = $c['dias_pago'];
+         
+         $this->i343 = TRUE;
+         if( !is_null($c['i343']) AND $c['i343'] != '' )
+            $this->i343 = $this->str2bool($c['i343']);
       }
       else
       {
@@ -93,6 +110,13 @@ class cliente extends fs_model
          $this->observaciones = NULL;
          $this->tipoidfiscal = 'NIF';
          $this->regimeniva = 'General';
+         $this->dtopor = 0;
+         $this->zona = NULL;
+         $this->ruta = NULL;
+         $this->tipo_portes = NULL;
+         $this->agencia_transporte = NULL;
+         $this->dias_pago = NULL;
+         $this->i343 = TRUE;
       }
    }
    
@@ -128,6 +152,66 @@ class cliente extends fs_model
    public function regimenes_iva()
    {
       return array('General', 'Exportaciones', 'U.E.', 'Exento');
+   }
+   
+   public function zonas()
+   {
+      $zlist = array();
+      
+      $zonas = $this->db->select("SELECT DISTINCT(zona) as zona FROM ".$this->table_name.";");
+      if($zonas)
+      {
+         foreach($zonas as $z)
+            if($z['zona'] != '')
+               $zlist[] = $z['zona'];
+      }
+      
+      return $zlist;
+   }
+   
+   public function rutas()
+   {
+      $rlist = array();
+      
+      $rutas = $this->db->select("SELECT DISTINCT(ruta) as ruta FROM ".$this->table_name.";");
+      if($rutas)
+      {
+         foreach($rutas as $z)
+            if($z['ruta'] != '')
+               $rlist[] = $z['ruta'];
+      }
+      
+      return $rlist;
+   }
+   
+   public function tipos_portes()
+   {
+      $plist = array();
+      
+      $tportes = $this->db->select("SELECT DISTINCT(tipo_portes) as tipo_portes FROM ".$this->table_name.";");
+      if($tportes)
+      {
+         foreach($tportes as $z)
+            if($z['tipo_portes'] != '')
+               $plist[] = $z['tipo_portes'];
+      }
+      
+      return $plist;
+   }
+   
+   public function agencias_transportes()
+   {
+      $alist = array();
+      
+      $agencias = $this->db->select("SELECT DISTINCT(agenciat) as agenciat FROM ".$this->table_name.";");
+      if($agencias)
+      {
+         foreach($agencias as $z)
+            if($z['agenciat'] != '')
+               $alist[] = $z['agenciat'];
+      }
+      
+      return $alist;
    }
    
    public function get($cod)
@@ -251,6 +335,21 @@ class cliente extends fs_model
       $this->cifnif = $this->no_html($this->cifnif);
       $this->observaciones = $this->no_html($this->observaciones);
       
+      if($this->zona == '')
+         $this->zona = NULL;
+      
+      if($this->ruta == '')
+         $this->ruta = NULL;
+      
+      if($this->tipo_portes == '')
+         $this->tipo_portes = NULL;
+      
+      if($this->agencia_transporte == '')
+         $this->agencia_transporte = NULL;
+      
+      if($this->dias_pago == '')
+         $this->dias_pago = NULL;
+      
       if( !preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcliente) )
          $this->new_error_msg("Código de cliente no válido.");
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
@@ -279,14 +378,17 @@ class cliente extends fs_model
                codagente = ".$this->var2str($this->codagente).", codgrupo = ".$this->var2str($this->codgrupo).",
                debaja = ".$this->var2str($this->debaja).", fechabaja = ".$this->var2str($this->fechabaja).",
                observaciones = ".$this->var2str($this->observaciones).",
-               tipoidfiscal = ".$this->var2str($this->tipoidfiscal).", regimeniva = ".$this->var2str($this->regimeniva)."
-               WHERE codcliente = ".$this->var2str($this->codcliente).";";
+               tipoidfiscal = ".$this->var2str($this->tipoidfiscal).", regimeniva = ".$this->var2str($this->regimeniva).",
+               zona = ".$this->var2str($this->zona).", ruta = ".$this->var2str($this->ruta).",
+               tipo_portes = ".$this->var2str($this->tipo_portes).", agenciat = ".$this->var2str($this->agencia_transporte).",
+               dtopor = ".$this->var2str($this->dtopor).", dias_pago = ".$this->var2str($this->dias_pago).",
+               i343 = ".$this->var2str($this->i343)." WHERE codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,telefono1,
                telefono2,fax,email,web,codserie,coddivisa,codpago,codagente,codgrupo,debaja,fechabaja,
-               observaciones,tipoidfiscal,regimeniva)
+               observaciones,tipoidfiscal,regimeniva,zona,ruta,tipo_portes,agenciat,dtopor,dias_pago,i343)
                VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",
@@ -294,7 +396,10 @@ class cliente extends fs_model
                ".$this->var2str($this->web).",".$this->var2str($this->codserie).",
                ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->codagente).",
                ".$this->var2str($this->codgrupo).",".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",
-               ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).",".$this->var2str($this->regimeniva).");";
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).","
+               .$this->var2str($this->regimeniva).",".$this->var2str($this->zona).",".$this->var2str($this->ruta).","
+               .$this->var2str($this->tipo_portes).",".$this->var2str($this->agencia_transporte).","
+               .$this->var2str($this->dtopor).",".$this->var2str($this->dias_pago).",".$this->var2str($this->i343).");";
          }
          return $this->db->exec($sql);
       }

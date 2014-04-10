@@ -49,7 +49,7 @@ function require_model($name)
       $GLOBALS['plugins'] = array();
       if( file_exists('tmp/enabled_plugins') )
       {
-         foreach(scandir('tmp/enabled_plugins') as $f)
+         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
          {
             if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {
@@ -416,7 +416,11 @@ abstract class fs_model
                {
                   $columnas[$i]['nombre'] = $col->nombre;
                   $columnas[$i]['tipo'] = $col->tipo;
-                  $columnas[$i]['nulo'] = $col->nulo;
+                  
+                  if($col->nulo)
+                     $columnas[$i]['nulo'] = $col->nulo;
+                  else
+                     $columnas[$i]['nulo'] = 'YES';
                   
                   if($col->defecto == '')
                      $columnas[$i]['defecto'] = NULL;

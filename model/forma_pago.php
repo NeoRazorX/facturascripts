@@ -55,6 +55,11 @@ class forma_pago extends fs_model
             ('CONT','CONTADO','Emitidos',NULL,FALSE);";
    }
    
+   public function url()
+   {
+      return 'index.php?page=contabilidad_formas_pago';
+   }
+   
    public function is_default()
    {
       return ( $this->codpago == $this->default_items->codpago() );

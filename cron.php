@@ -84,6 +84,29 @@ if( $db->connect() )
    echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...";
    $inventarios_balances->cron_job();
    
+   
+   /*
+    * Ahora ejecutamos el cron de cada plugin que tenga cron y esté activado
+    */
+   if( file_exists('tmp/enabled_plugins') )
+   {
+      foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
+      {
+         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+         {
+            if( file_exists('plugins/'.$f) )
+            {
+               if( file_exists('plugins/'.$f.'/cron.php') )
+               {
+                  include 'plugins/'.$f.'/cron.php';
+               }
+            }
+            else
+               unlink('tmp/enabled_plugins/'.$f);
+         }
+      }
+   }
+   
    $db->close();
 }
 else

@@ -43,7 +43,7 @@ else
    $GLOBALS['plugins'] = array();
    if( file_exists('tmp/enabled_plugins') )
    {
-      foreach(scandir('tmp/enabled_plugins') as $f)
+      foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
       {
          if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
          {

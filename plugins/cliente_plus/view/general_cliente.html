@@ -2,6 +2,30 @@
 
 {if condition="$fsc->cliente"}
 <script type="text/javascript">
+   function add_zona()
+   {
+      var new_zona = prompt('Nueva zona:');
+      $("#s_zona").append("<option>"+new_zona+"</option>");
+      $("#s_zona").val(new_zona);
+   }
+   function add_ruta()
+   {
+      var new_ruta = prompt('Nueva ruta:');
+      $("#s_ruta").append("<option>"+new_ruta+"</option>");
+      $("#s_ruta").val(new_ruta);
+   }
+   function add_portes()
+   {
+      var new_portes = prompt('Nuevo tipo de portes:');
+      $("#s_portes").append("<option>"+new_portes+"</option>");
+      $("#s_portes").val(new_portes);
+   }
+   function add_agenciat()
+   {
+      var new_agenciat = prompt('Nueva agencia de tranportes:');
+      $("#s_agenciat").append("<option>"+new_agenciat+"</option>");
+      $("#s_agenciat").val(new_agenciat);
+   }
    function buscar_lineas()
    {
       if(document.f_buscar_lineas.buscar_lineas.value == '')
@@ -204,6 +228,21 @@
    </form>
 </div>
 
+<div class="popup" id="popup_dtopac">
+   <h1>Descuento pactado</h1>
+   <p>
+      Indica el % de descuento pactado con el clientes. Este descuento <b>se aplicará después</b> de aplicar<br/>
+      el descuento propio de la <b>tarifa</b> que tengas asignada al <b>grupo de clientes</b> al que pertenece este<br/>
+      cliente.
+      <br/><br/>
+      <b>Ejemplos:</b>
+   </p>
+   <ul>
+      <li>Descuento de tarifa: 0%, descuento pactado con el cliente: 10%, descuento final: 10%.</li>
+      <li>Descuento de tarifa: 10%, descuento pactado con el cliente: 10%, descuento final: 19%.</li>
+   </ul>
+</div>
+
 <div class="rounded">
    <div class="select">
       <a id="b_general" href="#general" class="selected">Datos generales</a>
@@ -266,6 +305,11 @@
             </select>
          </div>
          <div class="bloque">
+            % dto. pactado:
+            <input type="text" name="dtopor" size="6" value="{$fsc->cliente->dtopor}" autocomplete="off"/>
+            <input class="button" type="button" value="?" onclick="fs_show_popup('popup_dtopac')"/>
+         </div>
+         <div class="bloque">
             <a class="link" href="{$fsc->serie->url()}">Serie</a>:
             <select name="codserie">
                {loop="$fsc->serie->all()"}
@@ -326,6 +370,60 @@
                   {/if}
                {/loop}
             </select>
+         </div>
+         <div class="bloque">
+            Zona:
+            <select name="zona" id="s_zona">
+               <option value="">Ninguna</option>
+               <option value="">---</option>
+               {loop="$fsc->cliente->zonas()"}
+               <option{if condition="$fsc->cliente->zona==$value"} selected="selected"{/if}>{$value}</option>
+               {/loop}
+            </select>
+            <input type="button" value="+" onclick="add_zona()"/>
+         </div>
+         <div class="bloque">
+            Ruta:
+            <select name="ruta" id="s_ruta">
+               <option value="">Ninguna</option>
+               <option value="">---</option>
+               {loop="$fsc->cliente->rutas()"}
+               <option{if condition="$fsc->cliente->ruta==$value"} selected="selected"{/if}>{$value}</option>
+               {/loop}
+            </select>
+            <input type="button" value="+" onclick="add_ruta()"/>
+         </div>
+         <div class="bloque">
+            Tipo de portes:
+            <select name="tipo_portes" id="s_portes">
+               <option value="">Ninguno</option>
+               <option value="">---</option>
+               {loop="$fsc->cliente->tipos_portes()"}
+               <option{if condition="$fsc->cliente->tipo_portes==$value"} selected="selected"{/if}>{$value}</option>
+               {/loop}
+            </select>
+            <input type="button" value="+" onclick="add_portes()"/>
+         </div>
+         <div class="bloque">
+            Agencia de transporte:
+            <select name="agenciat" id="s_agenciat">
+               <option value="">Ninguna</option>
+               <option value="">---</option>
+               {loop="$fsc->cliente->agencias_transportes()"}
+               <option{if condition="$fsc->cliente->agencia_transporte==$value"} selected="selected"{/if}>{$value}</option>
+               {/loop}
+            </select>
+            <input type="button" value="+" onclick="add_agenciat()"/>
+         </div>
+         <div class="bloque">
+            Días de pago:
+            <input type="text" name="dias_pago" value="{$fsc->cliente->dias_pago}" size="10" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            <label>
+               <input type="checkbox" name="i343" value="TRUE"{if condition="$fsc->cliente->i343"} checked="checked"{/if}/>
+               interviene en el modelo 343
+            </label>
          </div>
          <input class="submit pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();"/>
       </div>

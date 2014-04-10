@@ -380,7 +380,11 @@ class linea_albaran_cliente extends fs_model
          if($lineas)
          {
             foreach($lineas as $l)
-               $toplist[] = array($articulo->get($l['referencia']), intval($l['ventas']));
+            {
+               $art0 = $articulo->get($l['referencia']);
+               if($art0)
+                  $toplist[] = array($art0, intval($l['ventas']));
+            }
          }
          $this->cache->set('albcli_top_articulos', $toplist);
       }

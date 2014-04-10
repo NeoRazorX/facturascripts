@@ -78,6 +78,11 @@ class divisa extends fs_model
       return number_format($this->tasaconv, 3);
    }
    
+   public function url()
+   {
+      return 'index.php?page=admin_divisas';
+   }
+   
    public function is_default()
    {
       return ( $this->coddivisa == $this->default_items->coddivisa() );

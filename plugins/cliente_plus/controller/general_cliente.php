@@ -154,6 +154,13 @@ class general_cliente extends fs_controller
          $this->cliente->codpago = $_POST['codpago'];
          $this->cliente->coddivisa = $_POST['coddivisa'];
          $this->cliente->regimeniva = $_POST['regimeniva'];
+         $this->cliente->dtopor = floatval($_POST['dtopor']);
+         $this->cliente->zona = $_POST['zona'];
+         $this->cliente->ruta = $_POST['ruta'];
+         $this->cliente->tipo_portes = $_POST['tipo_portes'];
+         $this->cliente->agencia_transporte = $_POST['agenciat'];
+         $this->cliente->dias_pago = $_POST['dias_pago'];
+         $this->cliente->i343 = isset($_POST['i343']);
          
          if($_POST['codagente'] == '---')
             $this->cliente->codagente = NULL;

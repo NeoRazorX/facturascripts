@@ -314,14 +314,21 @@ div.grupo {
    margin: 5px;
    margin-bottom: 10px;
    padding: 5px;
-   background-color: #FFFAA6;
-   border: 1px dashed #333333;
+   background-color: #FFFBB6;
+   border: 1px dashed #555555;
 }
 
-div.grupo h2 {
-   margin: 0px;
+div.grupo_n {
+   margin: 5px;
    margin-bottom: 10px;
    padding: 5px;
+   background-color: #DEECFB;
+   border: 1px dashed #999999;
+}
+
+div.grupo h2, div.grupo_n h2 {
+   margin: 0px;
+   padding: 0px 5px 5px 5px;
 }
 
 div.rounded {

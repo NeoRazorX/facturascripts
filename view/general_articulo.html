@@ -415,7 +415,7 @@
                </tr>
                {loop="$fsc->articulo->get_tarifas(TRUE)"}
                <tr>
-                  <td>{$value->nombre}</td>
+                  <td><a class="link" href="{$value->url()}">{$value->nombre}</a></td>
                   <td>
                      <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                      <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
@@ -429,6 +429,13 @@
                   </td>
                </tr>
                {/loop}
+               <tr>
+                  <td colspan="4">
+                     <div class="new_line">
+                        <a class="new_line" href="index.php?page=general_articulos#tarifas">Nueva tarifa</a>
+                     </div>
+                  </td>
+               </tr>
             </table>
          </form>
       </div>

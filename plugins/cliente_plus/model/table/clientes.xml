@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : proveedores.xml
+    Document   : clientes.xml
     Description:
-        Estructura de la tabla proveedores.
+        Estructura de la tabla clientes.
 -->
 <tabla>
    <columna>
+      <nombre>capitalimpagado</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>cifnif</nombre>
       <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codagente</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codcliente</nombre>
+      <tipo>character varying(6)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
@@ -21,7 +36,7 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codcuentapago</nombre>
+      <nombre>codcuentarem</nombre>
       <tipo>character varying(6)</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -31,19 +46,24 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>codedi</nombre>
+      <tipo>character varying(17)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codgrupo</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>codpago</nombre>
       <tipo>character varying(10)</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codproveedor</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
       <nombre>codserie</nombre>
       <tipo>character varying(2)</tipo>
-      <nulo>YES</nulo>
+      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>codsubcuenta</nombre>
@@ -51,8 +71,23 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>codtiporappel</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>contacto</nombre>
       <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>copiasfactura</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>debaja</nombre>
+      <tipo>boolean</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -66,13 +101,18 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>fechabaja</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>idsubcuenta</nombre>
       <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>ivaportes</nombre>
-      <tipo>double precision</tipo>
+      <nombre>ivaincluido</nombre>
+      <tipo>boolean</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -91,13 +131,23 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>recfinanciero</nombre>
-      <tipo>character varying(20)</tipo>
+      <nombre>recargo</nombre>
+      <tipo>boolean</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>regimeniva</nombre>
       <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>riesgoalcanzado</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>riesgomax</nombre>
+      <tipo>double precision</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -111,18 +161,46 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>web</nombre>
+      <tipo>character varying(250)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>tipoidfiscal</nombre>
       <tipo>character varying(25)</tipo>
       <nulo>NO</nulo>
       <defecto>'NIF'::character varying</defecto>
    </columna>
    <columna>
-      <nombre>web</nombre>
-      <tipo>character varying(250)</tipo>
-      <nulo>YES</nulo>
+      <nombre>dtopor</nombre>
+      <tipo>double precision</tipo>
+   </columna>
+   <columna>
+      <nombre>zona</nombre>
+      <tipo>character varying(50)</tipo>
+   </columna>
+   <columna>
+      <nombre>ruta</nombre>
+      <tipo>character varying(50)</tipo>
+   </columna>
+   <columna>
+      <nombre>tipo_portes</nombre>
+      <tipo>character varying(50)</tipo>
+   </columna>
+   <columna>
+      <nombre>agenciat</nombre>
+      <tipo>character varying(50)</tipo>
+   </columna>
+   <columna>
+      <nombre>dias_pago</nombre>
+      <tipo>character varying(10)</tipo>
+   </columna>
+   <columna>
+      <nombre>i343</nombre>
+      <tipo>boolean</tipo>
    </columna>
    <restriccion>
-      <nombre>proveedores_pkey</nombre>
-      <consulta>PRIMARY KEY (codproveedor)</consulta>
+      <nombre>clientes_pkey</nombre>
+      <consulta>PRIMARY KEY (codcliente)</consulta>
    </restriccion>
 </tabla>

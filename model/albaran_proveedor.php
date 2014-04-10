@@ -180,8 +180,11 @@ class albaran_proveedor extends fs_model
    public function proveedor_url()
    {
       $pro = new proveedor();
-      $pro = $pro->get($this->codproveedor);
-      return $pro->url();
+      $pro2 = $pro->get($this->codproveedor);
+      if($pro2)
+         return $pro2->url();
+      else
+         return $pro->url();
    }
    
    public function get_lineas()

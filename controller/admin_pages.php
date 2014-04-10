@@ -82,9 +82,9 @@ class admin_pages extends fs_controller
       /// añadimos las páginas de los plugins
       foreach($this->plugins() as $plugin)
       {
-         foreach( scandir('plugins/'.$plugin.'/controller') as $f )
+         foreach( scandir(getcwd().'/plugins/'.$plugin.'/controller') as $f )
          {
-            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+            if( substr($f, -4) == '.php' )
             {
                $p = new fs_page();
                $p->name = substr($f, 0, -4);
@@ -101,9 +101,9 @@ class admin_pages extends fs_controller
       }
       
       /// añadimos las páginas que están en el directorio controller
-      foreach(scandir('controller') as $f)
+      foreach( scandir(getcwd().'/controller') as $f)
       {
-         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+         if( substr($f, -4) == '.php' )
          {
             $p = new fs_page();
             $p->name = substr($f, 0, -4);
@@ -149,7 +149,7 @@ class admin_pages extends fs_controller
       
       if( file_exists('tmp/enabled_plugins') )
       {
-         foreach(scandir('tmp/enabled_plugins') as $f)
+         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
          {
             if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {

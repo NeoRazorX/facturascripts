@@ -167,10 +167,7 @@ class articulo extends fs_model
    
    public function get($ref)
    {
-      $ref = str_replace(' ', '_', trim($ref));
-      
-      $art = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE referencia = ".$this->var2str($ref).";");
+      $art = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($art)
          return new articulo($art[0]);
       else
@@ -682,6 +679,26 @@ class articulo extends fs_model
          }
          
          $this->cache->set('articulos_searches', self::$search_tags, 86400);
+      }
+      
+      /*
+       * procesamos artículos aleatorios para calcular su costemedio,
+       * ya que es una funcionalidad relativamente nueva
+       */
+      if( strtolower(FS_DB_TYPE) == 'postgresql' )
+      {
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." OFFSET RANDOM()*(SELECT COUNT(*) FROM ".$this->table_name.") LIMIT 1000;");
+      }
+      else
+      {
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY RAND() LIMIT 1000;");
+      }
+      
+      foreach($data as $d)
+      {
+         $art0 = new articulo($d);
+         $art0->get_costemedio();
+         $art0->save();
       }
    }
    

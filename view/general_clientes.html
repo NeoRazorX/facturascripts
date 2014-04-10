@@ -3,6 +3,13 @@
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
+      window.onpopstate = function(){ 
+         if(window.location.hash.substring(1) == 'grupos')
+         {
+            fs_show_popup('popup_grupos');
+            document.f_new_grupo.nombre.focus();
+         }
+      }
       $("#b_nuevo_cliente").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nuevo_cliente');
@@ -72,6 +79,68 @@
          </tr>
       </table>
    </form>
+</div>
+
+<div class="popup" id="popup_grupos">
+   <h1>Grupos de clientes:</h1>
+   {loop="$fsc->grupo->all()"}
+   <div class="grupo">
+      <form name="f_new_grupo" action="{$fsc->url()}" method="post">
+         <input type="hidden" name="codgrupo" value="{$value->codgrupo}"/>
+         <h2>
+            Grupo {$value->codgrupo}:
+            <span>
+               <a class="delete" href="{$fsc->url()}&delete_grupo={$value->codgrupo}">eliminar</a>
+               <input class="submit" type="submit" value="Guardar"/>
+            </span>
+         </h2>
+         <div class="bloque">
+            Nombre:
+            <input type="text" name="nombre" size="15" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            <a class="link" href="index.php?page=general_articulos#tarifas">Tarifa</a>:
+            <select name="codtarifa">
+               <option value="---">Ninguna</option>
+               <option value="---">---</option>
+               {loop="$fsc->tarifa->all()"}
+                  {if condition="$value1->codtarifa==$value2->codtarifa"}
+                  <option value="{$value2->codtarifa}" selected="selected">{$value2->nombre}</option>
+                  {else}
+                  <option value="{$value2->codtarifa}">{$value2->nombre}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+      </form>
+   </div>
+   {/loop}
+   <div class="grupo_n">
+      <form name="f_new_grupo" action="{$fsc->url()}" method="post">
+         <h2>
+            Nuevo grupo:
+            <span><input class="submit" type="submit" value="Guardar"/></span>
+         </h2>
+         <div class="bloque">
+            Código:
+            <input type="text" name="codgrupo" value="{$fsc->grupo->get_new_codigo()}" size="6" maxlength="6" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            Nombre:
+            <input type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
+         </div>
+         <div class="bloque">
+            <a class="link" href="index.php?page=general_articulos#tarifas">Tarifa</a>:
+            <select name="codtarifa">
+               <option value="---">Ninguna</option>
+               <option value="---">---</option>
+               {loop="$fsc->tarifa->all()"}
+               <option value="{$value->codtarifa}">{$value->nombre}</option>
+               {/loop}
+            </select>
+         </div>
+      </form>
+   </div>
 </div>
 
 <div class="rounded">

@@ -55,7 +55,7 @@ class general_articulos extends fs_controller
       
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'nuevo');
-      $this->buttons[] = new fs_button('b_tarifas', 'tarifas');
+      $this->buttons[] = new fs_button('b_tarifas', 'tarifas', '#tarifas');
       $this->buttons[] = new fs_button('b_modificar_iva', 'modificar iva');
       
       if( !isset($_GET['public']) )

@@ -53,7 +53,7 @@ class admin_plugins extends fs_controller
       if( !file_exists('tmp/enabled_plugins') )
          mkdir('tmp/enabled_plugins');
       
-      foreach(scandir('plugins') as $f)
+      foreach( scandir(getcwd().'/plugins') as $f)
       {
          if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
          {
@@ -82,7 +82,7 @@ class admin_plugins extends fs_controller
          
          /// activamos las páginas del plugin
          $page_list = array();
-         foreach(scandir('plugins/'.$name.'/controller') as $f)
+         foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
          {
             if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {

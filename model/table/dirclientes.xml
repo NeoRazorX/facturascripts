@@ -70,4 +70,10 @@
       <nombre>dirclientes_pkey</nombre>
       <consulta>PRIMARY KEY (id)</consulta>
    </restriccion>
+   <restriccion>
+      <nombre>ca_dirclientes_clientes</nombre>
+      <consulta>FOREIGN KEY (codcliente)
+      REFERENCES clientes (codcliente)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>

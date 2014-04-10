@@ -18,16 +18,20 @@
  */
 
 require_model('cliente.php');
+require_model('grupo_clientes.php');
 require_model('pais.php');
 require_model('serie.php');
+require_model('tarifa.php');
 
 class general_clientes extends fs_controller
 {
    public $cliente;
+   public $grupo;
    public $offset;
    public $pais;
    public $resultados;
    public $serie;
+   public $tarifa;
    
    public function __construct()
    {
@@ -38,11 +42,47 @@ class general_clientes extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'nuevo');
+      $this->buttons[] = new fs_button('b_grupos_clientes', 'grupos', '#grupos');
       $this->cliente = new cliente();
+      $this->grupo = new grupo_clientes();
       $this->pais = new pais();
       $this->serie = new serie();
+      $this->tarifa = new tarifa();
       
-      if( isset($_GET['delete']) )
+      if( isset($_GET['delete_grupo']) )
+      {
+         $grupo = $this->grupo->get($_GET['delete_grupo']);
+         if($grupo)
+         {
+            if( $grupo->delete() )
+               $this->new_message('Grupo eliminado correctamente.');
+            else
+               $this->new_error_msg('Imposible eliminar el grupo.');
+         }
+         else
+            $this->new_error_msg('Grupo no encontrado.');
+      }
+      else if( isset($_POST['codgrupo']) )
+      {
+         $grupo = $this->grupo->get($_POST['codgrupo']);
+         if(!$grupo)
+         {
+            $grupo = new grupo_clientes();
+            $grupo->codgrupo = $_POST['codgrupo'];
+         }
+         $grupo->nombre = $_POST['nombre'];
+         
+         if($_POST['codtarifa'] == '---')
+            $grupo->codtarifa = NULL;
+         else
+            $grupo->codtarifa = $_POST['codtarifa'];
+         
+         if( $grupo->save() )
+            $this->new_message('Grupo guardado correctamente.');
+         else
+            $this->new_error_msg('Imposible guardar el grupo.');
+      }
+      else if( isset($_GET['delete']) )
       {
          $cliente = $this->cliente->get($_GET['delete']);
          if($cliente)
@@ -90,10 +130,9 @@ class general_clientes extends fs_controller
             $this->new_error_msg("¡Imposible guardar los datos del cliente!");
       }
       
+      $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       if($this->query != '')
          $this->resultados = $this->cliente->search($this->query, $this->offset);

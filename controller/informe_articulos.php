@@ -18,8 +18,8 @@
  */
 
 require_model('articulo.php');
-require_model('albaran_cliente.php');
-require_model('albaran_proveedor.php');
+require_model('linea_albaran_cliente.php');
+require_model('linea_albaran_proveedor.php');
 
 class informe_articulos extends fs_controller
 {

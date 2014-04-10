@@ -13,13 +13,13 @@
    <columna>
       <nombre>destacado</nombre>
       <tipo>boolean</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>false</defecto>
    </columna>
    <columna>
       <nombre>bloqueado</nombre>
       <tipo>boolean</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>false</defecto>
    </columna>
    <columna>
@@ -40,7 +40,7 @@
    <columna>
       <nombre>stockmin</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>0</defecto>
    </columna>
    <columna>
@@ -61,13 +61,13 @@
    <columna>
       <nombre>stockfis</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>stockmax</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>0</defecto>
    </columna>
    <columna>
@@ -110,7 +110,7 @@
    <columna>
       <nombre>codfamilia</nombre>
       <tipo>character varying(4)</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>imagen</nombre>
@@ -120,7 +120,7 @@
    <columna>
       <nombre>controlstock</nombre>
       <tipo>boolean</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>false</defecto>
    </columna>
    <columna>
@@ -131,7 +131,7 @@
    <columna>
       <nombre>pvp</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>0</defecto>
    </columna>
    <columna>
@@ -142,19 +142,13 @@
    <columna>
       <nombre>publico</nombre>
       <tipo>boolean</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
       <defecto>false</defecto>
    </columna>
    <restriccion>
       <nombre>ca_articulos_impuestos2</nombre>
       <consulta>FOREIGN KEY (codimpuesto)
       REFERENCES impuestos (codimpuesto)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
-      <nombre>ca_articulos_familias2</nombre>
-      <consulta>FOREIGN KEY (codfamilia)
-      REFERENCES familias (codfamilia)
       ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>

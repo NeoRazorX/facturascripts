@@ -168,7 +168,11 @@ class general_articulo extends fs_controller
             $this->new_error_msg("Este artículo está bloqueado.");
          
          $this->almacen = new almacen();
+         
          $this->familia = $this->articulo->get_familia();
+         if(!$this->familia)
+            $this->familia = new familia();
+         
          $this->impuesto = new impuesto();
          $this->stocks = $this->articulo->get_stock();
          /// metemos en un array los almacenes que no tengan stock de este producto

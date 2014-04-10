@@ -380,7 +380,11 @@ class linea_albaran_proveedor extends fs_model
          if($lineas)
          {
             foreach($lineas as $l)
-               $toplist[] = array($articulo->get($l['referencia']), intval($l['compras']));
+            {
+               $art0 = $articulo->get($l['referencia']);
+               if($art0)
+                  $toplist[] = array($art0, intval($l['compras']));
+            }
          }
          $this->cache->set('albpro_top_articulos', $toplist);
       }

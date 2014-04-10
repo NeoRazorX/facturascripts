@@ -57,7 +57,7 @@
          Especie:
          <select name="sespecie">
             {loop="$fsc->especie->all()"}
-               {if condition="$value2->nombre==$value1->nombre"}
+               {if condition="$value2->nombre==$value1->especie"}
                <option value="{$value2->nombre}" selected="selected">{$value2->nombre}</option>
                {else}
                <option value="{$value2->nombre}">{$value2->nombre}</option>

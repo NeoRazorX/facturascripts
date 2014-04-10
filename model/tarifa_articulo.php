@@ -62,6 +62,11 @@ class tarifa_articulo extends fs_model
       return '';
    }
    
+   public function url()
+   {
+      return 'index.php?page=general_articulos#tarifas';
+   }
+   
    public function pvp()
    {
       return $this->pvp*(100-$this->descuento)/100;

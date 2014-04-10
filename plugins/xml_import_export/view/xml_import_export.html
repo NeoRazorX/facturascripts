@@ -1,33 +1,61 @@
 {include="header"}
 
-<div class="rounded">
-   <h1>Exportar:</h1>
-   <form action="{$fsc->url()}" method="post" target="_blank">
-      SELECT * FROM
-      <select name="tabla">
-      {loop="$fsc->tablas()"}
-         <option value="{$value['name']}">{$value['name']}</option>
-      {/loop}
-      </select>
-      WHERE
-      <input type="text" name="where" value="1 = 1" size="80" autocomplete="off"/>;
-      <input class="submit" type="submit" value="exportar"/>
-   </form>
-</div>
+<script type="text/javascript">
+   $(document).ready(function() {
+      window.onpopstate = function(){ 
+         if(window.location.hash.substring(1) == 'export')
+         {
+            $("#b_importar").removeClass('selected');
+            $("#g_importar").hide();
+            $("#b_exportar").addClass('selected');
+            $("#g_exportar").show();
+         }
+         else if(window.location.hash.substring(1) == 'import')
+         {
+            $("#b_exportar").removeClass('selected');
+            $("#g_exportar").hide();
+            $("#b_importar").addClass('selected');
+            $("#g_importar").show();
+         }
+      }
+   });
+</script>
 
 <div class="rounded">
-   <h1>Importar:</h1>
-   <form action="{$fsc->url()}" method="post" enctype='multipart/form-data'>
+   <div class="select">
+      <a id="b_exportar" href="#export" class="selected">Exportar</a>
+      <a id="b_importar" href="#import">Importar</a>
+   </div>
+   <div id="g_exportar">
+      <div class="grupo">
+         <h2>Datos de la tabla...</h2>
+         <form action="{$fsc->url()}" method="post" target="_blank">
+            SELECT * FROM
+            <select name="tabla">
+            {loop="$fsc->tablas()"}<option value="{$value['name']}">{$value['name']}</option>{/loop}
+            </select>
+            WHERE
+            <input type="text" name="where" value="1 = 1" size="80" autocomplete="off"/>;
+            <input class="submit" type="submit" value="exportar"/>
+         </form>
+      </div>
+      <div class="grupo">
+         <h2>Estructura de la tabla...</h2>
+         <ul class="horizontal">
+         {loop="$fsc->all_tables()"}
+            <li><a class="link" target="_blank" href='{$fsc->page->url()}&table={$value.name}'>{$value.name}</a></li>
+         {/loop}
+         </ul>
+      </div>
+   </div>
+   <div id="g_importar" class="grupo" style="display: none;">
+      <h2>Datos de la tabla...</h2>
+      <form action="{$fsc->url()}#import" method="post" enctype='multipart/form-data'>
       <input name='archivo' type='hidden' value='TRUE'/>
       <input name='farchivo' type='file'/>
       <input class="submit" type="submit" value="importar"/>
    </form>
-</div>
-
-<div class="advice">
-   Si lo que deseas es obtener el XML con la estructura de una tabla (no los datos)
-   <u>para programar</u> un modelo, entonces haz clic
-   <a class="link" href="index.php?page=admin_table2xml">aquí</a>.
+   </div>
 </div>
 
 {include="footer"}

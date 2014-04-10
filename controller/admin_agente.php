@@ -61,6 +61,8 @@ class admin_agente extends fs_controller
                $this->agente->dnicif = $_POST['dnicif'];
                $this->agente->email = $_POST['email'];
                $this->agente->telefono = $_POST['telefono'];
+               $this->agente->porcomision = floatval($_POST['porcomision']);
+               
                if( $this->agente->save() )
                   $this->new_message("Datos del agente guardados correctamente.");
                else
