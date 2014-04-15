@@ -64,7 +64,7 @@ class informe_facturas extends fs_controller
       {
          $total_lineas = count($facturas);
          $linea_actual = 0;
-         $lppag = 33;
+         $lppag = 31;
          $total = $re = 0;
          $bases = array();
          $impuestos = array();
@@ -236,7 +236,7 @@ class informe_facturas extends fs_controller
       {
          $total_lineas = count( $facturas );
          $linea_actual = 0;
-         $lppag = 33;
+         $lppag = 31;
          $total = $re = 0;
          $bases = array();
          $impuestos = array();
