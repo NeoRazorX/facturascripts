@@ -65,7 +65,8 @@ class informe_facturas extends fs_controller
          $total_lineas = count($facturas);
          $linea_actual = 0;
          $lppag = 33;
-         $total = $base = $re = 0;
+         $total = $re = 0;
+         $bases = array();
          $impuestos = array();
          $pagina = 1;
          
@@ -78,8 +79,7 @@ class informe_facturas extends fs_controller
             }
             
             /// encabezado
-            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".
-                    $_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
             
             /// tabla principal
             $pdf_doc->new_table();
@@ -130,6 +130,12 @@ class informe_facturas extends fs_controller
                {
                   foreach($linivas as $liva)
                   {
+                     /// acumulamos la base
+                     if( !isset($bases[$liva->iva]) )
+                        $bases[$liva->iva] = $liva->neto;
+                     else
+                        $bases[$liva->iva] += $liva->neto;
+                     
                      /// acumulamos el iva
                      if( !isset($impuestos[$liva->iva]) )
                         $impuestos[$liva->iva] = $liva->totaliva;
@@ -145,7 +151,6 @@ class informe_facturas extends fs_controller
                   }
                }
                
-               $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
@@ -170,14 +175,19 @@ class informe_facturas extends fs_controller
             
             /// Rellenamos la última tabla
             $pdf_doc->new_table();
-            $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
-            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => $this->show_precio($base));
+            $titulo = array('pagina' => '<b>Suma y sigue</b>');
+            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag));
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
                 'width' => 750
             );
+            foreach($bases as $i => $value)
+            {
+               $titulo['base'.$i] = '<b>Base '.$i.'%</b>';
+               $fila['base'.$i] = $this->show_precio($value);
+               $opciones['cols']['base'.$i] = array('justification' => 'right');
+            }
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
@@ -197,8 +207,7 @@ class informe_facturas extends fs_controller
       }
       else
       {
-         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".
-                 $_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
          $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       
@@ -221,7 +230,8 @@ class informe_facturas extends fs_controller
          $total_lineas = count( $facturas );
          $linea_actual = 0;
          $lppag = 33;
-         $total = $base = $re = 0;
+         $total = $re = 0;
+         $bases = array();
          $impuestos = array();
          $pagina = 1;
 
@@ -234,9 +244,7 @@ class informe_facturas extends fs_controller
             }
             
             /// encabezado
-            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".
-                    $_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
-            
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
             
             /// tabla principal
             $pdf_doc->new_table();
@@ -287,6 +295,12 @@ class informe_facturas extends fs_controller
                {
                   foreach($linivas as $liva)
                   {
+                     /// acumuluamos la base
+                     if( !isset($bases[$liva->iva]) )
+                        $bases[$liva->iva] = $liva->neto;
+                     else
+                        $bases[$liva->iva] += $liva->neto;
+                     
                      /// acumulamos el iva
                      if( !isset($impuestos[$liva->iva]) )
                         $impuestos[$liva->iva] = $liva->totaliva;
@@ -302,7 +316,6 @@ class informe_facturas extends fs_controller
                   }
                }
                
-               $base += $facturas[$linea_actual]->neto;
                $re += $facturas[$linea_actual]->recfinanciero;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
@@ -327,14 +340,19 @@ class informe_facturas extends fs_controller
             
             /// Rellenamos la última tabla
             $pdf_doc->new_table();
-            $titulo = array('pagina' => '<b>Suma y sigue</b>','base' => '<b>Base im.</b>');
-            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag),
-                'base' => $this->show_precio($base));
+            $titulo = array('pagina' => '<b>Suma y sigue</b>');
+            $fila = array('pagina' => $pagina . '/' . ceil($total_lineas / $lppag));
             $opciones = array(
                 'cols' => array('base' => array('justification' => 'right')),
                 'showLines' => 0,
                 'width' => 750
             );
+            foreach($bases as $i => $value)
+            {
+               $titulo['base'.$i] = '<b>BASE '.$i.'%</b>';
+               $fila['base'.$i] = $this->show_precio($value);
+               $opciones['cols']['base'.$i] = array('justification' => 'right');
+            }
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
@@ -354,8 +372,7 @@ class informe_facturas extends fs_controller
       }
       else
       {
-         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".
-                 $_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
          $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       

@@ -126,7 +126,7 @@ class xml_import_export extends fs_controller
                       */
                      if( !$this->db->exec( $this->db->generate_table($tabla, $xml_columnas, array() ) ) )
                      {
-                        $this->new_error_msg('Error al comprobar la tabla '.$table_name);
+                        $this->new_error_msg('Error al comprobar la tabla '.$tabla);
                         $continuar = FALSE;
                      }
                   }
@@ -146,11 +146,22 @@ class xml_import_export extends fs_controller
             
             if($continuar)
             {
+               /// obetenemos las columnas de los datos almacenados en el xml
                $columnas = array();
                if($xml->columnas)
                {
-                  foreach($xml->columnas->columna as $col)
-                     $columnas[] = $col;
+                  /// pero sólo queremos las columnas comunes con la tabla de la base de datos
+                  foreach( $this->db->get_columns($tabla) as $col1 )
+                  {
+                     foreach($xml->columnas->columna as $col2)
+                     {
+                        if($col1['column_name'] == $col2)
+                        {
+                           $columnas[] = $col2;
+                           break;
+                        }
+                     }
+                  }
                }
                
                if($xml->fila)
