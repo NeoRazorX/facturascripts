@@ -128,6 +128,8 @@ class informe_facturas extends fs_controller
                $linivas = $facturas[$linea_actual]->get_lineas_iva();
                if($linivas)
                {
+                  $nueva_linea = FALSE;
+                  
                   foreach($linivas as $liva)
                   {
                      /// acumulamos la base
@@ -148,6 +150,11 @@ class informe_facturas extends fs_controller
                      $linea['totaliva'] = $this->show_numero($liva->totaliva);
                      $linea['total'] = $this->show_numero($liva->totallinea);
                      $pdf_doc->add_table_row($linea);
+                     
+                     if($nueva_linea)
+                        $i++;
+                     else
+                        $nueva_linea = TRUE;
                   }
                }
                
@@ -293,6 +300,8 @@ class informe_facturas extends fs_controller
                $linivas = $facturas[$linea_actual]->get_lineas_iva();
                if($linivas)
                {
+                  $nueva_linea = FALSE;
+                  
                   foreach($linivas as $liva)
                   {
                      /// acumuluamos la base
@@ -313,6 +322,12 @@ class informe_facturas extends fs_controller
                      $linea['totaliva'] = $this->show_numero($liva->totaliva);
                      $linea['total'] = $this->show_numero($liva->totallinea);
                      $pdf_doc->add_table_row($linea);
+                     
+                     
+                     if($nueva_linea)
+                        $i++;
+                     else
+                        $nueva_linea = TRUE;
                   }
                }
                
