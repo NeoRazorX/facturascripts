@@ -245,6 +245,10 @@
    }
    $(document).ready(function() {
       recalcular();
+      $("#b_imprimir").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_imprimir_albaran');
+      });
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_eliminar', 60);
@@ -265,6 +269,16 @@
       });
    });
 </script>
+
+<div class="popup" id="popup_imprimir_albaran">
+   <h1>Imprimir {$albaran}:</h1>
+   <center>
+      <ul class="bloque">
+         <li><a target="_blank" href="{$fsc->url()}&imprimir=simple">{$albaran}<br/>simple</a></li>
+         <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Cuartilla<br/>sin logotipo</a></li>
+      </ul>
+   </center>
+</div>
 
 <div class="popup" id="popup_new_line" style="min-width: 60%">
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">

@@ -124,7 +124,7 @@ class xml_import_export extends fs_controller
                       * Ejecutamos el SQL para generar la tabla, pero sin las restricciones,
                       * así que no hace falta insertar los datos en orden
                       */
-                     if( !$this->db->exec( $this->db->generate_table($tabla, $xml_columnas, array() ) ) )
+                     if( !$this->db->exec( $this->db->generate_table($tabla, $xml_columnas, $xml_restricciones) ) )
                      {
                         $this->new_error_msg('Error al comprobar la tabla '.$tabla);
                         $continuar = FALSE;
@@ -186,7 +186,7 @@ class xml_import_export extends fs_controller
                         $fail++;
                   }
                   
-                  $this->new_message($total.' filas insertadas. '.$fail.' errores.');
+                  $this->new_message($total.' filas insertadas en '.$tabla.'. '.$fail.' errores.');
                   $this->cache->clean();
                }
             }

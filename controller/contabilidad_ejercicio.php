@@ -119,10 +119,9 @@ class contabilidad_ejercicio extends fs_controller
             /// comprobamos el proceso de importación
             $this->importar_xml();
             
+            $this->offset = 0;
             if( isset($_GET['offset']) )
                $this->offset = intval($_GET['offset']);
-            else
-               $this->offset = 0;
             
             if( !isset($_GET['listar']) )
                $this->listar = 'cuentas';
@@ -316,7 +315,12 @@ class contabilidad_ejercicio extends fs_controller
          if( $import_step < 7 )
             $this->importar_url = $this->url().'&importar='.(1 + $import_step);
          else
+         {
+            $this->new_message('Datos importados correctamente.');
+            $this->new_message("Ahora es el momento de <a href='index.php?page=general_clientes#nuevo'>"
+                    . "añadir algún cliente</a>, si todavía no lo has hecho.");
             $import_step = 0;
+         }
       }
       
       if( file_exists('tmp/ejercicio.xml') AND $import_step > 0 )

@@ -64,7 +64,7 @@ define('FS_ID', 1);
  * '/dev/usb/lp0' -> escribir diectamente sobre ese archivo.
  * 'remote-printer' -> permite imprimir mediante el programa fs_remote_printer.py
  */
-define('FS_PRINTER', '');
+define('FS_PRINTER', 'remote-printer');
 
 /*
  * Nombre o dirección de la impresora que representa el dispositivo

@@ -272,7 +272,7 @@ class contabilidad_factura_cli extends fs_controller
                /// ¿Añadimos el logo?
                if( file_exists('tmp/logo.png') )
                {
-                  $pdf_doc->pdf->ezImage('tmp/logo.png');
+                  $pdf_doc->pdf->ezImage('tmp/logo.png', 0, 200, 'none');
                   $lppag -= 2; /// si metemos el logo, caben menos líneas
                }
                else
@@ -436,12 +436,12 @@ class contabilidad_factura_cli extends fs_controller
                 'cols' => array(
                     'neto' => array('justification' => 'right'),
                 ),
-                'showLines' => 0,
+                'showLines' => 4,
                 'width' => 540
             );
             foreach($lineas_iva as $li)
             {
-               $titulo['iva'.$li->iva] = '<b>IVA'.$li->iva.'%</b>';
+               $titulo['iva'.$li->iva] = '<b>IVA '.$li->iva.'%</b>';
                $fila['iva'.$li->iva] = $this->show_precio($li->totaliva, $this->factura->coddivisa);
                $opciones['cols']['iva'.$li->iva] = array('justification' => 'right');
             }

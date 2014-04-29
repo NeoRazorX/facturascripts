@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cuentasbcopro.xml
+    Description:
+        Estructura de la tabla cuentasbcopro.
+-->
+<tabla>
+   <columna>
+      <nombre>agencia</nombre>
+      <tipo>character varying(4)</tipo>
+   </columna>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codproveedor</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>ctaagencia</nombre>
+      <tipo>character varying(4)</tipo>
+   </columna>
+   <columna>
+      <nombre>ctaentidad</nombre>
+      <tipo>character varying(4)</tipo>
+   </columna>
+   <columna>
+      <nombre>cuenta</nombre>
+      <tipo>character varying(10)</tipo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+   </columna>
+   <columna>
+      <nombre>entidad</nombre>
+      <tipo>character varying(4)</tipo>
+   </columna>
+   <columna>
+      <nombre>iban</nombre>
+      <tipo>character varying(34)</tipo>
+   </columna>
+   <columna>
+      <nombre>swift</nombre>
+      <tipo>character varying(11)</tipo>
+   </columna>
+   <restriccion>
+      <nombre>cuentasbcopro_pkey</nombre>
+      <consulta>PRIMARY KEY (codcuenta)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_cuentasbcopro_proveedores</nombre>
+      <consulta>FOREIGN KEY (codproveedor)
+      REFERENCES proveedores (codproveedor)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+</tabla>

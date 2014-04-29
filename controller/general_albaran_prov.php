@@ -426,8 +426,13 @@ class general_albaran_prov extends fs_controller
       if( !$this->empresa->contintegrada )
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
       else if( !$subcuenta_prov )
-         $this->new_message("El proveedor no tiene asociada una subcuenta, y por tanto no se generará
-            un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      {
+         $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
+         $this->new_message("No se ha podido generar una subcuenta para el proveedor
+            <a href='".$eje0->url()."'>¿Has importado los datos del ejercicio?</a>
+            Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente,
+            pero sin asiento contable.");
+      }
       else
       {
          $asiento = new asiento();

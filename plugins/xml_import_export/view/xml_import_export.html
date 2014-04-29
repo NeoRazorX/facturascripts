@@ -1,22 +1,27 @@
 {include="header"}
 
 <script type="text/javascript">
+   function comprobar_url()
+   {
+      if(window.location.hash.substring(1) == 'export')
+      {
+         $("#b_importar").removeClass('selected');
+         $("#g_importar").hide();
+         $("#b_exportar").addClass('selected');
+         $("#g_exportar").show();
+      }
+      else if(window.location.hash.substring(1) == 'import')
+      {
+         $("#b_exportar").removeClass('selected');
+         $("#g_exportar").hide();
+         $("#b_importar").addClass('selected');
+         $("#g_importar").show();
+      }
+   }
    $(document).ready(function() {
+      comprobar_url();
       window.onpopstate = function(){ 
-         if(window.location.hash.substring(1) == 'export')
-         {
-            $("#b_importar").removeClass('selected');
-            $("#g_importar").hide();
-            $("#b_exportar").addClass('selected');
-            $("#g_exportar").show();
-         }
-         else if(window.location.hash.substring(1) == 'import')
-         {
-            $("#b_exportar").removeClass('selected');
-            $("#g_exportar").hide();
-            $("#b_importar").addClass('selected');
-            $("#g_importar").show();
-         }
+         comprobar_url();
       }
    });
 </script>

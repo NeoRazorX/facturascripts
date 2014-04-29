@@ -43,6 +43,7 @@ class tpv_recambios extends fs_controller
    public $familia;
    public $forma_pago;
    public $imprimir_descripciones;
+   public $imprimir_observaciones;
    public $results;
    public $serie;
    public $tarifas;
@@ -87,12 +88,17 @@ class tpv_recambios extends fs_controller
          $this->forma_pago = new forma_pago();
          $this->serie = new serie();
          
+         $this->imprimir_descripciones = FALSE;
          if( isset($_POST['imprimir_desc']) )
             $this->imprimir_descripciones = TRUE;
          else if( isset($_COOKIE['imprimir_desc']) )
             $this->imprimir_descripciones = TRUE;
-         else
-            $this->imprimir_descripciones = FALSE;
+         
+         $this->imprimir_observaciones = FALSE;
+         if( isset($_POST['imprimir_obs']) )
+            $this->imprimir_observaciones = TRUE;
+         else if( isset($_COOKIE['imprimir_obs']) )
+            $this->imprimir_observaciones = TRUE;
          
          if( $this->agente )
          {
@@ -243,6 +249,17 @@ class tpv_recambios extends fs_controller
       {
          $this->imprimir_descripciones = FALSE;
          setcookie('imprimir_desc', FALSE, time()-FS_COOKIES_EXPIRE);
+      }
+      
+      if( isset($_POST['imprimir_obs']) )
+      {
+         $this->imprimir_observaciones = TRUE;
+         setcookie('imprimir_obs', TRUE, time()+FS_COOKIES_EXPIRE);
+      }
+      else
+      {
+         $this->imprimir_observaciones = FALSE;
+         setcookie('imprimir_obs', FALSE, time()-FS_COOKIES_EXPIRE);
       }
       
       $albaran = new albaran_cliente();
@@ -501,11 +518,16 @@ class tpv_recambios extends fs_controller
          $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
          $fpt->add("Agente: " . $albaran->codagente . "\n\n");
          
+         if($this->imprimir_observaciones)
+         {
+            $fpt->add('Observaciones: '.$albaran->observaciones."\n\n");
+         }
+         
          $fpt->add(sprintf("%3s", "Ud.")." ".sprintf("%-25s", "Articulo")." ".sprintf("%10s", "TOTAL")."\n");
          $fpt->add(sprintf("%3s", "---")." ".sprintf("%-25s", "-------------------------")." ".sprintf("%10s", "----------")."\n");
          foreach($albaran->get_lineas() as $col)
          {
-            if( $this->imprimir_descripciones )
+            if($this->imprimir_descripciones)
             {
                $linea = sprintf("%3s", $col->cantidad)." ".sprintf("%-25s", substr($col->descripcion, 0, 24))." "
                   .sprintf("%10s", $this->show_numero($col->total_iva()))."\n";

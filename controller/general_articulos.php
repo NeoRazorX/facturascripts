@@ -39,12 +39,11 @@ class general_articulos extends fs_controller
    
    protected function process()
    {
+      $this->codfamilia = '';
       if( isset($_POST['codfamilia']) )
          $this->codfamilia = $_POST['codfamilia'];
       else if( isset($_GET['codfamilia']) )
          $this->codfamilia = $_GET['codfamilia'];
-      else
-         $this->codfamilia = '';
       
       $this->con_stock = ( isset($_POST['con_stock']) OR isset($_GET['con_stock']) );
       
@@ -54,9 +53,9 @@ class general_articulos extends fs_controller
       $articulo = new articulo();
       
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'nuevo', 'add.png', '#nuevo');
       $this->buttons[] = new fs_button('b_tarifas', 'tarifas', '#tarifas');
-      $this->buttons[] = new fs_button('b_modificar_iva', 'modificar iva');
+      $this->buttons[] = new fs_button('b_modificar_iva', 'modificar iva', '#mod-iva');
       
       if( !isset($_GET['public']) )
          $this->buttons[] = new fs_button('b_publicos', 'publicos', $this->url().'&public=TRUE');
@@ -169,7 +168,6 @@ class general_articulos extends fs_controller
       
       if( isset($_GET['publico']) )
          $extra = '&public=TRUE';
-      
       
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
       {

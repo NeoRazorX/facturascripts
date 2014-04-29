@@ -36,15 +36,15 @@
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
       <h1>
-         Código: {$value->id_tipo_desp}
+         Código: {$value->nombre}
          <span>
-            <a class="delete" href="#" onclick="delete_desparasitacion('{$fsc->url()}&delete={$value->id_tipo_desp}')">eliminar</a> &nbsp;
+            <a class="delete" href="#" onclick="delete_desparasitacion('{$fsc->url()}&delete={$value->nombre}')">eliminar</a> &nbsp;
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
       Nombre tipo desparasitacion:
-      <input type="hidden" name="scoddesparasitacion" value="{$value->id_tipo_desp}"/>
-      <input type="text" name="snombre" value="{$value->nombre_desp}" autocomplete="off"/>
+     
+      <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
    </form>
 </div>
 {/loop}

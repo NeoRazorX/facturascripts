@@ -118,7 +118,7 @@ class admin_empresa extends fs_controller
          {
             $this->mail['mail_host'] = $_POST['mail_host'];
             $this->mail['mail_port'] = $_POST['mail_port'];
-            $this->mail['mail_enc'] = $_POST['mail_enc'];
+            $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
             if( !$fsvar->multi_save($this->mail) )
                $this->new_error_msg('Error al guardar los datos del email.');

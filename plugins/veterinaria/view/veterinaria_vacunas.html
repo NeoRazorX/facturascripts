@@ -36,14 +36,13 @@
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
       <h1>
-         Código: {$value->id_tipo_vac}
+         Código: {$value->nombre_vac}
          <span>
-            <a class="delete" href="#" onclick="delete_vacuna('{$fsc->url()}&delete={$value->id_tipo_vac}')">eliminar</a> &nbsp;
+            <a class="delete" href="#" onclick="delete_vacuna('{$fsc->url()}&delete={$value->nombre_vac}')">eliminar</a> &nbsp;
             <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
          </span>
       </h1>
       Nombre tipo vacuna:
-      <input type="hidden" name="scodvacuna" value="{$value->id_tipo_vac}"/>
       <input type="text" name="snombre" value="{$value->nombre_vac}" autocomplete="off"/>
    </form>
 </div>

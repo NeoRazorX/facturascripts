@@ -31,6 +31,31 @@ class veterinaria_desparasitaciones extends fs_controller
    protected function process()
    {
       $this->desparasitacion = new desparasitacion();
+      
+      if( isset($_POST['snombre']) ) /// crear o modificar
+      {
+         $desparasitacion = new desparasitacion();
+         $desparasitacion->nombre = $_POST['snombre'];
+         if( $desparasitacion->save() )
+            $this->new_message("Tipo de desparasitacion guardada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible guardar el tipo de desparasitacion!");
+      }
+      else if( isset($_GET['delete']) ) /// eliminar
+      {
+         $desparasitacion = $this->desparasitacion->get($_GET['delete']);
+         if($desparasitacion)
+         {
+            if( $desparasitacion->delete() )
+               $this->new_message("Tipo de desparasitacion eliminada correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar el tipo de desparasitacion!");
+         }
+         else
+            $this->new_error_msg("Tipo de desparasitacion no encontrada!");
+      }
+      
+      
    }
 }
 

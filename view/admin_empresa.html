@@ -181,7 +181,10 @@
             <td><input type="text" name="mail_user" size="30" value="{$fsc->mail['mail_user']}" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td colspan="2" align="right">
+            <td>
+               <a class="link" href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
+            </td>
+            <td align="right">
                <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
@@ -246,5 +249,26 @@
       </table>
    </form>
 </div>
+
+{if condition="!$demo"}
+<div class="rounded">
+   <table>
+      <tr>
+         <td>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+               <input type="hidden" name="cmd" value="_s-xclick"/>
+               <input type="hidden" name="hosted_button_id" value="NXUH3XYDVPQBG"/>
+               <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal. La forma rápida y segura de pagar en Internet."/>
+               <img alt="" border="0" src="https://www.paypalobjects.com/es_ES/i/scr/pixel.gif" width="1" height="1"/>
+            </form>
+         </td>
+         <td>
+            <h1>¿Necesitas un plugin?</h1>
+            Pues mándame un email a <b>neorazorx@gmail.com</b> y no te olvides de hacer una donación ;-)
+         </td>
+      </tr>
+   </table>
+</div>
+{/if}
 
 {include="footer"}

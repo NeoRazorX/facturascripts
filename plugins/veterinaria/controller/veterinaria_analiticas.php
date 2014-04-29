@@ -31,6 +31,34 @@ class veterinaria_analiticas extends fs_controller
    protected function process()
    {
       $this->analitica = new analitica();
+      
+      if( isset($_POST['snombre']) ) /// crear o modificar
+      {
+         $analitica = new analitica();
+         $analitica->nombre = $_POST['snombre'];
+         if( $analitica->save() )
+            $this->new_message("Tipo de analitica guardada correctamente.");
+         else
+            $this->new_error_msg("¡Imposible guardar el tipo de analitica!");
+      }
+      else if( isset($_GET['delete']) ) /// eliminar
+      {
+         $analitica = $this->analitica->get($_GET['delete']);
+         if($analitica)
+         {
+            if( $analitica->delete() )
+               $this->new_message("Tipo de analitica eliminada correctamente.");
+            else
+               $this->new_error_msg("¡Imposible eliminar el tipo de analitica!");
+         }
+         else
+            $this->new_error_msg("Tipo de analitica no encontrada!");
+      }
+      
+      
+      
+      
+      
    }
 }
 

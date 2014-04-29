@@ -90,8 +90,8 @@ class impuesto extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA10','IVA 10%','10','0');".
-           "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES ('IVA21','IVA 21%','21','0');";
+      return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES "
+         . "('IVA21','IVA 21%','21','5.2'),('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
    }
    
    public function url()

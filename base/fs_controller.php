@@ -73,6 +73,10 @@ class fs_controller
       $this->cache = new fs_cache();
       $this->set_css_file();
       
+      /// comprobamos la versión de PHP
+      if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
+         $this->new_error_msg('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP '.phpversion().'.');
+      
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
@@ -297,7 +301,7 @@ class fs_controller
             {
                $user = new fs_user();
                $user->nick = $_POST['user'];
-               $user->password = 'demo';
+               $user->set_password('demo');
                $user->admin = TRUE;
                
                /// creamos un agente para asociarlo

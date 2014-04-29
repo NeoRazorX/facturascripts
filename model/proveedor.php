@@ -40,6 +40,7 @@ class proveedor extends fs_model
    public $codpago;
    public $observaciones;
    public $tipoidfiscal;
+   public $regimeniva;
 
    public function __construct($p=FALSE)
    {
@@ -60,6 +61,7 @@ class proveedor extends fs_model
          $this->codpago = $p['codpago'];
          $this->observaciones = $this->no_html($p['observaciones']);
          $this->tipoidfiscal = $p['tipoidfiscal'];
+         $this->regimeniva = $p['regimeniva'];
       }
       else
       {
@@ -77,6 +79,7 @@ class proveedor extends fs_model
          $this->codpago = $this->default_items->codpago();
          $this->observaciones = '';
          $this->tipoidfiscal = 'NIF';
+         $this->regimeniva = 'General';
       }
    }
    
@@ -84,6 +87,11 @@ class proveedor extends fs_model
    {
       $this->clean_cache();
       return '';
+   }
+   
+   public function regimenes_iva()
+   {
+      return array('General', 'U.E.', 'Exento', 'Importaciones', 'Agrario');
    }
    
    public function observaciones_resume()
@@ -255,19 +263,19 @@ class proveedor extends fs_model
                web = ".$this->var2str($this->web).", codserie = ".$this->var2str($this->codserie).",
                coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
                observaciones = ".$this->var2str($this->observaciones).",
-               tipoidfiscal = ".$this->var2str($this->tipoidfiscal)."
+               tipoidfiscal = ".$this->var2str($this->tipoidfiscal).", regimeniva = ".$this->var2str($this->regimeniva)."
                WHERE codproveedor = ".$this->var2str($this->codproveedor).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codproveedor,nombre,nombrecomercial,cifnif,telefono1,telefono2,
-               fax,email,web,codserie,coddivisa,codpago,observaciones,tipoidfiscal) VALUES
+               fax,email,web,codserie,coddivisa,codpago,observaciones,tipoidfiscal,regimeniva) VALUES
                (".$this->var2str($this->codproveedor).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",".$this->var2str($this->fax).",
                ".$this->var2str($this->email).",".$this->var2str($this->web).",".$this->var2str($this->codserie).",
-               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
-               ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).");";
+               ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->observaciones).","
+               .$this->var2str($this->tipoidfiscal).",".$this->var2str($this->regimeniva).");";
          }
          return $this->db->exec($sql);
       }

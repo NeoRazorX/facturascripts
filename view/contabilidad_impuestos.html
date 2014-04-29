@@ -32,6 +32,10 @@
             <td><input type="text" name="iva" value="0" size="4" autocomplete="off"/> %</td>
          </tr>
          <tr>
+            <td align="right">Recargo:</td>
+            <td><input type="text" name="recargo" value="0" size="4" autocomplete="off"/> %</td>
+         </tr>
+         <tr>
             <td colspan="2" align="right">
                <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
@@ -57,13 +61,16 @@
       <div class="bloque">
          IVA: <input type="text" name="iva" value="{$value->iva}" size="4" autocomplete="off"/> %
       </div>
+      <div class="bloque">
+         Recargo: <input type="text" name="recargo" value="{$value->recargo}" size="4" autocomplete="off"/> %
+      </div>
    </form>
 </div>
 {/loop}
 
 <div class="rounded">
    <div class="new_line">
-      <a id="b_nuevo_impuesto" href="#">Nuevo impuestos</a>
+      <a id="b_nuevo_impuesto" href="#">Nuevo impuesto</a>
    </div>
 </div>
 

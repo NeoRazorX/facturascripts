@@ -6,5 +6,5 @@ Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GN
 Tutorial de instalación: http://www.facturascripts.com/community/item.php?id=5203bda5b38d440a60000001
 Demo online: http://www.facturascripts.com/demo
 
-Si tienes problemas no dudes en informar:
+Si tienes problemas, no dudes en informar:
 http://www.facturascripts.com/community

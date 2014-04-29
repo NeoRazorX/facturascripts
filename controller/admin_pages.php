@@ -65,9 +65,10 @@ class admin_pages extends fs_controller
       }
       else
       {
-         $this->check_php();
-         $this->new_advice('Desde aquí se activan y desactivan todas las páginas de FacturaScripts.'
-                 . ' <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203ccc1b38d447c66000001">¿Necesitas ayuda?</a>');
+         $this->new_advice('Desde aquí se activan y desactivan todas las páginas de FacturaScripts.
+            Si quieres, puedes activarlas todas, trastear un poco y luego desactivar las que no
+            necesites. Si quieres ver un pequeño tutorial, haz clic
+            <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203ccc1b38d447c66000001">aquí</a>.');
       }
       
       $this->paginas = $this->all_pages();
@@ -162,13 +163,6 @@ class admin_pages extends fs_controller
       }
       
       return $plugins;
-   }
-   
-   private function check_php()
-   {
-      if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
-         $this->new_error_msg('FacturaScripts necesita de php 5.3 o superior,'
-                 . ' y tú tienes php '.phpversion());
    }
    
    private function enable_page($page)

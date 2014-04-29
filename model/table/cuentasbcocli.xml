@@ -8,32 +8,26 @@
    <columna>
       <nombre>descripcion</nombre>
       <tipo>char(100)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>swift</nombre>
       <tipo>char(11)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>ctaentidad</nombre>
       <tipo>char(4)</tipo>
-      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>iban</nombre>
       <tipo>char(34)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>agencia</nombre>
       <tipo>char(4)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>entidad</nombre>
       <tipo>char(4)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>codcliente</nombre>
@@ -43,7 +37,6 @@
    <columna>
       <nombre>ctaagencia</nombre>
       <tipo>char(4)</tipo>
-      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>codcuenta</nombre>
@@ -53,7 +46,6 @@
    <columna>
       <nombre>cuenta</nombre>
       <tipo>char(10)</tipo>
-      <nulo>NO</nulo>
    </columna>
    <restriccion>
       <nombre>cuentasbcocli_pkey</nombre>

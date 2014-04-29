@@ -1,14 +1,17 @@
 {include="header"}
 
 {if condition="$fsc->ejercicio"}
-
 <script type="text/javascript">
    function cerrar_ejercicio()
    {
       location.href = '{$fsc->url()}&cerrar=TRUE&petid={$fsc->random_string()}';
    }
    $(document).ready(function() {
-      {if condition="$fsc->importar_url"}setTimeout("location.href = '{$fsc->importar_url}';", 2000);{/if}
+      {if condition="$fsc->importar_url"}
+      setTimeout("location.href = '{$fsc->importar_url}';", 2000);
+      {elseif condition="!$fsc->listado"}
+      fs_show_popup('popup_importar');
+      {/if}
       $("#b_importar").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_importar');
@@ -25,14 +28,13 @@
    <h1>Importar datos del ejercicio</h1>
    <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
       <input name='archivo' type='hidden' value='TRUE'/>
-      Se importarán balances, grupos, epígrafes, cuentas, cuentas especiales y subcuentas
-      desde...
+      Se importarán grupos, epígrafes, cuentas, subcuentas y balances de...
       <br/><br/>
       <table width="100%">
          <tr>
             <td colspan="2">
                <input type="radio" id="rb_generico" name="fuente" value="generico" checked="checked"/>
-               <label for="rb_generico">El archivo interno de FacturaScripts (recomendado).</label>
+               <label for="rb_generico">Plan General Contable de <b>España</b>.</label>
             </td>
          </tr>
          <tr>
@@ -48,6 +50,15 @@
             </td>
          </tr>
       </table>
+      <div class="grupo">
+         <h2>¿No eres español?</h2>
+         <p>
+            Pues entonces necesitas el archivo con el Plan Contable de tu país.<br/>
+            Haz una cosa, busca en internet algún archivo de excel con el plan contable<br/>
+            de tu país y envíamelo a <b>neorazorx@gmail.com</b> para que yo lo adapte<br/>
+            al formato de FacturaScripts.
+         </p>
+      </div>
    </form>
 </div>
 
@@ -127,9 +138,7 @@
       </tr>
       {/loop}
    </table>
-   {/if}
-   
-   {if condition="$fsc->listar=='epigrafes'"}
+   {elseif condition="$fsc->listar=='epigrafes'"}
    <div class="select">
       <a href="{$fsc->url()}&listar=grupos">Grupos</a>
       <a href="{$fsc->url()}&listar=epigrafes" class="selected">Epígrafes</a>
@@ -157,9 +166,7 @@
       </tr>
       {/loop}
    </table>
-   {/if}
-   
-   {if condition="$fsc->listar=='cuentas'"}
+   {elseif condition="$fsc->listar=='cuentas'"}
    <div class="select">
       <a href="{$fsc->url()}&listar=grupos">Grupos</a>
       <a href="{$fsc->url()}&listar=epigrafes">Epígrafes</a>
@@ -187,9 +194,7 @@
       </tr>
       {/loop}
    </table>
-   {/if}
-   
-   {if condition="$fsc->listar=='subcuentas'"}
+   {elseif condition="$fsc->listar=='subcuentas'"}
    <div class="select">
       <a href="{$fsc->url()}&listar=grupos">Grupos</a>
       <a href="{$fsc->url()}&listar=epigrafes">Epígrafes</a>
@@ -219,6 +224,8 @@
       </tr>
       {/loop}
    </table>
+   {else}
+   <h1>Algo has tocado o_O</h1>
    {/if}
 </div>
 {else}

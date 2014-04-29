@@ -427,7 +427,8 @@ class albaran_proveedor extends fs_model
       {
          $factura = new factura_proveedor();
          $factura = $factura->get($this->idfactura);
-         $factura->delete();
+         if($factura)
+            $factura->delete();
       }
       
       return $this->db->exec("DELETE FROM ".$this->table_name.

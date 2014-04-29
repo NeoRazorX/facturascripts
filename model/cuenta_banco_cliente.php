@@ -91,7 +91,8 @@ class cuenta_banco_cliente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).", "
-               . "iban = ".$this->var2str($this->iban)." WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
+               . "iban = ".$this->var2str($this->iban)." WHERE codcuenta = ".$this->var2str($this->codcuenta)
+               ." AND codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {

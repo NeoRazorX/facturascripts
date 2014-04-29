@@ -325,12 +325,15 @@
                   <input class="button" type="button" value="+" onclick="more_tickets('1')"/>
                </td>
                <td>
-                  {if condition="$fsc->imprimir_descripciones"}
-                  <input type="checkbox" id="cb_imprimir_desc" name="imprimir_desc" value="TRUE" checked="checked"/>
-                  {else}
-                  <input type="checkbox" id="cb_imprimir_desc" name="imprimir_desc" value="TRUE"/>
-                  {/if}
-                  <label for="cb_imprimir_desc">Imprimir descripciones</label>
+                  <label>
+                     <input type="checkbox" name="imprimir_desc" value="TRUE"{if condition="$fsc->imprimir_descripciones"} checked="checked"{/if}/>
+                     Imprimir descripciones
+                  </label>
+                  &nbsp;
+                  <label>
+                     <input type="checkbox" name="imprimir_obs" value="TRUE"{if condition="$fsc->imprimir_observaciones"} checked="checked"{/if}/>
+                     Imprimir observaciones
+                  </label>
                </td>
                <td align="right">
                   <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>

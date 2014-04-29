@@ -67,6 +67,7 @@ class contabilidad_impuestos extends fs_controller
          }
          $impuesto->descripcion = $_POST['descripcion'];
          $impuesto->iva = floatval( $_POST['iva'] );
+         $impuesto->recargo = floatval( $_POST['recargo'] );
          if( $impuesto->save() )
             $this->new_message("Impuesto ".$impuesto->codimpuesto." guardado correctamente.");
          else

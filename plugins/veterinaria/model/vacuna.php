@@ -32,7 +32,7 @@ class vacuna extends fs_model
       }
       else
       {
-         $this->nombre = NULL;
+         $this->nombre = '';
       }
    }
 
@@ -80,13 +80,14 @@ class vacuna extends fs_model
          $sql = "INSERT INTO ".$this->table_name." (nombre) VALUES (".$this->var2str($this->nombre).");";
       }
       
+      
       return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre).";");
-   }
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nombre = ".$this->var2str($this->nombre_vac).";");
+    }
    
    public function all()
    {

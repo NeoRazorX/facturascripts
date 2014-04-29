@@ -94,7 +94,7 @@ class fs_user extends fs_model
       new fs_page();
       new ejercicio();
       
-      $this->new_error_msg('Se ha creado el usuario admin con la contraseña admin.');
+      $this->new_error_msg('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
       if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
       {
          return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
@@ -215,8 +215,8 @@ class fs_user extends fs_model
    
    public function set_password($p='')
    {
-      $p = trim($p);
-      if( preg_match("/^[A-Z0-9_]{1,12}$/i", $p) )
+      $p = strtolower( trim($p) );
+      if( preg_match("/^[a-z0-9]{1,12}$/", $p) )
       {
          $this->password = sha1($p);
          return TRUE;

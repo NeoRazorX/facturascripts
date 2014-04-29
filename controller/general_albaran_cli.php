@@ -78,7 +78,12 @@ class general_albaran_cli extends fs_controller
       }
       
       if( $this->albaran AND isset($_GET['imprimir']) )
-         $this->generar_pdf();
+      {
+         if($_GET['imprimir'] == 'simple')
+            $this->generar_pdf_simple();
+         else
+            $this->generar_pdf_cuartilla();
+      }
       else if( $this->albaran )
       {
          $this->page->title = $this->albaran->codigo;
@@ -96,7 +101,7 @@ class general_albaran_cli extends fs_controller
          }
          
          $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
-         $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png', $this->url()."&imprimir=TRUE", FALSE, TRUE);
+         $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png');
          
          if( $this->albaran->ptefactura )
          {
@@ -445,8 +450,11 @@ class general_albaran_cli extends fs_controller
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
       else if( !$subcuenta_cli )
       {
-         $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará
-            un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+         $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
+         $this->new_message("No se ha podido generar una subcuenta para el cliente
+            <a href='".$eje0->url()."'>¿Has importado los datos del ejercicio?</a>
+            Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente,
+            pero sin asiento contable.");
       }
       else
       {
@@ -558,7 +566,222 @@ class general_albaran_cli extends fs_controller
       }
    }
    
-   private function generar_pdf()
+   private function generar_pdf_simple()
+   {
+      /// desactivamos el motor de plantillas
+      $this->template = FALSE;
+      
+      $pdf_doc = new fs_pdf();
+      $pdf_doc->pdf->addInfo('Title', FS_ALBARAN.' '. $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Subject', FS_ALBARAN.' de cliente ' . $this->albaran->codigo);
+      $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
+      
+      $lineas = $this->albaran->get_lineas();
+      if($lineas)
+      {
+         $linea_actual = 0;
+         $lppag = 42;
+         $pagina = 1;
+         
+         /// imprimimos las páginas necesarias
+         while( $linea_actual < count($lineas) )
+         {
+            /// salto de página
+            if($linea_actual > 0)
+               $pdf_doc->pdf->ezNewPage();
+            
+            /// ¿Añadimos el logo?
+            if( file_exists('tmp/logo.png') )
+            {
+               $pdf_doc->pdf->ezImage('tmp/logo.png', 0, 200, 'none');
+               $lppag -= 2; /// si metemos el logo, caben menos líneas
+            }
+            else
+            {
+               $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
+               $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               
+               $direccion = $this->empresa->direccion;
+               if($this->empresa->codpostal)
+                  $direccion .= ' - ' . $this->empresa->codpostal;
+               if($this->empresa->ciudad)
+                  $direccion .= ' - ' . $this->empresa->ciudad;
+               if($this->empresa->provincia)
+                  $direccion .= ' (' . $this->empresa->provincia . ')';
+               if($this->empresa->telefono)
+                  $direccion .= ' - Teléfono: ' . $this->empresa->telefono;
+               $pdf_doc->pdf->ezText($direccion, 9, array('justification' => 'center'));
+            }
+            
+            /*
+             * Esta es la tabla con los datos del cliente:
+             * Albarán:             Fecha:
+             * Cliente:             CIF/NIF:
+             * Dirección:           Teléfonos:
+             */
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_row(
+               array(
+                   'campo1' => "<b>".ucfirst(FS_ALBARAN).":</b>",
+                   'dato1' => $this->albaran->codigo,
+                   'campo2' => "<b>Fecha:</b>",
+                   'dato2' => $this->albaran->fecha
+               )
+            );
+            $pdf_doc->add_table_row(
+               array(
+                   'campo1' => "<b>Cliente:</b>",
+                   'dato1' => $this->albaran->nombrecliente,
+                   'campo2' => "<b>CIF/NIF:</b>",
+                   'dato2' => $this->albaran->cifnif
+               )
+            );
+            $pdf_doc->add_table_row(
+               array(
+                   'campo1' => "<b>Dirección:</b>",
+                   'dato1' => $this->albaran->direccion.' CP: '.$this->albaran->codpostal.' - '.$this->albaran->ciudad.' ('.$this->albaran->provincia.')',
+                   'campo2' => "<b>Teléfonos:</b>",
+                   'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
+               )
+            );
+            $pdf_doc->save_table(
+               array(
+                   'cols' => array(
+                       'campo1' => array('justification' => 'right'),
+                       'dato1' => array('justification' => 'left'),
+                       'campo2' => array('justification' => 'right'),
+                       'dato2' => array('justification' => 'left')
+                   ),
+                   'showLines' => 0,
+                   'width' => 540,
+                   'shaded' => 0
+               )
+            );
+            $pdf_doc->pdf->ezText("\n", 10);
+            
+            
+            /*
+             * Creamos la tabla con las lineas del albarán:
+             * 
+             * Descripción    PVP   DTO   Cantidad    Importe
+             */
+            $pdf_doc->new_table();
+            $pdf_doc->add_table_header(
+               array(
+                  'descripcion' => '<b>Descripción</b>',
+                  'pvp' => '<b>PVP</b>',
+                  'dto' => '<b>DTO</b>',
+                  'cantidad' => '<b>Cantidad</b>',
+                  'importe' => '<b>Importe</b>'
+               )
+            );
+            $saltos = 0;
+            $subtotal = 0;
+            $impuestos = array();
+            for($i = $linea_actual; (($linea_actual < ($lppag + $i)) AND ($linea_actual < count($lineas)));)
+            {
+               if( !isset($impuestos[$lineas[$linea_actual]->iva]) )
+                  $impuestos[$lineas[$linea_actual]->iva] = $lineas[$linea_actual]->pvptotal * $lineas[$linea_actual]->iva / 100;
+               else
+                  $impuestos[$lineas[$linea_actual]->iva] += $lineas[$linea_actual]->pvptotal * $lineas[$linea_actual]->iva / 100;
+               
+               $fila = array(
+                  'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
+                  'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->albaran->coddivisa),
+                  'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 0) . " %",
+                  'cantidad' => $lineas[$linea_actual]->cantidad,
+                  'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->albaran->coddivisa)
+               );
+               
+               if($lineas[$linea_actual]->referencia != '0')
+                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 40);
+               
+               $pdf_doc->add_table_row($fila);
+               $saltos++;
+               $linea_actual++;
+            }
+            $pdf_doc->save_table(
+               array(
+                   'fontSize' => 8,
+                   'cols' => array(
+                       'pvp' => array('justification' => 'right'),
+                       'dto' => array('justification' => 'right'),
+                       'cantidad' => array('justification' => 'right'),
+                       'importe' => array('justification' => 'right')
+                   ),
+                   'width' => 540,
+                   'shaded' => 0
+               )
+            );
+            
+            
+            /*
+             * Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
+             */
+            if($this->albaran->observaciones == '')
+            {
+               $salto = '';
+            }
+            else
+            {
+               $salto = "\n<b>Observaciones</b>: " . $this->albaran->observaciones;
+               $saltos += count( explode("\n", $this->albaran->observaciones) ) - 1;
+            }
+            
+            if($saltos < $lppag)
+            {
+               for(;$saltos < $lppag; $saltos++)
+                  $salto .= "\n";
+               $pdf_doc->pdf->ezText($salto, 11);
+            }
+            else if($linea_actual >= $lineasfact)
+               $pdf_doc->pdf->ezText($salto, 11);
+            else
+               $pdf_doc->pdf->ezText("\n", 11);
+            
+            
+            /*
+             * Rellenamos la última tabla de la página:
+             * 
+             * Página            Neto    IVA   Total
+             */
+            $pdf_doc->new_table();
+            $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
+            $fila = array(
+                'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
+                'neto' => $this->show_precio($this->albaran->neto, $this->albaran->coddivisa),
+            );
+            $opciones = array(
+                'cols' => array(
+                    'neto' => array('justification' => 'right'),
+                ),
+                'showLines' => 4,
+                'width' => 540
+            );
+            foreach($impuestos as $i => $value)
+            {
+               $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
+               $fila['iva'.$i] = $this->show_precio($value, $this->albaran->coddivisa);
+               $opciones['cols']['iva'.$i] = array('justification' => 'right');
+            }
+            $titulo['liquido'] = '<b>Total</b>';
+            $fila['liquido'] = $this->show_precio($this->albaran->total, $this->albaran->coddivisa);
+            $opciones['cols']['liquido'] = array('justification' => 'right');
+            $pdf_doc->add_table_header($titulo);
+            $pdf_doc->add_table_row($fila);
+            $pdf_doc->save_table($opciones);
+            $pdf_doc->pdf->ezText("\n", 10);
+            
+            $pdf_doc->pdf->addText(10, 10, 8, $pdf_doc->center_text($this->empresa->pie_factura, 153), 0, 1.5);
+            
+            $pagina++;
+         }
+      }
+      
+      $pdf_doc->show();
+   }
+   
+   private function generar_pdf_cuartilla()
    {
       /// desactivamos el motor de plantillas
       $this->template = FALSE;

@@ -28,56 +28,61 @@
          });
       }
    }
-   $(document).ready(function() {
-      window.onpopstate = function(){
-         $("#b_general").removeClass('selected');
-         $("#b_facturacion").removeClass('selected');
-         $("#b_direcciones").removeClass('selected');
-         $("#b_subcuentas").removeClass('selected');
-         $("#div_datos_generales").hide();
-         $("#div_facturacion").hide();
-         $("#div_cuentas_bancarias").hide();
-         $("#div_direcciones").hide();
-         $("#div_subcuentas").hide();
+   function comprobar_url()
+   {
+      $("#b_general").removeClass('selected');
+      $("#b_facturacion").removeClass('selected');
+      $("#b_direcciones").removeClass('selected');
+      $("#b_subcuentas").removeClass('selected');
+      $("#div_datos_generales").hide();
+      $("#div_facturacion").hide();
+      $("#div_cuentas_bancarias").hide();
+      $("#div_direcciones").hide();
+      $("#div_subcuentas").hide();
+      
+      if(window.location.hash.substring(1) == 'facturacion')
+      {
+         $("#b_facturacion").addClass('selected');
+         $("#div_facturacion").show();
+         $("#div_cuentas_bancarias").show();
+      }
+      else if(window.location.hash.substring(1) == 'direcciones')
+      {
+         $("#b_direcciones").addClass('selected');
+         $("#div_direcciones").show();
+      }
+      else if(window.location.hash.substring(1) == 'subcuentas')
+      {
+         $("#b_subcuentas").addClass('selected');
+         $("#div_subcuentas").show();
+      }
+      else if(window.location.hash.substring(1) == 'nueva_cuenta')
+      {
+         $("#b_facturacion").addClass('selected');
+         $("#div_facturacion").show();
+         $("#div_cuentas_bancarias").show();
          
-         if(window.location.hash.substring(1) == 'facturacion')
-         {
-            $("#b_facturacion").addClass('selected');
-            $("#div_facturacion").show();
-            $("#div_cuentas_bancarias").show();
-         }
-         else if(window.location.hash.substring(1) == 'direcciones')
-         {
-            $("#b_direcciones").addClass('selected');
-            $("#div_direcciones").show();
-         }
-         else if(window.location.hash.substring(1) == 'subcuentas')
-         {
-            $("#b_subcuentas").addClass('selected');
-            $("#div_subcuentas").show();
-         }
-         else if(window.location.hash.substring(1) == 'nueva_cuenta')
-         {
-            $("#b_facturacion").addClass('selected');
-            $("#div_facturacion").show();
-            $("#div_cuentas_bancarias").show();
-            
-            fs_show_popup('popup_nueva_cuenta');
-            document.f_nueva_cuenta.descripcion.focus();
-         }
-         else if(window.location.hash.substring(1) == 'nueva_direccion')
-         {
-            $("#b_direcciones").addClass('selected');
-            $("#div_direcciones").show();
-            
-            fs_show_popup('popup_nueva_direccion');
-            document.f_nueva_direccion.provincia.focus();
-         }
-         else
-         {
-            $("#b_general").addClass('selected');
-            $("#div_datos_generales").show();
-         }
+         fs_show_popup('popup_nueva_cuenta');
+         document.f_nueva_cuenta.descripcion.focus();
+      }
+      else if(window.location.hash.substring(1) == 'nueva_direccion')
+      {
+         $("#b_direcciones").addClass('selected');
+         $("#div_direcciones").show();
+         
+         fs_show_popup('popup_nueva_direccion');
+         document.f_nueva_direccion.provincia.focus();
+      }
+      else
+      {
+         $("#b_general").addClass('selected');
+         $("#div_datos_generales").show();
+      }
+   }
+   $(document).ready(function() {
+      comprobar_url();
+      window.onpopstate = function(){
+         comprobar_url();
       }
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
@@ -136,12 +141,16 @@
       <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
       <table>
          <tr>
-            <td>Descripción:</td>
-            <td><input type="text" name="descripcion" size="40" autocomplete="off"/></td>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion" size="40" placeholder="ej: Cuenta principal" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right"><a class="link" target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:</td>
-            <td><input type="text" name="iban" size="40" autocomplete="off"/></td>
+            <td><input type="text" name="iban" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Calcular IBAN:</td>
+            <td><input type="text" name="ciban" size="40" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/></td>
          </tr>
       </table>
       <div style="text-align: right;">
@@ -165,11 +174,11 @@
       </div>
       <div class="bloque">
          Provincia:
-         <input type="text" name="provincia" size="12"/>
+         <input type="text" name="provincia" size="15"/>
       </div>
       <div class="bloque">
          Ciudad:
-         <input type="text" name="ciudad" size="12"/>
+         <input type="text" name="ciudad" size="20"/>
       </div>
       <div class="bloque">
          Código postal:
@@ -196,7 +205,7 @@
       <br/>
       <div class="bloque">
          Descripción:
-         <input type="text" name="descripcion" size="60" autocomplete="off"/>
+         <input type="text" name="descripcion" size="40" autocomplete="off"/>
       </div>
       <div style="text-align: right;">
          <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
@@ -290,7 +299,19 @@
             </select>
          </div>
          <div class="bloque">
-            Régimen IVA:
+            <a class="link" href="{$fsc->divisa->url()}">Divisa</a>:
+            <select name="coddivisa">
+               {loop="$fsc->divisa->all()"}
+                  {if condition="$value->coddivisa==$fsc->cliente->coddivisa"}
+                     <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+         <div class="bloque">
+            <a class="link" href="http://www.facturascripts.com/community/item/regimen-de-iva-desde-la-version-2014-4b-se-puede-seleccionar-el-regimen-de-784.html" target="_blank">Régimen IVA</a>:
             <select name="regimeniva">
                {loop="$fsc->cliente->regimenes_iva()"}
                   {if condition="$value==$fsc->cliente->regimeniva"}
@@ -302,16 +323,10 @@
             </select>
          </div>
          <div class="bloque">
-            <a class="link" href="{$fsc->divisa->url()}">Divisa</a>:
-            <select name="coddivisa">
-               {loop="$fsc->divisa->all()"}
-                  {if condition="$value->coddivisa==$fsc->cliente->coddivisa"}
-                     <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                  {/if}
-               {/loop}
-            </select>
+            <label>
+               <input type="checkbox" name="recargo" value="TRUE"{if condition="$fsc->cliente->recargo"} checked="checked"{/if}/>
+               aplicar recargo de equivalencia
+            </label>
          </div>
          <div class="bloque">
             <a class="link" href="{$fsc->agente->url()}">Agente asignado</a>:
@@ -340,11 +355,15 @@
             <input type="hidden" name="codcliente" value="{$value->codcliente}"/>
             <div class="bloque">
                Descripción:
-               <input type="text" name="descripcion" value="{$value->descripcion}" size="40" autocomplete="off"/>
+               <input type="text" name="descripcion" value="{$value->descripcion}" size="40" placeholder="ej: Cuenta principal" autocomplete="off"/>
             </div>
             <div class="bloque">
                <a class="link" target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
-               <input type="text" name="iban" value="{$value->iban}" size="40" autocomplete="off"/>
+               <input type="text" name="iban" value="{$value->iban}" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/>
+            </div>
+            <div class="bloque">
+               Calcular IBAN:
+               <input type="text" name="ciban" size="40" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
             </div>
             <div>
                <a class="delete" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">eliminar</a>
@@ -364,7 +383,6 @@
          <form action="{$fsc->url()}#direcciones" method="post"/>
             <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
             <input type="hidden" name="coddir" value="{$value->id}"/>
-            <h2>Dirección #{$value->id}:</h2>
             <div class="bloque">
                <a class="link" href="">País</a>:
                <select name="pais">
@@ -379,11 +397,11 @@
             </div>
             <div class="bloque">
                Provincia:
-               <input type="text" name="provincia" value="{$value->provincia}" size="12"/>
+               <input type="text" name="provincia" value="{$value->provincia}" size="15"/>
             </div>
             <div class="bloque">
                Ciudad:
-               <input type="text" name="ciudad" value="{$value->ciudad}" size="12"/>
+               <input type="text" name="ciudad" value="{$value->ciudad}" size="20"/>
             </div>
             <div class="bloque">
                Código postal:
@@ -391,7 +409,7 @@
             </div>
             <div class="bloque">
                Dirección:
-               <input type="text" name="direccion" value="{$value->direccion}" size="25" autocomplete="off"/>
+               <input type="text" name="direccion" value="{$value->direccion}" size="60" autocomplete="off"/>
             </div>
             <div class="bloque">
                Apartado:
@@ -415,7 +433,7 @@
             </div>
             <div class="bloque">
                Descripción:
-               <input type="text" name="descripcion" value="{$value->descripcion}" size="60" autocomplete="off"/>
+               <input type="text" name="descripcion" value="{$value->descripcion}" size="40" autocomplete="off"/>
             </div>
             <div>
                <a class="delete" href="{$fsc->url()}&delete_dir={$value->id}#direcciones">eliminar</a>

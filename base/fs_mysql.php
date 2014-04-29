@@ -32,12 +32,7 @@ class fs_mysql extends fs_db
       }
       else if( class_exists('mysqli') )
       {
-         if(FS_DB_PORT == '5432')
-            $port = 3306;
-         else
-            $port = intval(FS_DB_PORT);
-         
-         self::$link = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, $port);
+         self::$link = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT) );
          
          if(self::$link->connect_error)
          {
@@ -45,8 +40,16 @@ class fs_mysql extends fs_db
          }
          else
          {
-            $connected = TRUE;
             self::$link->set_charset('utf8');
+            $connected = TRUE;
+            
+            /// comprobamos el soporte para InnoDB
+            $data = $this->select("SHOW TABLE STATUS WHERE Name = 'fs_pages';");
+            if($data)
+            {
+               if($data[0]['Engine'] != 'InnoDB')
+                  self::$errors[] = 'FacturaScripts necesita usar el motor InnoDB en MySQL, y tú estás usando el motor '.$data[0]['Engine'].'.';
+            }
          }
       }
       else
