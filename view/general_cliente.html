@@ -489,21 +489,13 @@
 </div>
 
 <div class="rounded">
+   <!-- uso #listado para poner la vista directamente aquí, y $fsc->listar para seleccionar -->
    <a name="listado"></a>
    <div class="select">
-      {if condition="$fsc->listar=='albaranes'"}
-         <a href="{$fsc->url()}&listar=albaranes#listado" class="selected">{$albaranes}</a>
-         <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
-         <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
-      {elseif condition="$fsc->listar=='facturas'"}
-         <a href="{$fsc->url()}&listar=albaranes#listado">{$albaranes}</a>
-         <a href="{$fsc->url()}&listar=facturas#listado" class="selected">Facturas</a>
-         <a href="{$fsc->url()}&listar=stats#listado">Estadísticas</a>
-      {else}
-         <a href="{$fsc->url()}&listar=albaranes#listado">{$albaranes}</a>
-         <a href="{$fsc->url()}&listar=facturas#listado">Facturas</a>
-         <a href="{$fsc->url()}&listar=stats#listado" class="selected">Estadísticas</a>
-      {/if}
+      <a href="{$fsc->url()}&listar=albaranes#listado"{if condition="$fsc->listar=='albaranes'"} class="selected"{/if}>{$albaranes}</a>
+      <a href="{$fsc->url()}&listar=facturas#listado"{if condition="$fsc->listar=='facturas'"} class="selected"{/if}>Facturas</a>
+      <a href="{$fsc->url()}&listar=articulos#listado"{if condition="$fsc->listar=='articulos'"} class="selected"{/if}>Artículos</a>
+      <a href="{$fsc->url()}&listar=stats#listado"{if condition="$fsc->listar=='stats'"} class="selected"{/if}>Estadísticas</a>
    </div>
    &nbsp; <img id="b_buscar_lineas" class="search touch" src="view/img/zoom2.png" alt="buscar"/>
    <br/><br/>
@@ -576,6 +568,27 @@
             {/if}
             </td>
          </tr>
+      </table>
+   {elseif condition="$fsc->listar=='articulos'"}
+      <table class="list">
+         <tr>
+            <th align="left">{$albaran}</th>
+            <th align="left">Artículo</th>
+            <th align="right">Cantidad</th>
+            <th align="right">Total+IVA</th>
+            <th align="right">Fecha</th>
+         </tr>
+         {loop="$fsc->listado"}
+         <tr>
+            <td><a class="link" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td align="right">{$value->cantidad}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
+            <td align="right">{$value->show_fecha()}</td>
+         </tr>
+         {else}
+         <tr><td colspan="5">Sin resultados.</td></tr>
+         {/loop}
       </table>
    {else}
       <div id="chart_albaranes_month" style="width: 95%; margin-left: auto; margin-right: auto; height: 400px;"></div>

@@ -46,6 +46,7 @@ class cliente extends fs_model
    public $observaciones;
    public $tipoidfiscal;
    public $regimeniva;
+   public $recargo;
    public $dtopor;
    public $zona;
    public $ruta;
@@ -78,6 +79,7 @@ class cliente extends fs_model
          $this->observaciones = $this->no_html($c['observaciones']);
          $this->tipoidfiscal = $c['tipoidfiscal'];
          $this->regimeniva = $c['regimeniva'];
+         $this->recargo = $this->str2bool($c['recargo']);
          $this->dtopor = $c['dtopor'];
          $this->zona = $c['zona'];
          $this->ruta = $c['ruta'];
@@ -117,6 +119,7 @@ class cliente extends fs_model
          $this->agencia_transporte = NULL;
          $this->dias_pago = NULL;
          $this->i343 = TRUE;
+         $this->recargo = FALSE;
       }
    }
    
@@ -382,13 +385,14 @@ class cliente extends fs_model
                zona = ".$this->var2str($this->zona).", ruta = ".$this->var2str($this->ruta).",
                tipo_portes = ".$this->var2str($this->tipo_portes).", agenciat = ".$this->var2str($this->agencia_transporte).",
                dtopor = ".$this->var2str($this->dtopor).", dias_pago = ".$this->var2str($this->dias_pago).",
-               i343 = ".$this->var2str($this->i343)." WHERE codcliente = ".$this->var2str($this->codcliente).";";
+               i343 = ".$this->var2str($this->i343).", recargo = ".$this->var2str($this->recargo)."
+               WHERE codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,telefono1,
                telefono2,fax,email,web,codserie,coddivisa,codpago,codagente,codgrupo,debaja,fechabaja,
-               observaciones,tipoidfiscal,regimeniva,zona,ruta,tipo_portes,agenciat,dtopor,dias_pago,i343)
+               observaciones,tipoidfiscal,regimeniva,zona,ruta,tipo_portes,agenciat,dtopor,dias_pago,i343,recargo)
                VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",
@@ -399,7 +403,8 @@ class cliente extends fs_model
                ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).","
                .$this->var2str($this->regimeniva).",".$this->var2str($this->zona).",".$this->var2str($this->ruta).","
                .$this->var2str($this->tipo_portes).",".$this->var2str($this->agencia_transporte).","
-               .$this->var2str($this->dtopor).",".$this->var2str($this->dias_pago).",".$this->var2str($this->i343).");";
+               .$this->var2str($this->dtopor).",".$this->var2str($this->dias_pago).","
+               .$this->var2str($this->i343).",".$this->var2str($this->recargo).");";
          }
          return $this->db->exec($sql);
       }

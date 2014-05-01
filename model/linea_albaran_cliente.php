@@ -359,6 +359,23 @@ class linea_albaran_cliente extends fs_model
       return $linealist;
    }
    
+   public function last_from_cliente($codcliente, $offset=0)
+   {
+      $linealist = array();
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idalbaran IN
+         (SELECT idalbaran FROM albaranescli WHERE codcliente = ".$this->var2str($codcliente).")
+         ORDER BY idalbaran DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_albaran_cliente($l);
+      }
+      return $linealist;
+   }
+   
    public function count_by_articulo()
    {
       $num = 0;

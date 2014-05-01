@@ -189,12 +189,14 @@ class general_cliente extends fs_controller
          $this->listar = 'albaranes';
          if( isset($_GET['listar']) )
          {
-            if( in_array($_GET['listar'], array('albaranes','facturas','stats')) )
+            if( in_array($_GET['listar'], array('albaranes','facturas','articulos','stats')) )
                $this->listar = $_GET['listar'];
          }
          
          if($this->listar == 'facturas')
             $this->listado = $this->cliente->get_facturas($this->offset);
+         else if($this->listar == 'articulos')
+            $this->listado = $this->ultimos_articulos();
          else
             $this->listado = $this->cliente->get_albaranes($this->offset);
       }
@@ -275,6 +277,12 @@ class general_cliente extends fs_controller
          $digitoControl = '0'.$digitoControl;
       
       return $codpais.$digitoControl.$ccc;
+   }
+   
+   private function ultimos_articulos()
+   {
+      $linea = new linea_albaran_cliente();
+      return $linea->last_from_cliente($this->cliente->codcliente);
    }
 }
 

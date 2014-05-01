@@ -256,7 +256,7 @@ class RainTPL
          // if the template doesn't exsist throw an error
          if( self::$check_template_update && !file_exists( $this->tpl['tpl_filename'] ) )
          {
-            $e = new RainTpl_NotFoundException( 'Template '. $this->tpl['tpl_filename'] .' not found!' );
+            $e = new RainTpl_NotFoundException( 'No se encuentra el archivo '.$this->tpl['tpl_filename'] );
             throw $e->setTemplateFile($this->tpl['tpl_filename']);
          }
          
@@ -924,6 +924,29 @@ class RainTpl_Exception extends Exception
  */
 class RainTpl_NotFoundException extends RainTpl_Exception
 {
+   public function __construct($message, $code = 0, Exception $previous = NULL)
+   {
+      echo <<<END
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>FacturaScripts</title>
+      <meta name="description" content="FacturaScripts es un software libre bajo licencia GNU/AGPL." />
+   </head>
+   <body>
+      <h1>$message</h1>
+      <p>
+         Si necesitas ayuda, recuerda que
+         <a target="_blank" href="http://www.facturascripts.com">la comunidad FacturaScripts</a>
+         está para ayudarte.
+      </p>
+   </body>
+</html>
+END;
+      
+      parent::__construct($message, $code, $previous);
+   }
 }
 
 

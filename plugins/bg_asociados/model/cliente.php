@@ -47,6 +47,7 @@ class cliente extends fs_model
    public $observaciones;
    public $tipoidfiscal;
    public $regimeniva;
+   public $recargo;
 
    public function __construct($c=FALSE)
    {
@@ -73,6 +74,7 @@ class cliente extends fs_model
          $this->observaciones = $this->no_html($c['observaciones']);
          $this->tipoidfiscal = $c['tipoidfiscal'];
          $this->regimeniva = $c['regimeniva'];
+         $this->recargo = $this->str2bool($c['recargo']);
       }
       else
       {
@@ -96,6 +98,7 @@ class cliente extends fs_model
          $this->observaciones = NULL;
          $this->tipoidfiscal = 'NIF';
          $this->regimeniva = 'General';
+         $this->recargo = FALSE;
       }
    }
    
@@ -283,13 +286,14 @@ class cliente extends fs_model
                debaja = ".$this->var2str($this->debaja).", fechabaja = ".$this->var2str($this->fechabaja).",
                observaciones = ".$this->var2str($this->observaciones).",
                tipoidfiscal = ".$this->var2str($this->tipoidfiscal).", regimeniva = ".$this->var2str($this->regimeniva).",
-               expbgnum = ".$this->var2str($this->expbgnum)." WHERE codcliente = ".$this->var2str($this->codcliente).";";
+               expbgnum = ".$this->var2str($this->expbgnum).", recargo = ".$this->var2str($this->recargo)."
+               WHERE codcliente = ".$this->var2str($this->codcliente).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codcliente,nombre,nombrecomercial,cifnif,telefono1,
                telefono2,fax,email,web,codserie,coddivisa,codpago,codagente,codgrupo,debaja,fechabaja,
-               observaciones,tipoidfiscal,regimeniva,expbgnum)
+               observaciones,tipoidfiscal,regimeniva,expbgnum,recargo)
                VALUES (".$this->var2str($this->codcliente).",".$this->var2str($this->nombre).",
                ".$this->var2str($this->nombrecomercial).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->telefono1).",".$this->var2str($this->telefono2).",
@@ -298,7 +302,7 @@ class cliente extends fs_model
                ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",".$this->var2str($this->codagente).",
                ".$this->var2str($this->codgrupo).",".$this->var2str($this->debaja).",".$this->var2str($this->fechabaja).",
                ".$this->var2str($this->observaciones).",".$this->var2str($this->tipoidfiscal).","
-               .$this->var2str($this->regimeniva).",".$this->var2str($this->expbgnum).");";
+               .$this->var2str($this->regimeniva).",".$this->var2str($this->expbgnum).",".$this->var2str($this->recargo).");";
          }
          return $this->db->exec($sql);
       }

@@ -1,0 +1,31 @@
+{include="header"}
+
+<div class="rounded">
+   <div class="select">
+      <a href="#" class="selected">Ventas</a>
+   </div>
+   <br/><br/>
+   <table class="list">
+      <tr>
+         <th align='left'>Artículo</th>
+         <th align='right'>Cantidad</th>
+         <th align='right'>Precio medio</th>
+      </tr>
+      {loop="$fsc->articulos"}
+      <tr>
+         <td>
+            <a class="link" href="{$value['url']}">{$value['referencia']}</a>
+            {$value['descripcion']}
+         </td>
+         <td align='right'>{$value['cantidad']}</td>
+         <td align='right'>{$fsc->show_precio($value['precio'])}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3">Sin resultados.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}
