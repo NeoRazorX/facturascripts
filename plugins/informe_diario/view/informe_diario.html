@@ -2,7 +2,8 @@
 
 <div class="rounded">
    <div class="select">
-      <a href="#" class="selected">Ventas</a>
+      <a href="{$fsc->url()}"{if condition="$fsc->hoy"} class="selected"{/if}>Ventas de hoy</a>
+      <a href="{$fsc->url()}&ayer=TRUE"{if condition="!$fsc->hoy"} class="selected"{/if}>Ayer</a>
    </div>
    <br/><br/>
    <table class="list">

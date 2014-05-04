@@ -22,6 +22,7 @@ require_model('articulo.php');
 class informe_diario extends fs_controller
 {
    public $articulos;
+   public $hoy;
    
    public function __construct()
    {
@@ -32,10 +33,22 @@ class informe_diario extends fs_controller
    {
       $articulo = new articulo();
       $this->articulos = array();
+      $this->hoy = !isset($_GET['ayer']);
+      
+      if( isset($_GET['ayer']) )
+      {
+         $this->hoy = FALSE;
+         $fecha = date( "d-m-Y", strtotime("-1 day") );
+      }
+      else
+      {
+         $this->hoy = TRUE;
+         $fecha = date("d-m-Y");
+      }
       
       /// leemos directamente de la base de datos
       $data = $this->db->select_limit("SELECT referencia, SUM(cantidad) as cantidad, AVG(pvptotal/cantidad) as precio
-         FROM lineasalbaranescli WHERE idalbaran IN (SELECT idalbaran FROM albaranescli WHERE fecha = ".$articulo->var2str($this->today()).")
+         FROM lineasalbaranescli WHERE idalbaran IN (SELECT idalbaran FROM albaranescli WHERE fecha = ".$articulo->var2str($fecha).")
          GROUP BY referencia", FS_ITEM_LIMIT, 0);
       if($data)
       {
