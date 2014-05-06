@@ -164,7 +164,7 @@ class fs_controller
       else
       {
          $this->template = 'no_db';
-         $this->new_error_msg('¡Imposible conectar con la base de datos!');
+         $this->new_error_msg('¡Imposible conectar con la base de datos <b>'.FS_DB_NAME.'</b>!');
       }
    }
    

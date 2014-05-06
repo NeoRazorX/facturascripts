@@ -36,6 +36,7 @@ class fs_mysql extends fs_db
          
          if(self::$link->connect_error)
          {
+            self::$errors[] = self::$link->connect_error;
             self::$link = NULL;
          }
          else

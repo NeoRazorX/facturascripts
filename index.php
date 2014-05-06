@@ -55,8 +55,6 @@ else
       }
    }
    
-   $tpl_dir2 = 'view/';
-   
    /// ¿Qué controlador usar?
    if( isset($_GET['page']) )
    {
@@ -69,10 +67,6 @@ else
             require_once 'plugins/'.$plugin.'/controller/'.$_GET['page'].'.php';
             $fsc = new $_GET['page']();
             $found = TRUE;
-            
-            /// seleccionamod la carpeta view del plugin como segundo directorio de templates
-            $tpl_dir2 = 'plugins/'.$plugin.'/view/';
-            
             break;
          }
       }
@@ -99,7 +93,6 @@ else
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);
       raintpl::configure('tpl_dir', 'view/');
-      raintpl::configure('tpl_dir2', $tpl_dir2);
       raintpl::configure('path_replace', FALSE);
       
       /// ¿Se puede escribir sobre la carpeta temporal?

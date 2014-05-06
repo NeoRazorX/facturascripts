@@ -19,8 +19,7 @@ class RainTPL
      *
      * @var string
      */
-   static $tpl_dir = 'tpl/';
-   static $tpl_dir2 = 'tpl/';
+   static $tpl_dir = 'view/';
    
    /**
      * Cache directory. Is the directory where RainTPL will compile the template and save the cache
@@ -243,10 +242,16 @@ class RainTPL
          $tpl_basename                   = basename( $tpl_name );                                           // template basename
          $tpl_basedir                    = strpos($tpl_name,"/") ? dirname($tpl_name) . '/' : null;         // template basedirectory
          
-         if( file_exists(self::$tpl_dir2 . $tpl_name . '.' . self::$tpl_ext) )
-            $tpl_dir                     = self::$tpl_dir2 . $tpl_basedir;                                  // template directory
-         else
-            $tpl_dir                     = self::$tpl_dir . $tpl_basedir;                                   // template directory
+         $tpl_dir = self::$tpl_dir.$tpl_basedir;
+         /// buscamos la plantilla en los plugins activos
+         if( isset($GLOBALS['plugins']) )
+         {
+            foreach($GLOBALS['plugins'] as $plugin_dir)
+            {
+               if( file_exists('plugins/'.$plugin_dir.'/view/'.$tpl_name.'.'.self::$tpl_ext) )
+                  $tpl_dir = 'plugins/'.$plugin_dir.'/view/'.$tpl_basedir;
+            }
+         }
          
          $this->tpl['tpl_filename']      = $tpl_dir . $tpl_basename . '.' . self::$tpl_ext;                 // template filename
          $temp_compiled_filename         = self::$cache_dir . $tpl_basename . "." . md5( $tpl_dir . serialize(self::$config_name_sum));
