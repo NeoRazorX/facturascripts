@@ -1,0 +1,4 @@
+Este es el plugin con los nuevos formularios para crear albaranes. Estos nuevos formularios permiten seleccionar
+previamente al cliente o proveedor antes de empezar, proporcionar información de interes del cliente/proveedor
+seleccionado, y permiten aplicar recargo de equivalencia a los clientes, así como calcular la comisión para
+el agente asignado.

@@ -157,6 +157,11 @@ class articulo extends fs_model
       return $this->costemedio * (100+$this->get_iva()) / 100;
    }
    
+   public function factualizado()
+   {
+      return $this->var2timesince($this->factualizado);
+   }
+   
    public function url()
    {
       if( is_null($this->referencia) )
