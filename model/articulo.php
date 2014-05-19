@@ -123,9 +123,10 @@ class articulo extends fs_model
    
    protected function install()
    {
-      /// la tabla articulos tiene claves ajeas a familias e impuestos
+      /// la tabla articulos tiene claves ajeas a familias, impuestos y stocks
       new familia();
       new impuesto();
+      new stock();
       
       $this->clean_cache();
       
@@ -699,11 +700,14 @@ class articulo extends fs_model
          $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY RAND() LIMIT 1000;");
       }
       
-      foreach($data as $d)
+      if($data)
       {
-         $art0 = new articulo($d);
-         $art0->get_costemedio();
-         $art0->save();
+         foreach($data as $d)
+         {
+            $art0 = new articulo($d);
+            $art0->get_costemedio();
+            $art0->save();
+         }
       }
    }
    

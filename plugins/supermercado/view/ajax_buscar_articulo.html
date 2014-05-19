@@ -12,7 +12,7 @@
       <td align="center">{$fsc->articulo->stockfis}</td>
       <td align="center">
          <input class="button" type="button" value="-" onclick="linea_sum_ud('{$fsc->numlineas}','-1')"/>
-         <input type="text" id="cantidad_{$fsc->numlineas}" name="cantidad_{$fsc->numlineas}" onkeyup="recalcular()" autocomplete="off" value="1" size="2"/>
+         <input type="text" id="cantidad_{$fsc->numlineas}" name="cantidad_{$fsc->numlineas}" onkeyup="recalcular()" autocomplete="off" value="1" size="5"/>
          <input class="button" type="button" value="+" onclick="linea_sum_ud('{$fsc->numlineas}','1')"/>
       </td>
       <td>
