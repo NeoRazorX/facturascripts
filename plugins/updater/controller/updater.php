@@ -28,9 +28,10 @@ class updater extends fs_controller
 	
 	protected function process()
 	{	
+		$tmpfile = sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfile.zip";
+		
 		if( isset($_GET['buscar']) )
 		{
-			$tmpfile = sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfile.zip";
 			file_put_contents($tmpfile, fopen("https://github.com/NeoRazorX/facturascripts/archive/master.zip", 'r'));
 			$releaseZip = new PclZip($tmpfile);
 			if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir(),PCLZIP_OPT_BY_NAME, 
@@ -47,11 +48,62 @@ class updater extends fs_controller
 				unlink($tmpfile);
 			}
 			else
-			{				
+			{	
+				unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.'VERSION');
 				$this->new_message("Hay una versi&oacute;n distinta disponible: tu versi&oacute;n es la "
 						.$this->getVersion()." y est&aacute; disponible la ".$releaseVersion.
-						"&nbsp;&nbsp;<a class='submit' style='padding: 10px;' href='index.php?page=".$this->template."&actualizar=TRUE'>ACTUALIZAR</a>");
-				$this->new_message("ATENCI&Oacute;N: PROCEDE CON CUIDADO. HAZ UN BACKUP COMPLETO DE LA BASE DE DATOS ANTES DE ACTUALIZAR");
+						"&nbsp;&nbsp;&nbsp;&nbsp;<a class='submit' style='padding: 10px;' href='index.php?page=".$this->template."&actualizar=TRUE'>ACTUALIZAR</a>");
+				$this->new_message("ATENCI&Oacute;N: HAZ UN BACKUP COMPLETO DE LA BASE DE DATOS ANTES DE ACTUALIZAR");
+			}
+		}
+		// actualizar
+		if( isset($_GET['actualizar']) )
+		{
+			if (file_exists($tmpfile))
+			{
+				$releaseZip = new PclZip($tmpfile);
+				try {
+				// descomprimimos
+					if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts") == 0)					
+						throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));					
+					
+					// si no hubo errores al descomprimir, copiamos todo lo descomprimido en 
+					// el directorio del apache al que apunta actualmente facturascripts y renombramos el "viejo"
+					$basenameold = basename(getcwd());
+					$parent = dirname (getcwd());
+					$newnameold = $basenameold."-".date("dmy");
+					
+					if (!rename(getcwd(), $parent.DIRECTORY_SEPARATOR.$newnameold))
+						throw new Exception("Hubo un error al renombrar el directorio de trabajo actual: ".getcwd());
+					
+					if (!rename(sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts".DIRECTORY_SEPARATOR."facturascripts-master",
+						$parent.DIRECTORY_SEPARATOR.$basenameold))
+						throw new Exception("Hubo un error al actualizar. Hay una copia de los antiguos ficheros en: ".
+											$parent.DIRECTORY_SEPARATOR.$newnameold);
+					// copiamos config
+					if (!copy($parent.DIRECTORY_SEPARATOR.$newnameold.DIRECTORY_SEPARATOR."config.php", 
+						  $parent.DIRECTORY_SEPARATOR.$basenameold.DIRECTORY_SEPARATOR."config.php"));
+						throw new Exception("Hubo un error al copiar la configuración antigua en la actualización.".
+											"Hay una copia de los antiguos ficheros en: ".
+											$parent.DIRECTORY_SEPARATOR.$newnameold);
+					// permisos de escritura para tmp
+					if (!chmod($parent.DIRECTORY_SEPARATOR.$basenameold.DIRECTORY_SEPARATOR."tmp",0755));
+						throw new Exception("Hubo un error al dar permiso de escritura a la carpeta tmp. Por favor, hazlo a mano");
+						
+					// todo fue ok
+					$this->new_message("ENHORABUENA, FACTURASCRIPTS SE HA ACTUALIZADO. Por favor, sal y vuelve a entrar en el programa");
+					rmdir(sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts");
+					unlink($tmpfile);			
+					
+				}
+				catch (Exception $e)
+				{
+					$this->new_error_msg($e->getMessage());
+				}			
+			}
+			else
+			{
+				$this->new_error_msg("No está descargado el fichero de actualización. Pulsa el botón BUSCAR antes de actualizar");
 			}
 		}
 	}
