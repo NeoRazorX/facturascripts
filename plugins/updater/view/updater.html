@@ -1,0 +1,15 @@
+{include="header"}
+
+<div class="rounded" style="text-align: center; padding: 30px;">
+   <div style="display: inline-block; max-width: 50%; font-size: 20px;">
+   	  <p>La versión actual es:</p>
+      <p>
+         {$fsc->getVersion()}
+      </p>
+      <p>¿Buscar una nueva versión?</p>
+      <br/>
+      <a class="submit" style="padding: 10px;" href="{$fsc->url()}&buscar=TRUE">buscar</a> 
+   </div>
+</div>
+
+{include="footer"}
