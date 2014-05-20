@@ -15,16 +15,16 @@
 
 		if($type == "MYSQL")
 		{
-			$link = mysql_connect('localhost', $user, $password) or die("Imposible conectarse con el servidor<br>");
+			$link = mysqli_connect('localhost', $user, $password) or die("Imposible conectarse con el servidor<br>");
 			$query = "CREATE DATABASE IF NOT EXISTS $database";
 			
-			if (mysql_query($query)) 
+			if (mysqli_query($query)) 
 			{
 				echo "Base de datos <b>$database</b> creada correctamente<br>";
 			} 
 			else 
 			{
-				echo "Error al crear la base de datos: <br /><br />". mysql_error();
+				echo "Error al crear la base de datos: <br /><br />". mysqli_error();
 				exit;
 			}
 		}
