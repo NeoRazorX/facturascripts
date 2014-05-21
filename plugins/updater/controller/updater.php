@@ -25,8 +25,8 @@ class updater extends fs_controller
 	
 	public function __construct()
 	{
-		parent::__construct(__CLASS__, 'Buscar actualizaciones', 'admin', TRUE, TRUE);
 		$this->config = parse_ini_file("plugins/updater/config.ini");
+		parent::__construct(__CLASS__, 'Buscar actualizaciones', 'admin', TRUE, TRUE);		
 	}
 	
 	protected function process()
