@@ -138,7 +138,7 @@ class updater extends fs_controller
 	private function __descomprime($zipFile)
 	{
 		$releaseZip = new PclZip($zipFile);
-		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, $this->config['rootFolderOnRelease']) == 0)					
+		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, $this->config['rootFolderOnRelease'], PCLZIP_OPT_REPLACE_NEWER) == 0)					
 			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true).
 								"Se hizo una copia de seguridad del sistema anterior en ".$backupDest);				
 	}
