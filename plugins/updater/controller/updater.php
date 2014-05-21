@@ -72,7 +72,7 @@ class updater extends fs_controller
 					$this->__checkForRights();
 					
 					// hacemos copia de seguridad en el directorio temporal del sistema
-					$backupDest = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(getcwd())."-".date("dmy");
+					$backupDest = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(getcwd())."-".date("dmy-Hi");
 					$this->__systemBackup(getcwd(), $backupDest);
 					
 					// descomprimimos
