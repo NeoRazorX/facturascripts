@@ -18,7 +18,6 @@
  */
 
 require_once 'extras/pclzip/pclzip-2-8-2/pclzip.lib.php';
-require_once 'plugins/updater/config.php';
 		
 class updater extends fs_controller
 {
