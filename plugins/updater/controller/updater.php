@@ -22,9 +22,12 @@ require_once 'plugins/updater/config.php';
 		
 class updater extends fs_controller
 {
+	private $config;
+	
 	public function __construct()
 	{
 		parent::__construct(__CLASS__, 'Buscar actualizaciones', 'admin', TRUE, TRUE);
+		$this->config = parse_ini_file("plugins/updater/config.ini");
 	}
 	
 	protected function process()
@@ -102,7 +105,7 @@ class updater extends fs_controller
 	/* Método que devuelve la versión actual de facturascripts */
 	public function getVersion()
 	{
-		return file_get_contents($config['versionFile']);
+		return file_get_contents($this->config['versionFile']);
 	}	
 	
 	/* Método que devuelve la versión de la última release de facturascripts a partir de un fichero .ZIP */
@@ -112,22 +115,22 @@ class updater extends fs_controller
 		
 		// extraemos el fichero VERSION
 		if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir(),
-								 PCLZIP_OPT_BY_NAME, $config['rootFolderOnRelease'].DIRECTORY_SEPARATOR.$config['versionFile'],
+								 PCLZIP_OPT_BY_NAME, $this->config['rootFolderOnRelease'].DIRECTORY_SEPARATOR.$this->config['versionFile'],
 								 PCLZIP_OPT_REMOVE_ALL_PATH) == 0) 		
 			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));
 		
 		
-  		$version = file_get_contents(sys_get_temp_dir().DIRECTORY_SEPARATOR.$config['versionFile']);
+  		$version = file_get_contents(sys_get_temp_dir().DIRECTORY_SEPARATOR.$this->config['versionFile']);
   		
   		// borramos el fichero
-  		unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.$config['versionFile']);
+  		unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.$this->config['versionFile']);
 		return $version;
 	}	
 	
 	/* Método que se descarga la última versión de facturascripts en .zip del servidor indicado en la configuración */
 	private function __downloadRelease($dest)
 	{		
-		if(file_put_contents($tmpfile, fopen($config['remoteServer'], 'r')) === 0)
+		if(file_put_contents($tmpfile, fopen($this->config['remoteServer'], 'r')) === 0)
 			throw new Exception("Error al descargar la &uacute;ltima versi&oacute;n del servidor");
 	}
 	
@@ -135,7 +138,7 @@ class updater extends fs_controller
 	private function __descomprime($zipFile)
 	{
 		$releaseZip = new PclZip($zipFile);
-		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/".$config['rootFolderOnRelease']) == 0)					
+		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/".$this->config['rootFolderOnRelease']) == 0)					
 			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true).
 								"Se hizo una copia de seguridad del sistema anterior en ".$backupDest);				
 	}
