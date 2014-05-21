@@ -80,11 +80,11 @@ class updater extends fs_controller
 
 					// permisos de escritura para tmp
 					$mode = 774;
-					if (!chmod("tmp",octdec($mode)));
-						$this->new_error_msg("Hubo un error al dar permiso de escritura a la carpeta tmp. Por favor, hazlo a mano");
+					chmod("tmp",octdec($mode));
 						
 					// todo fue ok
 					$this->new_message("FACTURASCRIPTS SE HA ACTUALIZADO. Por favor, sal y vuelve a entrar en el programa");
+					$this->new_message("Recuerda dar permisos de escritura a la carpeta tmp si no los tiene");
 					$this->new_message("INFO: Ha quedado una copia de seguridad del sistema anterior en ".$backupDest);
 					unlink($tmpfile);			
 					
