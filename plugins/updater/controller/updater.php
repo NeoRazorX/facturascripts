@@ -79,7 +79,7 @@ class updater extends fs_controller
 					$this->__descomprime($tmpfile);		
 
 					// permisos de escritura para tmp
-					$mode = 774;
+					$mode = 775;
 					chmod("tmp",octdec($mode));
 						
 					// todo fue ok
