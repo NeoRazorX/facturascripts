@@ -129,7 +129,7 @@ class updater extends fs_controller
 	/* Método que se descarga la última versión de facturascripts en .zip del servidor indicado en la configuración */
 	private function __downloadRelease($dest)
 	{		
-		if(file_put_contents($tmpfile, fopen($this->config['remoteServer'], 'r')) === 0)
+		if(file_put_contents($dest, fopen($this->config['remoteServer'], 'r')) === 0)
 			throw new Exception("Error al descargar la &uacute;ltima versi&oacute;n del servidor");
 	}
 	
