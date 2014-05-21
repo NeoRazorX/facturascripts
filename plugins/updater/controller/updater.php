@@ -163,15 +163,15 @@ class updater extends fs_controller
 		{
 			if ($item->isDir()) 
 			{
-				if (!mkdir($dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName()))
+				if (!mkdir($dest . DIRECTORY_SEPARATOR . $recursiveIteratordir->getSubPathName()))
 					throw new Exception("Hubo un problema al crear la copia de seguridad: error creando el directorio ".
-										$dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+										$dest . DIRECTORY_SEPARATOR . $recursiveIteratordir->getSubPathName());
 			}
 			else
 			{
-				if (!copy($item, $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName()))
+				if (!copy($item, $dest . DIRECTORY_SEPARATOR . $recursiveIteratordir->getSubPathName()))
 					throw new Exception("Hubo un problema al crear la copia de seguridad: error al copiar el fichero ".
-										$item." en ".$dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+										$item." en ".$dest . DIRECTORY_SEPARATOR . $recursiveIteratordir->getSubPathName());
 			}
 		}
 	}
