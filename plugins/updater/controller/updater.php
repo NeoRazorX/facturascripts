@@ -18,6 +18,7 @@
  */
 
 require_once 'extras/pclzip/pclzip-2-8-2/pclzip.lib.php';
+require_once 'plugins/updater/config.php';
 		
 class updater extends fs_controller
 {
@@ -32,72 +33,53 @@ class updater extends fs_controller
 		
 		if( isset($_GET['buscar']) )
 		{
-			file_put_contents($tmpfile, fopen("https://github.com/NeoRazorX/facturascripts/archive/master.zip", 'r'));
-			$releaseZip = new PclZip($tmpfile);
-			if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir(),PCLZIP_OPT_BY_NAME, 
-									'facturascripts-master'.DIRECTORY_SEPARATOR.'VERSION',
-									PCLZIP_OPT_REMOVE_ALL_PATH) == 0) 
+			try 
 			{
-				$this->new_error_msg("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));
-  			}
-			$releaseVersion = file_get_contents(sys_get_temp_dir().DIRECTORY_SEPARATOR.'VERSION');
-			if (strcmp($this->getVersion(), $releaseVersion) == 0)
-			{
-				$this->new_message("Est&aacute;s actualizado a la &uacute;ltima versi&oacute;n de facturascripts: ".$releaseVersion);
-				unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.'VERSION');
-				unlink($tmpfile);
+				// descargamos la release
+				$this->__downloadRelease($tmpfile);
+				
+				// obtenemos la versión de la release
+				$releaseVersion = $this->__getReleaseVersion($tmpfile);
+	
+				if (strcmp($this->getVersion(), $releaseVersion) == 0)
+				{
+					$this->new_message("Est&aacute;s actualizado a la &uacute;ltima versi&oacute;n de facturascripts: ".$releaseVersion);				
+					unlink($tmpfile);
+				}
+				else
+				{	
+					$this->new_message("Hay una versi&oacute;n distinta disponible: tu versi&oacute;n es la "
+							.$this->getVersion()." y est&aacute; disponible la ".$releaseVersion.
+							"&nbsp;&nbsp;&nbsp;&nbsp;<a class='submit' style='padding: 10px;' href='index.php?page=".$this->template."&actualizar=TRUE'>ACTUALIZAR</a>");
+					$this->new_message("ATENCI&Oacute;N: HAZ UN BACKUP COMPLETO DE LA BASE DE DATOS ANTES DE ACTUALIZAR");
+				}
 			}
-			else
-			{	
-				unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.'VERSION');
-				$this->new_message("Hay una versi&oacute;n distinta disponible: tu versi&oacute;n es la "
-						.$this->getVersion()." y est&aacute; disponible la ".$releaseVersion.
-						"&nbsp;&nbsp;&nbsp;&nbsp;<a class='submit' style='padding: 10px;' href='index.php?page=".$this->template."&actualizar=TRUE'>ACTUALIZAR</a>");
-				$this->new_message("ATENCI&Oacute;N: HAZ UN BACKUP COMPLETO DE LA BASE DE DATOS ANTES DE ACTUALIZAR");
+			catch (Exception $e)
+			{
+				$this->new_error_msg($e->getMessage());
 			}
 		}
 		// actualizar
 		if( isset($_GET['actualizar']) )
 		{
 			if (file_exists($tmpfile))
-			{
-				$releaseZip = new PclZip($tmpfile);
-				
-				try {
+			{				
+				try 
+				{
 					// en primer lugar hacemos copia de seguridad en el directorio temporal del sistema
 					$backupDest = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(getcwd())."-".date("dmy");
 					$this->__systemBackup(getcwd(), $backupDest);
 					
 					// descomprimimos
-					if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/facturascripts-master") == 0)					
-						throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));					
-					
-					// si no hubo errores al descomprimir, copiamos todo lo descomprimido en 
-					// el directorio del apache al que apunta actualmente facturascripts y renombramos el "viejo"
-					$basenameold = basename(getcwd());
-					$parent = dirname (getcwd());
-					$newnameold = $basenameold."-".date("dmy");
-					
-					if (!rename(getcwd(), $parent.DIRECTORY_SEPARATOR.$newnameold))
-						throw new Exception("Hubo un error al renombrar el directorio de trabajo actual: ".getcwd());
-					
-					if (!rename(sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts".DIRECTORY_SEPARATOR."facturascripts-master",
-						$parent.DIRECTORY_SEPARATOR.$basenameold))
-						throw new Exception("Hubo un error al actualizar. Hay una copia de los antiguos ficheros en: ".
-											$parent.DIRECTORY_SEPARATOR.$newnameold);
-					// copiamos config
-					if (!copy($parent.DIRECTORY_SEPARATOR.$newnameold.DIRECTORY_SEPARATOR."config.php", 
-						  $parent.DIRECTORY_SEPARATOR.$basenameold.DIRECTORY_SEPARATOR."config.php"));
-						throw new Exception("Hubo un error al copiar la configuración antigua en la actualización.".
-											"Hay una copia de los antiguos ficheros en: ".
-											$parent.DIRECTORY_SEPARATOR.$newnameold);
+					$this->__descomprime($tmpfile);		
+
 					// permisos de escritura para tmp
 					if (!chmod($parent.DIRECTORY_SEPARATOR.$basenameold.DIRECTORY_SEPARATOR."tmp",0755));
 						throw new Exception("Hubo un error al dar permiso de escritura a la carpeta tmp. Por favor, hazlo a mano");
 						
 					// todo fue ok
-					$this->new_message("ENHORABUENA, FACTURASCRIPTS SE HA ACTUALIZADO. Por favor, sal y vuelve a entrar en el programa");
-					rmdir(sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts");
+					$this->new_message("FACTURASCRIPTS SE HA ACTUALIZADO. Por favor, sal y vuelve a entrar en el programa");
+					$this->new_message("INFO: Ha quedado una copia de seguridad del sistema anterior en ".$backupDest);
 					unlink($tmpfile);			
 					
 				}
@@ -113,11 +95,49 @@ class updater extends fs_controller
 		}
 	}
 	
+	
+	/* Método que devuelve la versión actual de facturascripts */
 	public function getVersion()
 	{
-		return file_get_contents('VERSION');
+		return file_get_contents($config['versionFile']);
+	}	
+	
+	/* Método que devuelve la versión de la última release de facturascripts a partir de un fichero .ZIP */
+	private function __getReleaseVersion($releaseZipFile)
+	{
+		$releaseZip = new PclZip($releaseZipFile);
+		
+		// extraemos el fichero VERSION
+		if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir(),
+								 PCLZIP_OPT_BY_NAME, $config['rootFolderOnRelease'].DIRECTORY_SEPARATOR.$config['versionFile'],
+								 PCLZIP_OPT_REMOVE_ALL_PATH) == 0) 		
+			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));
+		
+		
+  		$version = file_get_contents(sys_get_temp_dir().DIRECTORY_SEPARATOR.$config['versionFile']);
+  		
+  		// borramos el fichero
+  		unlink(sys_get_temp_dir().DIRECTORY_SEPARATOR.$config['versionFile']);
+		return $version;
+	}	
+	
+	/* Método que se descarga la última versión de facturascripts en .zip del servidor indicado en la configuración */
+	private function __downloadRelease($dest)
+	{		
+		if(file_put_contents($tmpfile, fopen($config['remoteServer'], 'r')) === 0)
+			throw new Exception("Error al descargar la &uacute;ltima versi&oacute;n del servidor");
 	}
 	
+	/* Método que descomprime un fichero .zip en el directorio de trabajo actual */
+	private function __descomprime($zipFile)
+	{
+		$releaseZip = new PclZip($zipFile);
+		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/".$config['rootFolderOnRelease']) == 0)					
+			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true).
+								"Se hizo una copia de seguridad del sistema anterior en ".$backupDest);				
+	}
+	
+	/* Método que realiza una copia de seguridad de source en dest */
 	private function __systemBackup($source, $dest)
 	{
 		if (!mkdir($dest))
