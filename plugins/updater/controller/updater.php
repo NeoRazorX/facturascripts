@@ -66,7 +66,10 @@ class updater extends fs_controller
 			{				
 				try 
 				{
-					// en primer lugar hacemos copia de seguridad en el directorio temporal del sistema
+					// comprobamos que tenemos permisos de escritura en el directorio
+					$this->__checkForRights();
+					
+					// hacemos copia de seguridad en el directorio temporal del sistema
 					$backupDest = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(getcwd())."-".date("dmy");
 					$this->__systemBackup(getcwd(), $backupDest);
 					
@@ -135,6 +138,14 @@ class updater extends fs_controller
 		if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/".$config['rootFolderOnRelease']) == 0)					
 			throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true).
 								"Se hizo una copia de seguridad del sistema anterior en ".$backupDest);				
+	}
+	
+	/* Método que devuelve la versión actual de facturascripts */
+	private function __checkForRights()
+	{
+		if (!is_writable(getcwd()))
+			throw new Exception("El usuario con que se ejecuta el servidor web no tiene permisos de escritura en getcwd(). Imposible
+									actualizar. P&oacute;ngase en contacto con el administrador de su servidor");
 	}
 	
 	/* Método que realiza una copia de seguridad de source en dest */
