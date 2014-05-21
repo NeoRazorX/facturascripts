@@ -79,7 +79,7 @@ class updater extends fs_controller
 					$this->__descomprime($tmpfile);		
 
 					// permisos de escritura para tmp
-					if (!chmod($parent.DIRECTORY_SEPARATOR.$basenameold.DIRECTORY_SEPARATOR."tmp",0755));
+					if (!chmod("tmp",0755));
 						throw new Exception("Hubo un error al dar permiso de escritura a la carpeta tmp. Por favor, hazlo a mano");
 						
 					// todo fue ok
