@@ -158,7 +158,7 @@ class updater extends fs_controller
 								$dest);
 					
 		$dirIterator = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
-		$recursiveIteratordir = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+		$recursiveIteratordir = new RecursiveIteratorIterator($dirIterator, RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($recursiveIteratordir as $item)
 		{
 			if ($item->isDir()) 
