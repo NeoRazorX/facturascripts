@@ -62,9 +62,14 @@ class updater extends fs_controller
 			if (file_exists($tmpfile))
 			{
 				$releaseZip = new PclZip($tmpfile);
+				
 				try {
-				// descomprimimos
-					if ($releaseZip->extract(PCLZIP_OPT_PATH, sys_get_temp_dir().DIRECTORY_SEPARATOR."tmpfctscrpts") == 0)					
+					// en primer lugar hacemos copia de seguridad en el directorio temporal del sistema
+					$backupDest = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(getcwd())."-".date("dmy");
+					$this->__systemBackup(getcwd(), $backupDest);
+					
+					// descomprimimos
+					if ($releaseZip->extract(PCLZIP_OPT_REMOVE_PATH, "/facturascripts-master") == 0)					
 						throw new Exception("Hubo un error al descomprimir el fichero remoto: ".$releaseZip->errorInfo(true));					
 					
 					// si no hubo errores al descomprimir, copiamos todo lo descomprimido en 
@@ -111,6 +116,31 @@ class updater extends fs_controller
 	public function getVersion()
 	{
 		return file_get_contents('VERSION');
+	}
+	
+	private function __systemBackup($source, $dest)
+	{
+		if (!mkdir($dest))
+			throw new Exception("Hubo un problema al crear la copia de seguridad: error creando el directorio ".
+								$dest);
+					
+		$dirIterator = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
+		$recursiveIteratordir = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+		foreach ($recursiveIteratordir as $item)
+		{
+			if ($item->isDir()) 
+			{
+				if (!mkdir($dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName()))
+					throw new Exception("Hubo un problema al crear la copia de seguridad: error creando el directorio ".
+										$dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+			}
+			else
+			{
+				if (!copy($item, $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName()))
+					throw new Exception("Hubo un problema al crear la copia de seguridad: error al copiar el fichero ".
+										$item." en ".$dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+			}
+		}
 	}
 }
  ?>
