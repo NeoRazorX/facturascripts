@@ -91,5 +91,3 @@ define('FS_POS_DIVISA', 'right');
  */
 define('FS_ALBARAN', 'albarán');
 define('FS_ALBARANES', 'albaranes');
-
-?>

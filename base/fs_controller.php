@@ -170,7 +170,7 @@ class fs_controller
    
    public function version()
    {
-      return '2014.5';
+      return file_get_contents('VERSION');
    }
    
    public function close()

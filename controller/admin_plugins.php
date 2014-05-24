@@ -113,6 +113,46 @@ class admin_plugins extends fs_controller
          $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
       else
          $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
+      
+      /*
+       * Desactivamos las páginas que ya no existen
+       */
+      foreach($this->page->all() as $p)
+      {
+         $encontrada = FALSE;
+         
+         if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
+            $encontrada = TRUE;
+         else
+         {
+            foreach($GLOBALS['plugins'] as $plugin)
+            {
+               if( file_exists(getcwd().'/plugins/'.$plugin.'/controller/'.$p->name.'.php') AND $name != $plugin)
+               {
+                  $encontrada = TRUE;
+                  break;
+               }
+            }
+         }
+         
+         if( !$encontrada )
+         {
+            if( $p->delete() )
+            {
+               $this->new_message('Se ha eliminado automáticamnte la página '.$p->name);
+            }
+         }
+      }
+      
+      /// borramos los archivos temporales del motor de plantillas
+      foreach( scandir(getcwd().'/tmp') as $f)
+      {
+         if( substr($f, -4) == '.php' )
+            unlink('tmp/'.$f);
+      }
+      
+      /// limpiamos la caché
+      $this->cache->clean();
    }
 }
 

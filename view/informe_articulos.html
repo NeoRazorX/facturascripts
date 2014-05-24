@@ -35,7 +35,7 @@
    <h1>Búsquedas de artículos:</h1>
    <ul class="horizontal">
       {loop="$fsc->articulo->get_search_tags()"}
-      <li>{$value.tag}</li>
+      <li>{$value.tag} ({$value.count})</li>
       {else}
       <li>Ninguna búsqueda realizada.</li>
       {/loop}

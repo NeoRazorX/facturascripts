@@ -629,9 +629,10 @@ class articulo extends fs_model
             if( $value['tag'] == $tag )
             {
                $encontrado = TRUE;
-               if( time()+86400 > $value['expires']+300 )
+               if( time()+64800 > $value['expires']+300 )
                {
-                  self::$search_tags[$i]['expires'] = time()+86400;
+                  self::$search_tags[$i]['expires'] = time()+64800;
+                  self::$search_tags[$i]['count']++;
                   $actualizar = TRUE;
                }
                break;
@@ -639,12 +640,12 @@ class articulo extends fs_model
          }
          if( !$encontrado )
          {
-            self::$search_tags[] = array('tag' => $tag, 'expires' => time()+86400);
+            self::$search_tags[] = array('tag' => $tag, 'expires' => time()+64800, 'count' => 1);
             $actualizar = TRUE;
          }
          
          if( $actualizar )
-            $this->cache->set('articulos_searches', self::$search_tags, 86400);
+            $this->cache->set('articulos_searches', self::$search_tags, 64800);
       }
       
       return $encontrado;
@@ -677,37 +678,15 @@ class articulo extends fs_model
                /// eliminamos las búsquedas antiguas
                unset(self::$search_tags[$i]);
             }
-            else
+            else if( $value['count'] > 1 )
             {
                /// guardamos los resultados de la búsqueda en memcache
                $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+               echo '.';
             }
          }
          
-         $this->cache->set('articulos_searches', self::$search_tags, 86400);
-      }
-      
-      /*
-       * procesamos artículos aleatorios para calcular su costemedio,
-       * ya que es una funcionalidad relativamente nueva
-       */
-      if( strtolower(FS_DB_TYPE) == 'postgresql' )
-      {
-         $data = $this->db->select("SELECT * FROM ".$this->table_name." OFFSET RANDOM()*(SELECT COUNT(*) FROM ".$this->table_name.") LIMIT 1000;");
-      }
-      else
-      {
-         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY RAND() LIMIT 1000;");
-      }
-      
-      if($data)
-      {
-         foreach($data as $d)
-         {
-            $art0 = new articulo($d);
-            $art0->get_costemedio();
-            $art0->save();
-         }
+         $this->cache->set('articulos_searches', self::$search_tags, 64800);
       }
    }
    

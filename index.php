@@ -27,14 +27,6 @@ else
 {
    /// cargamos las constantes de configuración
    require_once 'config.php';
-   if( !defined('FS_COMMUNITY_URL') )
-      define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
-   if( !defined('FS_POS_DIVISA') )
-      define('FS_POS_DIVISA', 'right');
-   if( !defined('FS_ALBARAN') )
-      define('FS_ALBARAN', 'albarán');
-   if( !defined('FS_ALBARANES') )
-      define('FS_ALBARANES', 'albaranes');
    
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
@@ -96,10 +88,10 @@ else
       raintpl::configure('path_replace', FALSE);
       
       /// ¿Se puede escribir sobre la carpeta temporal?
-      if( file_exists('tmp/test') )
+      if( is_writable('tmp') )
+      {
          raintpl::configure('cache_dir', 'tmp/');
-      else if( mkdir('tmp/test') )
-         raintpl::configure('cache_dir', 'tmp/');
+      }
       else
       {
          echo '<center>'
@@ -123,11 +115,28 @@ else
       
       $tpl->assign('db_history', FS_DB_HISTORY);
       $tpl->assign('demo', FS_DEMO);
+      
+      if( !defined('FS_COMMUNITY_URL') )
+         define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
       $tpl->assign('community_url', FS_COMMUNITY_URL);
+      
+      if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
+      {
+         define('FS_NF0', 2);
+         define('FS_NF1', '.');
+         define('FS_NF2', ' ');
+         define('FS_POS_DIVISA', 'right');
+      }
       $tpl->assign('nf0', FS_NF0);
       $tpl->assign('nf1', FS_NF1);
       $tpl->assign('nf2', FS_NF2);
       $tpl->assign('pos_divisa', FS_POS_DIVISA);
+      
+      if( !defined('FS_ALBARAN') OR !defined('FS_ALBARANES') )
+      {
+         define('FS_ALBARAN', 'albarán');
+         define('FS_ALBARANES', 'albaranes');
+      }
       $tpl->assign('albaran', FS_ALBARAN);
       $tpl->assign('albaranes', FS_ALBARANES);
       
@@ -136,5 +145,3 @@ else
    
    $fsc->close();
 }
-
-?>

@@ -102,7 +102,7 @@ class empresa extends fs_model
          codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,
          ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES
          (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','http://code.google.com/p/facturascripts/',NULL,NULL,
-         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa S.L.','','');";
+         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa ".mt_rand(1, 9999)." S.L.','','');";
    }
    
    public function url()

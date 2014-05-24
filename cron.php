@@ -69,11 +69,11 @@ if( $db->connect() )
    $alb_pro->cron_job();
    
    $articulo = new articulo();
-   echo "Ejecutando tareas para los artículos...\n";
+   echo "Ejecutando tareas para los artículos...";
    $articulo->cron_job();
    
    $asiento = new asiento();
-   echo "Ejecutando tareas para los asientos...\n";
+   echo "\nEjecutando tareas para los asientos...\n";
    $asiento->cron_job();
    
    $libro = new libro_mayor();
@@ -98,7 +98,11 @@ if( $db->connect() )
             {
                if( file_exists('plugins/'.$f.'/cron.php') )
                {
+                  echo "\n\n***********************\nEjecutamos el cron.php del plugin ".$f."\n";
+                  
                   include 'plugins/'.$f.'/cron.php';
+                  
+                  echo "\n***********************\n";
                }
             }
             else
