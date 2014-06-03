@@ -39,10 +39,8 @@ class linea_albaran_cliente extends fs_model
    private $codigo;
    private $fecha;
    private $albaran_url;
-   private $articulo_url;
    
    private static $albaranes;
-   private static $articulos;
 
    public function __construct($l=FALSE)
    {
@@ -50,9 +48,6 @@ class linea_albaran_cliente extends fs_model
       
       if( !isset(self::$albaranes) )
          self::$albaranes = array();
-      
-      if( !isset(self::$articulos) )
-         self::$articulos = array();
       
       if($l)
       {
@@ -121,27 +116,6 @@ class linea_albaran_cliente extends fs_model
             self::$albaranes[] = $alb;
          }
       }
-      
-      $encontrado = FALSE;
-      foreach(self::$articulos as $a)
-      {
-         if($a->referencia == $this->referencia)
-         {
-            $this->articulo_url = $a->url();
-            $encontrado = TRUE;
-            break;
-         }
-      }
-      if( !$encontrado )
-      {
-         $art = new articulo();
-         $art = $art->get($this->referencia);
-         if($art)
-         {
-            $this->articulo_url = $art->url();
-            self::$articulos[] = $art;
-         }
-      }
    }
    
    public function pvp_iva()
@@ -186,9 +160,10 @@ class linea_albaran_cliente extends fs_model
    
    public function articulo_url()
    {
-      if( !isset($this->articulo_url) )
-         $this->fill();
-      return $this->articulo_url;
+      if( is_null($this->referencia) AND $this->referencia == ' ')
+         return "index.php?page=general_articulos";
+      else
+         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
    }
    
    public function exists()
@@ -196,8 +171,7 @@ class linea_albaran_cliente extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
@@ -347,6 +321,34 @@ class linea_albaran_cliente extends fs_model
       {
          $buscar = str_replace(' ', '%', $query);
          $sql .= "(lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%')";
+      }
+      $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_albaran_cliente($l);
+      }
+      return $linealist;
+   }
+   
+   public function search_from_cliente2($codcliente, $ref='', $obs='', $offset=0)
+   {
+      $linealist = array();
+      $ref = strtolower( $this->no_html($ref) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idalbaran IN
+         (SELECT idalbaran FROM albaranescli WHERE codcliente = ".$this->var2str($codcliente)."
+         AND lower(observaciones) LIKE '".strtolower($obs)."%') AND ";
+      if( is_numeric($ref) )
+      {
+         $sql .= "(referencia LIKE '%".$ref."%' OR descripcion LIKE '%".$ref."%')";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $ref);
+         $sql .= "(lower(referencia) LIKE '%".$ref."%' OR lower(descripcion) LIKE '%".$ref."%')";
       }
       $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
       

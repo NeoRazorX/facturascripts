@@ -126,7 +126,6 @@ class articulo extends fs_model
       /// la tabla articulos tiene claves ajeas a familias, impuestos y stocks
       new familia();
       new impuesto();
-      new stock();
       
       $this->clean_cache();
       
@@ -893,5 +892,3 @@ class articulo extends fs_model
       return $stats;
    }
 }
-
-?>

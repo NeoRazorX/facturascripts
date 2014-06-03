@@ -34,37 +34,36 @@ class general_albaranes_cli extends fs_controller
    protected function process()
    {
       if( isset($_POST['buscar_lineas']) )
+      {
          $this->buscar_lineas();
+      }
       else
       {
          $albaran = new albaran_cliente();
          $this->custom_search = TRUE;
          
-         $npage = $this->page->get('general_nuevo_albaran');
-         if($npage)
-            $this->buttons[] = new fs_button_img('b_nuevo_albaran', 'nuevo', 'add.png', $npage->url());
-         
-         $agpage = $this->page->get('general_agrupar_albaranes_cli');
-         if($agpage)
-            $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', $agpage->url());
-         
+         $this->buttons[] = new fs_button_img('b_nuevo_albaran', 'nuevo', 'add.png', 'index.php?page=general_nuevo_albaran');
+         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', 'index.php?page=general_agrupar_albaranes_cli');
          $this->buttons[] = new fs_button_img('b_buscar_lineas', 'lineas', 'zoom.png');
          
          if( !isset($_GET['ptefactura']) )
+         {
             $this->buttons[] = new fs_button('b_pendientes', 'pendientes', $this->url()."&amp;ptefactura=TRUE");
+         }
          
          if( isset($_POST['delete']) )
          {
             $this->delete_albaran();
          }
          
+         $this->offset = 0;
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
-         else
-            $this->offset = 0;
          
          if($this->query)
+         {
             $this->resultados = $albaran->search($this->query, $this->offset);
+         }
          else if( isset($_GET['ptefactura']) )
          {
             $this->new_advice('Estos son los '.FS_ALBARANES.' pendientes de facturar. Haz clic <a class="link" href="'.$this->url().

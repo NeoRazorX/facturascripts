@@ -312,7 +312,7 @@
 </span><span id="170" class="l"><a class="l" href="#170">170: </a>   
 </span><span id="171" class="l"><a class="l" href="#171">171: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_version" href="#_version">version</a>()
 </span><span id="172" class="l"><a class="l" href="#172">172: </a>   {
-</span><span id="173" class="l"><a class="l" href="#173">173: </a>      <span class="php-keyword1">return</span> <span class="php-quote">'2014.5'</span>;
+</span><span id="173" class="l"><a class="l" href="#173">173: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">file_get_contents</span>(<span class="php-quote">'VERSION'</span>);
 </span><span id="174" class="l"><a class="l" href="#174">174: </a>   }
 </span><span id="175" class="l"><a class="l" href="#175">175: </a>   
 </span><span id="176" class="l"><a class="l" href="#176">176: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_close" href="#_close">close</a>()

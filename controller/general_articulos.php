@@ -182,5 +182,3 @@ class general_articulos extends fs_controller
       return $url;
    }
 }
-
-?>

@@ -588,13 +588,19 @@ class albaran_cliente extends fs_model
       return $alblist;
    }
    
-   public function search_from_cliente($codcliente, $desde, $hasta, $serie)
+   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
    {
       $albalist = array();
-      $albaranes = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE codcliente = ".$this->var2str($codcliente).
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
          " AND ptefactura AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
-         " AND codserie = ".$this->var2str($serie)." ORDER BY fecha DESC, codigo DESC");
+         " AND codserie = ".$this->var2str($serie);
+      
+      if($obs != '')
+         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
+      
+      $sql .= " ORDER BY fecha DESC, codigo DESC;";
+      
+      $albaranes = $this->db->select($sql);
       if($albaranes)
       {
          foreach($albaranes as $a)

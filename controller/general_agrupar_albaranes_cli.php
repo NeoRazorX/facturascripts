@@ -33,9 +33,10 @@ class general_agrupar_albaranes_cli extends fs_controller
    public $cliente;
    public $desde;
    public $hasta;
+   public $neto;
+   public $observaciones;
    public $resultados;
    public $serie;
-   public $neto;
    public $total;
    
    public function __construct()
@@ -62,14 +63,20 @@ class general_agrupar_albaranes_cli extends fs_controller
       else
          $this->hasta = Date('d-m-Y');
       
+      $this->observaciones = '';
+      if( isset($_POST['observaciones']) )
+         $this->observaciones = $_POST['observaciones'];
+      
       if( isset($_POST['idalbaran']) )
+      {
          $this->agrupar();
+      }
       else if( isset($_POST['cliente']) )
       {
          $this->save_codcliente($_POST['cliente']);
          
          $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'],
-                 $_POST['desde'], $_POST['hasta'], $_POST['serie']);
+                 $_POST['desde'], $_POST['hasta'], $_POST['serie'], $_POST['observaciones']);
          
          if($this->resultados)
          {

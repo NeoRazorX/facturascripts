@@ -237,7 +237,11 @@ class general_cliente extends fs_controller
       
       $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
       $linea = new linea_albaran_cliente();
-      $this->lineas = $linea->search_from_cliente($_POST['codcliente'], $this->buscar_lineas);
+      
+      if($_POST['buscar_lineas_o'] == '')
+         $this->lineas = $linea->search_from_cliente($_POST['codcliente'], $this->buscar_lineas);
+      else
+         $this->lineas = $linea->search_from_cliente2($_POST['codcliente'], $this->buscar_lineas, $_POST['buscar_lineas_o']);
    }
    
    public function stats_last_months()

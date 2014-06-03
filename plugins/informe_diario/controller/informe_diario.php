@@ -47,9 +47,9 @@ class informe_diario extends fs_controller
       }
       
       /// leemos directamente de la base de datos
-      $data = $this->db->select_limit("SELECT referencia, SUM(cantidad) as cantidad, AVG(pvptotal/cantidad) as precio
+      $data = $this->db->select("SELECT referencia, SUM(cantidad) as cantidad, AVG(pvptotal/cantidad) as precio
          FROM lineasalbaranescli WHERE idalbaran IN (SELECT idalbaran FROM albaranescli WHERE fecha = ".$articulo->var2str($fecha).")
-         GROUP BY referencia", FS_ITEM_LIMIT, 0);
+         GROUP BY referencia ORDER BY referencia ASC;");
       if($data)
       {
          foreach($data as $d)

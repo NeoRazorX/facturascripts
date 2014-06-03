@@ -44,11 +44,9 @@ class linea_factura_cliente extends fs_model
    private $albaran_numero;
    private $albaran_fecha;
    private $albaran_url;
-   private $articulo_url;
    
    private static $facturas;
    private static $albaranes;
-   private static $articulos;
    
    public function __construct($l=FALSE)
    {
@@ -59,9 +57,6 @@ class linea_factura_cliente extends fs_model
       
       if( !isset(self::$albaranes) )
          self::$albaranes = array();
-      
-      if( !isset(self::$articulos) )
-         self::$articulos = array();
       
       if($l)
       {
@@ -165,27 +160,6 @@ class linea_factura_cliente extends fs_model
             self::$albaranes[] = $alb;
          }
       }
-      
-      $encontrado = FALSE;
-      foreach(self::$articulos as $a)
-      {
-         if($a->referencia == $this->referencia)
-         {
-            $this->articulo_url = $a->url();
-            $encontrado = TRUE;
-            break;
-         }
-      }
-      if( !$encontrado )
-      {
-         $art = new articulo();
-         $art = $art->get($this->referencia);
-         if($art)
-         {
-            $this->articulo_url = $art->url();
-            self::$articulos[] = $art;
-         }
-      }
    }
    
    public function total_iva()
@@ -244,9 +218,10 @@ class linea_factura_cliente extends fs_model
    
    public function articulo_url()
    {
-      if( !isset($this->articulo_url) )
-         $this->fill();
-      return $this->articulo_url;
+      if( is_null($this->referencia) AND $this->referencia == ' ')
+         return "index.php?page=general_articulos";
+      else
+         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
    }
    
    public function exists()
@@ -254,8 +229,7 @@ class linea_factura_cliente extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()
