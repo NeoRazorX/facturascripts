@@ -1,0 +1,155 @@
+{include="header"}
+
+<script type="text/javascript">
+   function buscar_subcuentas()
+   {
+      if(document.f_buscar_subcuentas.query.value == '')
+      {
+         $("#subcuentas").html('');
+         fs_resize_popup("popup_subcuentas", 40);
+      }
+      else
+      {
+         var datos = 'query='+document.f_buscar_subcuentas.query.value;
+         datos += "&ejercicio="+document.f_change_subcuenta.codejercicio.value;
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: datos,
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_subcuentas.query.value )
+               {
+                  $("#subcuentas").html(datos);
+                  fs_resize_popup("popup_subcuentas", 40);
+               }
+            }
+         });
+      }
+   }
+   function select_subcuenta(id,ejercicio,subcuenta,descripcion,debe,haber,saldo)
+   {
+      document.f_change_subcuenta.idsc.value = id;
+      document.f_change_subcuenta.codejercicio.value = ejercicio;
+      document.f_change_subcuenta.codsubcuenta.value = subcuenta;
+      document.f_change_subcuenta.descripcion.value = descripcion;
+      document.f_change_subcuenta.debe.value = debe;
+      document.f_change_subcuenta.haber.value = haber;
+      document.f_change_subcuenta.saldo.value = saldo;
+      fs_hide_popups();
+   }
+   $(document).ready(function() {
+      $("#codsubcuenta").click(function() {
+         $("#subcuentas").html('');
+         document.f_buscar_subcuentas.query.value = '';
+         fs_show_popup('popup_subcuentas', 40);
+         document.f_buscar_subcuentas.query.focus();
+      });
+      $("#f_buscar_subcuentas").keyup(function() {
+         buscar_subcuentas();
+      });
+      $("#f_buscar_subcuentas").submit(function(event) {
+         event.preventDefault();
+         buscar_subcuentas();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_subcuentas" style="min-width: 80%">
+   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
+      <input type="hidden" name="codejercicio"/>
+      <h1>Buscar subcuentas</h1>
+      <div style="text-align: center;">
+         <input type="text" name="query" size="40"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+      </div>
+   </form>
+   <div id="subcuentas"></div>
+</div>
+
+{if condition="$fsc->tipo == 'cli'"}
+<div class="rounded">
+   <div>
+      <a class="button" href="{$fsc->cliente->url()}">&laquo; Volver al cliente</a>
+   </div>
+   <h2 style="margin: 10px 0px 10px 0px;">
+      En el ejercicio {$fsc->subcuenta_a->codejercicio},
+      <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a>
+      tiene asignada la cuenta...
+   </h2>
+   <table class="list">
+      <tr>
+         <th align="left">Ejercicio</th>
+         <th align="left">Subcuenta + Descripcion</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
+         <th align="right">Saldo</th>
+      </tr>
+      <tr>
+         <td align="left">{$fsc->subcuenta->codejercicio}</td>
+         <td align="left">
+            <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+            {$fsc->subcuenta->descripcion}
+         </td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
+      </tr>
+   </table>
+</div>
+
+<div class="rounded">
+   <h2 style="margin: 0px 0px 10px 0px;">
+      Cambiarla por...
+   </h2>
+   <form name="f_change_subcuenta" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="cli" value="{$fsc->cliente->codcliente}"/>
+      <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
+      <table class="list">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Subcuenta</th>
+            <th align="left">Descripcion</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         <tr>
+            <td>
+               <input class="full" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
+            </td>
+            <td>
+               <input id="codsubcuenta" class="full" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
+            </td>
+         </tr>
+      </table>
+      <div style="text-align: right;">
+         <input class="submit" type="submit" value="guardar"/>
+      </div>
+   </form>
+</div>
+{elseif condition="$fsc->tipo == 'pro'"}
+<div class="rounded">
+   <h1>Estas son las subcuentas asociadas a :</h1>
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

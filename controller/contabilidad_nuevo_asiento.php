@@ -52,7 +52,9 @@ class contabilidad_nuevo_asiento extends fs_controller
       $this->subcuenta = new subcuenta();
       
       if( isset($_POST['fecha']) AND isset($_POST['query']) )
+      {
          $this->new_search();
+      }
       else if( isset($_POST['fecha']) AND isset($_POST['concepto']) AND isset($_POST['divisa']) )
       {
          $continuar = TRUE;
@@ -176,5 +178,3 @@ class contabilidad_nuevo_asiento extends fs_controller
       $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
    }
 }
-
-?>

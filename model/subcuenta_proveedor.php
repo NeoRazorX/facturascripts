@@ -58,7 +58,17 @@ class subcuenta_proveedor extends fs_model
       $subc = new subcuenta();
       return $subc->get($this->idsubcuenta);
    }
-
+   
+   public function get($pro, $idsc)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($pro)."
+         AND idsubcuenta = ".$this->var2str($idsc).";");
+      if($data)
+         return new subcuenta_cliente($data[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->id) )
@@ -118,5 +128,3 @@ class subcuenta_proveedor extends fs_model
       return $sclist;
    }
 }
-
-?>

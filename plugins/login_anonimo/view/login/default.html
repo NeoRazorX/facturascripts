@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>FacturaScripts</title>
+   <meta name="description" content="Facturación y contabilidad fácil, libre y con actualizaciones constantes.
+         Es software libre bajo licencia GNU/AGPL." />
+   <meta name="keywords" content="facturascripts, facturación, contabilidad, abanq, eneboo, facturalux, facturaplus"/>
+   <link rel="shortcut icon" href="view/img/favicon.ico" />
+   <link rel="stylesheet" type="text/css" href="view/login/login.css" />
+   <script type="text/javascript" src="view/js/jquery.js"></script>
+   <script type="text/javascript">
+       $(document).ready(function() {
+         document.f_login.user.focus();
+         $("#b_feedback").click(function() {
+            $("#b_feedback").hide();
+            $("#popup_feedback").show();
+            document.feedback.feedback_text.focus();
+         });
+         $("#b_sql").click(function() {
+            $("#b_sql").hide();
+            $("#popup_sql").show();
+         });
+      });
+   </script>
+</head>
+<body>
+   {if condition="$fsc->get_errors()"}
+      <div class="error">
+         <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+      </div>
+   {/if}
+   {if condition="$fsc->get_messages()"}
+      <div class="message">
+         <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+      </div>
+   {/if}
+   
+   <div class="header">
+      <h1><a href="index.php">FacturaScripts</a></h1>
+      <br/>
+      <div class="popup">
+         <form name="f_login" action="index.php" method="post">
+            <input type="text" class="full" name="user" placeholder="usuario" autocomplete="off" style="border: 1px solid #666666;"/>
+            <input type="password" name="password" placeholder="contraseña" style="border: 1px solid #666666;"/>
+            <input type="submit" class="full" value="entrar"/>
+         </form>
+      </div>
+      <br/><br/>
+      <p>
+         Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()},
+         Procesado en: {$fsc->duration()}
+      </p>
+   </div>
+   
+   <div class="bottom_frame">
+      <a id="b_feedback" href="#feedback">Ayuda</a>
+      {if condition="$db_history"}<a id="b_sql" href="#sql">SQL</a>{/if}
+   </div>
+   
+   <a name="feedback"></a>
+   {include="feedback"}
+   <br/>
+   
+   {if condition="$db_history"}
+   <a name="sql"></a>
+   <div class="popup" id="popup_sql" style="display: none;">
+      <h1>Consultas SQL:</h1>
+      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   </div>
+   {/if}
+</body>
+</html>

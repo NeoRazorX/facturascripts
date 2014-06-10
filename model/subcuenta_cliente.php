@@ -59,13 +59,22 @@ class subcuenta_cliente extends fs_model
       return $subc->get($this->idsubcuenta);
    }
    
+   public function get($cli, $idsc)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cli)."
+         AND idsubcuenta = ".$this->var2str($idsc).";");
+      if($data)
+         return new subcuenta_cliente($data[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -118,5 +127,3 @@ class subcuenta_cliente extends fs_model
       return $sublist;
    }
 }
-
-?>
