@@ -12,25 +12,23 @@
    </div>
    {loop="$fsc->plugins()"}
    <div class="grupo">
-      <h1>
-         {$value['name']}
-         <span>
+      <div class="pull_right">
          {if condition="$fsc->unstables"}
             {if condition="$value['enabled']"}
-            <a class="delete" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">Desctivar</a>
+            <a class="delete" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">Desactivar</a>
             {else}
             <a class="button" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">Activar</a>
             {/if}
          {else}
             {if condition="$value['enabled']"}
-            <a class="delete" href="{$fsc->url()}&disable={$value['name']}">Desctivar</a>
+            <a class="delete" href="{$fsc->url()}&disable={$value['name']}">Desactivar</a>
             {else}
             <a class="button" href="{$fsc->url()}&enable={$value['name']}">Activar</a>
             {/if}
          {/if}
-         </span>
-      </h1>
-      <p>{$value['description']}</p>
+      </div>
+      <h2 style="margin: 0px;">{$value['name']}</h2>
+      <p style="margin: 5px 5px 0px 5px;">{$value['description']}</p>
    </div>
    {else}
    <div>Ningún plugin encontrado.</div>

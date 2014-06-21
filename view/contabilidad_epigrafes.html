@@ -60,7 +60,7 @@
          </tr>
          <tr>
             <td colspan="4" align="right">
-               <input class="submit" type="submit" value="Guardar"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -73,7 +73,12 @@
          <th align="right">Ejercicio</th>
       </tr>
       <tr>
-         <td>{$fsc->grupo->descripcion}</td>
+         <td>
+            <form action="{$fsc->grupo->url()}" method="post">
+               <input type="text" name="descripcion" value="{$fsc->grupo->descripcion}" size="60" autocomplete="off"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </form>
+         </td>
          <td align="right">
             <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
          </td>
@@ -140,7 +145,12 @@
          <th align="right">Ejercicio</th>
       </tr>
       <tr>
-         <td>{$fsc->epigrafe->descripcion}</td>
+         <td>
+            <form action="{$fsc->epigrafe->url()}" method="post">
+               <input type="text" name="descripcion" value="{$fsc->epigrafe->descripcion}" size="60" autocomplete="off"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </form>
+         </td>
          <td align="right">
             <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
          </td>
@@ -150,13 +160,13 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
+         <th align="right">Cuenta especial</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+         <td align="right">{$value->idcuentaesp}</td>
       </tr>
       {/loop}
       <tr>
@@ -199,7 +209,7 @@
       </tr>
       <tr>
          <td colspan="4" align="right">
-            <input class="submit" type="submit" value="guardar"/>
+            <input class="submit" type="submit" value="Guardar"/>
          </td>
       </tr>
    </table>

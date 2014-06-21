@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Un grupo de clientes, que puede estar asociado a una tarifa.
+ */
 class grupo_clientes extends fs_model
 {
    public $codgrupo;

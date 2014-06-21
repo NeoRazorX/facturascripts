@@ -28,6 +28,9 @@ require_model('linea_iva_factura_cliente.php');
 require_model('linea_factura_cliente.php');
 require_model('secuencia.php');
 
+/**
+ * Factura de un cliente.
+ */
 class factura_cliente extends fs_model
 {
    public $idfactura;
@@ -963,5 +966,3 @@ class factura_cliente extends fs_model
       return $stats;
    }
 }
-
-?>

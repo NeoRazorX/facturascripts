@@ -49,6 +49,13 @@
     
 */
 
+/**
+ * Redondeo bancario
+ * @staticvar real $dFuzz
+ * @param type $dVal
+ * @param type $iDec
+ * @return type
+ */
 function bround($dVal, $iDec=2)
 {
    // banker's style rounding or round-half-even

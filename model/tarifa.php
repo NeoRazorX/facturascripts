@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una tarifa para los artículos.
+ */
 class tarifa extends fs_model
 {
    public $codtarifa;
@@ -58,8 +61,7 @@ class tarifa extends fs_model
    
    public function get($cod)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codtarifa = ".$this->var2str($cod).";");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = ".$this->var2str($cod).";");
       if($tarifa)
          return new tarifa( $tarifa[0] );
       else
@@ -80,8 +82,7 @@ class tarifa extends fs_model
       if( is_null($this->codtarifa) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
    }
    
    public function test()
@@ -128,8 +129,7 @@ class tarifa extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codtarifa = ".$this->var2str($this->codtarifa).";");
    }
    
    private function clean_cache()
@@ -142,8 +142,7 @@ class tarifa extends fs_model
       $tarlist = $this->cache->get_array('m_tarifa_all');
       if( !$tarlist )
       {
-         $tarifas = $this->db->select("SELECT * FROM ".$this->table_name.
-                 " ORDER BY codtarifa ASC;");
+         $tarifas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codtarifa ASC;");
          if($tarifas)
          {
             foreach($tarifas as $t)
@@ -154,5 +153,3 @@ class tarifa extends fs_model
       return $tarlist;
    }
 }
-
-?>

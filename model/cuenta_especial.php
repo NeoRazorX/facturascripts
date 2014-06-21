@@ -19,6 +19,10 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Permite relacionar cuentas especiales (VENTAS, por ejemplo)
+ * con la cuenta o subcuenta real.
+ */
 class cuenta_especial extends fs_model
 {
    public $idcuentaesp; /// pkey
@@ -110,5 +114,3 @@ class cuenta_especial extends fs_model
       return $culist;
    }
 }
-
-?>

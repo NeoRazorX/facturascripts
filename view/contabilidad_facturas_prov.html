@@ -35,7 +35,11 @@
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">{if condition="$value->idasiento"}A{/if}</td>
+         <td align="center">
+            {if condition="$value->idasiento"}
+            <span title="la factura tiene vinculado un asiento contable">A</span>
+            {/if}
+         </td>
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
@@ -49,19 +53,17 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}
          </td>
       </tr>
    </table>
 </div>
-
-<div class="advice"><b>A</b> significa que la factura tiene vinculado un asiento contable.</div>
 
 {include="footer"}

@@ -24,6 +24,9 @@ require_model('factura_proveedor.php');
 require_model('subcuenta.php');
 require_model('subcuenta_proveedor.php');
 
+/**
+ * Un proveedor. Puede estar relacionado con varias direcciones o subcuentas.
+ */
 class proveedor extends fs_model
 {
    public $codproveedor;
@@ -353,5 +356,3 @@ class proveedor extends fs_model
       return $prolist;
    }
 }
-
-?>

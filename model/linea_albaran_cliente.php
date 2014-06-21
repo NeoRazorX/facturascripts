@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Línea de un albarán de cliente (boceto de factura).
+ */
 class linea_albaran_cliente extends fs_model
 {
    public $idlinea; /// pkey
@@ -410,5 +413,3 @@ class linea_albaran_cliente extends fs_model
       return $toplist;
    }
 }
-
-?>

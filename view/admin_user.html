@@ -66,12 +66,10 @@
 <form id="f_user_pages" action="{$fsc->url()}" method="POST">
    <input type="hidden" name="modupages" value="TRUE"/>
       <div class="rounded">
-         <h1>
-            Datos de usuario:
-            <span>
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </span>
-         </h1>
+         <div class="pull_right">
+            <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </div>
+         <h1>Datos de usuario:</h1>
          <div class="bloque">
             Nick: <input type="text" value="{$fsc->suser->nick}" size="12" maxlength="12" disabled="disabled"/>
          </div>
@@ -86,7 +84,6 @@
             {/if}
             <label for="usuario_admin">Administrador</label>
          </div>
-         <br/>
          <div class="bloque">
             <a class="link" href="{$fsc->agente->url()}">Agente</a>:
             <select name="scodagente">
@@ -150,8 +147,8 @@
          <table width="100%">
             <tr>
                <td>
-                  <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-                  <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+                  <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+                  <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
                </td>
             </tr>
          </table>
@@ -183,8 +180,8 @@
          <table width="100%">
             <tr>
                <td>
-                  <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-                  <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+                  <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+                  <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
                </td>
                <td align="right">
                   <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>

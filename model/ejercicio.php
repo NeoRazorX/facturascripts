@@ -21,6 +21,9 @@ require_once 'base/fs_model.php';
 require_model('asiento.php');
 require_model('subcuenta.php');
 
+/**
+ * Ejercicio contable.
+ */
 class ejercicio extends fs_model
 {
    public $idasientocierre;
@@ -312,5 +315,3 @@ class ejercicio extends fs_model
       return $listae;
    }
 }
-
-?>

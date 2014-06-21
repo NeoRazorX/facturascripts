@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Línea de una factura de cliente.
+ */
 class linea_factura_cliente extends fs_model
 {
    public $pvptotal;
@@ -373,5 +376,3 @@ class linea_factura_cliente extends fs_model
       return $facturalist;
    }
 }
-
-?>

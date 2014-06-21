@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * La empresa.
+ */
 class empresa extends fs_model
 {
    public $id; /// pkey
@@ -203,5 +206,3 @@ class empresa extends fs_model
       $this->cache->delete('empresa');
    }
 }
-
-?>

@@ -2,8 +2,7 @@
 
 {loop="$fsc->ejercicio->all()"}
 <div class="rounded">
-   <h1>{$value->nombre}</h1>
-   
+   <h2 style="margin: 0px;">Ejercicio {$value->nombre}</h2>
    <ul class="bloque">
       <li>
          {if condition="$fsc->existe_libro_diario($value->codejercicio)"}

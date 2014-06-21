@@ -21,6 +21,9 @@ require_once 'base/fs_model.php';
 require_model('asiento.php');
 require_model('partida.php');
 
+/**
+ * Una regularización de IVA.
+ */
 class regularizacion_iva extends fs_model
 {
    public $codejercicio;
@@ -185,5 +188,3 @@ class regularizacion_iva extends fs_model
       return $reglist;
    }
 }
-
-?>

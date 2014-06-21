@@ -32,11 +32,11 @@
 <div class="rounded">
    <form action="{$fsc->factura->url()}" method="post">
       <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
+      <div class="pull_right">
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
       <h1>
          <a class="link" href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
       </h1>
       <div class="bloque">
          Ejercicio: {$fsc->factura->codejercicio}

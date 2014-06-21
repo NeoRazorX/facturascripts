@@ -53,10 +53,9 @@ class contabilidad_subcuenta extends fs_controller
          $this->cuenta = $this->subcuenta->get_cuenta();
          $this->ejercicio = $this->subcuenta->get_ejercicio();
          
+         $this->offset = 0;
          if( isset($_GET['offset']) )
             $this->offset = intval($_GET['offset']);
-         else
-            $this->offset = 0;
          
          $this->resultados = $this->subcuenta->get_partidas($this->offset);
          
@@ -133,6 +132,12 @@ class contabilidad_subcuenta extends fs_controller
    
    private function puntear()
    {
+      if($_POST['descripcion'] != $this->subcuenta->descripcion)
+      {
+         $this->subcuenta->descripcion = $_POST['descripcion'];
+         $this->subcuenta->save();
+      }
+      
       $partida = new partida();
       
       foreach($this->resultados as $pa)
@@ -152,5 +157,3 @@ class contabilidad_subcuenta extends fs_controller
       $this->new_message('Datos guardados correctamente.');
    }
 }
-
-?>

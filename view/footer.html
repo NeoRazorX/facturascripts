@@ -1,37 +1,45 @@
+   {if condition="$fsc->get_last_changes()"}
+   <div class="history">
+      <h1>Últimos cambios:</h1>
+      <ul class="h_bloque">
+      {loop="$fsc->get_last_changes()"}
+         <li{if condition="!$value['nuevo']"} class="verde"{/if}>
+            <a href="{$value['url']}">{$value['texto']}</a>
+         </li>
+      {/loop}
+      </ul>
+   </div>
+   {/if}
    {if condition="$demo"}
-      <div class="rounded">
-         <table width="100%">
-            <tr>
-               <td>
-                  <h1>¿Te está gustando FacturaScripts?</h1>
-                  <p>
-                     Pues lo puedes usar muy fácilemnte en tu negocio. Tienes 3 opciones:
-                  </p>
-                  <ul>
-                     <li>Descarga FacturaScripts e instálalo en tu ordenador.</li>
-                     <li>Descarga FacturaScripts y cópialo a tu hosting, como un wordpress.</li>
-                     <li>
-                        Si no tienes ni idea de apache, ni hostings, simplemente escríbeme un email a
-                        <b>neorazorx@gmail.com</b> y yo te lo instalo en un servidor por un módico precio ;-)
-                     </li>
-                  </ul>
-               </td>
-               <td align="right">
-                  <a href="http://www.facturascripts.com/community/download.php">
-                     <img src="view/img/download.png" alt="descargar" title="descargar FacturaScripts"/>
-                  </a>
-               </td>
-            </tr>
-         </table>
-      </div>
+   <div class="rounded">
+      <table width="100%">
+         <tr>
+            <td>
+               <h1>¿Te está gustando FacturaScripts?</h1>
+               <p>Pues lo puedes usar muy fácilemnte en tu negocio. Tienes 3 opciones:</p>
+               <ul>
+                  <li>Descarga FacturaScripts e instálalo en tu ordenador.</li>
+                  <li>Descarga FacturaScripts y cópialo a tu hosting, como un wordpress.</li>
+                  <li>
+                     Si no tienes ni idea de apache, ni hostings, simplemente escríbeme un email a
+                     <b>neorazorx@gmail.com</b> y yo te lo instalo en un servidor por un módico precio ;-)
+                  </li>
+               </ul>
+            </td>
+            <td align="right">
+               <a href="http://www.facturascripts.com/community/download.php">
+                  <img src="view/img/download.png" alt="descargar" title="descargar FacturaScripts"/>
+               </a>
+            </td>
+         </tr>
+      </table>
+   </div>
    {/if}
    {if condition="$db_history"}
-      <div id="sql_history">
-         <h1>Consultas SQL:</h1>
-         <ol>
-         {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
-         </ol>
-      </div>
+   <div class="history">
+      <h1>Consultas SQL:</h1>
+      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   </div>
    {/if}
    </div>
    <a id="fs_feedback" href="#">Ayuda</a>

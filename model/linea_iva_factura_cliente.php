@@ -19,9 +19,8 @@
 
 require_once 'base/fs_model.php';
 
-/*
- * Función para comparar dos linea_iva_factura_cliente
- * en función de su totallinea
+/**
+ * Compara dos linea_iva_factura_cliente en función de su totallinea
  */
 function cmp_linea_iva_fact_cli($a, $b)
 {
@@ -32,6 +31,10 @@ function cmp_linea_iva_fact_cli($a, $b)
 }
 
 
+/**
+ * La línea de IVA de una factura de cliente.
+ * Indica el neto, iva y total para un determinado IVA y una factura.
+ */
 class linea_iva_factura_cliente extends fs_model
 {
    public $totallinea;
@@ -144,5 +147,3 @@ class linea_iva_factura_cliente extends fs_model
       return $linealist;
    }
 }
-
-?>

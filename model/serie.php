@@ -19,6 +19,10 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una serie de facturación o contabilidad, para tener distinta numeración
+ * en cada serie.
+ */
 class serie extends fs_model
 {
    public $codserie; /// pkey
@@ -153,5 +157,3 @@ class serie extends fs_model
       return $serielist;
    }
 }
-
-?>

@@ -20,6 +20,7 @@
 require_model('ejercicio.php');
 require_model('subcuenta_cliente.php');
 require_model('subcuenta_proveedor.php');
+require_model('subcuenta.php');
 
 class subcuenta_asociada extends fs_controller
 {
@@ -37,6 +38,7 @@ class subcuenta_asociada extends fs_controller
    protected function process()
    {
       $this->tipo = FALSE;
+      $this->subcuenta = FALSE;
       
       if( isset($_POST['ejercicio']) AND isset($_POST['query']) )
       {
@@ -49,11 +51,86 @@ class subcuenta_asociada extends fs_controller
          $this->cliente = $cliente->get($_GET['cli']);
          $subcuenta_cliente = new subcuenta_cliente();
          $this->subcuenta_a = $subcuenta_cliente->get($_GET['cli'], $_GET['idsc']);
-         $this->subcuenta = $this->subcuenta_a->get_subcuenta();
+         if($this->subcuenta_a)
+            $this->subcuenta = $this->subcuenta_a->get_subcuenta();
+      }
+      else if( isset($_POST['cli']) )
+      {
+         $this->tipo = 'cli';
+         $cliente = new cliente();
+         $this->cliente = $cliente->get($_POST['cli']);
+         $subcuenta_cliente = new subcuenta_cliente();
+         $this->subcuenta_a = $subcuenta_cliente->get($_POST['cli'], $_POST['idsc']);
+         if($this->subcuenta_a)
+         {
+            $subc = new subcuenta();
+            $subc0 = $subc->get($_POST['idsc2']);
+            if($subc0)
+            {
+               $this->subcuenta_a->idsubcuenta = $subc0->idsubcuenta;
+               $this->subcuenta_a->codsubcuenta = $subc0->codsubcuenta;
+               $this->subcuenta_a->codejercicio = $subc0->codejercicio;
+               if( $this->subcuenta_a->save() )
+               {
+                  $this->new_message('Datos guardados correctamente.');
+               }
+               else
+               {
+                  $this->new_error_msg('Imposible guardar la subcuenta.');
+               }
+               
+               $this->subcuenta = $subc0;
+            }
+            else
+            {
+               $this->new_error_msg('Subcuenta no encontrada.');
+               $this->subcuenta = $this->subcuenta_a->get_subcuenta();
+            }
+         }
       }
       else if( isset($_GET['pro']) )
       {
          $this->tipo = 'pro';
+         $proveedor = new proveedor();
+         $this->proveedor = $proveedor->get($_GET['pro']);
+         $subcuenta_proveedor = new subcuenta_proveedor();
+         $this->subcuenta_a = $subcuenta_proveedor->get($_GET['pro'], $_GET['idsc']);
+         if($this->subcuenta_a)
+            $this->subcuenta = $this->subcuenta_a->get_subcuenta();
+      }
+      else if( isset($_POST['pro']) )
+      {
+         $this->tipo = 'pro';
+         $proveedor = new proveedor();
+         $this->proveedor = $proveedor->get($_POST['pro']);
+         $subcuenta_proveedor = new subcuenta_proveedor();
+         $this->subcuenta_a = $subcuenta_proveedor->get($_POST['pro'], $_POST['idsc']);
+         if($this->subcuenta_a)
+         {
+            $subc = new subcuenta();
+            $subc0 = $subc->get($_POST['idsc2']);
+            if($subc0)
+            {
+               $this->subcuenta_a->idsubcuenta = $subc0->idsubcuenta;
+               $this->subcuenta_a->codsubcuenta = $subc0->codsubcuenta;
+               $this->subcuenta_a->codejercicio = $subc0->codejercicio;
+               if( $this->subcuenta_a->save() )
+               {
+                  $this->new_message('Datos guardados correctamente.');
+               }
+               else
+               {
+                  $this->new_error_msg('Imposible guardar la subcuenta.');
+               }
+               
+               $this->subcuenta = $subc0;
+            }
+            else
+            {
+               $this->new_error_msg('Subcuenta no encontrada.');
+               $this->subcuenta = $this->subcuenta_a->get_subcuenta();
+            }
+         }
       }
    }
    

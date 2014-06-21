@@ -30,7 +30,9 @@
             <th align="right">Saldo</th>
          </tr>
          <tr>
-            <td>{$fsc->subcuenta->descripcion}</td>
+            <td>
+               <input type="text" class="full" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
+            </td>
             <td align="center">
                <a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
             </td>
@@ -45,8 +47,8 @@
       <table width="100%">
          <tr>
             <td>
-               <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-               <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+               <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+               <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
             </td>
             <td>
                <div class="paginas">
@@ -60,7 +62,7 @@
                </div>
             </td>
             <td align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -135,8 +137,8 @@
       <table width="100%">
          <tr>
             <td>
-               <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-               <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+               <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+               <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
             </td>
             <td>
                <div class="paginas">
@@ -150,7 +152,7 @@
                </div>
             </td>
             <td align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>

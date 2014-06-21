@@ -1,0 +1,25 @@
+{include="header"}
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Código + Cliente</th>
+         <th align="left">Observaciones</th>
+         <th align="right">Total</th>
+         <th align="right">Fecha</th>
+      </tr>
+      {loop="$fsc->presupuesto->all()"}
+      <tr>
+         <td>
+            <a class="link" href="{$value->url()}">{$value->codigo}</a>
+            {$value->nombrecliente}
+         </td>
+         <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una cuenta bancaria de un proveedor.
+ */
 class cuenta_banco_proveedor extends fs_model
 {
    public $codcuenta; /// pkey

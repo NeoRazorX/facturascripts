@@ -19,6 +19,9 @@
 
 require_once 'base/fs_db.php';
 
+/**
+ * Clase para conectar a PostgreSQL
+ */
 class fs_postgresql extends fs_db
 {
    /// conecta con la base de datos
@@ -134,6 +137,9 @@ class fs_postgresql extends fs_db
             $resultado = pg_fetch_all($filas);
             pg_free_result($filas);
          }
+         else
+            self::$errors[] = pg_last_error(self::$link);
+         
          self::$t_selects++;
       }
       return $resultado;
@@ -153,6 +159,9 @@ class fs_postgresql extends fs_db
             $resultado = pg_fetch_all($filas);
             pg_free_result($filas);
          }
+         else
+            self::$errors[] = pg_last_error(self::$link);
+         
          self::$t_selects++;
       }
       return $resultado;
@@ -174,7 +183,11 @@ class fs_postgresql extends fs_db
             $resultado = TRUE;
          }
          else
+         {
+            self::$errors[] = pg_last_error(self::$link);
             pg_query(self::$link, 'ROLLBACK;');
+         }
+         
          self::$t_transactions++;
       }
       return $resultado;

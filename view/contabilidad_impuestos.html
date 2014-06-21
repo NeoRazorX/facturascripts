@@ -37,7 +37,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -48,13 +48,12 @@
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
-      <h1>
-         {$value->codimpuesto}
-         <span>
-            <a class="delete" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">eliminar</a> &nbsp;
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <div class="pull_right">
+         <a class="delete" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">eliminar</a>
+         &nbsp;
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>{$value->codimpuesto}</h1>
       <div class="bloque">
          Descripción: <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
       </div>

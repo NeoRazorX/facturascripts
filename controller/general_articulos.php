@@ -123,13 +123,14 @@ class general_articulos extends fs_controller
          }
       }
       
+      $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       if($this->query != '')
+      {
          $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia, $this->con_stock);
+      }
       else if( isset($_GET['public']) )
       {
          $this->new_advice('Estos son los artículos que tienes marcados como púbicos. Haz clic <a class="link" href="'.$this->url().

@@ -339,7 +339,10 @@ class general_albaran_cli extends fs_controller
       }
       
       if( $this->albaran->save() )
+      {
          $this->new_message(FS_ALBARAN." modificado correctamente.");
+         $this->new_change(FS_ALBARAN.' Cliente<br/>'.$this->albaran->codigo, $this->albaran->url());
+      }
       else
          $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
    }
@@ -419,7 +422,9 @@ class general_albaran_cli extends fs_controller
             $this->albaran->idfactura = $factura->idfactura;
             $this->albaran->ptefactura = FALSE;
             if( $this->albaran->save() )
+            {
                $this->generar_asiento($factura);
+            }
             else
             {
                $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
@@ -447,7 +452,10 @@ class general_albaran_cli extends fs_controller
       $subcuenta_cli = $cliente->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )
+      {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+         $this->new_change('Factura Cliente<br/>'.$factura->codigo, $factura->url(), TRUE);
+      }
       else if( !$subcuenta_cli )
       {
          $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
@@ -537,7 +545,10 @@ class general_albaran_cli extends fs_controller
             {
                $factura->idasiento = $asiento->idasiento;
                if( $factura->save() )
+               {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+                  $this->new_change('Factura Cliente<br/>'.$factura->codigo, $factura->url(), TRUE);
+               }
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }
@@ -830,7 +841,7 @@ class general_albaran_cli extends fs_controller
                $pdf_doc->add_table_row(
                   Array(
                       'unidades' => $lineas[$linea_actual]->cantidad,
-                      'descripcion' => substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 40),
+                      'descripcion' => $lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion,
                       'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 2).' %',
                       'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->albaran->coddivisa),
                       'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->albaran->coddivisa)
@@ -842,6 +853,7 @@ class general_albaran_cli extends fs_controller
             }
             $pdf_doc->save_table(
                array(
+                   'fontSize' => 9,
                    'cols' => array(
                        'dto' => array('justification' => 'right'),
                        'pvp' => array('justification' => 'right'),
@@ -887,5 +899,3 @@ class general_albaran_cli extends fs_controller
       $pdf_doc->show();
    }
 }
-
-?>

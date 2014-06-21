@@ -20,6 +20,9 @@
 require_once 'base/fs_model.php';
 require_model('ejercicio.php');
 
+/**
+ * Define que cuentas hay que usar para generar los distintos informes contables.
+ */
 class balance extends fs_model
 {
    public $descripcion4ba;
@@ -160,6 +163,9 @@ class balance extends fs_model
 }
 
 
+/**
+ * Detalle de un balance.
+ */
 class balance_cuenta extends fs_model
 {
    public $id; /// pkey
@@ -275,6 +281,9 @@ class balance_cuenta extends fs_model
 }
 
 
+/**
+ * Detalle abreviado de un balance.
+ */
 class balance_cuenta_a extends fs_model
 {
    public $id; /// pkey
@@ -431,5 +440,3 @@ class balance_cuenta_a extends fs_model
       return $balist;
    }
 }
-
-?>

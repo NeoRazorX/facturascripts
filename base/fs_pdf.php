@@ -19,6 +19,9 @@
 
 require_once 'extras/ezpdf/Cezpdf.php';
 
+/**
+ * Permite la generación de PDFs algo más sencilla.
+ */
 class fs_pdf
 {
    public $pdf;
@@ -135,5 +138,3 @@ class fs_pdf
       $this->pdf->ezTable($this->table_rows, $this->table_header, '', $options);
    }
 }
-
-?>

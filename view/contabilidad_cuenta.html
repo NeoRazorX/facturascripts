@@ -41,8 +41,40 @@
          </tr>
          <tr>
             <td colspan="4" align="right">
-               <input class="submit" type="submit" value="Guardar"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="rounded">
+   <form action="{$fsc->url()}" method="post">
+      <table class="list">
+         <tr>
+            <th align="left">Descripción</th>
+            <th align="left">Cuenta especial</th>
+            <th align="right">Ejercicio</th>
+            <td align="right" rowspan="2">
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <input class="full" type="text" name="descripcion" value="{$fsc->cuenta->descripcion}" autocomplete="off"/>
+            </td>
+            <td>
+               <select name="idcuentaesp">
+                  <option value="---">Ninguna</option>
+                  <option value="---">---</option>
+                  {loop="$fsc->cuentas_especiales()"}
+                  <option value="{$value->idcuentaesp}"{if condition="$value->idcuentaesp==$fsc->cuenta->idcuentaesp"} selected="selected"{/if}>
+                     {$value->descripcion}
+                  </option>
+                  {/loop}
+               </select>
+            </td>
+            <td align="right"><a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
          </tr>
       </table>
    </form>
@@ -51,38 +83,21 @@
 <div class="rounded">
    <table class="list">
       <tr>
-         <th align="left">Descripción</th>
-         <th>Ejercicio</th>
-         <th align="right">Cuenta especial</th>
-      </tr>
-      <tr>
-         <td>{$fsc->cuenta->descripcion}</td>
-         <td align="center"><a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
-         <td align="right">{$fsc->cuenta->idcuentaesp}</td>
-      </tr>
-   </table>
-</div>
-
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
          <th align="right">Saldo</th>
       </tr>
       {loop="$fsc->cuenta->get_subcuentas()"}
       <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
          <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
          <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
          <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {/loop}
       <tr>
-         <td colspan="5">
+         <td colspan="4">
             <div class="new_line">
                <a id="b_nueva_subcuenta2" href="#">Nueva subcuenta</a>
             </div>

@@ -16,12 +16,10 @@
 
 <form name="f_empresa" action="{$fsc->page->url()}" method="POST">
    <div class="rounded">
-      <h1>
+      <h2 style="margin: 0px 0px 5px 0px;">
+         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
          Datos generales:
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      </h2>
       <div class="bloque">
          Nombre:
          <input type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}" autocomplete="off"/>
@@ -185,7 +183,7 @@
                <a class="link" href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
             </td>
             <td align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -243,7 +241,7 @@
                <a class="delete" href="{$fsc->url()}&delete_logo=TRUE">Eliminar</a>
             </td>
             <td align="right">
-               <input class="submit" type="submit" value="guardar"/>
+               <input class="submit" type="submit" value="Guardar"/>
             </td>
          </tr>
       </table>

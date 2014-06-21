@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Elemento del menú de FacturaScripts.
+ */
 class fs_page extends fs_model
 {
    public $name;
@@ -167,5 +170,3 @@ class fs_page extends fs_model
       return $pagelist;
    }
 }
-
-?>

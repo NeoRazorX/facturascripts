@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una cuenta bancaria de un cliente.
+ */
 class cuenta_banco_cliente extends fs_model
 {
    public $codcliente;

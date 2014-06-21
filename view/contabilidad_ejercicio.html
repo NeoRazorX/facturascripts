@@ -30,29 +30,41 @@
       <input name='archivo' type='hidden' value='TRUE'/>
       Se importarán grupos, epígrafes, cuentas, subcuentas y balances de...
       <br/><br/>
-      <table width="100%">
-         <tr>
-            <td colspan="2">
-               <input type="radio" id="rb_generico" name="fuente" value="generico" checked="checked"/>
-               <label for="rb_generico">Plan General Contable de <b>España</b>.</label>
-            </td>
-         </tr>
-         <tr>
-            <td>
-               <input type="radio" id="rb_archivo" name="fuente" value="archivo"/>
-               <label for="rb_archivo">Un archivo externo:</label>
-               <input name='farchivo' type='file'/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">
-               <input class="submit" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+      <div style="padding: 3px;">
+         <label>
+            <input type="radio" name="fuente" value="espanya" checked="checked" style="vertical-align: bottom;"/>
+            Plan General Contable de <b>España</b>.
+         </label>
+      </div>
+      <div style="padding: 3px;">
+         <label>
+            <input type="radio" name="fuente" value="colombia" style="vertical-align: bottom;"/>
+            Plan General Contable de <b>Colombia</b>.
+         </label>
+      </div>
+      <div style="padding: 3px;">
+         <label>
+            <input type="radio" name="fuente" value="panama" style="vertical-align: bottom;"/>
+            Plan General Contable de <b>Panamá</b>.
+         </label>
+      </div>
+      <div style="padding: 3px;">
+         <label>
+            <input type="radio" name="fuente" value="peru" style="vertical-align: bottom;"/>
+            Plan General Contable de <b>Perú</b>.
+         </label>
+      </div>
+      <div style="padding: 3px;">
+         <input type="radio" id="rb_archivo" name="fuente" value="archivo"/>
+         <label for="rb_archivo">Un archivo externo:</label>
+         <input name='farchivo' type='file' onclick="$('#rb_archivo').prop('checked', true)"/>
+      </div>
+      <div style="text-align: right;">
+         <input class="submit" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
       <div class="grupo">
-         <h2>¿No eres español?</h2>
-         <p>
+         <h2>¿No está tu pais?</h2>
+         <p style="margin: 2px;">
             Pues entonces necesitas el archivo con el Plan Contable de tu país.<br/>
             Haz una cosa, busca en internet algún archivo de excel con el plan contable<br/>
             de tu país y envíamelo a <b>neorazorx@gmail.com</b> para que yo lo adapte<br/>
@@ -73,7 +85,7 @@
             <th align="left">Longitud subcuenta</th>
             <th align="left">Estado</th>
             <td align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
          <tr>
@@ -149,18 +161,16 @@
    <table class="list">
       <tr>
          <th align="left">Grupo</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
       </tr>
       {loop="$fsc->listado"}
       <tr>
          <td>{$value->codgrupo}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a> {$value->descripcion}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="3">
+         <td colspan="2">
             Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
          </td>
       </tr>
@@ -177,18 +187,16 @@
    <table class="list">
       <tr>
          <th align="left">Epígrafe</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
       </tr>
       {loop="$fsc->listado"}
       <tr>
          <td>{$value->codepigrafe}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="3">
+         <td colspan="2">
             Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
          </td>
       </tr>
@@ -205,20 +213,18 @@
    <table class="list">
       <tr>
          <th align="left">Cuenta</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
          <th align="right">Saldo</th>
       </tr>
       {loop="$fsc->listado"}
       <tr>
          <td>{$value->codcuenta}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
          <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="4">
+         <td colspan="3">
             Sin resultados. Debes importar los datos del ejercicio, pulsa el botón <b>importar</b>.
          </td>
       </tr>

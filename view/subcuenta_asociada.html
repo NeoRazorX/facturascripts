@@ -31,7 +31,7 @@
    }
    function select_subcuenta(id,ejercicio,subcuenta,descripcion,debe,haber,saldo)
    {
-      document.f_change_subcuenta.idsc.value = id;
+      document.f_change_subcuenta.idsc2.value = id;
       document.f_change_subcuenta.codejercicio.value = ejercicio;
       document.f_change_subcuenta.codsubcuenta.value = subcuenta;
       document.f_change_subcuenta.descripcion.value = descripcion;
@@ -69,7 +69,7 @@
    <div id="subcuentas"></div>
 </div>
 
-{if condition="$fsc->tipo == 'cli'"}
+{if condition="$fsc->tipo == 'cli' AND $fsc->subcuenta"}
 <div class="rounded">
    <div>
       <a class="button" href="{$fsc->cliente->url()}">&laquo; Volver al cliente</a>
@@ -107,6 +107,7 @@
    <form name="f_change_subcuenta" action="{$fsc->url()}" method="post">
       <input type="hidden" name="cli" value="{$fsc->cliente->codcliente}"/>
       <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
+      <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
       <table class="list">
          <tr>
             <th align="left">Ejercicio</th>
@@ -138,13 +139,83 @@
          </tr>
       </table>
       <div style="text-align: right;">
-         <input class="submit" type="submit" value="guardar"/>
+         <input class="submit" type="submit" value="Guardar"/>
       </div>
    </form>
 </div>
-{elseif condition="$fsc->tipo == 'pro'"}
+{elseif condition="$fsc->tipo == 'pro' AND $fsc->subcuenta"}
 <div class="rounded">
-   <h1>Estas son las subcuentas asociadas a :</h1>
+   <div>
+      <a class="button" href="{$fsc->proveedor->url()}">&laquo; Volver al proveedor</a>
+   </div>
+   <h2 style="margin: 10px 0px 10px 0px;">
+      En el ejercicio {$fsc->subcuenta_a->codejercicio},
+      <a class="link" href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
+      tiene asignada la cuenta...
+   </h2>
+   <table class="list">
+      <tr>
+         <th align="left">Ejercicio</th>
+         <th align="left">Subcuenta + Descripcion</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
+         <th align="right">Saldo</th>
+      </tr>
+      <tr>
+         <td align="left">{$fsc->subcuenta->codejercicio}</td>
+         <td align="left">
+            <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+            {$fsc->subcuenta->descripcion}
+         </td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
+         <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
+      </tr>
+   </table>
+</div>
+
+<div class="rounded">
+   <h2 style="margin: 0px 0px 10px 0px;">
+      Cambiarla por...
+   </h2>
+   <form name="f_change_subcuenta" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="pro" value="{$fsc->proveedor->codproveedor}"/>
+      <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
+      <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
+      <table class="list">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Subcuenta</th>
+            <th align="left">Descripcion</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         <tr>
+            <td>
+               <input class="full" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
+            </td>
+            <td>
+               <input id="codsubcuenta" class="full" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
+            </td>
+            <td>
+               <input class="full" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
+            </td>
+         </tr>
+      </table>
+      <div style="text-align: right;">
+         <input class="submit" type="submit" value="Guardar"/>
+      </div>
+   </form>
 </div>
 {else}
 <div class="rounded" style="text-align: center;">

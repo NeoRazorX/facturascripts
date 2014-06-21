@@ -25,6 +25,9 @@ require_model('factura_cliente.php');
 require_model('subcuenta.php');
 require_model('subcuenta_cliente.php');
 
+/**
+ * El cliente. Puede tener una o varias direcciones y subcuentas asociadas.
+ */
 class cliente extends fs_model
 {
    public $codcliente;
@@ -386,5 +389,3 @@ class cliente extends fs_model
       return $clilist;
    }
 }
-
-?>

@@ -154,7 +154,10 @@ class contabilidad_nuevo_asiento extends fs_controller
                }
                
                if( $continuar )
+               {
                   $this->new_message("<a href='".$this->asiento->url()."'>Asiento</a> guardado correctamente!");
+                  $this->new_change('Asiento<br/>'.$this->asiento->numero, $this->asiento->url(), TRUE);
+               }
                else
                {
                   if( $this->asiento->delete() )

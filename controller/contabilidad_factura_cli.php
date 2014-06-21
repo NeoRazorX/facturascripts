@@ -45,10 +45,11 @@ class contabilidad_factura_cli extends fs_controller
       $this->ppage = $this->page->get('contabilidad_facturas_cli');
       $this->ejercicio = new ejercicio();
       
+      $this->factura = FALSE;
       if( isset($_POST['idfactura']) )
       {
-         $this->factura = new factura_cliente();
-         $this->factura = $this->factura->get($_POST['idfactura']);
+         $factura = new factura_cliente();
+         $this->factura = $factura->get($_POST['idfactura']);
          $this->factura->observaciones = $_POST['observaciones'];
          
          $this->cambiar_numero_factura();
@@ -70,6 +71,7 @@ class contabilidad_factura_cli extends fs_controller
                   $this->new_error_msg("Imposible modificar la fecha del asiento.");
             }
             $this->new_message("Factura modificada correctamente.");
+            $this->new_change('Factura Cliente<br/>'.$this->factura->codigo, $this->factura->url());
          }
          else
             $this->new_error_msg("¡Imposible modificar la factura!");
@@ -671,5 +673,3 @@ class contabilidad_factura_cli extends fs_controller
       }
    }
 }
-
-?>

@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Relaciona a un cliente con una subcuenta para cada ejercicio
+ */
 class subcuenta_cliente extends fs_model
 {
    public $codcliente;

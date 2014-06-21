@@ -338,8 +338,8 @@
       <table width="100%">
          <tr>
             <td>
-               <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-               <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+               <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+               <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
             </td>
             <td align="center">
                <label>
@@ -379,6 +379,9 @@
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <div class="rounded">
       <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
+      <div class="pull_right">
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
          <a class="link" href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
@@ -394,9 +397,6 @@
          {else}
          <a class="link" href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
          {/if}
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
       </h1>
       <div class="bloque">Número: {$fsc->albaran->numero}</div>
       <div class="bloque">
@@ -505,7 +505,7 @@
             <th>Anterior</th>
             <th>Nuevo</th>
             <td rowspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
          <tr>

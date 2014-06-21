@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Botón de la cabecera.
+ */
 class fs_button
 {
    public $id;
@@ -43,6 +46,10 @@ class fs_button
    }
 }
 
+
+/**
+ * Botón de la cabecera con imagen.
+ */
 class fs_button_img extends fs_button
 {
    public $img;
@@ -72,5 +79,3 @@ class fs_button_img extends fs_button
               "<img src='view/img/".$this->img."' alt='".$this->img."'/> ".$this->value."</a>";
    }
 }
-
-?>

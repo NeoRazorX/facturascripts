@@ -93,7 +93,7 @@ div.bottom_frame a {
    border-top: 1px solid #424242;
    border-left: 1px solid #424242;
    border-right: 1px solid #424242;
-   box-shadow: 2px 2px 2px #333;
+   box-shadow: 2px 2px 2px #555;
    color: black;
    text-decoration: none;
    font-size: 15px;
@@ -122,9 +122,9 @@ div.popup {
    padding: 10px;
    background-color: #f1f1f1;
    color: black;
-   border-radius: 5px;
+   border-radius: 3px;
    border: 2px solid silver;
-   box-shadow: 10px 10px 10px #333;
+   box-shadow: 5px 5px 5px #555;
    text-align: left;
 }
 

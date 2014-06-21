@@ -47,11 +47,11 @@ class general_articulo extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_articulos');
+      $articulo = new articulo();
       
       if( isset($_POST['pvpiva']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_POST['referencia']);
+         $this->articulo = $articulo->get($_POST['referencia']);
          if($this->articulo)
          {
             $continuar = TRUE;
@@ -95,8 +95,7 @@ class general_articulo extends fs_controller
       }
       else if( isset($_POST['almacen']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_POST['referencia']);
+         $this->articulo = $articulo->get($_POST['referencia']);
          if($this->articulo)
          {
             if( $this->articulo->set_stock($_POST['almacen'], $_POST['cantidad']) )
@@ -107,8 +106,7 @@ class general_articulo extends fs_controller
       }
       else if( isset($_POST['imagen']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_POST['referencia']);
+         $this->articulo = $articulo->get($_POST['referencia']);
          if(is_uploaded_file($_FILES['fimagen']['tmp_name']) AND $_FILES['fimagen']['size'] <= 1024000)
          {
             $this->articulo->set_imagen( file_get_contents($_FILES['fimagen']['tmp_name']) );
@@ -120,8 +118,7 @@ class general_articulo extends fs_controller
       }
       else if( isset($_GET['delete_img']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_GET['ref']);
+         $this->articulo = $articulo->get($_GET['ref']);
          $this->articulo->set_imagen(NULL);
          if( $this->articulo->save() )
                $this->new_message("Imagen del articulo eliminada correctamente");
@@ -130,8 +127,7 @@ class general_articulo extends fs_controller
       }
       else if( isset($_POST['referencia']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_POST['referencia']);
+         $this->articulo = $articulo->get($_POST['referencia']);
          $this->articulo->descripcion = $_POST['descripcion'];
          $this->articulo->codfamilia = $_POST['codfamilia'];
          $this->articulo->codbarras = $_POST['codbarras'];
@@ -146,18 +142,22 @@ class general_articulo extends fs_controller
          $this->articulo->stockmin = $_POST['stockmin'];
          $this->articulo->stockmax = $_POST['stockmax'];
          if( $this->articulo->save() )
+         {
             $this->new_message("Datos del articulo modificados correctamente");
+            $this->articulo->set_referencia($_POST['nreferencia']);
+         }
          else
             $this->new_error_msg("¡Error al guardar el articulo!");
       }
       else if( isset($_GET['ref']) )
       {
-         $this->articulo = new articulo();
-         $this->articulo = $this->articulo->get($_GET['ref']);
+         $this->articulo = $articulo->get($_GET['ref']);
       }
       
       if( $this->articulo AND isset($_POST['buscar']) )
+      {
          $this->buscar();
+      }
       else if($this->articulo)
       {
          $this->page->title = $this->articulo->referencia;

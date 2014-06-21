@@ -1,0 +1,33 @@
+.chart{	font-family:Lato, "Open Sans";	font-size:18px;	color:#333;}
+.chart2{	font-family:Lato, "Open Sans";	font-size:18px;	color:#333;}
+.chart3{	font-family:Lato, "Open Sans";	font-size:18px;	color:#333;}
+
+.charttext{
+text-align:center;
+font-family:"Open Sans";
+Font-Size:18px;
+font-weight:400;
+color:#ffffff;
+
+}
+
+.easyPieChart {
+    position: relative;
+    text-align: center;
+}
+
+.easyPieChart canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+.piedark{color:#222;}
+.charttext2{
+text-align:center;
+font-family:"Open Sans";
+Font-Size:18px;
+font-weight:400;
+color:#222;
+}

@@ -20,6 +20,9 @@
 require_once 'base/fs_model.php';
 require_model('subcuenta.php');
 
+/**
+ * Entidad bancaria.
+ */
 class banco extends fs_model
 {
    public $entidad;
@@ -142,6 +145,9 @@ class banco extends fs_model
    }
 }
 
+/**
+ * La sucursal de un banco. Está relacionada con un único banco.
+ */
 class sucursal extends fs_model
 {
    public $observaciones;
@@ -272,6 +278,9 @@ class sucursal extends fs_model
    }
 }
 
+/**
+ * Cuenta bancaria de la empresa en un banco y sucursal concreta.
+ */
 class cuenta_banco extends fs_model
 {
    public $sufijo;
@@ -389,5 +398,3 @@ class cuenta_banco extends fs_model
       return $clist;
    }
 }
-
-?>

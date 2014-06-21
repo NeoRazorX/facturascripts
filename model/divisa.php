@@ -19,11 +19,24 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
+ */
 class divisa extends fs_model
 {
    public $coddivisa;
    public $descripcion;
+   
+   /**
+    * Tasa de conversión respecto al euro.
+    * @var type 
+    */
    public $tasaconv;
+   
+   /**
+    * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
+    * @var type
+    */
    public $codiso;
    public $simbolo;
 
@@ -63,6 +76,8 @@ class divisa extends fs_model
          VALUES ('ARS','PESOS (ARG)','10.83','32','$');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('CLP','PESOS (CLP)','755.73','152','$');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('COP','PESOS (COP)','2573','170','$');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('USD','DÓLARES EE.UU.','1.36','840','$');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
@@ -178,5 +193,3 @@ class divisa extends fs_model
       return $listad;
    }
 }
-
-?>

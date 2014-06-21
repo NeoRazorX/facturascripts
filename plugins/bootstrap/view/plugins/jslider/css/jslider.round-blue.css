@@ -1,0 +1,18 @@
+
+  .jslider_round .jslider-bg i,
+  .jslider_round .jslider-pointer { background-image: url(../img/jslider.round-blue.png); }
+
+  .jslider_round .jslider-pointer { width: 17px; height: 17px; top: -6px; margin-left: -8px; }
+ 
+ 
+ .jslider-pointer:nth-child(2){display:none;}
+ 
+ .jslider-value span{display:none;}
+ .jslider-value-to span{display:block; }
+ 
+ .jslider-label-to span{display:none; }
+
+ .jslider-label span{display:none;}
+
+ 
+ 

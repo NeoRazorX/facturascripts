@@ -21,6 +21,9 @@ require_once 'base/fs_model.php';
 require_model('articulo.php');
 require_model('proveedor.php');
 
+/**
+ * Una familia de artículos (el equivalente a la marca del artículo).
+ */
 class familia extends fs_model
 {
    public $codfamilia;
@@ -207,5 +210,3 @@ class familia extends fs_model
       return $provelist;
    }
 }
-
-?>

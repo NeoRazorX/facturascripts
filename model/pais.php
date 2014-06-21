@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Un país, por ejemplo España.
+ */
 class pais extends fs_model
 {
    public $codiso;
@@ -51,6 +54,7 @@ class pais extends fs_model
       return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');".
            "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ARG','Argentina',NULL,'');".
            "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('CHL','Chile',NULL,'');".
+           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('COL','Colombia',NULL,'');".
            "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ECU','Ecuador',NULL,'');".
            "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('MEX','México',NULL,'');".
            "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('PAN','Panamá',NULL,'');".
@@ -149,5 +153,3 @@ class pais extends fs_model
       return $listap;
    }
 }
-
-?>

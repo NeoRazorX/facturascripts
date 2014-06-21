@@ -25,36 +25,99 @@ else
 require_once 'base/fs_button.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_default_items.php';
-require_once 'model/fs_access.php';
-require_once 'model/fs_page.php';
-require_once 'model/fs_user.php';
+require_once 'base/fs_model.php';
 
 require_model('agente.php');
 require_model('divisa.php');
 require_model('empresa.php');
+require_model('fs_access.php');
+require_model('fs_page.php');
+require_model('fs_user.php');
 
+/**
+ * La clase principal de la que deben heredar todos los controladores
+ * (las páginas) de FacturaScripts.
+ */
 class fs_controller
 {
+   /**
+    * Este objeto permite acceso directo a la base de datos.
+    * @var type es una instancia de fs_mysql o fs_postgresql
+    */
    protected $db;
    private $uptime;
    private $errors;
    private $messages;
    private $advices;
+   private $last_changes;
    private $simbolo_divisas;
+   
+   /**
+    * El usuario que ha hecho login
+    * @var type 
+    */
    public $user;
+   
+   /**
+    * El elemento del menú de esta página
+    * @var type 
+    */
    public $page;
+   
+   /**
+    * La página previa (si está definida)
+    * @var type 
+    */
    public $ppage;
    private $admin_page;
    protected $menu;
+   
+   /**
+    * Indica que archivo HTML hay que cargar
+    * @var type 
+    */
    public $template;
    public $css_file;
+   
+   /**
+    * TRUE si queremos mostrar el cuadro de búsqueda.
+    * @var type 
+    */
    public $custom_search;
+   
+   /**
+    * La cadena obtenida del formulario de búsqueda
+    * @var type 
+    */
    public $query;
+   
+   /**
+    * Lista de botones que aparecen en la parte superior de la cabecera
+    * @var type 
+    */
    public $buttons;
+   
+   /**
+    * La empresa
+    * @var type 
+    */
    public $empresa;
    public $default_items;
+   
+   /**
+    * Este objeto permite interactuar con memcache
+    * @var type 
+    */
    protected $cache;
    
+   /**
+    * @param type $name sustituir por __CLASS__
+    * @param type $title es el título de la página, y el texto que aparecerá en el menú
+    * @param type $folder es el menú dónde quieres colocar el acceso directo
+    * @param type $admin debe ser TRUE si quieres que solamente un administrador pueda ver esta página
+    * @param type $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
+    * @param type $important debe ser TRUE si quieres que se la primera página que ven los nuevos usuarios
+    */
    public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE, $important=FALSE)
    {
       $tiempo = explode(' ', microtime());
@@ -168,22 +231,37 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve la versión de FacturaScripts
+    * @return type versión de FacturaScripts
+    */
    public function version()
    {
       return file_get_contents('VERSION');
    }
    
+   /**
+    * Cierra la conexión con la base de datos
+    */
    public function close()
    {
       $this->db->close();
    }
    
+   /**
+    * Muestra al usuario un mensaje de error
+    * @param type $msg el mensaje a mostrar
+    */
    public function new_error_msg($msg=FALSE)
    {
       if( $msg )
          $this->errors[] = $msg;
    }
    
+   /**
+    * Devuelve la lista de errores
+    * @return type lista de errores
+    */
    public function get_errors()
    {
       $full = array_merge( $this->errors, $this->db->get_errors() );
@@ -194,35 +272,57 @@ class fs_controller
       return $full;
    }
    
+   /**
+    * Muestra un mensaje al usuario
+    * @param type $msg mensaje a mostrar
+    */
    public function new_message($msg=FALSE)
    {
       if( $msg )
          $this->messages[] = $msg;
    }
    
+   /**
+    * Devuelve la lista de mensajes
+    * @return type lista de mensajes
+    */
    public function get_messages()
    {
       return $this->messages;
    }
    
+   /**
+    * Muestra un consejo al usuario
+    * @param type $msg el consejo a mostrar
+    */
    public function new_advice($msg=FALSE)
    {
       if( $msg )
          $this->advices[] = $msg;
    }
    
+   /**
+    * Devuelve la lista de consejos
+    * @return type lista de consejos
+    */
    public function get_advices()
    {
       return $this->advices;
    }
    
+   /**
+    * Devuelve la URL de esta página (index.php?page=LO-QUE-SEA)
+    * @return type
+    */
    public function url()
    {
       return $this->page->url();
    }
    
-   /*
+   /**
     * Una IP será baneada si falla más de 5 intentos de login en menos de 10 minutos
+    * @param type $ips es un array de IP;intentos;hora
+    * @return boolean
     */
    private function ip_baneada(&$ips)
    {
@@ -254,8 +354,9 @@ class fs_controller
       return $baneada;
    }
    
-   /*
+   /**
     * Baneamos las IPs que fallan más de 5 intentos de login en 10 minutos
+    * @param type $ips es un array de IP;intentos;hora
     */
    private function banear_ip(&$ips)
    {
@@ -282,6 +383,10 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve TRUE si el usuario realmente tiene acceso a esta página
+    * @return type
+    */
    private function log_in()
    {
       $ips = array();
@@ -367,10 +472,9 @@ class fs_controller
                $this->user = $user;
                $this->load_menu();
             }
-            else
+            else if( !is_null($user->log_key) )
             {
-               $this->new_message('¡Cookie no válida! Tú o alguien ha accedido
-                  a esta cuenta desde otro PC.');
+               $this->new_message('¡Cookie no válida! Tú o alguien ha accedido a esta cuenta desde otro PC.');
                $this->log_out();
             }
          }
@@ -386,32 +490,55 @@ class fs_controller
       return $this->user->logged_on;
    }
    
+   /**
+    * Gestiona el cierre de sesión
+    */
    private function log_out()
    {
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
    }
    
+   /**
+    * Devuelve la duración de la ejecución de la página
+    * @return type un string con la duración de la ejecución
+    */
    public function duration()
    {
       $tiempo = explode(" ", microtime());
       return (number_format($tiempo[1] + $tiempo[0] - $this->uptime, 3) . ' s');
    }
    
+   /**
+    * Devuelve el número de consultas SQL (SELECT) que se han ejecutado
+    * @return type
+    */
    public function selects()
    {
       return $this->db->get_selects();
    }
    
+   /**
+    * Devuleve el número de transacciones SQL que se han ejecutado
+    * @return type
+    */
    public function transactions()
    {
       return $this->db->get_transactions();
    }
    
+   /**
+    * Devuelve el listado de consultas SQL que se han ejecutados
+    * @return type lista de consultas SQL
+    */
    public function get_db_history()
    {
       return $this->db->get_history();
    }
    
+   /**
+    * Carga el menú de facturaScripts
+    * @param type $reload TRUE si quieres recargar
+    */
    protected function load_menu($reload=FALSE)
    {
       $this->menu = $this->user->get_menu($reload);
@@ -429,6 +556,10 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve la lista de menús
+    * @return type lista de menús
+    */
    public function folders()
    {
       $folders = array();
@@ -440,6 +571,11 @@ class fs_controller
       return $folders;
    }
    
+   /**
+    * Devuelve la lista de elementos de un menú seleccionado
+    * @param type $f el menú seleccionado
+    * @return type lista de elementos del menú
+    */
    public function pages($f='')
    {
       $pages = array();
@@ -451,11 +587,18 @@ class fs_controller
       return $pages;
    }
    
+   /**
+    * Esta es la función que se ejecuta en el constructor si, y sólo si,
+    * el usuario realmente tiene acceso a la página
+    */
    protected function process()
    {
       
    }
    
+   /**
+    * Redirecciona a la página predeterminada para el usuario
+    */
    public function select_default_page()
    {
       if( $this->db->connected() )
@@ -491,6 +634,9 @@ class fs_controller
       }
    }
    
+   /**
+    * Selecciona la hoja de estilos
+    */
    private function set_css_file()
    {
       if( isset($_GET['css_file']) )
@@ -521,11 +667,21 @@ class fs_controller
          $this->css_file = 'base.css';
    }
    
+   /**
+    * Devuelve TRUE si la página sólo es accesible para administradores
+    * @return type TRUE si la página sólo es accesible para administradores
+    */
    public function is_admin_page()
    {
       return $this->admin_page;
    }
    
+   /**
+    * Establecemos los elementos por defecto, pero no se guardan.
+    * Para guardarlos hay que usar las funciones fs_controller::save_lo_que_sea().
+    * La clase fs_default_items sólo se usa para indicar valores
+    * por defecto a los modelos.
+    */
    private function set_default_items()
    {
       /// gestionamos la página de inicio
@@ -541,12 +697,6 @@ class fs_controller
       if( is_null($this->default_items->showing_page()) )
          $this->default_items->set_showing_page( $this->page->name );
       
-      /*
-       * Establecemos los elementos por defecto, pero no se guardan.
-       * Para guardarlos hay que usar las funciones fs_controller::save_lo_que_sea().
-       * La clase fs_default_items sólo se usa para indicar valores
-       * por defecto a los modelos.
-       */
       $this->default_items->set_codejercicio( $this->user->codejercicio );
       
       if( isset($_COOKIE['default_almacen']) )
@@ -587,6 +737,10 @@ class fs_controller
          $this->default_items->set_codserie( $this->empresa->codserie );
    }
    
+   /**
+    * Establece un ejercicio como predeterminado para este usuario
+    * @param type $cod el código del ejercicio
+    */
    protected function save_codejercicio($cod)
    {
       if($cod != $this->user->codejercicio)
@@ -601,77 +755,126 @@ class fs_controller
       }
    }
    
+   /**
+    * Establece un almacén como predeterminado para este usuario
+    * @param type $cod el código del almacén
+    */
    protected function save_codalmacen($cod)
    {
       setcookie('default_almacen', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codalmacen($cod);
    }
    
+   /**
+    * Establece un cliente como predeterminado para este usuario
+    * @param type $cod el código del cliente
+    */
    protected function save_codcliente($cod)
    {
       setcookie('default_cliente', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codcliente($cod);
    }
    
+   /**
+    * Establece una divisa como predeterminada para este usuario
+    * @param type $cod el código de la divisa
+    */
    protected function save_coddivisa($cod)
    {
       setcookie('default_divisa', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_coddivisa($cod);
    }
    
+   /**
+    * Establece una familia como predeterminada para este usuario
+    * @param type $cod el código de la familia
+    */
    protected function save_codfamilia($cod)
    {
       setcookie('default_familia', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codfamilia($cod);
    }
    
+   /**
+    * Establece una forma de pago como predeterminada para este usuario
+    * @param type $cod el código de la forma de pago
+    */
    protected function save_codpago($cod)
    {
       setcookie('default_formapago', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codpago($cod);
    }
    
+   /**
+    * Establece un impuesto (IVA) como predeterminado para este usuario
+    * @param type $cod el código del iumpuesto
+    */
    protected function save_codimpuesto($cod)
    {
       setcookie('default_impuesto', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codimpuesto($cod);
    }
    
+   /**
+    * Establece un código de país como predeterminado para este usuario
+    * @param type $cod el código del país
+    */
    protected function save_codpais($cod)
    {
       setcookie('default_pais', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codpais($cod);
    }
    
+   /**
+    * Establece un proveedor como predeterminado para este usuario
+    * @param type $cod el código del proveedor
+    */
    protected function save_codproveedor($cod)
    {
       setcookie('default_proveedor', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codproveedor($cod);
    }
    
+   /**
+    * Establece una serie como predeterminada para este usuario
+    * @param type $cod el código de la serie
+    */
    protected function save_codserie($cod)
    {
       setcookie('default_serie', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codserie($cod);
    }
    
+   /**
+    * Devuelve la fecha actual
+    * @return type la fecha en formato día-mes-año
+    */
    public function today()
    {
       return date('d-m-Y');
    }
    
+   /**
+    * Devuelve la hora actual
+    * @return type la hora en formato hora:minutos:segundos
+    */
    public function hour()
    {
       return Date('H:i:s');
    }
    
+   /**
+    * Devuelve un string aleatorio de longitud $length
+    * @param type $length la longitud del string
+    * @return type la cadena aleatoria
+    */
    public function random_string($length = 30)
    {
       return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
               0, $length);
    }
    
-   /*
+   /**
     * He detectado que algunos navegadores, en algunos casos, envían varias veces la
     * misma petición del formulario. En consecuencia se crean varios modelos (asientos,
     * albaranes, etc...) con los mismos datos, es decir, duplicados.
@@ -679,6 +882,8 @@ class fs_controller
     * de texto aleatoria. Al llamar a esta función se comprueba si esa cadena
     * ya ha sido almacenada, de ser así devuelve TRUE, así no hay que gabar los datos,
     * si no, se almacena el ID y se devuelve FALSE.
+    * @param type $id el identificador de la petición
+    * @return boolean TRUE si la petición está duplicada
     */
    protected function duplicated_petition($id)
    {
@@ -693,6 +898,10 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve información del sistema para el informe de errores
+    * @return type la información del sistema
+    */
    public function system_info()
    {
       $txt = 'facturascripts: '.$this->version()."\n";
@@ -717,6 +926,12 @@ class fs_controller
       return str_replace('"', "'", $txt);
    }
    
+   /**
+    * Devuelve el símbolo de divisa predeterminado
+    * o bien el símbolo de la divisa seleccionada.
+    * @param type $coddivisa
+    * @return string
+    */
    public function simbolo_divisa($coddivisa = FALSE)
    {
       if(!$coddivisa)
@@ -738,6 +953,15 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve un string con el precio en el formato predefinido y con la
+    * divisa seleccionada (o la predeterminada).
+    * 
+    * @param type $precio
+    * @param type $coddivisa
+    * @param type $simbolo
+    * @return type
+    */
    public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
    {
       if($coddivisa === FALSE)
@@ -759,6 +983,13 @@ class fs_controller
       }
    }
    
+   /**
+    * Devuelve un string con el número en el formato de número predeterminado.
+    * @param type $num
+    * @param type $decimales
+    * @param type $js
+    * @return type
+    */
    public function show_numero($num=0, $decimales=FS_NF0, $js=FALSE)
    {
       if($js)
@@ -766,6 +997,53 @@ class fs_controller
       else
          return number_format($num, $decimales, FS_NF1, FS_NF2);
    }
+   
+   /**
+    * Añade un elemento a la lista de cambios del usuario.
+    * @param type $txt texto descriptivo.
+    * @param type $url URL del elemento (albarán, factura, artículos...).
+    * @param type $nuevo TRUE si el elemento es nuevo, FALSE si se ha modificado.
+    */
+   public function new_change($txt, $url, $nuevo=FALSE)
+   {
+      $this->get_last_changes();
+      if( count($this->last_changes) > 0 )
+      {
+         if($this->last_changes[0]['url'] == $url)
+            $this->last_changes[0]['nuevo'] = $nuevo;
+         else
+            array_unshift($this->last_changes, array('texto' => $txt, 'url' => $url, 'nuevo' => $nuevo) );
+      }
+      else
+         array_unshift($this->last_changes, array('texto' => $txt, 'url' => $url, 'nuevo' => $nuevo) );
+      
+      /// sólo queremos 10 elementos
+      $num = 10;
+      foreach($this->last_changes as $i => $value)
+      {
+         if($num > 0)
+         {
+            $num--;
+         }
+         else
+         {
+            unset($this->last_changes[$i]);
+         }
+      }
+      
+      $this->cache->set('last_changes_'.$this->user->nick, $this->last_changes);
+   }
+   
+   /**
+    * Devuelve la lista con los últimos cambios del usuario.
+    */
+   public function get_last_changes()
+   {
+      if( !isset($this->last_changes) )
+      {
+         $this->last_changes = $this->cache->get_array('last_changes_'.$this->user->nick);
+      }
+      
+      return $this->last_changes;
+   }
 }
-
-?>

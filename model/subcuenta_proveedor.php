@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Relaciona a un proveedor con una subcuenta para cada ejercicio
+ */
 class subcuenta_proveedor extends fs_model
 {
    public $codproveedor;
@@ -64,7 +67,7 @@ class subcuenta_proveedor extends fs_model
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($pro)."
          AND idsubcuenta = ".$this->var2str($idsc).";");
       if($data)
-         return new subcuenta_cliente($data[0]);
+         return new subcuenta_proveedor($data[0]);
       else
          return FALSE;
    }

@@ -26,6 +26,9 @@ require_model('factura_cliente.php');
 require_model('linea_albaran_cliente.php');
 require_model('secuencia.php');
 
+/**
+ * Albarán (boceto de factura o factura preliminar) de cliente
+ */
 class albaran_cliente extends fs_model
 {
    public $idalbaran;

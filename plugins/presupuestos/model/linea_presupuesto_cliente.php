@@ -1,0 +1,100 @@
+<?php
+
+require_once 'base/fs_model.php';
+
+class linea_presupuesto_cliente extends fs_model
+{
+   public $pvptotal;
+   public $idpresupuesto;
+   public $cantidad;
+   public $descripcion;
+   public $idlinea;
+   public $codimpuesto;
+   public $iva;
+   public $dtopor;
+   public $pvpsindto;
+   public $pvpunitario;
+   public $referencia;
+   
+   public function __construct($l = FALSE)
+   {
+      parent::__construct('lineaspresupuestoscli', 'plugins/presupuestos/');
+      
+      if($l)
+      {
+         $this->cantidad = floatval($l['cantidad']);
+         $this->codimpuesto = $l['codimpuesto'];
+         $this->descripcion = $l['descripcion'];
+         $this->dtopor = floatval($l['dtopor']);
+         $this->idlinea = $l['idlinea'];
+         $this->idpresupuesto = $l['idpresupuesto'];
+         $this->iva = floatval($l['iva']);
+         $this->pvpsindto = floatval($l['pvpsindto']);
+         $this->pvptotal = floatval($l['pvptotal']);
+         $this->pvpunitario = floatval($l['pvpunitario']);
+         $this->referencia = $l['referencia'];
+      }
+      else
+      {
+         $this->cantidad = 0;
+         $this->codimpuesto = NULL;
+         $this->descripcion = NULL;
+         $this->dtopor = 0;
+         $this->idlinea = NULL;
+         $this->idpresupuesto = NULL;
+         $this->iva = 0;
+         $this->pvpsindto = 0;
+         $this->pvptotal = 0;
+         $this->pvpunitario = 0;
+         $this->referencia = NULL;
+      }
+   }
+   
+   protected function install()
+   {
+      return '';
+   }
+   
+   public function url()
+   {
+      if( is_null($this->idpresupuesto) )
+         return 'index.php?page=ver_presupuesto_cli';
+      else
+         return 'index.php?page=ver_presupuesto_cli&id='.$this->idpresupuesto;
+   }
+   
+   public function exists()
+   {
+      
+   }
+   
+   public function test()
+   {
+      
+   }
+   
+   public function save()
+   {
+      
+   }
+   
+   public function delete()
+   {
+      
+   }
+   
+   public function all_from_presupuesto($idp)
+   {
+      $plist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idpresupuesto = ".$this->var2str($idp)." ORDER BY referencia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $plist[] = new linea_presupuesto_cliente($d);
+      }
+      
+      return $plist;
+   }
+}

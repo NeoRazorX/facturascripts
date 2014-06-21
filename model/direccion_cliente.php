@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una dirección de un cliente. Puede tener varias.
+ */
 class direccion_cliente extends fs_model
 {
    public $id;
@@ -152,5 +155,3 @@ class direccion_cliente extends fs_model
       return $dirlist;
    }
 }
-
-?>

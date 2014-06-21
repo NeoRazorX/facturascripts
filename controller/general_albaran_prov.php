@@ -319,7 +319,10 @@ class general_albaran_prov extends fs_controller
       }
       
       if( $this->albaran->save() )
+      {
          $this->new_message(FS_ALBARAN." modificado correctamente.");
+         $this->new_change(FS_ALBARAN.' Proveedor<br/>'.$this->albaran->codigo, $this->albaran->url());
+      }
       else
          $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
    }
@@ -396,7 +399,9 @@ class general_albaran_prov extends fs_controller
             $this->albaran->idfactura = $factura->idfactura;
             $this->albaran->ptefactura = FALSE;
             if( $this->albaran->save() )
+            {
                $this->generar_asiento($factura);
+            }
             else
             {
                $this->new_error_msg("¡Imposible vincular el ".FS_ALBARAN." con la nueva factura!");
@@ -424,7 +429,10 @@ class general_albaran_prov extends fs_controller
       $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )
+      {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+         $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+      }
       else if( !$subcuenta_prov )
       {
          $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
@@ -510,11 +518,14 @@ class general_albaran_prov extends fs_controller
                }
             }
             
-            if( $asiento_correcto )
+            if($asiento_correcto)
             {
                $factura->idasiento = $asiento->idasiento;
                if( $factura->save() )
+               {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+                  $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+               }
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }
@@ -581,5 +592,3 @@ class general_albaran_prov extends fs_controller
       $this->new_message('Precios actualizados.');
    }
 }
-
-?>

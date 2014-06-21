@@ -29,7 +29,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -39,13 +39,12 @@
 {loop="$fsc->pais->all()"}
 <div class="rounded">
    <form action="{$fsc->url()}" method="POST">
-      <h1>
-         Código: {$value->codpais}
-         <span>
-            <a class="delete" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">eliminar</a> &nbsp;
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <div class="pull_right">
+         <a class="delete" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">eliminar</a>
+         &nbsp;
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>Código: {$value->codpais}</h1>
       Nombre del país:
       <input type="hidden" name="scodpais" value="{$value->codpais}"/>
       <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>

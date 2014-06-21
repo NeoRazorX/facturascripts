@@ -25,6 +25,9 @@ require_model('impuesto.php');
 require_model('tarifa_articulo.php');
 require_model('stock.php');
 
+/**
+ * Representa el artículo que se vende o compra.
+ */
 class articulo extends fs_model
 {
    public $referencia;
@@ -251,13 +254,13 @@ class articulo extends fs_model
     * Devuelve un array con las tarifas asignadas a ese artículo.
     * Si todas = TRUE -> devuelve además las que no están asignadas.
     */
-   public function get_tarifas($todas=FALSE)
+   public function get_tarifas($todas = FALSE)
    {
       $tarifa = new tarifa();
       $tarifas = $tarifa->all();
       $tarifa_articulo = new tarifa_articulo();
-      $tas = $tarifa_articulo->all_from_articulo( $this->referencia );
-      if( $todas )
+      $tas = $tarifa_articulo->all_from_articulo($this->referencia);
+      if($todas)
       {
          foreach($tarifas as $t)
          {
@@ -270,7 +273,7 @@ class articulo extends fs_model
                   break;
                }
             }
-            if( !$encontrada )
+            if(!$encontrada)
             {
                /// añadimos las tarifas que no tiene asignadas
                $tas[] = new tarifa_articulo( array('id' => NULL, 'codtarifa' => $t->codtarifa,
@@ -283,7 +286,7 @@ class articulo extends fs_model
       {
          foreach($tarifas as $t)
          {
-            if( $t->codtarifa == $ta->codtarifa )
+            if($t->codtarifa == $ta->codtarifa)
             {
                $ta->nombre = $t->nombre;
                $ta->pvp = $this->pvp;
@@ -376,6 +379,28 @@ class articulo extends fs_model
       $this->pvp_ant = $this->pvp;
       $this->factualizado = Date('d-m-Y');
       $this->pvp = round((100*$p)/(100+$this->get_iva()), 3);
+   }
+   
+   public function set_referencia($ref)
+   {
+      $ref = str_replace(' ', '_', trim($ref));
+      if( !preg_match("/^[A-Z0-9_\+\.\*\/\-]{1,18}$/i", $ref) )
+      {
+         $this->new_error_msg("¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.
+            Se admiten letras, números, '_', '.', '*', '/' ó '-'.");
+      }
+      else if($ref != $this->referencia)
+      {
+         $sql = "UPDATE ".$this->table_name." SET referencia = ".$this->var2str($ref)." WHERE referencia = ".$this->var2str($this->referencia).";";
+         if( $this->db->exec($sql) )
+         {
+            $this->referencia = $ref;
+         }
+         else
+         {
+            $this->new_error_msg('Imposible modificar la referencia.');
+         }
+      }
    }
    
    public function set_impuesto($codimpuesto)
@@ -486,8 +511,20 @@ class articulo extends fs_model
       return $result;
    }
    
+   /**
+    * Esta función devuelve TRUE si el artículo ya existe en la base de datos.
+    * Por motivos de rendimiento y al ser esta una clase de uso intensivo,
+    * se utiliza la variable $this->exists para almacenar el resultado.
+    * @return type
+    */
    public function exists()
    {
+      if( !$this->exists )
+      {
+         if( $this->db->select("SELECT referencia FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";") )
+            $this->exists = TRUE;
+      }
+      
       return $this->exists;
    }
    

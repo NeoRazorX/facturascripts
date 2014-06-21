@@ -21,6 +21,9 @@ require_once 'base/fs_model.php';
 require_model('articulo.php');
 require_model('tarifa.php');
 
+/**
+ * El precio concreto de un artículo en una tarifa determinada.
+ */
 class tarifa_articulo extends fs_model
 {
    public $id;
@@ -147,5 +150,3 @@ class tarifa_articulo extends fs_model
       return $tarlist;
    }
 }
-
-?>

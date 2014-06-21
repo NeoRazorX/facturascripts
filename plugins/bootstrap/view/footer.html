@@ -1,0 +1,18 @@
+   {if condition="$db_history"}
+   <div class="well well-sm">
+      <h1>Consultas SQL:</h1>
+      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   </div>
+   {/if}
+   </div>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-md-12" style="text-align: center; margin-top: 20px;">
+            Consultas: {$fsc->selects()} |
+            Transacciones: {$fsc->transactions()} |
+            Procesado en: {$fsc->duration()}
+         </div>
+      </div>
+   </div>
+</body>
+</html>

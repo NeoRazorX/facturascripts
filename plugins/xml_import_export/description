@@ -1,2 +1,3 @@
 Este plugin permite exportar a XML los datos de una consulta, así como importar esos
-datos a una tabla.
+datos a una tabla. Con el puedes importar datos en FacturaScripts o exportarlos
+a otras bases de datos o programas.

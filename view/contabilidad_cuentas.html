@@ -52,7 +52,7 @@
    <table width="100%">
       <tr>
          <td>
-            <a class="button" href="index.php?page=contabilidad_epigrafes">&lt; grupos y epígrafes</a>
+            <a class="button" href="index.php?page=contabilidad_epigrafes">&lt; Grupos y epígrafes</a>
          </td>
          <td align="right">
             <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
@@ -74,29 +74,26 @@
    <table class="list">
       <tr>
          <th align="left">Ejercicio</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
       </tr>
       {else}
-      <tr><td colspan="3">Sin resultados.</td></tr>
+      <tr><td colspan="2">Sin resultados.</td></tr>
       {/loop}
-      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr><td colspan="2">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}
          </td>
       </tr>
@@ -118,29 +115,26 @@
    <table class="list" id="resultados_cuentas">
       <tr>
          <th align="left">Ejercicio</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
       </tr>
       {else}
-      <tr><td colspan="3">Sin resultados.</td></tr>
+      <tr><td colspan="2">Sin resultados.</td></tr>
       {/loop}
-      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr><td colspan="2">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}
          </td>
       </tr>
@@ -148,8 +142,7 @@
    <table class="list" id="resultados_subcuentas">
       <tr>
          <th align="left">Ejercicio</th>
-         <th align="left">Código</th>
-         <th align="left">Descripción</th>
+         <th align="left">Código + Descripción</th>
          <th align="right">Debe</th>
          <th align="right">Haber</th>
          <th align="right">Saldo</th>
@@ -157,14 +150,13 @@
       {loop="$fsc->resultados2"}
       <tr>
          <td>{$value->codejercicio}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
          <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
          <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
          <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
-      <tr><td colspan="6">Sin resultados.</td></tr>
+      <tr><td colspan="5">Sin resultados.</td></tr>
       {/loop}
    </table>
 </div>

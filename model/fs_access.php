@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Define que un usuario tiene acceso a una página concreta.
+ */
 class fs_access extends fs_model
 {
    public $fs_user;
@@ -88,5 +91,3 @@ class fs_access extends fs_model
       return $accesslist;
    }
 }
-
-?>

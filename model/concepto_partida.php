@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Un concepto predefinido para una partida (la línea de un asiento contable).
+ */
 class concepto_partida extends fs_model
 {
    public $idconceptopar;
@@ -90,5 +93,3 @@ class concepto_partida extends fs_model
       return $concelist;
    }
 }
-
-?>

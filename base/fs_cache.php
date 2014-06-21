@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Clase para concectar e interactuar con memcache.
+ */
 class fs_cache
 {
    private static $memcache;
@@ -143,5 +146,3 @@ class fs_cache
       return self::$connected;
    }
 }
-
-?>

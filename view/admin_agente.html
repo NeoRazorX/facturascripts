@@ -13,12 +13,10 @@
 
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
-      <h1>
-         {$fsc->agente->get_fullname()}
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <div class="pull_right">
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>{$fsc->agente->get_fullname()}</h1>
       <div class="bloque">
          Nombre: <input type="text" name="nombre" value="{$fsc->agente->nombre}" maxlength="50" autocomplete="off"/>
       </div>
@@ -74,13 +72,13 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>
@@ -117,13 +115,13 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>
@@ -160,13 +158,13 @@
       <tr>
          <td colspan="2">
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}#listado">anterior</a>
          {/if}
          </td>
          <td colspan="2"></td>
          <td colspan="2" align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}#listado">siguiente</a>
          {/if}
          </td>
       </tr>

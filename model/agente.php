@@ -21,6 +21,11 @@ require_once 'base/fs_model.php';
 require_model('albaran_cliente.php');
 require_model('albaran_proveedor.php');
 
+/**
+ * El agente es el que se asocia a un albarán, factura o caja.
+ * Cada usuario puede estar asociado a un agente, y un agente puede
+ * estar asociado a varios usuarios.
+ */
 class agente extends fs_model
 {
    public $coddepartamento;
@@ -218,5 +223,3 @@ class agente extends fs_model
       return $listagentes;
    }
 }
-
-?>

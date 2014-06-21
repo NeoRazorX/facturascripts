@@ -33,7 +33,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -44,13 +44,12 @@
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="codserie" value="{$value->codserie}"/>
-      <h1>
-         {$value->codserie}
-         <span>
-            <a class="delete" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">eliminar</a> &nbsp;
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <div class="pull_right">
+         <a class="delete" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">eliminar</a>
+         &nbsp;
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>Série {$value->codserie}</h1>
       <div class="bloque">
          Descripción:
          <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>

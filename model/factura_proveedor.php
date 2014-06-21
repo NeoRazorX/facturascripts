@@ -28,6 +28,9 @@ require_model('linea_factura_proveedor.php');
 require_model('proveedor.php');
 require_model('secuencia.php');
 
+/**
+ * Factura de un proveedor.
+ */
 class factura_proveedor extends fs_model
 {
    public $automatica;

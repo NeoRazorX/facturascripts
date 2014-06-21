@@ -15,8 +15,8 @@
    <form id="f_enable_pages" action="{$fsc->url()}" method="post">
       <input type="hidden" name="modpages" value="TRUE"/>
       <div>
-         <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+         <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
          <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
       <br/>
@@ -24,8 +24,7 @@
       <table class="list">
          <tr>
             <th align="left">página</th>
-            <th align="left">carpeta</th>
-            <th align="left">titulo</th>
+            <th align="left">menú</th>
             <th align="left">versión</th>
             <th>en menú</th>
             <th>importante</th>
@@ -33,11 +32,7 @@
          </tr>
          {loop="$fsc->paginas"}
          <tr>
-            {if condition="$value->exists"}
-            <td>
-            {else}
-            <td class="locked">
-            {/if}
+            <td{if condition="!$value->exists"} class="locked"{/if}>
                {if condition="$value->enabled"}
                <input type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
                {else}
@@ -45,8 +40,7 @@
                {/if}
                <a class="link" target="_blank" href="{$value->url()}">{$value->name}</a>
             </td>
-            <td>{$value->folder}</td>
-            <td>{$value->title}</td>
+            <td>{$value->folder} » {$value->title}</td>
             <td>{$value->version}</td>
             <td align="center">{if condition="$value->show_on_menu"}Si{else}-{/if}</td>
             <td align="center">{if condition="$value->important"}Si{else}-{/if}</td>
@@ -57,8 +51,8 @@
       
       <br/>
       <div>
-         <input class="button" type="button" value="todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="nada" onclick="fs_marcar_nada()"/>
+         <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+         <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
          <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>

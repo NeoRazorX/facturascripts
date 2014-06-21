@@ -20,6 +20,9 @@
 require_once 'base/fs_model.php';
 require_model('articulo.php');
 
+/**
+ * La cantidad en inventario de un artículo en un almacén concreto.
+ */
 class stock extends fs_model
 {
    public $idstock;
@@ -206,5 +209,3 @@ class stock extends fs_model
       return $num;
    }
 }
-
-?>

@@ -210,11 +210,12 @@ class contabilidad_asiento extends fs_controller
          }
          
          if($continuar)
+         {
             $this->new_message('Asiento modificado correctamente.');
+            $this->new_change('Asiento<br/>'.$this->asiento->numero, $this->asiento->url());
+         }
       }
       else
          $this->new_error_msg('Imposible modificar el asiento.');
    }
 }
-
-?>

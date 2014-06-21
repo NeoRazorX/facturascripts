@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una dirección de un proveedor. Puede tener varias.
+ */
 class direccion_proveedor extends fs_model
 {
    public $codproveedor;
@@ -152,5 +155,3 @@ class direccion_proveedor extends fs_model
       return $dirlist;
    }
 }
-
-?>

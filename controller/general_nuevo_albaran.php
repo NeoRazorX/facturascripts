@@ -303,7 +303,10 @@ class general_nuevo_albaran extends fs_controller
                $albaran->total = $albaran->neto + $albaran->totaliva;
                
                if( $albaran->save() )
+               {
                   $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
+                  $this->new_change(FS_ALBARAN.' Cliente<br/>'.$albaran->codigo, $albaran->url(), TRUE);
+               }
                else
                   $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
@@ -478,7 +481,10 @@ class general_nuevo_albaran extends fs_controller
                $albaran->total = $albaran->neto + $albaran->totaliva;
                
                if( $albaran->save() )
+               {
                   $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
+                  $this->new_change(FS_ALBARAN.' Proveedor<br/>'.$albaran->codigo, $albaran->url(), TRUE);
+               }
                else
                   $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
@@ -499,5 +505,3 @@ class general_nuevo_albaran extends fs_controller
       $this->articulo = $this->articulo->get($_POST['referencia4precios']);
    }
 }
-
-?>

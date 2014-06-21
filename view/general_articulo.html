@@ -172,7 +172,7 @@
          <tr>
             <td><input type="file" name="fimagen" accept="image/png"/></td>
             <td align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -188,13 +188,10 @@
    <td valign="top">
       <div class="rounded">
          <form action="{$fsc->url()}" method="post">
-         <h1>
-            {if condition="$fsc->articulo->descripcion"}
-               {$fsc->articulo->descripcion}
-            {else}
-               Sin descripción
-            {/if}
-            <span>
+         <div style="padding-left: 5px;">
+            <b>Referencia:</b>
+            <input type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off"/>
+            <div class="pull_right">
                {if condition="$fsc->articulo->bloqueado"}
                <input type="checkbox" name="bloqueado" value="TRUE" checked="checked" id="articulo_bloqueado"/>
                {else}
@@ -202,9 +199,9 @@
                {/if}
                <label for="articulo_bloqueado">bloqueado</label>
                &nbsp;
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </span>
-         </h1>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </div>
+         </div>
          <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
          <div class="bloque">
             Descripción:
@@ -226,7 +223,7 @@
             Código de barras:
             <input type="text" name="codbarras" value="{$fsc->articulo->codbarras}" autocomplete="off"/>
          </div>
-         <div>
+         <div style="padding-left: 5px;">
             Código de equivalencia:
             <input type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}" autocomplete="off"/>
             Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.
@@ -319,7 +316,7 @@
                <td align="center">{$value->disponible}</td>
                <td align="center">{$value->pterecibir}</td>
                <td align="right">
-                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+                  <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
                </td>
             </form>
          </tr>
@@ -340,7 +337,7 @@
                <td align="center"></td>
                <td align="center"></td>
                <td align="right">
-                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+                  <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
                </td>
             </form>
          </tr>
@@ -349,7 +346,7 @@
       </div>
       
       <div class="rounded">
-         <h1>Buscar en...</h1>
+         <h2 style="margin: 0px;">Buscar en...</h2>
          <ul class="bloque">
             <li><a id="b_buscar_albcli" href="#">{$albaranes}<br/>de<br/>cliente</a></li>
             <li><a id="b_buscar_albpro" href="#">{$albaranes}<br/>de<br/>proveedor</a></li>
@@ -362,12 +359,12 @@
       <div class="rounded">
          <form action="{$fsc->url()}" method="post">
             <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-            <h1>
+            <h2 style="margin: 0px 0px 15px 0px;">
                Precios:
-               <span>
-                  <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <span class="pull_right">
+                  <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
                </span>
-            </h1>
+            </h2>
             <table class="list">
                <tr>
                   <th align="left">IVA</th>
@@ -396,12 +393,14 @@
                   <th>PVP</th>
                   <th>PVP+IVA</th>
                </tr>
+               {if condition="$fsc->articulo->costemedio!=0"}
                <tr>
                   <td>Coste</td>
                   <td align="center">0.00</td>
                   <td align="center">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
                   <td align="center">{$fsc->show_precio($fsc->articulo->costemedio_iva())}</td>
                </tr>
+               {/if}
                <tr>
                   <td>General</td>
                   <td align="center">0.00</td>

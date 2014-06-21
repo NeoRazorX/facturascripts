@@ -154,7 +154,7 @@
          </tr>
       </table>
       <div style="text-align: right;">
-         <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>
 </div>
@@ -203,7 +203,7 @@
          <input type="text" name="descripcion" size="40" autocomplete="off"/>
       </div>
       <div style="text-align: right;">
-         <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
    </form>
 </div>
@@ -249,7 +249,7 @@
             <textarea name="observaciones" rows="3" cols="60">{$fsc->proveedor->observaciones}</textarea>
          </div>
          <div style="text-align: right;">
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
          </div>
       </div>
       
@@ -303,7 +303,7 @@
                {/loop}
             </select>
          </div>
-         <input class="submit pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();"/>
+         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();"/>
       </div>
    </form>
    
@@ -390,7 +390,7 @@
             </div>
             <div>
                <a class="delete" href="{$fsc->url()}&delete_dir={$value->id}#direcciones">eliminar</a>
-               <input class="submit pull_right" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </div>
          </form>
       </div>
@@ -486,13 +486,13 @@
          <tr>
             <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
-            <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
+            <a class="button" href="{$fsc->anterior_url()}#listado">anterior</a>
             {/if}
             </td>
             <td colspan="2"></td>
             <td align="right">
             {if condition="$fsc->siguiente_url()!=''"}
-            <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
+            <a class="button" href="{$fsc->siguiente_url()}#listado">siguiente</a>
             {/if}
             </td>
          </tr>
@@ -519,13 +519,13 @@
          <tr>
             <td colspan="2">
             {if condition="$fsc->anterior_url()!=''"}
-               <a class="next" href="{$fsc->anterior_url()}#listado">anterior</a>
+               <a class="button" href="{$fsc->anterior_url()}#listado">anterior</a>
             {/if}
             </td>
             <td colspan="2"></td>
             <td align="right">
             {if condition="$fsc->siguiente_url()!=''"}
-               <a class="next" href="{$fsc->siguiente_url()}#listado">siguiente</a>
+               <a class="button" href="{$fsc->siguiente_url()}#listado">siguiente</a>
             {/if}
             </td>
          </tr>

@@ -21,6 +21,10 @@ require_once 'base/fs_model.php';
 require_model('asiento.php');
 require_model('subcuenta.php');
 
+/**
+ * La línea de un asiento.
+ * Se relaciona con un asiento y una subcuenta.
+ */
 class partida extends fs_model
 {
    public $idpartida;
@@ -423,5 +427,3 @@ class partida extends fs_model
       return $totales;
    }
 }
-
-?>

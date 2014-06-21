@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Forma de pago de una factura.
+ */
 class forma_pago extends fs_model
 {
    public $codpago;
@@ -142,5 +145,3 @@ class forma_pago extends fs_model
       return $listaformas;
    }
 }
-
-?>

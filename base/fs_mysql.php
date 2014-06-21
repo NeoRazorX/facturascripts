@@ -19,6 +19,9 @@
 
 require_once 'base/fs_db.php';
 
+/**
+ * Clase para conectar a MySQL
+ */
 class fs_mysql extends fs_db
 {
    /// conecta con la base de datos

@@ -18,6 +18,7 @@
  */
 
 require_model('cuenta.php');
+require_model('cuenta_especial.php');
 require_model('subcuenta.php');
 
 class contabilidad_cuenta extends fs_controller
@@ -32,6 +33,7 @@ class contabilidad_cuenta extends fs_controller
    
    protected function process()
    {
+      $this->cuenta = FALSE;
       if( isset($_POST['nsubcuenta']) )
       {
          $subc0 = new subcuenta();
@@ -66,8 +68,21 @@ class contabilidad_cuenta extends fs_controller
       }
       else if( isset($_GET['id']) )
       {
-         $this->cuenta = new cuenta();
-         $this->cuenta = $this->cuenta->get($_GET['id']);
+         $cuenta = new cuenta();
+         $this->cuenta = $cuenta->get($_GET['id']);
+         if($this->cuenta AND isset($_POST['descripcion']))
+         {
+            $this->cuenta->descripcion = $_POST['descripcion'];
+            if($_POST['idcuentaesp'] == '---')
+               $this->cuenta->idcuentaesp = NULL;
+            else
+               $this->cuenta->idcuentaesp = $_POST['idcuentaesp'];
+            
+            if( $this->cuenta->save() )
+               $this->new_message('Cuenta modificada correctamente.');
+            else
+               $this->new_error_msg('Error al modificar la cuenta.');
+         }
       }
       
       if($this->cuenta)
@@ -100,6 +115,10 @@ class contabilidad_cuenta extends fs_controller
       else
          return $this->page->url();
    }
+   
+   public function cuentas_especiales()
+   {
+      $cuentae = new cuenta_especial();
+      return $cuentae->all();
+   }
 }
-
-?>

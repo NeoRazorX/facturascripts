@@ -107,12 +107,10 @@
 
 <div class="rounded">
    <form action="{$fsc->url()}" method="post">
-      <h1>
-         {$fsc->familia->descripcion}
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
+      <div class="pull_right">
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>{$fsc->familia->descripcion}</h1>
       <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
       Descripción:
       <input type="text" name="descripcion" value="{$fsc->familia->descripcion}" size="60"/>
@@ -151,13 +149,13 @@
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}
          </td>
       </tr>

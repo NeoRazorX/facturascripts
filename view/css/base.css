@@ -125,15 +125,14 @@ div#header_buttons a.btn, div#header_buttons a.btn_img, div#header_buttons a.rem
    margin-right: 5px;
    padding-left: 5px;
    padding-right: 5px;
-   border-radius: 3px;
-   box-shadow: 1px 1px 1px #aaa;
+   border-radius: 2px;
    text-decoration: none;
 }
 
 div#header_buttons a.btn {
-   padding: 3px 8px 1px 8px;
+   padding: 3px 8px 2px 8px;
    background-color: white;
-   border: 1px solid #888888;
+   border: 1px solid #c1c1c1;
    color: #333333;
 }
 
@@ -141,7 +140,7 @@ div#header_buttons a.btn_img {
    background-color: white;
    padding-top: 1px;
    padding-bottom: 1px;
-   border: 1px solid #888888;
+   border: 1px solid #c1c1c1;
    color: #333333;
 }
 
@@ -149,7 +148,7 @@ div#header_buttons a.remove {
    background-color: #E46353;
    padding-top: 1px;
    padding-bottom: 1px;
-   border: 1px solid #993427;
+   border: 1px solid #D65D4E;
    color: white;
 }
 
@@ -160,12 +159,10 @@ div#header_buttons a.btn_img img, div#header_buttons a.remove img {
 
 div#header_buttons a.btn:hover, div#header_buttons a.btn_img:hover {
    color: black;
-   box-shadow: 1px 1px 1px #777;
 }
 
 div#header_buttons a.remove:hover {
    background-color: #D84937;
-   box-shadow: 1px 1px 1px #777;
 }
 
 div#header_location {
@@ -213,7 +210,7 @@ div.pages ul {
    padding: 0px;
    background-color: #333333;
    border: 2px solid #333333;
-   box-shadow: 5px 5px 5px #888;
+   box-shadow: 3px 3px 3px #999;
    color: white;
    list-style-type: none;
    text-align: left;
@@ -254,7 +251,7 @@ div#shadow {
    width: 100%;
    height: 100%;
    background: #000;
-   opacity: 0.5;
+   opacity: 0.4;
 }
 
 div#shadow:hover {
@@ -277,14 +274,14 @@ div.popup {
    position: fixed;
    top: 50px;
    left: 50px;
-   padding: 5px;
+   padding: 3px;
    max-width: 90%;
    max-height: 90%;
    overflow: auto;
    background-color: white;
-   border-radius: 5px;
-   border: 3px solid #cccccc;
-   box-shadow: 10px 10px 10px #333;
+   border-radius: 3px;
+   border: 1px solid #1D4666;
+   box-shadow: 3px 3px 3px #666;
    color: black;
 }
 
@@ -335,30 +332,18 @@ div.rounded {
    margin: 10px;
    padding: 5px;
    background-color: white;
-   border: 1px solid #B3B3B3;
-   border-radius: 5px;
-   box-shadow: 2px 2px 2px #aaa;
+   border: 1px solid #c5c5c5;
    color: black;
 }
 
 div.rounded h1 {
-   margin: 0px;
-   margin-bottom: 5px;
-   padding: 5px;
+   margin: 0px 0px 5px 0px;
    min-height: 25px;
-   border-bottom: 1px dashed #c1c1c1;
    font-size: 18px;
 }
 
 div.rounded h1:first-letter {
    text-transform: uppercase;
-}
-
-div.rounded h1 span {
-   float: right;
-   clear: both;
-   font-size: 14px;
-   font-weight: normal;
 }
 
 div.bloque {
@@ -476,7 +461,7 @@ ul.bloque li {
    display: inline-block;
    margin: 5px;
    background-color: #ACD6F5;
-   border: 1px outset #cccccc;
+   border: 1px solid #A3CBE8;
    border-radius: 3px;
    font-size: 18px;
    text-align: center;
@@ -484,6 +469,7 @@ ul.bloque li {
 
 ul.bloque li.verde {
    background-color: #ADF5AC;
+   border: 1px solid #A4E8A3;
 }
 
 ul.bloque li a {
@@ -584,7 +570,7 @@ div.footer table td.left {
 .submit, .button, .delete {
    display: inline-block;
    vertical-align: middle;
-   padding: 2px 5px 2px 5px;
+   padding: 4px 8px 4px 8px;
    border-radius: 2px;
    font-weight: bold;
    font-size: 15px;
@@ -592,14 +578,14 @@ div.footer table td.left {
 }
 
 .submit {
-   background-color: #55BA42;
-   border: 1px solid #26641C;
+   background-color: #5CB85C;
+   border: 1px solid #5CB85C;
    color: white;
 }
 
 .submit:hover {
-   background-color: #5DCC48;
-   color: black;
+   background-color: #53A653;
+   border: 1px solid #4D994D;
    cursor: pointer;
 }
 
@@ -616,12 +602,14 @@ div.footer table td.left {
 }
 
 .delete {
-   background-color: #E46353;
-   border: 1px solid #994238;
+   background-color: #D9534F;
+   border: 1px solid #D9534F;
    color: white;
 }
 
 .delete:hover {
+   background-color: #BF4946;
+   border: 1px solid #B34441;
    cursor: pointer;
 }
 
@@ -645,23 +633,6 @@ input.full, textarea {
 
 .link {
    color: #0062DD;
-}
-
-a.next {
-   display: inline-block;
-   padding: 2px 5px 1px 5px;
-   background-color: #bbbbbb;
-   border: 1px solid #888888;
-   border-radius: 2px;
-   color: black;
-   font-size: 16px;
-   text-transform: capitalize;
-   text-decoration: none;
-}
-
-a.next:hover {
-   background-color: #3768B8;
-   color: white;
 }
 
 .hidden_black {
@@ -755,17 +726,47 @@ a#fs_exit img {
    border: 0px solid transparent;
 }
 
-div#sql_history {
+div.history {
    margin: 10px;
    margin-top: 20px;
-   padding: 5px;
-   background-color: #C2D0DE;
-   border: 1px solid #A1ADB8;
-   border-radius: 5px;
+   padding: 3px;
+   background-color: #E4ECF2;
+   border: 1px solid #C0C7CC;
+   border-radius: 3px;
    color: #424242;
 }
 
-div#sql_history h1 {
-   margin: 5px;
-   font-size: 20px;
+div.history h1 {
+   margin: 5px 5px 2px 5px;
+   font-size: 18px;
+}
+
+ul.h_bloque {
+   margin: 2px;
+   padding: 2px;
+   list-style-type: none;
+}
+
+ul.h_bloque li {
+   display: inline-block;
+   margin: 2px;
+   background-color: white;
+   border-left: 2px solid #5BC0DE;
+   font-size: 15px;
+   text-align: center;
+}
+
+ul.h_bloque li.verde {
+   border-left: 2px solid #5CB85C;
+}
+
+ul.h_bloque li a {
+   display: block;
+   padding: 5px 10px 5px 10px;
+   text-decoration: none;
+   color: #333333;
+}
+
+ul.h_bloque li a:first-letter {
+   text-transform: uppercase;
 }

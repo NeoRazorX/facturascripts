@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * El almacén donde están físicamente los artículos.
+ */
 class almacen extends fs_model
 {
    public $observaciones;
@@ -192,5 +195,3 @@ class almacen extends fs_model
       return $listaa;
    }
 }
-
-?>

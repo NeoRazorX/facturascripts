@@ -36,7 +36,7 @@ else
 require_once 'base/fs_default_items.php';
 
 
-/*
+/**
  * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
  * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
  * de FacturaScripts.
@@ -87,17 +87,48 @@ function require_model($name)
 }
 
 
+/**
+ * La clase de la que heredan todos los modelos, conecta a la base de datos,
+ * comprueba la estructura de la tabla y de ser necesario la crea o adapta.
+ */
 abstract class fs_model
 {
+   /**
+    * Proporciona acceso directo a la base de datos.
+    * Implementa la clase fs_mysql o fs_postgresql.
+    * @var type 
+    */
    protected $db;
+   
+   /**
+    * Nombre de la tabla en la base de datos.
+    * @var type 
+    */
    protected $table_name;
+   
+   /**
+    * Directorio donde se encuentra el directorio table con
+    * el XML con la estructura de la tabla.
+    * @var type 
+    */
    protected $base_dir;
+   
+   /**
+    * Permite conectar e interactuar con memcache.
+    * @var type 
+    */
    protected $cache;
    protected $default_items;
    
    private static $checked_tables;
    private static $errors;
    
+   /**
+    * 
+    * @param type $name nombre de la tabla de la base de datos.
+    * @param type $basedir ruta del directorio table donde se encuentra el XML
+    * con la estructura de la tabla de la base de datos.
+    */
    public function __construct($name = '', $basedir = '')
    {
       if(strtolower(FS_DB_TYPE) == 'mysql')
@@ -157,46 +188,69 @@ abstract class fs_model
       $this->cache->delete('fs_checked_tables');
    }
    
+   /**
+    * Muestra al usuario un mensaje de error
+    * @param type $msg mensaje de error
+    */
    protected function new_error_msg($msg = FALSE)
    {
       if( $msg )
          self::$errors[] = $msg;
    }
    
+   /**
+    * Devuelve la lista de mensajes de error.
+    * @return type lista de errores.
+    */
    public function get_errors()
    {
       return self::$errors;
    }
    
-   /*
+   /**
     * Esta función es llamada al crear una tabla.
-    * Permite insertar tuplas o lo que desees.
+    * Permite insertar valores en la tabla.
     */
    abstract protected function install();
    
-   /*
+   /**
     * Esta función devuelve TRUE si los datos del objeto se encuentran
     * en la base de datos.
     */
    abstract public function exists();
    
-   /// Esta función devuelve TRUE si los datos del objeto son válidos
+   /**
+    * Esta función devuelve TRUE si los datos del objeto son válidos
+    */
    abstract public function test();
    
-   /*
+   /**
     * Esta función sirve tanto para insertar como para actualizar
     * los datos del objeto en la base de datos.
     */
    abstract public function save();
    
-   /// Esta función sirve para eliminar los datos del objeto de la base de datos
+   /**
+    * Esta función sirve para eliminar los datos del objeto de la base de datos
+    */
    abstract public function delete();
    
+   /**
+    * Escapa las comillas de una cadena de texto.
+    * @param type $s cadena de texto a escapar
+    * @return type cadena de texto resultante
+    */
    public function escape_string($s='')
    {
       return $this->db->escape_string($s);
    }
    
+   /**
+    * Transforma una variable en una cadena de texto válida para ser
+    * utilizada en una consulta SQL.
+    * @param type $v
+    * @return string
+    */
    public function var2str($v)
    {
       if( is_null($v) )
@@ -256,7 +310,7 @@ abstract class fs_model
          return intval($s);
    }
    
-   /*
+   /**
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
     */
@@ -268,7 +322,7 @@ abstract class fs_model
          return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
    }
    
-   /*
+   /**
     * Compara tres números en coma flotante usando la función floatcmp().
     * ATENCIÓN: NO COPARA LOS TRES NÚMERO ENTRE SI, solamente compara el
     * primero con los otros dos.
@@ -284,7 +338,11 @@ abstract class fs_model
          return FALSE;
    }
    
-   /// functión auxiliar para facilitar el uso de fechas
+   /**
+    * functión auxiliar para facilitar el uso de fechas
+    * @param type $v
+    * @return string
+    */
    public function var2timesince($v)
    {
       if( isset($v) )
@@ -326,7 +384,7 @@ abstract class fs_model
       return $dates;
    }
    
-   /*
+   /**
     * Esta función convierte:
     * < en &lt;
     * > en &gt;
@@ -351,7 +409,11 @@ abstract class fs_model
               0, $length);
    }
    
-   /// comprueba y actualiza la estructura de la tabla si es necesario
+   /**
+    * Comprueba y actualiza la estructura de la tabla si es necesario
+    * @param type $table_name
+    * @return boolean
+    */
    public function check_table($table_name)
    {
       $done = TRUE;
@@ -398,7 +460,13 @@ abstract class fs_model
       return $done;
    }
    
-   /// obtiene las columnas y restricciones del fichero xml para una tabla
+   /**
+    * Obtiene las columnas y restricciones del fichero xml para una tabla
+    * @param type $table_name
+    * @param type $columnas
+    * @param type $restricciones
+    * @return boolean
+    */
    protected function get_xml_table($table_name, &$columnas, &$restricciones)
    {
       $retorno = FALSE;
@@ -454,5 +522,3 @@ abstract class fs_model
       return $retorno;
    }
 }
-
-?>

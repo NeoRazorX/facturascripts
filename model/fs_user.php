@@ -23,6 +23,9 @@ require_model('ejercicio.php');
 require_once 'model/fs_access.php';
 require_once 'model/fs_page.php';
 
+/**
+ * Usuario de facturaScripts. Puede estar asociado a un agente.
+ */
 class fs_user extends fs_model
 {
    public $nick;
@@ -357,5 +360,3 @@ class fs_user extends fs_model
       return $userlist;
    }
 }
-
-?>

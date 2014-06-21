@@ -24,6 +24,9 @@ require_model('factura_proveedor.php');
 require_model('partida.php');
 require_model('secuencia.php');
 
+/**
+ * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
+ */
 class asiento extends fs_model
 {
    public $idasiento;
@@ -573,5 +576,3 @@ class asiento extends fs_model
       $this->renumerar();
    }
 }
-
-?>

@@ -17,12 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Esta es la clase de la que heredan las clases fs_mysql y fs_postgresql.
+ */
 abstract class fs_db
 {
+   /**
+    * El enlace con la base de datos.
+    * @var type 
+    */
    protected static $link;
    protected static $t_selects;
    protected static $t_transactions;
+   
+   /**
+    * Historial de consultas SQL.
+    * @var type 
+    */
    protected static $history;
+   
+   /**
+    * Lista de errores.
+    * @var type 
+    */
    protected static $errors;
    
    public function __construct()
@@ -36,13 +53,19 @@ abstract class fs_db
       }
    }
    
-   /// devuelve el número de selects ejecutados
+   /**
+    * Devuelve el número de selects ejecutados
+    * @return type
+    */
    public function get_selects()
    {
       return self::$t_selects;
    }
    
-   /// devuele le número de transacciones realizadas
+   /**
+    * Devuele le número de transacciones realizadas
+    * @return type
+    */
    public function get_transactions()
    {
       return self::$t_transactions;
@@ -58,7 +81,9 @@ abstract class fs_db
       return self::$errors;
    }
    
-   /// conecta con la base de datos
+   /**
+    * Conecta con la base de datos
+    */
    abstract public function connect();
    
    public function connected()
@@ -69,13 +94,22 @@ abstract class fs_db
          return FALSE;
    }
    
-   /// desconecta de la base de datos
+   /**
+    * Desconecta de la base de datos
+    */
    abstract public function close();
    
-   /// devuelve un array con los nombres de las tablas de la base de datos
+   /**
+    * Devuelve un array con los nombres de las tablas de la base de datos
+    */
    abstract public function list_tables();
    
-   /// devuelve TRUE si la tabla existe
+   /**
+    * Devuelve TRUE si la tabla existe
+    * @param type $name
+    * @param type $list
+    * @return boolean
+    */
    public function table_exists($name, $list=FALSE)
    {
       $resultado = FALSE;
@@ -95,36 +129,56 @@ abstract class fs_db
       return $resultado;
    }
    
-   /// devuelve un array con las columnas de una tabla dada
+   /**
+    * Devuelve un array con las columnas de una tabla dada
+    */
    abstract public function get_columns($table);
    
-   /// devuelve una array con las restricciones de una tabla dada
+   /**
+    * Devuelve una array con las restricciones de una tabla dada
+    */
    abstract public function get_constraints($table);
    
-   /// devuelve una array con los indices de una tabla dada
+   /**
+    * Devuelve una array con los indices de una tabla dada
+    */
    abstract public function get_indexes($table);
    
-   /// devuelve un array con los datos de bloqueos
+   /**
+    * Devuelve un array con los datos de bloqueos
+    */
    abstract public function get_locks();
    
    abstract public function version();
    
-   /// ejecuta un select
+   /**
+    * Ejecuta un select
+    */
    abstract public function select($sql);
    
-   /// ejecuta un select parcial
+   /**
+    * Ejecuta un select parcial
+    */
    abstract public function select_limit($sql, $limit, $offset);
    
-   /// ejecuta una consulta sobre la base de datos
+   /**
+    * Ejecuta una consulta sobre la base de datos
+    */
    abstract public function exec($sql);
    
-   /// devuelve TRUE si existe la secuencia
+   /**
+    * Devuelve TRUE si existe la secuencia
+    */
    abstract public function sequence_exists($seq);
    
-   /// devuleve el siguiente valor de una secuencia
+   /**
+    * Devuleve el siguiente valor de una secuencia
+    */
    abstract public function nextval($seq);
    
-   /// devuleve el último ID asignado
+   /**
+    * Devuleve el último ID asignado
+    */
    abstract public function lastval();
    
    abstract public function escape_string($s);
@@ -133,20 +187,20 @@ abstract class fs_db
    
    abstract public function sql_to_int($col);
    
-   /*
+   /**
     * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.
     */
    abstract public function compare_columns($table_name, $xml_cols, $columnas);
    
-   /*
+   /**
     * Compara dos arrays de restricciones, devuelve una sentencia sql
     * en caso de encontrar diferencias.
     */
    abstract public function compare_constraints($table_name, $c_nuevas, $c_old);
    
-   /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+   /**
+    * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+    */
    abstract public function generate_table($table_name, $xml_columnas, $xml_restricciones);
 }
-
-?>

@@ -17,16 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Estos tres modelos (secuencia, secuencia_contabilidad y secuencia_ejercicio)
- * existen para mantener compatibilidad con eneboo, porque maldita la gana que
- * yo tengo de usar TRES tablas para algo tan simple...
- */
-
 require_once 'base/fs_model.php';
 require_model('ejercicio.php');
 require_model('serie.php');
 
+/**
+ * Estos tres modelos (secuencia, secuencia_contabilidad y secuencia_ejercicio)
+ * existen para mantener compatibilidad con eneboo, porque maldita la gana que
+ * yo tengo de usar TRES tablas para algo tan simple...
+ */
 class secuencia extends fs_model
 {
    public $idsec; /// pkey
@@ -159,6 +158,9 @@ class secuencia extends fs_model
    }
 }
 
+/**
+ * Clase que permite la compatibilidad con Eneboo.
+ */
 class secuencia_contabilidad extends fs_model
 {
    public $valorout;
@@ -271,6 +273,9 @@ class secuencia_contabilidad extends fs_model
    }
 }
 
+/**
+ * Clase que permite la compatibilidad con Eneboo.
+ */
 class secuencia_ejercicio extends fs_model
 {
    public $id; /// pkey
@@ -440,5 +445,3 @@ class secuencia_ejercicio extends fs_model
       return $seclist;
    }
 }
-
-?>

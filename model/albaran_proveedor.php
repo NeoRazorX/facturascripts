@@ -26,6 +26,9 @@ require_model('linea_albaran_proveedor.php');
 require_model('proveedor.php');
 require_model('secuencia.php');
 
+/**
+ * Albarán de proveedor (boceto de factura o factura preliminar)
+ */
 class albaran_proveedor extends fs_model
 {
    public $idalbaran;

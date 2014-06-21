@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Línea de un albarán de proveedor (boceto de una factura).
+ */
 class linea_albaran_proveedor extends fs_model
 {
    public $idlinea;
@@ -366,5 +369,3 @@ class linea_albaran_proveedor extends fs_model
       return $toplist;
    }
 }
-
-?>

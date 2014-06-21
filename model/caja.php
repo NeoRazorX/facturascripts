@@ -20,6 +20,9 @@
 require_once 'base/fs_model.php';
 require_model('agente.php');
 
+/**
+ * Estructura para almacenar los datos de estado de una caja registradora (TPV).
+ */
 class caja extends fs_model
 {
    public $id;
@@ -204,5 +207,3 @@ class caja extends fs_model
       return $cajalist;
    }
 }
-
-?>

@@ -45,6 +45,7 @@ class contabilidad_ejercicio extends fs_controller
    
    protected function process()
    {
+      $this->ejercicio = FALSE;
       if( isset($_POST['codejercicio']) )
       {
          $this->ejercicio = new ejercicio();
@@ -67,13 +68,13 @@ class contabilidad_ejercicio extends fs_controller
          $this->ejercicio = new ejercicio();
          $this->ejercicio = $this->ejercicio->get($_GET['cod']);
       }
-      else
-         $this->ejercicio = FALSE;
       
       if($this->ejercicio)
       {
          if( isset($_GET['export']) )
+         {
             $this->exportar_xml();
+         }
          else
          {
             $this->ppage = $this->page->get('contabilidad_ejercicios');
@@ -298,13 +299,19 @@ class contabilidad_ejercicio extends fs_controller
          if( file_exists('tmp/ejercicio.xml') )
             unlink('tmp/ejercicio.xml');
          
-         if($_POST['fuente'] == 'generico')
-            copy('extras/ejercicio.xml', 'tmp/ejercicio.xml');
+         if( in_array($_POST['fuente'], array('espanya', 'colombia', 'panama', 'peru') ) )
+         {
+            copy('extras/'.$_POST['fuente'].'.xml', 'tmp/ejercicio.xml');
+         }
          else if( $_POST['fuente'] == 'archivo' AND isset($_POST['archivo']) )
+         {
             copy($_FILES['farchivo']['tmp_name'], 'tmp/ejercicio.xml');
+         }
          else
+         {
             $this->new_error_msg('Has seleccionado importar desde un archivo externo,
                pero no has seleccionado ningún archivo.');
+         }
          
          $import_step = 1;
          $this->importar_url = $this->url().'&importar='.(1 + $import_step);
@@ -313,7 +320,9 @@ class contabilidad_ejercicio extends fs_controller
       {
          $import_step = intval($_GET['importar']);
          if( $import_step < 7 )
+         {
             $this->importar_url = $this->url().'&importar='.(1 + $import_step);
+         }
          else
          {
             $this->new_message('Datos importados correctamente.');
@@ -796,5 +805,3 @@ class contabilidad_ejercicio extends fs_controller
       }
    }
 }
-
-?>

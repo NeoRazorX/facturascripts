@@ -79,7 +79,7 @@
          </tr>
          <tr>
             <td colspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
       </table>
@@ -96,7 +96,7 @@
             Grupo {$value->codgrupo}:
             <span>
                <a class="delete" href="{$fsc->url()}&delete_grupo={$value->codgrupo}">eliminar</a>
-               <input class="submit" type="submit" value="Guardar"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </span>
          </h2>
          <div class="bloque">
@@ -124,7 +124,7 @@
       <form name="f_new_grupo" action="{$fsc->url()}" method="post">
          <h2>
             Nuevo grupo:
-            <span><input class="submit" type="submit" value="Guardar"/></span>
+            <span><input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/></span>
          </h2>
          <div class="bloque">
             Código:
@@ -152,34 +152,32 @@
    {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda "{$fsc->query}":</h1>{/if}
    <table class="list">
       <tr>
-         <th align="left">código</th>
-         <th align="left">nombre</th>
+         <th align="left">código + nombre</th>
          <th align="left">cifnif</th>
          <th align="left">observaciones</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codcliente}</a></td>
-         <td>{$value->nombre}</td>
+         <td><a class="link" href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
          <td>{$value->cifnif}</td>
          <td>{$value->observaciones_resume()}</td>
       </tr>
       {else}
       <tr>
-         <td colspan="4">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="3">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
-      <tr><td colspan="4">&nbsp;</td></tr>
+      <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
          {/if}
          </td>
-         <td colspan="2"></td>
+         <td></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
          {/if}
          </td>
       </tr>

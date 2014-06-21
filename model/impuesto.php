@@ -19,6 +19,9 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Un impuesto (IVA) que puede estar asociado a artículos y línes de albaranes o facturas.
+ */
 class impuesto extends fs_model
 {
    public $codimpuesto; /// pkey
@@ -223,5 +226,3 @@ class impuesto extends fs_model
       return $impuestolist;
    }
 }
-
-?>

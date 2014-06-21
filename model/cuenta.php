@@ -22,6 +22,11 @@ require_model('cuenta_especial.php');
 require_model('epigrafe.php');
 require_model('subcuenta.php');
 
+/**
+ * Elemento de tercer nivel del plan contable.
+ * Está relacionada con un único ejercicio y epígrafe,
+ * pero puede estar relacionada con muchas subcuentas.
+ */
 class cuenta extends fs_model
 {
    public $idcuenta;
@@ -233,5 +238,3 @@ class cuenta extends fs_model
       return $cuenlist;
    }
 }
-
-?>

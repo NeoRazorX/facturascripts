@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
  * Esta clase sólo sirve para que los modelos sepan que elementos son los
  * predeterminados para la sesión. Pero para guardar los valores hay que usar
  * las funciones fs_controller::save_lo_que_sea()
@@ -196,5 +196,3 @@ class fs_default_items
       self::$showing_page = $name;
    }
 }
-
-?>

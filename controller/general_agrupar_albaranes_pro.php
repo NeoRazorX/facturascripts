@@ -282,10 +282,15 @@ class general_agrupar_albaranes_pro extends fs_controller
       $subcuenta_prov = $proveedor->get_subcuenta($factura->codejercicio);
       
       if( !$this->empresa->contintegrada )
+      {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+         $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+      }
       else if( !$subcuenta_prov )
+      {
          $this->new_message("El proveedor no tiene asociada una subcuenta, y por tanto no se generará
             un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      }
       else
       {
          $asiento = new asiento();
@@ -367,7 +372,10 @@ class general_agrupar_albaranes_pro extends fs_controller
             {
                $factura->idasiento = $asiento->idasiento;
                if( $factura->save() )
+               {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
+                  $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+               }
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");
             }
@@ -396,5 +404,3 @@ class general_agrupar_albaranes_pro extends fs_controller
       }
    }
 }
-
-?>

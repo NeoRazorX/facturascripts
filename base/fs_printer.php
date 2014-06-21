@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Permite imprimir ticket de forma local o remota.
+ */
 class fs_printer
 {
    private $file;
@@ -147,5 +150,3 @@ class fs_printer
               0, $length);
    }
 }
-
-?>

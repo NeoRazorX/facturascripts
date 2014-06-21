@@ -50,41 +50,37 @@
    <table class="list">
       <tr>
          <th></th>
-         <th align="left">código</th>
-         <th align="left">cliente</th>
+         <th align="left">código + cliente</th>
          <th align="left">Observaciones</th>
          <th align="right">total</th>
          <th align="right">fecha</th>
       </tr>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">{if condition="$value->idasiento"}A{/if}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codigo}</a></td>
-         <td>{$value->nombrecliente}</td>
+         <td align="center">
+            {if condition="$value->idasiento"}
+            <span title="la factura tiene vinculado un asiento contable">A</span>
+            {/if}
+         </td>
+         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="6">Ninguna factura encontrada.</td></tr>
+      <tr><td colspan="5">Ninguna factura encontrada.</td></tr>
       {/loop}
-      <tr><td colspan="6">&nbsp;</td></tr>
+      <tr><td colspan="5">&nbsp;</td></tr>
       <tr>
          <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="next" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
+            {if condition="$fsc->anterior_url()!=''"}<a class="button" href="{$fsc->anterior_url()}">anterior</a>{/if}
          </td>
-         <td colspan="3"></td>
+         <td colspan="2"></td>
          <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="next" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
+            {if condition="$fsc->siguiente_url()!=''"}<a class="button" href="{$fsc->siguiente_url()}">siguiente</a>{/if}
          </td>
       </tr>
    </table>
 </div>
-
-<div class="advice"><b>A</b> significa que la factura tiene vinculado un asiento contable.</div>
 
 {include="footer"}

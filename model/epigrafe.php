@@ -20,6 +20,9 @@
 require_once 'base/fs_model.php';
 require_model('cuenta.php');
 
+/**
+ * Primer nivel del plan contable.
+ */
 class grupo_epigrafes extends fs_model
 {
    public $codejercicio;
@@ -159,6 +162,10 @@ class grupo_epigrafes extends fs_model
    }
 }
 
+
+/**
+ * Segundo novel del plan contable.
+ */
 class epigrafe extends fs_model
 {
    public $idepigrafe; /// pkey
@@ -234,7 +241,7 @@ class epigrafe extends fs_model
          }
       }
       
-      parent::check_table($table_name);
+      return parent::check_table($table_name);
    }
    
    public function url()
@@ -372,5 +379,3 @@ class epigrafe extends fs_model
       return $epilist;
    }
 }
-
-?>

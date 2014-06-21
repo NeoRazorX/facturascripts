@@ -324,6 +324,9 @@
 <form action="{$fsc->albaran->url()}" method="post">
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <div class="rounded">
+      <div class="pull_right">
+         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
          <a class="link" href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
@@ -339,9 +342,6 @@
          {else}
          <a class="link" href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
          {/if}
-         <span>
-            <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
       </h1>
       <div class="bloque">Número: {$fsc->albaran->numero}</div>
       <div class="bloque">
@@ -457,7 +457,7 @@
             <th>Anterior</th>
             <th>Nuevo</th>
             <td rowspan="2" align="right">
-               <input class="submit" type="submit" value="guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
             </td>
          </tr>
          <tr>

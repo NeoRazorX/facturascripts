@@ -19,6 +19,10 @@
 
 require_once 'base/fs_model.php';
 
+/**
+ * Una clase genércia para consultar o almacenar en la base de datos
+ * pares clave/valor.
+ */
 class fs_var extends fs_model
 {
    public $name; /// pkey
@@ -147,5 +151,3 @@ class fs_var extends fs_model
       return $done;
    }
 }
-
-?>
