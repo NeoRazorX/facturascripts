@@ -255,7 +255,7 @@ class fs_controller
    public function new_error_msg($msg=FALSE)
    {
       if( $msg )
-         $this->errors[] = $msg;
+         $this->errors[] = str_replace("\n", ' ', $msg);
    }
    
    /**
@@ -279,7 +279,7 @@ class fs_controller
    public function new_message($msg=FALSE)
    {
       if( $msg )
-         $this->messages[] = $msg;
+         $this->messages[] = str_replace("\n", ' ', $msg);
    }
    
    /**
@@ -298,7 +298,7 @@ class fs_controller
    public function new_advice($msg=FALSE)
    {
       if( $msg )
-         $this->advices[] = $msg;
+         $this->advices[] = str_replace("\n", ' ', $msg);
    }
    
    /**
@@ -546,7 +546,7 @@ class fs_controller
       /// actualizamos los datos de la página
       foreach($this->menu as $m)
       {
-         if($m->name == $this->page->name AND $m->version != $this->page->version)
+         if($m->name == $this->page->name AND ($m->version != $this->page->version OR $m->title != $this->page->title))
          {
             if( !$this->page->save() )
                $this->new_error_msg('Imposible actualizar los datos de esta página.');
@@ -687,8 +687,17 @@ class fs_controller
       /// gestionamos la página de inicio
       if( isset($_GET['default_page']) )
       {
-         $this->default_items->set_default_page( $this->page->name );
-         $this->user->fs_page = $this->page->name;
+         if($_GET['default_page'] == 'FALSE')
+         {
+            $this->default_items->set_default_page(NULL);
+            $this->user->fs_page = NULL;
+         }
+         else
+         {
+            $this->default_items->set_default_page( $this->page->name );
+            $this->user->fs_page = $this->page->name;
+         }
+         
          $this->user->save();
       }
       else if( is_null($this->default_items->default_page()) )
@@ -1012,10 +1021,10 @@ class fs_controller
          if($this->last_changes[0]['url'] == $url)
             $this->last_changes[0]['nuevo'] = $nuevo;
          else
-            array_unshift($this->last_changes, array('texto' => $txt, 'url' => $url, 'nuevo' => $nuevo) );
+            array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')) );
       }
       else
-         array_unshift($this->last_changes, array('texto' => $txt, 'url' => $url, 'nuevo' => $nuevo) );
+         array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')) );
       
       /// sólo queremos 10 elementos
       $num = 10;

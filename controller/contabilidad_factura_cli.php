@@ -71,7 +71,7 @@ class contabilidad_factura_cli extends fs_controller
                   $this->new_error_msg("Imposible modificar la fecha del asiento.");
             }
             $this->new_message("Factura modificada correctamente.");
-            $this->new_change('Factura Cliente<br/>'.$this->factura->codigo, $this->factura->url());
+            $this->new_change('Factura Cliente '.$this->factura->codigo, $this->factura->url());
          }
          else
             $this->new_error_msg("¡Imposible modificar la factura!");

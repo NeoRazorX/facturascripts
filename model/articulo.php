@@ -650,6 +650,13 @@ class articulo extends fs_model
          return FALSE;
    }
    
+   /**
+    * Comprueba y añade una cadena a la lista de búsquedas precargadas
+    * en memcache. Devuelve TRUE si la cadena ya está en la lista de
+    * precargadas.
+    * @param type $tag
+    * @return boolean
+    */
    private function new_search_tag($tag)
    {
       $encontrado = FALSE;
@@ -665,10 +672,10 @@ class articulo extends fs_model
             if( $value['tag'] == $tag )
             {
                $encontrado = TRUE;
-               if( time()+64800 > $value['expires']+300 )
+               if( time()+5400 > $value['expires']+300 )
                {
-                  self::$search_tags[$i]['expires'] = time()+64800;
                   self::$search_tags[$i]['count']++;
+                  self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                   $actualizar = TRUE;
                }
                break;
@@ -676,12 +683,12 @@ class articulo extends fs_model
          }
          if( !$encontrado )
          {
-            self::$search_tags[] = array('tag' => $tag, 'expires' => time()+64800, 'count' => 1);
+            self::$search_tags[] = array('tag' => $tag, 'expires' => time()+5400, 'count' => 1);
             $actualizar = TRUE;
          }
          
          if( $actualizar )
-            $this->cache->set('articulos_searches', self::$search_tags, 64800);
+            $this->cache->set('articulos_searches', self::$search_tags, 5400);
       }
       
       return $encontrado;
@@ -717,12 +724,13 @@ class articulo extends fs_model
             else if( $value['count'] > 1 )
             {
                /// guardamos los resultados de la búsqueda en memcache
-               $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 3600);
+               $this->cache->set('articulos_search_'.$value['tag'], $this->search($value['tag']), 5400);
                echo '.';
             }
          }
          
-         $this->cache->set('articulos_searches', self::$search_tags, 64800);
+         /// guardamos en memcache la lista de búsquedas
+         $this->cache->set('articulos_searches', self::$search_tags, 5400);
       }
    }
    

@@ -85,14 +85,14 @@ div#header_folders {
    padding-left: 10px;
 }
 
-div#header_folders a.selected {
+div#header_folders a.selected, div#header_user a {
    background-color: #325066;
    box-shadow: inset 0px 2px 2px #333;
 }
 
 div#header_user {
    vertical-align: middle;
-   padding-right: 5px;
+   padding-right: 10px;
    text-align: right;
 }
 
@@ -108,7 +108,7 @@ div#header_folders a, div#header_user a.btn {
    font-weight: bold;
 }
 
-div#header_folders a:hover, div#header_user a.btn:hover, a#fs_exit:hover {
+div#header_folders a:hover, div#header_user a.btn:hover {
    background-color: #456E8C;
    box-shadow: inset 0px 2px 2px #444;
 }
@@ -240,6 +240,11 @@ div.pages div#user_list ul li a {
    padding-left: 10px;
    padding-right: 10px;
    font-size: 16px;
+}
+
+div#user_list ul li hr {
+   margin: 0px 5px 0px 5px;
+   border: 1px solid #505050;
 }
 
 div#shadow {
@@ -693,7 +698,7 @@ a#fs_logo {
 
 a#fs_feedback {
    position: fixed;
-   right: 100px;
+   right: 20px;
    bottom: 0px;
    padding: 5px 10px 5px 10px;
    background-color: #FDDA58;
@@ -702,7 +707,7 @@ a#fs_feedback {
    border-top: 1px solid #B37600;
    border-left: 1px solid #B37600;
    border-right: 1px solid #B37600;
-   box-shadow: 2px 2px 2px #444;
+   box-shadow: 2px 2px 2px #888;
    color: black;
    text-decoration: none;
    font-size: 15px;
@@ -712,18 +717,33 @@ a#fs_feedback:hover {
    padding-bottom: 10px;
 }
 
-a#fs_exit {
-   display: inline-block;
-   margin-left: 15px;
-   margin-right: 15px;
-   padding: 2px;
-   background-color: #325066;
-   border-radius: 4px;
+div.bottom_frame {
+   position: fixed;
+   bottom: 0px;
+   left: 0px;
+   right: opx;
+   padding: 0px 10px 0px 10px;
 }
 
-a#fs_exit img {
+div.bottom_frame a {
+   display: inline-block;
    vertical-align: bottom;
-   border: 0px solid transparent;
+   margin-left: 10px;
+   padding: 5px 10px 5px 10px;
+   background-color: #444444;
+   color: white;
+   box-shadow: 2px 2px 2px #888;
+   border-top-left-radius: 4px;
+   border-top-right-radius: 4px;
+   border-top: 1px solid #333333;
+   border-left: 1px solid #333333;
+   border-right: 1px solid #333333;
+   text-decoration: none;
+   font-size: 15px;
+}
+
+div.bottom_frame a:hover {
+   padding-bottom: 10px;
 }
 
 div.history {
@@ -739,34 +759,4 @@ div.history {
 div.history h1 {
    margin: 5px 5px 2px 5px;
    font-size: 18px;
-}
-
-ul.h_bloque {
-   margin: 2px;
-   padding: 2px;
-   list-style-type: none;
-}
-
-ul.h_bloque li {
-   display: inline-block;
-   margin: 2px;
-   background-color: white;
-   border-left: 2px solid #5BC0DE;
-   font-size: 15px;
-   text-align: center;
-}
-
-ul.h_bloque li.verde {
-   border-left: 2px solid #5CB85C;
-}
-
-ul.h_bloque li a {
-   display: block;
-   padding: 5px 10px 5px 10px;
-   text-decoration: none;
-   color: #333333;
-}
-
-ul.h_bloque li a:first-letter {
-   text-transform: uppercase;
 }

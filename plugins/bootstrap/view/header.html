@@ -13,12 +13,16 @@
    <!-- Optional theme -->
    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
    
+   <!-- Calendario -->
+   <link rel="stylesheet" href="view/css/tcal.css">
+   <script type="text/javascript" src="view/js/tcal.js"></script>
+   
    <!-- Latest compiled and minified JavaScript -->
    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
    <script type="text/javascript">
       $(document).ready(function() {
          $("div.rounded").addClass('well well-sm');
-         $("table.list").addClass('table table-striped');
+         $("table.list").addClass('table table-hover');
          $(".button").addClass('btn btn-sm btn-default');
          $(".submit").addClass('btn btn-sm btn-primary');
          $(".delete").addClass('btn btn-sm btn-danger');
@@ -32,7 +36,8 @@
    </script>
    <style>
       body {
-         background-color: #F4F4F4;
+         background-color: white;
+         padding: 5px;
       }
       .well {
          margin: 5px;
@@ -47,6 +52,9 @@
       div.grupo {
          margin: 5px;
          padding: 5px;
+      }
+      .alert {
+         margin: 5px;
       }
    </style>
 </head>
@@ -69,7 +77,7 @@
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
                <li class="dropdown{if condition="$value==$fsc->page->folder"} active{/if}">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value} <b class="caret"></b></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value}</a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->pages($value)"}
                      <li{if condition="$value->showing()"} class="active"{/if}><a href="{$value->url()}">{$value->title}</a></li>
@@ -79,16 +87,7 @@
                {/loop}
             </ul>
             
-            {if condition="$fsc->custom_search"}
-            <form class="navbar-form navbar-left" role="search" name="f_custom_search" action="{$fsc->url()}" method="post">
-               <div class="form-group">
-                  <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off" class="form-control" placeholder="buscar">
-               </div>
-               <button type="submit" class="btn btn-primary">
-                  <span class="glyphicon glyphicon-search"></span>
-               </button>
-            </form>
-            {/if}
+            
             
             <ul class="nav navbar-nav navbar-right">
                {if condition="$fsc->get_last_changes()"}
@@ -108,7 +107,9 @@
                {/if}
                
                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$fsc->user->nick} <b class="caret"></b></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
+                     <span class="glyphicon glyphicon-user"></span>
+                  </a>
                   <ul class="dropdown-menu">
                      <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
                      {if condition="$fsc->user->codagente"}
@@ -147,41 +148,63 @@
    </div>
    {/if}
    
-   <div style="margin: 5px;">
-      <div class="btn-toolbar" role="toolbar" style="margin-bottom: 5px;">
-         <div class="btn-group">
-            <a class="btn btn-default" href="{$fsc->url()}" title="recargar la página">
-               <span class="glyphicon glyphicon-refresh"></span>
-            </a>
-            {if condition="$fsc->page->show_on_menu"}
-               {if condition="$fsc->page->is_default()"}
-               <a class="btn btn-default" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
-                  <span class="glyphicon glyphicon-remove-circle"></span>
-               </a>
-               {else}
-               <a class="btn btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
-                  <span class="glyphicon glyphicon-home"></span>
-               </a>
-               {/if}
+   <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
+      <div class="row">
+         <div class="col-md-9" style="padding-left: 5px;">
+            <div class="btn-toolbar" role="toolbar">
+               <div class="btn-group">
+                  <a class="btn btn-default" href="{$fsc->url()}" title="recargar la página">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </a>
+                  {if condition="$fsc->page->show_on_menu"}
+                     {if condition="$fsc->page->is_default()"}
+                     <a class="btn btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
+                     {else}
+                     <a class="btn btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
+                     {/if}
+                  {/if}
+               </div>
+               
+               <div class="btn-group">
+                  {if condition="$fsc->ppage"}
+                  <a class="btn btn-default" href="{$fsc->ppage->url()}">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                     {$fsc->ppage->title}
+                  </a>
+                  {/if}
+                  <a class="btn btn-default active" href="{$fsc->url()}">
+                     {$fsc->page->title}
+                  </a>
+               </div>
+               
+               <div class="btn-group">
+                  {loop="$fsc->buttons"}
+                     {if condition="get_class($value)=='fs_button_img'"}
+                     <a id="{$value->id}" class="btn{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
+                     {else}
+                     <a id="{$value->id}" class="btn btn-default" href="{$value->href}">{$value->value}</a>
+                     {/if}
+                  {/loop}
+               </div>
+            </div>
+         </div>
+         <div class="col-md-3" style="padding-right: 5px;">
+            {if condition="$fsc->custom_search"}
+            <form name="f_custom_search" action="{$fsc->url()}" method="post">
+               <div class="input-group">
+                  <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off" class="form-control" placeholder="buscar">
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
+            </form>
             {/if}
          </div>
-         
-         {if condition="$fsc->ppage"}
-         <div class="btn-group">
-            <a class="btn btn-default" href="{$fsc->ppage->url()}">
-               <span class="glyphicon glyphicon-arrow-left"></span>
-               {$fsc->ppage->title}
-            </a>
-         </div>
-         {/if}
-         
-         <div class="btn-group">
-            {loop="$fsc->buttons"}
-               {if condition="get_class($value)=='fs_button_img'"}
-               <a id="{$value->id}" class="btn{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
-               {else}
-               <a id="{$value->id}" class="btn btn-default" href="{$value->href}">{$value->value}</a>
-               {/if}
-            {/loop}
-         </div>
       </div>
+   </div>

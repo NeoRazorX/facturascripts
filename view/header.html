@@ -3,8 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
-   <meta name="description" content="FacturaScripts es un software de facturación
-         y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="view/css/{$fsc->css_file}" />
    <script type="text/javascript" src="view/js/jquery.js"></script>
@@ -54,7 +53,6 @@
          </div>
          <div id="header_user">
             <a class="btn" href="#" id="b_user_list">{$fsc->user->nick}</a>
-            <a id="fs_exit" href="{$fsc->url()}&logout=TRUE"><img src="view/img/logout.png" alt="salir" title="cerrar sesión"/></a>
          </div>
       </div>
    </div>
@@ -140,12 +138,42 @@
                   {/loop}
                {/if}
             {/if}
+            <li><hr/></li>
+            <li><a href="{$fsc->url()}&logout=TRUE">Cerrar sesión</a></li>
          </ul>
       </div>
    </div>
+   <div class="bottom_frame">
+      {if condition="$fsc->get_last_changes()"}
+      <a id="fs_last_changes" href="#">Historial</a>
+      {/if}
+      {if condition="$db_history"}
+      <a href="doc/" target="_blank">Documentación</a>
+      {/if}
+   </div>
+   <a id="fs_feedback" href="#">Ayuda</a>
    <div id="shadow"></div>
    <a id="b_close_popup" href="#" onclick="fs_hide_popups(); return false;">
       <img src="view/img/close.png" alt="close"/>
    </a>
    <div class="main_div">
+      {if condition="$fsc->get_last_changes()"}
+      <div class="popup" id="popup_last_changes" style="min-width: 400px;">
+         <h1>Últimos cambios</h1>
+         <table class="list">
+            <tr>
+               <th></th>
+               <th align="left">Página</th>
+               <th align="right">Modificación</th>
+            </tr>
+            {loop="$fsc->get_last_changes()"}
+            <tr>
+               <td>{if condition="$value['nuevo']"}N{/if}</td>
+               <td><a class="link" href="{$value['url']}">{$value['texto']}</a></td>
+               <td align="right">{$value['cambio']}</td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
+      {/if}
       {include="feedback"}

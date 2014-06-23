@@ -1,7 +1,40 @@
 {include="header"}
 
+{if condition="$fsc->pedido"}
 <div class="rounded">
-   
+   <h1>{$fsc->pedido->nombrecliente}</h1>
 </div>
+
+<div class="rounded">
+   <table class="list">
+      <tr>
+         <th align="left">Artículo</th>
+         <th align="right">Cantidad</th>
+         <th align="right">PVP</th>
+         <th align="right">Dto</th>
+         <th align="right">Total</th>
+         <th align="right">IVA</th>
+         <th align="right">Total + IVA</th>
+      </tr>
+      {loop="$fsc->lineas"}
+      <tr>
+         <td>
+            <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}
+         </td>
+         <td align="right">{$value->cantidad}</td>
+         <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->pedido->coddivisa)}</td>
+         <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+         <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->pedido->coddivisa)}</td>
+         <td align="right">{$value->iva} %</td>
+         <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->pedido->coddivisa)}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+{else}
+<div class="rounded" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
 
 {include="footer"}

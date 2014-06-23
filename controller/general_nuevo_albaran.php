@@ -227,7 +227,9 @@ class general_nuevo_albaran extends fs_controller
          }
          
          if( is_null($albaran->codcliente) )
+         {
             $this->new_error_msg("No hay ninguna dirección asociada al cliente.");
+         }
          else if( $albaran->save() )
          {
             $n = floatval($_POST['numlineas']);
@@ -304,14 +306,16 @@ class general_nuevo_albaran extends fs_controller
                
                if( $albaran->save() )
                {
-                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
-                  $this->new_change(FS_ALBARAN.' Cliente<br/>'.$albaran->codigo, $albaran->url(), TRUE);
+                  $this->new_message("<a href='".$albaran->url()."'>".ucfirst(FS_ALBARAN)."</a> guardado correctamente.");
+                  $this->new_change(ucfirst(FS_ALBARAN).' Cliente '.$albaran->codigo, $albaran->url(), TRUE);
                }
                else
                   $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
+            {
                $this->new_message(FS_ALBARAN." eliminado correctamente.");
+            }
             else
                $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }
@@ -482,14 +486,16 @@ class general_nuevo_albaran extends fs_controller
                
                if( $albaran->save() )
                {
-                  $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
-                  $this->new_change(FS_ALBARAN.' Proveedor<br/>'.$albaran->codigo, $albaran->url(), TRUE);
+                  $this->new_message("<a href='".$albaran->url()."'>".ucfirst(FS_ALBARAN)."</a> guardado correctamente.");
+                  $this->new_change(ucfirst(FS_ALBARAN).' Proveedor '.$albaran->codigo, $albaran->url(), TRUE);
                }
                else
                   $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
+            {
                $this->new_message(FS_ALBARAN." eliminado correctamente.");
+            }
             else
                $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }

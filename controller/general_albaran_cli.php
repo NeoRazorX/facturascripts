@@ -340,8 +340,8 @@ class general_albaran_cli extends fs_controller
       
       if( $this->albaran->save() )
       {
-         $this->new_message(FS_ALBARAN." modificado correctamente.");
-         $this->new_change(FS_ALBARAN.' Cliente<br/>'.$this->albaran->codigo, $this->albaran->url());
+         $this->new_message(ucfirst(FS_ALBARAN)." modificado correctamente.");
+         $this->new_change(ucfirst(FS_ALBARAN).' Cliente '.$this->albaran->codigo, $this->albaran->url());
       }
       else
          $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
@@ -454,7 +454,7 @@ class general_albaran_cli extends fs_controller
       if( !$this->empresa->contintegrada )
       {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-         $this->new_change('Factura Cliente<br/>'.$factura->codigo, $factura->url(), TRUE);
+         $this->new_change('Factura Cliente '.$factura->codigo, $factura->url(), TRUE);
       }
       else if( !$subcuenta_cli )
       {
@@ -547,7 +547,7 @@ class general_albaran_cli extends fs_controller
                if( $factura->save() )
                {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-                  $this->new_change('Factura Cliente<br/>'.$factura->codigo, $factura->url(), TRUE);
+                  $this->new_change('Factura Cliente '.$factura->codigo, $factura->url(), TRUE);
                }
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");

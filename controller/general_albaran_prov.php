@@ -320,8 +320,8 @@ class general_albaran_prov extends fs_controller
       
       if( $this->albaran->save() )
       {
-         $this->new_message(FS_ALBARAN." modificado correctamente.");
-         $this->new_change(FS_ALBARAN.' Proveedor<br/>'.$this->albaran->codigo, $this->albaran->url());
+         $this->new_message(ucfirst(FS_ALBARAN)." modificado correctamente.");
+         $this->new_change(ucfirst(FS_ALBARAN).' Proveedor '.$this->albaran->codigo, $this->albaran->url());
       }
       else
          $this->new_error_msg("¡Imposible modificar el ".FS_ALBARAN."!");
@@ -431,7 +431,7 @@ class general_albaran_prov extends fs_controller
       if( !$this->empresa->contintegrada )
       {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-         $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+         $this->new_change('Factura Proveedor '.$factura->codigo, $factura->url(), TRUE);
       }
       else if( !$subcuenta_prov )
       {
@@ -524,7 +524,7 @@ class general_albaran_prov extends fs_controller
                if( $factura->save() )
                {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
-                  $this->new_change('Factura Proveedor<br/>'.$factura->codigo, $factura->url(), TRUE);
+                  $this->new_change('Factura Proveedor '.$factura->codigo, $factura->url(), TRUE);
                }
                else
                   $this->new_error_msg("¡Imposible añadir el asiento a la factura!");

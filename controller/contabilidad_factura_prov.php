@@ -65,7 +65,7 @@ class contabilidad_factura_prov extends fs_controller
                   $this->new_error_msg("Imposible modificar la fecha del asiento.");
             }
             $this->new_message("Factura modificada correctamente.");
-            $this->new_change('Factura Proveedor<br/>'.$this->factura->codigo, $this->factura->url());
+            $this->new_change('Factura Proveedor '.$this->factura->codigo, $this->factura->url());
          }
          else
             $this->new_error_msg("¡Imposible modificar la factura!");

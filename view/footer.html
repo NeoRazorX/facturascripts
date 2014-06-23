@@ -1,15 +1,3 @@
-   {if condition="$fsc->get_last_changes()"}
-   <div class="history">
-      <h1>Últimos cambios:</h1>
-      <ul class="h_bloque">
-      {loop="$fsc->get_last_changes()"}
-         <li{if condition="!$value['nuevo']"} class="verde"{/if}>
-            <a href="{$value['url']}">{$value['texto']}</a>
-         </li>
-      {/loop}
-      </ul>
-   </div>
-   {/if}
    {if condition="$demo"}
    <div class="rounded">
       <table width="100%">
@@ -42,7 +30,7 @@
    </div>
    {/if}
    </div>
-   <a id="fs_feedback" href="#">Ayuda</a>
+   
    <div class="footer">
       <table>
          <tr>

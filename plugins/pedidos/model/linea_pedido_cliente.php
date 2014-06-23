@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once 'base/fs_model.php';
 
@@ -55,12 +72,25 @@ class linea_pedido_cliente extends fs_model
       return '';
    }
    
+   public function total_iva()
+   {
+      return $this->pvptotal*(100+$this->iva)/100;
+   }
+   
    public function url()
    {
       if( is_null($this->idpedido) )
          return 'index.php?page=ver_pedido_cli';
       else
          return 'index.php?page=ver_pedido_cli&id='.$this->idpedido;
+   }
+   
+   public function articulo_url()
+   {
+      if( is_null($this->referencia) AND $this->referencia == ' ')
+         return "index.php?page=general_articulos";
+      else
+         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
    }
    
    public function exists()

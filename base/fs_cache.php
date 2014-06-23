@@ -75,7 +75,7 @@ class fs_cache
          self::$memcache->close();
    }
    
-   public function set($key, $object, $expire=3600)
+   public function set($key, $object, $expire=5400)
    {
       if( self::$connected )
          self::$memcache->set(FS_CACHE_PREFIX.$key, $object, FALSE, $expire);
