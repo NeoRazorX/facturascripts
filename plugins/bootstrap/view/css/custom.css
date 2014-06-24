@@ -1,0 +1,89 @@
+/*!
+ * This file is part of FacturaSctipts
+ * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+body {
+   background-color: white;
+}
+
+ul.dropdown-menu li a:first-letter {
+   text-transform: uppercase;
+}
+
+.well {
+   margin: 5px;
+}
+
+.popup {
+   display: none;
+}
+
+.bloque {
+   display: inline-block;
+   padding: 2px;
+}
+
+div.grupo {
+   margin: 5px;
+   padding: 5px;
+}
+
+.alert {
+   margin: 5px;
+}
+
+.modal-header .close {
+   color: #333333;
+}
+
+.modal-footer {
+   margin: 0px;
+}
+
+table.list {
+   width: 100%;
+}
+
+table.list th {
+   border-bottom: 1px solid #cccccc;
+   text-transform: capitalize;
+}
+
+table.list tr:hover {
+   background-color: #d9edf7;
+}
+
+table.list td.locked {
+   background-color: #fdcece;
+   text-decoration: line-through;
+}
+
+div.new_line {
+   margin: 2px;
+   padding: 0px;
+   background-color: #deecfb;
+   border: 1px dashed #999999;
+}
+
+div.new_line a {
+   display: block;
+   padding: 5px;
+   color: black;
+   font-size: 15px;
+   text-align: center;
+   text-decoration: none;
+}

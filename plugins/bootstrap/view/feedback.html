@@ -1,0 +1,48 @@
+<div class="modal fade" id="modal_feedback">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_feedback" action="{$community_url}/feedback.php" method="post" target="_blank" role="form">
+            <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">¿Necesitas ayuda?</h4>
+            </div>
+            <div class="modal-body">
+               <p>
+                  La <a class="link" href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
+                  está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
+                  lo antes posible.
+               </p>
+               <div class="form-group">
+                  <select class="form-control" name="feedback_type">
+                     <option value="question">Preguntar</option>
+                     <option value="error">Informar de un error</option>
+                     <option value="idea">Aportar una idea</option>
+                  </select>
+               </div>
+               <div class="form-group">
+                  <label for="feedback_textarea">Observaciones</label>
+                  <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6">{if condition="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
+               </div>
+               <div class="form-group">
+                  <label for="exampleInputEmail1">Tu email</label>
+                  {if condition="$fsc->empresa"}
+                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
+                  {else}
+                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="introduce tu email"/>
+                  {/if}
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="submit" class="btn btn-sm btn-primary">Enviar</button>
+            </div>
+         </form>
+      </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{if condition="$fsc->empresa AND !$demo AND mt_rand(0,9)==0"}
+<div style="display: none;">
+   <iframe src="{$community_url}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
+</div>
+{/if}

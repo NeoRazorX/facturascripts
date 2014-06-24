@@ -3,60 +3,29 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
-   <meta name="description" content="FacturaScripts es un software de facturación
-         y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <script type="text/javascript" src="view/js/jquery.js"></script>
-   <!-- Latest compiled and minified CSS -->
-   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-   
-   <!-- Optional theme -->
-   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-   
-   <!-- Calendario -->
-   <link rel="stylesheet" href="view/css/tcal.css">
+   <link href="plugins/bootstrap/view/css/bootstrap-yeti.min.css" rel="stylesheet">
+   <link href="plugins/bootstrap/view/css/custom.css" rel="stylesheet">
+   <link href="view/css/tcal.css" rel="stylesheet">
+   <script type="text/javascript" src="plugins/bootstrap/view/js/jquery-2.1.1.min.js"></script>
+   <script type="text/javascript" src="plugins/bootstrap/view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="plugins/bootstrap/view/js/base.js"></script>
    <script type="text/javascript" src="view/js/tcal.js"></script>
-   
-   <!-- Latest compiled and minified JavaScript -->
-   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
    <script type="text/javascript">
-      $(document).ready(function() {
-         $("div.rounded").addClass('well well-sm');
-         $("table.list").addClass('table table-hover');
-         $(".button").addClass('btn btn-sm btn-default');
-         $(".submit").addClass('btn btn-sm btn-primary');
-         $(".delete").addClass('btn btn-sm btn-danger');
-         $("div.advice").addClass('alert alert-info');
-         $("div.grupo").addClass('panel panel-primary');
-         $(".pull_right").addClass('pull-right');
-         $("div.select").addClass('btn-group');
-         $("div.select a").addClass('btn btn-default');
-         $("div.select a.selected").addClass('active');
-      });
+      function show_precio(precio)
+      {
+         {if condition="$pos_divisa=='right'"}
+         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}')+' {$fsc->simbolo_divisa()}';
+         {else}
+         return '{$fsc->simbolo_divisa()}'+number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+         {/if}
+      }
+      function show_numero(numero)
+      {
+         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+      }
    </script>
-   <style>
-      body {
-         background-color: white;
-         padding: 5px;
-      }
-      .well {
-         margin: 5px;
-      }
-      .popup {
-         display: none;
-      }
-      .bloque {
-         display: inline-block;
-         padding: 2px;
-      }
-      div.grupo {
-         margin: 5px;
-         padding: 5px;
-      }
-      .alert {
-         margin: 5px;
-      }
-   </style>
 </head>
 <body>
    <nav class="navbar navbar-inverse" role="navigation" style="margin: 0px;">
@@ -87,8 +56,6 @@
                {/loop}
             </ul>
             
-            
-            
             <ul class="nav navbar-nav navbar-right">
                {if condition="$fsc->get_last_changes()"}
                <li class="dropdown">
@@ -97,23 +64,35 @@
                   </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->get_last_changes()"}
-                        {if condition="$counter>0"}
-                        <li class="divider"></li>
-                        {/if}
-                        <li><a href="{$value['url']}">{$value['texto']}</a></li>
+                        <li title="{if condition="$value['nuevo']"}creado{else}modificado{/if} el {$value['cambio']}">
+                           <a href="{$value['url']}">
+                              {if condition="$value['nuevo']"}
+                              <span class="glyphicon glyphicon-file"></span> &nbsp;
+                              {else}
+                              <span class="glyphicon glyphicon-edit"></span> &nbsp;
+                              {/if}
+                              {$value['texto']}
+                           </a>
+                        </li>
                      {/loop}
                   </ul>
                </li>
                {/if}
+               
+               <li>
+                  <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
+                     <span class="glyphicon glyphicon-question-sign"></span>
+                  </a>
+               </li>
                
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
                      <span class="glyphicon glyphicon-user"></span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
+                     <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>
                      {if condition="$fsc->user->codagente"}
-                     <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
+                     <li><a href="{$fsc->user->get_agente_url()}">Agente: {$fsc->user->codagente}</a></li>
                      {/if}
                      {if condition="count($fsc->user->all())>1"}
                         <li class="divider"></li>
@@ -124,7 +103,12 @@
                         {/loop}
                      {/if}
                      <li class="divider"></li>
-                     <li><a href="{$fsc->url()}&logout=TRUE">Cerrar sesión</a></li>
+                     <li>
+                        <a href="{$fsc->url()}&logout=TRUE">
+                           <span class="glyphicon glyphicon-log-out"></span> &nbsp;
+                           Cerrar sesión
+                        </a>
+                     </li>
                   </ul>
                </li>
             </ul>
@@ -153,16 +137,16 @@
          <div class="col-md-9" style="padding-left: 5px;">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group">
-                  <a class="btn btn-default" href="{$fsc->url()}" title="recargar la página">
+                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                      <span class="glyphicon glyphicon-refresh"></span>
                   </a>
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
-                     <a class="btn btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
                         <span class="glyphicon glyphicon-home"></span>
                      </a>
                      {else}
-                     <a class="btn btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
                         <span class="glyphicon glyphicon-home"></span>
                      </a>
                      {/if}
@@ -171,12 +155,12 @@
                
                <div class="btn-group">
                   {if condition="$fsc->ppage"}
-                  <a class="btn btn-default" href="{$fsc->ppage->url()}">
+                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
                      <span class="glyphicon glyphicon-arrow-left"></span>
                      {$fsc->ppage->title}
                   </a>
                   {/if}
-                  <a class="btn btn-default active" href="{$fsc->url()}">
+                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}">
                      {$fsc->page->title}
                   </a>
                </div>
@@ -184,9 +168,9 @@
                <div class="btn-group">
                   {loop="$fsc->buttons"}
                      {if condition="get_class($value)=='fs_button_img'"}
-                     <a id="{$value->id}" class="btn{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
                      {else}
-                     <a id="{$value->id}" class="btn btn-default" href="{$value->href}">{$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>
                      {/if}
                   {/loop}
                </div>
@@ -208,3 +192,19 @@
          </div>
       </div>
    </div>
+   
+   <div class="modal fade" id="modal_fspopup">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">FacturaScripts</h4>
+            </div>
+            <div class="modal-body" id="modal_fspopup_content">
+               
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   {include="feedback"}
