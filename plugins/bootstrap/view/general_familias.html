@@ -1,0 +1,45 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nueva_familia").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nueva_familia');
+         document.f_nueva_familia.ncodfamilia.focus();
+      });
+      document.f_custom_search.query.focus();
+   });
+</script>
+
+<div class="popup" id="popup_nueva_familia">
+   <h1>Nueva familia</h1>
+   <form name="f_nueva_familia" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="ncodfamilia" size="4" maxlength="4" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="ndescripcion" size="60" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <ul class="horizontal">
+   {loop="$fsc->resultados"}
+      <li><a class="link" href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
+   {else}
+      <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>
+   {/loop}
+   </ul>
+</div>
+
+{include="footer"}

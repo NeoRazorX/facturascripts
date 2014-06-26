@@ -178,30 +178,9 @@ function fs_resize_popup(id, top)
 
 function fs_hide_popups()
 {
-   $("#tcal").hide();
-   $("#b_close_popup").hide();
-   $('div.popup').each(function() {
-      $(this).hide();
-   });
-   $("#shadow").fadeOut('fast');
+   $("#modal_fspopup").modal('hide');
 }
 
 $(document).ready(function() {
-   $("div.rounded").addClass('well well-sm');
-   $(".button").addClass('btn btn-sm btn-default');
-   $(".submit").addClass('btn btn-sm btn-primary');
-   $(".delete").addClass('btn btn-sm btn-danger');
-   $("div.advice").addClass('alert alert-info');
-   $("div.grupo").addClass('panel panel-primary');
-   $(".pull_right").addClass('pull-right');
-   $("div.select").addClass('btn-group');
-   $("div.select a").addClass('btn btn-sm btn-default');
-   $("div.select a.selected").addClass('active');
-   $("#shadow").click(function() {
-      fs_hide_popups();
-   });
-   $("#fs_last_changes").click(function(event) {
-      event.preventDefault();
-      fs_show_popup('popup_last_changes');
-   });
+   
 });

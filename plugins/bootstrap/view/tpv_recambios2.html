@@ -1,0 +1,377 @@
+   <script type="text/javascript">
+      var numlineas = 0;
+      var lcd_txt = '-1';
+      function update_lcd(saldo)
+      {
+         if(saldo != lcd_txt)
+         {
+            $.ajax({
+               type: 'POST',
+               url: '{$fsc->url()}',
+               dataType: 'html',
+               data: 'saldo='+saldo
+            });
+            lcd_txt = saldo;
+         }
+      }
+      function recalcular()
+      {
+         var l_uds = 0;
+         var l_pvp = 0;
+         var l_dto = 0;
+         var l_iva = 0;
+         var neto = 0;
+         var total_iva = 0;
+         
+         for(var i=1; i<=numlineas; i++)
+         {
+            if($("#linea_"+i).length > 0)
+            {
+               l_uds = parseFloat( $("#cantidad_"+i).val() );
+               l_pvp = parseFloat( $("#pvp_"+i).val() );
+               l_dto = parseFloat( $("#dto_"+i).val() );
+               l_iva = parseFloat( $("#iva_"+i).val() );
+               $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+               $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+               
+               neto += l_uds*l_pvp*(100-l_dto)/100;
+               total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+            }
+         }
+         neto = fs_round(neto, 2);
+         total_iva = fs_round(total_iva, 2);
+         $("#tpv_total").html( show_precio(neto + total_iva) );
+         update_lcd(neto + total_iva);
+      }
+      function ajustar_totiva()
+      {
+         var l_uds = 0;
+         var l_pvp = 0;
+         var l_iva = 0;
+         var l_dto = 0;
+         var l_totiva = 0;
+         var neto = 0;
+         var total_iva = 0;
+         
+         for(var i=1; i<=numlineas; i++)
+         {
+            if($("#linea_"+i).length > 0)
+            {
+               l_uds = parseFloat( $("#cantidad_"+i).val() );
+               l_pvp = parseFloat( $("#pvp_"+i).val() );
+               l_dto = parseFloat( $("#dto_"+i).val() );
+               l_iva = parseFloat( $("#iva_"+i).val() );
+               l_totiva = parseFloat( $("#totiva_"+i).val() );
+               if( isNaN(l_totiva) )
+                  l_totiva = 0;
+               
+               if( l_totiva <= l_pvp*l_uds*(100+l_iva)/100 )
+               {
+                  l_dto = 100 - 100*l_totiva/(l_pvp*l_uds*(100+l_iva)/100);
+                  if( isNaN(l_dto) )
+                     l_dto = 0;
+               }
+               else
+               {
+                  l_dto = 0;
+                  l_pvp = 10000*l_totiva/(l_uds*(100-l_dto)*(100+l_iva));
+                  if( isNaN(l_pvp) )
+                     l_pvp = 0;
+               }
+               
+               $("#pvp_"+i).val(l_pvp);
+               $("#dto_"+i).val(l_dto);
+               $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+               
+               neto += l_uds*l_pvp*(100-l_dto)/100;
+               total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+            }
+         }
+         neto = fs_round(neto, 2);
+         total_iva = fs_round(total_iva, 2);
+         $("#tpv_total").html( show_precio(neto + total_iva) );
+         update_lcd(neto + total_iva);
+      }
+      function linea_sum_ud(num,value)
+      {
+         var udl = parseInt($("#cantidad_"+num).val()) + value;
+         if(udl < 1)
+            $("#linea_"+num).remove();
+         else
+            $("#cantidad_"+num).val(udl);
+         recalcular();
+      }
+      function get_precios(ref)
+      {
+         fs_hide_popups();
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: "referencia4precios="+ref,
+            success: function(datos) {
+               $("#precios_articulo").html(datos);
+               fs_show_popup('popup_precios', 40);
+            }
+         });
+      }
+      function add_articulo(ref,desc,pvp,dto,iva)
+      {
+         numlineas += 1;
+         $("#numlineas").val(numlineas);
+         desc = Base64.decode(desc);
+         $("#tpv_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
+            <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
+               <a class=\"link\" target=\"_blank\" href=\"index.php?page=general_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
+            <td><input type=\"text\" class=\"full\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
+            <td align=\"center\"><input class=\"button\" type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/>\n\
+               <input type=\"text\" id=\"cantidad_"+numlineas+"\" name=\"cantidad_"+numlineas+
+                  "\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\" size=\"2\"/>\n\
+               <input class=\"button\" type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
+            <td align=\"center\"><input type=\"hidden\" id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" value=\""+iva+"\"/>\n\
+               <input type=\"text\" class=\"full\" id=\"pvp_"+numlineas+"\" name=\"pvp_"+numlineas+"\" value=\""+pvp+
+                  "\" size=\"6\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+            <td align=\"center\"><input type=\"text\" class=\"full\" id=\"dto_"+numlineas+"\" name=\"dto_"+numlineas+"\" value=\""+dto+
+                  "\" size=\"4\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+            <td align=\"center\">"+iva+" %</td>\n\
+            <td align=\"center\"><input type=\"hidden\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+"\"/>\n\
+               <input type=\"text\" class=\"full\" id=\"totiva_"+numlineas+"\" name=\"totiva_"+numlineas+
+                  "\" size=\"6\" onkeyup=\"ajustar_totiva()\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
+         fs_hide_popups();
+         recalcular();
+      }
+      function buscar_articulos()
+      {
+         if(document.f_search_recambios.query.value == '')
+         {
+            $("#search_results").html('');
+            fs_resize_popup("popup_new_line", 40);
+         }
+         else
+         {
+            $.ajax({
+               type: 'POST',
+               url: '{$fsc->url()}',
+               dataType: 'html',
+               data: $("form[name=f_search_recambios]").serialize(),
+               success: function(datos) {
+                  var re = /<!--(.*?)-->/g;
+                  var m = re.exec( datos );
+                  if( m[1] == document.f_search_recambios.query.value )
+                  {
+                     $("#search_results").html(datos);
+                     fs_resize_popup("popup_new_line", 40);
+                  }
+               }
+            });
+         }
+      }
+      function more_tickets(value)
+      {
+         var num = parseInt($("#num_tickets").val()) + parseInt(value);
+         if(num < 0)
+            $("#num_tickets").val(0);
+         else
+            $("#num_tickets").val(num);
+      }
+      $(document).ready(function() {
+         $("#b_reticket").click(function() {
+            window.location.href = "{$fsc->url()}&reticket="+prompt('Introduce el'+
+               ' código del ticket (o déjalo en blanco para re-imprimir el último):');
+         });
+         $("#b_borrar_ticket").click(function() {
+            window.location.href = "{$fsc->url()}&delete="+prompt('Introduce el código del ticket:');
+         });
+         $("#b_cerrar_caja").click(function() {
+            if( confirm("¿Realmente deseas cerrar la caja?") )
+               window.location.href = "{$fsc->url()}&cerrar_caja=TRUE";
+         });
+         $("#b_new_line").click(function(event) {
+            event.preventDefault();
+            $("#search_results").html('');
+            document.f_search_recambios.query.value = '';
+            fs_show_popup('popup_new_line', 40);
+            document.f_search_recambios.query.focus();
+         });
+         $("#f_search_recambios").keyup(function() {
+            buscar_articulos();
+         });
+         $("#f_search_recambios").submit(function(event) {
+            event.preventDefault();
+            buscar_articulos();
+         });
+         $("#b_nuevo_albaran_cliente").click(function() {
+            fs_show_popup('popup_tpv_opciones');
+         });
+         update_lcd(0);
+      });
+   </script>
+   
+   <div class="popup" id="popup_new_line" style="min-width: 80%">
+      <form id="f_search_recambios" name="f_search_recambios" action="{$fsc->url()}" method="post">
+         <h1>Buscar artículos</h1>
+         <div style="text-align: center;">
+            <input type="text" name="query" size="40" autocomplete="off"/>
+            <select name="codfamilia" onchange="buscar_articulos()">
+               <option value="">Todas las familias</option>
+               <option value="">------</option>
+            {loop="$fsc->familia->all()"}
+               <option value="{$value->codfamilia}">{$value->descripcion}</option>
+            {/loop}
+            </select>
+            <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+            <label for="cb_con_stock">sólo con stock</label>
+            <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+         </div>
+         <div id="search_results"></div>
+      </form>
+   </div>
+   
+   <div class="popup" id="popup_precios" style="min-width: 60%">
+      <div id="precios_articulo"></div>
+   </div>
+   
+   <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+      <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+      <div class="popup" id="popup_tpv_opciones"/>
+         <h1>Guardar como...</h1>
+         <table>
+            <tr>
+               <td align="right">Fecha:</td>
+               <td colspan="3">
+                  <input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+               </td>
+            </tr>
+            <tr>
+               <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
+               <td colspan="3">
+                  <select name="cliente">
+                     {loop="$fsc->cliente->all_full()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                        {else}
+                        <option value="{$value->codcliente}">{$value->nombre}</option>
+                        {/if}
+                     {else}
+                     <option value="">¡¡¡No tienes clientes!!!</option>
+                     {/loop}
+                  </select>
+               </td>
+            </tr>
+            <tr>
+               <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
+               <td colspan="3">
+                  <select name="almacen">
+                     {loop="$fsc->almacen->all()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                        {else}
+                        <option value="{$value->codalmacen}">{$value->nombre}</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </td>
+            </tr>
+            <tr>
+               <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
+               <td colspan="3">
+                  <select name="serie">
+                     {loop="$fsc->serie->all()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->codserie}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </td>
+            </tr>
+            <tr>
+               <td align="right">Forma de pago:</td>
+               <td>
+                  <select name="forma_pago">
+                     {loop="$fsc->forma_pago->all()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->codpago}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </td>
+               <td align="right">Divisa:</td>
+               <td>
+                  <select name="divisa">
+                     {loop="$fsc->divisa->all()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </td>
+            </tr>
+            <tr>
+               <td align="right">Observaciones:</td>
+               <td colspan="3"><textarea name="observaciones" cols="40" rows="3"></textarea></td>
+            </tr>
+            <tr>
+               <td align="right">Nº de tickets:</td>
+               <td>
+                  <input class="btn btn-sm btn-default" type="button" value="-" onclick="more_tickets('-1')"/>
+                  <input type="text" id="num_tickets" name="num_tickets" value="1" size="2"/>
+                  <input class="btn btn-sm btn-default" type="button" value="+" onclick="more_tickets('1')"/>
+               </td>
+               <td>
+                  <label>
+                     <input type="checkbox" name="imprimir_desc" value="TRUE"{if condition="$fsc->imprimir_descripciones"} checked="checked"{/if}/>
+                     Imprimir descripciones
+                  </label>
+                  &nbsp;
+                  <label>
+                     <input type="checkbox" name="imprimir_obs" value="TRUE"{if condition="$fsc->imprimir_observaciones"} checked="checked"{/if}/>
+                     Imprimir observaciones
+                  </label>
+               </td>
+               <td align="right">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
+            </tr>
+         </table>
+      </div>
+      <div class="well well-sm">
+         <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
+         <div class="form-group">
+            Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+         </div>
+         <br/><br/>
+         <table class="fs_table" id="tpv_albaran">
+            <tr>
+               <th align="left">Referencia</th>
+               <th>Descripción</th>
+               <th>Cantidad</th>
+               <th>PVP</th>
+               <th>Dto. %</th>
+               <th>IVA</th>
+               <th>Total+IVA</th>
+            </tr>
+         </table>
+         <div class="new_line">
+            <a name="new_line" href="#" id="b_new_line">Añadir artículo...</a>
+         </div>
+         <br/><br/>
+         <table width="100%">
+            <tr>
+               <td align="right">
+                  <input class="btn btn-sm btn-default" type="button" id="b_nuevo_albaran_cliente" value="guardar ticket">
+               </td>
+            </tr>
+         </table>
+      </div>
+   </form>
+   
+   <div class="hidden">
+      <iframe src="http://localhost:10080" height="0"></iframe>
+   </div>

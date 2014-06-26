@@ -32,16 +32,6 @@ ul.dropdown-menu li a:first-letter {
    display: none;
 }
 
-.bloque {
-   display: inline-block;
-   padding: 2px;
-}
-
-div.grupo {
-   margin: 5px;
-   padding: 5px;
-}
-
 .alert {
    margin: 5px;
 }
@@ -54,22 +44,31 @@ div.grupo {
    margin: 0px;
 }
 
-table.list {
+table.fs_table {
    width: 100%;
 }
 
-table.list th {
+table.fs_table th {
    border-bottom: 1px solid #cccccc;
    text-transform: capitalize;
 }
 
-table.list tr:hover {
+table.fs_table tr:hover {
    background-color: #d9edf7;
 }
 
-table.list td.locked {
+table.fs_table td.locked {
    background-color: #fdcece;
    text-decoration: line-through;
+}
+
+input.full {
+   display: block;
+   width: 100%;
+   box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   -ms-box-sizing: border-box;
 }
 
 div.new_line {

@@ -1,0 +1,141 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).prop('checked', true);
+         i++;
+      }
+   }
+   function fs_marcar_nada()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).attr('checked', false);
+         i++;
+      }
+   }
+   $(document).ready(function() {
+      $("#b_nueva_divisa").click(function(event) {
+         event.preventDefault();
+         $('#modal_nueva_divisa').modal('show');
+      });
+   });
+</script>
+
+<div class="modal fade" id="modal_nueva_divisa">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nueva_divisa" action="{$fsc->url()}" method="post" class="form">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva divisa</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="coddivisa" size="3" maxlength="3" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Símbolo:
+                  <input class="form-control" type="text" name="simbolo" value="?" size="5" maxlength="10" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Código ISO:
+                  <input class="form-control" type="text" name="codiso" size="3" maxlength="3" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Tasa de conversión:
+                  <input class="form-control" type="text" name="tasaconv" value="1" size="5" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="post" class="form">
+      <div style="margin-bottom: 5px;">
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+            Guardar
+         </button>
+      </div>
+      
+      <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th>Eliminar</th>
+               <th align="left">Código</th>
+               <th align="left">Símbolo</th>
+               <th align="left">Descripción</th>
+               <th align="left">Código ISO</th>
+               <th align="left">Tasa de conversión</th>
+            </tr>
+         </thead>
+         {loop="$fsc->divisa->all()"}
+         <tr>
+            <td align="center">
+               <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
+            </td>
+            <td>
+               {$value->coddivisa}
+               <input type="hidden" name="coddivisa_{$counter}" value="{$value->coddivisa}"/>
+            </td>
+            <td>
+               <input class="full form-control" type="text" name="simbolo_{$counter}" value="{$value->simbolo}" size="5" maxlength="10" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="full form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="full form-control" type="text" name="codiso_{$counter}" value="{$value->codiso}" size="3" maxlength="3" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="full form-control" type="text" name="tasaconv_{$counter}" value="{$value->tasaconv}" size="5" autocomplete="off"/>
+            </td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="6">
+               <div class="new_line">
+                  <a id="b_nueva_divisa" href="#">Nueva divisa</a>
+               </div>
+            </td>
+         </tr>
+      </table>
+      </div>
+      
+      <div>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+            Guardar
+         </button>
+      </div>
+   </form>
+</div>
+
+{include="footer"}

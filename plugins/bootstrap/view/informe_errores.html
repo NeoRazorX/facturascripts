@@ -1,0 +1,131 @@
+{if condition="!$fsc->informe['started']"}
+   {include="header"}
+   
+   <div class="well well-sm">
+      <form action="{$fsc->url()}" method="post">
+         <div class="form-group">
+            Comprobar
+            <select name="modelo">
+               <option value="todo">Todo</option>
+               <option value="">-------</option>
+               <option value="asiento">Asientos</option>
+               <option value="factura cliente">Facturas de cliente</option>
+               <option value="factura proveedor">Facturas de proveedor</option>
+               <option value="albaran cliente">{$albaranes} de cliente</option>
+               <option value="albaran proveedor">{$albaranes} de proveedor</option>
+            </select>
+            hasta el ejercicio
+            <select name="ejercicio">
+            {loop="$fsc->ejercicio->all()"}
+               <option value="{$value->codejercicio}">{$value->nombre}</option>
+            {/loop}
+               <option value="">---</option>
+               <option value="">Todos</option>
+            </select>
+            <label>
+               <input type="checkbox" name="duplicados" value="TRUE"/>
+               detectar duplicados.
+            </label>
+            <input class="btn btn-sm btn-primary" type="submit" value="comprobar"/>
+         </div>
+      </form>
+   </div>
+   
+   {include="footer"}
+{elseif condition="!$fsc->ajax"}
+   {include="header"}
+   
+   <script type="text/javascript">
+      var show_page = "{$fsc->informe['show_page']}";
+      var timeout = false;
+      function load_errors(page)
+      {
+         show_page = page;
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'ajax=TRUE&show_page='+show_page,
+            success: function(datos) {
+               clearTimeout(timeout);
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec(datos);
+               if(m[1] == 'FIN_PROCESO')
+               {
+                  $("#informe_errores").html(datos);
+               }
+               else if(m[1] == show_page)
+               {
+                  $("#informe_errores").html(datos);
+                  timeout = setTimeout("load_errors(show_page);", 500);
+               }
+            }
+         });
+      }
+      $(document).ready(function() {
+         timeout = setTimeout("load_errors(show_page);", 500);
+      });
+   </script>
+   
+   <br/>
+   
+   <div id="informe_errores">
+      <div class="advice">Cargando...</div>
+   </div>
+   
+   {include="footer"}
+{else}
+   {if condition="$fsc->informe['model']=='fin'"}
+      <!--FIN_PROCESO-->
+      <div class="advice">Comprobación finalizada.</div>
+   {else}
+      <!--{$fsc->informe['show_page']}-->
+      <div class="advice">
+         Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...
+         {$fsc->duration()}
+      </div>
+   {/if}
+   
+   <div class="well well-sm">
+      <div class="paginas">
+         {loop="$fsc->all_pages()"}
+            {if condition="$value.selected"}
+               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
+            {else}
+               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
+            {/if}
+         {/loop}
+      </div>
+      <br/>
+      <table class="fs_table">
+         <tr>
+            <th align="left"></th>
+            <th align="left">Modelo</th>
+            <th align="left">Ejercicio</th>
+            <th align="left">Identificador</th>
+            <th align="right">Fecha</th>
+         </tr>
+         {loop="$fsc->errores"}
+         <tr>
+            <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
+            <td>{$value.model}</td>
+            <td>{$value.ejercicio}</td>
+            <td><a class="link" href="{$value.url}">{$value.id}</a></td>
+            <td align="right">{$value.fecha}</td>
+         </tr>
+         {else}
+         <tr><td colspan="5">Nada que mostrar.</td></tr>
+         {/loop}
+      </table>
+      <br/>
+      <div class="paginas">
+         {loop="$fsc->all_pages()"}
+            {if condition="$value.selected"}
+               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
+            {else}
+               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
+            {/if}
+         {/loop}
+      </div>
+   </div>
+{/if}

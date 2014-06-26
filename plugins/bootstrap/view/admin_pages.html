@@ -1,0 +1,75 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_enable_pages input:checkbox').prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_enable_pages input:checkbox').prop('checked', false);
+   }
+</script>
+
+<div class="well well-sm">
+   <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
+      <input type="hidden" name="modpages" value="TRUE"/>
+      <div style="margin-bottom: 5px;">
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+            Guardar
+         </button>
+      </div>
+      
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th align="left">página</th>
+                  <th align="left">menú</th>
+                  <th align="left">versión</th>
+                  <th>importante</th>
+                  <th>existe</th>
+               </tr>
+            </thead>
+            {loop="$fsc->paginas"}
+            <tr>
+               <td{if condition="!$value->exists"} class="locked"{/if}>
+                  <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if condition="$value->enabled"} checked="checked"{/if}/>
+                  &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
+               </td>
+               <td>
+                  {if condition="$value->show_on_menu"}
+                     {$value->folder} » {$value->title}
+                  {else}
+                     -
+                  {/if}
+               </td>
+               <td>{$value->version}</td>
+               <td align="center">{if condition="$value->important"}Si{else}-{/if}</td>
+               <td align="center">{if condition="$value->exists"}Si{else}-{/if}</td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
+      
+      <div>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+            Guardar
+         </button>
+      </div>
+   </form>
+</div>
+
+{include="footer"}

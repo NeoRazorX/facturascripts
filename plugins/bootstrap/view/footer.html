@@ -1,7 +1,13 @@
    {if condition="$db_history"}
-   <div class="well well-sm">
-      <h1>Consultas SQL:</h1>
-      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   <div class="panel panel-warning" style="margin: 5px;">
+      <div class="panel-heading">
+         <h3 class="panel-title">Consultas SQL:</h3>
+      </div>
+      <div class="panel-body">
+         <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+            {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+         </ol>
+      </div>
    </div>
    {/if}
    <div class="container-fluid">

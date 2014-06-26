@@ -1,0 +1,69 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+      $("#b_nueva").click(function() {
+         fs_show_popup('popup_nueva', 50);
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nueva">
+   <h1>Nueva factura:</h1>
+   En lugar de crear una factura directamente, es mejor que<br/>
+   crees un {$albaran} de cliente (que es un "borrador" de factura)<br/>
+   y después pulses el botón <b>generar factura</b>.
+   <br/><br/>
+   Trabajar con {$albaranes} es más cómodo porque puedes modificarlos<br/>
+   e incluso agruparlos en una sola factura.
+   <div>
+      <a class="btn btn-sm btn-primary pull-right" href="index.php?page=general_nuevo_albaran">crear un {$albaran}</a>
+   </div>
+</div>
+
+<div class="well well-sm">
+   {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
+   <table class="fs_table">
+      <tr>
+         <th></th>
+         <th align="left">código + num. proveedor</th>
+         <th align="left">cliente</th>
+         <th align="left">Observaciones</th>
+         <th align="right">total</th>
+         <th align="right">fecha</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center">
+            {if condition="$value->idasiento"}
+            <span title="la factura tiene vinculado un asiento contable">A</span>
+            {/if}
+         </td>
+         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+         <td>{$value->nombre}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr><td colspan="6">Ninguna factura encontrada.</td></tr>
+      {/loop}
+      <tr><td colspan="6">&nbsp;</td></tr>
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}

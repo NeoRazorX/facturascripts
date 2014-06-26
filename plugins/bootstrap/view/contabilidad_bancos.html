@@ -1,0 +1,76 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_banco, #b_nuevo_banco2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_banco');
+         document.f_nuevo_banco.entidad.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_banco">
+   <h1>Nuevo banco</h1>
+   <form name="f_nuevo_banco" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Entidad:</td>
+            <td>
+               <input class="full form-control" type="text" name="entidad" maxlength="4" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td>
+               <input class="full form-control" type="text" name="nombre" size="50" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">
+               <a class="link" href="{$fsc->proveedor->url()}">Proveedor</a>:
+            </td>
+            <td>
+               <select name="codproveedor">
+                  <option value="-1">-- No conectar a ningún proveedor --</option>
+                  <option value="-1">----------</option>
+                  {loop="$fsc->proveedor->all_full()"}
+                  <option value="{$value->codproveedor}">{$value->nombre}</option>
+                  {else}
+                  <option value="-1">-- No tienes proveedores --</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">Entidad</th>
+         <th align="left">Nombre</th>
+      </tr>
+      {loop="$fsc->banco->all()"}
+      <tr>
+         <td width="80"><a class="link" href="{$value->url()}">{$value->entidad}</a></td>
+         <td>{$value->nombre}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+            <div class="new_line">
+               <a id="b_nuevo_banco" href="#">Nuevo banco</a>
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}

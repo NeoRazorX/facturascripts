@@ -1,0 +1,420 @@
+{include="header"}
+
+{if condition="$fsc->asiento"}
+<script type="text/javascript">
+   var numlineas = 0;
+   function add_partida()
+   {
+      numlineas++;
+      $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
+         <table width='100%'>\n\
+            <tr>\n\
+               <td>\n\
+               <table>\n\
+                  <tr>\n\
+                     <th align='left'>Subcuenta+saldo</th>\n\
+                     <th align='left'>Debe</th>\n\
+                     <th align='left'>Haber</th>\n\
+                  </tr>\n\
+                  <tr>\n\
+                     <td>\n\
+                        <input type='hidden' name='idpartida_"+numlineas+"' value='-1'/>\n\
+                        <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
+                           onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
+                        <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' size='8' disabled='disabled'/>\n\
+                     </td>\n\
+                     <td>\n\
+                        <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='5'\n\
+                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                     </td>\n\
+                     <td>\n\
+                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0' size='5'\n\
+                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                     </td>\n\
+                  </tr>\n\
+               </table>\n\
+               </td>\n\
+               <td id='contrapartida_"+numlineas+"'>\n\
+                  <a class='link' href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
+               </td>\n\
+               <td align='right'><input class='delete' type='button' value='x' onclick=\"clean_partida('"+numlineas+"')\"/></td>\n\
+            </tr>\n\
+         </table>\n\
+         </div>");
+   }
+   function add_contrapartida(num)
+   {
+      $("#contrapartida_"+num).html("<table width='100%'>\n\
+         <tr>\n\
+            <th align='left'>Contrapartida+saldo</th>\n\
+            <th align='left'>IVA</th>\n\
+            <th align='left'>Base Imp.</th>\n\
+            <th align='left'>CIF/NIF</th>\n\
+         </tr>\n\
+         <tr>\n\
+            <td>\n\
+               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text' size='10'\n\
+                  onclick=\"show_buscar_subcuentas('"+num+"','contrapartida')\" autocomplete='off' placeholder='Seleccionar'/>\n\
+               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' size='8' disabled='disabled'/>\n\
+            </td>\n\
+            <td>\n\
+               <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
+                  <option value='0'>---</option>\n\
+                  {loop="$fsc->impuesto->all()"}<option value='{$value->iva}'>{$value->descripcion}</option>{/loop}\n\
+               </select>\n\
+            </td>\n\
+            <td>\n\
+               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' size='5' autocomplete='off'/>\n\
+            </td>\n\
+            <td>\n\
+               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"' size='10'/>\n\
+            </td>\n\
+         </tr>\n\
+         </table>");
+   }
+   function show_buscar_subcuentas(num, tipo)
+   {
+      $("#subcuentas").html('');
+      document.f_buscar_subcuentas.fecha.value = document.f_asiento.fecha.value;
+      document.f_buscar_subcuentas.tipo.value = tipo;
+      document.f_buscar_subcuentas.numlinea.value = num;
+      document.f_buscar_subcuentas.query.value = '';
+      fs_show_popup('popup_subcuentas', 40);
+      document.f_buscar_subcuentas.query.focus();
+   }
+   function buscar_subcuentas()
+   {
+      if(document.f_buscar_subcuentas.query.value == '')
+      {
+         $("#subcuentas").html('');
+         fs_resize_popup("popup_subcuentas", 40);
+      }
+      else
+      {
+         var datos = 'query='+document.f_buscar_subcuentas.query.value;
+         datos += "&fecha="+document.f_buscar_subcuentas.fecha.value;
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: datos,
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_subcuentas.query.value )
+               {
+                  $("#subcuentas").html(datos);
+                  fs_resize_popup("popup_subcuentas", 40);
+               }
+            }
+         });
+      }
+   }
+   function select_subcuenta(codsubcuenta, descripcion, saldo)
+   {
+      var num = document.f_buscar_subcuentas.numlinea.value;
+      if(document.f_buscar_subcuentas.tipo.value == 'subcuenta')
+      {
+         $("#codsubcuenta_"+num).val(codsubcuenta);
+         $("#saldo_"+num).val(saldo);
+      }
+      else
+      {
+         $("#codcontrapartida_"+num).val(codsubcuenta);
+         $("#saldoc_"+num).val(saldo);
+      }
+      fs_hide_popups();
+   }
+   function clean_partida(num)
+   {
+      $("#partida_"+num).remove();
+      recalcular();
+   }
+   function recalcular()
+   {
+      var debe = 0;
+      var haber = 0;
+      var iva = 0;
+      var t_debe = 0;
+      var t_haber = 0;
+      
+      for(var i=1; i<200; i++)
+      {
+         if( $("#partida_"+i).length > 0 )
+         {
+            if(numlineas < i)
+               numlineas = i;
+            
+            debe = parseFloat( $("#debe_"+i).val() );
+            haber = parseFloat( $("#haber_"+i).val() );
+            
+            if( $("#codcontrapartida_"+i).val() != '' )
+            {
+               iva = parseFloat( $("#iva_"+i).val() );
+               if(iva == 0)
+                  $("#baseimp_"+i).val('0');
+               else
+               {
+                  if(haber == 0)
+                     $("#baseimp_"+i).val( debe*100/iva );
+                  else if(debe == 0)
+                     $("#baseimp_"+i).val( haber*100/iva );
+                  else
+                     $("#baseimp_"+i).val(0);
+               }
+            }
+            
+            t_debe += debe;
+            t_haber += haber;
+         }
+      }
+      
+      document.f_asiento.importe.value = Math.max(t_debe, t_haber);
+      document.f_asiento.descuadre.value = fs_round(t_debe - t_haber, 2);
+   }
+   function asigna_concepto()
+   {
+      document.f_asiento.concepto.value = $("#s_idconceptopar option:selected").text();
+      document.f_asiento.concepto.focus();
+   }
+   $(document).ready(function() {
+      {if condition="$fsc->asiento->editable"}recalcular();{/if}
+      $("#b_eliminar_asiento").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar este asiento?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->asiento->idasiento}";
+      });
+      $("#f_buscar_subcuentas").keyup(function() {
+         buscar_subcuentas();
+      });
+      $("#f_buscar_subcuentas").submit(function(event) {
+         event.preventDefault();
+         buscar_subcuentas();
+      });
+      $("#f_asiento").submit(function(event) {
+         event.preventDefault();
+         if(document.f_asiento.descuadre.value == 0)
+         {
+            $(this).disabled = true;
+            document.f_asiento.numlineas.value = numlineas;
+            document.f_asiento.importe.disabled = false;
+            document.f_asiento.submit();
+         }
+         else
+            alert('¡Asiento descuadrado!');
+      });
+   });
+</script>
+
+<div class="popup" id="popup_subcuentas" style="min-width: 80%">
+   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
+      <input type="hidden" name="fecha"/>
+      <input type="hidden" name="tipo"/>
+      <input type="hidden" name="numlinea"/>
+      <h1>Buscar subcuentas</h1>
+      <div style="text-align: center;">
+         <input type="text" name="query" size="40"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+      </div>
+   </form>
+   <div id="subcuentas"></div>
+</div>
+
+{if condition="$fsc->asiento->editable"}
+   <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="numlineas" value="0"/>
+      <div class="well well-sm">
+         <table class="fs_table">
+            <tr>
+               <th width="130" align="left">Fecha</th>
+               <th align="left">Concepto</th>
+               <th align="left">Divisa</th>
+               <th>Importe</th>
+               <th>Descuadre</th>
+               <td rowspan="2" align="right" width="100">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
+               </td>
+               <td>
+                  <input class="full form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}"
+                         maxlength="250" autocomplete="off"/>
+               </td>
+               <td>
+                  <select name='divisa'>
+                  {loop="$fsc->divisa->all()"}
+                     {if condition="$value->is_default()"}
+                        <option value='{$value->coddivisa}' selected='selected'>{$value->descripcion}</option>
+                     {else}
+                        <option value='{$value->coddivisa}'>{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+                  </select>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="importe" value="0" size="6" disabled="disabled"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="descuadre" value="0" size="6" disabled="disabled"/>
+               </td>
+            </tr>
+         </table>
+      </div>
+      
+      <div id="partidas">
+      {loop="$fsc->asiento->get_partidas()"}
+      <div class='rounded' id='partida_{$counter+1}'>
+         <table width='100%'>
+            <tr>
+               <td>
+               <table>
+                  <tr>
+                     <th align='left'>
+                        <a class="link" href="{$value->subcuenta_url()}">Subcuenta</a>+saldo
+                     </th>
+                     <th align='left'>Debe</th>
+                     <th align='left'>Haber</th>
+                  </tr>
+                  <tr>
+                     <td>
+                        <input type="hidden" name="idpartida_{$counter+1}" value="{$value->idpartida}"/>
+                        <input id='codsubcuenta_{$counter+1}' name='codsubcuenta_{$counter+1}' type='text' size='10'
+                               value="{$value->codsubcuenta}" onclick="show_buscar_subcuentas('{$counter+1}','subcuenta')"
+                               autocomplete='off' placeholder='Seleccionar'/>
+                        <input type='text' id='saldo_{$counter+1}' name='saldo_{$counter+1}' value='0' size='8' disabled='disabled'/>
+                     </td>
+                     <td>
+                        <input class='full' type='text' id='debe_{$counter+1}' name='debe_{$counter+1}' value='{$value->debe}' size='5'
+                               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
+                     </td>
+                     <td>
+                        <input class='full' type='text' id='haber_{$counter+1}' name='haber_{$counter+1}' value='{$value->haber}' size='5'
+                               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
+                     </td>
+                  </tr>
+               </table>
+               </td>
+               <td id='contrapartida_{$counter+1}'>
+                  <table width="100%">
+                     <tr>
+                        <th align='left'>
+                           <a class="link" href="{$value->contrapartida_url()}">Contrapartida</a>+saldo
+                        </th>
+                        <th align='left'>IVA</th>
+                        <th align='left'>Base Imp.</th>
+                        <th align='left'>CIF/NIF</th>
+                     </tr>
+                     <tr>
+                        <td>
+                           <input id='codcontrapartida_{$counter+1}' name='codcontrapartida_{$counter+1}' type='text'
+                              value='{$value->codcontrapartida}' onclick="show_buscar_subcuentas('{$counter+1}','contrapartida')"
+                              size='10' autocomplete='off' placeholder='Seleccionar'/>
+                           <input type='text' id='saldoc_{$counter+1}' name='saldoc_{$counter+1}' value='0' size='8' disabled='disabled'/>
+                        </td>
+                        <td>
+                           <select id='iva_{$counter+1}' name='iva_{$counter+1}' onchange='recalcular()'>
+                              <option value='0'>---</option>
+                              {loop="$fsc->impuesto->all()"}
+                                 {if condition="$value1->iva==$value2->iva"}
+                                    <option value='{$value->iva}' selected="selected">{$value->descripcion}</option>
+                                 {else}
+                                    <option value='{$value->iva}'>{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                        <td>
+                           <input class='full' type='text' id='baseimp_{$counter+1}' name='baseimp_{$counter+1}'
+                              value='{$value->baseimponible}' size='5' autocomplete='off'/>
+                        </td>
+                        <td>
+                           <input class='full' type='text' id='cifnif_{$counter+1}' name='cifnif_{$counter+1}'
+                              value="{$value->cifnif}" size='10'/>
+                        </td>
+                     </tr>
+                  </table>
+               </td>
+               <td align='right'>
+                  <input class="btn btn-sm btn-danger" type='button' value='x' onclick="clean_partida('{$counter+1}')"/>
+               </td>
+            </tr>
+         </table>
+      </div>
+      {/loop}
+      </div>
+      <div class="well well-sm">
+         <div class="new_line"><a href="#" onclick="add_partida(); return false;">Añadir línea...</a></div>
+      </div>
+   </form>
+{else}
+   <div class="well well-sm">
+      <table class="fs_table">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Documento</th>
+            <th align="right">Importe</th>
+         </tr>
+         <tr>
+            <td><a class='link' href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
+            <td align="center">{$fsc->asiento->fecha}</td>
+            <td align="center">{$fsc->asiento->concepto}</td>
+            <td align="center">
+               {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
+               {if condition="$fsc->asiento->documento"}
+                  <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+               {else}
+                  -
+               {/if}
+            </td>
+            <td align="right">{$fsc->show_precio($fsc->asiento->importe)}</td>
+         </tr>
+      </table>
+   </div>
+   
+   <div class="well well-sm">
+      <table class="fs_table">
+         <tr>
+            <th align="left">Concepto</th>
+            <th>Subcuenta</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">IVA</th>
+            <th align="right">Base imponible</th>
+            <th>Contrapartida</th>
+            <th>CIF/NIF</th>
+         </tr>
+         {loop="$fsc->asiento->get_partidas()"}
+         <tr>
+            <td>{$value->concepto}</td>
+            <td align="center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+            <td align="right"><span title="{$value->debe}">{$fsc->show_precio($value->debe, $value->coddivisa)}</span></td>
+            <td align="right"><span title="{$value->haber}">{$fsc->show_precio($value->haber, $value->coddivisa)}</span></td>
+            <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
+            <td align="right">
+               {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $value->coddivisa)}{else}-{/if}
+            </td>
+            <td align="center">
+               {if condition="$value->codcontrapartida"}
+               <a class='link' href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+               {else}
+               -
+               {/if}
+            </td>
+            <td align="center">{if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+{/if}
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

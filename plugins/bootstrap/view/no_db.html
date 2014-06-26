@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>FacturaScripts</title>
+      <meta name="description" content="FacturaScripts es un software libre bajo licencia GNU/AGPL." />
+      <link rel="shortcut icon" href="view/img/favicon.ico" />
+      <link rel="stylesheet" type="text/css" href="view/login/login.css" />
+      <script type="text/javascript" src="view/js/jquery.js"></script>
+      <script type="text/javascript">
+         $(document).ready(function() {
+            $("#popup_feedback").show();
+            $("#feedback_problem").click();
+            document.feedback.feedback_text.focus();
+         });
+      </script>
+   </head>
+   <body>
+      {if condition="$fsc->get_errors()"}
+         <div class="error">
+            <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+         </div>
+      {/if}
+      {if condition="$fsc->get_messages()"}
+         <div class="message">
+            <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+         </div>
+      {/if}
+      
+      {include="feedback"}
+   </body>
+</html>

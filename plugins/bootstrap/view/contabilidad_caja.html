@@ -1,0 +1,87 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_cajas input:checkbox').prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_cajas input:checkbox').attr('checked', false);
+   }
+</script>
+
+<div class="well well-sm">
+<form id="f_cajas" action="{$fsc->url()}" method="post">
+   <table width="100%">
+      <tr>
+         <td>
+            <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+            <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+         </td>
+         <td align="center">
+            {if condition="$fsc->show_cerrar"}
+            <a class="btn btn-sm btn-danger" href="{$fsc->url()}&cerrar=TRUE">cerrar caja</a>
+            {/if}
+         </td>
+         <td align="right">
+            <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </td>
+      </tr>
+   </table>
+   <br/><br/>
+   
+   <table class="fs_table">
+      <tr>
+         <th>Eliminar</th>
+         <th>Caja</th>
+         <th>Agente</th>
+         <th>Fecha inicial</th>
+         <th align="right">Dinero inicial</th>
+         <th>Fecha fin</th>
+         <th align="right">Diferencia</th>
+         <th align="right">Tickets</th>
+      </tr>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center"><input type="checkbox" name="delete[]" value="{$value->id}"/></td>
+         <td align="center">{$value->fs_id}</td>
+         {if condition="$value->agente"}
+         <td align="center"><a class="link" href="{$value->agente->url()}">{$value->agente->get_fullname()}</a></td>
+         {else}
+         <td align="center">-</td>
+         {/if}
+         <td align="center">{$value->fecha_inicial}</td>
+         <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
+         <td align="center">{$value->show_fecha_fin()}</td>
+         <td align="right">{$fsc->show_precio($value->diferencia())}</td>
+         <td align="right">{$value->tickets}</td>
+      </tr>
+      {else}
+      <tr><td colspan="7">No hay datos.</td></tr>
+      {/loop}
+      <tr>
+         <td colspan="2">
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td colspan="2" align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+   
+   <br/><br/>
+   <div>
+      <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+      <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+      <input class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+   </div>
+</form>
+</div>
+
+{include="footer"}

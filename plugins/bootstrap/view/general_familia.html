@@ -1,0 +1,170 @@
+{include="header"}
+
+{if condition="$fsc->familia"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_stats_familia").click(function(event) {
+         event.preventDefault();
+         $('#popup_stats_familia').html('');
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: 'stats=TRUE',
+            success: function(datos) {
+               $('#popup_stats_familia').html(datos);
+               fs_show_popup('popup_stats_familia');
+            }
+         });
+      });
+      $("#b_importar_familia").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_importar_familia');
+      });
+      $("#b_herramientas_familia").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_herramientas_familia');
+      });
+      $("#b_eliminar_familia").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar esta familia?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={$fsc->familia->codfamilia}";
+      });
+   });
+</script>
+
+<div class="popup" id="popup_stats_familia" style="min-width: 500px;"></div>
+
+<div class="popup" id="popup_herramientas_familia">
+   <h1>Herramientas</h1>
+   <form action="{$fsc->url()}" method="post">
+      Multiplicar precios por:
+      <input type="text" name="multiplicar" value="1" size="3"/>
+      <input class="btn btn-sm btn-primary" type="submit" value="aplicar" onclick="this.disabled=true;this.form.submit();"/>
+   </form>
+</div>
+
+{if condition="$fsc->pag_importar"}
+<div class="popup" id="popup_importar_familia">
+   <h1>Importar familia</h1>
+   <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
+      <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
+      <input name='archivo' type='hidden' value='TRUE'/>
+      El archivo debe estar en formato csv: valores separados por punto y coma y sin separador de texto,
+      <br/>
+      adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
+      <br/>Adicionalmente puedes añadir la columna stock.
+      <br/>
+      Pulsa el botón exportar para ver un ejemplo.
+      <br/><br/>
+      <table width="100%">
+         <tr>
+            <td align="right">Archivo:</td>
+            <td><input name='farchivo' type='file'/></td>
+         </tr>
+         <tr>
+            <td align="right">Impuesto:</td>
+            <td>
+               <select name="impuesto">
+                  {loop="$fsc->impuesto->all()"}
+                  <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Sufijo para los artículos:</td>
+            <td>
+               <input name='sufijo' type='text' size="5" maxlength="5"/>
+               Se añade al final de la referencia de cada artículo.
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><input id="cb_nnuevos" type="checkbox" name="nnuevos" value="TRUE"/></td>
+            <td><label for="cb_nnuevos">NO añadir artículos nuevos.</label></td>
+         </tr>
+         <tr>
+            <td align="right"><input id="cb_con_iva" type="checkbox" name="con_iva" value="TRUE"/></td>
+            <td><label for="cb_con_iva">Los precios ya llevan el IVA.</label></td>
+         </tr>
+         <tr>
+            <td align="right"><input id="cb_pvp_max" type="checkbox" name="pvp_max" value="TRUE"/></td>
+            <td><label for="cb_pvp_max">Asignar el precio máximo.</label></td>
+         </tr>
+         <tr>
+            <td align="right"><input id="cb_bloquear" type="checkbox" name="bloquear" value="TRUE"/></td>
+            <td><label for="cb_bloquear">Bloquear los artículo no actualizados.</label></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+{/if}
+
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="post">
+      <div class="pull_right">
+         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>{$fsc->familia->descripcion}</h1>
+      <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
+      Descripción:
+      <input type="text" name="descripcion" value="{$fsc->familia->descripcion}" size="60"/>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">referencia + descripción</th>
+         <th align="left">cod. equivalencia</th>
+         <th align="right">PVP</th>
+         <th align="right">PVP+IVA</th>
+         <th align="right">stock</th>
+      </tr>
+      {loop="$fsc->articulos"}
+      <tr>
+         {if condition="$value->bloqueado"}
+            <td class="locked"><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+         {else}
+            <td><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+         {/if}
+         <td>{$value->equivalencia}</td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
+         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
+         <td align="right">{$value->stockfis}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="5">Ningún artículo encontrado.</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="5">&nbsp;</td>
+      </tr>
+      <tr>
+         <td>
+         {if condition="$fsc->anterior_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
+         {/if}
+         </td>
+         <td colspan="3"></td>
+         <td align="right">
+         {if condition="$fsc->siguiente_url()!=''"}
+         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
+         {/if}
+         </td>
+      </tr>
+   </table>
+</div>
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

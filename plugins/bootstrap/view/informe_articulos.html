@@ -1,0 +1,45 @@
+{include="header"}
+
+<div class="well well-sm">
+   <h1>Estadísticas:</h1>
+   Hay un total de <b>{$fsc->stats['total']}</b> artículos,
+   <b>{$fsc->stats['con_stock']}</b> de ellos tienen stock,
+   <b>{$fsc->stats['publicos']}</b> son públicos
+   y <b>{$fsc->stats['bloqueados']}</b> están bloqueados.
+   La última actualización de los artículos es del <b>{$fsc->stats['factualizado']}</b>.
+</div>
+
+<div class="well well-sm">
+   <h1>Top ventas (unidades):</h1>
+   <ul class="horizontal">
+      {loop="$fsc->top_ventas"}
+      <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      {else}
+      <li>Sin resultados.</li>
+      {/loop}
+   </ul>
+</div>
+
+<div class="well well-sm">
+   <h1>Top compras (unidades):</h1>
+   <ul class="horizontal">
+      {loop="$fsc->top_compras"}
+      <li><a class="link" href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</li>
+      {else}
+      <li>Sin resultados.</li>
+      {/loop}
+   </ul>
+</div>
+
+<div class="well well-sm">
+   <h1>Búsquedas de artículos:</h1>
+   <ul class="horizontal">
+      {loop="$fsc->articulo->get_search_tags()"}
+      <li>{$value.tag} ({$value.count})</li>
+      {else}
+      <li>Ninguna búsqueda realizada.</li>
+      {/loop}
+   </ul>
+</div>
+
+{include="footer"}

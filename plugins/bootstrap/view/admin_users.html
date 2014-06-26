@@ -1,0 +1,82 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_usuario, #b_nuevo_usuario2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_usuario');
+         document.f_nuevo_usuario.nnick.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_usuario">
+   <h1>Nuevo usuario</h1>
+   <form name="f_nuevo_usuario" action="{$fsc->page->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Nick:</td>
+            <td><input type="text" name="nnick"  size="12" maxlength="12" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Contraseña:</td>
+            <td><input type="password" name="npassword"  size="12" maxlength="12"/></td>
+         </tr>
+         <tr>
+            <td align="right"><a class="link" href="{$fsc->agente->url()}">Agente</a>:</td>
+            <td>
+               <select name="ncodagente">
+                  <option value="">- ninguno -</option>
+                  <option value="">-----------</option>
+                  {loop="$fsc->agente->all()"}
+                  <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                  {/loop}
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td align="right"><input type="checkbox" name="nadmin" value="TRUE" id="usuario_admin"/></td>
+            <td><label for="usuario_admin">Administrador</label></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">nick</th>
+         <th align="left">agente</th>
+         <th>administrador</th>
+         <th>IP</th>
+         <th align="left">Página de inicio</th>
+         <th>Ejercicio</th>
+         <th align="right">último login</th>
+      </tr>
+      {loop="$fsc->user->all()"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->nick}</a></td>
+         <td>{$value->get_agente_fullname()}</td>
+         <td align="center">{if condition="$value->admin"}Si{else}-{/if}</td>
+         <td align="center">{$value->last_ip}</td>
+         <td>{$value->fs_page}</td>
+         <td align="center">{$value->codejercicio}</td>
+         <td align="right">{$value->show_last_login()}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="7">
+            <div class="new_line">
+               <a id="b_nuevo_usuario2" href="#">Nuevo usuario</a>
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+
+{include="footer"}

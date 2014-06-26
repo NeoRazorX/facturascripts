@@ -1,0 +1,71 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_agente, #b_nuevo_agente2").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_agente');
+         document.f_nuevo_agente.snombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_agente">
+   <h1>Nuevo agente</h1>
+   <form name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td>
+               <input type="text" name="scodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre" maxlength="50" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Apellidos:</td>
+            <td><input type="text" name="sapellidos" maxlength="100" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="sdnicif" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Teléfono:</td>
+            <td><input type="text" name="stelefono" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Email:</td>
+            <td><input type="text" name="semail" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">código</th>
+         <th align="left">nombre + apellidos</th>
+         <th>DNI/CIF</th>
+         <th align="right">teléfono</th>
+      </tr>
+      {loop="$fsc->agente->all()"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->codagente}</a></td>
+         <td><a class="link" href="{$value->url()}">{$value->get_fullname()}</a></td>
+         <td align="center">{$value->dnicif}</td>
+         <td align="right">{$value->telefono}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

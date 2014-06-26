@@ -1,0 +1,44 @@
+{include="header"}
+
+{if condition="$fsc->agente"}
+   {if condition="$fsc->caja"}
+      {if condition="$fsc->caja->codagente==$fsc->user->codagente"}
+         {include="tpv_recambios2"}
+      {else}
+      <div class='rounded'>
+         <center>
+            <img src='view/img/big_lock.png' alt="acceso denegado"/>
+         </center>
+      </div>
+      {/if}
+   {else}
+      <script type="text/javascript">
+         $(document).ready(function() {
+            document.f_caja.d_inicial.select();
+         });
+      </script>
+      <div class="well well-sm">
+         <form name="f_caja" action="{$fsc->url()}" method="post">
+            <h1>
+               Caja:
+               <span><input class="btn btn-sm btn-primary" type="submit" value="Guardar"/></span>
+            </h1>
+            ¿Cuanto hay en la caja?
+            <input type="text" name="d_inicial" value="0.00" size="7" autocomplete="off"/>
+            {$fsc->simbolo_divisa()}
+         </form>
+      </div>
+   {/if}
+{else}
+<div class='rounded'>
+   <center>
+      <img src='view/img/big_lock.png' alt="acceso denegado"/>
+   </center>
+</div>
+{/if}
+
+<div class="hidden">
+   <iframe src="http://localhost:10080" height="0"></iframe>
+</div>
+
+{include="footer"}

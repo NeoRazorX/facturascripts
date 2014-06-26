@@ -1,0 +1,53 @@
+{include="header"}
+
+{if condition="$demo"}
+<div class="well well-lg" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{else}
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-2">
+         <div class="list-group">
+            <a href="{$fsc->url()}" class="list-group-item{if condition="!$fsc->unstables"} active{/if}">Estables</a>
+            <a href="{$fsc->url()}&unstable=TRUE" class="list-group-item{if condition="$fsc->unstables"} active{/if}">Inestables</a>
+         </div>
+      </div>
+      <div class="col-lg-10">
+         <div class="panel-group" id="accordion">
+            {loop="$fsc->plugins()"}
+            <div class="panel{if condition="$value['enabled']"} panel-success{else} panel-default{/if}">
+               <div class="panel-heading">
+                  <h3 class="panel-title">
+                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$counter}">{$value['name']}</a>
+                  </h3>
+               </div>
+               <div id="collapse_{$counter}" class="panel-collapse collapse{if condition="$counter==0"} in{/if}">
+                  <div class="panel-body">
+                     {$value['description']}
+                  </div>
+                  <div class="panel-footer">
+                     {if condition="$fsc->unstables"}
+                        {if condition="$value['enabled']"}
+                        <a class="btn btn-sm btn-danger" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">Desactivar</a>
+                        {else}
+                        <a class="btn btn-sm btn-success" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">Activar</a>
+                        {/if}
+                     {else}
+                        {if condition="$value['enabled']"}
+                        <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}">Desactivar</a>
+                        {else}
+                        <a class="btn btn-sm btn-success" href="{$fsc->url()}&enable={$value['name']}">Activar</a>
+                        {/if}
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            {/loop}
+         </div>
+      </div>
+   </div>
+</div>
+{/if}
+
+{include="footer"}

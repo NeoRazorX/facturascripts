@@ -1,0 +1,313 @@
+{include="header"}
+
+<script type="text/javascript">
+   function comprobar_url()
+   {
+      $("#panel_generales").hide();
+      $("#panel_email").hide();
+      $("#panel_email2").hide();
+      $("#panel_facturacion").hide();
+      $("#panel_tickets").hide();
+      $("#b_generales").removeClass('active');
+      $("#b_email").removeClass('active');
+      $("#b_facturacion").removeClass('active');
+      $("#b_tickets").removeClass('active');
+      
+      if(window.location.hash.substring(1) == 'email')
+      {
+         $("#panel_email").show();
+         $("#panel_email2").show();
+         $("#b_email").addClass('active');
+         document.f_empresa.email.focus();
+      }
+      else if(window.location.hash.substring(1) == 'facturacion')
+      {
+         $("#panel_facturacion").show();
+         $("#b_facturacion").addClass('active');
+         document.f_empresa.codejercicio.focus();
+      }
+      else if(window.location.hash.substring(1) == 'tickets')
+      {
+         $("#panel_tickets").show();
+         $("#b_tickets").addClass('active');
+         document.f_empresa.lema.focus();
+      }
+      else
+      {
+         $("#panel_generales").show();
+         $("#b_generales").addClass('active');
+         document.f_empresa.nombre.focus();
+      }
+   }
+   $(document).ready(function() {
+      comprobar_url();
+      window.onpopstate = function(){ 
+         comprobar_url();
+      }
+      $("#b_add_logo").click(function(event) {
+         event.preventDefault();
+         $("#modal_logo").modal('show');
+      });
+   });
+</script>
+
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-2">
+         <div class="list-group">
+            <a id="b_generales" href="#generales" class="list-group-item active">
+               <span class="glyphicon glyphicon-dashboard"></span>
+               &nbsp; Datos generales
+            </a>
+            <a id="b_email" href="#email" class="list-group-item">
+               <span class="glyphicon glyphicon-inbox"></span>
+               &nbsp; Email
+            </a>
+            <a id="b_facturacion" href="#facturacion" class="list-group-item">
+               <span class="glyphicon glyphicon-euro"></span>
+               &nbsp; Facturación
+            </a>
+            <a id="b_tickets" href="#tickets" class="list-group-item">
+               <span class="glyphicon glyphicon-print"></span>
+               &nbsp; Tickets
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-10">
+         <form name="f_empresa" action="{$fsc->page->url()}" method="post" class="form" role="form">
+            <div class="panel panel-primary" id="panel_generales">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Datos generales</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     Nombre:
+                     <input class="form-control" type="text" name="nombre" size="60" value="{$fsc->empresa->nombre}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     cif/nif:
+                     <input class="form-control" type="text" name="cifnif" size="12" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     administrador:
+                     <input class="form-control" type="text" name="administrador" size="60" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     <a href="{$fsc->pais->url()}">País</a>:
+                     <select name="codpais" class="form-control">
+                        {loop="$fsc->pais->all()"}
+                        <option value="{$value->codpais}"{if condition="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
+                        {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     provincia:
+                     <input class="form-control" type="text" name="provincia" size="20" value="{$fsc->empresa->provincia}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     ciudad:
+                     <input class="form-control" type="text" name="ciudad" size="20" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     dirección:
+                     <input class="form-control" type="text" name="direccion" size="60" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     código postal:
+                     <input class="form-control" type="text" name="codpostal" size="6" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     Teléfono:
+                     <input class="form-control" type="text" name="telefono" size="12" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     fax:
+                     <input class="form-control" type="text" name="fax" size="12" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     Web:
+                     <input class="form-control" type="text" name="web" size="50" value="{$fsc->empresa->web}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="panel-footer" style="text-align: right;">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </div>
+            </div>
+            
+            <div class="panel panel-primary" id="panel_email">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Email</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     <label>Email:</label>
+                     <input class="form-control" type="email" name="email" size="30" value="{$fsc->empresa->email}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     <label>Contraseña:</label>
+                     <input class="form-control" type="password" name="email_password" size="20" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
+                  </div>
+                  <div class="form-group">
+                     <label>Firma:</label>
+                     <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                  </div>
+               </div>
+               <div class="panel-footer" style="text-align: right;">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </div>
+            </div>
+            
+            <div class="panel panel-warning" id="panel_email2">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena estos datos</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     <label>Host:</label>
+                     <input class="form-control" type="text" name="mail_host" size="30" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     <label>Puerto:</label>
+                     <input class="form-control" type="number" name="mail_port" size="30" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     <label>Encriptación:</label>
+                     <select name="mail_enc" class="form-control">
+                        <option value="ssl">SSL</option>
+                        <option value="tls"{if condition="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <label>Usuario:</label>
+                     <input class="form-control" type="text" name="mail_user" size="30" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="panel-footer" style="text-align: right;">
+                  <a href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </div>
+            </div>
+            
+            <div class="panel panel-primary" id="panel_facturacion">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Facturación</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     <a class="link" href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+                     <select name="codejercicio" class="form-control">
+                     {loop="$fsc->ejercicio->all()"}
+                        <option value="{$value->codejercicio}"{if condition="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <a class="link" href="{$fsc->serie->url()}">Serie</a>:
+                     <select name="codserie" class="form-control">
+                     {loop="$fsc->serie->all()"}
+                        <option value="{$value->codserie}"{if condition="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     Forma de pago:
+                     <select name="codpago" class="form-control">
+                     {loop="$fsc->forma_pago->all()"}
+                        <option value="{$value->codpago}"{if condition="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     Divisa:
+                     <select name="coddivisa" class="form-control">
+                     {loop="$fsc->divisa->all()"}
+                        <option value="{$value->coddivisa}"{if condition="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <a class="link" href="{$fsc->almacen->url()}">Almacén</a>:
+                     <select name="codalmacen" class="form-control">
+                     {loop="$fsc->almacen->all()"}
+                        <option value="{$value->codalmacen}"{if condition="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     Pie de página de la factura:
+                     <input class="form-control" type="text" name="pie_factura" size="80" maxlength="255" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
+                  </div>
+                  <div class="checkbox">
+                     <label>
+                        <input type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                        Contabilidad integrada
+                     </label>
+                  </div>
+               </div>
+               <div class="panel-footer">
+                  <a id="b_add_logo" class="btn btn-sm btn-default" href="#facturacion">
+                     <span class="glyphicon glyphicon-picture"></span>
+                     &nbsp; Añadir logotipo a las facturas
+                  </a>
+                  <input class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </div>
+            </div>
+            
+            <div class="panel panel-primary" id="panel_tickets">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Tickets</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     Lema:
+                     <input class="form-control" type="text" name="lema" size="30" maxlength="50" value="{$fsc->empresa->lema}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group">
+                     Horario:
+                     <input class="form-control" type="text" name="horario" size="50" maxlength="100" value="{$fsc->empresa->horario}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="panel-footer" style="text-align: right;">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<form enctype='multipart/form-data' action="{$fsc->url()}#facturacion" method="post">
+   <input type='hidden' name='logo' value='TRUE'/>
+   <div class="modal fade" id="modal_logo">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Logotipo para las facturas</h4>
+            </div>
+            <div class="modal-body">
+               <div style="text-align: center;">
+                  <div class="thumbnail">
+                     {if condition="$fsc->logo"}
+                     <img src="tmp/logo.png" alt="logotipo"/>
+                     {else}
+                     <div class="caption">
+                        La imagen debe estar en formato PNG.
+                     </div>
+                     {/if}
+                  </div>
+               </div>
+               <div class="form-group">
+                  <input class="form-control" name='fimagen' type='file'/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_logo=TRUE#facturacion">Eliminar</a>
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+{include="footer"}

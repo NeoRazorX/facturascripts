@@ -1,0 +1,72 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_ejercicio").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_ejercicio');
+         document.f_nuevo_ejercicio.nombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_ejercicio">
+   <form name="f_nuevo_ejercicio" action="{$fsc->url()}" method="post">
+      <h1>Nuevo ejercicio</h1>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td>
+               <input type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" size="4" maxlength="4" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="nombre" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Fecha de inicio:</td>
+            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="12"/></td>
+         </tr>
+         <tr>
+            <td align="right">Fecha fin:</td>
+            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="12"/></td>
+         </tr>
+         <tr>
+            <td align="right">Estado:</td>
+            <td>
+               <select name="estado">
+                  <option value="ABIERTO">ABIERTO</option>
+                  <option value="CERRADO">CERRADO</option>
+               </select>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">Código + nombre</th>
+         <th>Fecha de inicio</th>
+         <th>Fecha fin</th>
+         <th align="right">Estado</th>
+      </tr>
+      {loop="$fsc->ejercicio->all()"}
+      <tr>
+         <td><a class="link" href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
+         <td align="center">{$value->fechainicio}</td>
+         <td align="center">{$value->fechafin}</td>
+         <td align="right">{$value->estado}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}

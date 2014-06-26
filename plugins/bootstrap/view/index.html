@@ -1,0 +1,29 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#feedback_problem").click();
+   });
+</script>
+
+<div class="well well-sm">
+   <h1>Página no encontrada:</h1>
+   <ul>
+      <li>No se encuentra el controlador de esta página.</li>
+      <li>Consulta con el administrador.</li>
+      <li>
+         Si crees que es un error de FacturaScripts, no dudes en notificármelo.
+         <b>Haz clic en el botón de ayuda</b>, abajo a la derecha y <b>notifícame el error</b>.
+      </li>
+      <li>
+         <b>Si eres programador</b> y estas intentando hacer un plugin, entonces te comento que
+         lo que ha pasado es que no encuentro el archivo <b>{$_GET['page']}.php</b>,
+         que debería estar en el directorio controller de tu plugin.
+      </li>
+   </ul>
+   <div style="text-align: center;">
+      <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+   </div>
+</div>
+
+{include="footer"}

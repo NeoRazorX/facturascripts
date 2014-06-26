@@ -1,0 +1,61 @@
+{include="header"}
+
+<script type="text/javascript">
+   function delete_pais(url)
+   {
+      if( confirm("¿Realmente desea eliminar este país?") )
+         window.location.href = url;
+   }
+   $(document).ready(function() {
+      $("#b_nuevo_pais").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_pais');
+         document.f_nuevo_pais.scodpais.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_pais">
+   <h1>Nuevo país</h1>
+   <form name="f_nuevo_pais" action="{$fsc->url()}" method="post">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="scodpais" size="18" maxlength="20" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="snombre" size="18" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+{loop="$fsc->pais->all()"}
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="POST">
+      <div class="pull_right">
+         <a class="btn btn-sm btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">eliminar</a>
+         &nbsp;
+         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>Código: {$value->codpais}</h1>
+      Nombre del país:
+      <input type="hidden" name="scodpais" value="{$value->codpais}"/>
+      <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
+   </form>
+</div>
+{/loop}
+
+<div class="well well-sm">
+   <div class="new_line">
+      <a id="b_nuevo_pais" href="#">Nuevo país</a>
+   </div>
+</div>
+
+{include="footer"}

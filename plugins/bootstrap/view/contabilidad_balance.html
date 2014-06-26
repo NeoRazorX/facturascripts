@@ -1,0 +1,101 @@
+{include="header"}
+
+{if condition="$fsc->balance"}
+<div class="well well-sm">
+   <table class="fs_table">
+      <tr>
+         <th align="left">Naturaleza</th>
+         <th align="left">Nivel 1</th>
+         <th align="left">Descripción 1</th>
+      </tr>
+      <tr>
+         <td>{$fsc->balance->naturaleza}</td>
+         <td>{$fsc->balance->nivel1}</td>
+         <td>{$fsc->balance->descripcion1}</td>
+      </tr>
+      <tr>
+         <td></td>
+         <th align="left">Nivel 2</th>
+         <th align="left">Descripción 2</th>
+      </tr>
+      <tr>
+         <td></td>
+         <td>{$fsc->balance->nivel2}</td>
+         <td>{$fsc->balance->descripcion2}</td>
+      </tr>
+      <tr>
+         <td></td>
+         <th align="left">Nivel 3</th>
+         <th align="left">Descripción 3</th>
+         <th align="left">Orden 3</th>
+      </tr>
+      <tr>
+         <td></td>
+         <td>{$fsc->balance->nivel3}</td>
+         <td>{$fsc->balance->descripcion3}</td>
+         <td>{$fsc->balance->orden3}</td>
+      </tr>
+      <tr>
+         <td></td>
+         <th align="left">Nivel 4</th>
+         <th align="left">Descripción 4</th>
+         <th align="left">Descripción 4 a</th>
+      </tr>
+      <tr>
+         <td></td>
+         <td>{$fsc->balance->nivel4}</td>
+         <td>{$fsc->balance->descripcion4}</td>
+         <td>{$fsc->balance->descripcion4ba}</td>
+      </tr>
+   </table>
+</div>
+
+<table width="100%">
+   <tr>
+      <td valign="top">
+         <div class="well well-sm">
+            <h1>Cuentas normales</h1>
+            <table class="fs_table">
+               <tr>
+                  <th align="left">Cuenta</th>
+                  <th align="left">Descripción</th>
+               </tr>
+               {loop="$fsc->balances_cuenta"}
+               <tr>
+                  <td>{$value->codcuenta}</td>
+                  <td>{$value->desccuenta}</td>
+               </tr>
+               {else}
+               <tr><td colspan="2">Sin resultados.</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </td>
+      <td valign="top">
+         <div class="well well-sm">
+            <h1>Cuentas de balance abreviado</h1>
+            <table class="fs_table">
+               <tr>
+                  <th align="left">Cuenta</th>
+                  <th align="left">Descripción</th>
+               </tr>
+               {loop="$fsc->balances_cuenta_a"}
+               <tr>
+                  <td>{$value->codcuenta}</td>
+                  <td>{$value->desccuenta}</td>
+               </tr>
+               {else}
+               <tr><td colspan="2">Sin resultados.</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </td>
+   </tr>
+</table>
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

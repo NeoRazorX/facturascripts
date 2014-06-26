@@ -1,0 +1,76 @@
+{include="header"}
+
+<script type="text/javascript">
+   function delete_impuesto(url)
+   {
+      if( confirm("¿Realmente desea eliminar este impuesto?") )
+         window.location.href = url;
+   }
+   $(document).ready(function() {
+      $("#b_nuevo_impuesto").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_impuesto');
+         document.f_nuevo_impuesto.codimpuesto.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_impuesto">
+   <form name="f_nuevo_impuesto" action="{$fsc->url()}" method="post">
+      <h1>Nuevo impuesto</h1>
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td><input type="text" name="codimpuesto" size="10" maxlength="10" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Descripción:</td>
+            <td><input type="text" name="descripcion" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">IVA:</td>
+            <td><input type="text" name="iva" value="0" size="4" autocomplete="off"/> %</td>
+         </tr>
+         <tr>
+            <td align="right">Recargo:</td>
+            <td><input type="text" name="recargo" value="0" size="4" autocomplete="off"/> %</td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+{loop="$fsc->impuesto->all()"}
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="post">
+      <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
+      <div class="pull_right">
+         <a class="btn btn-sm btn-danger" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">eliminar</a>
+         &nbsp;
+         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+      <h1>{$value->codimpuesto}</h1>
+      <div class="form-group">
+         Descripción: <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+         IVA: <input type="text" name="iva" value="{$value->iva}" size="4" autocomplete="off"/> %
+      </div>
+      <div class="form-group">
+         Recargo: <input type="text" name="recargo" value="{$value->recargo}" size="4" autocomplete="off"/> %
+      </div>
+   </form>
+</div>
+{/loop}
+
+<div class="well well-sm">
+   <div class="new_line">
+      <a id="b_nuevo_impuesto" href="#">Nuevo impuesto</a>
+   </div>
+</div>
+
+{include="footer"}

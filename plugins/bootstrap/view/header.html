@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link href="plugins/bootstrap/view/css/bootstrap-yeti.min.css" rel="stylesheet">
    <link href="plugins/bootstrap/view/css/custom.css" rel="stylesheet">
@@ -134,7 +135,7 @@
    
    <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
       <div class="row">
-         <div class="col-md-9" style="padding-left: 5px;">
+         <div class="col-md-10 col-sm-8" style="padding-left: 5px;">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group">
                   <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
@@ -176,7 +177,7 @@
                </div>
             </div>
          </div>
-         <div class="col-md-3" style="padding-right: 5px;">
+         <div class="col-md-2 col-sm-4" style="padding-right: 5px;">
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
                <div class="input-group">

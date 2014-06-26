@@ -1,0 +1,202 @@
+{include="header"}
+
+{if condition="$fsc->suser"}
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $("#f_user_pages input[name='enabled[]']").prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $("#f_user_pages input[name='enabled[]']").attr('checked', false);
+   }
+   $(document).ready(function() {
+      $("#b_eliminar_usuario").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar el usuario?") )
+            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->suser->nick}';
+      });
+      $("#b_nuevo_agente").click(function(event) {
+         event.preventDefault();
+         fs_show_popup('popup_nuevo_agente');
+         document.f_nuevo_agente.nnombre.focus();
+      });
+   });
+</script>
+
+<div class="popup" id="popup_nuevo_agente">
+   <h1>Nuevo agente</h1>
+   <form name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
+      <table>
+         <tr>
+            <td align="right">Código:</td>
+            <td>
+               <input type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" size="8" maxlength="10" autocomplete="off"/>
+            </td>
+         </tr>
+         <tr>
+            <td align="right">Nombre:</td>
+            <td><input type="text" name="nnombre" maxlength="50" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Apellidos:</td>
+            <td><input type="text" name="napellidos" maxlength="100" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">CIF/NIF:</td>
+            <td><input type="text" name="ndnicif" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Teléfono:</td>
+            <td><input type="text" name="ntelefono" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td align="right">Email:</td>
+            <td><input type="text" name="nemail" autocomplete="off"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="guardar y asignar" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+   </form>
+</div>
+
+<form id="f_user_pages" action="{$fsc->url()}" method="POST">
+   <input type="hidden" name="modupages" value="TRUE"/>
+      <div class="well well-sm">
+         <div class="pull_right">
+            <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+         </div>
+         <h1>Datos de usuario:</h1>
+         <div class="form-group">
+            Nick: <input type="text" value="{$fsc->suser->nick}" size="12" maxlength="12" disabled="disabled"/>
+         </div>
+         <div class="form-group">
+            Contraseña: <input type="password" name="spassword" size="12" maxlength="12"/>
+         </div>
+         <div class="form-group">
+            {if condition="$fsc->suser->admin"}
+            <input type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
+            {else}
+            <input type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
+            {/if}
+            <label for="usuario_admin">Administrador</label>
+         </div>
+         <div class="form-group">
+            <a class="link" href="{$fsc->agente->url()}">Agente</a>:
+            <select name="scodagente">
+               <option value="">- ninguno -</option>
+               <option value="">-----------</option>
+               {loop="$fsc->agente->all()"}
+                  {if condition="$fsc->suser->codagente == $value->codagente"}
+                  <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
+                  {else}
+                  <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                  {/if}
+               {/loop}
+            </select>
+            <input id="b_nuevo_agente" class="btn btn-sm btn-default" type="button" value="crear" title="crear un nuevo agente y asignarlo a este usuario"/>
+         </div>
+         <div class="form-group">
+            Página de inicio:
+            <select name="udpage">
+            {loop="$fsc->suser->get_menu()"}
+               {if condition="$value->show_on_menu"}
+                  {if condition="$value->name==$fsc->suser->fs_page"}
+                     <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
+                  {else}
+                     <option value="{$value->name}">{$value->folder} - {$value->title}</option>
+                  {/if}
+               {/if}
+            {/loop}
+            </select>
+         </div>
+         <div class="form-group">
+            Ejercicio:
+            <select name="ejercicio">
+            {loop="$fsc->ejercicio->all_abiertos()"}
+               {if condition="$value->codejercicio==$fsc->suser->codejercicio"}
+                  <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
+               {else}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+               {/if}
+            {/loop}
+            </select>
+         </div>
+      </div>
+      
+      <div class="well well-sm">
+         <table class="fs_table">
+            <tr>
+               <th align="left">Último login</th>
+               <th align="left">IP</th>
+               <th align="left">Navegador</th>
+            </tr>
+            <tr>
+               <td>{$fsc->suser->show_last_login()}</td>
+               <td>{$fsc->suser->last_ip}</td>
+               <td>{$fsc->suser->last_browser}</td>
+            </tr>
+         </table>
+      </div>
+      
+      {if condition="!$fsc->suser->admin"}
+      <div class="well well-sm">
+         <table width="100%">
+            <tr>
+               <td>
+                  <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+                  <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+               </td>
+            </tr>
+         </table>
+         <br/>
+         
+         <table class="fs_table">
+            <tr>
+               <th align="left">Páginas autorizadas</th>
+               <th align="left">Menú</th>
+               <th align="left">titulo</th>
+            </tr>
+            {loop="$fsc->all_pages()"}
+            <tr>
+               <td>
+                  {if condition="$value->enabled"}
+                  <input type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
+                  {else}
+                  <input type="checkbox" name="enabled[]" value="{$value->name}"/>
+                  {/if}
+                  {$value->name}
+               </td>
+               <td>{$value->folder}</td>
+               <td>{$value->title}</td>
+            </tr>
+            {/loop}
+         </table>
+         
+         <br/>
+         <table width="100%">
+            <tr>
+               <td>
+                  <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+                  <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+               </td>
+               <td align="right">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
+            </tr>
+         </table>
+      </div>
+      {else}
+      <div class="advice">Los administradores tienen acceso a cualquier página.</div>
+      {/if}
+</form>
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

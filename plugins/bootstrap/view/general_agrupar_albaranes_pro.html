@@ -1,0 +1,109 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $("#f_agrupar_pro input[name='idalbaran[]']").prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $("#f_agrupar_pro input[name='idalbaran[]']").attr('checked', false);
+   }
+</script>
+
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="post">
+      <div class="form-group">
+         Cliente:
+         <select name="proveedor">
+         {loop="$fsc->proveedor->all_full()"}
+            {if condition="$value->is_default()"}
+               <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
+            {else}
+               <option value="{$value->codproveedor}">{$value->nombre}</option>
+            {/if}
+         {/loop}
+         </select>
+      </div>
+      <div class="form-group">
+         Serie:
+         <select name="serie">
+            {loop="$fsc->serie->all()"}
+               {if condition="$value->codserie==$_POST.serie"}
+               <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+               {else}
+               <option value="{$value->codserie}">{$value->descripcion}</option>
+               {/if}
+            {/loop}
+         </select>
+      </div>
+      <div class="form-group">
+         Desde: <input type="text" name="desde" class="tcal" value="{$fsc->desde}" size="10" maxlength="10"/>
+      </div>
+      <div class="form-group">
+         Hasta: <input type="text" name="hasta" class="tcal" value="{$fsc->hasta}" size="10" maxlength="10"/>
+      </div>
+      <input class="search" type="image" src="view/img/zoom2.png" alt="buscar" onclick="this.disabled=true;this.form.submit();"/>
+   </form>
+</div>
+
+{if condition="$fsc->resultados"}
+<div class="well well-sm">
+   <form id="f_agrupar_pro" action="{$fsc->url()}" method="post">
+      <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+      <table width="100%">
+         <tr>
+            <td>
+               <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+               <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+            </td>
+            <td align="center">
+               <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
+               <label for="cb_f_individuales">Generar facturas individuales</label>
+            </td>
+            <td align="right">
+               <input class="btn btn-sm btn-primary" type="submit" value="Generar factura" onclick="this.disabled=true;this.form.submit();"/>
+            </td>
+         </tr>
+      </table>
+      <br/>
+      
+      <table class="fs_table">
+         <tr>
+            <th align="left">código + num. proveedor</th>
+            <th align="left">observaciones</th>
+            <th align="right">neto</th>
+            <th align="right">total</th>
+            <th align="right">fecha</th>
+         </tr>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td>
+               <input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/>
+               <a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}
+            </td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+            <td align="right">{$value->fecha}</td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="2"></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->neto)}</b></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->total)}</b></td>
+            <td></td>
+         </tr>
+      </table>
+      
+      <br/>
+      <div>
+         <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+         <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+         <input class="btn btn-sm btn-primary pull-right" type="submit" value="Generar factura" onclick="this.disabled=true;this.form.submit();"/>
+      </div>
+   </form>
+</div>
+{/if}
+
+{include="footer"}
