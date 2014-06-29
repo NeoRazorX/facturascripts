@@ -11,7 +11,7 @@
    function add_partida()
    {
       numlineas++;
-      $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
+      $("#partidas").append("<div class='well well-sm' id='partida_"+numlineas+"'>\n\
          <table width='100%'>\n\
             <tr>\n\
                <td>\n\
@@ -273,7 +273,7 @@
       
       <div id="partidas">
       {loop="$fsc->asiento->get_partidas()"}
-      <div class='rounded' id='partida_{$counter+1}'>
+      <div class='well well-sm' id='partida_{$counter+1}'>
          <div class="table-responsive">
             <table class="table table-hover">
                <tr>
