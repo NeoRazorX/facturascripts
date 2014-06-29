@@ -1,5 +1,10 @@
 {include="header"}
 
+<!-- 
+ EL ELEMENTO #1 DE LA TABLA NO HACE EL EFECTO ONMOUSEOVER
+ LA SELECCION DEL ITEM PODRIA SER PULSANDO EN CUALQUIER LUGAR DE LA MISMA LINEA CON UN ONCLICK
+-->
+
 <script type="text/javascript">
    $(document).ready(function() {
       $("#b_nuevo_agente, #b_nuevo_agente2").click(function(event) {
@@ -9,11 +14,6 @@
       });
    });
 </script>
-
-<!-- 
- EL ELEMENTO #1 DE LA TABLA NO HACE EL EFECTO ONMOUSEOVER
- LA SELECCION DEL ITEM PODRIA SER PULSANDO EN CUALQUIER LUGAR DE LA MISMA LINEA CON UN ONCLICK
--->
 
 <div class="popup" id="popup_nuevo_agente">
    <h3>Nuevo agente</h3>

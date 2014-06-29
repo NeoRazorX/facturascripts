@@ -1,7 +1,6 @@
 {include="header"}
 
 <!-- 
- NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
  NO HAY BOTON ¿NUEVA CUENTA BANCARIA? EN EL BTN-TOOLBAR
  NO HAY BOTON ¿NUEVA DIRECCION? EN EL BTN-TOOLBAR
 -->
@@ -187,7 +186,7 @@
          <input type="text" name="ciudad" size="20"/>
       </div>
       <div class="form-group">
-         Código postal:
+         Código Postal:
          <input type="text" name="codpostal" size="6" autocomplete="off"/>
       </div>
       <br/>
@@ -233,13 +232,13 @@
             Nombre comercial: <input type="text" name="nombrecomercial" value="{$fsc->proveedor->nombrecomercial}" size="35" autocomplete="off"/>
          </div>
          <div class="form-group">
-            cif/nif: <input type="text" name="cifnif" value="{$fsc->proveedor->cifnif}" size="10" autocomplete="off"/>
+            CIF/NIF: <input type="text" name="cifnif" value="{$fsc->proveedor->cifnif}" size="10" autocomplete="off"/>
          </div>
          <div class="form-group">
-            Telefono1: <input type="text" name="telefono1" value="{$fsc->proveedor->telefono1}" size="9" autocomplete="off"/>
+            Teléfono 1: <input type="text" name="telefono1" value="{$fsc->proveedor->telefono1}" size="9" autocomplete="off"/>
          </div>
          <div class="form-group">
-            Telefono2: <input type="text" name="telefono2" value="{$fsc->proveedor->telefono2}" size="9" autocomplete="off"/>
+            Teléfono 2: <input type="text" name="telefono2" value="{$fsc->proveedor->telefono2}" size="9" autocomplete="off"/>
          </div>
          <div class="form-group">
             Fax: <input type="text" name="fax" value="{$fsc->proveedor->fax}" size="9" autocomplete="off"/>
@@ -333,7 +332,7 @@
                <input type="text" name="ciban" size="40" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
             </div>
             <div>
-               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">eliminar</a>
+               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">Eliminar</a>
                <input class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar"/>
             </div>
          </form>
@@ -371,7 +370,7 @@
                <input type="text" name="ciudad" value="{$value->ciudad}" size="20"/>
             </div>
             <div class="form-group">
-               Código postal:
+               Código Postal:
                <input type="text" name="codpostal" value="{$value->codpostal}" size="6" autocomplete="off"/>
             </div>
             <div class="form-group">
@@ -445,7 +444,7 @@
       <div style="text-align: center;">
          <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
          <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
       </div>
    </form>
    <div id="search_results"></div>
@@ -468,17 +467,17 @@
          <a href="{$fsc->url()}&listar=stats#listado" class="selected">Estadísticas</a>
       {/if}
    </div>
-   &nbsp; <img id="b_buscar_lineas" class="search touch" src="view/img/zoom2.png" alt="buscar"/>
+   &nbsp; <img id="b_buscar_lineas" class="search touch" src="view/img/zoom2.png" alt="Buscar"/>
    <br/><br/>
    <div class="table-responsive">
       <table class="table table-hover">
          {if condition="$fsc->listar=='albaranes'"}
             <tr>
                <th></th>
-               <th align="left">código + num. proveedor</th>
-               <th align="left">observaciones</th>
-               <th align="right">total</th>
-               <th align="right">fecha</th>
+               <th align="left">Código + Núm. Proveedor</th>
+               <th align="left">Observaciones</th>
+               <th align="right">Total</th>
+               <th align="right">Fecha</th>
             </tr>
             {loop="$fsc->listado"}
             <tr>
@@ -492,25 +491,24 @@
             <tr><td colspan="5" align="center">Sin resultados</td></tr>
             {/loop}
             <tr>
-               <td colspan="2">
-               {if condition="$fsc->anterior_url()!=''"}
-               <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">Anterior</a>
-               {/if}
-               </td>
-               <td colspan="2"></td>
-               <td align="right">
-               {if condition="$fsc->siguiente_url()!=''"}
-               <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">Siguiente</a>
-               {/if}
+               <td colspan="5">
+				 <ul class="pager">
+					 {if condition="$fsc->anterior_url()!=''"}
+					 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+					 {/if}
+					 {if condition="$fsc->siguiente_url()!=''"}
+					 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+					 {/if}
+				 </ul>
                </td>
             </tr>
          {elseif condition="$fsc->listar=='facturas'"}
             <tr>
                <th></th>
-               <th align="left">código + num. proveedor</th>
+               <th align="left">Código + Núm. Proveedor</th>
                <th align="left">Observaciones</th>
-               <th align="right">total</th>
-               <th align="right">fecha</th>
+               <th align="right">Total</th>
+               <th align="right">Fecha</th>
             </tr>
             {loop="$fsc->listado"}
             <tr>
@@ -524,16 +522,15 @@
             <tr><td colspan="5" align="center">Sin resultados</td></tr>
             {/loop}
             <tr>
-               <td colspan="2">
-               {if condition="$fsc->anterior_url()!=''"}
-                  <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">Anterior</a>
-               {/if}
-               </td>
-               <td colspan="2"></td>
-               <td align="right">
-               {if condition="$fsc->siguiente_url()!=''"}
-                  <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">Siguiente</a>
-               {/if}
+               <td colspan="5">
+				 <ul class="pager">
+					 {if condition="$fsc->anterior_url()!=''"}
+					 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+					 {/if}
+					 {if condition="$fsc->siguiente_url()!=''"}
+					 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+					 {/if}
+				 </ul>
                </td>
             </tr>
          {else}

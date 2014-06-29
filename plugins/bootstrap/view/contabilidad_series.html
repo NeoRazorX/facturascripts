@@ -63,20 +63,20 @@
       <div class="panel-body">
          <div class="form-group">
             <label for="descripcion" class="col-sm-1 control-label">Descripción</label>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
             </div>
             <label for="sin_iva_{$value->codserie}" class="col-sm-1 control-label">Sin IVA</label>
-            <div class="col-sm-3">
+            <div class="col-sm-1">
                   {if condition="$value->siniva"}
-                     <input class="form-control" type="checkbox" name="siniva" value="TRUE" checked="checked" id="sin_iva_{$value->codserie}"/>
+                     <input type="checkbox" name="siniva" value="TRUE" checked="checked" id="sin_iva_{$value->codserie}"/>
                   {else}
-                     <input class="form-control" type="checkbox" name="siniva" value="TRUE" id="sin_iva_{$value->codserie}"/>
+                     <input type="checkbox" name="siniva" value="TRUE" id="sin_iva_{$value->codserie}"/>
                   {/if}
             </div>
-            <label for="recargo" class="col-sm-1 control-label">Recargo</label>
-            <div class="col-sm-3">
-               <input class="form-control" type="text" name="recargo" value="{$value->recargo}" autocomplete="off"/> %
+            <label for="recargo" class="col-sm-1 control-label">Recargo %</label>
+            <div class="col-sm-4">
+               <input class="form-control" type="text" name="recargo" value="{$value->recargo}" autocomplete="off"/>
             </div>
          </div>
       </div>

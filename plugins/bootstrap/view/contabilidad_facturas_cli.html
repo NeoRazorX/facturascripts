@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
@@ -84,12 +80,15 @@
          <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
          {/loop}
          <tr>
-            <td colspan="2">
-               {if condition="$fsc->anterior_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>{/if}
-            </td>
-            <td colspan="2"></td>
-            <td align="right">
-               {if condition="$fsc->siguiente_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>{/if}
+            <td colspan="5">
+             <ul class="pager">
+				 {if condition="$fsc->anterior_url()!=''"}
+				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+				 {/if}
+				 {if condition="$fsc->siguiente_url()!=''"}
+				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+				 {/if}
+             </ul>
             </td>
          </tr>
       </table>

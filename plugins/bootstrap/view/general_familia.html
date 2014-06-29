@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
--->
-
 {if condition="$fsc->familia"}
 <script type="text/javascript">
    $(document).ready(function() {
@@ -124,11 +120,11 @@
 <div class="well well-sm">
    <table class="table table-hover">
       <tr>
-         <th align="left">referencia + descripción</th>
-         <th align="left">cod. equivalencia</th>
+         <th align="left">Referencia + Descripción</th>
+         <th align="left">Cód. Equivalencia</th>
          <th align="right">PVP</th>
          <th align="right">PVP+IVA</th>
-         <th align="right">stock</th>
+         <th align="right">Stock</th>
       </tr>
       {loop="$fsc->articulos"}
       <tr>
@@ -147,16 +143,15 @@
       {/loop}
 
       <tr>
-         <td>
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
-         {/if}
-         </td>
-         <td colspan="3"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
-         {/if}
+         <td colspan="5">
+              <ul class="pager">
+				 {if condition="$fsc->anterior_url()!=''"}
+				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+				 {/if}
+				 {if condition="$fsc->siguiente_url()!=''"}
+				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+				 {/if}
+             </ul>
          </td>
       </tr>
    </table>

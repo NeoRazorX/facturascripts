@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       $("#b_cuentas_especiales").click(function(event) {
@@ -90,15 +86,15 @@
         <tr><td colspan="2" align="center">Sin resultados</td></tr>
         {/loop}
         <tr>
-          <td>
-          {if condition="$fsc->anterior_url()!=''"}
-          <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
-          {/if}
-          </td>
-          <td align="right">
-          {if condition="$fsc->siguiente_url()!=''"}
-          <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
-          {/if}
+          <td colspan="2">
+             <ul class="pager">
+				 {if condition="$fsc->anterior_url()!=''"}
+				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+				 {/if}
+				 {if condition="$fsc->siguiente_url()!=''"}
+				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+				 {/if}
+             </ul>
           </td>
         </tr>
       </table>
@@ -132,15 +128,15 @@
          <tr><td colspan="2" align="center">Sin resultados</td></tr>
          {/loop}
          <tr>
-            <td>
-            {if condition="$fsc->anterior_url()!=''"}
-            <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
-            {/if}
-            </td>
-            <td align="right">
-            {if condition="$fsc->siguiente_url()!=''"}
-            <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
-            {/if}
+            <td colspan="2">
+              <ul class="pager">
+				 {if condition="$fsc->anterior_url()!=''"}
+				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+				 {/if}
+				 {if condition="$fsc->siguiente_url()!=''"}
+				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+				 {/if}
+             </ul>
             </td>
          </tr>
       </table>

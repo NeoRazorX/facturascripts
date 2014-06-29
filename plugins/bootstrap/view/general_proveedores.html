@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
@@ -52,7 +48,7 @@
             <td><input type="text" name="ciudad" size="20" autocomplete="off" value="{$fsc->empresa->ciudad}"/></td>
          </tr>
          <tr>
-            <td align="right">Código postal:</td>
+            <td align="right">Código Postal:</td>
             <td><input type="text" name="codpostal" size="6" autocomplete="off" value="{$fsc->empresa->codpostal}"/></td>
          </tr>
          <tr>
@@ -73,9 +69,9 @@
    <div class="table-responsive">
       <table class="table table-hover">
          <tr>
-            <th align="left">código + nombre</th>
-            <th align="left">cifnif</th>
-            <th align="left">observaciones</th>
+            <th align="left">Código + Nombre</th>
+            <th align="left">CIF/NIF</th>
+            <th align="left">Observaciones</th>
          </tr>
          {loop="$fsc->resultados"}
          <tr>
@@ -87,16 +83,15 @@
          <tr><td colspan="3" align="center">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td></tr>
          {/loop}
          <tr>
-            <td>
-            {if condition="$fsc->anterior_url()!=''"}
-            <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
-            {/if}
-            </td>
-            <td></td>
-            <td align="right">
-            {if condition="$fsc->siguiente_url()!=''"}
-            <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
-            {/if}
+            <td colspan="3">
+				 <ul class="pager">
+					 {if condition="$fsc->anterior_url()!=''"}
+					 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
+					 {/if}
+					 {if condition="$fsc->siguiente_url()!=''"}
+					 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
+					 {/if}
+				 </ul>
             </td>
          </tr>
       </table>
