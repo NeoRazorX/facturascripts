@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 {if condition="$fsc->familia"}
 <script type="text/javascript">
    $(document).ready(function() {
@@ -65,7 +69,7 @@
          <tr>
             <td align="right">Impuesto:</td>
             <td>
-               <select name="impuesto">
+               <select class="form-control" name="impuesto">
                   {loop="$fsc->impuesto->all()"}
                   <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                   {/loop}
@@ -139,23 +143,19 @@
          <td align="right">{$value->stockfis}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="5">Ningún artículo encontrado.</td>
-      </tr>
+      <tr><td colspan="5" align="center">Ningún artículo encontrado</td></tr>
       {/loop}
-      <tr>
-         <td colspan="5">&nbsp;</td>
-      </tr>
+
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
          {/if}
          </td>
       </tr>

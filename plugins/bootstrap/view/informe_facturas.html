@@ -68,9 +68,9 @@
             <form action="{$fsc->url()}" method="post" target="_blank">
                <input type="hidden" name="listado" value="facturascli"/>
                Desde:
-               <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
                Hasta:
-               <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
                <input class="btn btn-sm btn-primary" type="submit" value="mostrar" onclick="this.form.submit();"/>
             </form>
          </div>
@@ -81,9 +81,9 @@
             <form action="{$fsc->url()}" method="post" target="_blank">
                <input type="hidden" name="listado" value="facturasprov"/>
                Desde:
-               <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
                Hasta:
-               <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
                <input class="btn btn-sm btn-primary" type="submit" value="mostrar" onclick="this.form.submit();"/>
             </form>
          </div>

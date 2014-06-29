@@ -1,26 +1,26 @@
 {include="header"}
 
 <div class="well well-sm">
-   <table class="fs_table">
-      <tr>
-         <th align="left">Código</th>
-         <th>Naturalez</th>
-         <th>Nivel 1</th>
-         <th align="left">Descripción 1</th>
-      </tr>
-      {loop="$fsc->balance->all()"}
-      <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codbalance}</a></td>
-         <td align="center">{$value->naturaleza}</td>
-         <td align="center">{$value->nivel1}</td>
-         <td>{$value->descripcion1}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="4">No hay datos.</td>
-      </tr>
-      {/loop}
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th align="left">Código</th>
+            <th>Naturalez</th>
+            <th>Nivel 1</th>
+            <th align="left">Descripción 1</th>
+         </tr>
+         {loop="$fsc->balance->all()"}
+         <tr>
+            <td><a class="link" href="{$value->url()}">{$value->codbalance}</a></td>
+            <td align="center">{$value->naturaleza}</td>
+            <td align="center">{$value->nivel1}</td>
+            <td>{$value->descripcion1}</td>
+         </tr>
+         {else}
+         <tr><td colspan="4" align="center">No hay datos</td></tr>
+         {/loop}
+      </table>
+   </div>
 </div>
 
 {include="footer"}

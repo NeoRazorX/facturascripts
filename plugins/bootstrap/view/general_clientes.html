@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 <script type="text/javascript">
    function comprobar_url()
    {
@@ -36,7 +40,7 @@
          <tr>
             <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
             <td>
-               <select name="codserie">
+               <select class="form-control" name="codserie">
                {loop="$fsc->serie->all()"}
                   <option value="{$value->codserie}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
@@ -54,7 +58,7 @@
          <tr>
             <td align="right"><a class="link" href="{$fsc->pais->url()}">País</a>:</td>
             <td>
-               <select name="pais">
+               <select class="form-control" name="pais">
                   {loop="$fsc->pais->all()"}
                      <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                   {/loop}
@@ -105,7 +109,7 @@
          </div>
          <div class="form-group">
             <a class="link" href="index.php?page=general_articulos#tarifas">Tarifa</a>:
-            <select name="codtarifa">
+            <select class="form-control" name="codtarifa">
                <option value="---">Ninguna</option>
                <option value="---">---</option>
                {loop="$fsc->tarifa->all()"}
@@ -136,7 +140,7 @@
          </div>
          <div class="form-group">
             <a class="link" href="index.php?page=general_articulos#tarifas">Tarifa</a>:
-            <select name="codtarifa">
+            <select class="form-control" name="codtarifa">
                <option value="---">Ninguna</option>
                <option value="---">---</option>
                {loop="$fsc->tarifa->all()"}
@@ -150,38 +154,37 @@
 
 <div class="well well-sm">
    {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda "{$fsc->query}":</h1>{/if}
-   <table class="fs_table">
-      <tr>
-         <th align="left">código + nombre</th>
-         <th align="left">cifnif</th>
-         <th align="left">observaciones</th>
-      </tr>
-      {loop="$fsc->resultados"}
-      <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
-         <td>{$value->cifnif}</td>
-         <td>{$value->observaciones_resume()}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="3">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
-      {/loop}
-      <tr><td colspan="3">&nbsp;</td></tr>
-      <tr>
-         <td>
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
-         </td>
-         <td></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th align="left">código + nombre</th>
+            <th align="left">cifnif</th>
+            <th align="left">observaciones</th>
+         </tr>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td><a class="link" href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
+            <td>{$value->cifnif}</td>
+            <td>{$value->observaciones_resume()}</td>
+         </tr>
+         {else}
+         <tr><td colspan="3" align="center">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td></tr>
+         {/loop}
+         <tr>
+            <td>
+            {if condition="$fsc->anterior_url()!=''"}
+            <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
+            {/if}
+            </td>
+            <td></td>
+            <td align="right">
+            {if condition="$fsc->siguiente_url()!=''"}
+            <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
+            {/if}
+            </td>
+         </tr>
+      </table>
+   </div>
 </div>
 
 {include="footer"}

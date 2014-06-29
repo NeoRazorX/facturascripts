@@ -1,5 +1,10 @@
 {include="header"}
 
+<!-- 
+ ESTILO INCOMPLETO
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 <script type="text/javascript">
    function comprobar_url()
    {
@@ -39,7 +44,7 @@
          <tr>
             <td align="right"><a class="link" href="{$fsc->familia->url()}">Familia</a>:</td>
             <td>
-               <select name="codfamilia">
+               <select class="form-control" name="codfamilia">
                {loop="$fsc->familia->all()"}
                   <option value="{$value->codfamilia}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
@@ -49,7 +54,7 @@
          <tr>
             <td align="right"><a class="link" href="{$fsc->impuesto->url()}">IVA</a>:</td>
             <td>
-               <select name="codimpuesto">
+               <select class="form-control" name="codimpuesto">
                {loop="$fsc->impuesto->all()"}
                   <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
@@ -123,13 +128,13 @@
       <input type="hidden" name="mod_iva" value="TRUE"/>
       <h1>Modificar IVA</h1>
       Mover los artículos con
-      <select name="codimpuesto">
+      <select class="form-control" name="codimpuesto">
          {loop="$fsc->impuesto->all()"}
             <option value="{$value->codimpuesto}">{$value->descripcion}</option>
          {/loop}
       </select>
       a
-      <select name="codimpuesto2">
+      <select class="form-control" name="codimpuesto2">
          {loop="$fsc->impuesto->all()"}
             <option value="{$value->codimpuesto}">{$value->descripcion}</option>
          {/loop}
@@ -155,7 +160,7 @@
             Resultados de la búsqueda "{$fsc->query}".
             <span>
             Filtros:
-            <select name="codfamilia" onchange="document.custom_search2.submit()">
+            <select class="form-control" name="codfamilia" onchange="document.custom_search2.submit()">
                <option value="">Todas las familias</option>
                <option value="">-----</option>
                {loop="$fsc->familia->all()"}
@@ -197,21 +202,18 @@
          <td align="right">{$value->stockfis}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
+      <tr><td colspan="5" align="center">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td></tr>
       {/loop}
-      <tr><td colspan="5">&nbsp;</td></tr>
       <tr>
          <td>
          {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
+         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
          {/if}
          </td>
          <td colspan="3"></td>
          <td align="right">
          {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
+         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
          {/if}
          </td>
       </tr>

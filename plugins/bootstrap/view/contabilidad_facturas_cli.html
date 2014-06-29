@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
@@ -13,74 +17,83 @@
 </script>
 
 <div class="popup" id="popup_nueva">
-   <h1>Nueva factura:</h1>
-   En lugar de crear una factura directamente, es mejor que<br/>
-   crees un {$albaran} de cliente (que es un "borrador" de factura)<br/>
-   y después pulses el botón <b>generar factura</b>.
-   <br/><br/>
-   Trabajar con {$albaranes} es más cómodo porque puedes modificarlos<br/>
-   e incluso agruparlos en una sola factura.
-   <div>
-      <a class="btn btn-sm btn-primary pull-right" href="index.php?page=general_nuevo_albaran">crear un {$albaran}</a>
-   </div>
+   <h3>Nueva factura</h3>
+   <form class="form-horizontal" class="form" role="form" name="f_nuevo_pais" action ="{$fsc->url()}" method="POST">
+      <div class="form-group">
+         <div class="col-sm-10">
+            En lugar de crear una factura directamente, es mejor que crees un {$albaran} de cliente (que es un "borrador" de factura) y después pulses el botón <b>generar factura</b>.
+            <br/><br/>
+            Trabajar con {$albaranes} es más cómodo porque puedes modificarlos e incluso agruparlos en una sola factura.
+         </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10 text-right">
+            <button class="btn btn-sm btn-primary pull-right" href="index.php?page=general_nuevo_albaran" value="Crear un {$albaran}" title="Crear un {$albaran}">
+               <span class="glyphicon glyphicon-plus"></span>
+               &nbsp; Crear un {$albaran}
+            </button>
+          </div>
+      </div>
+   </form>
 </div>
 
 <div class="popup" id="popup_huecos" style="min-width: 500px;">
-   <h1>Huecos</h1>
-   <table class="fs_table">
-      <tr>
-         <th>Código</th>
-         <th>Fecha</th>
-      </tr>
-      {loop="$fsc->factura->huecos()"}
-      <tr>
-         <td align="center">{$value.codigo}</td>
-         <td align="center">{$value.fecha}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="2">No hay huecos.</td>
-      </tr>
-      {/loop}
-   </table>
+   <h3>Huecos</h3>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th>Código</th>
+            <th>Fecha</th>
+         </tr>
+         {loop="$fsc->factura->huecos()"}
+         <tr>
+            <td align="center">{$value.codigo}</td>
+            <td align="center">{$value.fecha}</td>
+         </tr>
+         {else}
+         <tr><td colspan="2" align="center">No hay huecos</td></tr>
+         {/loop}
+      </table>
+   </div>
 </div>
 
 <div class="well well-sm">
    {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
-   <table class="fs_table">
-      <tr>
-         <th></th>
-         <th align="left">código + cliente</th>
-         <th align="left">Observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
-      </tr>
-      {loop="$fsc->resultados"}
-      <tr>
-         <td align="center">
-            {if condition="$value->idasiento"}
-            <span title="la factura tiene vinculado un asiento contable">A</span>
-            {/if}
-         </td>
-         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha}</td>
-      </tr>
-      {else}
-      <tr><td colspan="5">Ninguna factura encontrada.</td></tr>
-      {/loop}
-      <tr><td colspan="5">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-            {if condition="$fsc->anterior_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>{/if}
-         </td>
-         <td colspan="2"></td>
-         <td align="right">
-            {if condition="$fsc->siguiente_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>{/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th></th>
+            <th align="left">Código + Cliente</th>
+            <th align="left">Observaciones</th>
+            <th align="right">Total</th>
+            <th align="right">Fecha</th>
+         </tr>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td align="center">
+               {if condition="$value->idasiento"}
+               <span title="La factura tiene vinculado un asiento contable">A</span>
+               {/if}
+            </td>
+            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+            <td align="right">{$value->fecha}</td>
+         </tr>
+         {else}
+         <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
+         {/loop}
+         <tr>
+            <td colspan="2">
+               {if condition="$fsc->anterior_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>{/if}
+            </td>
+            <td colspan="2"></td>
+            <td align="right">
+               {if condition="$fsc->siguiente_url()!=''"}<a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>{/if}
+            </td>
+         </tr>
+      </table>
+   </div>
 </div>
 
 {include="footer"}

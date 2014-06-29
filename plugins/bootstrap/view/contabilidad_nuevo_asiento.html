@@ -1,71 +1,79 @@
 {include="header"}
 
+<!-- 
+ TEMA INCOMPLETO
+ NO HAY BOTON NUEVA LINEA EN EL BTN-TOOLBAR
+ ESTILO NO TERMINADO, HA DEJADO DE FUNCIONAR EL BOTON AÑADIR LINEA AL MODIFICAR EL JAVASCRIPT
+-->
+
 <script type="text/javascript">
    var numlineas = 0;
    function add_partida()
    {
       numlineas++;
-      $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
-         <table width='100%'>\n\
+      $("#partidas").append("<div class='well well-sm'>\n\
+        <div class='table-responsive' id='partida_"+numlineas+"'>\n\
+          <table class='table table-hover'>\n\
             <tr>\n\
                <td>\n\
                <table>\n\
-                  <tr>\n\
-                     <th align='left'>Subcuenta+saldo</th>\n\
-                     <th align='left'>Debe</th>\n\
-                     <th align='left'>Haber</th>\n\
-                  </tr>\n\
-                  <tr>\n\
-                     <td>\n\
-                        <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
-                           onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-                        <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' size='8' disabled='disabled'/>\n\
-                     </td>\n\
-                     <td>\n\
-                        <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='5'\n\
-                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
-                     </td>\n\
-                     <td>\n\
-                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0' size='5'\n\
-                           onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
-                     </td>\n\
-                  </tr>\n\
+                 <tr>\n\
+                   <th align='left'>Subcuenta+saldo</th>\n\
+                   <th align='left'>Debe</th>\n\
+                   <th align='left'>Haber</th>\n\
+                 </tr>\n\
+                 <tr>\n\
+                   <td>\n\
+                     <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' \n\
+                        onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
+                     <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' disabled='disabled'/>\n\
+                   </td>\n\
+                   <td>\n\
+                     <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0'\n\
+                        onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                   </td>\n\
+                   <td>\n\
+                     <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0'\n\
+                        onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
+                   </td>\n\
+                 </tr>\n\
                </table>\n\
                </td>\n\
                <td id='contrapartida_"+numlineas+"'>\n\
-                  <a class='link' href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
+                 <a class='link' href='#' onclick=\"add_contrapartida('"+numlineas+"')\">Añadir contrapartida</a>\n\
                </td>\n\
                <td align='right'><a class='delete'onclick=\"clean_partida('"+numlineas+"')\">x</a></td>\n\
             </tr>\n\
-         </table>\n\
-         </div>");
+          </table>\n\
+        </div>\n\
+      </div>");
    }
    function add_contrapartida(num)
    {
       $("#contrapartida_"+num).html("<table width='100%'>\n\
          <tr>\n\
-            <th align='left'>Contrapartida+saldo</th>\n\
+            <th align='left'>Contrapartida + Saldo</th>\n\
             <th align='left'>IVA</th>\n\
             <th align='left'>Base Imp.</th>\n\
             <th align='left'>CIF/NIF</th>\n\
          </tr>\n\
          <tr>\n\
             <td>\n\
-               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text' size='10'\n\
+               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text'\n\
                   onclick=\"show_buscar_subcuentas('"+num+"','contrapartida')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' size='8' disabled='disabled'/>\n\
+               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' disabled='disabled'/>\n\
             </td>\n\
             <td>\n\
-               <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
+               <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()' class='form-control'>\n\
                   <option value='0'>---</option>\n\
                   {loop="$fsc->impuesto->all()"}<option value='{$value->iva}'>{$value->descripcion}</option>{/loop}\n\
                </select>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' size='5' autocomplete='off'/>\n\
+               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' autocomplete='off'/>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"' size='10'/>\n\
+               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"'/>\n\
             </td>\n\
          </tr>\n\
          </table>");
@@ -196,12 +204,12 @@
 
 <div class="popup" id="popup_subcuentas" style="min-width: 80%">
    <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input type="hidden" name="fecha"/>
-      <input type="hidden" name="tipo"/>
-      <input type="hidden" name="numlinea"/>
+      <input class="form-control" type="hidden" name="fecha"/>
+      <input class="form-control" type="hidden" name="tipo"/>
+      <input class="form-control" type="hidden" name="numlinea"/>
       <h1>Buscar subcuentas</h1>
       <div style="text-align: center;">
-         <input type="text" name="query" size="40"/>
+         <input class="form-control" type="text" name="query"/>
          <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>
@@ -209,44 +217,46 @@
 </div>
 
 <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
-   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
-   <input type="hidden" name="numlineas" value="0"/>
+   <input class="form-control" type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <input class="form-control" type="hidden" name="numlineas" value="0"/>
    <div class="well well-sm">
-      <table class="fs_table">
-         <tr>
+      <div class="table-responsive">
+         <table class="table table-hover">
+          <tr>
             <td>
                Fecha:
-               <input class="form-control datepicker" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
+               <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}"/>
             </td>
             <td colspan="2" align="center">
                Concepto:
-               <select id="s_idconceptopar" name="idconceptopar" onchange="asigna_concepto()">
-                  <option value="">---</option>
-                  {loop="$fsc->concepto->all()"}<option value="{$value->idconceptopar}">{$value->concepto}</option>{/loop}
+               <select id="s_idconceptopar" name="idconceptopar" onchange="asigna_concepto()" class="form-control">
+                 <option value="">---</option>
+                 {loop="$fsc->concepto->all()"}<option value="{$value->idconceptopar}">{$value->concepto}</option>{/loop}
                </select>
-               <input name="concepto" type="text" size="40" maxlength="250" autocomplete="off"/>
+               <input name="concepto" type="text" autocomplete="off"/>
             </td>
             <td align="right">
                <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
             </td>
-         </tr>
-         <tr>
+          </tr>
+          <tr>
             <td colspan="2">
                Divisa:
-               <select name='divisa'>
-                  {loop="$fsc->divisa->all()"}
-                     <option value='{$value->coddivisa}'{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
-                  {/loop}
+               <select name='divisa' class='form-control'>
+                 {loop="$fsc->divisa->all()"}
+                   <option value='{$value->coddivisa}'{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                 {/loop}
                </select>
             </td>
             <td colspan="2" align="right">
                Importe:
-               <input type="text" name="importe" value="0" size="6" disabled="disabled"/>
+               <input class="form-control" type="text" name="importe" value="0" disabled="disabled"/>
                Descuadre:
-               <input type="text" name="descuadre" value="0" size="6" disabled="disabled"/>
+               <input class="form-control" type="text" name="descuadre" value="0" disabled="disabled"/>
             </td>
-         </tr>
-      </table>
+          </tr>
+        </table>
+      </div>
    </div>
    <div id="partidas"></div>
    <div class="well well-sm">

@@ -5,7 +5,7 @@
       <form action="{$fsc->url()}" method="post">
          <div class="form-group">
             Comprobar
-            <select name="modelo">
+            <select class="form-control" name="modelo">
                <option value="todo">Todo</option>
                <option value="">-------</option>
                <option value="asiento">Asientos</option>
@@ -15,7 +15,7 @@
                <option value="albaran proveedor">{$albaranes} de proveedor</option>
             </select>
             hasta el ejercicio
-            <select name="ejercicio">
+            <select class="form-control" name="ejercicio">
             {loop="$fsc->ejercicio->all()"}
                <option value="{$value->codejercicio}">{$value->nombre}</option>
             {/loop}
@@ -97,26 +97,28 @@
          {/loop}
       </div>
       <br/>
-      <table class="fs_table">
-         <tr>
-            <th align="left"></th>
-            <th align="left">Modelo</th>
-            <th align="left">Ejercicio</th>
-            <th align="left">Identificador</th>
-            <th align="right">Fecha</th>
-         </tr>
-         {loop="$fsc->errores"}
-         <tr>
-            <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
-            <td>{$value.model}</td>
-            <td>{$value.ejercicio}</td>
-            <td><a class="link" href="{$value.url}">{$value.id}</a></td>
-            <td align="right">{$value.fecha}</td>
-         </tr>
-         {else}
-         <tr><td colspan="5">Nada que mostrar.</td></tr>
-         {/loop}
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left"></th>
+               <th align="left">Modelo</th>
+               <th align="left">Ejercicio</th>
+               <th align="left">Identificador</th>
+               <th align="right">Fecha</th>
+            </tr>
+            {loop="$fsc->errores"}
+            <tr>
+               <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
+               <td>{$value.model}</td>
+               <td>{$value.ejercicio}</td>
+               <td><a class="link" href="{$value.url}">{$value.id}</a></td>
+               <td align="right">{$value.fecha}</td>
+            </tr>
+            {else}
+            <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
+            {/loop}
+         </table>
+      </div>
       <br/>
       <div class="paginas">
          {loop="$fsc->all_pages()"}

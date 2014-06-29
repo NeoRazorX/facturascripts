@@ -1,5 +1,10 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+ NO TIENE EL BOTON NUEVA SUBCUENTA EN EL BTN-TOOLBAR
+-->
+
 <script type="text/javascript">
    $(document).ready(function() {
       $("#b_nueva_subcuenta, #b_nueva_subcuenta2").click(function(event) {
@@ -17,93 +22,98 @@
 
 {if condition="$fsc->cuenta"}
 <div class="popup" id="popup_nueva_subcuenta">
-   <h1>Nueva subcuenta</h1>
-   <form name="f_nueva_subcuenta" action="{$fsc->url()}" method="post">
-      <table>
-         <tr>
-            <td align="right"><b>Cuenta:</b></td>
-            <td>
-               {$fsc->cuenta->codcuenta}
-               <input type="hidden" name="ejercicio" value="{$fsc->cuenta->codejercicio}"/>
-               <input type="hidden" name="idcuenta" value="{$fsc->cuenta->idcuenta}"/>
-               <input type="hidden" name="codcuenta" value="{$fsc->cuenta->codcuenta}"/>
-            </td>
-            <td align="right"><b>Código:</b></td>
-            <td>
-               <input type="text" name="nsubcuenta" value="{$fsc->cuenta->codcuenta}0000000" size="10" maxlength="10" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right"><b>Descripción:</b></td>
-            <td colspan="3">
-               <input class="full form-control" type="text" name="descripcion" size="30" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="4" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+   <h3>Nueva subcuenta</h3>
+   <form class="form-horizontal" class="form" role="form" name="f_nueva_subcuenta" action ="{$fsc->url()}" method="POST">
+      <div class="form-group">
+         <label for="codcuenta" class="col-sm-2 control-label">Cuenta</label>
+         <div class="col-sm-10">
+         {$fsc->cuenta->codcuenta}
+         <input class="form-control" type="hidden" name="ejercicio" value="{$fsc->cuenta->codejercicio}"/>
+         <input class="form-control" type="hidden" name="idcuenta" value="{$fsc->cuenta->idcuenta}"/>
+         <input class="form-control" type="hidden" name="codcuenta" value="{$fsc->cuenta->codcuenta}"/>
+          </div>
+      </div>
+      <div class="form-group">
+         <label for="nsubcuenta" class="col-sm-2 control-label">Código</label>
+         <div class="col-sm-10">
+         <input class="form-control" type="text" name="nsubcuenta" value="{$fsc->cuenta->codcuenta}0000000" autocomplete="off"/>
+          </div>
+      </div>
+      <div class="form-group">
+         <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
+         <div class="col-sm-10">
+         <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
+          </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10 text-right">
+            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+          </div>
+      </div>
    </form>
 </div>
 
 <div class="well well-sm">
    <form action="{$fsc->url()}" method="post">
-      <table class="fs_table">
-         <tr>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <tr>
             <th align="left">Descripción</th>
             <th align="left">Cuenta especial</th>
             <th align="right">Ejercicio</th>
-            <td align="right" rowspan="2">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-         <tr>
+          </tr>
+          <tr>
             <td>
                <input class="full form-control" type="text" name="descripcion" value="{$fsc->cuenta->descripcion}" autocomplete="off"/>
             </td>
             <td>
-               <select name="idcuentaesp">
-                  <option value="---">Ninguna</option>
-                  <option value="---">---</option>
-                  {loop="$fsc->cuentas_especiales()"}
-                  <option value="{$value->idcuentaesp}"{if condition="$value->idcuentaesp==$fsc->cuenta->idcuentaesp"} selected="selected"{/if}>
-                     {$value->descripcion}
-                  </option>
-                  {/loop}
+               <select name="idcuentaesp" class="form-control">
+                 <option value="---">Ninguna</option>
+                 {loop="$fsc->cuentas_especiales()"}
+                 <option value="{$value->idcuentaesp}"{if condition="$value->idcuentaesp==$fsc->cuenta->idcuentaesp"} selected="selected"{/if}>
+                   {$value->descripcion}
+                 </option>
+                 {/loop}
                </select>
             </td>
             <td align="right"><a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
-         </tr>
-      </table>
+          </tr>
+        </table>
+        <input class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+        <br/><br/>
+      </div>
    </form>
 </div>
 
 <div class="well well-sm">
-   <table class="fs_table">
-      <tr>
-         <th align="left">Código + Descripción</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-         <th align="right">Saldo</th>
-      </tr>
-      {loop="$fsc->cuenta->get_subcuentas()"}
-      <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td colspan="4">
+   <div class="table-responsive">
+      <table class="table table-hover">
+        <tr>
+          <th align="left">Código + Descripción</th>
+          <th align="right">Debe</th>
+          <th align="right">Haber</th>
+          <th align="right">Saldo</th>
+        </tr>
+        {loop="$fsc->cuenta->get_subcuentas()"}
+        <tr>
+          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
+          <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+          <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+          <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
+        </tr>
+        {/loop}
+        <tr>
+          <td colspan="4">
             <div class="new_line">
                <a id="b_nueva_subcuenta2" href="#">Nueva subcuenta</a>
             </div>
-         </td>
-      </tr>
-   </table>
+          </td>
+        </tr>
+      </table>
+   </div>
 </div>
 {else}
 <div class="well well-sm" style="text-align: center;">

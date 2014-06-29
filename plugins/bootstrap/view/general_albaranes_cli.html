@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 <script type="text/javascript">
    function buscar_lineas()
    {
@@ -44,10 +48,10 @@
    });
 </script>
 
-<div class="popup" id="popup_buscar_lineas" style="min-width: 75%">
-   <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-      <h1>Buscar en las líneas</h1>
-      <div style="text-align: center;">
+<div class="popup" id="popup_buscar_lineas">
+   <h3>Buscar en las líneas</h3>
+   <form class="form-horizontal" class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action ="{$fsc->url()}" method="POST">
+      <div class="form-group">
          <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
          <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
@@ -57,44 +61,43 @@
 
 <div class="well well-sm">
    {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
-   <table class="fs_table">
-      <tr>
-         <th></th>
-         <th align="left">código + número 2</th>
-         <th align="left">cliente</th>
-         <th align="left">observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
-      </tr>
-      {loop="$fsc->resultados"}
-      <tr>
-         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
-         <td>{$value->nombrecliente}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right"><span title="{$value->hora}">{$value->fecha}</span></td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="6">Ningún {$albaran} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
-      {/loop}
-      <tr><td colspan="6">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
-         </td>
-         <td colspan="3"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th></th>
+            <th align="left">Código + Número 2</th>
+            <th align="left">Cliente</th>
+            <th align="left">Observaciones</th>
+            <th align="right">Total</th>
+            <th align="right">Fecha</th>
+         </tr>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+            <td>{$value->nombrecliente}</td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+            <td align="right"><span title="{$value->hora}">{$value->fecha}</span></td>
+         </tr>
+         {else}
+         <tr><td colspan="6" align="center">Ningún {$albaran} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td></tr>
+         {/loop}
+         <tr>
+            <td colspan="2">
+            {if condition="$fsc->anterior_url()!=''"}
+            <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}">Anterior</a>
+            {/if}
+            </td>
+            <td colspan="3"></td>
+            <td align="right">
+            {if condition="$fsc->siguiente_url()!=''"}
+            <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}">Siguiente</a>
+            {/if}
+            </td>
+         </tr>
+      </table>
+   </div>
 </div>
 
 {include="footer"}

@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO HAY BOTON ¿AÑADIR ARTICULO? EN EL BTN-TOOLBAR
+-->
+
 {if condition="$fsc->albaran"}
 <script type="text/javascript">
    var numlineas = 0;
@@ -152,7 +156,7 @@
       all_impuestos[{$counter}] = '{$value->iva}';
       {/loop}
       
-      var html = "<select id=\"iva_"+numlinea+"\" name=\"iva_"+numlinea+"\" onchange=\"recalcular()\">";
+      var html = "<select class=\"form-control\" id=\"iva_"+numlinea+"\" name=\"iva_"+numlinea+"\" onchange=\"recalcular()\">";
       for(var i=0; i<all_impuestos.length; i++)
       {
          if(iva == all_impuestos[i])
@@ -304,54 +308,58 @@
    <form id="f_precios" name="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
       <h1>Actualizar precios de los artículos</h1>
-      <table class="fs_table">
-         <tr>
-            <th width="100">Actualizar</th>
-            <th align="left">Artículo</th>
-            <th>Código de barras</th>
-            <th align="right">PVP</th>
-            <th width="100" align="right">PVP+IVA</th>
-         </tr>
-         {loop="$fsc->albaran->get_lineas()"}
-         <tr>
-            <td align="center">
-               <input class="cb_update" type="checkbox" name="referencia_{$counter}" value="{$value->referencia}" checked="checked"/>
-            </td>
-            <td>
-               <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
-               {$value->descripcion}
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
-            </td>
-            <td align="right">
-               {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}
-            </td>
-            <td align="right">
-               <input class="full form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
-            </td>
-         </tr>
-         {/loop}
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th width="100">Actualizar</th>
+               <th align="left">Artículo</th>
+               <th>Código de barras</th>
+               <th align="right">PVP</th>
+               <th width="100" align="right">PVP+IVA</th>
+            </tr>
+            {loop="$fsc->albaran->get_lineas()"}
+            <tr>
+               <td align="center">
+                  <input class="cb_update" type="checkbox" name="referencia_{$counter}" value="{$value->referencia}" checked="checked"/>
+               </td>
+               <td>
+                  <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
+                  {$value->descripcion}
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
+               </td>
+               <td align="right">
+                  {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}
+               </td>
+               <td align="right">
+                  <input class="full form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
+               </td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
       
       <br/>
-      <table width="100%">
-         <tr>
-            <td>
-               <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-               <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
-            </td>
-            <td align="center">
-               <label>
-                  <input type="checkbox" name="update_all" value="TRUE"/>
-                  Actualizar descripción y código de barras
-               </label>
-            </td>
-            <td align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <td>
+                  <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
+                  <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+               </td>
+               <td align="center">
+                  <label>
+                     <input type="checkbox" name="update_all" value="TRUE"/>
+                     Actualizar descripción y código de barras
+                  </label>
+               </td>
+               <td align="right">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Actualizar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
+            </tr>
+         </table>
+      </div>
    </form>
 </div>
 
@@ -360,7 +368,7 @@
       <h1>Buscar artículos</h1>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
-         <select name="codfamilia" onchange="buscar_articulos()">
+         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
             <option value="">Todas las familias</option>
             <option value="">------</option>
          {loop="$fsc->familia->all()"}
@@ -385,7 +393,7 @@
       <h1>
          {if condition="$fsc->albaran->ptefactura"}
          <a class="link" href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
-         <select name="proveedor">
+         <select class="form-control" name="proveedor">
             {loop="$fsc->proveedor->all_full()"}
                {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}
                <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
@@ -404,7 +412,7 @@
       </div>
       <div class="form-group">
          Serie:
-         <select name="serie">
+         <select class="form-control" name="serie">
             {loop="$fsc->serie->all()"}
                {if condition="$value->codserie==$fsc->albaran->codserie"}
                <option value="{$value->codserie}" selected="selected">{$value->descripcion}</option>
@@ -416,7 +424,7 @@
       </div>
       <div class="form-group">Ejercicio: {$fsc->albaran->codejercicio}</div>
       <div class="form-group">
-         Fecha: <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
+         Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
       </div>
       {if condition="$fsc->agente"}
       <div class="form-group">Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
@@ -430,129 +438,137 @@
    {if condition="$fsc->albaran->ptefactura"}
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="well well-sm">
-      <table class="fs_table" id="lineas_albaran">
-         <tr>
-            <th align="left">Referencia</th>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>PVP</th>
-            <th>dto. %</th>
-            <th>Total</th>
-            <th>IVA</th>
-            <th>Total+IVA</th>
-         </tr>
-         {loop="$fsc->albaran->get_lineas()"}
-         <tr id="linea_{$counter}">
-            <td>
-               <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
-               <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
-            </td>
-            <td>
-               <input type="text" class="full form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
-            </td>
-            <td align="center">
-               <input class="btn btn-sm btn-default" type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
-               <input type="text" name="cantidad_{$counter}" id="cantidad_{$counter}" value="{$value->cantidad}"
-                      size="3" autocomplete="off"/>
-               <input class="btn btn-sm btn-default" type="button" value="+" onclick="linea_sum_ud('{$counter}',1)"/>
-            </td>
-            <td align="center">
-               <input type="text" class="full form-control" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
-                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
-            </td>
-            <td align="center">
-               <input type="text" class="full form-control" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
-                      onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
-            </td>
-            <td align="center">
-               <input type="text" class="full form-control" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
-                      onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/>
-            </td>
-            <td align="center">
-               <select id="iva_{$counter}" name="iva_{$counter}" onchange="recalcular()">
-                  {loop="$fsc->impuesto->all()"}
-                     {if condition="$value1->codimpuesto==$value2->codimpuesto"}
-                     <option value="{$value2->iva}" selected="selected">{$value2->iva} %</option>
-                     {else}
-                     <option value="{$value2->iva}">{$value2->iva} %</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-            <td align="center">
-               <input type="text" class="full form-control" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
-                      onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/>
-            </td>
-         </tr>
-         {/loop}
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover" id="lineas_albaran">
+            <tr>
+               <th align="left">Referencia</th>
+               <th>Descripción</th>
+               <th>Cantidad</th>
+               <th>PVP</th>
+               <th>dto. %</th>
+               <th>Total</th>
+               <th>IVA</th>
+               <th>Total+IVA</th>
+            </tr>
+            {loop="$fsc->albaran->get_lineas()"}
+            <tr id="linea_{$counter}">
+               <td>
+                  <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
+                  <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
+               </td>
+               <td>
+                  <input type="text" class="full form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
+               </td>
+               <td align="center">
+                  <input class="btn btn-sm btn-default" type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
+                  <input type="text" name="cantidad_{$counter}" id="cantidad_{$counter}" value="{$value->cantidad}"
+                         size="3" autocomplete="off"/>
+                  <input class="btn btn-sm btn-default" type="button" value="+" onclick="linea_sum_ud('{$counter}',1)"/>
+               </td>
+               <td align="center">
+                  <input type="text" class="full form-control" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
+                         onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
+               </td>
+               <td align="center">
+                  <input type="text" class="full form-control" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
+                         onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
+               </td>
+               <td align="center">
+                  <input type="text" class="full form-control" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
+                         onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/>
+               </td>
+               <td align="center">
+                  <select class="form-control" id="iva_{$counter}" name="iva_{$counter}" onchange="recalcular()">
+                     {loop="$fsc->impuesto->all()"}
+                        {if condition="$value1->codimpuesto==$value2->codimpuesto"}
+                        <option value="{$value2->iva}" selected="selected">{$value2->iva} %</option>
+                        {else}
+                        <option value="{$value2->iva}">{$value2->iva} %</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </td>
+               <td align="center">
+                  <input type="text" class="full form-control" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
+                         onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/>
+               </td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
       {if condition="$fsc->nuevo_albaran_url"}
          <div class="new_line"><a name="new_line" href="#" id="b_new_line">Añadir artículo...</a></div>
       {/if}
       <br/><br/>
-      <table width="100%">
-         <tr>
-            <td rowspan="2">
-               <input class="btn btn-sm btn-default" type="button" value="deshacer" onclick="location.reload();"/>
-            </td>
-            <td></td>
-            <th>Anterior</th>
-            <th>Nuevo</th>
-            <td></td>
-            <th>Anterior</th>
-            <th>Nuevo</th>
-            <td></td>
-            <th>Anterior</th>
-            <th>Nuevo</th>
-            <td rowspan="2" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right"><b>Neto:</b></td>
-            <td align="center">{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="aneto"></span></td>
-            <td align="right"><b>IVA:</b></td>
-            <td align="center">{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="aiva"></span></td>
-            <td align="right"><b>Total:</b></td>
-            <td align="center">{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><span id="atotal"></span></td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <td rowspan="2">
+                  <input class="btn btn-sm btn-default" type="button" value="deshacer" onclick="location.reload();"/>
+               </td>
+               <td></td>
+               <th>Anterior</th>
+               <th>Nuevo</th>
+               <td></td>
+               <th>Anterior</th>
+               <th>Nuevo</th>
+               <td></td>
+               <th>Anterior</th>
+               <th>Nuevo</th>
+               <td rowspan="2" align="right">
+                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
+            </tr>
+            <tr>
+               <td align="right"><b>Neto:</b></td>
+               <td align="center">{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+               <td align="center"><span id="aneto"></span></td>
+               <td align="right"><b>IVA:</b></td>
+               <td align="center">{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+               <td align="center"><span id="aiva"></span></td>
+               <td align="right"><b>Total:</b></td>
+               <td align="center">{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
+               <td align="center"><span id="atotal"></span></td>
+            </tr>
+         </table>
+      </div>
    </div>
    {else}
    <div class="well well-sm">
-      <table class="fs_table">
-         <tr>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total+IVA</th>
-         </tr>
-         {loop="$fsc->albaran->get_lineas()"}
-         <tr>
-            <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
-         </tr>
-         {/loop}
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">PVP</th>
+               <th align="right">dto</th>
+               <th align="right">Total</th>
+               <th align="right">IVA</th>
+               <th align="right">Total+IVA</th>
+            </tr>
+            {loop="$fsc->albaran->get_lineas()"}
+            <tr>
+               <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+               <td align="right">{$value->cantidad}</td>
+               <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+               <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+               <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+               <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+               <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
       <br/><br/>
-      <table class="fs_table">
-         <tr>
-            <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
-            <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+               <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+               <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
+            </tr>
+         </table>
+      </div>
    </div>
    {/if}
 </form>

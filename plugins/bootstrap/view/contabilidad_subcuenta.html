@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO HAY BOTON ¿NUEVO ASIENTO? EN EL BTN-TOOLBAR
+-->
+
 {if condition="$fsc->subcuenta"}
 <script type="text/javascript">
    function fs_marcar_todo()
@@ -18,144 +22,128 @@
 </script>
 
 <form id="f_subcuenta" action="{$fsc->url()}&offset={$fsc->offset}" method="post">
-   <input type="hidden" name="puntear" value="TRUE"/>
+   <input class="form-control" type="hidden" name="puntear" value="TRUE"/>
    
    <div class="well well-sm">
-      <table class="fs_table">
-         <tr>
-            <th align="left">Descripción</th>
-            <th>Ejercicio</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
-         </tr>
-         <tr>
-            <td>
-               <input type="text" class="full form-control" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
-            </td>
-            <td align="center">
-               <a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
-            </td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo, $fsc->subcuenta->coddivisa)}</td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left">Descripción</th>
+               <th>Ejercicio</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+               <th align="right">Saldo</th>
+            </tr>
+            <tr>
+               <td>
+                  <input class="form-control" type="text" class="full form-control" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
+               </td>
+               <td align="center">
+                  <a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+               </td>
+               <td align="right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo, $fsc->subcuenta->coddivisa)}</td>
+            </tr>
+         </table>
+      </div>
    </div>
    
    <div class="well well-sm">
-      <table width="100%">
-         <tr>
-            <td>
-               <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-               <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
-            </td>
-            <td>
-               <div class="paginas">
-               {loop="$fsc->paginas()"}
-                  {if condition="$value.actual"}
-                     <a class="actual" href="{$value.url}">{$value.num}</a>
-                  {else}
-                     <a href="{$value.url}">{$value.num}</a>
-                  {/if}
-               {/loop}
-               </div>
-            </td>
-            <td align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+      <div style="margin-bottom: 5px;">
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            &nbsp; Guardar
+         </button>
+      </div>
       <br/>
       
-      <table class="fs_table">
-         <tr>
-            <th title="puntear">P</th>
-            <th align="left">Asiento</th>
-            <th>Fecha</th>
-            <th align="left">Concepto</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
-            <th align="right">IVA</th>
-            <th align="right">Base imponible</th>
-            <th>Contrapartida</th>
-            <th>CIF/NIF</th>
-         </tr>
-         {$total=-1+count($fsc->resultados)}
-         {loop="$fsc->resultados"}
-         <tr>
-            <td align="center">
-               {if condition="$value->punteada"}
-               <input type="checkbox" name="punteada[]" value="{$value->idpartida}" checked="checked"/>
-               {else}
-               <input type="checkbox" name="punteada[]" value="{$value->idpartida}"/>
-               {/if}
-            </td>
-            <td><a class="link" href="{$value->url()}">{$value->numero}</a></td>
-            <td align="center">{$value->fecha}</td>
-            <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
-            <td align="right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->saldo, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">
-               {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
-            </td>
-            <td align="right">
-               {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $fsc->subcuenta->coddivisa)}{else}-{/if}
-            </td>
-            <td align="center">
-               {if condition="$value->codcontrapartida"}
-               <a class="link" href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
-               {else}
-               -
-               {/if}
-            </td>
-            <td align="center">
-               {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
-            </td>
-         </tr>
-         {if condition="$counter==$total"}
-         <tr>
-            <td colspan="4" align="right"><b>Sumas</b>:</td>
-            <td align="right"><b>{$fsc->show_precio($value->sum_debe, $fsc->subcuenta->coddivisa)}</b></td>
-            <td align="right"><b>{$fsc->show_precio($value->sum_haber, $fsc->subcuenta->coddivisa)}</b></td>
-            <td colspan="5"></td>
-         </tr>
-         {/if}
-         {/loop}
-         <tr>
-            <td colspan="11">
-               <div class="new_line">
-                  <a href="index.php?page=contabilidad_nuevo_asiento">Nuevo asiento</a>
-               </div>
-            </td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th title="puntear">P</th>
+               <th align="left">Asiento</th>
+               <th>Fecha</th>
+               <th align="left">Concepto</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+               <th align="right">Saldo</th>
+               <th align="right">IVA</th>
+               <th align="right">Base imponible</th>
+               <th>Contrapartida</th>
+               <th>CIF/NIF</th>
+            </tr>
+            {$total=-1+count($fsc->resultados)}
+            {loop="$fsc->resultados"}
+            <tr>
+               <td align="center">
+                  {if condition="$value->punteada"}
+                  <input class="form-control" type="checkbox" name="punteada[]" value="{$value->idpartida}" checked="checked"/>
+                  {else}
+                  <input class="form-control" type="checkbox" name="punteada[]" value="{$value->idpartida}"/>
+                  {/if}
+               </td>
+               <td><a class="link" href="{$value->url()}">{$value->numero}</a></td>
+               <td align="center">{$value->fecha}</td>
+               <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
+               <td align="right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
+               <td align="right">{$fsc->show_precio($value->saldo, $fsc->subcuenta->coddivisa)}</td>
+               <td align="right">
+                  {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
+               </td>
+               <td align="right">
+                  {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $fsc->subcuenta->coddivisa)}{else}-{/if}
+               </td>
+               <td align="center">
+                  {if condition="$value->codcontrapartida"}
+                  <a class="link" href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+                  {else}
+                  -
+                  {/if}
+               </td>
+               <td align="center">
+                  {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
+               </td>
+            </tr>
+            {if condition="$counter==$total"}
+            <tr>
+               <td colspan="4" align="right"><b>Sumas</b>:</td>
+               <td align="right"><b>{$fsc->show_precio($value->sum_debe, $fsc->subcuenta->coddivisa)}</b></td>
+               <td align="right"><b>{$fsc->show_precio($value->sum_haber, $fsc->subcuenta->coddivisa)}</b></td>
+               <td colspan="5"></td>
+            </tr>
+            {/if}
+            {/loop}
+            <tr>
+               <td colspan="11">
+                  <div class="new_line">
+                     <a href="index.php?page=contabilidad_nuevo_asiento">Nuevo asiento</a>
+                  </div>
+               </td>
+            </tr>
+         </table>
+      </div>
       
       <br/>
-      <table width="100%">
-         <tr>
-            <td>
-               <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-               <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
-            </td>
-            <td>
-               <div class="paginas">
-               {loop="$fsc->paginas()"}
-                  {if condition="$value.actual"}
-                     <a class="actual" href="{$value.url}">{$value.num}</a>
-                  {else}
-                     <a href="{$value.url}">{$value.num}</a>
-                  {/if}
-               {/loop}
-               </div>
-            </td>
-            <td align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+      <div style="margin-bottom: 5px;">
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            &nbsp; Guardar
+         </button>
+      </div>
    </div>
 </form>
 {else}

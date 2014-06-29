@@ -79,25 +79,27 @@
       <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a>
       tiene asignada la cuenta...
    </h2>
-   <table class="fs_table">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Subcuenta + Descripcion</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-         <th align="right">Saldo</th>
-      </tr>
-      <tr>
-         <td align="left">{$fsc->subcuenta->codejercicio}</td>
-         <td align="left">
-            <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
-            {$fsc->subcuenta->descripcion}
-         </td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Subcuenta + Descripcion</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         <tr>
+            <td align="left">{$fsc->subcuenta->codejercicio}</td>
+            <td align="left">
+               <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+               {$fsc->subcuenta->descripcion}
+            </td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
+         </tr>
+      </table>
+   </div>
 </div>
 
 <div class="well well-sm">
@@ -108,36 +110,38 @@
       <input type="hidden" name="cli" value="{$fsc->cliente->codcliente}"/>
       <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
       <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
-      <table class="fs_table">
-         <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Subcuenta</th>
-            <th align="left">Descripcion</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
-         </tr>
-         <tr>
-            <td>
-               <input class="full form-control" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
-            </td>
-            <td>
-               <input id="codsubcuenta" class="full form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
-            </td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left">Ejercicio</th>
+               <th align="left">Subcuenta</th>
+               <th align="left">Descripcion</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+               <th align="right">Saldo</th>
+            </tr>
+            <tr>
+               <td>
+                  <input class="full form-control" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
+               </td>
+               <td>
+                  <input id="codsubcuenta" class="full form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
+               </td>
+            </tr>
+         </table>
+      </div>
       <div style="text-align: right;">
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
       </div>
@@ -153,25 +157,27 @@
       <a class="link" href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
       tiene asignada la cuenta...
    </h2>
-   <table class="fs_table">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Subcuenta + Descripcion</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-         <th align="right">Saldo</th>
-      </tr>
-      <tr>
-         <td align="left">{$fsc->subcuenta->codejercicio}</td>
-         <td align="left">
-            <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
-            {$fsc->subcuenta->descripcion}
-         </td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
-         <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Subcuenta + Descripcion</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+            <th align="right">Saldo</th>
+         </tr>
+         <tr>
+            <td align="left">{$fsc->subcuenta->codejercicio}</td>
+            <td align="left">
+               <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+               {$fsc->subcuenta->descripcion}
+            </td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->haber)}</td>
+            <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo)}</td>
+         </tr>
+      </table>
+   </div>
 </div>
 
 <div class="well well-sm">
@@ -182,36 +188,38 @@
       <input type="hidden" name="pro" value="{$fsc->proveedor->codproveedor}"/>
       <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
       <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
-      <table class="fs_table">
-         <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Subcuenta</th>
-            <th align="left">Descripcion</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
-         </tr>
-         <tr>
-            <td>
-               <input class="full form-control" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
-            </td>
-            <td>
-               <input id="codsubcuenta" class="full form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
-            </td>
-            <td>
-               <input class="full form-control" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
-            </td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left">Ejercicio</th>
+               <th align="left">Subcuenta</th>
+               <th align="left">Descripcion</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+               <th align="right">Saldo</th>
+            </tr>
+            <tr>
+               <td>
+                  <input class="full form-control" type="text" name="codejercicio" value="{$fsc->subcuenta->codejercicio}" disabled="disabled"/>
+               </td>
+               <td>
+                  <input id="codsubcuenta" class="full form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" disabled="disabled"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="debe" value="{$fsc->subcuenta->debe}" disabled="disabled" style="text-align: right;"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="haber" value="{$fsc->subcuenta->haber}" disabled="disabled" style="text-align: right;"/>
+               </td>
+               <td>
+                  <input class="full form-control" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled" style="text-align: right;"/>
+               </td>
+            </tr>
+         </table>
+      </div>
       <div style="text-align: right;">
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
       </div>

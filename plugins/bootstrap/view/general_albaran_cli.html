@@ -32,24 +32,26 @@
 <div class="popup" id="popup_enviar">
    <h1>Enviar factura</h1>
    <form name="enviar_email" action="{$fsc->url()}" method="post">
-      <table class="fs_table">
-         <tr>
-            <td>Email del cliente:</td>
-            <td><input class="full form-control" type="text" name="email" value="{$fsc->cliente_email}" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td valign="top" align="right">Mensaje:</td>
-            <td>
-               <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su {$albaran} {$fsc->albaran->codigo}.
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <td>Email del cliente:</td>
+               <td><input class="full form-control" type="text" name="email" value="{$fsc->cliente_email}" autocomplete="off"/></td>
+            </tr>
+            <tr>
+               <td valign="top" align="right">Mensaje:</td>
+               <td>
+                  <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su {$albaran} {$fsc->albaran->codigo}.
 {$fsc->empresa->email_firma}</textarea>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="enviar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+               </td>
+            </tr>
+            <tr>
+               <td colspan="2" align="right">
+                  <input class="btn btn-sm btn-primary" type="submit" value="enviar" onclick="this.disabled=true;this.form.submit();"/>
+               </td>
+            </tr>
+         </table>
+      </div>
    </form>
 </div>
 
@@ -89,7 +91,7 @@
       </div>
       <div class="form-group">
          Serie:
-         <select name="serie">
+         <select name="serie" class="form-control">
             {loop="$fsc->serie->all()"}
                {if condition="$value->codserie==$fsc->albaran->codserie"}
                <option value="{$value->codserie}" selected="selected">{$value->descripcion}</option>
@@ -101,7 +103,7 @@
       </div>
       <div class="form-group">Ejercicio: {$fsc->albaran->codejercicio}</div>
       <div class="form-group">
-         Fecha: <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
+         Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
          Hora: <input type="text" name="hora" value="{$fsc->albaran->hora}" size="8"/>
       </div>
       {if condition="$fsc->agente"}
@@ -120,36 +122,40 @@
    </div>
 
    <div class="well well-sm">
-      <table class="fs_table">
-         <tr>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total+IVA</th>
-         </tr>
-         {loop="$fsc->albaran->get_lineas()"}
-         <tr>
-            <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
-         </tr>
-         {/loop}
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">PVP</th>
+               <th align="right">dto</th>
+               <th align="right">Total</th>
+               <th align="right">IVA</th>
+               <th align="right">Total+IVA</th>
+            </tr>
+            {loop="$fsc->albaran->get_lineas()"}
+            <tr>
+               <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+               <td align="right">{$value->cantidad}</td>
+               <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+               <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+               <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+               <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+               <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
       <br/><br/>
-      <table class="fs_table">
-         <tr>
-            <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
-            <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
-         </tr>
-      </table>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <tr>
+               <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
+               <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
+               <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
+            </tr>
+         </table>
+      </div>
    </div>
 </form>
 {else}

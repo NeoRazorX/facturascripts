@@ -1,3 +1,8 @@
+
+<!-- 
+ NO HAY BOTON ¿AÑADIR ARTICULO? EN EL BTN-TOOLBAR
+-->
+
    <script type="text/javascript">
       var numlineas = 0;
       var lcd_txt = '-1';
@@ -212,7 +217,7 @@
          <h1>Buscar artículos</h1>
          <div style="text-align: center;">
             <input type="text" name="query" size="40" autocomplete="off"/>
-            <select name="codfamilia" onchange="buscar_articulos()">
+            <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                <option value="">Todas las familias</option>
                <option value="">------</option>
             {loop="$fsc->familia->all()"}
@@ -240,13 +245,13 @@
             <tr>
                <td align="right">Fecha:</td>
                <td colspan="3">
-                  <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+                  <input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
                </td>
             </tr>
             <tr>
                <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
                <td colspan="3">
-                  <select name="cliente">
+                  <select class="form-control" name="cliente">
                      {loop="$fsc->cliente->all_full()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
@@ -262,7 +267,7 @@
             <tr>
                <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
                <td colspan="3">
-                  <select name="almacen">
+                  <select class="form-control" class="form-control" name="almacen">
                      {loop="$fsc->almacen->all()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
@@ -276,7 +281,7 @@
             <tr>
                <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
                <td colspan="3">
-                  <select name="serie">
+                  <select class="form-control" class="form-control" name="serie">
                      {loop="$fsc->serie->all()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
@@ -290,7 +295,7 @@
             <tr>
                <td align="right">Forma de pago:</td>
                <td>
-                  <select name="forma_pago">
+                  <select class="form-control" name="forma_pago">
                      {loop="$fsc->forma_pago->all()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
@@ -302,7 +307,7 @@
                </td>
                <td align="right">Divisa:</td>
                <td>
-                  <select name="divisa">
+                  <select class="form-control" name="divisa">
                      {loop="$fsc->divisa->all()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
@@ -347,28 +352,32 @@
             Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
          <br/><br/>
-         <table class="fs_table" id="tpv_albaran">
-            <tr>
-               <th align="left">Referencia</th>
-               <th>Descripción</th>
-               <th>Cantidad</th>
-               <th>PVP</th>
-               <th>Dto. %</th>
-               <th>IVA</th>
-               <th>Total+IVA</th>
-            </tr>
-         </table>
+         <div class="table-responsive">
+            <table class="table table-hover" id="tpv_albaran">
+               <tr>
+                  <th align="left">Referencia</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                  <th>PVP</th>
+                  <th>Dto. %</th>
+                  <th>IVA</th>
+                  <th>Total+IVA</th>
+               </tr>
+            </table>
+         </div>
          <div class="new_line">
             <a name="new_line" href="#" id="b_new_line">Añadir artículo...</a>
          </div>
          <br/><br/>
-         <table width="100%">
-            <tr>
-               <td align="right">
-                  <input class="btn btn-sm btn-default" type="button" id="b_nuevo_albaran_cliente" value="guardar ticket">
-               </td>
-            </tr>
-         </table>
+         <div class="table-responsive">
+            <table class="table table-hover" id="tpv_albaran">
+               <tr>
+                  <td align="right">
+                     <input class="btn btn-sm btn-default" type="button" id="b_nuevo_albaran_cliente" value="guardar ticket">
+                  </td>
+               </tr>
+            </table>
+         </div>
       </div>
    </form>
    

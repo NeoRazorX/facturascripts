@@ -1,5 +1,9 @@
 {include="header"}
 
+<!-- 
+ NO UTILIZA LA PAGINACION DE BOOTSTRAP ( http://getbootstrap.com/components/#pagination-pager )
+-->
+
 {if condition="$fsc->agente"}
 <script type="text/javascript">
    $(document).ready(function() {
@@ -12,28 +16,51 @@
 </script>
 
 <div class="well well-sm">
-   <form action="{$fsc->url()}" method="post">
-      <div class="pull_right">
-         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-      </div>
-      <h1>{$fsc->agente->get_fullname()}</h1>
+   <form class="form-horizontal" class="form" role="form" action="{$fsc->url()}" method="post">
+      <h3>{$fsc->agente->get_fullname()}</h3>
       <div class="form-group">
-         Nombre: <input type="text" name="nombre" value="{$fsc->agente->nombre}" maxlength="50" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-         Apellidos: <input type="text" name="apellidos" value="{$fsc->agente->apellidos}" maxlength="100" autocomplete="off"/>
+         <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" name="nombre" value="{$fsc->agente->nombre}" autocomplete="off"/>
+         </div>
       </div>
       <div class="form-group">
-         DNI/CIF: <input type="text" name="dnicif" value="{$fsc->agente->dnicif}" autocomplete="off"/>
+         <label for="apellidos" class="col-sm-2 control-label">Apellidos</label>
+         <div class="col-sm-10">
+           <input class="form-control" type="text" name="apellidos" value="{$fsc->agente->apellidos}" autocomplete="off"/>
+         </div>
       </div>
       <div class="form-group">
-         Teléfono: <input type="text" name="telefono" value="{$fsc->agente->telefono}" autocomplete="off"/>
+         <label for="dnicif" class="col-sm-2 control-label">DNI/CIF</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" name="dnicif" value="{$fsc->agente->dnicif}" autocomplete="off"/>
+         </div>
       </div>
       <div class="form-group">
-         Email: <input type="text" name="email" value="{$fsc->agente->email}" size="30" maxlength="50" autocomplete="off"/>
+         <label for="telefono" class="col-sm-2 control-label">Teléfono</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" name="telefono" value="{$fsc->agente->telefono}" autocomplete="off"/>
+         </div>
       </div>
       <div class="form-group">
-         % Comisión: <input type="text" name="porcomision" value="{$fsc->agente->porcomision}" size="5" autocomplete="off"/>
+         <label for="email" class="col-sm-2 control-label">Email</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" name="email" value="{$fsc->agente->email}" autocomplete="off"/>
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="porcomision" class="col-sm-2 control-label">% Comisión</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" name="porcomision" value="{$fsc->agente->porcomision}" autocomplete="off"/>
+         </div>
+      </div>
+      <div class="form-group">
+         <div class="col-sm-offset-2 col-sm-10 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+         </div>
       </div>
    </form>
 </div>
@@ -41,134 +68,137 @@
 <div class="well well-sm">
    <a name="listado"></a>
    {if condition="$fsc->listar=='albaranes_cli'"}
-   <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="selected">{$albaranes} de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado">{$albaranes} de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
+   <div class="btn-group btn-group-justified">
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="btn btn-sm btn-default active">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="btn btn-sm btn-default">{$albaranes} de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado" class="btn btn-sm btn-default">Caja</a>
    </div>
    <br/><br/>
-   <table class="fs_table">
-      <tr>
-         <th></th>
-         <th align="left">código + número 2</th>
-         <th align="left">cliente</th>
-         <th align="left">observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
-      </tr>
-      {loop="$fsc->listado"}
-      <tr>
-         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
-         <td>{$value->nombrecliente}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha}</td>
-      </tr>
-      {else}
-      <tr><td colspan="6">Ningún {$albaran} encontrado.</td></tr>
-      {/loop}
-      <tr><td colspan="6">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">anterior</a>
-         {/if}
-         </td>
-         <td colspan="3"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">siguiente</a>
-         {/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+        <tr>
+          <th></th>
+          <th align="left">Código + Número 2</th>
+          <th align="left">Cliente</th>
+          <th align="left">Observaciones</th>
+          <th align="right">Total</th>
+          <th align="right">Fecha</th>
+        </tr>
+        {loop="$fsc->listado"}
+        <tr>
+          <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+          <td>{$value->nombrecliente}</td>
+          <td>{$value->observaciones_resume()}</td>
+          <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+          <td align="right">{$value->fecha}</td>
+        </tr>
+        {else}
+        <tr><td colspan="6" align="center">Ningún {$albaran} encontrado</td></tr>
+        {/loop}
+        <tr>
+          <td colspan="2">
+          {if condition="$fsc->anterior_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">Anterior</a>
+          {/if}
+          </td>
+          <td colspan="3"></td>
+          <td align="right">
+          {if condition="$fsc->siguiente_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">Siguiente</a>
+          {/if}
+          </td>
+        </tr>
+      </table>
+   </div>
    {elseif condition="$fsc->listar=='albaranes_prov'"}
-   <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado">{$albaranes} de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="selected">{$albaranes} de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja#listado">Caja</a>
+   <div class="btn-group btn-group-justified">
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="btn btn-sm btn-default">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="btn btn-sm btn-default active">{$albaranes} de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado" class="btn btn-sm btn-default">Caja</a>
    </div>
    <br/><br/>
-   <table class="fs_table">
-      <tr>
-         <th></th>
-         <th align="left">código + num. proveedor</th>
-         <th align="left">proveedor</th>
-         <th align="left">observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
-      </tr>
-      {loop="$fsc->listado"}
-      <tr>
-         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-         <td><a  class="link"href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
-         <td>{$value->nombre}</td>
-         <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha}</td>
-      </tr>
-      {else}
-      <tr><td colspan="6">Ningún {$albaran} encontrado.</td></tr>
-      {/loop}
-      <tr><td colspan="6">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">anterior</a>
-         {/if}
-         </td>
-         <td colspan="3"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">siguiente</a>
-         {/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+        <tr>
+          <th></th>
+          <th align="left">código + num. proveedor</th>
+          <th align="left">proveedor</th>
+          <th align="left">observaciones</th>
+          <th align="right">total</th>
+          <th align="right">fecha</th>
+        </tr>
+        {loop="$fsc->listado"}
+        <tr>
+          <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+          <td><a  class="link"href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+          <td>{$value->nombre}</td>
+          <td>{$value->observaciones_resume()}</td>
+          <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+          <td align="right">{$value->fecha}</td>
+        </tr>
+        {else}
+        <tr><td colspan="6" align="center">Ningún {$albaran} encontrado</td></tr>
+        {/loop}
+        <tr>
+          <td colspan="2">
+          {if condition="$fsc->anterior_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">Anterior</a>
+          {/if}
+          </td>
+          <td colspan="3"></td>
+          <td align="right">
+          {if condition="$fsc->siguiente_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">Siguiente</a>
+          {/if}
+          </td>
+        </tr>
+      </table>
+   </div>
    {else}
-   <div class="select">
-      <a href="{$fsc->url()}&listar=albaranes_cli#listado">{$albaranes} de cliente</a>
-      <a href="{$fsc->url()}&listar=albaranes_prov#listado">{$albaranes} de proveedor</a>
-      <a href="{$fsc->url()}&listar=caja#listado" class="selected">Caja</a>
+   <div class="btn-group btn-group-justified">
+      <a href="{$fsc->url()}&listar=albaranes_cli#listado" class="btn btn-sm btn-default">{$albaranes} de cliente</a>
+      <a href="{$fsc->url()}&listar=albaranes_prov#listado" class="btn btn-sm btn-default">{$albaranes} de proveedor</a>
+      <a href="{$fsc->url()}&listar=caja#listado" class="btn btn-sm btn-default active">Caja</a>
    </div>
    <br/><br/>
-   <table class="fs_table">
-      <tr>
-         <th>Caja</th>
-         <th>Fecha inicial</th>
-         <th align="right">Dinero inicial</th>
-         <th>Fecha fin</th>
-         <th align="right">Diferencia</th>
-         <th align="right">Tickets</th>
-      </tr>
-      {loop="$fsc->listado"}
-      <tr>
-         <td align="center">{$value->fs_id}</td>
-         <td align="center">{$value->fecha_inicial}</td>
-         <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
-         <td align="center">{$value->show_fecha_fin()}</td>
-         <td align="right">{$fsc->show_precio($value->diferencia())}</td>
-         <td align="right">{$value->tickets}</td>
-      </tr>
-      {else}
-      <tr><td colspan="6">No hay datos.</td></tr>
-      {/loop}
-      <tr><td colspan="6">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">anterior</a>
-         {/if}
-         </td>
-         <td colspan="2"></td>
-         <td colspan="2" align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">siguiente</a>
-         {/if}
-         </td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+        <tr>
+          <th>Caja</th>
+          <th>Fecha inicial</th>
+          <th align="right">Dinero inicial</th>
+          <th>Fecha fin</th>
+          <th align="right">Diferencia</th>
+          <th align="right">Tickets</th>
+        </tr>
+        {loop="$fsc->listado"}
+        <tr>
+          <td align="center">{$value->fs_id}</td>
+          <td align="center">{$value->fecha_inicial}</td>
+          <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
+          <td align="center">{$value->show_fecha_fin()}</td>
+          <td align="right">{$fsc->show_precio($value->diferencia())}</td>
+          <td align="right">{$value->tickets}</td>
+        </tr>
+        {else}
+        <tr><td colspan="6" align="center">No hay datos</td></tr>
+        {/loop}
+        <tr>
+          <td colspan="2">
+          {if condition="$fsc->anterior_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->anterior_url()}#listado">Anterior</a>
+          {/if}
+          </td>
+          <td colspan="2"></td>
+          <td colspan="2" align="right">
+          {if condition="$fsc->siguiente_url()!=''"}
+          <a class="btn btn-sm btn-default" href="{$fsc->siguiente_url()}#listado">Siguiente</a>
+          {/if}
+          </td>
+        </tr>
+      </table>
+   </div>
    {/if}
 </div>
 {else}

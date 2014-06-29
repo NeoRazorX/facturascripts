@@ -41,71 +41,73 @@
    });
 </script>
 
-<div id="popup_nueva_regiva" class="popup">
-   <h1>Nueva regularización de IVA</h1>
-   <form name="f_nueva_regiva" action="{$fsc->url()}" method="post">
-      <input type="hidden" name="proceso" value=""/>
-      <table class="fs_table">
-         <tr>
-            <th>Periodo</th>
-            <th>Desde</th>
-            <th>Hasta</th>
-         </tr>
-         <tr>
-            <td>
-               <select name="periodo">
-                  {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
-                  {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
-                  {if condition="$fsc->periodo=='T3'"}<option selected="selected">T3</option>{else}<option>T3</option>{/if}
-                  {if condition="$fsc->periodo=='T4'"}<option selected="selected">T4</option>{else}<option>T4</option>{/if}
-               </select>
-            </td>
-            <td>
-               <input type="text" class="form-control datepicker" name="desde" size="10" value="{$fsc->fecha_desde}"/>
-            </td>
-            <td>
-               <input type="text" class="form-control datepicker" name="hasta" size="10" value="{$fsc->fecha_hasta}"/>
-            </td>
-         </tr>
-      </table>
-      <table width="100%">
-         <tr>
-            <td align="right">
-               <input class="btn btn-sm btn-default" type="button" value="completar" onclick="completar_regiva()"/>
-            </td>
-         </tr>
-      </table>
-      <div id="lineas_regiva"></div>
+<div class="popup" id="popup_nueva_regiva">
+   <h3>Nueva regularización de IVA</h3>
+   <form class="form-horizontal" class="form" role="form" name="f_nueva_regiva" action ="{$fsc->url()}" method="POST">
+      <div class="form-group">
+         <label for="periodo" class="col-sm-2 control-label">Período</label>
+         <div class="col-sm-10">
+             <select name="periodo" class="form-control">
+                {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
+                {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
+                {if condition="$fsc->periodo=='T3'"}<option selected="selected">T3</option>{else}<option>T3</option>{/if}
+                {if condition="$fsc->periodo=='T4'"}<option selected="selected">T4</option>{else}<option>T4</option>{/if}
+             </select>
+          </div>
+      </div>
+      <div class="form-group">
+         <label for="desde" class="col-sm-2 control-label">Desde</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" class="tcal" name="desde" value="{$fsc->fecha_desde}"/>
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="hasta" class="col-sm-2 control-label">Hasta</label>
+         <div class="col-sm-10">
+            <input class="form-control" type="text" class="tcal" name="hasta" value="{$fsc->fecha_hasta}"/>
+         </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10 text-right">
+           <button class="btn btn-sm btn-primary pull-right" onclick="completar_regiva()" title="Completar" value="Completar">
+              <span class="glyphicon glyphicon-floppy-disk"></span>
+              &nbsp; Completar
+           </button>
+        </div>
+      </div>
    </form>
+   
+   <div id="lineas_regiva"></div>
+   
 </div>
 
 <div id="popup_full_regiva" class="popup"></div>
 
 <div class="well well-sm">
-   <table class="fs_table">
-      <tr>
-         <th align="left">Periodo@Ejercicio</th>
-         <th align="left">Fecha del asiento</th>
-         <th align="left">Fecha de inicio</th>
-         <th align="right">Fecha fin</th>
-      </tr>
-      {loop="$fsc->regiva->all()"}
-      <tr>
-         <td>
-            <a class="link" href="#" onclick="full_regiva('{$value->idregiva}')">
-               {$value->periodo}@{$value->codejercicio}
-            </a>
-         </td>
-         <td>{$value->fechaasiento}</td>
-         <td>{$value->fechainicio}</td>
-         <td align="right">{$value->fechafin}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="4">Sin resultados.</td>
-      </tr>
-      {/loop}
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <tr>
+            <th align="left">Periodo@Ejercicio</th>
+            <th align="left">Fecha del asiento</th>
+            <th align="left">Fecha de inicio</th>
+            <th align="right">Fecha de fin</th>
+         </tr>
+         {loop="$fsc->regiva->all()"}
+         <tr>
+            <td>
+               <a class="link" href="#" onclick="full_regiva('{$value->idregiva}')">
+                  {$value->periodo}@{$value->codejercicio}
+               </a>
+            </td>
+            <td>{$value->fechaasiento}</td>
+            <td>{$value->fechainicio}</td>
+            <td align="right">{$value->fechafin}</td>
+         </tr>
+         {else}
+         <tr><td colspan="4" align="center">Sin resultados</td></tr>
+         {/loop}
+      </table>
+   </div>
 </div>
 
 {include="footer"}
