@@ -6,13 +6,13 @@
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link href="plugins/bootstrap/view/css/bootstrap-yeti.min.css" rel="stylesheet">
-   <link href="plugins/bootstrap/view/css/custom.css" rel="stylesheet">
-   <link href="view/css/tcal.css" rel="stylesheet">
+   <link href="plugins/bootstrap/view/css/bootstrap-yeti.min.css" rel="stylesheet" />
+   <link href="plugins/bootstrap/view/css/datepicker.css" rel="stylesheet" />
+   <link href="plugins/bootstrap/view/css/custom.css" rel="stylesheet" />
    <script type="text/javascript" src="plugins/bootstrap/view/js/jquery-2.1.1.min.js"></script>
    <script type="text/javascript" src="plugins/bootstrap/view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="plugins/bootstrap/view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="plugins/bootstrap/view/js/base.js"></script>
-   <script type="text/javascript" src="view/js/tcal.js"></script>
    <script type="text/javascript">
       function show_precio(precio)
       {
@@ -138,16 +138,16 @@
          <div class="col-md-10 col-sm-8" style="padding-left: 5px;">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group">
-                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                      <span class="glyphicon glyphicon-refresh"></span>
                   </a>
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
-                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio">
+                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
                         <span class="glyphicon glyphicon-home"></span>
                      </a>
                      {else}
-                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio">
+                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
                         <span class="glyphicon glyphicon-home"></span>
                      </a>
                      {/if}
@@ -169,7 +169,7 @@
                <div class="btn-group">
                   {loop="$fsc->buttons"}
                      {if condition="get_class($value)=='fs_button_img'"}
-                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}"><span class="glyphicon glyphicon-{if condition="$value->remove"}remove{else}plus{/if}"></span> {$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
                      {else}
                      <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>
                      {/if}
@@ -181,9 +181,9 @@
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
                <div class="input-group">
-                  <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off" class="form-control" placeholder="Buscar">
+                  <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off" class="form-control" placeholder="buscar">
                   <span class="input-group-btn">
-                     <button class="btn btn-primary" type="button">
+                     <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
                      </button>
                   </span>
