@@ -454,7 +454,7 @@ class fs_controller
             }
             else
             {
-               $this->new_error_msg('El usuario no existe!');
+               $this->new_error_msg('El usuario '.$_POST['user'].' no existe!');
                $this->user->clean_cache(TRUE);
                $this->cache->clean();
             }
@@ -474,13 +474,14 @@ class fs_controller
             }
             else if( !is_null($user->log_key) )
             {
-               $this->new_message('¡Cookie no válida! Tú o alguien ha accedido a esta cuenta desde otro PC.');
+               $this->new_message('¡Cookie no válida! Alguien ha accedido a esta cuenta desde otro PC con IP: '
+                       .$user->last_ip.". Si has sido tú, ignora este mensaje.");
                $this->log_out();
             }
          }
          else
          {
-            $this->new_message('¡El usuario no existe!');
+            $this->new_error_msg('¡El usuario '.$_COOKIE['user'].' no existe!');
             $this->log_out();
             $this->user->clean_cache(TRUE);
             $this->cache->clean();

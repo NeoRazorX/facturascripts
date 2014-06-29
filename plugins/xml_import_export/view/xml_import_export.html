@@ -5,16 +5,16 @@
    {
       if(window.location.hash.substring(1) == 'export')
       {
-         $("#b_importar").removeClass('selected');
+         $("#b_importar").removeClass('active');
          $("#g_importar").hide();
-         $("#b_exportar").addClass('selected');
+         $("#b_exportar").addClass('active');
          $("#g_exportar").show();
       }
       else if(window.location.hash.substring(1) == 'import')
       {
-         $("#b_exportar").removeClass('selected');
+         $("#b_exportar").removeClass('active');
          $("#g_exportar").hide();
-         $("#b_importar").addClass('selected');
+         $("#b_importar").addClass('active');
          $("#g_importar").show();
       }
    }
@@ -26,40 +26,72 @@
    });
 </script>
 
-<div class="rounded">
-   <div class="select">
-      <a id="b_exportar" href="#export" class="selected">Exportar</a>
-      <a id="b_importar" href="#import">Importar</a>
-   </div>
-   <div id="g_exportar">
-      <div class="grupo">
-         <h2>Datos de la tabla...</h2>
-         <form action="{$fsc->url()}" method="post" target="_blank">
-            SELECT * FROM
-            <select name="tabla">
-            {loop="$fsc->tablas()"}<option value="{$value['name']}">{$value['name']}</option>{/loop}
-            </select>
-            WHERE
-            <input type="text" name="where" value="1 = 1" size="80" autocomplete="off"/>;
-            <input class="submit" type="submit" value="exportar"/>
-         </form>
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-2">
+         <div class="list-group">
+            <a id="b_exportar" href="#export" class="list-group-item active">Exportar</a>
+            <a id="b_importar" href="#import"class="list-group-item">Importar</a>
+         </div>
       </div>
-      <div class="grupo">
-         <h2>Estructura de la tabla...</h2>
-         <ul class="horizontal">
-         {loop="$fsc->all_tables()"}
-            <li><a class="link" target="_blank" href='{$fsc->page->url()}&table={$value.name}'>{$value.name}</a></li>
-         {/loop}
-         </ul>
+      <div class="col-lg-10">
+         <div id="g_exportar">
+            <form action="{$fsc->url()}" method="post" target="_blank" class="form">
+               <div class="panel panel-info">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Datos de la tabla...</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="form-group">
+                        SELECT * FROM
+                        <select name="tabla" class="form-control">
+                        {loop="$fsc->tablas()"}<option value="{$value['name']}">{$value['name']}</option>{/loop}
+                        </select>
+                     </div>
+                     <div class="form-group">
+                        WHERE
+                        <input class="form-control" type="text" name="where" value="1 = 1" autocomplete="off"/>
+                     </div>
+                  </div>
+                  <div class="panel-footer">
+                     <input class="btn btn-sm btn-primary" type="submit" value="exportar"/>
+                  </div>
+               </div>
+            </form>
+            
+            <div class="panel panel-success">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Estructura de la tabla...</h3>
+               </div>
+               <div class="panel-body">
+                  {loop="$fsc->all_tables()"}
+                     {if condition="$counter>0"} &nbsp; | &nbsp; {/if}
+                     <a target="_blank" href='{$fsc->page->url()}&table={$value.name}'>{$value.name}</a>
+                  {/loop}
+               </div>
+            </div>
+         </div>
+         
+         <div id="g_importar" style="display: none;">
+            <form action="{$fsc->url()}#import" method="post" enctype='multipart/form-data' class="form">
+               <input name='archivo' type='hidden' value='TRUE'/>
+               <div class="panel panel-info">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Datos de la tabla...</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="form-group">
+                        <label>Archivo a importar:</label>
+                        <input class="form-control" name='farchivo' type='file'/>
+                     </div>
+                  </div>
+                  <div class="panel-footer">
+                     <input class="btn btn-sm btn-primary" type="submit" value="importar"/>
+                  </div>
+               </div>
+            </form>
+         </div>
       </div>
-   </div>
-   <div id="g_importar" class="grupo" style="display: none;">
-      <h2>Datos de la tabla...</h2>
-      <form action="{$fsc->url()}#import" method="post" enctype='multipart/form-data'>
-      <input name='archivo' type='hidden' value='TRUE'/>
-      <input name='farchivo' type='file'/>
-      <input class="submit" type="submit" value="importar"/>
-   </form>
    </div>
 </div>
 

@@ -22,7 +22,7 @@ require_model('asiento.php');
 require_model('cliente.php');
 require_model('ejercicio.php');
 require_model('factura_cliente.php');
-require_once 'model/fs_var.php';
+require_model('fs_var.php');
 require_model('partida.php');
 require_model('subcuenta.php');
 require_once 'extras/phpmailer/class.phpmailer.php';
@@ -88,7 +88,9 @@ class contabilidad_factura_cli extends fs_controller
          $this->cliente = $cliente->get($this->factura->codcliente);
          
          if( isset($_GET['imprimir']) )
+         {
             $this->generar_pdf($_GET['imprimir']);
+         }
          else
          {
             if( isset($_GET['gen_asiento']) AND isset($_GET['petid']) )

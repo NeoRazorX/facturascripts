@@ -92,10 +92,11 @@ class factura_cliente extends fs_model
          $this->codpago = $f['codpago'];
          $this->coddivisa = $f['coddivisa'];
          $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
-         if( is_null($f['hora']) )
-            $this->hora = '00:00:00';
-         else
+         
+         $this->hora = '00:00:00';
+         if( !is_null($f['hora']) )
             $this->hora = $f['hora'];
+         
          $this->codcliente = $f['codcliente'];
          $this->nombrecliente = $f['nombrecliente'];
          $this->cifnif = $f['cifnif'];
@@ -193,30 +194,26 @@ class factura_cliente extends fs_model
    
    public function asiento_url()
    {
-      $asiento = $this->get_asiento();
-      if($asiento)
-         return $asiento->url();
+      if( is_null($this->idasiento) )
+         return 'index.php?page=contabilidad_asientos';
       else
-         return '#';
+         return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
    public function agente_url()
    {
-      $agente = $this->get_agente();
-      if($agente)
-         return $agente->url();
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
       else
-         return '#';
+         return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
    public function cliente_url()
    {
-      $cliente = new cliente();
-      $cliente = $cliente->get($this->codcliente);
-      if($cliente)
-         return $cliente->url();
+      if( is_null($this->codcliente) )
+         return "index.php?page=general_clientes";
       else
-         return '#';
+         return "index.php?page=general_cliente&cod=".$this->codcliente;
    }
    
    public function get_agente()

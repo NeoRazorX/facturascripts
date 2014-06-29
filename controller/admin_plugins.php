@@ -113,7 +113,18 @@ class admin_plugins extends fs_controller
    private function disable_plugin($name)
    {
       if( unlink('tmp/enabled_plugins/'.$name) )
+      {
          $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
+         
+         foreach($GLOBALS['plugins'] as $i => $value)
+         {
+            if($value == $name)
+            {
+               unset($GLOBALS['plugins'][$i]);
+               break;
+            }
+         }
+      }
       else
          $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
       
@@ -125,7 +136,9 @@ class admin_plugins extends fs_controller
          $encontrada = FALSE;
          
          if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
+         {
             $encontrada = TRUE;
+         }
          else
          {
             foreach($GLOBALS['plugins'] as $plugin)

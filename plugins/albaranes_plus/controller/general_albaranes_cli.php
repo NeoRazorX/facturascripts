@@ -149,5 +149,3 @@ class general_albaranes_cli extends fs_controller
          $this->new_error_msg("¡".FS_ALBARAN." no encontrado!");
    }
 }
-
-?>

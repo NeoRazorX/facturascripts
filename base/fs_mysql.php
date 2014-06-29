@@ -559,5 +559,3 @@ class fs_mysql extends fs_db
       return $consulta;
    }
 }
-
-?>

@@ -25,17 +25,21 @@ require_model('cliente.php');
 require_model('ejercicio.php');
 require_model('factura_cliente.php');
 require_model('familia.php');
+require_model('fs_var.php');
 require_model('impuesto.php');
 require_model('partida.php');
 require_model('regularizacion_iva.php');
 require_model('serie.php');
 require_model('subcuenta.php');
+require_once 'extras/phpmailer/class.phpmailer.php';
+require_once 'extras/phpmailer/class.smtp.php';
 
 class general_albaran_cli extends fs_controller
 {
    public $agente;
    public $albaran;
    public $cliente;
+   public $cliente_email;
    public $ejercicio;
    public $familia;
    public $impuesto;
@@ -50,14 +54,21 @@ class general_albaran_cli extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('general_albaranes_cli');
+      $this->agente = FALSE;
+      $albaran = new albaran_cliente();
+      $this->albaran = FALSE;
       $this->cliente = new cliente();
+      $this->cliente_email = '';
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
+      $this->nuevo_albaran_url = FALSE;
       $this->serie = new serie();
       
-      /// Comprobamos si el usuario tiene acceso a general_nuevo_albaran
-      $this->nuevo_albaran_url = FALSE;
+      /**
+       * Comprobamos si el usuario tiene acceso a general_nuevo_albaran,
+       * necesario para poder añadir líneas.
+       */
       if( $this->user->have_access_to('general_nuevo_albaran', FALSE) )
       {
          $nuevoalbp = $this->page->get('general_nuevo_albaran');
@@ -67,27 +78,39 @@ class general_albaran_cli extends fs_controller
       
       if( isset($_POST['idalbaran']) )
       {
-         $this->albaran = new albaran_cliente();
-         $this->albaran = $this->albaran->get($_POST['idalbaran']);
+         $this->albaran = $albaran->get($_POST['idalbaran']);
          $this->modificar();
       }
       else if( isset($_GET['id']) )
       {
-         $this->albaran = new albaran_cliente();
-         $this->albaran = $this->albaran->get($_GET['id']);
+         $this->albaran = $albaran->get($_GET['id']);
       }
       
       if( $this->albaran AND isset($_GET['imprimir']) )
       {
          if($_GET['imprimir'] == 'simple')
+         {
             $this->generar_pdf_simple();
+         }
          else
+         {
             $this->generar_pdf_cuartilla();
+         }
       }
       else if( $this->albaran )
       {
          $this->page->title = $this->albaran->codigo;
          $this->agente = $this->albaran->get_agente();
+         
+         /**
+          * Como es una plantilla compleja, he separado el código HTML
+          * en dos archivos: general_albaran_cli_edit.html para los
+          * albaranes editables y general_albaran_cli.html para los demás.
+          */
+         if($this->albaran->ptefactura)
+            $this->template = 'general_albaran_cli_edit';
+         else
+            $this->template = 'general_albaran_cli';
          
          /// comprobamos el albarán
          $this->albaran->full_test();
@@ -102,6 +125,23 @@ class general_albaran_cli extends fs_controller
          
          $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
          $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png');
+         
+         /// comprobamos si se pueden enviar emails
+         if( $this->empresa->can_send_mail() )
+         {
+            $cliente = $this->cliente->get($this->albaran->codcliente);
+            if($cliente)
+            {
+               $this->cliente_email = $cliente->email;
+            }
+            
+            $this->buttons[] = new fs_button_img('b_enviar', 'enviar', 'send.png');
+            
+            if( isset($_POST['email']) )
+            {
+               $this->enviar_email();
+            }
+         }
          
          if( $this->albaran->ptefactura )
          {
@@ -577,10 +617,13 @@ class general_albaran_cli extends fs_controller
       }
    }
    
-   private function generar_pdf_simple()
+   private function generar_pdf_simple($archivo = FALSE)
    {
-      /// desactivamos el motor de plantillas
-      $this->template = FALSE;
+      if( !$archivo )
+      {
+         /// desactivamos la plantilla HTML
+         $this->template = FALSE;
+      }
       
       $pdf_doc = new fs_pdf();
       $pdf_doc->pdf->addInfo('Title', FS_ALBARAN.' '. $this->albaran->codigo);
@@ -789,7 +832,15 @@ class general_albaran_cli extends fs_controller
          }
       }
       
-      $pdf_doc->show();
+      if($archivo)
+      {
+         if( !file_exists('tmp/enviar') )
+            mkdir('tmp/enviar');
+         
+         $pdf_doc->save('tmp/enviar/'.$archivo);
+      }
+      else
+         $pdf_doc->show();
    }
    
    private function generar_pdf_cuartilla()
@@ -897,5 +948,65 @@ class general_albaran_cli extends fs_controller
       }
       
       $pdf_doc->show();
+   }
+   
+   private function enviar_email()
+   {
+      $cliente = $this->cliente->get($this->albaran->codcliente);
+      
+      if( $this->empresa->can_send_mail() AND $cliente )
+      {
+         if( $_POST['email'] != $cliente->email )
+         {
+            $cliente->email = $_POST['email'];
+            $cliente->save();
+         }
+         
+         /// obtenemos la configuración extra del email
+         $mailop = array(
+             'mail_host' => 'smtp.gmail.com',
+             'mail_port' => '465',
+             'mail_user' => '',
+             'mail_enc' => 'ssl'
+         );
+         $fsvar = new fs_var();
+         foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
+            $mailop[$var->name] = $var->varchar;
+         
+         $filename = 'albaran_'.$this->albaran->codigo.'.pdf';
+         $this->generar_pdf_simple($filename);
+         if( file_exists('tmp/enviar/'.$filename) )
+         {
+            $mail = new PHPMailer();
+            $mail->IsSMTP();
+            $mail->SMTPAuth = TRUE;
+            $mail->SMTPSecure = $mailop['mail_enc'];
+            $mail->Host = $mailop['mail_host'];
+            $mail->Port = intval($mailop['mail_port']);
+            
+            if($mailop['mail_user'] != '')
+               $mail->Username = $mailop['mail_user'];
+            else
+               $mail->Username = $this->empresa->email;
+            
+            $mail->Password = $this->empresa->email_password;
+            $mail->From = $this->empresa->email;
+            $mail->FromName = $this->user->nick;
+            $mail->Subject = $this->empresa->nombre . ': Su '.FS_ALBARAN.' '.$this->albaran->codigo;
+            $mail->AltBody = 'Buenos días, le adjunto su '.FS_ALBARAN.' '.$this->albaran->codigo.".\n".$this->empresa->email_firma;
+            $mail->WordWrap = 50;
+            $mail->MsgHTML( nl2br($_POST['mensaje']) );
+            $mail->AddAttachment('tmp/enviar/'.$filename);
+            $mail->AddAddress($_POST['email'], $cliente->nombrecomercial);
+            $mail->IsHTML(TRUE);
+            
+            if( $mail->Send() )
+               $this->new_message('Mensaje enviado correctamente.');
+            else
+               $this->new_error_msg("Error al enviar el email: " . $mail->ErrorInfo);
+         }
+         else
+            $this->new_error_msg('Imposible generar el PDF.');
+      }
    }
 }

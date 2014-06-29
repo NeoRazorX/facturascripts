@@ -17,12 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/fs_var.php';
-
 require_model('almacen.php');
 require_model('divisa.php');
 require_model('ejercicio.php');
 require_model('forma_pago.php');
+require_model('fs_var.php');
 require_model('serie.php');
 require_model('pais.php');
 

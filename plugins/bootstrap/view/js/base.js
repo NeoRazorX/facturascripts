@@ -182,5 +182,5 @@ function fs_hide_popups()
 }
 
 $(document).ready(function() {
-   
+   $('.datepicker').datepicker();
 });

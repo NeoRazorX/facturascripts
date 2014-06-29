@@ -18,8 +18,8 @@
  */
 
 require_once 'plugins/woocommerce/model/fs_mysql_x.php';
-require_once 'model/fs_var.php';
 require_model('articulo.php');
+require_model('fs_var.php');
 
 class admin_woocommerce extends fs_controller
 {

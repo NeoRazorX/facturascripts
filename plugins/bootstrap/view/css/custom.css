@@ -44,24 +44,6 @@ ul.dropdown-menu li a:first-letter {
    margin: 0px;
 }
 
-table.fs_table {
-   width: 100%;
-}
-
-table.fs_table th {
-   border-bottom: 1px solid #cccccc;
-   text-transform: capitalize;
-}
-
-table.fs_table tr:hover {
-   background-color: #d9edf7;
-}
-
-table.fs_table td.locked {
-   background-color: #fdcece;
-   text-decoration: line-through;
-}
-
 input.full {
    display: block;
    width: 100%;

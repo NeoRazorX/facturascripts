@@ -103,10 +103,11 @@ class albaran_cliente extends fs_model
          $this->provincia = $a['provincia'];
          $this->apartado = $a['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
-         if( is_null($a['hora']) )
-            $this->hora = '00:00:00';
-         else
+         
+         $this->hora = '00:00:00';
+         if( !is_null($a['hora']) )
             $this->hora = $a['hora'];
+         
          $this->neto = floatval($a['neto']);
          $this->total = floatval($a['total']);
          $this->totaliva = floatval($a['totaliva']);
@@ -193,36 +194,32 @@ class albaran_cliente extends fs_model
    public function factura_url()
    {
       if( $this->ptefactura )
+      {
          return '#';
+      }
       else
       {
-         $fac = new factura_cliente();
-         $fac = $fac->get($this->idfactura);
-         if($fac)
-            return $fac->url();
+         if( is_null($this->idfactura) )
+            return 'index.php?page=contabilidad_facturas_cli';
          else
-            return '#';
+            return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
       }
    }
    
    public function agente_url()
    {
-      $agente = new agente();
-      $agente = $agente->get($this->codagente);
-      if($agente)
-         return $agente->url();
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
       else
-         return '#';
+         return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
    public function cliente_url()
    {
-      $cliente = new cliente();
-      $cliente = $cliente->get($this->codcliente);
-      if($cliente)
-         return $cliente->url();
+      if( is_null($this->codcliente) )
+         return "index.php?page=general_clientes";
       else
-         return '#';
+         return "index.php?page=general_cliente&cod=".$this->codcliente;
    }
    
    public function get_lineas()
@@ -239,8 +236,7 @@ class albaran_cliente extends fs_model
    
    public function get($id)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idalbaran = ".$this->var2str($id).";");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($albaran)
          return new albaran_cliente($albaran[0]);
       else
@@ -249,8 +245,7 @@ class albaran_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
       if($albaran)
          return new albaran_cliente($albaran[0]);
       else
@@ -262,8 +257,7 @@ class albaran_cliente extends fs_model
       if( is_null($this->idalbaran) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function new_idalbaran()
@@ -310,7 +304,9 @@ class albaran_cliente extends fs_model
       $this->totaleuros = $this->total * $this->tasaconv;
       
       if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      {
          return TRUE;
+      }
       else
       {
          $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
@@ -382,8 +378,7 @@ class albaran_cliente extends fs_model
       }
       else if( isset($this->idfactura) )
       {
-         $this->new_error_msg("Este ".FS_ALBARAN." esta asociado a una <a href='".
-                 $this->factura_url()."'>factura</a> incorrecta.");
+         $this->new_error_msg("Este ".FS_ALBARAN." esta asociado a una <a href='".$this->factura_url()."'>factura</a> incorrecta.");
          $status = FALSE;
       }
       
@@ -493,15 +488,13 @@ class albaran_cliente extends fs_model
             $factura->delete();
       }
       
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -771,5 +764,3 @@ class albaran_cliente extends fs_model
       return $stats;
    }
 }
-
-?>

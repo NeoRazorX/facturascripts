@@ -721,7 +721,7 @@ div.bottom_frame {
    position: fixed;
    bottom: 0px;
    left: 0px;
-   right: opx;
+   right: 0px;
    padding: 0px 10px 0px 10px;
 }
 
@@ -759,4 +759,10 @@ div.history {
 div.history h1 {
    margin: 5px 5px 2px 5px;
    font-size: 18px;
+}
+
+div.history ol {
+   margin: 0px;
+   padding: 0px 0px 5px 20px;
+   font-size: 12px;
 }
