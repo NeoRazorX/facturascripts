@@ -284,19 +284,28 @@
 </script>
 
 <div class="popup" id="popup_eliminar">
-   <h1>Eliminar {$albaran}</h1>
+   <h3>Eliminar {$albaran}</h3>
    {if condition="$fsc->albaran->idfactura"}
       <ul><li>Hay una factura asociada que será eliminada junto con este {$albaran}.</li></ul>
    {/if}
-   <form action="{$fsc->ppage->url()}" method="post">
-      <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
-      ¿Realmente desea eliminar este {$albaran}?
-      <br/><br/>
-      <label>
-         <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
-         Actualizar el stock
-      </label>
-      <button class="delete pull_right">Eliminar</button>
+   <form class="form-horizontal" class="form" role="form" action ="{$fsc->ppage->url()}" method="POST">
+      <div class="form-group">
+		  <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
+		  ¿Realmente desea eliminar este {$albaran}?
+		  <br/><br/>
+		  <label>
+			 <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
+			 Actualizar el stock
+		  </label>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10 text-right">
+            <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" value="Eliminar" title="Eliminar">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Eliminar
+            </button>
+          </div>
+      </div>
    </form>
 </div>
 
@@ -307,7 +316,7 @@
 <div class="popup" id="popup_precios2" style="min-width: 70%;">
    <form id="f_precios" name="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
-      <h1>Actualizar precios de los artículos</h1>
+      <h3>Actualizar precios de los artículos</h3>
       <div class="table-responsive">
          <table class="table table-hover">
             <tr>
@@ -345,8 +354,12 @@
          <table class="table table-hover">
             <tr>
                <td>
-                  <input class="btn btn-sm btn-default" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-                  <input class="btn btn-sm btn-default" type="button" value="Nada" onclick="fs_marcar_nada()"/>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
                </td>
                <td align="center">
                   <label>
@@ -365,7 +378,7 @@
 
 <div class="popup" id="popup_new_line" style="min-width: 60%">
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h1>Buscar artículos</h1>
+      <h3>Buscar artículos</h3>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
          <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
@@ -390,7 +403,7 @@
       <div class="pull_right">
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
-      <h1>
+      <h3>
          {if condition="$fsc->albaran->ptefactura"}
          <a class="link" href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
          <select class="form-control" name="proveedor">
@@ -405,13 +418,20 @@
          {else}
          <a class="link" href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
          {/if}
-      </h1>
-      <div class="form-group">Número: {$fsc->albaran->numero}</div>
+      </h3>
+      <div class="form-group">Número {$fsc->albaran->numero}</div>
       <div class="form-group">
-         Num proveedor: <input type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
+         <label for="numproveedor" class="col-sm-2 control-label">Num proveedor</label>
+         <div class="col-sm-10">
+			<input type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
+         </div>
       </div>
       <div class="form-group">
-         Serie:
+         <label for="numproveedor" class="col-sm-2 control-label">Serie</label>
+         <div class="col-sm-10">
+			<input type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
+         </div>
+      </div>
          <select class="form-control" name="serie">
             {loop="$fsc->serie->all()"}
                {if condition="$value->codserie==$fsc->albaran->codserie"}
@@ -421,18 +441,28 @@
                {/if}
             {/loop}
          </select>
-      </div>
-      <div class="form-group">Ejercicio: {$fsc->albaran->codejercicio}</div>
+      <div class="form-group">Ejercicio {$fsc->albaran->codejercicio}</div>
       <div class="form-group">
-         Fecha: <input class="tcal" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
+         <label for="numproveedor" class="col-sm-2 control-label">Fecha</label>
+         <div class="col-sm-10">
+			<input class="datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
+         </div>
       </div>
       {if condition="$fsc->agente"}
-      <div class="form-group">Agente: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></div>
-      {/if}
-      <div>
-         Observaciones:<br/>
-         <textarea name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
+      <div class="form-group">
+         <label for="numproveedor" class="col-sm-2 control-label">Agente</label>
+         <div class="col-sm-10">
+			<a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+         </div>
       </div>
+      {/if}
+      <div class="form-group">
+         <label for="numproveedor" class="col-sm-2 control-label">Observaciones</label>
+         <div class="col-sm-10">
+			<textarea name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
+         </div>
+      </div>      
+      <div>
    </div>
    
    {if condition="$fsc->albaran->ptefactura"}

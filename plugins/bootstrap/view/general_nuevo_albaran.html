@@ -287,7 +287,7 @@
 
 <div class="popup" id="popup_new_line" style="min-width: 70%">
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h1>Buscar artículos</h1>
+      <h3>Buscar artículos</h3>
       <div style="text-align: center;">
          <input type="text" name="query" size="40" autocomplete="off"/>
          <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
@@ -315,7 +315,7 @@
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <input type="hidden" name="tipoalbaran" value="cliente"/>
    <div class="popup" id="popup_tpv_opciones"/>
-      <h1>Guardar como...</h1>
+      <h3>Guardar como...</h3>
       <table>
          <tr>
             <td align="right"><a class="link" href="{$fsc->agente->url()}">Agente</a>:</td>
@@ -333,7 +333,7 @@
          </tr>
          <tr>
             <td align="right">Fecha:</td>
-            <td><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
+            <td><input class="datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
             <td align="right">Hora:</td>
             <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
          </tr>

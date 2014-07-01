@@ -36,7 +36,7 @@
 <div class="popup" id="popup_stats_familia" style="min-width: 500px;"></div>
 
 <div class="popup" id="popup_herramientas_familia">
-   <h1>Herramientas</h1>
+   <h3>Herramientas</h3>
    <form action="{$fsc->url()}" method="post">
       Multiplicar precios por:
       <input type="text" name="multiplicar" value="1" size="3"/>
@@ -46,11 +46,11 @@
 
 {if condition="$fsc->pag_importar"}
 <div class="popup" id="popup_importar_familia">
-   <h1>Importar familia</h1>
+   <h3>Importar familia</h3>
    <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
       <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
       <input name='archivo' type='hidden' value='TRUE'/>
-      El archivo debe estar en formato csv: valores separados por punto y coma y sin separador de texto,
+      El archivo debe estar en formato CSV: valores separados por punto y coma y sin separador de texto,
       <br/>
       adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
       <br/>Adicionalmente puedes añadir la columna stock.
@@ -110,7 +110,7 @@
       <div class="pull_right">
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
-      <h1>{$fsc->familia->descripcion}</h1>
+      <h3>{$fsc->familia->descripcion}</h3>
       <input type="hidden" name="cod" value="{$fsc->familia->codfamilia}"/>
       Descripción:
       <input type="text" name="descripcion" value="{$fsc->familia->descripcion}" size="60"/>
@@ -139,7 +139,9 @@
          <td align="right">{$value->stockfis}</td>
       </tr>
       {else}
-      <tr><td colspan="5" align="center">Ningún artículo encontrado</td></tr>
+      <tr>
+         <td colspan="5" align="center">Ningún artículo encontrado</td>
+      </tr>
       {/loop}
 
       <tr>

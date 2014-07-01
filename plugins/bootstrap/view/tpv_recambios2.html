@@ -214,7 +214,7 @@
    
    <div class="popup" id="popup_new_line" style="min-width: 80%">
       <form id="f_search_recambios" name="f_search_recambios" action="{$fsc->url()}" method="post">
-         <h1>Buscar artículos</h1>
+         <h3>Buscar artículos</h3>
          <div style="text-align: center;">
             <input type="text" name="query" size="40" autocomplete="off"/>
             <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
@@ -240,12 +240,12 @@
       <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
       <input type="hidden" id="numlineas" name="numlineas" value="0"/>
       <div class="popup" id="popup_tpv_opciones"/>
-         <h1>Guardar como...</h1>
+         <h3>Guardar como...</h3>
          <table>
             <tr>
                <td align="right">Fecha:</td>
                <td colspan="3">
-                  <input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+                  <input class="datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
                </td>
             </tr>
             <tr>

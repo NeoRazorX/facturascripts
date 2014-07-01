@@ -3,6 +3,7 @@
 <!-- 
  ESTILO INCOMPLETO
  NO HAY BOTON ¿NUEVA TARIFA? EN EL BTN-TOOLBAR
+ POSIBLE ERROR CON REEMPLAZAR MASIVO
 -->
 
 {if condition="$fsc->articulo"}
@@ -161,7 +162,7 @@
 </script>
 
 <div class="popup" id="popup_articulo_imagen">
-   <h1>Imagen</h1>
+   <h3>Imagen</h3>
    Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
    {if condition="$fsc->articulo->imagen_url()"}
       <center>
@@ -185,7 +186,7 @@
 </div>
 
 <div class="popup" id="popup_buscar" style="min-width: 75%">
-   cargando...
+   Cargando...
 </div>
 
 <div class="well well-sm">
@@ -450,7 +451,7 @@
       </div>
       
       <div class="well well-sm">
-         <h1>Artículos equivalentes:</h1>
+         <h3>Artículos equivalentes:</h3>
          {if condition="$fsc->equivalentes"}
          <div class="table-responsive">
             <table class="table table-hover">

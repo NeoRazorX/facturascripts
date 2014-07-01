@@ -70,17 +70,17 @@
    <br/>
    
    <div id="informe_errores">
-      <div class="advice">Cargando...</div>
+      <div class="alert alert-info" role="alert">Cargando...</div>
    </div>
    
    {include="footer"}
 {else}
    {if condition="$fsc->informe['model']=='fin'"}
       <!--FIN_PROCESO-->
-      <div class="advice">Comprobación finalizada.</div>
+      <div class="alert alert-info" role="alert">Comprobación finalizada.</div>
    {else}
       <!--{$fsc->informe['show_page']}-->
-      <div class="advice">
+      <div class="alert alert-info" role="alert">
          Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...
          {$fsc->duration()}
       </div>
@@ -115,7 +115,9 @@
                <td align="right">{$value.fecha}</td>
             </tr>
             {else}
-            <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
+            <tr>
+               <td colspan="5" align="center">Nada que mostrar</td>
+            </tr>
             {/loop}
          </table>
       </div>

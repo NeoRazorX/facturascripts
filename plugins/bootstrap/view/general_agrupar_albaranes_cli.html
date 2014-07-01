@@ -14,38 +14,49 @@
 <div class="well well-sm">
    <form action="{$fsc->url()}" method="post">
       <div class="form-group">
-         Cliente:
-         <select name="cliente" class="form-control">
-         {loop="$fsc->cliente->all_full()"}
-            {if condition="$value->is_default()"}
-               <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
-            {else}
-               <option value="{$value->codcliente}">{$value->nombre}</option>
-            {/if}
-         {/loop}
-         </select>
+         <label for="cliente" class="col-sm-2 control-label">Cliente</label>
+         <div class="col-sm-10">
+			 <select name="cliente" class="form-control">
+			 {loop="$fsc->cliente->all_full()"}
+				{if condition="$value->is_default()"}
+				   <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+				{else}
+				   <option value="{$value->codcliente}">{$value->nombre}</option>
+				{/if}
+			 {/loop}
+			 </select>
+         </div>
       </div>
       <div class="form-group">
-         Serie:
-         <select name="serie" class="form-control">
-            {loop="$fsc->serie->all()"}
-               {if condition="$value->codserie==$_POST.serie"}
-               <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
-               {else}
-               <option value="{$value->codserie}">{$value->descripcion}</option>
-               {/if}
-            {/loop}
-         </select>
+         <label for="serie" class="col-sm-2 control-label">Serie</label>
+         <div class="col-sm-10">
+			 <select name="serie" class="form-control">
+				{loop="$fsc->serie->all()"}
+				   {if condition="$value->codserie==$_POST.serie"}
+				   <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+				   {else}
+				   <option value="{$value->codserie}">{$value->descripcion}</option>
+				   {/if}
+				{/loop}
+			 </select>         </div>
+      </div>
+       <div class="form-group">
+         <label for="desde" class="col-sm-2 control-label">Desde</label>
+         <div class="col-sm-10">
+			<input type="text" name="desde" class="datepicker" value="{$fsc->desde}" size="10" maxlength="10"/>
+         </div>
       </div>
       <div class="form-group">
-         Desde: <input type="text" name="desde" class="tcal" value="{$fsc->desde}" size="10" maxlength="10"/>
+         <label for="hasta" class="col-sm-2 control-label">Hasta</label>
+         <div class="col-sm-10">
+			<input type="text" name="hasta" class="datepicker" value="{$fsc->hasta}" size="10" maxlength="10"/>
+         </div>
       </div>
       <div class="form-group">
-         Hasta: <input type="text" name="hasta" class="tcal" value="{$fsc->hasta}" size="10" maxlength="10"/>
-      </div>
-      <div class="form-group">
-         Observaciones:
-         <input type="text" name="observaciones" value="{$fsc->observaciones}" size="20" autocomplete="off"/>
+         <label for="observaciones" class="col-sm-2 control-label">Observaciones</label>
+         <div class="col-sm-10">
+			<input type="text" name="observaciones" value="{$fsc->observaciones}" size="20" autocomplete="off"/>
+         </div>
       </div>
       <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar" onclick="this.disabled=true;this.form.submit();"/>
    </form>
@@ -55,31 +66,31 @@
 <div class="well well-sm">
    <form id="f_agrupar_cli" action="{$fsc->url()}" method="post">
       <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
-      <table width="100%">
-         <tr>
-            <td>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-                  <span class="glyphicon glyphicon-check"></span>
-               </button>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-                  <span class="glyphicon glyphicon-unchecked"></span>
-               </button>
-            </td>
-            <td align="center">
-               <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
-               <label for="cb_f_individuales">Generar facturas individuales</label>
-            </td>
-            <td align="right">
-               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();" value="Generar Factura" title="Generar Factura">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
-               </button>
-            </td>
-         </tr>
-      </table>
-      <br/>
-      
       <div class="table-responsive">
+         <table width="100%">
+            <tr>
+               <td>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+                     <span class="glyphicon glyphicon-check"></span>
+                  </button>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+                     <span class="glyphicon glyphicon-unchecked"></span>
+                  </button>
+               </td>
+               <td align="center">
+                  <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
+                  <label for="cb_f_individuales">Generar facturas individuales</label>
+               </td>
+               <td align="right">
+                  <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();" value="Generar Factura" title="Generar Factura">
+                     <span class="glyphicon glyphicon-file"></span>
+                     &nbsp; Generar Factura
+                  </button>
+               </td>
+            </tr>
+         </table>
+         <br/>
+      
          <table class="table table-hover">
             <tr>
                <th align="left">Código + Número 2</th>
@@ -107,11 +118,9 @@
                <td></td>
             </tr>
          </table>
-      </div>
       
-      <br/>
-      <div class="table-responsive">
-         <table class="table table-hover">
+         <br/>
+         <table width="100%">
             <tr>
                <td>
                   <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
@@ -121,10 +130,14 @@
                      <span class="glyphicon glyphicon-unchecked"></span>
                   </button>
                </td>
+               <td align="center">
+                  <input id="cb_f_individuales" type="checkbox" name="individuales" value="TRUE"/>
+                  <label for="cb_f_individuales">Generar facturas individuales</label>
+               </td>
                <td align="right">
                   <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();" value="Generar Factura" title="Generar Factura">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar
+                     <span class="glyphicon glyphicon-file"></span>
+                     &nbsp; Generar Factura
                   </button>
                </td>
             </tr>

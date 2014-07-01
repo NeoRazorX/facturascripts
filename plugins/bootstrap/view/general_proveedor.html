@@ -141,7 +141,7 @@
 {/if}
 
 <div class="popup" id="popup_nueva_cuenta">
-   <h1>Nueva cuenta bancaria:</h1>
+   <h3>Nueva cuenta bancaria:</h3>
    <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
       <table>
@@ -168,7 +168,7 @@
    <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
       <input type="hidden" name="coddir" value=""/>
-      <h1>Nueva dirección:</h1>
+      <h3>Nueva dirección:</h3>
       <div class="form-group">
          <a class="link" href="">País</a>:
          <select class="form-control" name="pais">
@@ -440,7 +440,7 @@
 
 <div class="popup" id="popup_buscar_lineas" style="min-width: 75%">
    <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-      <h1>Buscar en las líneas de los {$albaranes}</h1>
+      <h3>Buscar en las líneas de los {$albaranes}</h3>
       <div style="text-align: center;">
          <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
          <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
@@ -488,7 +488,9 @@
                <td align="right">{$value->fecha}</td>
             </tr>
             {else}
-            <tr><td colspan="5" align="center">Sin resultados</td></tr>
+            <tr>
+               <td colspan="5" align="center">Sin resultados</td>
+            </tr>
             {/loop}
             <tr>
                <td colspan="5">
@@ -519,7 +521,9 @@
                <td align="right">{$value->fecha}</td>
             </tr>
             {else}
-            <tr><td colspan="5" align="center">Sin resultados</td></tr>
+            <tr>
+               <td colspan="5" align="center">Sin resultados</td>
+            </tr>
             {/loop}
             <tr>
                <td colspan="5">
