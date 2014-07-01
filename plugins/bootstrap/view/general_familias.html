@@ -4,47 +4,51 @@
    $(document).ready(function() {
       $("#b_nueva_familia").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_familia');
-         document.f_nueva_familia.ncodfamilia.focus();
+         $("#modal_nueva_familia").modal('show');
       });
       document.f_custom_search.query.focus();
    });
 </script>
 
-<div class="popup" id="popup_nueva_familia">
-   <h3>Nueva familia</h3>
-   <form name="f_nueva_familia" action="{$fsc->url()}" method="post">
-      <div class="form-group">
-         <label for="ncodfamilia" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-			<input type="text" name="ncodfamilia" size="4" maxlength="4" autocomplete="off"/>
-         </div>
+<div class="modal fade" id="modal_nueva_familia">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" name="f_nueva_familia" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva familia</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="ncodfamilia" size="4" maxlength="4" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="ndescripcion" size="60" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </form>
       </div>
-      <div class="form-group">
-         <label for="ncodfamilia" class="col-sm-2 control-label">Descripción</label>
-         <div class="col-sm-10">
-			<input type="text" name="ndescripcion" size="60" autocomplete="off"/>
-         </div>
-      </div>      
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
+   </div>
 </div>
 
-<div class="well well-sm">
-   <ul class="horizontal">
-   {loop="$fsc->resultados"}
-      <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
-   {else}
-      <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>
-   {/loop}
-   </ul>
+<div class="container-fluid">
+   <div class="row">
+      {loop="$fsc->resultados"}
+      <div class="col-lg-3">
+         <a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}
+      </div>
+      {else}
+      <div class="col-lg-12">Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</div>
+      {/loop}
+   </div>
 </div>
 
 {include="footer"}
