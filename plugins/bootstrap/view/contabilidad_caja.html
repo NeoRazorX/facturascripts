@@ -7,95 +7,93 @@
    }
    function fs_marcar_nada()
    {
-      $('#f_cajas input:checkbox').attr('checked', false);
+      $('#f_cajas input:checkbox').prop('checked', false);
    }
 </script>
 
 <div class="well well-sm">
-<form id="f_cajas" action="{$fsc->url()}" method="post">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <td>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+   <form id="f_cajas" action="{$fsc->url()}" method="post">
+      <div class="container-fluid" style="margin-bottom: 10px;">
+         <div class="row">
+            <div class="col-lg-4" style="padding-left: 0px;">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
                   <span class="glyphicon glyphicon-check"></span>
                </button>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
                   <span class="glyphicon glyphicon-unchecked"></span>
                </button>
-            </td>
-            <td align="center">
-               {if condition="$fsc->show_cerrar"}
-               <button class="btn btn-sm btn-danger" href="{$fsc->url()}&cerrar=TRUE" onclick="this.disabled=true;this.form.submit();" value="Cerrar caja" title="Cerrar caja">
+            </div>
+            <div class="col-lg-4" style="text-align: center;">
+               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&cerrar=TRUE">
                   <span class="glyphicon glyphicon-briefcase"></span>
-                  &nbsp; Cerrar caja
-               </button>
-               {/if}
-            </td>
-            <td align="right">
-               <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                  &nbsp; cerrar caja
+               </a>
+            </div>
+            <div class="col-lg-4" style="text-align: right; padding-right: 0px;">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
                </button>
-            </td>
-         </tr>
-      </table>
-      <table class="table table-hover">
-        <tr>
-          <th>Eliminar</th>
-          <th>Caja</th>
-          <th>Agente</th>
-          <th>Fecha inicial</th>
-          <th align="right">Dinero inicial</th>
-          <th>Fecha fin</th>
-          <th align="right">Diferencia</th>
-          <th align="right">Tickets</th>
-        </tr>
-        {loop="$fsc->resultados"}
-        <tr>
-          <td align="center"><input class="form-control" type="checkbox" name="delete[]" value="{$value->id}"/></td>
-          <td align="center">{$value->fs_id}</td>
-          {if condition="$value->agente"}
-          <td align="center"><a class="link" href="{$value->agente->url()}">{$value->agente->get_fullname()}</a></td>
-          {else}
-          <td align="center">-</td>
-          {/if}
-          <td align="center">{$value->fecha_inicial}</td>
-          <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
-          <td align="center">{$value->show_fecha_fin()}</td>
-          <td align="right">{$fsc->show_precio($value->diferencia())}</td>
-          <td align="right">{$value->tickets}</td>
-        </tr>
-        {else}
-        <tr><td colspan="7" align="center">No hay datos</td></tr>
-        {/loop}
-        <tr>
-          <td colspan="7">
-             <ul class="pager">
-				 {if condition="$fsc->anterior_url()!=''"}
-				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-				 {/if}
-				 {if condition="$fsc->siguiente_url()!=''"}
-				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-				 {/if}
-             </ul>
-          </td>
-        </tr>
-      </table>
-   </div>
-   <div>
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-         <span class="glyphicon glyphicon-check"></span>
-      </button>
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-         <span class="glyphicon glyphicon-unchecked"></span>
-      </button>
-      <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-         <span class="glyphicon glyphicon-floppy-disk"></span>
-         &nbsp; Guardar
-      </button>
-   </div>
-</form>
+            </div>
+         </div>
+      </div>
+      
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th>Eliminar</th>
+                  <th>Caja</th>
+                  <th>Agente</th>
+                  <th>Fecha inicial</th>
+                  <th align="right">Dinero inicial</th>
+                  <th>Fecha fin</th>
+                  <th align="right">Diferencia</th>
+                  <th align="right">Tickets</th>
+               </tr>
+            </thead>
+            {loop="$fsc->resultados"}
+            <tr>
+               <td align="center">
+                  <input type="checkbox" name="delete[]" value="{$value->id}"/>
+               </td>
+               <td align="center">{$value->fs_id}</td>
+               <td align="center">
+               {if condition="$value->agente"}
+                  <a href="{$value->agente->url()}">{$value->agente->get_fullname()}</a>
+               {else}
+                  -
+               {/if}
+               </td>
+               <td align="center">{$value->fecha_inicial}</td>
+               <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
+               <td align="center">{$value->show_fecha_fin()}</td>
+               <td align="right">{$fsc->show_precio($value->diferencia())}</td>
+               <td align="right">{$value->tickets}</td>
+            </tr>
+            {else}
+            <tr><td colspan="7" align="center">No hay datos</td></tr>
+            {/loop}
+         </table>
+      </div>
+      <ul class="pager" id="ul_paginador">
+         <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
+         <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+      </ul>
+      
+      <div>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+            <span class="glyphicon glyphicon-check"></span>
+         </button>
+         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+            <span class="glyphicon glyphicon-unchecked"></span>
+         </button>
+         <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            &nbsp; Guardar
+         </button>
+      </div>
+   </form>
 </div>
 
 {include="footer"}

@@ -373,7 +373,7 @@
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
       <h3>
-         <a class="link" href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
+         <a href="{$fsc->albaran->cliente_url()}">Cliente actual</a>:
          <select class="form-control" name="cliente">
             {loop="$fsc->cliente->all_full()"}
                {if condition="$value->codcliente==$fsc->albaran->codcliente"}
@@ -422,7 +422,7 @@
       <div class="form-group">
          <label for="agente" class="col-sm-2 control-label">Agente</label>
          <div class="col-sm-10">
-            <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+            <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
       </div>
       {/if}
@@ -451,7 +451,7 @@
             {loop="$fsc->albaran->get_lineas()"}
             <tr id="linea_{$counter}">
                <td>
-                  <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
+                  <a href="{$value->articulo_url()}">{$value->referencia}</a>
                   <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
                </td>
                <td>

@@ -7,7 +7,7 @@
    }
    function fs_marcar_nada()
    {
-      $("#f_agrupar_cli input[name='idalbaran[]']").attr('checked', false);
+      $("#f_agrupar_cli input[name='idalbaran[]']").prop('checked', true);
    }
 </script>
 
@@ -103,7 +103,7 @@
             <tr>
                <td>
                   <input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/>
-                  <a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}
+                  <a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}
                </td>
                <td>{$value->observaciones_resume()}</td>
                <td align="right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>

@@ -318,7 +318,7 @@
       <h3>Guardar como...</h3>
       <table>
          <tr>
-            <td align="right"><a class="link" href="{$fsc->agente->url()}">Agente</a>:</td>
+            <td align="right"><a href="{$fsc->agente->url()}">Agente</a>:</td>
             <td colspan="3">
                <select class="form-control" name="codagente">
                   <option value="{$fsc->agente->codagente}">{$fsc->agente->get_fullname()}</option>
@@ -338,7 +338,7 @@
             <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
          </tr>
          <tr id="tr_clientes">
-            <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
+            <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
             <td colspan="3">
                <select class="form-control" name="cliente">
                   {loop="$fsc->cliente->all_full()"}
@@ -354,7 +354,7 @@
             </td>
          </tr>
          <tr id="tr_proveedores">
-            <td align="right"><a class="link" href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
+            <td align="right"><a href="{$fsc->proveedor->url()}">Proveedor</a>:</td>
             <td colspan="3">
                <select class="form-control" name="proveedor">
                   {loop="$fsc->proveedor->all_full()"}
@@ -370,7 +370,7 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
+            <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
             <td colspan="3">
                <select class="form-control" name="almacen">
                   {loop="$fsc->almacen->all()"}
@@ -384,7 +384,7 @@
             </td>
          </tr>
          <tr>
-            <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
+            <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
             <td colspan="3">
                <select class="form-control" name="serie">
                   {loop="$fsc->serie->all()"}

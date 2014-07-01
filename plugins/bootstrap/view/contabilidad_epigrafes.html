@@ -90,7 +90,7 @@
                </form>
             </td>
             <td align="right">
-               <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
+               <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
             </td>
          </tr>
       </table>
@@ -109,8 +109,8 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a></td>
-            <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+            <td><a href="{$value->url()}">{$value->codepigrafe}</a></td>
+            <td><a href="{$value->url()}">{$value->descripcion}</a></td>
          </tr>
          {/loop}
          <tr>
@@ -173,7 +173,7 @@
                </form>
             </td>
             <td align="right">
-               <a class="link" href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
+               <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
             </td>
          </tr>
       </table>
@@ -193,7 +193,7 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
             <td align="right">{$value->idcuentaesp}</td>
          </tr>
          {/loop}
@@ -278,8 +278,8 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td><a class="link" href="{$value->url()}">{$value->codgrupo}</a></td>
-            <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+            <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
+            <td><a href="{$value->url()}">{$value->descripcion}</a></td>
          </tr>
          {/loop}
          <tr>

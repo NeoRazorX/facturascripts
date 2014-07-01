@@ -93,7 +93,7 @@
          <input class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" value="Guardar" title="Guardar"/>
       </div>
       <h3>
-         <a class="link" href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
+         <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
       </h3>
       <div class="form-group">Número: {$fsc->albaran->numero}</div>
       <div class="form-group">
@@ -131,7 +131,7 @@
       <div class="form-group">
          <label for="agente" class="col-sm-2 control-label">Agente</label>
          <div class="col-sm-10">
-			<a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+			<a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
       </div>
       {/if}
@@ -157,7 +157,7 @@
             </tr>
             {loop="$fsc->albaran->get_lineas()"}
             <tr>
-               <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+               <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
                <td align="right">{$value->cantidad}</td>
                <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
                <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>

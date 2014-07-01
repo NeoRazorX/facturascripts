@@ -23,9 +23,13 @@
         </tr>
         {loop="$fsc->resultados"}
         <tr>
-          <td align="center">{if condition="$value->editable"}E{/if}</td>
-          <td>{$value->codejercicio} <a class="link" href="{$value->url()}">{$value->numero}</a></td>
-          <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
+          <td align="center">
+             {if condition="$value->editable"}
+             <span class="glyphicon glyphicon-pencil" title="editable"></span>
+             {/if}
+          </td>
+          <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
+          <td><a href="{$value->url()}">{$value->concepto}</a></td>
           <td align="right">{$fsc->show_precio($value->importe)}</td>
           <td align="right">{$value->fecha}</td>
         </tr>

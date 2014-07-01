@@ -6,10 +6,10 @@
    </div>
    <div class="panel-body">
       Hay un total de <b>{$fsc->stats['total']}</b> artículos,
-   <b>{$fsc->stats['con_stock']}</b> de ellos tienen stock,
-   <b>{$fsc->stats['publicos']}</b> son públicos
-   y <b>{$fsc->stats['bloqueados']}</b> están bloqueados.
-   La última actualización de los artículos es del <b>{$fsc->stats['factualizado']}</b>.
+      <b>{$fsc->stats['con_stock']}</b> de ellos tienen stock,
+      <b>{$fsc->stats['publicos']}</b> son públicos
+      y <b>{$fsc->stats['bloqueados']}</b> están bloqueados.
+      La última actualización de los artículos es del <b>{$fsc->stats['factualizado']}</b>.
    </div>
 </div>
 
@@ -18,12 +18,15 @@
       <h3 class="panel-title">Top ventas (unidades)</h3>
    </div>
    <div class="panel-body">
-      {loop="$fsc->top_ventas"}
-         {if condition="$counter>0"} &nbsp; | &nbsp; {/if}
-         <a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})
-      {else}
-      <b>Sin resultados</b>
-      {/loop}
+      <div class="container-fluid">
+         <div class="row">
+            {loop="$fsc->top_ventas"}
+            <div class="col-lg-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
+            {else}
+            <div class="col-lg-12">Sin resultados</div>
+            {/loop}
+         </div>
+      </div>
    </div>
 </div>
 
@@ -32,12 +35,15 @@
       <h3 class="panel-title">Top compras (Unidades)</h3>
    </div>
    <div class="panel-body">
-      {loop="$fsc->top_compras"}
-         {if condition="$counter>0"} &nbsp; | &nbsp; {/if}
-         <a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})
-      {else}
-      <b>Sin resultados</b>
-      {/loop}
+      <div class="container-fluid">
+         <div class="row">
+            {loop="$fsc->top_compras"}
+            <div class="col-lg-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
+            {else}
+            <div class="col-lg-12">Sin resultados</div>
+            {/loop}
+         </div>
+      </div>
    </div>
 </div>
 
@@ -46,12 +52,15 @@
       <h3 class="panel-title">Búsquedas de artículos</h3>
    </div>
    <div class="panel-body">
-      {loop="$fsc->articulo->get_search_tags()"}
-         {if condition="$counter>0"} &nbsp; | &nbsp; {/if}
-         {$value.tag} ({$value.count})
-      {else}
-      <b>Ninguna búsqueda realizada</b>
-      {/loop}
+      <div class="container-fluid">
+         <div class="row">
+            {loop="$fsc->articulo->get_search_tags()"}
+            <div class="col-lg-3">{$value.tag} ({$value.count})</div>
+            {else}
+            <div class="col-lg-12">Ninguna búsqueda realizada</div>
+            {/loop}
+         </div>
+      </div>
    </div>
 </div>
 

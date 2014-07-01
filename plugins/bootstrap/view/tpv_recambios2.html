@@ -249,7 +249,7 @@
                </td>
             </tr>
             <tr>
-               <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
+               <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
                <td colspan="3">
                   <select class="form-control" name="cliente">
                      {loop="$fsc->cliente->all_full()"}
@@ -265,7 +265,7 @@
                </td>
             </tr>
             <tr>
-               <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
+               <td align="right"><a href="{$fsc->almacen->url()}">Almacén</a>:</td>
                <td colspan="3">
                   <select class="form-control" class="form-control" name="almacen">
                      {loop="$fsc->almacen->all()"}
@@ -279,7 +279,7 @@
                </td>
             </tr>
             <tr>
-               <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
+               <td align="right"><a href="{$fsc->serie->url()}">Serie</a>:</td>
                <td colspan="3">
                   <select class="form-control" class="form-control" name="serie">
                      {loop="$fsc->serie->all()"}
@@ -349,7 +349,7 @@
       <div class="well well-sm">
          <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
          <div class="form-group">
-            Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+            Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
          <br/><br/>
          <div class="table-responsive">

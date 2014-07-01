@@ -168,7 +168,7 @@
       <center>
          <img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/>
          <br/>
-         <a class="link" href="{$fsc->url()}&delete_img=TRUE">Eliminar imagen</a>
+         <a href="{$fsc->url()}&delete_img=TRUE">Eliminar imagen</a>
       </center>
    {/if}
    <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
@@ -213,7 +213,7 @@
             <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60" autocomplete="off"/>
          </div>
          <div class="form-group">
-            <a class="link" href="{$fsc->familia->url()}">Familia</a>:
+            <a href="{$fsc->familia->url()}">Familia</a>:
             <select class="form-control" name="codfamilia">
             {loop="$fsc->familia->all()"}
                {if condition="$value->codfamilia===$fsc->articulo->codfamilia"}
@@ -424,7 +424,7 @@
                   </tr>
                   {loop="$fsc->articulo->get_tarifas(TRUE)"}
                   <tr>
-                     <td><a class="link" href="{$value->url()}">{$value->nombre}</a></td>
+                     <td><a href="{$value->url()}">{$value->nombre}</a></td>
                      <td>
                         <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                         <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
@@ -462,7 +462,7 @@
                </tr>
                {loop="$fsc->equivalentes"}
                <tr>
-                  <td><a class="link" href="{$value->url()}">{$value->referencia}</a></td>
+                  <td><a href="{$value->url()}">{$value->referencia}</a></td>
                   <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
                   <td align="right">{$value->stockfis}</td>
                </tr>

@@ -28,7 +28,7 @@
          <li><a target="_blank" href="{$fsc->url()}&imprimir=firma">Factura<br/>con firma</a></li>
       </ul>
       <br/>
-      <a class="link" href="{$fsc->url()}&updatedir=TRUE">Actualizar la dirección de la factura.</a>
+      <a href="{$fsc->url()}&updatedir=TRUE">Actualizar la dirección de la factura.</a>
    </center>
 </div>
 
@@ -114,7 +114,7 @@
          <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
       </div>
       <h1>
-         <a class="link" href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
+         <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
       </h1>
       <div class="form-group">
          <label for="codejercicio" class="col-sm-2 control-label">Ejercicio</label>
@@ -144,7 +144,7 @@
       <div class="form-group">
          <label for="fecha" class="col-sm-2 control-label">Agente</label>
          <div class="col-sm-10">
-            <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+            <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
       </div>
       {/if}
@@ -173,11 +173,11 @@
         {loop="$fsc->factura->get_lineas()"}
         <tr>
           <td>
-            <a class="link" href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+            <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
             {$value->albaran_numero()}
           </td>
           <td>
-            <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
+            <a href="{$value->articulo_url()}">{$value->referencia}</a>
             {$value->descripcion}
           </td>
           <td align="right">{$value->cantidad}</td>

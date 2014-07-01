@@ -150,7 +150,7 @@
             <td><input type="text" name="descripcion" size="40" placeholder="ej: Cuenta principal" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right"><a class="link" target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:</td>
+            <td align="right"><a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:</td>
             <td><input type="text" name="iban" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/></td>
          </tr>
          <tr>
@@ -170,7 +170,7 @@
       <input type="hidden" name="coddir" value=""/>
       <h3>Nueva dirección:</h3>
       <div class="form-group">
-         <a class="link" href="">País</a>:
+         <a href="">País</a>:
          <select class="form-control" name="pais">
             {loop="$fsc->pais->all()"}
             <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
@@ -261,7 +261,7 @@
       <div id="div_facturacion" style="display: none;">
          <br/>
          <div class="form-group">
-            <a class="link" href="{$fsc->serie->url()}">Serie</a>:
+            <a href="{$fsc->serie->url()}">Serie</a>:
             <select class="form-control" name="codserie">
                {loop="$fsc->serie->all()"}
                   {if condition="$value->codserie==$fsc->proveedor->codserie"}
@@ -273,7 +273,7 @@
             </select>
          </div>
          <div class="form-group">
-            <a class="link" href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+            <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
             <select class="form-control" name="codpago">
                {loop="$fsc->forma_pago->all()"}
                   {if condition="$value->codpago==$fsc->proveedor->codpago"}
@@ -285,7 +285,7 @@
             </select>
          </div>
          <div class="form-group">
-            <a class="link" href="{$fsc->divisa->url()}">Divisa</a>:
+            <a href="{$fsc->divisa->url()}">Divisa</a>:
             <select class="form-control" name="coddivisa">
                {loop="$fsc->divisa->all()"}
                   {if condition="$value->coddivisa==$fsc->proveedor->coddivisa"}
@@ -297,7 +297,7 @@
             </select>
          </div>
          <div class="form-group">
-            <a class="link" href="http://www.facturascripts.com/community/item/regimen-de-iva-desde-la-version-2014-4b-se-puede-seleccionar-el-regimen-de-784.html" target="_blank">Régimen IVA</a>:
+            <a href="http://www.facturascripts.com/community/item/regimen-de-iva-desde-la-version-2014-4b-se-puede-seleccionar-el-regimen-de-784.html" target="_blank">Régimen IVA</a>:
             <select class="form-control" name="regimeniva">
                {loop="$fsc->proveedor->regimenes_iva()"}
                   {if condition="$value==$fsc->proveedor->regimeniva"}
@@ -324,7 +324,7 @@
                <input type="text" name="descripcion" value="{$value->descripcion}" placeholder="ej: cuenta principal" size="40" autocomplete="off"/>
             </div>
             <div class="form-group">
-               <a class="link" target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
+               <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                <input type="text" name="iban" value="{$value->iban}" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/>
             </div>
             <div class="form-group">
@@ -350,7 +350,7 @@
             <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
             <input type="hidden" name="coddir" value="{$value->id}"/>
             <div class="form-group">
-               <a class="link" href="">País</a>:
+               <a href="">País</a>:
                <select class="form-control" name="pais">
                   {loop="$fsc->pais->all()"}
                      {if condition="$value1->codpais==$value2->codpais"}
@@ -420,9 +420,9 @@
             <tr>
                <td>{$value->codejercicio}</td>
                <td>
-                  <a class="link" href="{$value->url()}">{$value->codsubcuenta}</a>
+                  <a href="{$value->url()}">{$value->codsubcuenta}</a>
                   {$value->descripcion}
-                  <a class="link" href="index.php?page=subcuenta_asociada&pro={$fsc->proveedor->codproveedor}&idsc={$value->idsubcuenta}">[+]</a>
+                  <a href="index.php?page=subcuenta_asociada&pro={$fsc->proveedor->codproveedor}&idsc={$value->idsubcuenta}">[+]</a>
                </td>
                <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
                <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
@@ -482,7 +482,7 @@
             {loop="$fsc->listado"}
             <tr>
                <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-               <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+               <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
                <td>{$value->observaciones_resume()}</td>
                <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
                <td align="right">{$value->fecha}</td>
@@ -515,7 +515,7 @@
             {loop="$fsc->listado"}
             <tr>
                <td align="center">{if condition="$value->idasiento"}A{/if}</td>
-               <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+               <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
                <td>{$value->observaciones_resume()}</td>
                <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
                <td align="right">{$value->fecha}</td>

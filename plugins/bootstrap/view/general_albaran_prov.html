@@ -253,7 +253,7 @@
    }
    function fs_marcar_nada()
    {
-      $('#f_precios input.cb_update').attr('checked', false);
+      $('#f_precios input.cb_update').prop('checked', true);
    }
    $(document).ready(function() {
       recalcular();
@@ -405,7 +405,7 @@
       </div>
       <h3>
          {if condition="$fsc->albaran->ptefactura"}
-         <a class="link" href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
+         <a href="{$fsc->albaran->proveedor_url()}">Proveedor actual:</a>
          <select class="form-control" name="proveedor">
             {loop="$fsc->proveedor->all_full()"}
                {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}
@@ -416,7 +416,7 @@
             {/loop}
          </select>
          {else}
-         <a class="link" href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
+         <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
          {/if}
       </h3>
       <div class="form-group">Número {$fsc->albaran->numero}</div>
@@ -452,7 +452,7 @@
       <div class="form-group">
          <label for="numproveedor" class="col-sm-2 control-label">Agente</label>
          <div class="col-sm-10">
-			<a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+			<a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
          </div>
       </div>
       {/if}
@@ -483,7 +483,7 @@
             {loop="$fsc->albaran->get_lineas()"}
             <tr id="linea_{$counter}">
                <td>
-                  <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
+                  <a href="{$value->articulo_url()}">{$value->referencia}</a>
                   <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
                </td>
                <td>
@@ -578,7 +578,7 @@
             </tr>
             {loop="$fsc->albaran->get_lineas()"}
             <tr>
-               <td><a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+               <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
                <td align="right">{$value->cantidad}</td>
                <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
                <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>

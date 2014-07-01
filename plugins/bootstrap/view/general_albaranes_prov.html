@@ -69,8 +69,12 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
+            <td align="center">
+               {if condition="!$value->ptefactura"}
+               <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
+               {/if}
+            </td>
+            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
             <td>{$value->nombre}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>

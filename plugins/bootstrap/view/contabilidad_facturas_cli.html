@@ -68,10 +68,10 @@
          <tr>
             <td align="center">
                {if condition="$value->idasiento"}
-               <span title="La factura tiene vinculado un asiento contable">A</span>
+               <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
                {/if}
             </td>
-            <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
             <td>{$value->observaciones_resume()}</td>
             <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
             <td align="right">{$value->fecha}</td>

@@ -30,7 +30,7 @@
             <td><input type="text" name="cifnif" value="" autocomplete="off"/></td>
          </tr>
          <tr>
-            <td align="right"><a class="link" href="{$fsc->pais->url()}">País</a>:</td>
+            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
             <td>
                <select class="form-control" name="pais">
                {loop="$fsc->pais->all()"}
@@ -75,7 +75,7 @@
          </tr>
          {loop="$fsc->resultados"}
          <tr>
-            <td><a class="link" href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
+            <td><a href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
             <td>{$value->cifnif}</td>
             <td>{$value->observaciones_resume()}</td>
          </tr>

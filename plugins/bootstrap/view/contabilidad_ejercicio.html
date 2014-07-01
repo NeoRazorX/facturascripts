@@ -116,13 +116,13 @@
          <br/><br/>
        </div>
       {if condition="$fsc->asiento_apertura_url"}
-         <div class="form-group"><a class="link" href="{$fsc->asiento_apertura_url}">Asiento de apertura</a></div>
+         <div class="form-group"><a href="{$fsc->asiento_apertura_url}">Asiento de apertura</a></div>
       {/if}
       {if condition="$fsc->asiento_cierre_url"}
-         <div class="form-group"><a class="link" href="{$fsc->asiento_cierre_url}">Asiento de cierre</a></div>
+         <div class="form-group"><a href="{$fsc->asiento_cierre_url}">Asiento de cierre</a></div>
       {/if}
       {if condition="$fsc->asiento_pyg_url"}
-         <div class="form-group"><a class="link" href="{$fsc->asiento_pyg_url}">Asiento de pérdidas y ganancias</a></div>
+         <div class="form-group"><a href="{$fsc->asiento_pyg_url}">Asiento de pérdidas y ganancias</a></div>
       {/if}
    </form>
 </div>
@@ -144,8 +144,8 @@
          </tr>
          {loop="$fsc->listado"}
          <tr>
-            <td><a class="link" href="{$value->url()}">{$value->codgrupo}</a></td>
-            <td><a class="link" href="{$value->url()}">{$value->descripcion}</a></td>
+            <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
+            <td><a href="{$value->url()}">{$value->descripcion}</a></td>
          </tr>
          {else}
          <tr>
@@ -173,7 +173,7 @@
          {loop="$fsc->listado"}
          <tr>
             <td>{$value->codgrupo}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codepigrafe}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codepigrafe}</a> {$value->descripcion}</td>
          </tr>
          {else}
          <tr>
@@ -201,7 +201,7 @@
          {loop="$fsc->listado"}
          <tr>
             <td>{$value->codepigrafe}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
          </tr>
          {else}
          <tr>
@@ -230,7 +230,7 @@
          {loop="$fsc->listado"}
          <tr>
             <td>{$value->codcuenta}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
             <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
          </tr>
          {else}

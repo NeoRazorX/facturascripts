@@ -12,7 +12,7 @@
    }
    function fs_marcar_nada()
    {
-      $('#f_subcuenta input:checkbox').attr('checked', false);
+      $('#f_subcuenta input:checkbox').prop('checked', true);
    }
    $("#b_eliminar").click(function(event) {
       event.preventDefault();
@@ -39,7 +39,7 @@
                   <input class="form-control" type="text" class="full form-control" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
                </td>
                <td align="center">
-                  <a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+                  <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
                </td>
                <td align="right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</td>
                <td align="right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</td>
@@ -89,9 +89,9 @@
                   <input class="form-control" type="checkbox" name="punteada[]" value="{$value->idpartida}"/>
                   {/if}
                </td>
-               <td><a class="link" href="{$value->url()}">{$value->numero}</a></td>
+               <td><a href="{$value->url()}">{$value->numero}</a></td>
                <td align="center">{$value->fecha}</td>
-               <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
+               <td><a href="{$value->url()}">{$value->concepto}</a></td>
                <td align="right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
                <td align="right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
                <td align="right">{$fsc->show_precio($value->saldo, $fsc->subcuenta->coddivisa)}</td>
@@ -103,7 +103,7 @@
                </td>
                <td align="center">
                   {if condition="$value->codcontrapartida"}
-                  <a class="link" href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+                  <a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
                   {else}
                   -
                   {/if}

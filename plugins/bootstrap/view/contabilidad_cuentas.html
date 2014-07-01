@@ -80,7 +80,7 @@
         {loop="$fsc->resultados"}
         <tr>
           <td>{$value->codejercicio}</td>
-          <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+          <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
         </tr>
         {else}
         <tr><td colspan="2" align="center">Sin resultados</td></tr>
@@ -122,7 +122,7 @@
          {loop="$fsc->resultados"}
          <tr>
             <td>{$value->codejercicio}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
          </tr>
          {else}
          <tr><td colspan="2" align="center">Sin resultados</td></tr>
@@ -151,7 +151,7 @@
          {loop="$fsc->resultados2"}
          <tr>
             <td>{$value->codejercicio}</td>
-            <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
             <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
             <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
             <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>

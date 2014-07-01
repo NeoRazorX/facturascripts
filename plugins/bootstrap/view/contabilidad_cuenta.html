@@ -78,7 +78,7 @@
                  {/loop}
                </select>
             </td>
-            <td align="right"><a class="link" href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
+            <td align="right"><a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a></td>
           </tr>
         </table>
         <input class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
@@ -98,7 +98,7 @@
         </tr>
         {loop="$fsc->cuenta->get_subcuentas()"}
         <tr>
-          <td><a class="link" href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
+          <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
           <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
           <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
           <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>

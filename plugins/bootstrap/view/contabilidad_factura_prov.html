@@ -38,7 +38,7 @@
    <form action="{$fsc->factura->url()}" method="post">
       <input class="form-control" type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
       <h1>
-         <a class="link" href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
+         <a href="{$fsc->factura->proveedor_url()}">{$fsc->factura->nombre}</a>
       </h1>
       <div class="form-group">
          <label for="codejercicio" class="col-sm-2 control-label">Ejercicio</label>
@@ -103,11 +103,11 @@
          {loop="$fsc->factura->get_lineas()"}
          <tr>
             <td>
-               <a class="link" href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+               <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
                {$value->albaran_numero()}
             </td>
             <td>
-               <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a>
+               <a href="{$value->articulo_url()}">{$value->referencia}</a>
                {$value->descripcion}
             </td>
             <td align="right">{$value->cantidad}</td>

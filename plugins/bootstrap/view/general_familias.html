@@ -40,7 +40,7 @@
 <div class="well well-sm">
    <ul class="horizontal">
    {loop="$fsc->resultados"}
-      <li><a class="link" href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
+      <li><a href="{$value->url()}">{$value->codfamilia}</a> {$value->descripcion}</li>
    {else}
       <li>Ninguna familia encontrada. Pulsa el botón <b>Nueva</b> para crear una.</li>
    {/loop}

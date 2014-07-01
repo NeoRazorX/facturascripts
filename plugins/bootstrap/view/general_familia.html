@@ -129,9 +129,9 @@
       {loop="$fsc->articulos"}
       <tr>
          {if condition="$value->bloqueado"}
-            <td class="locked"><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {else}
-            <td><a class="link" href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
          <td>{$value->equivalencia}</td>
          <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>

@@ -53,7 +53,6 @@
 
 <div class="container-fluid">
    <div class="row">
-      
       <div class="col-lg-2">
          <div class="list-group">
             <a id="b_generales" href="#generales" class="list-group-item active">
@@ -77,7 +76,6 @@
       
       <div class="col-lg-10">
          <form name="f_empresa" action="{$fsc->page->url()}" method="post" class="form" role="form">
-         
             <div class="panel panel-primary" id="panel_generales">
                <div class="panel-heading">
                   <h3 class="panel-title">Datos generales</h3>
@@ -206,7 +204,7 @@
                </div>
                <div class="panel-body">
                   <div class="form-group">
-                     <a class="link" href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+                     <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control">
                      {loop="$fsc->ejercicio->all()"}
                         <option value="{$value->codejercicio}"{if condition="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
@@ -214,7 +212,7 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <a class="link" href="{$fsc->serie->url()}">Serie</a>:
+                     <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
                         <option value="{$value->codserie}"{if condition="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
@@ -238,7 +236,7 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <a class="link" href="{$fsc->almacen->url()}">Almacén</a>:
+                     <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
                         <option value="{$value->codalmacen}"{if condition="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
@@ -294,7 +292,6 @@
             
          </form>
       </div>
-      
    </div>
 </div>
 

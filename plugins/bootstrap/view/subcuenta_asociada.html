@@ -76,7 +76,7 @@
    </div>
    <h2 style="margin: 10px 0px 10px 0px;">
       En el ejercicio {$fsc->subcuenta_a->codejercicio},
-      <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a>
+      <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a>
       tiene asignada la cuenta...
    </h2>
    <div class="table-responsive">
@@ -91,7 +91,7 @@
          <tr>
             <td align="left">{$fsc->subcuenta->codejercicio}</td>
             <td align="left">
-               <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+               <a href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
                {$fsc->subcuenta->descripcion}
             </td>
             <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
@@ -154,7 +154,7 @@
    </div>
    <h2 style="margin: 10px 0px 10px 0px;">
       En el ejercicio {$fsc->subcuenta_a->codejercicio},
-      <a class="link" href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
+      <a href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
       tiene asignada la cuenta...
    </h2>
    <div class="table-responsive">
@@ -169,7 +169,7 @@
          <tr>
             <td align="left">{$fsc->subcuenta->codejercicio}</td>
             <td align="left">
-               <a class="link" href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
+               <a href="{$fsc->subcuenta->url()}">{$fsc->subcuenta->codsubcuenta}</a>
                {$fsc->subcuenta->descripcion}
             </td>
             <td align="right">{$fsc->show_precio($fsc->subcuenta->debe)}</td>
