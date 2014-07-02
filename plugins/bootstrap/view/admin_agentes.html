@@ -15,7 +15,7 @@
          <form class="form-horizontal" role="form" name="f_nuevo_agente" action ="{$fsc->url()}" method="POST">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nueva divisa</h4>
+               <h4 class="modal-title">Nuevo agente</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -66,23 +66,21 @@
    </div>
 </div>
 
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <th align="left">Código + Nombre + Apellidos</th>
-            <th>DNI/CIF</th>
-            <th align="right">Teléfono</th>
-         </tr>
-         {loop="$fsc->agente->all()"}
-         <tr>
-            <td>{$value->codagente} <a href="{$value->url()}">{$value->get_fullname()}</a></td>
-            <td align="center">{$value->dnicif}</td>
-            <td align="right">{$value->telefono}</td>
-         </tr>
-         {/loop}
-      </table>
-   </div>
+<div class="table-responsive" style="margin: 5px;">
+   <table class="table table-hover">
+      <tr>
+         <th align="left">Código + Nombre + Apellidos</th>
+         <th>DNI/CIF</th>
+         <th align="right">Teléfono</th>
+      </tr>
+      {loop="$fsc->agente->all()"}
+      <tr>
+         <td>{$value->codagente} <a href="{$value->url()}">{$value->get_fullname()}</a></td>
+         <td align="center">{$value->dnicif}</td>
+         <td align="right">{$value->telefono}</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}

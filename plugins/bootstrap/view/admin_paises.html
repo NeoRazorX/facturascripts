@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO HAY BOTON NUEVO PAIS EN EL BTN-TOOLBAR
--->
-
 <script type="text/javascript">
    function delete_pais(url)
    {
@@ -13,67 +9,74 @@
    $(document).ready(function() {
       $("#b_nuevo_pais").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_pais');
-         document.f_nuevo_pais.scodpais.focus();
+         $("#modal_nuevo_pais").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_pais">
-   <h3>Nuevo país</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nuevo_pais" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="scodpais" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="scodpais" autocomplete="off"/>
-          </div>
+<div class="modal fade" id="modal_nuevo_pais">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" role="form" name="f_nuevo_pais" action ="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo país</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="scodpais" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Nombre:
+                  <input class="form-control" type="text" name="snombre" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </form>
       </div>
-      <div class="form-group">
-         <label for="snombre" class="col-sm-2 control-label">Nombre</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="snombre" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
-</div>
-
-{loop="$fsc->pais->all()"}
-<div class="well well-sm">
-   <form action="{$fsc->url()}" method="POST">
-      <div class="pull_right">
-         <button class="btn btn-sm btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')" value="Eliminar" title="Eliminar">
-            <span class="glyphicon glyphicon-minus"></span>
-            &nbsp; Eliminar
-         </button>
-         &nbsp;
-         <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-            <span class="glyphicon glyphicon-floppy-disk"></span>
-            &nbsp; Guardar
-         </button>
-      </div>
-      <h1>Código: {$value->codpais}</h1>
-      Nombre del país:
-      <input class="form-control" type="hidden" name="scodpais" value="{$value->codpais}"/>
-      <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
-   </form>
-</div>
-{/loop}
-
-<div class="well well-sm">
-   <div class="new_line">
-      <button class="btn btn-sm btn-primary" id="b_nuevo_pais" href="#" value="Nuevo país" title="Nuevo país">
-         <span class="glyphicon glyphicon-plus"></span>
-         &nbsp; Nuevo país
-      </button>
    </div>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">¿Eliminar?</th>
+            <th align="left">Código</th>
+            <th align="left">Nombre</th>
+         </tr>
+      </thead>
+      {loop="$fsc->pais->all()"}
+      <tr>
+         <td>
+            <a class="btn btn-sm btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">
+               <span class="glyphicon glyphicon-trash"></span>
+            </a>
+         </td>
+         <td>{$value->codpais}</td>
+         <td>
+            <form action="{$fsc->url()}" method="post" role="form">
+               <input type="hidden" name="scodpais" value="{$value->codpais}"/>
+               <div class="input-group">
+                  <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        &nbsp; Guardar
+                     </button>
+                  </span>
+               </div>
+            </form>
+         </td>
+      </tr>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}

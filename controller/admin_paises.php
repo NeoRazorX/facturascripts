@@ -31,6 +31,7 @@ class admin_paises extends fs_controller
    protected function process()
    {
       $this->pais = new pais();
+      $this->buttons[] = new fs_button('b_nuevo_pais', 'Nuevo');
       
       if( isset($_POST['scodpais']) )
       {
@@ -69,5 +70,3 @@ class admin_paises extends fs_controller
       }
    }
 }
-
-?>
