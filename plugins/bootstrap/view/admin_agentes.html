@@ -68,11 +68,13 @@
 
 <div class="table-responsive" style="margin: 5px;">
    <table class="table table-hover">
-      <tr>
-         <th align="left">Código + Nombre + Apellidos</th>
-         <th>DNI/CIF</th>
-         <th align="right">Teléfono</th>
-      </tr>
+      <thead>
+         <tr>
+            <th align="left">Código + Nombre + Apellidos</th>
+            <th>DNI/CIF</th>
+            <th align="right">Teléfono</th>
+         </tr>
+      </thead>
       {loop="$fsc->agente->all()"}
       <tr>
          <td>{$value->codagente} <a href="{$value->url()}">{$value->get_fullname()}</a></td>

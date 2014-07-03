@@ -57,25 +57,25 @@
    </form>
 </div>
 
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
+<div class="table-responsive" style="margin: 5px;">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th align="left">Código + Nombre</th>
             <th>Fecha de inicio</th>
             <th>Fecha fin</th>
             <th align="right">Estado</th>
          </tr>
-         {loop="$fsc->ejercicio->all()"}
-         <tr>
-            <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
-            <td align="center">{$value->fechainicio}</td>
-            <td align="center">{$value->fechafin}</td>
-            <td align="right">{$value->estado}</td>
-         </tr>
-         {/loop}
-      </table>
-   </div>
+      </thead>
+      {loop="$fsc->ejercicio->all()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
+         <td align="center">{$value->fechainicio}</td>
+         <td align="center">{$value->fechafin}</td>
+         <td align="right">{$value->estado}</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}

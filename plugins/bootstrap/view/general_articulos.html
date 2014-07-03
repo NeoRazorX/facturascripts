@@ -164,8 +164,7 @@
    </form>
 </div>
 
-<div class="well well-sm">
-   {if condition="$fsc->query!=''"}
+{if condition="$fsc->query!=''"}
       <h3>
          <form name="custom_search2" action="{$fsc->url()}" method="post">
             <input type="hidden" name="query" value="{$fsc->query}"/>
@@ -192,15 +191,19 @@
             </span>
          </form>
       </h3>
-   {/if}
+{/if}
+
+<div class="table-responsive">
    <table class="table table-hover">
-      <tr>
-         <th align="left">Familia</th>
-         <th align="left">Referencia + Descripción</th>
-         <th align="right">PVP</th>
-         <th align="right">PVP+IVA</th>
-         <th align="right">Stock</th>
-      </tr>
+      <thead>
+         <tr>
+            <th align="left">Familia</th>
+            <th align="left">Referencia + Descripción</th>
+            <th align="right">PVP</th>
+            <th align="right">PVP+IVA</th>
+            <th align="right">Stock</th>
+         </tr>
+      </thead>
       {loop="$fsc->resultados"}
       <tr>
          <td>{$value->codfamilia}</td>
@@ -218,19 +221,12 @@
          <td colspan="5" align="center">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
-      <tr>
-         <td colspan="5">
-             <ul class="pager">
-				 {if condition="$fsc->anterior_url()!=''"}
-				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-				 {/if}
-				 {if condition="$fsc->siguiente_url()!=''"}
-				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-				 {/if}
-             </ul>
-         </td>
-      </tr>
    </table>
 </div>
+
+<ul class="pager" id="ul_paginador">
+   <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
+   <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+</ul>
 
 {include="footer"}

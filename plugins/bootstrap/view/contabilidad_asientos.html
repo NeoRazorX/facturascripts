@@ -1,55 +1,47 @@
 {include="header"}
 
-<!-- 
- LA SELECCION DEL ITEM PODRIA SER PULSANDO EN CUALQUIER LUGAR DE LA MISMA LINEA CON UN ONCLICK
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
    });
 </script>
 
-<div class="well well-sm">
-   {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda '{$fsc->query}':</h1>{/if}
-   <div class="table-responsive">
-      <table class="table table-hover">
-        <tr>
-          <th></th>
-          <th align="left">Ejercicio + Número</th>
-          <th align="left">Concepto</th>
-          <th align="right">Importe</th>
-          <th align="right">Fecha</th>
-        </tr>
-        {loop="$fsc->resultados"}
-        <tr>
-          <td align="center">
-             {if condition="$value->editable"}
-             <span class="glyphicon glyphicon-pencil" title="editable"></span>
-             {/if}
-          </td>
-          <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
-          <td><a href="{$value->url()}">{$value->concepto}</a></td>
-          <td align="right">{$fsc->show_precio($value->importe)}</td>
-          <td align="right">{$value->fecha}</td>
-        </tr>
-        {else}
-        <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
-        {/loop}
-        <tr>
-          <td colspan="5">
-             <ul class="pager">
-				 {if condition="$fsc->anterior_url()!=''"}
-				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-				 {/if}
-				 {if condition="$fsc->siguiente_url()!=''"}
-				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-				 {/if}
-             </ul>
-          </td>
-        </tr>
-      </table>
-   </div>
+{if condition="$fsc->query!=''"}
+<h1>Resultados de la búsqueda '{$fsc->query}':</h1>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th align="left">Ejercicio + Número</th>
+            <th align="left">Concepto</th>
+            <th align="right">Importe</th>
+            <th align="right">Fecha</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center">
+            {if condition="$value->editable"}
+            <span class="glyphicon glyphicon-pencil" title="editable"></span>
+            {/if}
+         </td>
+         <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
+         <td><a href="{$value->url()}">{$value->concepto}</a></td>
+         <td align="right">{$fsc->show_precio($value->importe)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
+      {/loop}
+   </table>
 </div>
+
+<ul class="pager" id="ul_paginador">
+   <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
+   <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+</ul>
 
 {include="footer"}

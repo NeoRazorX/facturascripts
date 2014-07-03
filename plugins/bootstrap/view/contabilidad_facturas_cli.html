@@ -53,10 +53,13 @@
    </div>
 </div>
 
-<div class="well well-sm">
-   {if condition="$fsc->query!=''"}<h1>Resultados de "{$fsc->query}":</h1>{/if}
-   <div class="table-responsive">
-      <table class="table table-hover">
+{if condition="$fsc->query!=''"}
+<h1>Resultados de "{$fsc->query}":</h1>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th></th>
             <th align="left">Código + Cliente</th>
@@ -64,35 +67,28 @@
             <th align="right">Total</th>
             <th align="right">Fecha</th>
          </tr>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td align="center">
-               {if condition="$value->idasiento"}
-               <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
-               {/if}
-            </td>
-            <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
-            <td>{$value->observaciones_resume()}</td>
-            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-            <td align="right">{$value->fecha}</td>
-         </tr>
-         {else}
-         <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
-         {/loop}
-         <tr>
-            <td colspan="5">
-             <ul class="pager">
-				 {if condition="$fsc->anterior_url()!=''"}
-				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-				 {/if}
-				 {if condition="$fsc->siguiente_url()!=''"}
-				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-				 {/if}
-             </ul>
-            </td>
-         </tr>
-      </table>
-   </div>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center">
+            {if condition="$value->idasiento"}
+            <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
+            {/if}
+         </td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
+      {/loop}
+   </table>
 </div>
+
+<ul class="pager" id="ul_paginador">
+   <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
+   <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+</ul>
 
 {include="footer"}
