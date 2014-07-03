@@ -168,7 +168,9 @@
                
                <div class="btn-group">
                   {loop="$fsc->buttons"}
-                     {if condition="get_class($value)=='fs_button_img'"}
+                     {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
+                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">{$value->value}</a>
+                     {elseif condition="get_class($value)=='fs_button_img'"}
                      <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
                      {else}
                      <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>

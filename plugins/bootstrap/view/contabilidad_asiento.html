@@ -359,9 +359,9 @@
       </div>
    </form>
 {else}
-   <div class="well well-sm">
-      <div class="table-responsive">
-         <table class="table table-hover">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
             <tr>
                <th align="left">Ejercicio</th>
                <th>Fecha</th>
@@ -369,27 +369,27 @@
                <th>Documento</th>
                <th align="right">Importe</th>
             </tr>
-            <tr>
-               <td><a class='link' href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
-               <td align="center">{$fsc->asiento->fecha}</td>
-               <td align="center">{$fsc->asiento->concepto}</td>
-               <td align="center">
-                  {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
-                  {if condition="$fsc->asiento->documento"}
-                     <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
-                  {else}
-                     -
-                  {/if}
-               </td>
-               <td align="right">{$fsc->show_precio($fsc->asiento->importe)}</td>
-            </tr>
-         </table>
-      </div>
+         </thead>
+         <tr>
+            <td><a href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
+            <td align="center">{$fsc->asiento->fecha}</td>
+            <td align="center">{$fsc->asiento->concepto}</td>
+            <td align="center">
+               {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
+               {if condition="$fsc->asiento->documento"}
+               <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+               {else}
+               -
+               {/if}
+            </td>
+            <td align="right">{$fsc->show_precio($fsc->asiento->importe)}</td>
+         </tr>
+      </table>
    </div>
    
-   <div class="well well-sm">
-      <div class="table-responsive">
-         <table class="table table-hover">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
             <tr>
                <th align="left">Concepto</th>
                <th>Subcuenta</th>
@@ -400,28 +400,28 @@
                <th>Contrapartida</th>
                <th>CIF/NIF</th>
             </tr>
-            {loop="$fsc->asiento->get_partidas()"}
-            <tr>
-               <td>{$value->concepto}</td>
-               <td align="center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
-               <td align="right"><span title="{$value->debe}">{$fsc->show_precio($value->debe, $value->coddivisa)}</span></td>
-               <td align="right"><span title="{$value->haber}">{$fsc->show_precio($value->haber, $value->coddivisa)}</span></td>
-               <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
-               <td align="right">
-                  {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $value->coddivisa)}{else}-{/if}
-               </td>
-               <td align="center">
-                  {if condition="$value->codcontrapartida"}
-                  <a class='link' href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
-                  {else}
-                  -
-                  {/if}
-               </td>
-               <td align="center">{if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}</td>
-            </tr>
-            {/loop}
-         </table>
-      </div>
+         </thead>
+         {loop="$fsc->asiento->get_partidas()"}
+         <tr>
+            <td>{$value->concepto}</td>
+            <td align="center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+            <td align="right"><span title="{$value->debe}">{$fsc->show_precio($value->debe, $value->coddivisa)}</span></td>
+            <td align="right"><span title="{$value->haber}">{$fsc->show_precio($value->haber, $value->coddivisa)}</span></td>
+            <td align="right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>
+            <td align="right">
+               {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $value->coddivisa)}{else}-{/if}
+            </td>
+            <td align="center">
+               {if condition="$value->codcontrapartida"}
+               <a class='link' href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
+               {else}
+               -
+               {/if}
+            </td>
+            <td align="center">{if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}</td>
+         </tr>
+         {/loop}
+      </table>
    </div>
 {/if}
 {else}

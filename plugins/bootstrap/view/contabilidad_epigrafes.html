@@ -1,27 +1,18 @@
 {include="header"}
 
-<!-- 
- NO TIENE BOTON NUEVO GRUPO EN EL BTN-TOOLBAR
- NO TIENE BOTON NUEVO EPIGRAFE EN EL BTN-TOOLBAR
- MO TIENE BOTON NUEVA CUETNA EN EL BTN-TOOLBAR
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       $("#b_nuevo_grupo, #b_nuevo_grupo2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_grupo');
-         document.f_nuevo_grupo.ngrupo.select();
+         $("#modal_nuevo_grupo").modal('show');
       });
       $("#b_nuevo_epigrafe, #b_nuevo_epigrafe2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_epigrafe');
-         document.f_nuevo_epigrafe.nepigrafe.select();
+         $("#modal_nuevo_epigrafe").modal('show');
       });
       $("#b_nueva_cuenta, #b_nueva_cuenta2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_cuenta');
-         document.f_nueva_cuenta.ncuenta.select();
+         $("#modal_nueva_cuenta").modal('show');
       });
       {if condition="$fsc->grupo"}
       $("#b_eliminar").click(function(event) {
@@ -41,219 +32,119 @@
 </script>
 
 {if condition="$fsc->grupo"}
-<div class="popup" id="popup_nuevo_epigrafe">
-   <h3>Nuevo epígrafe</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nuevo_epigrafe" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="scodpais" class="col-sm-2 control-label">Grupo</label>
-         <div class="col-sm-10">
-            {$fsc->grupo->codgrupo}
-            <input class="form-control" type="hidden" name="ejercicio" value="{$fsc->grupo->codejercicio}"/>
-            <input class="form-control" type="hidden" name="idgrupo" value="{$fsc->grupo->idgrupo}"/>
-            <input class="form-control" type="hidden" name="codgrupo" value="{$fsc->grupo->codgrupo}"/>
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="nepigrafe" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="nepigrafe" value="{$fsc->grupo->codgrupo}0" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
-         <div class="col-sm-10">
-         <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Descripción</th>
+         </tr>
+      </thead>
+      <tr>
+         <td>
+            <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
+         </td>
+         <td>
+            <form action="{$fsc->grupo->url()}" method="post" class="form" role="form">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="descripcion" value="{$fsc->grupo->descripcion}" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        &nbsp; Guardar
+                     </button>
+                  </span>
+               </div>
+            </form>
+         </td>
+      </tr>
+   </table>
 </div>
 
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
+            <th align="left">Código</td>
             <th align="left">Descripción</th>
-            <th align="right">Ejercicio</th>
          </tr>
-         <tr>
-            <td>
-               <form action="{$fsc->grupo->url()}" method="post">
-                  <input class="form-control" type="text" name="descripcion" value="{$fsc->grupo->descripcion}" autocomplete="off"/>
-               </form>
-            </td>
-            <td align="right">
-               <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
-            </td>
-         </tr>
-      </table>
-      <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-         <span class="glyphicon glyphicon-floppy-disk"></span>
-         &nbsp; Guardar
-      </button>
-      <br/><br/>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codepigrafe}</a></td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="2" class="bg-success">
+            <a id="b_nuevo_epigrafe" href="#" style="display: block; text-align: center;">Nuevo Epígrafe...</a>
+         </td>
+      </tr>
+   </table>
 </div>
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
+{elseif condition="$fsc->epigrafe"}
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Descripción</th>
+         </tr>
+      </thead>
+      <tr>
+         <td>
+            <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
+         </td>
+         <td>
+            <form action="{$fsc->epigrafe->url()}" method="post" class="form">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="descripcion" value="{$fsc->epigrafe->descripcion}" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        &nbsp; Guardar
+                     </button>
+                  </span>
+               </div>
+            </form>
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th align="left">Código</th>
             <th align="left">Descripción</th>
-         </tr>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td><a href="{$value->url()}">{$value->codepigrafe}</a></td>
-            <td><a href="{$value->url()}">{$value->descripcion}</a></td>
-         </tr>
-         {/loop}
-         <tr>
-            <td colspan="2">
-               <div class="new_line">
-                  <a id="b_nuevo_epigrafe2" href="#">Nuevo epígrafe</a>
-               </div>
-            </td>
-         </tr>
-      </table>
-   </div>
-</div>
-{elseif condition="$fsc->epigrafe"}
-<div class="popup" id="popup_nueva_cuenta">
-   <h3>Nueva cuenta</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nueva_cuenta" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="scodpais" class="col-sm-2 control-label">Epígrafe</label>
-         <div class="col-sm-10">
-               <input class="form-control" type="hidden" name="ejercicio" value="{$fsc->epigrafe->codejercicio}"/>
-               <input class="form-control" type="hidden" name="idepigrafe" value="{$fsc->epigrafe->idepigrafe}"/>
-               <input class="form-control" type="hidden" name="codepigrafe" value="{$fsc->epigrafe->codepigrafe}"/>
-               {$fsc->epigrafe->codepigrafe}
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="ncuenta" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-         <input class="full form-control" type="text" name="ncuenta" value="{$fsc->epigrafe->codepigrafe}0" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
-         <div class="col-sm-10">
-         <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
-</div>
-
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <th align="left">Descripción</th>
-            <th align="right">Ejercicio</th>
-         </tr>
-         <tr>
-            <td>
-               <form action="{$fsc->epigrafe->url()}" method="post">
-                  <input class="form-control" type="text" name="descripcion" value="{$fsc->epigrafe->descripcion}" autocomplete="off"/>
-               </form>
-            </td>
-            <td align="right">
-               <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
-            </td>
-         </tr>
-      </table>
-      <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-         <span class="glyphicon glyphicon-floppy-disk"></span>
-         &nbsp; Guardar
-      </button>
-      <br/><br/>
-   </div>
-</div>
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <th align="left">Código + Descripción</th>
             <th align="right">Cuenta especial</th>
          </tr>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
-            <td align="right">{$value->idcuentaesp}</td>
-         </tr>
-         {/loop}
-         <tr>
-            <td colspan="2">
-               <div class="new_line">
-                  <a id="b_nueva_cuenta2" href="#">Nueva cuenta</a>
-               </div>
-            </td>
-         </tr>
-      </table>
-   </div>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
+         <td>{$value->descripcion}</td>
+         <td align="right">{$value->idcuentaesp}</td>
+      </tr>
+      {/loop}
+      <tr>
+         <td colspan="3" class="bg-success">
+            <a id="b_nueva_cuenta" href="#" style="display: block; text-align: center;">Nueva Cuenta...</a>
+         </td>
+      </tr>
+   </table>
 </div>
 {else}
-<div class="popup" id="popup_nuevo_grupo">
-   <h3>Nuevo grupo</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nuevo_grupo" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="scodpais" class="col-sm-2 control-label">Ejercicio</label>
-         <div class="col-sm-10">
-            <select name="ejercicio" class="form-control">
-            {loop="$fsc->ejercicio->all()"}
-               {if condition="$value->codejercicio==$fsc->codejercicio"}
-               <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
-               {else}
-               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
-               {/if}
-            {/loop}
-            </select>
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="snombre" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="ngrupo" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-         <label for="snombre" class="col-sm-2 control-label">Descripción</label>
-         <div class="col-sm-10">
-         <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
-          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
-</div>
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <td>
-               <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
-                  <b>Ejercicio:</b>
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-3">
+         <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
+            <div class="panel panel-info">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Ejercicio:</h3>
+               </div>
+               <div class="panel-body">
                   <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
                      {loop="$fsc->ejercicio->all()"}
                         {if condition="$value->codejercicio==$fsc->codejercicio"}
@@ -263,35 +154,146 @@
                         {/if}
                      {/loop}
                   </select>
-               </form>
-            </td>
-            <td align="right">
-               <a class="btn btn-sm btn-default" href="index.php?page=contabilidad_cuentas">Cuentas &gt;</a>
-            </td>
-         </tr>
-      </table>
-      <br/>
-      <table class="table table-hover">
-         <tr>
-            <th align="left">Código</th>
-            <th align="left">Descripción</th>
-         </tr>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
-            <td><a href="{$value->url()}">{$value->descripcion}</a></td>
-         </tr>
-         {/loop}
-         <tr>
-            <td colspan="2">
-               <div class="new_line">
-                  <a id="b_nuevo_grupo2" href="#">Nuevo grupo</a>
                </div>
-            </td>
-         </tr>
-      </table>
+               <div class="panel-footer">
+                  <button class="btn btn-sm btn-info" type="submit">
+                     <span class="glyphicon glyphicon-search"></span>
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="col-lg-9">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th align="left">Código</td>
+                     <th align="left">Descripción</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->resultados"}
+               <tr>
+                  <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
+                  <td>{$value->descripcion}</td>
+               </tr>
+               {/loop}
+               <tr>
+                  <td colspan="2" class="bg-success">
+                     <a id="b_nuevo_grupo" href="#" style="display: block; text-align: center;">
+                        Nuevo Grupo...
+                     </a>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </div>
    </div>
 </div>
 {/if}
+
+<div class="modal fade" id="modal_nuevo_grupo">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" role="form" name="f_nuevo_grupo" action ="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo grupo</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Ejercicio:
+                  <select name="ejercicio" class="form-control">
+                     {loop="$fsc->ejercicio->all()"}
+                        {if condition="$value->codejercicio==$fsc->codejercicio"}
+                        <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+                        {else}
+                        <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="ngrupo" autocomplete="off" maxlength="6"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_nuevo_epigrafe">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" role="form" name="f_nuevo_epigrafe" action ="{$fsc->url()}" method="post">
+            <input type="hidden" name="ejercicio" value="{$fsc->grupo->codejercicio}"/>
+            <input type="hidden" name="idgrupo" value="{$fsc->grupo->idgrupo}"/>
+            <input type="hidden" name="codgrupo" value="{$fsc->grupo->codgrupo}"/>
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo epigrafe</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="nepigrafe" value="{$fsc->grupo->codgrupo}0" autocomplete="off" maxlength="6"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="full form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_nueva_cuenta">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" role="form" name="f_nueva_cuenta" action ="{$fsc->url()}" method="post">
+            <input type="hidden" name="ejercicio" value="{$fsc->epigrafe->codejercicio}"/>
+            <input type="hidden" name="idepigrafe" value="{$fsc->epigrafe->idepigrafe}"/>
+            <input type="hidden" name="codepigrafe" value="{$fsc->epigrafe->codepigrafe}"/>
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva cuenta</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:<input class="form-control" type="text" name="ncuenta" value="{$fsc->epigrafe->codepigrafe}0" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
 
 {include="footer"}

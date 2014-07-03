@@ -64,40 +64,36 @@
    </form>
 </div>
 
-<div class="well well-sm">
-   {if condition="$fsc->query!=''"}<h3>Resultados de la búsqueda "{$fsc->query}":</h3>{/if}
-   <div class="table-responsive">
-      <table class="table table-hover">
+{if condition="$fsc->query!=''"}
+<h3>Resultados de la búsqueda "{$fsc->query}":</h3>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th align="left">Código + Nombre</th>
             <th align="left">CIF/NIF</th>
             <th align="left">Observaciones</th>
          </tr>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td><a href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
-            <td>{$value->cifnif}</td>
-            <td>{$value->observaciones_resume()}</td>
-         </tr>
-         {else}
-         <tr>
-            <td colspan="3" align="center">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-         </tr>
-         {/loop}
-         <tr>
-            <td colspan="3">
-				 <ul class="pager">
-					 {if condition="$fsc->anterior_url()!=''"}
-					 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-					 {/if}
-					 {if condition="$fsc->siguiente_url()!=''"}
-					 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-					 {/if}
-				 </ul>
-            </td>
-         </tr>
-      </table>
-   </div>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
+         <td>{$value->cifnif}</td>
+         <td>{$value->observaciones_resume()}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3" align="center">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
+
+<ul class="pager" id="ul_paginador">
+   <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
+   <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+</ul>
 
 {include="footer"}

@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_nuevo_agente").click(function(event) {
+      $("#b_nuevo_agente, #b_nuevo_agente2").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
       });
@@ -82,6 +82,11 @@
          <td align="right">{$value->telefono}</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="3" class="bg-success">
+            <a id="b_nuevo_agente2" href="#" style="display: block; text-align: center;">Nuevo agente...</a>
+         </td>
+      </tr>
    </table>
 </div>
 

@@ -52,19 +52,3 @@ input.full {
    -moz-box-sizing: border-box;
    -ms-box-sizing: border-box;
 }
-
-div.new_line {
-   margin: 2px;
-   padding: 0px;
-   background-color: #deecfb;
-   border: 1px dashed #999999;
-}
-
-div.new_line a {
-   display: block;
-   padding: 5px;
-   color: black;
-   font-size: 15px;
-   text-align: center;
-   text-decoration: none;
-}
