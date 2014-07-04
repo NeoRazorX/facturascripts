@@ -130,7 +130,11 @@
                </thead>
                {loop="$fsc->listado"}
                <tr>
-                  <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+                  <td align="center">
+                     {if condition="!$value->ptefactura"}
+                     <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
+                     {/if}
+                  </td>
                   <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
                   <td>{$value->nombrecliente}</td>
                   <td>{$value->observaciones_resume()}</td>
@@ -155,7 +159,11 @@
                </thead>
                {loop="$fsc->listado"}
                <tr>
-                  <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+                  <td align="center">
+                     {if condition="!$value->ptefactura"}
+                     <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
+                     {/if}
+                  </td>
                   <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
                   <td>{$value->nombre}</td>
                   <td>{$value->observaciones_resume()}</td>
@@ -194,8 +202,46 @@
             {/if}
          </div>
          <ul class="pager" id="ul_paginador">
-            <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; anteriores</a></li>
-            <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">siguientes &rarr;</a></li>
+            {if condition="$fsc->anterior_url()!=''"}
+            <li class="previous">
+               {if condition="$fsc->listar=='albaranes_cli'"}
+               <a href="{$fsc->anterior_url()}#alb_cli">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                  anteriores
+               </a>
+               {elseif condition="$fsc->listar=='albaranes_prov'"}
+               <a href="{$fsc->anterior_url()}#alb_pro">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                  anteriores
+               </a>
+               {else}
+               <a href="{$fsc->anterior_url()}#caja">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                  anteriores
+               </a>
+               {/if}
+            </li>
+            {/if}
+            {if condition="$fsc->siguiente_url()!=''"}
+            <li class="next">
+               {if condition="$fsc->listar=='albaranes_cli'"}
+               <a href="{$fsc->siguiente_url()}#alb_cli">
+                  siguientes
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+               </a>
+               {elseif condition="$fsc->listar=='albaranes_prov'"}
+               <a href="{$fsc->siguiente_url()}#alb_pro">
+                  siguientes
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+               </a>
+               {else}
+               <a href="{$fsc->siguiente_url()}#caja">
+                  siguientes
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+               </a>
+               {/if}
+            </li>
+            {/if}
          </ul>
       </div>
    </div>

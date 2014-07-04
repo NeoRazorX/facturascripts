@@ -31,7 +31,7 @@ class admin_agentes extends fs_controller
    protected function process()
    {
       $this->agente = new agente();
-      $this->buttons[] = new fs_button_img('b_nuevo_agente', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_agente', 'Nuevo');
       
       if( isset($_POST['scodagente']) )
       {

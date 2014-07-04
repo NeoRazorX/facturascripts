@@ -10,12 +10,14 @@
       </div>
    </div>
    {/if}
-   <div class="container-fluid">
+   <div class="container-fluid" style="margin-top: 20px;">
       <div class="row">
-         <div class="col-md-12" style="text-align: center; margin-top: 20px;">
-            Consultas: {$fsc->selects()} |
-            Transacciones: {$fsc->transactions()} |
-            Procesado en: {$fsc->duration()}
+         <div class="col-lg-6">
+            <span class="label label-default">Consultas: {$fsc->selects()}</span>
+            <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
+         </div>
+         <div class="col-lg-6" style="text-align: right;">
+            <span class="label label-default">Procesado en: {$fsc->duration()}</span>
          </div>
       </div>
    </div>

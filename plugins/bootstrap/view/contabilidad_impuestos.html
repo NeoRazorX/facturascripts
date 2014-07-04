@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO HAY BOTON NUEVO IMPUESTO EN EL BTN-TOOLBAR
--->
-
 <script type="text/javascript">
    function delete_impuesto(url)
    {
@@ -57,49 +53,46 @@
    </form>
 </div>
 
-{loop="$fsc->impuesto->all()"}
-<div class="well well-sm">
-   <form class="form-horizontal" class="form" role="form" action ="{$fsc->url()}" method="POST">
-      <div class="panel panel-default" style="margin: 5px;">
-         <div class="panel-heading">
-            <h3 class="panel-title">{$value->codimpuesto}</h3>
-            <input class="form-control" type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
-         </div>
-      </div>
-      <div class="panel-body">
-         <div class="form-group">
-            <label for="descripcion" class="col-sm-1 control-label">Descripción</label>
-            <div class="col-sm-3">
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">¿Eliminar?</th>
+            <th align="left">Código</th>
+            <th align="left">Descripción</th>
+            <th align="left">% IVA</th>
+            <th align="left">% Recargo</th>
+            <th align="right">¿Guardar?</th>
+         </tr>
+      </thead>
+      {loop="$fsc->impuesto->all()"}
+      <form class="form" role="form" action ="{$fsc->url()}" method="post">
+         <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
+         <tr>
+            <td>
+               <a class="btn btn-sm btn-danger" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">
+                  <span class="glyphicon glyphicon-trash"></span>
+               </a>
+            </td>
+            <td>{$value->codimpuesto}</td>
+            <td>
                <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
-            </div>
-            <label for="iva" class="col-sm-1 control-label">IVA</label>
-            <div class="col-sm-3">
-               <input class="form-control" type="text" name="iva" value="{$value->iva}" autocomplete="off"/> %
-            </div>
-            <label for="recargo" class="col-sm-1 control-label">Recargo</label>
-            <div class="col-sm-3">
-               <input class="form-control" type="text" name="recargo" value="{$value->recargo}" autocomplete="off"/> %
-            </div>
-         </div>
-      </div>
-      <div class="panel-footer">
-            <button class="btn btn-sm btn-danger" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')" value="Eliminar" title="Eliminar">
-               <span class="glyphicon glyphicon-minus"></span>
-               &nbsp; Eliminar
-            </button>
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-      </div>
-   </form>
-</div>
-{/loop}
-
-<div class="well well-sm">
-   <div class="new_line">
-      <a id="b_nuevo_impuesto" href="#">Nuevo impuesto</a>
-   </div>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="iva" value="{$value->iva}" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="recargo" value="{$value->recargo}" autocomplete="off"/>
+            </td>
+            <td align="right">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
+            </td>
+         </tr>
+      </form>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}

@@ -61,7 +61,8 @@
                {if condition="$fsc->get_last_changes()"}
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                     <span class="glyphicon glyphicon-time"></span>
+                     <span class="glyphicon glyphicon-time hidden-xs"></span>
+                     <span class="glyphicon glyphicon-time visible-xs"> Historial</span>
                   </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->get_last_changes()"}
@@ -82,13 +83,15 @@
                
                <li>
                   <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
-                     <span class="glyphicon glyphicon-question-sign"></span>
+                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                     <span class="glyphicon glyphicon-question-sign visible-xs"> Ayuda</span>
                   </a>
                </li>
                
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
-                     <span class="glyphicon glyphicon-user"></span>
+                     <span class="glyphicon glyphicon-user hidden-xs"></span>
+                     <span class="glyphicon glyphicon-user visible-xs"> Usuario</span>
                   </a>
                   <ul class="dropdown-menu">
                      <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>
@@ -135,9 +138,9 @@
    
    <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
       <div class="row">
-         <div class="col-md-10 col-sm-8" style="padding-left: 5px;">
+         <div class="col-lg-10 col-sm-9">
             <div class="btn-toolbar" role="toolbar">
-               <div class="btn-group">
+               <div class="btn-group hidden-xs">
                   <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                      <span class="glyphicon glyphicon-refresh"></span>
                   </a>
@@ -154,7 +157,7 @@
                   {/if}
                </div>
                
-               <div class="btn-group">
+               <div class="btn-group hidden-xs">
                   {if condition="$fsc->ppage"}
                   <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
                      <span class="glyphicon glyphicon-arrow-left"></span>
@@ -179,7 +182,7 @@
                </div>
             </div>
          </div>
-         <div class="col-md-2 col-sm-4" style="padding-right: 5px;">
+         <div class="col-lg-2 col-sm-3">
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post">
                <div class="input-group">

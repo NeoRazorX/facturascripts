@@ -1,26 +1,24 @@
 {include="header"}
 
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th>FacturaScripts</th>
-               <th>PHP</th>
-               <th>Base de datos</th>
-               <th>Motor de base de datos</th>
-               <th>Memcache</th>
-            </tr>
-         </thead>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
-            <td align="center">{$fsc->version()}</td>
-            <td align="center">{$fsc->php_version()}</td>
-            <td align="center">{$fsc->fs_db_name()}</td>
-            <td align="center">{$fsc->fs_db_version()}</td>
-            <td align="center">{$fsc->cache_version()}</td>
+            <th>FacturaScripts</th>
+            <th>PHP</th>
+            <th>Base de datos</th>
+            <th>Motor de base de datos</th>
+            <th>Memcache</th>
          </tr>
-      </table>
-   </div>
+      </thead>
+      <tr>
+         <td align="center">{$fsc->version()}</td>
+         <td align="center">{$fsc->php_version()}</td>
+         <td align="center">{$fsc->fs_db_name()}</td>
+         <td align="center">{$fsc->fs_db_version()}</td>
+         <td align="center">{$fsc->cache_version()}</td>
+      </tr>
+   </table>
 </div>
 
 <div class="panel panel-info" style="margin: 5px;">

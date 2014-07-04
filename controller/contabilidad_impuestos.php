@@ -31,6 +31,7 @@ class contabilidad_impuestos extends fs_controller
    protected function process()
    {
       $this->impuesto = new impuesto();
+      $this->buttons[] = new fs_button('b_nuevo_impuesto', 'Nuevo');
       
       if( isset($_GET['delete']) )
       {

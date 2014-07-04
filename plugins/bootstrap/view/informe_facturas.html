@@ -60,50 +60,97 @@
    }
 </script>
 
-<table width="100%">
-   <tr>
-      <td valign="top">
-         <div class="well well-sm">
-            <h1>Facturas emitidas de cliente:</h1>
-            <form action="{$fsc->url()}" method="post" target="_blank">
-               <input type="hidden" name="listado" value="facturascli"/>
-               Desde:
-               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
-               Hasta:
-               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input class="btn btn-sm btn-primary" type="submit" value="Mostrar" onclick="this.form.submit();"/>
-            </form>
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-6">
+         <form action="{$fsc->url()}" method="post" target="_blank" class="form">
+            <input type="hidden" name="listado" value="facturascli"/>
+            <div class="panel panel-info">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Facturas emitidas de cliente</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     Desde:
+                     <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+                  </div>
+                  <div class="form-group">
+                     Hasta:
+                     <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                  </div>
+               </div>
+               <div class="panel-footer">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
+                     <span class="glyphicon glyphicon-eye-open"></span>
+                     &nbsp; Mostrar
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="col-lg-6">
+         <form action="{$fsc->url()}" method="post" target="_blank" class="form">
+            <input type="hidden" name="listado" value="facturasprov"/>
+            <div class="panel panel-info">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Facturas recibidas de proveedor</h3>
+               </div>
+               <div class="panel-body">
+                  <div class="form-group">
+                     Desde:
+                     <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+                  </div>
+                  <div class="form-group">
+                     Hasta:
+                     <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                  </div>
+               </div>
+               <div class="panel-footer">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
+                     <span class="glyphicon glyphicon-eye-open"></span>
+                     &nbsp; Mostrar
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+               <h3 class="panel-title">Facturación de los últimos días</h3>
+            </div>
+            <div class="panel-body">
+               <div id="chart_facturas_day"></div>
+            </div>
          </div>
-      </td>
-      <td valign="top">
-         <div class="well well-sm">
-            <h1>Facturas recibidas de proveedor:</h1>
-            <form action="{$fsc->url()}" method="post" target="_blank">
-               <input type="hidden" name="listado" value="facturasprov"/>
-               Desde:
-               <input class="tcal" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
-               Hasta:
-               <input class="tcal" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
-               <input class="btn btn-sm btn-primary" type="submit" value="Mostrar" onclick="this.form.submit();"/>
-            </form>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+               <h3 class="panel-title">Facturación de los últimos meses</h3>
+            </div>
+            <div class="panel-body">
+               <div id="chart_facturas_month"></div>
+            </div>
          </div>
-      </td>
-   </tr>
-</table>
-
-<div class="well well-sm">
-   <h1>Facturación de los últimos días:</h1>
-   <div id="chart_facturas_day" style="width: 95%; margin-left: auto; margin-right: auto;"></div>
-</div>
-
-<div class="well well-sm">
-   <h1>Facturación de los últimos meses:</h1>
-   <div id="chart_facturas_month" style="width: 95%; margin-left: auto; margin-right: auto; height: 300px;"></div>
-</div>
-
-<div class="well well-sm">
-   <h1>Facturación de los últimos años:</h1>
-   <div id="chart_facturas_year" style="width: 95%; margin-left: auto; margin-right: auto; height: 300px;"></div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-lg-12">
+         <div class="panel panel-default">
+            <div class="panel-heading">
+               <h3 class="panel-title">Facturación de los últimos años</h3>
+            </div>
+            <div class="panel-body">
+               <div id="chart_facturas_year"></div>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
 
 {include="footer"}

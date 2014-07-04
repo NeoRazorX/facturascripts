@@ -31,6 +31,7 @@ class contabilidad_series extends fs_controller
    protected function process()
    {
       $this->serie = new serie();
+      $this->buttons[] = new fs_button('b_nueva_serie', 'Nueva');
       
       if( isset($_GET['delete']) )
       {
@@ -74,5 +75,3 @@ class contabilidad_series extends fs_controller
       }
    }
 }
-
-?>

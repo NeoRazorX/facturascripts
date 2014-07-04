@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO HAY BOTON ¿NUEVO ASIENTO? EN EL BTN-TOOLBAR
--->
-
 {if condition="$fsc->subcuenta"}
 <script type="text/javascript">
    function fs_marcar_todo()
@@ -125,6 +121,7 @@
       </table>
    </div>
    
+   {if condition="$total>10"}
    <div style="margin: 5px;">
       <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
          <span class="glyphicon glyphicon-check"></span>
@@ -137,6 +134,7 @@
          &nbsp; Guardar
       </button>
    </div>
+   {/if}
 </form>
 {else}
 <div class="well well-sm" style="text-align: center;">
