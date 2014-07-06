@@ -5,90 +5,103 @@
    $(document).ready(function() {
       $("#b_imprimir").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_imprimir');
+         $("#modal_imprimir").modal('show');
       });
       $("#b_enviar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_enviar');
+         $("#modal_enviar").modal('show');
          document.enviar_email.email.focus();
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_eliminar', 60);
+         $("#modal_eliminar").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_imprimir">
-   <h3>Imprimir factura</h3>
-   <center>
-      <ul class="bloque">
-         <li><a target="_blank" href="{$fsc->url()}&imprimir=simple">Factura<br/>simple</a></li>
-         <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Modelo<br/>carta</a></li>
-         <li><a target="_blank" href="{$fsc->url()}&imprimir=firma">Factura<br/>con firma</a></li>
-      </ul>
-      <br/>
-      <a href="{$fsc->url()}&updatedir=TRUE">Actualizar la dirección de la factura.</a>
-   </center>
+<div class="modal fade" id="modal_imprimir">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Imprimir factura</h4>
+         </div>
+         <div class="modal-body">
+            <center>
+               <ul class="bloque">
+                  <li><a target="_blank" href="{$fsc->url()}&imprimir=simple">Factura<br/>simple</a></li>
+                  <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Modelo<br/>carta</a></li>
+                  <li><a target="_blank" href="{$fsc->url()}&imprimir=firma">Factura<br/>con firma</a></li>
+               </ul>
+               <br/>
+               <a href="{$fsc->url()}&updatedir=TRUE">Actualizar la dirección de la factura.</a>
+            </center>
+         </div>
+      </div>
+   </div>
 </div>
 
-<div class="popup" id="popup_enviar">
-   <h3>Enviar factura</h3>
-   <form class="form-horizontal" class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="email" class="col-sm-2 control-label">Email del cliente</label>
-         <div class="col-sm-10">
-            <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="snombre" class="col-sm-2 control-label">Mensaje</label>
-         <div class="col-sm-10">
-            <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su factura {$fsc->factura->codigo}.
+<div class="modal fade" id="modal_enviar">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Enviar factura</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="email" class="col-sm-2 control-label">Email del cliente</label>
+                  <div class="col-sm-10">
+                     <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="snombre" class="col-sm-2 control-label">Mensaje</label>
+                  <div class="col-sm-10">
+                     <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su factura {$fsc->factura->codigo}.
 {$fsc->empresa->email_firma}</textarea>
-         </div>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
       </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-           <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-              <span class="glyphicon glyphicon-floppy-disk"></span>
-              &nbsp; Guardar
-           </button>
-         </div>
-      </div>
-   </form>
+   </div>
 </div>
 
-<div class="popup" id="popup_eliminar">
-   <h3>Eliminar factura</h3>
-   {if condition="$fsc->factura->idasiento"}
-      <ul>
-         <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
-      </ul>
-   {/if}
-   <form class="form-horizontal" class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <label for="email" class="col-sm-2 control-label">Email del cliente</label>
-         <div class="col-sm-10">
-            <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
+<div class="modal fade" id="modal_eliminar">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Eliminar factura</h4>
          </div>
-      </div>
-      <div class="form-group">
-         <label for="snombre" class="col-sm-2 control-label">Mensaje</label>
-         <div class="col-sm-10">
-            <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su factura {$fsc->factura->codigo}.
-{$fsc->empresa->email_firma}</textarea>
+         <div class="modal-body">
+            <div class="form-group">
+               <div class="col-sm-12">
+                  {if condition="$fsc->factura->idasiento"}
+                  <ul>
+                     <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
+                  </ul>
+                  {/if}
+                  ¿Realmente desea eliminar esta factura?
+               </div>
+            </div>
          </div>
-      </div>
-      <div class="form-group">
-         <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
+         <div class="modal-footer">
+            <a class="btn btn-sm btn-danger" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}" title="Eliminar">
+               <span class="glyphicon glyphicon-trash"></span>
+               &nbsp; Eliminar
+            </a>
          </div>
-      </div>
-   </form>
+       </div>
+   </div>
 </div>
 
 <form action="{$fsc->factura->url()}" method="post" class="form">
