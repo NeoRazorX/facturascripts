@@ -6,7 +6,6 @@
       if(document.f_buscar_subcuentas.query.value == '')
       {
          $("#subcuentas").html('');
-         fs_resize_popup("popup_subcuentas", 40);
       }
       else
       {
@@ -23,7 +22,6 @@
                if( m[1] == document.f_buscar_subcuentas.query.value )
                {
                   $("#subcuentas").html(datos);
-                  fs_resize_popup("popup_subcuentas", 40);
                }
             }
          });
@@ -38,13 +36,13 @@
       document.f_change_subcuenta.debe.value = debe;
       document.f_change_subcuenta.haber.value = haber;
       document.f_change_subcuenta.saldo.value = saldo;
-      fs_hide_popups();
+      $("#modal_subcuentas").modal('hide');
    }
    $(document).ready(function() {
       $("#codsubcuenta").click(function() {
          $("#subcuentas").html('');
          document.f_buscar_subcuentas.query.value = '';
-         fs_show_popup('popup_subcuentas', 40);
+         $("#modal_subcuentas").modal('show');
          document.f_buscar_subcuentas.query.focus();
       });
       $("#f_buscar_subcuentas").keyup(function() {
@@ -57,16 +55,32 @@
    });
 </script>
 
-<div class="popup" id="popup_subcuentas" style="min-width: 80%">
-   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input type="hidden" name="codejercicio"/>
-      <h1>Buscar subcuentas</h1>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
+<div class="modal fade" id="modal_subcuentas">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar subcuentas</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="hidden" name="codejercicio"/>
+                  <input class="form-control" type="text" name="query"/>
+               </div>
+               <div class="form-group">
+                  <div id="subcuentas"></div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="subcuentas"></div>
+   </div>
 </div>
 
 {if condition="$fsc->tipo == 'cli' AND $fsc->subcuenta"}
