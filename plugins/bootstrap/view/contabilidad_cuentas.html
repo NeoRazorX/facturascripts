@@ -4,7 +4,7 @@
    $(document).ready(function() {
       $("#b_cuentas_especiales").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_cuentas_especiales');
+         $("#modal_cuentas_especiales").modal('show');
       });
       $("#b_show_cuentas").click(function() {
          $("#resultados_subcuentas").hide();
@@ -27,23 +27,34 @@
    });
 </script>
 
-<div class="popup" id="popup_cuentas_especiales">
-   <h3>Cuentas especiales</h3>
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <tr>
-            <th align="left" width="100">Código</th>
-            <th align="left">Descripción</th>
-         </tr>
-         {loop="$fsc->cuentas_especiales"}
-         <tr>
-            <td>{$value->idcuentaesp}</td>
-            <td>{$value->descripcion}</td>
-         </tr>
-         {else}
-         <tr><td colspan="2" align="center">Sin resultados</td></tr>
-         {/loop}
-      </table>
+<div class="modal fade" id="modal_cuentas_especiales">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Cuentas especiales</h4>
+         </div>
+         <div class="modal-body">
+            <div class="form-group">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <tr>
+                        <th align="left" width="100">Código</th>
+                        <th align="left">Descripción</th>
+                     </tr>
+                     {loop="$fsc->cuentas_especiales"}
+                     <tr>
+                        <td>{$value->idcuentaesp}</td>
+                        <td>{$value->descripcion}</td>
+                     </tr>
+                     {else}
+                     <tr><td colspan="2" align="center">Sin resultados</td></tr>
+                     {/loop}
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
    </div>
 </div>
 

@@ -84,7 +84,7 @@
       document.f_buscar_subcuentas.tipo.value = tipo;
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
-      fs_show_popup('popup_subcuentas', 40);
+      $("#modal_subcuentas").modal('show');
       document.f_buscar_subcuentas.query.focus();
    }
    function buscar_subcuentas()
@@ -92,7 +92,7 @@
       if(document.f_buscar_subcuentas.query.value == '')
       {
          $("#subcuentas").html('');
-         fs_resize_popup("popup_subcuentas", 40);
+         fs_resize_popup("modal_subcuentas", 40);
       }
       else
       {
@@ -109,7 +109,7 @@
                if( m[1] == document.f_buscar_subcuentas.query.value )
                {
                   $("#subcuentas").html(datos);
-                  fs_resize_popup("popup_subcuentas", 40);
+                  fs_resize_popup("modal_subcuentas", 40);
                }
             }
          });
@@ -128,7 +128,7 @@
          $("#codcontrapartida_"+num).val(codsubcuenta);
          $("#saldoc_"+num).val(saldo);
       }
-      fs_hide_popups();
+      $("#modal_subcuentas").modal('hide');
    }
    function clean_partida(num)
    {
@@ -211,18 +211,39 @@
    });
 </script>
 
-<div class="popup" id="popup_subcuentas" style="min-width: 80%">
-   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input class="form-control" type="hidden" name="fecha"/>
-      <input class="form-control" type="hidden" name="tipo"/>
-      <input class="form-control" type="hidden" name="numlinea"/>
-      <h1>Buscar subcuentas</h1>
-      <div style="text-align: center;">
-         <input class="form-control" type="text" name="query"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
+<div class="modal fade" id="modal_subcuentas">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" role="form" name="f_buscar_subcuentas">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar subcuenta</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input class="form-control" type="hidden" name="fecha"/>
+                  <input class="form-control" type="hidden" name="tipo"/>
+                  <input class="form-control" type="hidden" name="numlinea"/>
+                  <label for="ncodagente" class="col-sm-2 control-label">Búsqueda</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="query"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nemail" class="col-sm-2 control-label">Resultado</label>
+                  <div class="col-sm-10" id="subcuentas">
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="subcuentas"></div>
+   </div>
 </div>
 
 {if condition="$fsc->asiento->editable"}

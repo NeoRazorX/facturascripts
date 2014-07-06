@@ -1,7 +1,6 @@
 {include="header"}
 
 <!-- 
- ESTILO DEL POPUP ERRONEO
  LA SELECCION DEL USUARIO PODRIA SER PULSANDO EN CUALQUIER LUGAR DE LA MISMA LINEA CON UN ONCLICK
 -->
 
@@ -24,60 +23,67 @@
       });
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_agente');
+         $("#modal_nuevo_agente").modal('show');
          document.f_nuevo_agente.nnombre.focus();
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_agente">
-   <h3>Nuevo agente</h3>
-   <form name="f_nuevo_agente" class="form" role="form" action="{$fsc->page->url()}" method="POST">
-      <div class="form-group">
-         <label for="ncodagente" class="col-sm-2 control-label">Código</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" autocomplete="off"/>
-         </div>
+<div class="modal fade" id="modal_nuevo_agente">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" role="form" name="f_nuevo_agente" action="{$fsc->page->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo agente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="ncodagente" class="col-sm-2 control-label">Código</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nnombre" class="col-sm-2 control-label">Nombre</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="nnombre" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="napellidos" class="col-sm-2 control-label">Apellidos</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="napellidos" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="ndnicif" class="col-sm-2 control-label">CIF/NIF</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="ndnicif" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="ntelefono" class="col-sm-2 control-label">Teléfono</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="ntelefono" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nemail" class="col-sm-2 control-label">Email</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="nemail" autocomplete="off"/>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
       </div>
-      <div class="form-group">
-         <label for="nnombre" class="col-sm-2 control-label">Nombre</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="nnombre" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="napellidos" class="col-sm-2 control-label">Apellidos</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="napellidos" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="ndnicif" class="col-sm-2 control-label">CIF/NIF</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="ndnicif" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="ntelefono" class="col-sm-2 control-label">Teléfono</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="ntelefono" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="nemail" class="col-sm-2 control-label">Email</label>
-         <div class="col-sm-10">
-         <input class="form-control" type="text" name="nemail" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-           <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
-              </button>
-          </div>
-      </div>
-   </form>
+   </div>
 </div>
 
 <form class="form-horizontal" class="form" role="form" id="f_user_pages" action="{$fsc->url()}" method="POST">

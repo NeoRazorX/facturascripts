@@ -10,11 +10,12 @@
       {if condition="$fsc->importar_url"}
       setTimeout("location.href = '{$fsc->importar_url}';", 2000);
       {elseif condition="!$fsc->listado"}
-      fs_show_popup('popup_importar');
+      $("#modal_importar").modal('show');
+
       {/if}
       $("#b_importar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_importar');
+         $("#modal_importar").modal('show');
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
@@ -24,54 +25,74 @@
    });
 </script>
 
-<div class="popup" id="popup_importar">
-   <h1>Importar datos del ejercicio</h1>
-   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
-      <input name='archivo' type='hidden' value='TRUE'/>
-      Se importarán grupos, epígrafes, cuentas, subcuentas y balances de...
-      <br/><br/>
-      <div style="padding: 3px;">
-         <label>
-            <input class="form-control" type="radio" name="fuente" value="espanya" checked="checked" style="vertical-align: bottom;"/>
-            Plan General Contable de <b>España</b>.
-         </label>
+<div class="modal fade" id="modal_importar">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Importar datos del ejercicio</h4>
+            </div>
+            <div class="modal-body">
+			   <div class="form-group">
+                  <input name='archivo' type='hidden' value='TRUE'/>
+                  Se importarán grupos, epígrafes, cuentas, subcuentas y balances de...
+			   </div>
+               <div class="form-group">
+                  <label for="espanya" class="col-sm-10 control-label">Plan General Contable de <b>España</b></label>
+                  <div class="col-sm-2">
+                     <input type="radio" name="fuente" value="espanya" checked="checked"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="colombia" class="col-sm-10 control-label">Plan General Contable de <b>Colombia</b></label>
+                  <div class="col-sm-2">
+                     <input type="radio" name="fuente" value="colombia"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="panama" class="col-sm-10 control-label">Plan General Contable de <b>Panamá</b></label>
+                  <div class="col-sm-2">
+                     <input type="radio" name="fuente" value="panama"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="peru" class="col-sm-10 control-label">Plan General Contable de <b>Perú</b></label>
+                  <div class="col-sm-2">
+                     <input type="radio" name="fuente" value="peru"/>
+                  </div>
+               </div>
+               <div class="form-group">
+				  <br/>
+                  <label for="archivo" class="col-sm-10 control-label">Un archivo externo</label>
+                  <div class="col-sm-2">
+                     <input type="radio" id="rb_archivo" name="fuente" value="archivo"/>
+                  </div>
+               </div>
+               <div class="form-group">
+				  <div class="col-sm-12">
+                     <input name='farchivo' type='file' onclick="$('#rb_archivo').prop('checked', true)"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-sm-12">
+                     <h4>¿No está tu pais?</h4>
+                     Pues entonces necesitas el archivo con el Plan Contable de tu país.<br/>
+                     Haz una cosa, busca en internet algún archivo de excel con el plan contable<br/>
+                     de tu país y envíamelo a <b>neorazorx@gmail.com</b> para que yo lo adapte<br/>
+                     al formato de FacturaScripts.
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Importar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Importar
+                </button>
+            </div>
+         </form>
       </div>
-      <div style="padding: 3px;">
-         <label>
-            <input class="form-control" type="radio" name="fuente" value="colombia" style="vertical-align: bottom;"/>
-            Plan General Contable de <b>Colombia</b>.
-         </label>
-      </div>
-      <div style="padding: 3px;">
-         <label>
-            <input class="form-control" type="radio" name="fuente" value="panama" style="vertical-align: bottom;"/>
-            Plan General Contable de <b>Panamá</b>.
-         </label>
-      </div>
-      <div style="padding: 3px;">
-         <label>
-            <input class="form-control" type="radio" name="fuente" value="peru" style="vertical-align: bottom;"/>
-            Plan General Contable de <b>Perú</b>.
-         </label>
-      </div>
-      <div style="padding: 3px;">
-         <input class="form-control" type="radio" id="rb_archivo" name="fuente" value="archivo"/>
-         <label for="rb_archivo">Un archivo externo:</label>
-         <input name='farchivo' type='file' onclick="$('#rb_archivo').prop('checked', true)"/>
-      </div>
-      <div style="text-align: right;">
-         <input class="btn btn-sm btn-primary" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
-      </div>
-      <div class="grupo">
-         <h2>¿No está tu pais?</h2>
-         <p style="margin: 2px;">
-            Pues entonces necesitas el archivo con el Plan Contable de tu país.<br/>
-            Haz una cosa, busca en internet algún archivo de excel con el plan contable<br/>
-            de tu país y envíamelo a <b>neorazorx@gmail.com</b> para que yo lo adapte<br/>
-            al formato de FacturaScripts.
-         </p>
-      </div>
-   </form>
+   </div>
 </div>
 
 <div class="well well-sm">
