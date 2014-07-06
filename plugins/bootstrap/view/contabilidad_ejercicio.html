@@ -25,63 +25,61 @@
    });
 </script>
 
+<form enctype='multipart/form-data' action="{$fsc->url()}" method="post" class="form">
+   <input name='archivo' type='hidden' value='TRUE'/>
 <div class="modal fade" id="modal_importar">
    <div class="modal-dialog">
       <div class="modal-content">
-		 <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+		 
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Importar datos del ejercicio</h4>
             </div>
             <div class="modal-body">
-			   <div class="form-group">
-                  <input name='archivo' type='hidden' value='TRUE'/>
+               <p>
                   Se importarán grupos, epígrafes, cuentas, subcuentas y balances de...
-			   </div>
+               </p>
                <div class="form-group">
-                  <label for="espanya" class="col-sm-10 control-label">Plan General Contable de <b>España</b></label>
-                  <div class="col-sm-2">
+                  <label>
                      <input type="radio" name="fuente" value="espanya" checked="checked"/>
-                  </div>
+                     Plan General Contable de <b>España</b>
+                  </label>
                </div>
                <div class="form-group">
-                  <label for="colombia" class="col-sm-10 control-label">Plan General Contable de <b>Colombia</b></label>
-                  <div class="col-sm-2">
+                  <label>
                      <input type="radio" name="fuente" value="colombia"/>
-                  </div>
+                     Plan General Contable de <b>Colombia</b>
+                  </label>
                </div>
                <div class="form-group">
-                  <label for="panama" class="col-sm-10 control-label">Plan General Contable de <b>Panamá</b></label>
-                  <div class="col-sm-2">
+                  <label>
                      <input type="radio" name="fuente" value="panama"/>
-                  </div>
+                     Plan General Contable de <b>Panamá</b>
+                  </label>
                </div>
                <div class="form-group">
-                  <label for="peru" class="col-sm-10 control-label">Plan General Contable de <b>Perú</b></label>
-                  <div class="col-sm-2">
+                  <label>
                      <input type="radio" name="fuente" value="peru"/>
-                  </div>
+                     Plan General Contable de <b>Perú</b>
+                  </label>
                </div>
                <div class="form-group">
-				  <br/>
-                  <label for="archivo" class="col-sm-10 control-label">Un archivo externo</label>
-                  <div class="col-sm-2">
+                  <label>
                      <input type="radio" id="rb_archivo" name="fuente" value="archivo"/>
-                  </div>
+                     Un archivo externo
+                  </label>
                </div>
                <div class="form-group">
-				  <div class="col-sm-12">
-                     <input name='farchivo' type='file' onclick="$('#rb_archivo').prop('checked', true)"/>
-                  </div>
+                  <input class="form-control" name='farchivo' type='file' onclick="$('#rb_archivo').prop('checked', true)"/>
                </div>
-               <div class="form-group">
-                  <div class="col-sm-12">
-                     <h4>¿No está tu pais?</h4>
+               <div>
+                  <h4>¿No está tu pais?</h4>
+                  <p>
                      Pues entonces necesitas el archivo con el Plan Contable de tu país.<br/>
                      Haz una cosa, busca en internet algún archivo de excel con el plan contable<br/>
                      de tu país y envíamelo a <b>neorazorx@gmail.com</b> para que yo lo adapte<br/>
                      al formato de FacturaScripts.
-                  </div>
+                  </p>
                </div>
             </div>
             <div class="modal-footer">
@@ -90,10 +88,11 @@
                    &nbsp; Importar
                 </button>
             </div>
-         </form>
+         
       </div>
    </div>
 </div>
+</form>
 
 <div class="well well-sm">
    <form action="{$fsc->url()}" method="post">
