@@ -7,7 +7,6 @@
       if(document.f_buscar_lineas.buscar_lineas.value == '')
       {
          $("#search_results").html('');
-         fs_resize_popup('popup_buscar_lineas', 40);
       }
       else
       {
@@ -22,7 +21,6 @@
                if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
                {
                   $("#search_results").html(datos);
-                  fs_resize_popup('popup_buscar_lineas', 40);
                }
             }
          });

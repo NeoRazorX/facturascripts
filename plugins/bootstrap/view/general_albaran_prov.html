@@ -176,7 +176,7 @@
          data: "referencia4precios="+ref,
          success: function(datos) {
             $("#precios_articulo").html(datos);
-            fs_show_popup('popup_precios', 40);
+            $("#modal_precios").modal('show');
          }
       });
    }
@@ -214,8 +214,8 @@
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
             $("#search_results").html(datos);
-            $("#popup_new_line").css({
-               left: ($(window).width() - $("#popup_new_line").outerWidth())/2,
+            $("#modal_new_line").css({
+               left: ($(window).width() - $("#modal_new_line").outerWidth())/2,
                top: 40
             });
          }
@@ -226,7 +226,6 @@
       if(document.f_buscar_articulos.query.value == '')
       {
          $("#search_results").html('');
-         fs_resize_popup("popup_new_line", 40);
       }
       else
       {
@@ -241,7 +240,6 @@
                if( m[1] == document.f_buscar_articulos.query.value )
                {
                   $("#search_results").html(datos);
-                  fs_resize_popup("popup_new_line", 40);
                }
             }
          });
@@ -259,18 +257,18 @@
       recalcular();
       $("#b_precios").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_precios2', 60);
+         $("#modal_precios2").modal('show');
          document.f_precios.codbar_0.focus();
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_eliminar', 60);
+         $("#modal_eliminar").modal('show');
       });
       $("#b_new_line").click(function(event) {
          event.preventDefault();
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
-         fs_show_popup('popup_new_line', 40);
+         $("#modal_new_line").modal('show');
          document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
@@ -283,37 +281,47 @@
    });
 </script>
 
-<div class="popup" id="popup_eliminar">
-   <h3>Eliminar {$albaran}</h3>
-   {if condition="$fsc->albaran->idfactura"}
-      <ul><li>Hay una factura asociada que será eliminada junto con este {$albaran}.</li></ul>
-   {/if}
-   <form class="form-horizontal" class="form" role="form" action ="{$fsc->ppage->url()}" method="POST">
-      <div class="form-group">
-		  <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
-		  ¿Realmente desea eliminar este {$albaran}?
-		  <br/><br/>
-		  <label>
-			 <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
-			 Actualizar el stock
-		  </label>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" value="Eliminar" title="Eliminar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Eliminar
-            </button>
-          </div>
-      </div>
-   </form>
+<div class="modal fade" id="modal_eliminar">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" action ="{$fsc->ppage->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Eliminar {$albaran}</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <div class="col-sm-12">
+                     {if condition="$fsc->albaran->idfactura"}
+                     <ul>
+                        <li>Hay una factura asociada que será eliminada junto con este {$albaran}.</li>
+                     </ul>
+                     {/if}
+                     ¿Realmente desea eliminar este {$albaran}?
+                     <br/><br/>
+		             <label>
+                        <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
+			               Actualizar el stock
+		             </label>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-danger pull-right" onclick="this.disabled=true;this.form.submit();" title="Eliminar">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Eliminar
+               </button>
+            </div>
+         </form>
+       </div>
+   </div>
 </div>
 
-<div class="popup" id="popup_precios" style="min-width: 60%">
+<div class="modal fade" id="modal_precios">
    <div id="precios_articulo"></div>
 </div>
 
-<div class="popup" id="popup_precios2" style="min-width: 70%;">
+<div class="modal fade" id="modal_precios2">
    <form id="f_precios" name="f_precios" action="{$fsc->url()}" method="post">
       <input type="hidden" name="actualizar_precios" value="TRUE"/>
       <h3>Actualizar precios de los artículos</h3>
@@ -376,24 +384,39 @@
    </form>
 </div>
 
-<div class="popup" id="popup_new_line" style="min-width: 60%">
-   <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h3>Buscar artículos</h3>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40" autocomplete="off"/>
-         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
-            <option value="">Todas las familias</option>
-            <option value="">------</option>
-         {loop="$fsc->familia->all()"}
-            <option value="{$value->codfamilia}">{$value->descripcion}</option>
-         {/loop}
-         </select>
-         <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
-         <label for="cb_con_stock">Sólo con stock</label>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
+<div class="modal fade" id="modal_new_line">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar artículos</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                     <option value="">Todas las familias</option>
+                     <option value="">------</option>
+                     {loop="$fsc->familia->all()"}
+                     <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+                  <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                  <label for="cb_con_stock">Sólo con stock</label>
+               </div>
+               <div class="form-group" id="search_results">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="search_results"></div>
+   </div>
 </div>
 
 <form action="{$fsc->albaran->url()}" method="post">

@@ -9,17 +9,17 @@
    {
       if(window.location.hash.substring(1) == 'nuevo')
       {
-         fs_show_popup('popup_nuevo_articulo');
+         $("#modal_nuevo_articulo").modal('show');
          document.f_nuevo_articulo.referencia.focus();
       }
       else if(window.location.hash.substring(1) == 'tarifas')
       {
-         fs_show_popup('popup_tarifas');
+         $("#modal_tarifas").modal('show');
          document.f_nueva_tarifa.nombre.focus();
       }
       else if(window.location.hash.substring(1) == 'mod-iva')
       {
-         fs_show_popup('popup_modificar_iva');
+         $("#modal_modificar_iva").modal('show');
       }
    }
    $(document).ready(function() {
@@ -31,7 +31,7 @@
    });
 </script>
 
-<div class="popup" id="popup_nuevo_articulo">
+<div class="popup" id="modal_nuevo_articulo">
    <h3>Nuevo artículo</h3>
    {if condition="$fsc->familia->all()"}
    <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
@@ -77,7 +77,7 @@
    {/if}
 </div>
 
-<div class="popup" id="popup_tarifas">
+<div class="popup" id="modal_tarifas">
    <h3>Tarifas</h3>
    {loop="$fsc->tarifa->all()"}
       <div class="grupo">
@@ -135,7 +135,7 @@
    </div>
 </div>
 
-<div class="popup" id="popup_modificar_iva">
+<div class="popup" id="modal_modificar_iva">
    <form action="{$fsc->url()}" method="post">
       <input type="hidden" name="mod_iva" value="TRUE"/>
       <h3>Modificar IVA</h3>

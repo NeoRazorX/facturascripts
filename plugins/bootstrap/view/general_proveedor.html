@@ -12,7 +12,6 @@
       if(document.f_buscar_lineas.buscar_lineas.value == '')
       {
          $("#search_results").html('');
-         fs_resize_popup('popup_buscar_lineas', 40);
       }
       else
       {
@@ -27,7 +26,6 @@
                if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
                {
                   $("#search_results").html(datos);
-                  fs_resize_popup('popup_buscar_lineas', 40);
                }
             }
          });
@@ -67,7 +65,7 @@
          $("#div_facturacion").show();
          $("#div_cuentas_bancarias").show();
          
-         fs_show_popup('popup_nueva_cuenta');
+         $("#modal_nueva_cuenta").modal('show');
          document.f_nueva_cuenta.descripcion.focus();
       }
       else if(window.location.hash.substring(1) == 'nueva_direccion')
@@ -75,7 +73,7 @@
          $("#b_direcciones").addClass('selected');
          $("#div_direcciones").show();
          
-         fs_show_popup('popup_nueva_direccion');
+         $("#modal_nueva_direccion").modal('show');
          document.f_nueva_direccion.provincia.focus();
       }
       else
@@ -96,7 +94,7 @@
       });
       $("#b_buscar_lineas").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_buscar_lineas', 40);
+         $("#modal_buscar_lineas").modal('show');
          document.f_buscar_lineas.buscar_lineas.focus();
       });
       $("#f_buscar_lineas").keyup(function() {
@@ -140,7 +138,7 @@
 </script>
 {/if}
 
-<div class="popup" id="popup_nueva_cuenta">
+<div class="popup" id="modal_nueva_cuenta">
    <h3>Nueva cuenta bancaria:</h3>
    <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
@@ -164,7 +162,7 @@
    </form>
 </div>
 
-<div class="popup" id="popup_nueva_direccion">
+<div class="popup" id="modal_nueva_direccion">
    <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
       <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
       <input type="hidden" name="coddir" value=""/>
@@ -438,7 +436,7 @@
    </div>
 </div>
 
-<div class="popup" id="popup_buscar_lineas" style="min-width: 75%">
+<div class="popup" id="modal_buscar_lineas" style="min-width: 75%">
    <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
       <h3>Buscar en las líneas de los {$albaranes}</h3>
       <div style="text-align: center;">

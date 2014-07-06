@@ -5,13 +5,13 @@
       document.f_custom_search.query.focus();
       $("#b_nuevo_proveedor").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_proveedor');
+         $("#modal_nuevo_proveedor").modal('show');
          document.f_nuevo_proveedor.nombre.focus();
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_proveedor">
+<div class="popup" id="modal_nuevo_proveedor">
    <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
       <h3>Nuevo proveedor</h3>
       <table>

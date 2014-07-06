@@ -5,25 +5,25 @@
    $(document).ready(function() {
       $("#b_stats_familia").click(function(event) {
          event.preventDefault();
-         $('#popup_stats_familia').html('');
+         $('#modal_stats_familia').html('');
          $.ajax({
             type: 'POST',
             url: '{$fsc->url()}',
             dataType: 'html',
             data: 'stats=TRUE',
             success: function(datos) {
-               $('#popup_stats_familia').html(datos);
-               fs_show_popup('popup_stats_familia');
+               $('#modal_stats_familia').html(datos);
+               $("#modal_stats_familia").modal('show');
             }
          });
       });
       $("#b_importar_familia").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_importar_familia');
+         $("#modal_importar_familia").modal('show');
       });
       $("#b_herramientas_familia").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_herramientas_familia');
+         $("#modal_herramientas_familia").modal('show');
       });
       $("#b_eliminar_familia").click(function(event) {
          event.preventDefault();
@@ -33,9 +33,9 @@
    });
 </script>
 
-<div class="popup" id="popup_stats_familia" style="min-width: 500px;"></div>
+<div class="popup" id="modal_stats_familia" style="min-width: 500px;"></div>
 
-<div class="popup" id="popup_herramientas_familia">
+<div class="popup" id="modal_herramientas_familia">
    <h3>Herramientas</h3>
    <form action="{$fsc->url()}" method="post">
       Multiplicar precios por:
@@ -45,7 +45,7 @@
 </div>
 
 {if condition="$fsc->pag_importar"}
-<div class="popup" id="popup_importar_familia">
+<div class="popup" id="modal_importar_familia">
    <h3>Importar familia</h3>
    <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
       <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>

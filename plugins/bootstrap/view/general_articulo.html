@@ -120,7 +120,7 @@
          dataType: 'html',
          data: 'buscar='+donde+'&offset='+offset,
          success: function(datos) {
-            $("#popup_buscar").html(datos);
+            $("#modal_buscar").html(datos);
          }
       });
    }
@@ -132,60 +132,69 @@
       });
       $("#b_imagen").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_articulo_imagen');
+         $("#modal_articulo_imagen").modal('show');
       });
       $("#b_buscar_albcli").click(function(event) {
          event.preventDefault();
-         $("#popup_buscar").html('Cargando...');
-         fs_show_popup('popup_buscar', 40);
+         $("#modal_buscar").html('Cargando...');
+         $("#modal_buscar").modal('show');
          buscar_articulo_en('albcli', 0);
       });
       $("#b_buscar_albpro").click(function(event) {
          event.preventDefault();
-         $("#popup_buscar").html('Cargando...');
-         fs_show_popup('popup_buscar', 40);
+         $("#modal_buscar").html('Cargando...');
+         $("#modal_buscar").modal('show');
          buscar_articulo_en('albpro', 0);
       });
       $("#b_buscar_faccli").click(function(event) {
          event.preventDefault();
-         $("#popup_buscar").html('Cargando...');
-         fs_show_popup('popup_buscar', 40);
+         $("#modal_buscar").html('Cargando...');
+         $("#modal_buscar").modal('show');
          buscar_articulo_en('faccli', 0);
       });
       $("#b_buscar_facpro").click(function(event) {
          event.preventDefault();
-         $("#popup_buscar").html('Cargando...');
-         fs_show_popup('popup_buscar', 40);
+         $("#modal_buscar").html('Cargando...');
+         $("#modal_buscar").modal('show');
          buscar_articulo_en('facpro', 0);
       });
    });
 </script>
 
-<div class="popup" id="popup_articulo_imagen">
-   <h3>Imagen</h3>
-   Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
-   {if condition="$fsc->articulo->imagen_url()"}
-      <center>
-         <img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/>
-         <br/>
-         <a href="{$fsc->url()}&delete_img=TRUE">Eliminar imagen</a>
-      </center>
-   {/if}
-   <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
-      <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-      <input type="hidden" name="imagen" value="TRUE"/>
-      <table width="100%">
-         <tr>
-            <td><input type="file" name="fimagen" accept="image/png"/></td>
-            <td align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_articulo_imagen">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form action="{$fsc->url()}" enctype="multipart/form-data" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Imagen</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+               Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
+               {if condition="$fsc->articulo->imagen_url()"}
+                  <center>
+                     <img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/>
+                     <br/>
+                     <a href="{$fsc->url()}&delete_img=TRUE">Eliminar imagen</a>
+                  </center>
+               {/if}
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <input type="hidden" name="imagen" value="TRUE"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </form>
+       </div>
+   </div>
 </div>
 
-<div class="popup" id="popup_buscar" style="min-width: 75%">
+<div class="modal fade" id="modal_buscar">
    Cargando...
 </div>
 

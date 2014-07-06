@@ -5,12 +5,12 @@
    {
       if(window.location.hash.substring(1) == 'nuevo')
       {
-         fs_show_popup('popup_nuevo_cliente');
+         $("#modal_nuevo_cliente").modal('show');
          document.f_nuevo_cliente.nombre.focus();
       }
       else if(window.location.hash.substring(1) == 'grupos')
       {
-         fs_show_popup('popup_grupos');
+         $("#modal_grupos").modal('show');
          document.f_new_grupo.nombre.focus();
       }
    }
@@ -23,7 +23,7 @@
    });
 </script>
 
-<div class="popup" id="popup_nuevo_cliente">
+<div class="popup" id="modal_nuevo_cliente">
    <h3>Nuevo cliente</h3>
    <form class="form-horizontal" class="form" role="form" name="f_nuevo_cliente" action ="{$fsc->url()}" method="POST">
       <div class="form-group">
@@ -99,7 +99,7 @@
    </form>
 </div>
 
-<div class="popup" id="popup_grupos">
+<div class="popup" id="modal_grupos">
    <h3>Grupos de clientes:</h3>
    {loop="$fsc->grupo->all()"}
    <div class="grupo">

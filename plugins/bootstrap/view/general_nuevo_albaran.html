@@ -181,7 +181,7 @@
          data: "referencia4precios="+ref,
          success: function(datos) {
             $("#precios_articulo").html(datos);
-            fs_show_popup('popup_precios', 40);
+            $("#modal_precios").modal('show');
          }
       });
    }
@@ -221,7 +221,6 @@
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
             $("#search_results").html(datos);
-            fs_resize_popup("popup_new_line", 40);
          }
       });
    }
@@ -230,7 +229,6 @@
       if(document.f_buscar_articulos.query.value == '')
       {
          $("#search_results").html('');
-         fs_resize_popup("popup_new_line", 40);
       }
       else
       {
@@ -245,7 +243,6 @@
                if( m[1] == document.f_buscar_articulos.query.value )
                {
                   $("#search_results").html(datos);
-                  fs_resize_popup("popup_new_line", 40);
                }
             }
          });
@@ -256,7 +253,7 @@
          event.preventDefault();
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
-         fs_show_popup('popup_new_line', 40);
+         $("#modal_new_line").modal('show');
          document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
@@ -272,7 +269,7 @@
          $("#tr_numero2").hide();
          $("#tr_proveedores").show();
          $("#tr_numproveedor").show();
-         fs_show_popup('popup_tpv_opciones');
+         $("#modal_tpv_opciones").modal('show');
       });
       $("#b_nuevo_albaran_cliente").click(function() {
          document.f_new_albaran.tipoalbaran.value = 'cliente';
@@ -280,12 +277,12 @@
          $("#tr_numproveedor").hide();
          $("#tr_clientes").show();
          $("#tr_numero2").show();
-         fs_show_popup('popup_tpv_opciones');
+         $("#modal_tpv_opciones").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_new_line" style="min-width: 70%">
+<div class="popup" id="modal_new_line" style="min-width: 70%">
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
       <h3>Buscar artículos</h3>
       <div style="text-align: center;">
@@ -305,7 +302,7 @@
    <div id="search_results"></div>
 </div>
 
-<div class="popup" id="popup_precios" style="min-width: 60%">
+<div class="popup" id="modal_precios" style="min-width: 60%">
    <div id="precios_articulo"></div>
 </div>
 
@@ -314,7 +311,7 @@
    <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <input type="hidden" name="tipoalbaran" value="cliente"/>
-   <div class="popup" id="popup_tpv_opciones"/>
+   <div class="popup" id="modal_tpv_opciones"/>
       <h3>Guardar como...</h3>
       <table>
          <tr>
