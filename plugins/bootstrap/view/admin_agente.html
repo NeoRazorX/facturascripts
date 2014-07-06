@@ -65,7 +65,7 @@
             </a>
             <a id="b_alb_pro" href="{$fsc->url()}&listar=albaranes_prov#alb_pro" class="list-group-item">
                <span class="glyphicon glyphicon-list"></span>
-               &nbsp; albaranes de proveedor
+               &nbsp; Albaranes de proveedor
             </a>
             <a id="b_caja" href="{$fsc->url()}&listar=caja#caja" class="list-group-item">
                <span class="glyphicon glyphicon-euro"></span>
@@ -107,7 +107,7 @@
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar" value="Guardar">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
                      &nbsp; Guardar
                   </button>
@@ -150,11 +150,11 @@
                <thead>
                   <tr>
                      <th></th>
-                     <th align="left">código + num. proveedor</th>
-                     <th align="left">proveedor</th>
-                     <th align="left">observaciones</th>
-                     <th align="right">total</th>
-                     <th align="right">fecha</th>
+                     <th align="left">Código + Núm. Proveedor</th>
+                     <th align="left">Proveedor</th>
+                     <th align="left">Observaciones</th>
+                     <th align="right">Total</th>
+                     <th align="right">Fecha</th>
                   </tr>
                </thead>
                {loop="$fsc->listado"}

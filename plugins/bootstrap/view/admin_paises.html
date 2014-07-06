@@ -47,34 +47,34 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">¿Eliminar?</th>
             <th align="left">Código</th>
             <th align="left">Nombre</th>
+            <th align="left">Acciones</th>
          </tr>
       </thead>
       {loop="$fsc->pais->all()"}
+      <form action="{$fsc->url()}" method="post" role="form">
       <tr>
-         <td>
-            <a class="btn btn-sm btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')">
-               <span class="glyphicon glyphicon-trash"></span>
-            </a>
-         </td>
          <td>{$value->codpais}</td>
+         <td width="100%">
+            <input type="hidden" name="scodpais" value="{$value->codpais}"/>
+            <div class="input-group">
+               <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
+            </div>
+         </td>
          <td>
-            <form action="{$fsc->url()}" method="post" role="form">
-               <input type="hidden" name="scodpais" value="{$value->codpais}"/>
-               <div class="input-group">
-                  <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-floppy-disk"></span>
-                        &nbsp; Guardar
-                     </button>
-                  </span>
-               </div>
-            </form>
+            <span class="input-group-btn">
+               <button class="btn btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')" value="Eliminar" title="Eliminar">
+                  <span class="glyphicon glyphicon-trash"></span>
+               </button>
+               
+               <button class="btn btn-primary" type="submit" value="Guardar" title="Guardar">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
+            </span>
          </td>
       </tr>
+      </form>
       {/loop}
    </table>
 </div>
