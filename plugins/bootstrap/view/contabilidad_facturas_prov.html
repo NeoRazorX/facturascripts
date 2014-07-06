@@ -4,31 +4,31 @@
    $(document).ready(function() {
       document.f_custom_search.query.focus();
       $("#b_nueva").click(function() {
-         fs_show_popup('popup_nueva', 50);
+         $("#modal_nueva").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nueva">
-   <h3>Nueva factura</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nuevo_pais" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <div class="col-sm-10">
-            En lugar de crear una factura directamente, es mejor que crees un {$albaran} de cliente (que es un "borrador" de factura)
-            y después pulses el botón <b>generar factura</b>.
+<div class="modal fade" id="modal_nueva">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Nueva factura</h4>
+         </div>
+         <div class="modal-body">
+            En lugar de crear una factura directamente, es mejor que crees un {$albaran} de cliente (que es un "borrador" de factura) y después pulses el botón <b>generar factura</b>.
             <br/><br/>
             Trabajar con {$albaranes} es más cómodo porque puedes modificarlos e incluso agruparlos en una sola factura.
          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" href="index.php?page=general_nuevo_albaran" value="Crear un {$albaran}" title="Crear un {$albaran}">
+         <div class="modal-footer">
+            <button class="btn btn-sm btn-primary pull-right" href="index.php?page=general_nuevo_albaran" title="Crear un {$albaran}">
                <span class="glyphicon glyphicon-plus"></span>
                &nbsp; Crear un {$albaran}
             </button>
-          </div>
+         </div>
       </div>
-   </form>
+   </div>
 </div>
 
 {if condition="$fsc->query!=''"}

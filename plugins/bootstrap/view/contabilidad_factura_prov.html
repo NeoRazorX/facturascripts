@@ -5,33 +5,38 @@
    $(document).ready(function() {
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_eliminar', 60);
+         $("#modal_eliminar").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_eliminar">
-   <h3>Eliminar factura</h3>
-   <form class="form-horizontal" class="form" role="form" name="f_nuevo_pais" action ="{$fsc->url()}" method="POST">
-      <div class="form-group">
-         <div class="col-sm-10">
-            {if condition="$fsc->factura->idasiento"}
-               <ul>
-                  <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
-               </ul>
-            {/if}
-            ¿Realmente desea eliminar esta factura?
+<div class="modal fade" id="modal_eliminar">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Eliminar factura</h4>
          </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}" value="Eliminar" title="Eliminar">
-               <span class="glyphicon glyphicon-minus"></span>
+         <div class="modal-body">
+            <div class="form-group">
+               <div class="col-sm-12">
+                  {if condition="$fsc->factura->idasiento"}
+                  <ul>
+                     <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
+                  </ul>
+                  {/if}
+                  ¿Realmente desea eliminar esta factura?
+               </div>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <a class="btn btn-sm btn-danger" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}" title="Eliminar">
+               <span class="glyphicon glyphicon-trash"></span>
                &nbsp; Eliminar
-            </button>
-          </div>
-      </div>
-   </form>
+            </a>
+         </div>
+       </div>
+   </div>
 </div>
 
 <form action="{$fsc->factura->url()}" method="post">
