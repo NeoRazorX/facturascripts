@@ -81,19 +81,19 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      CIF/NIF:
                      <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Administrador:
                      <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <a href="{$fsc->pais->url()}">País</a>:
                      <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
@@ -101,40 +101,40 @@
                         {/loop}
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Provincia:
                      <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Ciudad:
                      <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Dirección:
                      <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Código Postal:
                      <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Teléfono:
                      <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Fax:
                      <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Web:
                      <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar
-              </button>
+               <div class="panel-footer text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar
+                  </button>
                </div>
             </div>
             
@@ -143,11 +143,11 @@
                   <h3 class="panel-title">Email</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <label>Email:</label>
                      <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <label>Contraseña:</label>
                      <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
                   </div>
@@ -156,11 +156,11 @@
                      <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
                   </div>
                </div>
-               <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar
-              </button>
+               <div class="panel-footer text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar
+                  </button>
                </div>
             </div>
             
@@ -169,32 +169,35 @@
                   <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena estos datos</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <label>Host:</label>
                      <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-2">
                      <label>Puerto:</label>
                      <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-4">
                      <label>Encriptación:</label>
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
                         <option value="tls"{if condition="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <label>Usuario:</label>
                      <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
                   </div>
+                  <div class="col-lg-6">
+                     <br/>
+                     <a href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
+                  </div>
                </div>
-               <div class="panel-footer" style="text-align: right;">
-                  <a href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
-              <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar
-              </button>
+               <div class="panel-footer text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar
+                  </button>
                </div>
             </div>
             
@@ -203,7 +206,7 @@
                   <h3 class="panel-title">Facturación</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group">
+                  <div class="form-group col-lg-3">
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control">
                      {loop="$fsc->ejercicio->all()"}
@@ -211,7 +214,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-3">
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
@@ -219,7 +222,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Forma de pago:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
@@ -227,7 +230,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Divisa:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
@@ -235,7 +238,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
@@ -247,18 +250,18 @@
                      Pie de página de la factura:
                      <input class="form-control" type="text" name="pie_factura" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
                   </div>
-                  <div class="checkbox">
+                  <div class="form-group col-lg-6">
                      <label>
-                        <input class="form-control" type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                        <input type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
                         Contabilidad integrada
                      </label>
                   </div>
-                  <div class="form-group">
-                 <button class="btn btn-sm btn-danger" href="#facturacion" id="b_add_logo" value="Añadir logotipo a las facturas" title="Añadir logotipo a las facturas">
-                    <span class="glyphicon glyphicon-picture"></span>
-                    Añadir logotipo a las facturas
-                 </button>
-              </div>
+                  <div class="form-group col-lg-6">
+                     <button class="btn btn-sm btn-default" id="b_add_logo">
+                        <span class="glyphicon glyphicon-picture"></span>
+                        Añadir logotipo a las facturas
+                     </button>
+                  </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
@@ -296,7 +299,7 @@
 </div>
 
 <form enctype='multipart/form-data' action="{$fsc->url()}#facturacion" method="post">
-   <input class='form-control' type='hidden' name='logo' value='TRUE'/>
+   <input type='hidden' name='logo' value='TRUE'/>
    <div class="modal fade" id="modal_logo">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -321,18 +324,14 @@
                </div>
             </div>
             <div class="modal-footer">
-            <div style="text-align: left;">
-              <button class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_logo=TRUE#facturacion" value="Eliminar" title="Eliminar">
-                 <span class="glyphicon glyphicon-minus"></span>
-                 &nbsp; Eliminar
-              </button>
-            </div>
-            <div style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar
-              </button>
-            </div>
+               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_logo=TRUE#facturacion">
+                  <span class="glyphicon glyphicon-trash"></span>
+                  &nbsp; Eliminar
+               </a>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
             </div>
          </div>
       </div>

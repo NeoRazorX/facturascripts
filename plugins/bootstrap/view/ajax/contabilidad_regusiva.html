@@ -1,0 +1,40 @@
+{if condition="$fsc->get_errors()"}
+<div class="error">
+   <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+</div>
+{/if}
+
+{if condition="$fsc->get_messages()"}
+<div class="message">
+   <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+</div>
+{/if}
+
+<br/>
+
+<table class="list">
+   <tr>
+      <th align='left'>Subcuenta</th>
+      <th align='right'>Debe</th>
+      <th align='right'>Haber</th>
+   </tr>
+   {loop="$fsc->aux_regiva"}
+   <tr>
+      <td>{$value['subcuenta']}</td>
+      <td align='right'>{$fsc->show_precio($value['debe'])}</td>
+      <td align='right'>{$fsc->show_precio($value['haber'])}</td>
+   </tr>
+   {else}
+   <tr>
+      <td colspan="3">Sin resultados.</td>
+   </tr>
+   {/loop}
+</table>
+
+<table width="100%">
+   <tr>
+      <td align="right">
+         <input class="submit" type="submit" value="Guardar" onclick="guardar_regiva();return false;"/>
+      </td>
+   </tr>
+</table>

@@ -1,0 +1,43 @@
+<!--{$fsc->query}-->
+
+{if condition="$fsc->get_errors()"}
+   <div class="error">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="message">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
+{if condition="$fsc->results"}
+<table class="list">
+   <tr>
+      <th align="left">Referencia + Descripción</th>
+      <th align="left">Cod. equivalencia</th>
+      <th align="right">PVP</th>
+      <th align="right">PVP+IVA</th>
+      <th align="right">Stock</th>
+   </tr>
+   {loop="$fsc->results"}
+   <tr>
+      {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
+         <a class="link" href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
+         <a class="link" href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+            {$value->referencia}</a> {$value->descripcion}
+      </td>
+      <td>{$value->equivalencia}</td>
+      <td align="right">
+         <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span>
+      </td>
+      <td align="right">
+         <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
+      </td>
+      <td align="right">{$value->stockfis}</td>
+   </tr>
+   {/loop}
+</table>
+{else}
+   <div class="message">Sin resultados.</div>
+{/if}

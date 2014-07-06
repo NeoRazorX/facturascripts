@@ -60,16 +60,13 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Ejercicio</th>
             <th align="left">Descripción</th>
             <th align="left">Cuenta especial</th>
+            <th align="left">Ejercicio</th>
             <th></th>
          </tr>
       </thead>
       <tr>
-         <td>
-            <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a>
-         </td>
          <td>
             <input class="form-control" type="text" name="descripcion" value="{$fsc->cuenta->descripcion}" autocomplete="off"/>
          </td>
@@ -82,6 +79,11 @@
                </option>
                {/loop}
             </select>
+         </td>
+         <td>
+            <div class="form-control">
+               <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a>
+            </div>
          </td>
          <td align="right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">

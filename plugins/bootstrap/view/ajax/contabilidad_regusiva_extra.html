@@ -1,0 +1,54 @@
+{if condition="$fsc->regiva"}
+   <h1>Regularización del periódo {$fsc->regiva->periodo}</h1>
+   <table class="list">
+      <tr>
+         <th align="left">Ejercicio</th>
+         <th align="left">Periódo</th>
+         <th>Fecha de inicio</th>
+         <th>Fecha fin</th>
+      </tr>
+      <tr>
+         <td><a class="link" href="{$fsc->regiva->ejercicio_url()}">{$fsc->regiva->codejercicio}</a></td>
+         <td>{$fsc->regiva->periodo}</td>
+         <td align="center">{$fsc->regiva->fechainicio}</td>
+         <td align="center">{$fsc->regiva->fechafin}</td>
+      </tr>
+   </table>
+   
+   <br/><br/>
+   
+   <center>
+      <a class="link" target="_blank" href="{$fsc->regiva->asiento_url()}">Asiento</a>
+      {$fsc->regiva->fechaasiento}
+   </center>
+   
+   <table class="list">
+      <tr>
+         <th align="left">Subcuenta</th>
+         <th align="right">Debe</th>
+         <th align="right">Haber</th>
+      </tr>
+      {loop="$fsc->regiva->get_partidas()"}
+      <tr>
+         <td>
+            <a class="link" href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a>
+         </td>
+         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="3">Sin datos.</td>
+      </tr>
+      {/loop}
+   </table>
+   
+   <br/><br/>
+   
+   <a class="delete" href="{$fsc->url()}&delete={$fsc->regiva->idregiva}">
+      <img src="view/img/trash.png"/>
+      eliminar
+   </a>
+{else}
+   <h1>Regularización no encontrada</h1>
+{/if}

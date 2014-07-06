@@ -36,7 +36,9 @@
                <input class="form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
             </td>
             <td align="center">
-               <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+               <div class="form-control">
+                  <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
+               </div>
             </td>
             <td align="right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</td>
             <td align="right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</td>
@@ -115,7 +117,7 @@
          {/loop}
          <tr>
             <td colspan="11" class="bg-success">
-               <a href="index.php?page=contabilidad_nuevo_asiento" style="display: block; text-align: center;">Nuevo asiento</a>
+               <a href="index.php?page=contabilidad_nuevo_asiento" style="display: block; text-align: center;">Nuevo Asiento...</a>
             </td>
          </tr>
       </table>

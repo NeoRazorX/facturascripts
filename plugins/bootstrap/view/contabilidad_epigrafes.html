@@ -32,34 +32,37 @@
 </script>
 
 {if condition="$fsc->grupo"}
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
+<form action="{$fsc->grupo->url()}" method="post" class="form" role="form">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Descripción</th>
+               <th align="left">Ejercicio</th>
+               <th></th>
+            </tr>
+         </thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Descripción</th>
-         </tr>
-      </thead>
-      <tr>
-         <td>
-            <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
-         </td>
-         <td>
-            <form action="{$fsc->grupo->url()}" method="post" class="form" role="form">
-               <div class="input-group">
+            <td>
+               <div class="form-group">
                   <input class="form-control" type="text" name="descripcion" value="{$fsc->grupo->descripcion}" autocomplete="off"/>
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-floppy-disk"></span>
-                        &nbsp; Guardar
-                     </button>
-                  </span>
                </div>
-            </form>
-         </td>
-      </tr>
-   </table>
-</div>
+            </td>
+            <td>
+               <div class="form-control">
+                  <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->grupo->codejercicio}">{$fsc->grupo->codejercicio}</a>
+               </div>
+            </td>
+            <td align="right">
+               <button class="btn btn-sm btn-primary" type="submit">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </td>
+         </tr>
+      </table>
+   </div>
+</form>
 
 <div class="table-responsive">
    <table class="table table-hover">
@@ -83,34 +86,37 @@
    </table>
 </div>
 {elseif condition="$fsc->epigrafe"}
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
+<form action="{$fsc->epigrafe->url()}" method="post" class="form">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Descripción</th>
+               <th align="left">Ejercicio</th>
+               <th></th>
+            </tr>
+         </thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Descripción</th>
-         </tr>
-      </thead>
-      <tr>
-         <td>
-            <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
-         </td>
-         <td>
-            <form action="{$fsc->epigrafe->url()}" method="post" class="form">
-               <div class="input-group">
+            <td>
+               <div class="form-group">
                   <input class="form-control" type="text" name="descripcion" value="{$fsc->epigrafe->descripcion}" autocomplete="off"/>
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-floppy-disk"></span>
-                        &nbsp; Guardar
-                     </button>
-                  </span>
                </div>
-            </form>
-         </td>
-      </tr>
-   </table>
-</div>
+            </td>
+            <td>
+               <div class="form-control">
+                  <a href="index.php?page=contabilidad_ejercicio&cod={$fsc->epigrafe->codejercicio}">{$fsc->epigrafe->codejercicio}</a>
+               </div>
+            </td>
+            <td align="right">
+               <button class="btn btn-sm btn-primary" type="submit">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </td>
+         </tr>
+      </table>
+   </div>
+</form>
 
 <div class="table-responsive">
    <table class="table table-hover">

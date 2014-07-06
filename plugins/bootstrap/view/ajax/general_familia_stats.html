@@ -1,0 +1,43 @@
+{if condition="$fsc->familia"}
+   <h1>Estadísticas</h1>
+   <table class="list">
+      <tr>
+         <th>Artículos</th>
+         <th>En stock</th>
+         <th>Públicos</th>
+         <th>Bloqueados</th>
+         <th>Último artículo modificado</th>
+      </tr>
+      <tr>
+         <td align="center">{$fsc->familia->stats['articulos']}</td>
+         <td align="center">{$fsc->familia->stats['con_stock']}</td>
+         <td align="center">{$fsc->familia->stats['publicos']}</td>
+         <td align="center">{$fsc->familia->stats['bloqueados']}</td>
+         <td align="center">{$fsc->familia->stats['factualizado']}</td>
+      </tr>
+   </table>
+   <br/><br/>
+   <div class="grupo">
+      <h2>Proveedores:</h2>
+      <table class="list">
+         <tr>
+            <th align="left">Código</th>
+            <th align="left">Proveedor</th>
+            <th>Teléfono 1</th>
+            <th>Teléfono 2</th>
+         </tr>
+         {loop="$fsc->familia->proveedores()"}
+         <tr>
+            <td><a class="link" href="{$value->url()}">{$value->codproveedor}</a></td>
+            <td>{$value->nombre}</td>
+            <td>{$value->telefono1}</td>
+            <td>{$value->telefono2}</td>
+         </tr>
+         {else}
+         <tr>
+            <td colspan="4">Sin proveedores.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+{/if}
