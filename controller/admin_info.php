@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_printer.php';
+require_model('fs_var.php');
 
 class admin_info extends fs_controller
 {
@@ -28,8 +29,27 @@ class admin_info extends fs_controller
    
    protected function process()
    {
-      $this->buttons[] = new fs_button_img('b_clean_cache', 'limpiar la cache', 'trash.png',
+      $fsvar = new fs_var();
+      $fv0 = $fsvar->multi_get( array('cron_lock', 'cron_error', 'cron_exists') );
+      
+      if(!$fv0['cron_exists'])
+      {
+         $this->new_advice('Nunca se ha ejecutado el cron, te perderás algunas '
+                 . 'características interesantes de FacturaScripts.');
+      }
+      else if($fv0['cron_error'])
+      {
+         $this->new_error_msg('Parece que ha habido un error con el cron.');
+      }
+      else if($fv0['cron_lock'])
+      {
+         $this->new_advice('Se está ejecutando el cron.');
+      }
+      else
+      {
+         $this->buttons[] = new fs_button_img('b_clean_cache', 'limpiar la cache', 'trash.png',
               $this->url()."&clean_cache=TRUE", TRUE);
+      }
       
       if( isset($_GET['clean_cache']) )
       {
@@ -105,5 +125,3 @@ class admin_info extends fs_controller
       return $this->db->get_locks();
    }
 }
-
-?>

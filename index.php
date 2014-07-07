@@ -22,7 +22,9 @@
 date_default_timezone_set('Europe/Madrid');
 
 if( !file_exists('config.php') )
+{
    include('view/no_config.html');
+}
 else
 {
    /// cargamos las constantes de configuración

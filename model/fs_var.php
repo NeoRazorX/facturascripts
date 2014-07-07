@@ -48,11 +48,29 @@ class fs_var extends fs_model
       return '';
    }
    
+   /**
+    * Devuelve la variable $cod o FALSE en caso de que no se encuentre.
+    * @param type $cod
+    * @return \fs_var|boolean
+    */
+   public function get($cod)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($cod).";");
+      if($data)
+      {
+         return new fs_var($data[0]);
+      }
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( isset($this->name) )
+      {
          return $this->db->select("SELECT * FROM ".$this->table_name.
                  " WHERE name = ".$this->var2str($this->name).";");
+      }
       else
          return FALSE;
    }
@@ -60,9 +78,13 @@ class fs_var extends fs_model
    public function test()
    {
       if( is_null($this->name) )
+      {
          return FALSE;
+      }
       else if( strlen($this->name) > 1 AND strlen($this->name) < 20  )
+      {
          return TRUE;
+      }
       else
          return FALSE;
    }
@@ -71,10 +93,9 @@ class fs_var extends fs_model
    {
       if( $this->test() )
       {
+         $comillas = '';
          if( strtolower(FS_DB_TYPE) == 'mysql' )
             $comillas = '`';
-         else
-            $comillas = '';
          
          if( $this->exists() )
          {
@@ -86,6 +107,7 @@ class fs_var extends fs_model
             $sql = "INSERT INTO ".$this->table_name." (name,".$comillas."varchar".$comillas.") VALUES
                (".$this->var2str($this->name).",".$this->var2str($this->varchar).");";
          }
+         
          return $this->db->exec($sql);
       }
       else
@@ -94,8 +116,7 @@ class fs_var extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-                 " WHERE name = ".$this->var2str($this->name).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
    }
    
    public function all()
@@ -110,6 +131,14 @@ class fs_var extends fs_model
       return $vlist;
    }
    
+   /**
+    * Devuelve un array con los resultados para cada clave, es decir,
+    * un fs_var si lo encuentra o FALSE en caso contrario.
+    * Cada objeto se encuentra en la posición del array correspondiente a su clave,
+    * es decir, el objeto fs_var de nombre1 estará en $resultado['nombre1'].
+    * @param type $names
+    * @return \fs_var
+    */
    public function multi_get($names)
    {
       $vlist = array();
@@ -127,11 +156,17 @@ class fs_var extends fs_model
       if($vars)
       {
          foreach($vars as $v)
-            $vlist[] = new fs_var($v);
+            $vlist[$v['name']] = new fs_var($v);
       }
+      
       return $vlist;
    }
    
+   /**
+    * Guarda en la base de datos un array simple, es decir, de una dimensión.
+    * @param type $data
+    * @return boolean
+    */
    public function multi_save($data)
    {
       $done = TRUE;

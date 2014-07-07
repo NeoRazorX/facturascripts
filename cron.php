@@ -44,79 +44,128 @@ require_model('albaran_proveedor.php');
 require_model('articulo.php');
 require_model('asiento.php');
 require_model('empresa.php');
+require_model('fs_var.php');
 
 require_once 'extras/libromayor.php';
 require_once 'extras/inventarios_balances.php';
 
 if( $db->connect() )
 {
-   /// establecemos los elementos por defecto
-   $fs_default_items = new fs_default_items();
-   $empresa = new empresa();
-   $fs_default_items->set_codalmacen( $empresa->codalmacen );
-   $fs_default_items->set_coddivisa( $empresa->coddivisa );
-   $fs_default_items->set_codejercicio( $empresa->codejercicio );
-   $fs_default_items->set_codpago( $empresa->codpago );
-   $fs_default_items->set_codpais( $empresa->codpais );
-   $fs_default_items->set_codserie( $empresa->codserie );
+   $fsvar = new fs_var();
+   $fv0 = $fsvar->get('cron_lock');
    
-   $alb_cli = new albaran_cliente();
-   echo "Ejecutando tareas para los ".FS_ALBARANES." de cliente...\n";
-   $alb_cli->cron_job();
-   
-   $alb_pro = new albaran_proveedor();
-   echo "Ejecutando tareas para los ".FS_ALBARANES." de proveedor...\n";
-   $alb_pro->cron_job();
-   
-   $articulo = new articulo();
-   echo "Ejecutando tareas para los artículos...";
-   $articulo->cron_job();
-   
-   $asiento = new asiento();
-   echo "\nEjecutando tareas para los asientos...\n";
-   $asiento->cron_job();
-   
-   $libro = new libro_mayor();
-   echo "Generamos el libro mayor para cada subcuenta y el libro diario para cada ejercicio...";
-   $libro->cron_job();
-   
-   $inventarios_balances = new inventarios_balances();
-   echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...";
-   $inventarios_balances->cron_job();
-   
-   
-   /*
-    * Ahora ejecutamos el cron de cada plugin que tenga cron y esté activado
-    */
-   if( file_exists('tmp/enabled_plugins') )
+   if($fv0)
    {
-      foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
+      echo "ERROR: Ya hay un cron en ejecución. Si crees que es un error,"
+      . " elimina la entrada cron_lock en la tabla fs_vars de la base de datos.";
+      
+      /// creamos una entrada de error
+      $fv1 = $fsvar->get('cron_error');
+      if(!$fv1)
       {
-         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+         $fv1 = new fs_var();
+         $fv1->name = 'cron_error';
+         $fv1->varchar = 'TRUE';
+         $fv1->save();
+      }
+   }
+   else
+   {
+      /**
+       * He de tectado que a veces, con el plugin kiwimaru,
+       * el proceso cron tarda más de una hora, y por tanto se encadenan varios
+       * procesos a la vez. Para evitar esto, uso la entrada cron_lock.
+       */
+      $fv0 = new fs_var();
+      $fv0->name = 'cron_lock';
+      $fv0->varchar = 'TRUE';
+      $fv0->save();
+      
+      
+      /// uso la entrada cron_exists para saber si alguna vez se ha ejecutado el cron
+      $fv2 = $fsvar->get('cron_exists');
+      if(!$fv2)
+      {
+         $fv2 = new fs_var();
+         $fv2->name = 'cron_exists';
+         $fv2->varchar = 'TRUE';
+         $fv2->save();
+      }
+      
+      
+      /// establecemos los elementos por defecto
+      $fs_default_items = new fs_default_items();
+      $empresa = new empresa();
+      $fs_default_items->set_codalmacen( $empresa->codalmacen );
+      $fs_default_items->set_coddivisa( $empresa->coddivisa );
+      $fs_default_items->set_codejercicio( $empresa->codejercicio );
+      $fs_default_items->set_codpago( $empresa->codpago );
+      $fs_default_items->set_codpais( $empresa->codpais );
+      $fs_default_items->set_codserie( $empresa->codserie );
+      
+      $alb_cli = new albaran_cliente();
+      echo "Ejecutando tareas para los ".FS_ALBARANES." de cliente...\n";
+      $alb_cli->cron_job();
+      
+      $alb_pro = new albaran_proveedor();
+      echo "Ejecutando tareas para los ".FS_ALBARANES." de proveedor...\n";
+      $alb_pro->cron_job();
+      
+      $articulo = new articulo();
+      echo "Ejecutando tareas para los artículos...";
+      $articulo->cron_job();
+      
+      $asiento = new asiento();
+      echo "\nEjecutando tareas para los asientos...\n";
+      $asiento->cron_job();
+      
+      $libro = new libro_mayor();
+      echo "Generamos el libro mayor para cada subcuenta y el libro diario para cada ejercicio...";
+      $libro->cron_job();
+      
+      $inventarios_balances = new inventarios_balances();
+      echo "\nGeneramos el libro de inventarios y balances para cada ejercicio...";
+      $inventarios_balances->cron_job();
+      
+      
+      /*
+       * Ahora ejecutamos el cron de cada plugin que tenga cron y esté activado
+       */
+      if( file_exists('tmp/enabled_plugins') )
+      {
+         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
          {
-            if( file_exists('plugins/'.$f) )
+            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {
-               if( file_exists('plugins/'.$f.'/cron.php') )
+               if( file_exists('plugins/'.$f) )
                {
-                  echo "\n\n***********************\nEjecutamos el cron.php del plugin ".$f."\n";
-                  
-                  include 'plugins/'.$f.'/cron.php';
-                  
-                  echo "\n***********************\n";
+                  if( file_exists('plugins/'.$f.'/cron.php') )
+                  {
+                     echo "\n\n***********************\nEjecutamos el cron.php del plugin ".$f."\n";
+                     
+                     include 'plugins/'.$f.'/cron.php';
+                     
+                     echo "\n***********************\n";
+                  }
+               }
+               else
+               {
+                  unlink('tmp/enabled_plugins/'.$f);
                }
             }
-            else
-               unlink('tmp/enabled_plugins/'.$f);
          }
       }
+      
+      /// Eliminamos la variable cron_lock puesto que ya hemos terminado
+      $fv0->delete();
    }
    
    $db->close();
 }
 else
+{
    echo "¡Imposible conectar a la base de datos!\n";
+}
 
 $tiempo = explode(' ', microtime());
 echo "\nTiempo de ejecución: ".number_format($tiempo[1] + $tiempo[0] - $uptime, 3)." s\n";
-
-?>
