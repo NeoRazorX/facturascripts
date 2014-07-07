@@ -282,27 +282,42 @@
    });
 </script>
 
-<div class="popup" id="modal_new_line" style="min-width: 70%">
-   <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h3>Buscar artículos</h3>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40" autocomplete="off"/>
-         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
-            <option value="">Todas las familias</option>
-            <option value="">------</option>
-         {loop="$fsc->familia->all()"}
-            <option value="{$value->codfamilia}">{$value->descripcion}</option>
-         {/loop}
-         </select>
-         <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
-         <label for="cb_con_stock">Sólo con stock</label>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
+<div class="modal fade" id="modal_new_line">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar artículos</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                     <option value="">Todas las familias</option>
+                     <option value="">------</option>
+                     {loop="$fsc->familia->all()"}
+                     <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+                  <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                  <label for="cb_con_stock">Sólo con stock</label>
+               </div>
+               <div class="form-group" id="search_results">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="search_results"></div>
+   </div>
 </div>
 
-<div class="popup" id="modal_precios" style="min-width: 60%">
+<div class="modal fade" id="modal_precios">
    <div id="precios_articulo"></div>
 </div>
 
@@ -330,7 +345,7 @@
          </tr>
          <tr>
             <td align="right">Fecha:</td>
-            <td><input class="datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
+            <td><input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
             <td align="right">Hora:</td>
             <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
          </tr>

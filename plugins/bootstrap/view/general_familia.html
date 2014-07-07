@@ -33,75 +33,99 @@
    });
 </script>
 
-<div class="popup" id="modal_stats_familia" style="min-width: 500px;"></div>
+<div class="modal fade" id="modal_stats_familia"></div>
 
-<div class="popup" id="modal_herramientas_familia">
-   <h3>Herramientas</h3>
-   <form action="{$fsc->url()}" method="post">
-      Multiplicar precios por:
-      <input type="text" name="multiplicar" value="1" size="3"/>
-      <input class="btn btn-sm btn-primary" type="submit" value="aplicar" onclick="this.disabled=true;this.form.submit();"/>
-   </form>
+<div class="modal fade" id="modal_herramientas_familia">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Herramientas</h4>
+            </div>
+            <div class="modal-body">
+               Multiplicar precios por:
+               <input type="text" name="multiplicar" value="1" size="3"/>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Aplicar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Aplicar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
 {if condition="$fsc->pag_importar"}
-<div class="popup" id="modal_importar_familia">
-   <h3>Importar familia</h3>
-   <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
-      <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
-      <input name='archivo' type='hidden' value='TRUE'/>
-      El archivo debe estar en formato CSV: valores separados por punto y coma y sin separador de texto,
-      <br/>
-      adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
-      <br/>Adicionalmente puedes añadir la columna stock.
-      <br/>
-      Pulsa el botón exportar para ver un ejemplo.
-      <br/><br/>
-      <table width="100%">
-         <tr>
-            <td align="right">Archivo:</td>
-            <td><input name='farchivo' type='file'/></td>
-         </tr>
-         <tr>
-            <td align="right">Impuesto:</td>
-            <td>
-               <select class="form-control" name="impuesto">
-                  {loop="$fsc->impuesto->all()"}
-                  <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Sufijo para los artículos:</td>
-            <td>
-               <input name='sufijo' type='text' size="5" maxlength="5"/>
-               Se añade al final de la referencia de cada artículo.
-            </td>
-         </tr>
-         <tr>
-            <td align="right"><input id="cb_nnuevos" type="checkbox" name="nnuevos" value="TRUE"/></td>
-            <td><label for="cb_nnuevos">NO añadir artículos nuevos.</label></td>
-         </tr>
-         <tr>
-            <td align="right"><input id="cb_con_iva" type="checkbox" name="con_iva" value="TRUE"/></td>
-            <td><label for="cb_con_iva">Los precios ya llevan el IVA.</label></td>
-         </tr>
-         <tr>
-            <td align="right"><input id="cb_pvp_max" type="checkbox" name="pvp_max" value="TRUE"/></td>
-            <td><label for="cb_pvp_max">Asignar el precio máximo.</label></td>
-         </tr>
-         <tr>
-            <td align="right"><input id="cb_bloquear" type="checkbox" name="bloquear" value="TRUE"/></td>
-            <td><label for="cb_bloquear">Bloquear los artículo no actualizados.</label></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="importar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_importar_familia">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form enctype='multipart/form-data' action="{$fsc->pag_importar->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Importar familia</h4>
+            </div>
+            <div class="modal-body">
+               <input name='fam' type='hidden' value='{$fsc->familia->codfamilia}'/>
+               <input name='archivo' type='hidden' value='TRUE'/>
+               El archivo debe estar en formato CSV: valores separados por punto y coma y sin separador de texto,
+               <br/>
+               adem&aacute;s las columnas deben ir en este orden: referencia,pvp,descripcion,codigo de barras.
+               <br/>Adicionalmente puedes añadir la columna stock.
+               <br/>
+               Pulsa el botón exportar para ver un ejemplo.
+               <br/><br/>
+               <table class="table table-hover">
+                  <tr>
+                     <td align="right">Archivo:</td>
+                     <td><input name='farchivo' type='file'/></td>
+                  </tr>
+                  <tr>
+                     <td align="right">Impuesto:</td>
+                     <td>
+                        <select class="form-control" name="impuesto">
+                           {loop="$fsc->impuesto->all()"}
+                           <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                           {/loop}
+                        </select>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td align="right">Sufijo para los artículos:</td>
+                     <td>
+                        <input name='sufijo' type='text' size="5" maxlength="5"/>
+                        Se añade al final de la referencia de cada artículo.
+                     </td>
+                  </tr>
+                  <tr>
+                     <td align="right"><input id="cb_nnuevos" type="checkbox" name="nnuevos" value="TRUE"/></td>
+                     <td><label for="cb_nnuevos">NO añadir artículos nuevos.</label></td>
+                  </tr>
+                  <tr>
+                     <td align="right"><input id="cb_con_iva" type="checkbox" name="con_iva" value="TRUE"/></td>
+                     <td><label for="cb_con_iva">Los precios ya llevan el IVA.</label></td>
+                  </tr>
+                  <tr>
+                     <td align="right"><input id="cb_pvp_max" type="checkbox" name="pvp_max" value="TRUE"/></td>
+                     <td><label for="cb_pvp_max">Asignar el precio máximo.</label></td>
+                  </tr>
+                  <tr>
+                     <td align="right"><input id="cb_bloquear" type="checkbox" name="bloquear" value="TRUE"/></td>
+                     <td><label for="cb_bloquear">Bloquear los artículo no actualizados.</label></td>
+                  </tr>
+               </table>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 {/if}
 

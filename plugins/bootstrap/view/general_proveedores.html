@@ -11,57 +11,74 @@
    });
 </script>
 
-<div class="popup" id="modal_nuevo_proveedor">
-   <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
-      <h3>Nuevo proveedor</h3>
-      <table>
-         <tr>
-            <td align="right">Código:</td>
-            <td>
-               <input type="text" name="codproveedor" value="{$fsc->proveedor->get_new_codigo()}" size="6" maxlegth="6" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Nombre:</td>
-            <td><input type="text" name="nombre" value="" size="30" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">CIF/NIF:</td>
-            <td><input type="text" name="cifnif" value="" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
-            <td>
-               <select class="form-control" name="pais">
-               {loop="$fsc->pais->all()"}
-                  <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-               {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Provincia:</td>
-            <td><input type="text" name="provincia" size="15" autocomplete="off" value="{$fsc->empresa->provincia}"/></td>
-         </tr>
-         <tr>
-            <td align="right">Ciudad:</td>
-            <td><input type="text" name="ciudad" size="20" autocomplete="off" value="{$fsc->empresa->ciudad}"/></td>
-         </tr>
-         <tr>
-            <td align="right">Código Postal:</td>
-            <td><input type="text" name="codpostal" size="6" autocomplete="off" value="{$fsc->empresa->codpostal}"/></td>
-         </tr>
-         <tr>
-            <td align="right">Dirección:</td>
-            <td><input type="text" name="direccion" size="30" value="C/ " autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_nuevo_proveedor">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo proveedor</h4>
+            </div>
+            <div class="modal-body">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <tr>
+                        <td align="right">Código:</td>
+                        <td>
+                           <input type="text" name="codproveedor" value="{$fsc->proveedor->get_new_codigo()}" size="6" maxlegth="6" autocomplete="off"/>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="right">Nombre:</td>
+                        <td><input type="text" name="nombre" value="" size="30" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">CIF/NIF:</td>
+                        <td><input type="text" name="cifnif" value="" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right"><a href="{$fsc->pais->url()}">País</a>:</td>
+                        <td>
+                           <select class="form-control" name="pais">
+                           {loop="$fsc->pais->all()"}
+                              <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                           {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="right">Provincia:</td>
+                        <td><input type="text" name="provincia" size="15" autocomplete="off" value="{$fsc->empresa->provincia}"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">Ciudad:</td>
+                        <td><input type="text" name="ciudad" size="20" autocomplete="off" value="{$fsc->empresa->ciudad}"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">Código Postal:</td>
+                        <td><input type="text" name="codpostal" size="6" autocomplete="off" value="{$fsc->empresa->codpostal}"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">Dirección:</td>
+                        <td><input type="text" name="direccion" size="30" value="C/ " autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td colspan="2" align="right">
+                           <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
 {if condition="$fsc->query!=''"}

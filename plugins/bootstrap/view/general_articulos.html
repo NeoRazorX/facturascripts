@@ -31,137 +31,167 @@
    });
 </script>
 
-<div class="popup" id="modal_nuevo_articulo">
-   <h3>Nuevo artículo</h3>
-   {if condition="$fsc->familia->all()"}
-   <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
-      <div class="form-group">
-         <label for="referencia" class="col-sm-2 control-label">Referencia</label>
-         <div class="col-sm-10">
-            <input type="text" name="referencia" size="20" maxlength="18" autocomplete="off"/>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="codfamilia" class="col-sm-2 control-label"><a href="{$fsc->familia->url()}">Familia</a></label>
-         <div class="col-sm-10">
-            <select class="form-control" name="codfamilia">
-               {loop="$fsc->familia->all()"}
-                  <option value="{$value->codfamilia}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
-               {/loop}
-            </select>
-         </div>
-      </div>
-      <div class="form-group">
-         <label for="codimpuesto" class="col-sm-2 control-label"><a href="{$fsc->impuesto->url()}">IVA</a></label>
-         <div class="col-sm-10">
-            <select class="form-control" name="codimpuesto">
-               {loop="$fsc->impuesto->all()"}
-                  <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
-               {/loop}
-            </select>
-         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 text-right">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-          </div>
-      </div>
-   </form>
-   {else}
-   <div class="error">
-      No hay <a target="_blank" href="{$fsc->familia->url()}">familias</a> creadas. Debes crear al menos una.
-   </div>
-   {/if}
-</div>
-
-<div class="popup" id="modal_tarifas">
-   <h3>Tarifas</h3>
-   {loop="$fsc->tarifa->all()"}
-      <div class="grupo">
-         <form action="{$fsc->url()}" method="post">
-            <input type="hidden" name="codtarifa" value="{$value->codtarifa}"/>
-            <h2>
-               {$value->codtarifa}
-               <span>
-                  <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_tarifa={$value->codtarifa}">eliminar</a>
-                  <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-               </span>
-            </h2>
-            <div class="form-group">
-               <label for="nombre" class="col-sm-2 control-label">Nombre</label>
-               <div class="col-sm-10">
-                  <input type="text" name="nombre" value="{$value->nombre}" size="15" maxlength="50" autocomplete="off"/>
+<div class="modal fade" id="modal_nuevo_articulo">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         {if condition="$fsc->familia->all()"}
+		 <form class="form-horizontal" class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="POST">
+			 <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Nuevo artículo</h4>
+			 </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="referencia" class="col-sm-2 control-label">Referencia</label>
+                  <div class="col-sm-10">
+                     <input type="text" name="referencia" size="20" maxlength="18" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="codfamilia" class="col-sm-2 control-label"><a href="{$fsc->familia->url()}">Familia</a></label>
+                  <div class="col-sm-10">
+                     <select class="form-control" name="codfamilia">
+                        {loop="$fsc->familia->all()"}
+                           <option value="{$value->codfamilia}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="codimpuesto" class="col-sm-2 control-label"><a href="{$fsc->impuesto->url()}">IVA</a></label>
+                  <div class="col-sm-10">
+                     <select class="form-control" name="codimpuesto">
+                        {loop="$fsc->impuesto->all()"}
+                           <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                        {/loop}
+                     </select>
+                  </div>
                </div>
             </div>
-            <div class="form-group">
-               <label for="dtopor" class="col-sm-2 control-label">Descuento %</label>
-               <div class="col-sm-10">
-                  <input type="text" name="dtopor" value="{$value->dtopor()}" size="4" autocomplete="off"/>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+         {else}
+			 <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Nuevo artículo</h4>
+			 </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <div class="error">
+                     No hay <a target="_blank" href="{$fsc->familia->url()}">familias</a> creadas. Debes crear al menos una.
+                  </div>
                </div>
+         {/if}
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_tarifas">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Tarifas</h4>
+         </div>
+         <div class="modal-body">
+         {loop="$fsc->tarifa->all()"}
+            <div class="grupo">
+               <form action="{$fsc->url()}" method="post">
+                  <input type="hidden" name="codtarifa" value="{$value->codtarifa}"/>
+                  <h2>
+                     {$value->codtarifa}
+                     <span>
+                        <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_tarifa={$value->codtarifa}">Eliminar</a>
+                        <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+                     </span>
+                  </h2>
+                  <div class="form-group">
+                     <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+                     <div class="col-sm-10">
+                        <input type="text" name="nombre" value="{$value->nombre}" size="15" maxlength="50" autocomplete="off"/>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="dtopor" class="col-sm-2 control-label">Descuento %</label>
+                     <div class="col-sm-10">
+                        <input type="text" name="dtopor" value="{$value->dtopor()}" size="4" autocomplete="off"/>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         {/loop}
+            <div class="grupo_n">
+               <form name="f_nueva_tarifa" action="{$fsc->url()}" method="post">
+                  <h2>
+                     Nueva:
+                     <span>
+                        <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+                     </span>
+                  </h2>
+                  <div class="form-group">
+                     <label for="codtarifa" class="col-sm-2 control-label">Código</label>
+                     <div class="col-sm-10">
+                        <input type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" size="6" maxlength="6" autocomplete="off"/>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+                     <div class="col-sm-10">
+                        <input type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="dtopor" class="col-sm-2 control-label">Descuento %</label>
+                     <div class="col-sm-10">
+                        <input type="text" name="dtopor" value="0" size="4" autocomplete="off"/>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_modificar_iva">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Modificar IVA</h4>
+            </div>
+            <div class="modal-body">
+               Mover los artículos con
+               <select class="form-control" name="codimpuesto">
+                  {loop="$fsc->impuesto->all()"}
+                     <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
+               a
+               <select class="form-control" name="codimpuesto2">
+                  {loop="$fsc->impuesto->all()"}
+                     <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/loop}
+               </select>
+               <br/>
+               <input type="checkbox" id="cb_mantener" name="mantener" value="TRUE"/>
+               <label for="cb_mantener">Mantener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Mover">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Mover
+                </button>
             </div>
          </form>
       </div>
-   {/loop}
-   <div class="grupo_n">
-      <form name="f_nueva_tarifa" action="{$fsc->url()}" method="post">
-         <h2>
-            Nueva:
-            <span>
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </span>
-         </h2>
-         <div class="form-group">
-            <label for="codtarifa" class="col-sm-2 control-label">Código</label>
-            <div class="col-sm-10">
-               <input type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" size="6" maxlength="6" autocomplete="off"/>
-            </div>
-         </div>
-         <div class="form-group">
-            <label for="nombre" class="col-sm-2 control-label">Nombre</label>
-            <div class="col-sm-10">
-               <input type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
-            </div>
-         </div>
-         <div class="form-group">
-            <label for="dtopor" class="col-sm-2 control-label">Descuento %</label>
-            <div class="col-sm-10">
-               <input type="text" name="dtopor" value="0" size="4" autocomplete="off"/>
-            </div>
-         </div>
-      </form>
    </div>
-</div>
-
-<div class="popup" id="modal_modificar_iva">
-   <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="mod_iva" value="TRUE"/>
-      <h3>Modificar IVA</h3>
-      Mover los artículos con
-      <select class="form-control" name="codimpuesto">
-         {loop="$fsc->impuesto->all()"}
-            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-         {/loop}
-      </select>
-      a
-      <select class="form-control" name="codimpuesto2">
-         {loop="$fsc->impuesto->all()"}
-            <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-         {/loop}
-      </select>
-      <br/>
-      <input type="checkbox" id="cb_mantener" name="mantener" value="TRUE"/>
-      <label for="cb_mantener">Mantener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
-      <table width="100%">
-         <tr>
-            <td colspan="2" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="mover" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
 </div>
 
 {if condition="$fsc->query!=''"}

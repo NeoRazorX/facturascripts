@@ -138,77 +138,110 @@
 </script>
 {/if}
 
-<div class="popup" id="modal_nueva_cuenta">
-   <h3>Nueva cuenta bancaria:</h3>
-   <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post">
-      <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-      <table>
-         <tr>
-            <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion" size="40" placeholder="ej: Cuenta principal" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right"><a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:</td>
-            <td><input type="text" name="iban" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Calcular IBAN:</td>
-            <td><input type="text" name="ciban" size="40" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/></td>
-         </tr>
-      </table>
-      <div style="text-align: right;">
-         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+<div class="modal fade" id="modal_nueva_cuenta">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva cuenta bancaria</h4>
+            </div>
+            <div class="modal-body">
+               <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <tr>
+                        <td align="right">Descripción:</td>
+                        <td><input type="text" name="descripcion" size="40" placeholder="ej: Cuenta principal" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right"><a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:</td>
+                        <td><input type="text" name="iban" size="40" maxlength="28" placeholder="ej: ES12345678901234567890123456" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">Calcular IBAN:</td>
+                        <td><input type="text" name="ciban" size="40" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/></td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
+   </div>
 </div>
 
-<div class="popup" id="modal_nueva_direccion">
-   <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
-      <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-      <input type="hidden" name="coddir" value=""/>
-      <h3>Nueva dirección:</h3>
-      <div class="form-group">
-         <a href="">País</a>:
-         <select class="form-control" name="pais">
-            {loop="$fsc->pais->all()"}
-            <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-            {/loop}
-         </select>
+<div class="modal fade" id="modal_nueva_direccion">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva dirección</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
+                  <input type="hidden" name="coddir" value=""/>
+                  
+                  <label for="email" class="col-sm-2 control-label">Email del cliente</label>
+                  <div class="col-sm-10">
+                     <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <a href="">País</a>:
+                  <select class="form-control" name="pais">
+                     {loop="$fsc->pais->all()"}
+                     <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Provincia:
+                  <input type="text" name="provincia" size="15"/>
+               </div>
+               <div class="form-group">
+                  Ciudad:
+                  <input type="text" name="ciudad" size="20"/>
+               </div>
+               <div class="form-group">
+                  Código Postal:
+                  <input type="text" name="codpostal" size="6" autocomplete="off"/>
+               </div>
+               <br/>
+               <div class="form-group">
+                  Dirección:
+                  <input type="text" name="direccion" size="60" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Apartado:
+                  <input type="text" name="apartado" size="6" autocomplete="off"/>
+               </div>
+               <br/>
+               <div class="form-group">
+                  <input type="checkbox" name="direccionppal" id="ndireccionppal" value="TRUE" checked="checked"/>
+                  <label for="ndireccionppal">Dirección principal</label>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input type="text" name="descripcion" size="40" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
       </div>
-      <div class="form-group">
-         Provincia:
-         <input type="text" name="provincia" size="15"/>
-      </div>
-      <div class="form-group">
-         Ciudad:
-         <input type="text" name="ciudad" size="20"/>
-      </div>
-      <div class="form-group">
-         Código Postal:
-         <input type="text" name="codpostal" size="6" autocomplete="off"/>
-      </div>
-      <br/>
-      <div class="form-group">
-         Dirección:
-         <input type="text" name="direccion" size="60" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-         Apartado:
-         <input type="text" name="apartado" size="6" autocomplete="off"/>
-      </div>
-      <br/>
-      <div class="form-group">
-         <input type="checkbox" name="direccionppal" id="ndireccionppal" value="TRUE" checked="checked"/>
-         <label for="ndireccionppal">Dirección principal</label>
-      </div>
-      <div class="form-group">
-         Descripción:
-         <input type="text" name="descripcion" size="40" autocomplete="off"/>
-      </div>
-      <div style="text-align: right;">
-         <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-      </div>
-   </form>
+   </div>
 </div>
 
 <div class="well well-sm">
@@ -436,16 +469,30 @@
    </div>
 </div>
 
-<div class="popup" id="modal_buscar_lineas" style="min-width: 75%">
-   <form id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-      <h3>Buscar en las líneas de los {$albaranes}</h3>
-      <div style="text-align: center;">
-         <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-         <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
+<div class="modal fade" id="modal_buscar_lineas">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action ="{$fsc->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar en las líneas</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="text" name="buscar_lineas" size="40" autocomplete="off"/>
+               </div>
+               <div class="form-group" id="search_results">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="search_results"></div>
+   </div>
 </div>
 
 <div class="well well-sm">
