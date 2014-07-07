@@ -25,7 +25,7 @@ class presupuestos_cliente extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Presupuestos cliente', 'general');
+      parent::__construct(__CLASS__, 'Presupuestos cliente', 'ventas');
    }
    
    protected function process()

@@ -27,7 +27,7 @@ class ver_pedido_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pedido...', 'general', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Pedido...', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

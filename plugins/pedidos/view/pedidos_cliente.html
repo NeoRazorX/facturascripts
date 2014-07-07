@@ -1,13 +1,15 @@
 {include="header"}
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Código + Cliente</th>
-         <th align="left">Observaciones</th>
-         <th align="right">Total</th>
-         <th align="right">Fecha</th>
-      </tr>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Código + Cliente</th>
+            <th align="left">Observaciones</th>
+            <th align="right">Total</th>
+            <th align="right">Fecha</th>
+         </tr>
+      </thead>
       {loop="$fsc->pedido->all()"}
       <tr>
          <td>

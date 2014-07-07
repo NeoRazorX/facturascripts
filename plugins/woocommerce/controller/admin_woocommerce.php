@@ -34,15 +34,16 @@ class admin_woocommerce extends fs_controller
    protected function process()
    {
       $this->mysql = new fs_mysql_x();
-      $fs_var = new fs_var();
+      
       $this->woo_setup = array(
-          'woo_server' => '',
-          'woo_port' => '',
-          'woo_dbname' => '',
-          'woo_user' => '',
-          'woo_password' => '',
-          'connected' => FALSE
+          'woo_server' => FALSE,
+          'woo_port' => FALSE,
+          'woo_dbname' => FALSE,
+          'woo_user' => FALSE,
+          'woo_password' => FALSE
       );
+      $fsvar = new fs_var();
+      $this->woo_setup = $fsvar->array_get($this->woo_setup);
       
       if( isset($_POST['woo_server']) )
       {
@@ -52,61 +53,30 @@ class admin_woocommerce extends fs_controller
          $this->woo_setup['woo_user'] = $_POST['woo_user'];
          $this->woo_setup['woo_password'] = $_POST['woo_password'];
          
-         if( $fs_var->multi_save($this->woo_setup) )
+         if( $fsvar->array_save($this->woo_setup) )
+         {
             $this->new_message("Datos guardados correctamente.");
+         }
          else
             $this->new_error_msg("Error al guardar los datos.");
       }
       
-      $num = 0;
-      foreach($fs_var->multi_get(array('woo_server','woo_port','woo_dbname','woo_user','woo_password')) as $fv)
-      {
-         if($fv->varchar != '')
-         {
-            if($fv->name == 'woo_server')
-            {
-               $this->woo_setup['woo_server'] = $fv->varchar;
-               $num++;
-            }
-            else if($fv->name == 'woo_port')
-            {
-               $this->woo_setup['woo_port'] = $fv->varchar;
-               $num++;
-            }
-            else if($fv->name == 'woo_dbname')
-            {
-               $this->woo_setup['woo_dbname'] = $fv->varchar;
-               $num++;
-            }
-            else if($fv->name == 'woo_user')
-            {
-               $this->woo_setup['woo_user'] = $fv->varchar;
-               $num++;
-            }
-            else if($fv->name == 'woo_password')
-            {
-               $this->woo_setup['woo_password'] = $fv->varchar;
-               $num++;
-            }
-         }
-      }
-      
-      if($num == 5)
+      if($this->woo_setup['woo_server'])
       {
          $this->mysql->connect($this->woo_setup['woo_server'], $this->woo_setup['woo_port'],
                  $this->woo_setup['woo_user'], $this->woo_setup['woo_password'], $this->woo_setup['woo_dbname']);
          
          if( $this->mysql->connected )
          {
-            $this->woo_setup['connected'] = TRUE;
-            
             if( isset($_GET['sync']) )
+            {
                $this->woo_sync();
+            }
             else
                $this->buttons[] = new fs_button('b_woo_sync', 'Sincronizar', $this->url().'&sync=TRUE');
          }
          else
-            $this->new_error_msg('Error al conectar. '.$this->mysql->last_error());
+            $this->new_error_msg('Error al conectar.');
       }
       else
       {
@@ -114,6 +84,9 @@ class admin_woocommerce extends fs_controller
             es el plugin para wordpress que sirve para montar una pequeña tienda online.
             Introduce los datos de la base de datos de wordpress para empezar a sincronizar.');
       }
+      
+      foreach($this->mysql->errors as $e)
+         $this->new_error_msg($e);
    }
    
    private function woo_sync()
@@ -225,5 +198,3 @@ class admin_woocommerce extends fs_controller
       return $done;
    }
 }
-
-?>

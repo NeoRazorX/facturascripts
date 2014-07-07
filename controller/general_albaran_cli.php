@@ -48,7 +48,7 @@ class general_albaran_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_albaran_cli', FS_ALBARAN.' de cliente', 'general', FALSE, FALSE);
+      parent::__construct('general_albaran_cli', FS_ALBARAN.' de cliente', 'ventas', FALSE, FALSE);
    }
    
    protected function process()
@@ -970,8 +970,7 @@ class general_albaran_cli extends fs_controller
              'mail_enc' => 'ssl'
          );
          $fsvar = new fs_var();
-         foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
-            $mailop[$var->name] = $var->varchar;
+         $mailop = $fsvar->array_get($mailop);
          
          $filename = 'albaran_'.$this->albaran->codigo.'.pdf';
          $this->generar_pdf_simple($filename);

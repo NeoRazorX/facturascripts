@@ -133,7 +133,7 @@ class general_importar_familia extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_importar_familia', 'importar familia', 'general', FALSE, FALSE);
+      parent::__construct('general_importar_familia', 'importar familia', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

@@ -27,7 +27,7 @@ class ver_presupuesto_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Presupuesto', 'general', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Presupuesto', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

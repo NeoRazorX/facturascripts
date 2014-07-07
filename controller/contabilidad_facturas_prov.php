@@ -27,7 +27,7 @@ class contabilidad_facturas_prov extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('contabilidad_facturas_prov', 'Facturas de proveedor', 'contabilidad', FALSE, TRUE);
+      parent::__construct('contabilidad_facturas_prov', 'Facturas de proveedor', 'compras', FALSE, TRUE);
    }
    
    protected function process()

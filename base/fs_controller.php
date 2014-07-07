@@ -547,7 +547,7 @@ class fs_controller
       /// actualizamos los datos de la página
       foreach($this->menu as $m)
       {
-         if($m->name == $this->page->name AND ($m->version != $this->page->version OR $m->title != $this->page->title))
+         if($m->name == $this->page->name AND ($m->version != $this->page->version OR $m->title != $this->page->title OR $m->folder != $this->page->folder))
          {
             if( !$this->page->save() )
                $this->new_error_msg('Imposible actualizar los datos de esta página.');

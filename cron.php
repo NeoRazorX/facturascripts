@@ -52,46 +52,30 @@ require_once 'extras/inventarios_balances.php';
 if( $db->connect() )
 {
    $fsvar = new fs_var();
-   $fv0 = $fsvar->get('cron_lock');
+   $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
    
-   if($fv0)
+   if($cron_vars['cron_lock'])
    {
       echo "ERROR: Ya hay un cron en ejecución. Si crees que es un error,"
       . " elimina la entrada cron_lock en la tabla fs_vars de la base de datos.";
       
-      /// creamos una entrada de error
-      $fv1 = $fsvar->get('cron_error');
-      if(!$fv1)
-      {
-         $fv1 = new fs_var();
-         $fv1->name = 'cron_error';
-         $fv1->varchar = 'TRUE';
-         $fv1->save();
-      }
+      /// marcamos el error en el cron
+      $cron_vars['cron_error'] = 'TRUE';
    }
    else
    {
       /**
-       * He de tectado que a veces, con el plugin kiwimaru,
+       * He detectado que a veces, con el plugin kiwimaru,
        * el proceso cron tarda más de una hora, y por tanto se encadenan varios
        * procesos a la vez. Para evitar esto, uso la entrada cron_lock.
+       * Además uso la entrada cron_exists para marcar que alguna vez se ha ejecutado el cron,
+       * y cron_error por si hubiese algún fallo.
        */
-      $fv0 = new fs_var();
-      $fv0->name = 'cron_lock';
-      $fv0->varchar = 'TRUE';
-      $fv0->save();
+      $cron_vars['cron_lock'] = 'TRUE';
+      $cron_vars['cron_exists'] = 'TRUE';
       
-      
-      /// uso la entrada cron_exists para saber si alguna vez se ha ejecutado el cron
-      $fv2 = $fsvar->get('cron_exists');
-      if(!$fv2)
-      {
-         $fv2 = new fs_var();
-         $fv2->name = 'cron_exists';
-         $fv2->varchar = 'TRUE';
-         $fv2->save();
-      }
-      
+      /// guardamos las variables
+      $fsvar->array_save($cron_vars);
       
       /// establecemos los elementos por defecto
       $fs_default_items = new fs_default_items();
@@ -157,8 +141,11 @@ if( $db->connect() )
       }
       
       /// Eliminamos la variable cron_lock puesto que ya hemos terminado
-      $fv0->delete();
+      $cron_vars['cron_lock'] = FALSE;
    }
+   
+   /// guardamos las variables
+   $fsvar->array_save($cron_vars);
    
    $db->close();
 }

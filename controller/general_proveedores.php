@@ -29,7 +29,7 @@ class general_proveedores extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_proveedores', 'Proveedores', 'general', FALSE, TRUE);
+      parent::__construct('general_proveedores', 'Proveedores', 'compras', FALSE, TRUE);
    }
    
    protected function process()

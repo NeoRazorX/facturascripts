@@ -27,7 +27,7 @@ class contabilidad_facturas_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_facturas_cli', 'Facturas de cliente', 'contabilidad', FALSE, TRUE);
+      parent::__construct('contabilidad_facturas_cli', 'Facturas de cliente', 'ventas', FALSE, TRUE);
    }
    
    protected function process()

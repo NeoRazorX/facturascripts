@@ -218,35 +218,33 @@ class fs_mysql_x
          $this->history[] = $sql;
          
          /// desactivamos el autocommit
-         mysqli_autocommit($this->link, FALSE);
+         $this->link->autocommit(FALSE);
          
-         /// ejecutar multi-consulta
          $i = 0;
-         if( mysqli_multi_query($this->link, $sql) )
+         if( $this->link->multi_query($sql) )
          {
-            do { $i++; } while ( mysqli_more_results($this->link) AND mysqli_next_result($this->link) );
+            do { $i++; } while ($this->link->more_results() AND $this->link->next_result() );
          }
          
-         if( mysqli_errno($this->link) )
-            self::$errors[] =  'Error al ejecutar la consulta '.$i.': '.mysqli_error($this->link);
+         if( $this->link->errno )
+         {
+            $this->errors[] =  'Error al ejecutar la consulta '.$i.': '.$this->link->error;
+         }
          else
             $resultado = TRUE;
          
          if($resultado)
-            mysqli_commit($this->link);
+         {
+            $this->link->commit();
+         }
          else
-            mysqli_rollback($this->link);
+            $this->link->rollback();
          
          /// reactivamos el autocommit
-         mysqli_autocommit($this->link, TRUE);
+         $this->link->autocommit(TRUE);
       }
       
       return $resultado;
-   }
-   
-   public function last_error()
-   {
-      return mysqli_error($this->link);
    }
    
    public function lastval()
@@ -268,5 +266,3 @@ class fs_mysql_x
       return 'Y-m-d';
    }
 }
-
-?>

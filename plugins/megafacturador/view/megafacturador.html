@@ -1,13 +1,18 @@
 {include="header"}
 
-<div class="rounded" style="text-align: center; padding: 30px;">
-   <div style="display: inline-block; max-width: 50%; font-size: 20px;">
-      <p>
-         Haz clic en comenzar para facturar todos los {$albaranes} pendientes,
-         tanto de clientes como de proveedores.
-      </p>
-      <br/>
-      <a class="submit" style="padding: 10px;" href="{$fsc->url()}&start=TRUE">comenzar</a>
+<div class="container">
+   <div class="row">
+      <div class="col-lg-6 col-lg-offset-3">
+         <div class="well">
+            <p>
+               Haz clic en comenzar para facturar todos los {$albaranes} pendientes,
+               tanto de clientes como de proveedores.
+            </p>
+            <div class="text-center">
+               <a class="btn btn-sm btn-primary" href="{$fsc->url()}&start=TRUE">Comenzar</a>
+            </div>
+         </div>
+      </div>
    </div>
 </div>
 

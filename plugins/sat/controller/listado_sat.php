@@ -30,7 +30,7 @@ class listado_sat extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Sat', 'general', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Sat', 'ventas', FALSE, TRUE);
       
       /// cualquier cosa que pongas aquí se ejecutará DESPUÉS de process()
    }

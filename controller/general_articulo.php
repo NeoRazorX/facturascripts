@@ -41,7 +41,7 @@ class general_articulo extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('general_articulo', 'Articulo', 'general', FALSE, FALSE);
+      parent::__construct('general_articulo', 'Articulo', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

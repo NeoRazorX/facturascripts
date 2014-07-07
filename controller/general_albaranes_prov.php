@@ -29,7 +29,7 @@ class general_albaranes_prov extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_albaranes_prov', FS_ALBARANES.' de proveedor', 'general', FALSE, TRUE, TRUE);
+      parent::__construct('general_albaranes_prov', FS_ALBARANES.' de proveedor', 'compras', FALSE, TRUE, TRUE);
    }
    
    protected function process()

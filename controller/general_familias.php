@@ -26,7 +26,7 @@ class general_familias extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_familias', 'Familias', 'general', FALSE, TRUE);
+      parent::__construct('general_familias', 'Familias', 'ventas', FALSE, TRUE);
    }
    
    protected function process()

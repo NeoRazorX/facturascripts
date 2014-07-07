@@ -45,7 +45,7 @@ class general_cliente extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_cliente', 'Cliente', 'general', FALSE, FALSE);
+      parent::__construct('general_cliente', 'Cliente', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

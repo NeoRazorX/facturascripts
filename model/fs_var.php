@@ -132,54 +132,52 @@ class fs_var extends fs_model
    }
    
    /**
-    * Devuelve un array con los resultados para cada clave, es decir,
-    * un fs_var si lo encuentra o FALSE en caso contrario.
-    * Cada objeto se encuentra en la posición del array correspondiente a su clave,
-    * es decir, el objeto fs_var de nombre1 estará en $resultado['nombre1'].
-    * @param type $names
-    * @return \fs_var
+    * Rellena un array con los resultados de la base de datos para cada clave,
+    * es decir, apara el array('clave1' => false, 'clave2' => false) busca
+    * en la tabla las claves clave1 y clave2 y asigna los valores almacenados
+    * en la base de datos.
+    * 
+    * @param type $array
     */
-   public function multi_get($names)
+   public function array_get($array)
    {
-      $vlist = array();
-      
-      $insql = '';
-      foreach($names as $n)
+      foreach($array as $i => $value)
       {
-         if($insql == '')
-            $insql = $this->var2str($n);
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($i).";");
+         if($data)
+         {
+            $array[$i] = $data[0]['varchar'];
+         }
          else
-            $insql .= ','.$this->var2str($n);
+            $array[$i] = FALSE;
       }
       
-      $vars = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name IN (".$insql.");");
-      if($vars)
-      {
-         foreach($vars as $v)
-            $vlist[$v['name']] = new fs_var($v);
-      }
-      
-      return $vlist;
+      return $array;
    }
    
    /**
-    * Guarda en la base de datos un array simple, es decir, de una dimensión.
-    * @param type $data
-    * @return boolean
+    * Guarda en la base de datos los pares clave, valor de un array simple.
+    * 
+    * @param type $array
     */
-   public function multi_save($data)
+   public function array_save($array)
    {
       $done = TRUE;
       
-      foreach($data as $i => $value)
+      foreach($array as $i => $value)
       {
-         $var = new fs_var();
-         $var->name = $i;
-         $var->varchar = $value;
-         if( !$var->save() )
+         if($value === FALSE)
          {
-            $this->new_error_msg("Error al guardar '".$var->name."'");
-            $done = FALSE;
+            $fv0 = $this->get($i);
+            if($fv0)
+               $fv0->delete();
+         }
+         else
+         {
+            $fv0 = new fs_var( array('name' => $i, 'varchar' => $value) );
+            
+            if( !$fv0->save() )
+               $done = FALSE;
          }
       }
       

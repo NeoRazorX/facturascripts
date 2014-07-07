@@ -37,7 +37,7 @@ class contabilidad_factura_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_factura_cli', 'Factura de cliente', 'contabilidad', FALSE, FALSE);
+      parent::__construct('contabilidad_factura_cli', 'Factura de cliente', 'ventas', FALSE, FALSE);
    }
    
    protected function process()
@@ -635,8 +635,7 @@ class contabilidad_factura_cli extends fs_controller
              'mail_enc' => 'ssl'
          );
          $fsvar = new fs_var();
-         foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
-            $mailop[$var->name] = $var->varchar;
+         $mailop = $fsvar->array_get($mailop);
          
          $filename = 'factura_'.$this->factura->codigo.'.pdf';
          $this->generar_pdf('simple', $filename);

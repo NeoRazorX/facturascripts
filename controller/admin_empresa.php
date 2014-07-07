@@ -59,8 +59,7 @@ class admin_empresa extends fs_controller
           'mail_user' => ''
       );
       $fsvar = new fs_var();
-      foreach($fsvar->multi_get( array('mail_host','mail_port','mail_enc','mail_user') ) as $var)
-         $this->mail[$var->name] = $var->varchar;
+      $this->mail = $fsvar->array_get($this->mail);
       
       if( isset($_POST['nombre']) )
       {
@@ -119,8 +118,7 @@ class admin_empresa extends fs_controller
             $this->mail['mail_port'] = $_POST['mail_port'];
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
-            if( !$fsvar->multi_save($this->mail) )
-               $this->new_error_msg('Error al guardar los datos del email.');
+            $fsvar->array_save($this->mail);
          }
       }
       else if( isset($_POST['logo']) )
@@ -143,5 +141,3 @@ class admin_empresa extends fs_controller
       $this->logo = file_exists('tmp/logo.png');
    }
 }
-
-?>

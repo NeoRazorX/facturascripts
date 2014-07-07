@@ -1,34 +1,36 @@
 {include="header"}
 
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <h1>
-         Base de datos de wordpress (MySQL):
-         <span>
-            <input class="submit" type="submit" value="Guardar"/>
-         </span>
-      </h1>
-      <div class="bloque">
-         Servidor:
-         <input type="text" name="woo_server" value="{$fsc->woo_setup['woo_server']}" autocomplete="off"/>
+<div class="container">
+   <div class="row">
+      <div class="col-lg-6 col-lg-offset-3">
+         <form action="{$fsc->url()}" method="post" class="form">
+            <div class="well">
+               <h1 style="margin: 5px;">Base de datos de wordpress (MySQL):</h1>
+               <div class="form-group">
+                  Servidor:
+                  <input class="form-control" type="text" name="woo_server" value="{$fsc->woo_setup['woo_server']}" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Puerto:
+                  <input class="form-control" type="number" name="woo_port" value="{$fsc->woo_setup['woo_port']}" maxlength="5" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Base de datos:
+                  <input class="form-control" type="text" name="woo_dbname" value="{$fsc->woo_setup['woo_dbname']}" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Usuario:
+                  <input class="form-control" type="text" name="woo_user" value="{$fsc->woo_setup['woo_user']}" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Contraseña:
+                  <input class="form-control" type="password" name="woo_password" value="{$fsc->woo_setup['woo_password']}"/>
+               </div>
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
+            </div>
+         </form>
       </div>
-      <div class="bloque">
-         Puerto:
-         <input type="text" name="woo_port" value="{$fsc->woo_setup['woo_port']}" size="4" maxlength="5" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Base de datos:
-         <input type="text" name="woo_dbname" value="{$fsc->woo_setup['woo_dbname']}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Usuario:
-         <input type="text" name="woo_user" value="{$fsc->woo_setup['woo_user']}" size="10" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Contraseña:
-         <input type="password" name="woo_password" value="{$fsc->woo_setup['woo_password']}" size="10"/>
-      </div>
-   </form>
+   </div>
 </div>
 
 {include="footer"}

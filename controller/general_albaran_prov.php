@@ -43,7 +43,7 @@ class general_albaran_prov extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_albaran_prov', FS_ALBARAN.' de proveedor', 'general', FALSE, FALSE);
+      parent::__construct('general_albaran_prov', FS_ALBARAN.' de proveedor', 'compras', FALSE, FALSE);
    }
    
    protected function process()

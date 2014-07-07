@@ -25,7 +25,7 @@ class pedidos_cliente extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pedidos de cliente', 'general');
+      parent::__construct(__CLASS__, 'Pedidos de cliente', 'ventas');
    }
    
    protected function process()
