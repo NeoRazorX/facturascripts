@@ -292,7 +292,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <input type="text" name="query" size="40" autocomplete="off" autofocus />
                   <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                      <option value="">Todas las familias</option>
                      <option value="">------</option>
@@ -332,7 +332,7 @@
          <tr>
             <td align="right"><a href="{$fsc->agente->url()}">Agente</a>:</td>
             <td colspan="3">
-               <select class="form-control" name="codagente">
+               <select class="form-control" name="codagente" autofocus >
                   <option value="{$fsc->agente->codagente}">{$fsc->agente->get_fullname()}</option>
                   {if condition="$fsc->user->admin"}
                      <option value="{$fsc->agente->codagente}">-----</option>

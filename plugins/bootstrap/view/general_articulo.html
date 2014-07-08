@@ -184,7 +184,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" title="Guardar" autofocus >
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
                </button>
@@ -204,7 +204,7 @@
          <form action="{$fsc->url()}" method="post">
          <div style="padding-left: 5px;">
             <b>Referencia:</b>
-            <input type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off"/>
+            <input type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off" autofocus />
             <div class="pull_right">
                {if condition="$fsc->articulo->bloqueado"}
                <input type="checkbox" name="bloqueado" value="TRUE" checked="checked" id="articulo_bloqueado"/>

@@ -350,7 +350,7 @@
                   {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}
                </td>
                <td align="right">
-                  <input class="full form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
+                  <input class="full form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off" autofocus />
                </td>
             </tr>
             {/loop}
@@ -394,7 +394,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <input type="text" name="query" size="40" autocomplete="off" autofocus />
                   <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                      <option value="">Todas las familias</option>
                      <option value="">------</option>

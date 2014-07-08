@@ -29,7 +29,7 @@
          <div class="modal-body">
             <center>
                <ul class="bloque">
-                  <li><a target="_blank" href="{$fsc->url()}&imprimir=simple">Factura<br/>simple</a></li>
+                  <li><a target="_blank" href="{$fsc->url()}&imprimir=simple" autofocus >Factura<br/>simple</a></li>
                   <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Modelo<br/>carta</a></li>
                   <li><a target="_blank" href="{$fsc->url()}&imprimir=firma">Factura<br/>con firma</a></li>
                </ul>
@@ -53,7 +53,7 @@
                <div class="form-group">
                   <label for="email" class="col-sm-2 control-label">Email del cliente</label>
                   <div class="col-sm-10">
-                     <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
+                     <input class="full form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">
