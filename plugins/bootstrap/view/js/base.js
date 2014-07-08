@@ -165,22 +165,6 @@ var Base64 = {
 
 }
 
-function fs_show_popup(id, top)
-{
-   $("#modal_fspopup_content").html( $("#"+id).html() );
-   $("#modal_fspopup").modal('show');
-}
-
-function fs_resize_popup(id, top)
-{
-   
-}
-
-function fs_hide_popups()
-{
-   $("#modal_fspopup").modal('hide');
-}
-
 $(document).ready(function() {
    $('.datepicker').datepicker();
 });

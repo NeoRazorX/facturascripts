@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_nuevo_agente, #b_nuevo_agente2").click(function(event) {
+      $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
       });
@@ -70,24 +70,20 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Código</th>
-            <th align="left">Nombre + Apellidos</th>
-            <th>DNI/CIF</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
+            <th align="left">Código + Nombre + Apellidos</th>
+            <th align="left">DNI/CIF</th>
+            <th align="left">Teléfono</th>
+            <th align="right">email</th>
          </tr>
       </thead>
       {loop="$fsc->agente->all()"}
       <tr>
-		 <td>{$value->codagente}</td>
-         <td>{$value->get_fullname()}</td>
-         <td align="center">{$value->dnicif}</td>
-         <td>{$value->telefono}</td>
-         <td align="center">
-            <a class="btn btn-sm btn-primary" href="{$value->url()}">
-               <span class="glyphicon glyphicon-edit"></span>
-           </a>
+         <td>
+            <a href="{$value->url()}">{$value->codagente}</a> {$value->get_fullname()}
          </td>
+         <td>{$value->dnicif}</td>
+         <td>{if condition="$value->telefono==''"}-{else}{$value->telefono}{/if}</td>
+         <td align="right">{if condition="$value->email==''"}-{else}{$value->email}{/if}</td>
       </tr>
       {/loop}
    </table>

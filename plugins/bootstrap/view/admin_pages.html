@@ -15,12 +15,15 @@
    <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
       <input class="form-control" type="hidden" name="modpages" value="TRUE"/>
       <div style="margin-bottom: 5px;">
-         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-            <span class="glyphicon glyphicon-check"></span>
-         </button>
-         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-            <span class="glyphicon glyphicon-unchecked"></span>
-         </button>
+         <div class="btn-group">
+            <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+               <span class="glyphicon glyphicon-check"></span>
+            </button>
+            <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+               <span class="glyphicon glyphicon-unchecked"></span>
+            </button>
+         </div>
+         
          <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
             <span class="glyphicon glyphicon-floppy-disk"></span>
             &nbsp; Guardar
@@ -60,12 +63,15 @@
       </div>
       
       <div>
-         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-            <span class="glyphicon glyphicon-check"></span>
-         </button>
-         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-            <span class="glyphicon glyphicon-unchecked"></span>
-         </button>
+         <div class="btn-group">
+            <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+               <span class="glyphicon glyphicon-check"></span>
+            </button>
+            <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+               <span class="glyphicon glyphicon-unchecked"></span>
+            </button>
+         </div>
+         
          <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
             <span class="glyphicon glyphicon-floppy-disk"></span>
             &nbsp; Guardar
