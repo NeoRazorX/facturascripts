@@ -10,7 +10,6 @@
       if(window.location.hash.substring(1) == 'nuevo')
       {
          $("#modal_nuevo_articulo").modal('show');
-         document.f_nuevo_articulo.referencia.focus();
       }
       else if(window.location.hash.substring(1) == 'tarifas')
       {
@@ -44,7 +43,7 @@
                <div class="form-group">
                   <label for="referencia" class="col-sm-2 control-label">Referencia</label>
                   <div class="col-sm-10">
-                     <input type="text" name="referencia" size="20" maxlength="18" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="referencia" size="20" maxlength="18" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">

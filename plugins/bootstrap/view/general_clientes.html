@@ -6,7 +6,6 @@
       if(window.location.hash.substring(1) == 'nuevo')
       {
          $("#modal_nuevo_cliente").modal('show');
-         document.f_nuevo_cliente.nombre.focus();
       }
       else if(window.location.hash.substring(1) == 'grupos')
       {
@@ -51,7 +50,7 @@
                <div class="form-group">
                   <label for="nombre" class="col-sm-2 control-label">Nombre</label>
                   <div class="col-sm-10">
-                     <input class="form-control" type="text" name="nombre" autocomplete="off"/>
+                     <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus/>
                   </div>
                </div>
                <div class="form-group">
