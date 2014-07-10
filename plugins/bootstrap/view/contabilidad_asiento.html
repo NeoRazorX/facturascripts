@@ -29,11 +29,11 @@
                         <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' disabled='disabled'/>\n\
                      </td>\n\
                      <td>\n\
-                        <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0'\n\
+                        <input class='form-control' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0'\n\
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                      <td>\n\
-                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0'\n\
+                        <input class='form-control' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0'\n\
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                   </tr>\n\
@@ -69,10 +69,10 @@
                </select>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' autocomplete='off'/>\n\
+               <input class='form-control' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' autocomplete='off'/>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"'/>\n\
+               <input class='form-control' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"'/>\n\
             </td>\n\
          </tr>\n\
          </table>");
@@ -265,7 +265,7 @@
                      <input class="form-control datepicker" name="fecha" type="text" value="{$fsc->asiento->fecha}"/>
                   </td>
                   <td>
-                     <input class="full form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}"
+                     <input class="form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}"
                             autocomplete="off"/>
                   </td>
                   <td>
@@ -280,10 +280,10 @@
                      </select>
                   </td>
                   <td>
-                     <input class="full form-control" type="text" name="importe" value="0" disabled="disabled"/>
+                     <input class="form-control" type="text" name="importe" value="0" disabled="disabled"/>
                   </td>
                   <td>
-                     <input class="full form-control" type="text" name="descuadre" value="0" disabled="disabled"/>
+                     <input class="form-control" type="text" name="descuadre" value="0" disabled="disabled"/>
                   </td>
                </tr>
             </table>
@@ -314,11 +314,11 @@
                            <input type='text' id='saldo_{$counter+1}' name='saldo_{$counter+1}' value='0' disabled='disabled'/>
                         </td>
                         <td>
-                           <input class='full' type='text' id='debe_{$counter+1}' name='debe_{$counter+1}' value='{$value->debe}'
+                           <input class='form-control' type='text' id='debe_{$counter+1}' name='debe_{$counter+1}' value='{$value->debe}'
                                   onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
                         </td>
                         <td>
-                           <input class='full' type='text' id='haber_{$counter+1}' name='haber_{$counter+1}' value='{$value->haber}'
+                           <input class='form-control' type='text' id='haber_{$counter+1}' name='haber_{$counter+1}' value='{$value->haber}'
                                   onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
                         </td>
                      </tr>
@@ -354,11 +354,11 @@
                               </select>
                            </td>
                            <td>
-                              <input class='full' type='text' id='baseimp_{$counter+1}' name='baseimp_{$counter+1}'
+                              <input class='form-control' type='text' id='baseimp_{$counter+1}' name='baseimp_{$counter+1}'
                                  value='{$value->baseimponible}' autocomplete='off'/>
                            </td>
                            <td>
-                              <input class='full' type='text' id='cifnif_{$counter+1}' name='cifnif_{$counter+1}'
+                              <input class='form-control' type='text' id='cifnif_{$counter+1}' name='cifnif_{$counter+1}'
                                  value="{$value->cifnif}"/>
                            </td>
                         </tr>

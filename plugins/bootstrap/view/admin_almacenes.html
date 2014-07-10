@@ -17,55 +17,77 @@
 <div class="modal fade" id="modal_nuevo_almacen">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post" class="form" role="form">
+         <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post" class="form-horizontal" role="form">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo almacén</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  Código:
-                  <input class="form-control" type="text" name="scodalmacen" autocomplete="off" autofocus />
+                  <label class="col-lg-2 control-label">Código:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="scodalmacen" autocomplete="off" autofocus />
+                  </div>
                </div>
                <div class="form-group">
-                  Nombre:
-                  <input class="form-control" type="text" name="snombre" autocomplete="off"/>
+                  <label class="col-lg-2 control-label">Nombre:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="snombre" autocomplete="off"/>
+                  </div>
                </div>
                <div class="form-group">
-                  <a href="{$fsc->pais->url()}">País</a>:
-                  <select name="scodpais" class="form-control">
-                     {loop="$fsc->pais->all()"}
-                     <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-                     {/loop}
-                  </select>
+                  <label class="col-lg-2 control-label">
+                     <a href="{$fsc->pais->url()}">País</a>:
+                  </label>
+                  <div class="col-lg-10">
+                     <select name="scodpais" class="form-control col-lg-10">
+                        {loop="$fsc->pais->all()"}
+                        <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                        {/loop}
+                     </select>
+                  </div>
                </div>
                <div class="form-group">
-                  Provincia:
-                  <input class="form-control" type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
+                  <label class="col-lg-2 control-label">Provincia:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Ciudad:
-                  <input class="form-control" type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
+                  <label class="col-lg-2 control-label">Ciudad:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Dirección:
-                  <input class="form-control" type="text" name="sdireccion" autocomplete="off"/>
+                  <label class="col-lg-2 control-label">Dirección:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="sdireccion" autocomplete="off"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Código Postal:
-                  <input class="form-control" type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
+                  <label class="col-lg-2 control-label">Código Postal:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Teléfono:
-                  <input class="form-control" type="text" name="stelefono" autocomplete="off"/>
+                  <label class="col-lg-2 control-label">Teléfono:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="stelefono" autocomplete="off"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Fax:
-                  <input class="form-control" type="text" name="sfax" autocomplete="off"/>
+                  <label class="col-lg-2 control-label">Fax:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="sfax" autocomplete="off"/>
+                  </div>
                </div>
                <div class="form-group">
-                  Contacto:
-                  <input class="form-control" type="text" name="scontacto" autocomplete="off"/>
+                  <label class="col-lg-2 control-label">Contacto:</label>
+                  <div class="col-lg-10">
+                     <input class="form-control" type="text" name="scontacto" autocomplete="off"/>
+                  </div>
                </div>
             </div>
             <div class="modal-footer">

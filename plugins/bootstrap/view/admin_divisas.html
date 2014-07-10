@@ -73,12 +73,15 @@
       <div class="container-fluid" style="margin-bottom: 10px;">
          <div class="row">
             <div class="col-lg-8" style="padding-left: 0px;">
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-                  <span class="glyphicon glyphicon-check"></span>
-               </button>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-                  <span class="glyphicon glyphicon-unchecked"></span>
-               </button>
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+                     <span class="glyphicon glyphicon-check"></span>
+                  </button>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+                     <span class="glyphicon glyphicon-unchecked"></span>
+                  </button>
+               </div>
+               
                <button id="b_nueva_divisa2" class="btn btn-sm btn-success" type="button" value="Nueva divisa" title="Nueva divisa">
                   <span class="glyphicon glyphicon-plus"></span>
                   &nbsp; Nueva divisa
@@ -111,20 +114,20 @@
                <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
             </td>
             <td>
-               {$value->coddivisa}
+               <span class="form-control">{$value->coddivisa}</span>
                <input type="hidden" name="coddivisa_{$counter}" value="{$value->coddivisa}"/>
             </td>
             <td>
-               <input class="full form-control" type="text" name="simbolo_{$counter}" value="{$value->simbolo}" size="5" maxlength="10" autocomplete="off"/>
+               <input class="form-control" type="text" name="simbolo_{$counter}" value="{$value->simbolo}" size="5" maxlength="10" autocomplete="off"/>
             </td>
             <td>
-               <input class="full form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
+               <input class="form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
             </td>
             <td>
-               <input class="full form-control" type="text" name="codiso_{$counter}" value="{$value->codiso}" size="3" maxlength="3" autocomplete="off"/>
+               <input class="form-control" type="text" name="codiso_{$counter}" value="{$value->codiso}" size="3" maxlength="3" autocomplete="off"/>
             </td>
             <td>
-               <input class="full form-control" type="text" name="tasaconv_{$counter}" value="{$value->tasaconv}" size="5" autocomplete="off"/>
+               <input class="form-control" type="text" name="tasaconv_{$counter}" value="{$value->tasaconv}" size="5" autocomplete="off"/>
             </td>
          </tr>
          {/loop}
@@ -134,12 +137,15 @@
       <div class="container-fluid">
          <div class="row">
             <div class="col-lg-8" style="padding-left: 0px;">
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
-                  <span class="glyphicon glyphicon-check"></span>
-               </button>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
-                  <span class="glyphicon glyphicon-unchecked"></span>
-               </button>
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" value="Marcar todo" title="Marcar todo">
+                     <span class="glyphicon glyphicon-check"></span>
+                  </button>
+                  <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" value="Desmarcar todo" title="Desmarcar todo">
+                     <span class="glyphicon glyphicon-unchecked"></span>
+                  </button>
+               </div>
+               
                <button id="b_nueva_divisa2" class="btn btn-sm btn-success" type="button" value="Nueva divisa" title="Nueva divisa">
                   <span class="glyphicon glyphicon-plus"></span>
                   &nbsp; Nueva divisa

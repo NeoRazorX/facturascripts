@@ -43,12 +43,3 @@ ul.dropdown-menu li a:first-letter {
 .modal-footer {
    margin: 0px;
 }
-
-input.full {
-   display: block;
-   width: 100%;
-   box-sizing: border-box;
-   -webkit-box-sizing: border-box;
-   -moz-box-sizing: border-box;
-   -ms-box-sizing: border-box;
-}

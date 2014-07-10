@@ -344,13 +344,13 @@
                   {$value->descripcion}
                </td>
                <td>
-                  <input class="full form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
+                  <input class="form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
                </td>
                <td align="right">
                   {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}
                </td>
                <td align="right">
-                  <input class="full form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off" autofocus />
+                  <input class="form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off" autofocus />
                </td>
             </tr>
             {/loop}
@@ -510,7 +510,7 @@
                   <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
                </td>
                <td>
-                  <input type="text" class="full form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
+                  <input type="text" class="form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
                </td>
                <td align="center">
                   <input class="btn btn-sm btn-default" type="button" value="-" onclick="linea_sum_ud('{$counter}',-1)"/>
@@ -519,15 +519,15 @@
                   <input class="btn btn-sm btn-default" type="button" value="+" onclick="linea_sum_ud('{$counter}',1)"/>
                </td>
                <td align="center">
-                  <input type="text" class="full form-control" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
+                  <input type="text" class="form-control" name="pvp_{$counter}" id="pvp_{$counter}" value="{$value->pvpunitario}" size="6"
                          onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
                </td>
                <td align="center">
-                  <input type="text" class="full form-control" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
+                  <input type="text" class="form-control" name="dto_{$counter}" id="dto_{$counter}" value="{$value->dtopor}" size="4"
                          onclick="this.select()" onkeyup="recalcular()" autocomplete="off"/>
                </td>
                <td align="center">
-                  <input type="text" class="full form-control" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
+                  <input type="text" class="form-control" name="total_{$counter}" id="total_{$counter}" value="{$value->pvptotal}" size="6"
                          onclick="this.select()" onkeyup="ajustar_total('{$counter}')" autocomplete="off"/>
                </td>
                <td align="center">
@@ -542,7 +542,7 @@
                   </select>
                </td>
                <td align="center">
-                  <input type="text" class="full form-control" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
+                  <input type="text" class="form-control" name="totiva_{$counter}" id="totiva_{$counter}" size="6"
                          onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/>
                </td>
             </tr>

@@ -425,10 +425,10 @@
                      <td align="center">0.00</td>
                      <td>
                         <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
-                        <input type="text" class="full form-control" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+                        <input type="text" class="form-control" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
                      </td>
                      <td>
-                        <input type="text" class="full form-control" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+                        <input type="text" class="form-control" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
                      </td>
                   </tr>
                   {loop="$fsc->articulo->get_tarifas(TRUE)"}
@@ -437,13 +437,13 @@
                      <td>
                         <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                         <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
-                        <input type="text" class="full form-control" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+                        <input type="text" class="form-control" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
                      </td>
                      <td>
-                        <input type="text" class="full form-control" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+                        <input type="text" class="form-control" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
                      </td>
                      <td>
-                        <input type="text" class="full form-control" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
+                        <input type="text" class="form-control" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
                      </td>
                   </tr>
                   {/loop}

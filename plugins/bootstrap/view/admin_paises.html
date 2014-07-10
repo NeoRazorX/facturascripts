@@ -43,40 +43,40 @@
    </div>
 </div>
 
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
+<form action="{$fsc->url()}" method="post" class="form" role="form">
+   <input type="hidden" name="scodpais" value="{$value->codpais}"/>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Código</th>
+               <th align="left">Nombre</th>
+               <th align="right" width="140">Acciones</th>
+            </tr>
+         </thead>
+         {loop="$fsc->pais->all()"}
          <tr>
-            <th align="left">Código</th>
-            <th align="left">Nombre</th>
-            <th align="left">Acciones</th>
-         </tr>
-      </thead>
-      {loop="$fsc->pais->all()"}
-      <form action="{$fsc->url()}" method="post" role="form">
-      <tr>
-         <td>{$value->codpais}</td>
-         <td width="100%">
-            <input type="hidden" name="scodpais" value="{$value->codpais}"/>
-            <div class="input-group">
+            <td>
+               <div class="form-control">{$value->codpais}</div>
+            </td>
+            <td>
                <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
-            </div>
-         </td>
-         <td>
-            <span class="input-group-btn">
-               <button class="btn btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')" value="Eliminar" title="Eliminar">
-                  <span class="glyphicon glyphicon-trash"></span>
-               </button>
-               
-               <button class="btn btn-primary" type="submit" value="Guardar" title="Guardar">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-               </button>
-            </span>
-         </td>
-      </tr>
-      </form>
-      {/loop}
-   </table>
-</div>
+            </td>
+            <td align="right">
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-danger" href="#" onclick="delete_pais('{$fsc->url()}&delete={$value->codpais}')" title="Eliminar">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </button>
+                     
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
+            </td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+</form>
 
 {include="footer"}
