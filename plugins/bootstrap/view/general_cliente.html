@@ -202,11 +202,11 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->cliente->nombre}" autocomplete="off"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group col-lg-6">
                      Nombre comercial:
                      <input class="form-control" type="text" name="nombrecomercial" value="{$fsc->cliente->nombrecomercial}" autocomplete="off"/>
                   </div>
@@ -436,7 +436,7 @@
             <div class="panel panel-success">
                <div class="panel-heading">
                   <h3 class="panel-title">
-                     <a id="b_nueva_direccion" href="#">Nueva dirección</a>
+                     <a id="b_nueva_direccion" href="#">Nueva dirección...</a>
                   </h3>
                </div>
             </div>
@@ -471,88 +471,140 @@
             </table>
          </div>
          
-         {if condition="$fsc->listar=='albaranes'"}
-         <div class="table-responsive" id="div_albaranes">
-            <table class="table table-hover">
-               <thead>
+         <div id="div_albaranes">
+            {if condition="$fsc->listar=='albaranes'"}
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th align="left">Código + Número 2</th>
+                        <th align="left">Observaciones</th>
+                        <th align="right">Total</th>
+                        <th align="right">Fecha</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->listado"}
                   <tr>
-                     <th></th>
-                     <th align="left">Código + Número 2</th>
-                     <th align="left">Observaciones</th>
-                     <th align="right">Total</th>
-                     <th align="right">Fecha</th>
+                     <td align="center">
+                        {if condition="!$value->ptefactura"}
+                        <span class="glyphicon glyphicon-paperclip"></span>
+                        {/if}
+                     </td>
+                     <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+                     <td>{$value->observaciones_resume()}</td>
+                     <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+                     <td align="right">{$value->fecha}</td>
                   </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td align="center">
-                     {if condition="!$value->ptefactura"}<span class="glyphicon glyphicon-paperclip"></span>{/if}
-                  </td>
-                  <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
-                  <td>{$value->observaciones_resume()}</td>
-                  <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                  <td align="right">{$value->fecha}</td>
-               </tr>
-               {else}
-               <tr><td colspan="5" align="center">Sin resultados</td></tr>
-               {/loop}
-            </table>
+                  {else}
+                  <tr><td colspan="5" align="center">Sin resultados</td></tr>
+                  {/loop}
+               </table>
+            </div>
+            <ul class="pager">
+               {if condition="$fsc->anterior_url()!=''"}
+               <li class="previous">
+                  <a href="{$fsc->anterior_url()}#albaranes">
+                     <span class="glyphicon glyphicon-chevron-left"></span>
+                     &nbsp; Anterior
+                  </a>
+               </li>
+               {/if}
+               
+               {if condition="$fsc->siguiente_url()!=''"}
+               <li class="next">
+                  <a href="{$fsc->siguiente_url()}#albaranes">
+                     Siguiente &nbsp;
+                     <span class="glyphicon glyphicon-chevron-right"></span>
+                  </a>
+               </li>
+               {/if}
+            </ul>
+            {/if}
          </div>
-         {elseif condition="$fsc->listar=='facturas'"}
-         <div class="table-responsive" id="div_facturas">
-            <table class="table table-hover">
-               <thead>
+         
+         <div id="div_facturas">
+            {if condition="$fsc->listar=='facturas'"}
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th align="left">Código</th>
+                        <th align="left">Observaciones</th>
+                        <th align="right">Total</th>
+                        <th align="right">Fecha</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->listado"}
                   <tr>
-                     <th></th>
-                     <th align="left">Código</th>
-                     <th align="left">Observaciones</th>
-                     <th align="right">Total</th>
-                     <th align="right">Fecha</th>
+                     <td align="center">
+                        {if condition="$value->idasiento"}
+                        <span class="glyphicon glyphicon-paperclip"></span>
+                        {/if}
+                     </td>
+                     <td><a href="{$value->url()}">{$value->codigo}</a></td>
+                     <td>{$value->observaciones_resume()}</td>
+                     <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+                     <td align="right">{$value->fecha}</td>
                   </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td align="center">
-                     {if condition="$value->idasiento"}<span class="glyphicon glyphicon-paperclip"></span>{/if}
-                  </td>
-                  <td><a href="{$value->url()}">{$value->codigo}</a></td>
-                  <td>{$value->observaciones_resume()}</td>
-                  <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                  <td align="right">{$value->fecha}</td>
-               </tr>
-               {else}
-               <tr><td colspan="5" align="center">Sin resultados</td></tr>
-               {/loop}
-            </table>
+                  {else}
+                  <tr><td colspan="5" align="center">Sin resultados</td></tr>
+                  {/loop}
+               </table>
+            </div>
+            <ul class="pager">
+               {if condition="$fsc->anterior_url()!=''"}
+               <li class="previous">
+                  <a href="{$fsc->anterior_url()}#facturas">
+                     <span class="glyphicon glyphicon-chevron-left"></span>
+                     &nbsp; Anterior
+                  </a>
+               </li>
+               {/if}
+               
+               {if condition="$fsc->siguiente_url()!=''"}
+               <li class="next">
+                  <a href="{$fsc->siguiente_url()}#facturas">
+                     Siguiente &nbsp;
+                     <span class="glyphicon glyphicon-chevron-right"></span>
+                  </a>
+               </li>
+               {/if}
+            </ul>
+            {/if}
          </div>
-         {elseif condition="$fsc->listar=='articulos'"}
-         <div class="table-responsive" id="div_articulos">
-            <table class="table table-hover">
-               <thead>
+         
+         <div id="div_articulos">
+            {if condition="$fsc->listar=='articulos'"}
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th align="left">{$albaran}</th>
+                        <th align="left">Artículo</th>
+                        <th align="right">Cantidad</th>
+                        <th align="right">Total+IVA</th>
+                        <th align="right">Fecha</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->listado"}
                   <tr>
-                     <th align="left">{$albaran}</th>
-                     <th align="left">Artículo</th>
-                     <th align="right">Cantidad</th>
-                     <th align="right">Total+IVA</th>
-                     <th align="right">Fecha</th>
+                     <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
+                     <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+                     <td align="right">{$value->cantidad}</td>
+                     <td align="right">{$fsc->show_precio($value->total_iva())}</td>
+                     <td align="right">{$value->show_fecha()}</td>
                   </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td><a href="{$value->url()}">{$value->show_codigo()}</a></td>
-                  <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-                  <td align="right">{$value->cantidad}</td>
-                  <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-                  <td align="right">{$value->show_fecha()}</td>
-               </tr>
-               {else}
-               <tr><td colspan="5" align="center">Sin resultados</td></tr>
-               {/loop}
-            </table>
+                  {else}
+                  <tr><td colspan="5" align="center">Sin resultados</td></tr>
+                  {/loop}
+               </table>
+            </div>
+            {/if}
          </div>
-         {else}
+         
          <div id="chart_albaranes_month" style="height: 400px;"></div>
-         {/if}
       </div>
    </div>
 </div>
@@ -604,7 +656,7 @@
             <div class="modal-body">
                <div class="form-group">
                   <a href="{$fsc->pais->url()}">País</a>:
-                  <select name="pais" class="form-control" autofocus >
+                  <select name="pais" class="form-control">
                      {loop="$fsc->pais->all()"}
                      <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                      {/loop}
@@ -612,14 +664,14 @@
                </div>
                <div class="form-group">
                   Provincia:
-                  <input class="form-control" type="text" name="provincia"/>
+                  <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autofocus/>
                </div>
                <div class="form-group">
                   Ciudad:
-                  <input class="form-control" type="text" name="ciudad"/>
+                  <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}"/>
                </div>
                <div class="form-group">
-                  Código postal:
+                  Código Postal:
                   <input class="form-control" type="text" name="codpostal" autocomplete="off"/>
                </div>
                <div class="form-group">
@@ -644,7 +696,7 @@
                </div>
                <div class="form-group">
                   Descripción:
-                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+                  <input class="form-control" type="text" name="descripcion" value="Nueva dirección"/>
                </div>
             </div>
             <div class="modal-footer">
