@@ -9,92 +9,117 @@
    $(document).ready(function() {
       $("#b_nueva_serie").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_serie');
+         $("#modal_nueva_serie").modal('show');
          document.f_nueva_serie.codserie.focus();
       });
    });
 </script>
 
-<div class="popup" id="popup_nueva_serie">
-   <form name="f_nueva_serie" action="{$fsc->url()}" method="post">
-      <h1>Nueva serie</h1>
-      <table>
+<div class="modal fade" id="modal_nueva_serie">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" name="f_nueva_serie" action ="{$fsc->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva serie</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="codserie" class="col-sm-2 control-label">Código</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="codserie" autocomplete="off" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="fac_letra" class="col-sm-2 control-label">Letra de comprobante</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="fac_letra" size="1" maxlength="1" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="fac_prefijo" class="col-sm-2 control-label">Prefijo de comprobante</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="fac_prefijo" size="4" maxlength="4" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="fac_prefijo" class="col-sm-2 control-label">Primer num comprobante</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="fac_inicial" size="8" maxlength="8" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="siniva" class="col-sm-2 control-label">Sin IVA</label>
+                  <div class="col-sm-10">
+                     <input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
-            <td align="right">Código:</td>
-            <td><input type="text" name="codserie" size="2" maxlength="2" autocomplete="off"/></td>
+            <th align="left">¿Eliminar?</th>
+            <th align="left">Código</th>
+            <th align="left">Descripción</th>
+            <th align="left">Letra comprobante</th>
+            <th align="left">Prefijo comprobante</th>
+            <th align="left">Numero inicial comprobante</th>
+            <th align="left">Sin IVA</th>
+            <th align="right">¿Guardar?</th>
          </tr>
+      </thead>
+      {loop="$fsc->serie->all()"}
+      <form action ="{$fsc->url()}" method="post">
+         <input type="hidden" name="codserie" value="{$value->codserie}"/>
          <tr>
-            <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Letra de comprobante:</td>
-            <td><input type="text" name="fac_letra" size="1" maxlength="1" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Prefijo de comprobante:</td>
-            <td><input type="text" name="fac_prefijo" size="4" maxlength="4" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Primer num comprobante:</td>
-            <td><input type="text" name="fac_inicial" size="8" maxlength="8" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right"><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
-            <td><label for="serie_sin_iva">sin IVA</label></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <td>
+               <a class="btn btn-sm btn-danger" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
+                  <span class="glyphicon glyphicon-trash"></span>
+               </a>
+            </td>
+            <td>{$value->codserie}</td>
+            <td>
+               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="fac_letra" value="{$value->fac_letra}" maxlength="1" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="fac_prefijo" value="{$value->fac_prefijo}" maxlength="4" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="fac_inicial" value="{$value->fac_inicial}" maxlength="8" autocomplete="off"/>
+            </td>
+            <td>
+               <input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/>
+            </td>
+            <td align="right">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
             </td>
          </tr>
-      </table>
-   </form>
-</div>
-
-{loop="$fsc->serie->all()"}
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="codserie" value="{$value->codserie}"/>
-      <h1>
-         {$value->codserie}
-         <span>
-            <a class="delete" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">eliminar</a> &nbsp;
-            <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
-      <div class="bloque">
-         Descripción:
-         <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Letra comprobante:
-         <input type="text" name="fac_letra" value="{$value->fac_letra}" maxlength="1" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Prefijo comprobante:
-         <input type="text" name="fac_prefijo" value="{$value->fac_prefijo}" maxlength="4" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         Numero inicial comprobante:
-         <input type="text" name="fac_inicial" value="{$value->fac_inicial}" maxlength="8" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         {if condition="$value->siniva"}
-            <input type="checkbox" name="siniva" value="TRUE" checked="checked" id="sin_iva_{$value->codserie}"/>
-         {else}
-            <input type="checkbox" name="siniva" value="TRUE" id="sin_iva_{$value->codserie}"/>
-         {/if}
-         <label for="sin_iva_{$value->codserie}">sin IVA</label>
-      </div>
-   </form>
-</div>
-{/loop}
-
-<div class="rounded">
-   <div class="new_line">
-      <a id="b_nueva_serie" href="#">Nueva serie</a>
-   </div>
+      </form>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}
