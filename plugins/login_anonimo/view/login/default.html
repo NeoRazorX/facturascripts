@@ -9,6 +9,7 @@
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" type="text/css" href="view/login/login.css" />
    <script type="text/javascript" src="view/js/jquery.js"></script>
+   <script type="text/javascript" src="plugins/login_anonimo/view/login/js/jquery.ui.shake.js"></script>
    <script type="text/javascript">
        $(document).ready(function() {
          document.f_login.user.focus();
@@ -21,6 +22,10 @@
             $("#b_sql").hide();
             $("#popup_sql").show();
          });
+         
+         {if condition="$fsc->get_errors()"}
+         $("#box_login").shake();
+         {/if}
       });
    </script>
 </head>
@@ -39,11 +44,11 @@
    <div class="header">
       <h1><a href="index.php">FacturaScripts</a></h1>
       <br/>
-      <div class="popup">
+      <div class="popup" id="box_login">
          <form name="f_login" action="index.php" method="post">
-            <input type="text" class="full" name="user" placeholder="usuario" autocomplete="off" style="border: 1px solid #666666;"/>
-            <input type="password" name="password" placeholder="contraseña" style="border: 1px solid #666666;"/>
-            <input type="submit" class="full" value="entrar"/>
+            <input type="text" class="full" name="user" placeholder="Usuario" autocomplete="off" style="border: 1px solid #666666;"/>
+            <input type="password" name="password" placeholder="Contraseña" style="border: 1px solid #666666;"/>
+            <input type="submit" class="full" value="Iniciar sesión"/>
          </form>
       </div>
       <br/><br/>
