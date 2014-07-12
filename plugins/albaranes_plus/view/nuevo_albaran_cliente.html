@@ -177,7 +177,7 @@
          data: "referencia4precios="+ref,
          success: function(datos) {
             $("#precios_articulo").html(datos);
-            fs_show_popup('popup_precios', 40);
+            $("#modal_precios").modal('show');
          }
       });
    }
@@ -251,7 +251,7 @@
    {
       if(window.location.hash.substring(1) == 'nuevo')
       {
-         fs_show_popup('popup_select_cliente', 130);
+         $("#modal_select_cliente").modal('show');
          document.f_select_cliente.cliente.focus();
       }
    }
@@ -264,7 +264,7 @@
          event.preventDefault();
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
-         fs_show_popup('popup_new_line', 40);
+         $("#modal_new_line").modal('show');
          document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
@@ -275,199 +275,276 @@
          buscar_articulos();
       });
       $("#b_nuevo_albaran").click(function() {
-         fs_show_popup('popup_tpv_opciones');
+         $("#modal_tpv_opciones").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_select_cliente">
-   <h1>Selecciona el cliente</h1>
-   <form name="f_select_cliente" action="{$fsc->url()}" method="post">
-      <select name="cliente">
-         {loop="$fsc->cliente->all_full()"}
-            {if condition="$value->is_default()"}
-            <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
-            {else}
-            <option value="{$value->codcliente}">{$value->nombre}</option>
-            {/if}
-         {else}
-            <option value="">¡¡¡No tienes clientes!!!</option>
-         {/loop}
-      </select>
-      <input class="submit" type="submit" value="continuar"/>
-   </form>
-</div>
-
-<div class="popup" id="popup_new_line" style="min-width: 70%">
-   <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
-      <h1>Buscar artículos</h1>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40" autocomplete="off"/>
-         <select name="codfamilia" onchange="buscar_articulos()">
-            <option value="">Todas las familias</option>
-            <option value="">------</option>
-         {loop="$fsc->familia->all()"}
-            <option value="{$value->codfamilia}">{$value->descripcion}</option>
-         {/loop}
-         </select>
-         <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
-         <label for="cb_con_stock">sólo con stock</label>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+<div class="modal fade" id="modal_select_cliente">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_select_cliente" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Selecciona el cliente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="scodagente" class="col-sm-2 control-label">Nombre</label>
+                  <div class="col-sm-10">
+                     <select name="cliente" class="form-control">
+                     {loop="$fsc->cliente->all_full()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                        {else}
+                        <option value="{$value->codcliente}">{$value->nombre}</option>
+                        {/if}
+                     {else}
+                        <option value="">¡¡¡No tienes clientes!!!</option>
+                     {/loop}
+                     </select>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Continuar" value="Continuar">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Continuar
+               </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="search_results"></div>
+   </div>
 </div>
 
-<div class="popup" id="popup_precios" style="min-width: 60%">
-   <div id="precios_articulo"></div>
+<div class="modal fade" id="modal_new_line">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar artículos</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                     <option value="">Todas las familias</option>
+                     <option value="">------</option>
+                     {loop="$fsc->familia->all()"}
+                     <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+                  <input id="cb_con_stock" type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                  <label for="cb_con_stock">Sólo con stock</label>
+               </div>
+               <div class="form-group" id="search_results"></div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar" value="Buscar">
+                  <span class="glyphicon glyphicon-search"></span>
+                  &nbsp; Buscar
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
+
+<div class="modal fade" id="modal_precios">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Buscar artículos</h4>
+         </div>
+         <div class="modal-body">
+            <div class="form-group" id="precios_articulo"></div>
+         </div>
+         <div class="modal-footer">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Buscar" value="Buscar">
+               <span class="glyphicon glyphicon-search"></span>
+               &nbsp; Buscar
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+
 
 {if condition="$fsc->scliente"}
 <form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post">
    <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <input type="hidden" name="cliente" value="{$fsc->scliente->codcliente}"/>
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
-   <div class="popup" id="popup_tpv_opciones"/>
-      <h1>Guardar como...</h1>
-      <table>
-         <tr>
-            <td align="right">Fecha:</td>
-            <td><input class="tcal" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
-            <td align="right">Hora:</td>
-            <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
-            <td colspan="3">
-               <select name="almacen">
-                  {loop="$fsc->almacen->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
-                     {else}
-                     <option value="{$value->codalmacen}">{$value->nombre}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
-            <td colspan="3">
-               <select name="serie">
-                  {loop="$fsc->serie->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
-                     {else}
-                     <option value="{$value->codserie}">{$value->descripcion}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Forma de pago:</td>
-            <td>
-               <select name="forma_pago">
-                  {loop="$fsc->forma_pago->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
-                     {else}
-                     <option value="{$value->codpago}">{$value->descripcion}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-            <td align="right">Divisa:</td>
-            <td>
-               <select name="divisa">
-                  {loop="$fsc->divisa->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
-                     {else}
-                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Número 2:</td>
-            <td colspan="3"><input type="text" name="numero2" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Observaciones:</td>
-            <td colspan="3"><textarea name="observaciones" cols="50"></textarea></td>
-         </tr>
-         <tr>
-            <td colspan="4" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
+   <div class="modal fade" id="modal_tpv_opciones">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Guardar como...</h4>
+            </div>
+            <div class="modal-body">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <tr>
+                        <td align="right">Fecha:</td>
+                        <td><input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
+                        <td align="right">Hora:</td>
+                        <td><input class="form-control" type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
+                        <td colspan="3">
+                           <select class="form-control" name="almacen">
+                              {loop="$fsc->almacen->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                                 {else}
+                                 <option value="{$value->codalmacen}">{$value->nombre}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
+                        <td colspan="3">
+                           <select class="form-control" name="serie">
+                              {loop="$fsc->serie->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->codserie}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="right">Forma de pago:</td>
+                        <td>
+                           <select class="form-control" name="forma_pago">
+                              {loop="$fsc->forma_pago->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->codpago}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                        <td align="right">Divisa:</td>
+                        <td>
+                           <select class="form-control" name="divisa">
+                              {loop="$fsc->divisa->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td align="right">Número 2:</td>
+                        <td colspan="3"><input class="form-control" type="text" name="numero2" autocomplete="off"/></td>
+                     </tr>
+                     <tr>
+                        <td align="right">Observaciones:</td>
+                        <td colspan="3"><textarea class="form-control" name="observaciones" cols="50"></textarea></td>
+                     </tr>
+                     <tr>
+                        <td colspan="4" align="right">
+                           <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" value="Guardar" title="Guardar">
+                              <span class="glyphicon glyphicon-floppy-disk"></span>
+                              &nbsp; Guardar
+                          </button>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
    </div>
-   <div class="rounded">
+   <div class='well well-sm'>
       <h2 style="margin-top: 0px;">
          Para: <a class="link" href="{$fsc->scliente->url()}">{$fsc->scliente->nombre}</a>
       </h2>
-      <table class="list" id="tpv_albaran">
-         <tr>
-            <th align="left">Referencia</th>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>PVP</th>
-            <th>Dto. %</th>
-            <th>Total</th>
-            <th>IVA</th>
-            <th>Total+IVA</th>
-         </tr>
-      </table>
+      <div class="table-responsive" style="margin: 5px;">
+         <table class="table table-hover" id="tpv_albaran">
+            <thead>
+               <tr>
+                  <th align="left">Referencia</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                  <th>PVP</th>
+                  <th>Dto %</th>
+                  <th>Total</th>
+                  <th>IVA</th>
+                  <th>Total+IVA</th>
+               </tr>
+            </thead>
+         </table>
+      </div>
       <div class="new_line"><a name="new_line" href="#" id="b_new_line">Añadir artículo...</a></div>
       <br/><br/>
-      <table width="100%">
-         <tr>
-            <td>
-               <a class="button" href="{$fsc->url()}#nuevo">Nuevo</a>
-            </td>
-            <td style="font-size: 1.4em; text-align: center;">
-               <b>Neto:</b> <span id="aneto" align="center">{$fsc->show_precio(0)}</span> &nbsp;
-               <b>IVA:</b> <span id="aiva" align="center">{$fsc->show_precio(0)}</span> &nbsp;
-               <b>Total:</b> <span id="atotal" align="center">{$fsc->show_precio(0)}</span>
-            </td>
-            <td align="right">
-               <input class="submit" type="button" id="b_nuevo_albaran" value="Guardar">
-            </td>
-         </tr>
-      </table>
+      <div class="table-responsive" style="margin: 5px;">
+         <table class="table table-hover" id="tpv_albaran">
+            <tr>
+               <td>
+                  <a class="button" href="{$fsc->url()}#nuevo">Nuevo</a>
+               </td>
+               <td style="font-size: 1.4em; text-align: center;">
+                  <b>Neto:</b> <span id="aneto" align="center">{$fsc->show_precio(0)}</span> &nbsp;
+                  <b>IVA:</b> <span id="aiva" align="center">{$fsc->show_precio(0)}</span> &nbsp;
+                  <b>Total:</b> <span id="atotal" align="center">{$fsc->show_precio(0)}</span>
+               </td>
+               <td align="right">
+                  <button class="btn btn-sm btn-primary pull-right" id="b_nuevo_albaran" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar
+                  </button>
+               </td>
+            </tr>
+         </table>
+      </div>
    </div>
 </form>
 
-<div class="rounded" style="background-color: #F4EFD8;">
+<div class="well well-sm" style="background-color: #F4EFD8;">
    <h2 style="margin-top: 0px;">
       Últimas compras de <a class="link" href="{$fsc->scliente->url()}">{$fsc->scliente->nombre}</a>
    </h2>
-   <table class="list">
-      <tr>
-         <th align="left">{$albaran}</th>
-         <th align="left">Artículo</th>
-         <th align="right">Cantidad</th>
-         <th align="right">Total+IVA</th>
-         <th align="right">Fecha</th>
-      </tr>
-      {loop="$fsc->ultimas_compras()"}
-      <tr>
-         <td><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
-         <td><a class="link" target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         <td align="right">{$value->cantidad}</td>
-         <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-         <td align="right">{$value->show_fecha()}</td>
-      </tr>
-      {else}
-      <tr><td colspan="5">Sin resultados.</td></tr>
-      {/loop}
-   </table>
+   <div class="table-responsive" style="margin: 5px;">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">{$albaran}</th>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">Total+IVA</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
+         {loop="$fsc->ultimas_compras()"}
+         <tr>
+            <td><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a class="link" target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td align="right">{$value->cantidad}</td>
+            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
+            <td align="right">{$value->show_fecha()}</td>
+         </tr>
+         {else}
+         <tr><td colspan="5">Sin resultados</td></tr>
+         {/loop}
+      </table>
+   </div>
 </div>
 {else}
-<div class="rounded">
+<div class="well well-sm">
    <h2 style="margin-top: 0px;">Nuevo albarán de cliente:</h2>
    <div class="new_line">
       <a href="#nuevo">Selecciona el cliente</a>
