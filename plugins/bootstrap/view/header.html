@@ -172,11 +172,36 @@
                <div class="btn-group">
                   {loop="$fsc->buttons"}
                      {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
-                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">{$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">
+                        <span class="glyphicon glyphicon-plus"></span>	
+						{$value->value}
+                     </a>
                      {elseif condition="get_class($value)=='fs_button_img'"}
-                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">
+                        {if condition="$value->remove"}<span class="glyphicon glyphicon-trash"></span>{/if}
+                        {if condition="strtolower($value->value)=='lineas'"}<span class="glyphicon glyphicon-tasks"></span>{/if}
+                        {if condition="strtolower($value->value)=='renumerar'"}<span class="glyphicon glyphicon-list"></span>{/if}
+                        {if condition="strtolower($value->value)=='cerrar caja'"}<span class="glyphicon glyphicon-briefcase"></span>{/if}
+                        {if condition="strtolower($value->value)=='imprimir'"}<span class="glyphicon glyphicon-print"></span>{/if}
+						{$value->value}
+                     </a>
                      {else}
-                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>
+                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">
+                        {if condition="strtolower($value->value)=='imagen'"}<span class="glyphicon glyphicon-picture"></span>{/if}		
+                        {if condition="strtolower($value->value)=='agrupar'"}<span class="glyphicon glyphicon-magnet"></span>{/if}		
+                        {if condition="strtolower($value->value)=='pendientes'"}<span class="glyphicon glyphicon-list"></span>{/if}		
+                        {if condition="strtolower($value->value)=='descuadrados'"}<span class="glyphicon glyphicon-tasks"></span>{/if}		
+                        {if condition="strtolower($value->value)=='tarifas'"}<span class="glyphicon glyphicon-list-alt"></span>{/if}		
+                        {if condition="strtolower($value->value)=='modificar iva'"}<span class="glyphicon glyphicon-book"></span>{/if}		
+                        {if condition="strtolower($value->value)=='públicos'"}<span class="glyphicon glyphicon-eye-open"></span>{/if}		
+                        {if condition="strtolower($value->value)=='grupos'"}<span class="glyphicon glyphicon-user"></span>{/if}		
+                        {if condition="strtolower($value->value)=='huecos'"}<span class="glyphicon glyphicon-tasks"></span>{/if}		
+                        {if condition="strtolower($value->value)=='cuentas especiales'"}<span class="glyphicon glyphicon-list"></span>{/if}		
+                        {if condition="strtolower($value->value)=='balances'"}<span class="glyphicon glyphicon-indent-left"></span>{/if}		
+                        {if condition="strtolower($value->value)=='copiar'"}<span class="glyphicon glyphicon-retweet"></span>{/if}		
+                        {if condition="strtolower($value->value)=='generar factura'"}<span class="glyphicon glyphicon-file"></span>{/if}
+						{$value->value}
+                     </a>
                      {/if}
                   {/loop}
                </div>
