@@ -77,9 +77,10 @@
          <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
          <tr>
             <td>
-               <a class="btn btn-sm btn-danger" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">
-                  <span class="glyphicon glyphicon-trash"></span>
-               </a>
+               <button class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">
+                   <span class="glyphicon glyphicon-trash"></span>
+                   &nbsp; Eliminar
+               </button>
             </td>
             <td>{$value->codimpuesto}</td>
             <td>

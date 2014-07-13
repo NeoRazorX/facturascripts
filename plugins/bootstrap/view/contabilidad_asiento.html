@@ -257,7 +257,10 @@
                   <th>Importe</th>
                   <th>Descuadre</th>
                   <td rowspan="2" align="right" width="100">
-                     <input class="btn btn-sm btn-primary" type="submit" value="Guardar"/>
+                     <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        &nbsp; Guardar
+                     </button>
                   </td>
                </tr>
                <tr>
@@ -365,7 +368,9 @@
                      </table>
                   </td>
                   <td align='right'>
-                     <input class="btn btn-sm btn-danger" type='button' value='x' onclick="clean_partida('{$counter+1}')"/>
+                     <button class="btn btn-sm btn-danger" type="button" value="x" title="x" onclick="clean_partida('{$counter+1}')">
+                        <span class="glyphicon glyphicon-remove"></span>
+                     </button>
                   </td>
                </tr>
             </table>

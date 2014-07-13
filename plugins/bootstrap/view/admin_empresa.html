@@ -324,11 +324,11 @@
                </div>
             </div>
             <div class="modal-footer">
-               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_logo=TRUE#facturacion">
+               <button class="btn btn-sm btn-danger" type="button" title="Eliminar" value="Eliminar" href="{$fsc->url()}&delete_logo=TRUE#facturacion">
                   <span class="glyphicon glyphicon-trash"></span>
                   &nbsp; Eliminar
-               </a>
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar" value="Guardar">
+               </button>
+               <button class="btn btn-sm btn-primary" type="submit" title="Guardar" value="Guardar" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
                </button>

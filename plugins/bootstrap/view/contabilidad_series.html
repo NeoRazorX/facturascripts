@@ -70,9 +70,9 @@
          <input type="hidden" name="codserie" value="{$value->codserie}"/>
          <tr>
             <td>
-               <a class="btn btn-sm btn-danger" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
-                  <span class="glyphicon glyphicon-trash"></span>
-               </a>
+               <button class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
+                   <span class="glyphicon glyphicon-trash"></span>
+               </button>
             </td>
             <td>{$value->codserie}</td>
             <td>
@@ -82,7 +82,7 @@
                <input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/>
             </td>
             <td align="right">
-               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                </button>
             </td>

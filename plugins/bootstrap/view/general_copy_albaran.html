@@ -25,7 +25,10 @@
       <h3>
          Copiar a un nuevo...
          <span>
-            <input class="btn btn-sm btn-primary" type="submit" value="Copiar"/>
+            <button class="btn btn-sm btn-primary" type="submit" value="Copiar" title="Copiar" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Copiar
+            </button>
          </span>
       </h3>
       <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">

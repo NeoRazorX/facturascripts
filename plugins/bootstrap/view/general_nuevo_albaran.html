@@ -449,7 +449,10 @@
          </tr>
          <tr>
             <td colspan="4" align="right">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+               </button>
             </td>
          </tr>
       </table>
@@ -475,7 +478,10 @@
          <table class="table table-hover">
             <tr>
                <td>
-                  <input class="btn btn-sm btn-default" type="button" id="b_nuevo_albaran_proveedor" value="{$albaran} de proveedor">
+                  <button class="btn btn-sm btn-default" id="b_nuevo_albaran_proveedor" type="button" value="{$albaran} de proveedor" title="{$albaran} de proveedor" onclick="this.disabled=true;this.form.submit();">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      &nbsp; {$albaran} de proveedor
+                  </button>
                </td>
                <td align="center">
                   <b>Neto:</b> <span id="aneto" align="center">{$fsc->show_precio(0)}</span> &nbsp;
@@ -483,7 +489,10 @@
                   <b>Total:</b> <span id="atotal" align="center">{$fsc->show_precio(0)}</span>
                </td>
                <td align="right">
-                  <input class="btn btn-sm btn-default" type="button" id="b_nuevo_albaran_cliente" value="{$albaran} de cliente">
+                  <button class="btn btn-sm btn-default" id="b_nuevo_albaran_cliente" type="button" value="{$albaran} de cliente" title="{$albaran} de cliente" onclick="this.disabled=true;this.form.submit();">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      &nbsp; {$albaran} de cliente
+                  </button>
                </td>
             </tr>
          </table>

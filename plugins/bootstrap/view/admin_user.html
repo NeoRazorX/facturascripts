@@ -76,10 +76,10 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
                    <span class="glyphicon glyphicon-floppy-disk"></span>
                    &nbsp; Guardar
-                </button>
+               </button>
             </div>
          </form>
       </div>
@@ -112,26 +112,30 @@
             <label for="sadmin" class="col-sm-2 control-label">Administrador</label>
             <div class="col-sm-10">
             {if condition="$fsc->suser->admin"}
-            <input class="form-control" type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
+            <input type="checkbox" name="sadmin" value="TRUE" checked="checked" id="usuario_admin"/>
             {else}
-            <input class="form-control" type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
+            <input type="checkbox" name="sadmin" value="TRUE" id="usuario_admin"/>
             {/if}
              </div>
          </div>
          <div class="form-group">
             <label for="scodagente" class="col-sm-2 control-label"><a href="{$fsc->agente->url()}">Agente</a></label>
-            <div class="col-sm-10">
-            <select name="scodagente" class="form-control">
-               <option value="">Ninguno</option>
-               {loop="$fsc->agente->all()"}
-                 {if condition="$fsc->suser->codagente == $value->codagente"}
-                 <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
-                 {else}
-                 <option value="{$value->codagente}">{$value->get_fullname()}</option>
-                 {/if}
-               {/loop}
-            </select>
-            <input id="b_nuevo_agente" class="btn btn-sm btn-default" type="button" value="Crear un nuevo agente y asignarlo a este usuario" title="Crear un nuevo agente y asignarlo a este usuario"/>
+            <div class="col-sm-9">
+               <select name="scodagente" class="form-control">
+                  <option value="">Ninguno</option>
+                  {loop="$fsc->agente->all()"}
+                    {if condition="$fsc->suser->codagente == $value->codagente"}
+                    <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
+                    {else}
+                    <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                    {/if}
+                  {/loop}
+               </select>
+            </div>
+            <div class="col-sm-1">
+            <button id="b_nuevo_agente" class="btn btn-sm btn-default"  type="button" value="Crear un nuevo agente y asignarlo a este usuario" title="Crear un nuevo agente y asignarlo a este usuario">
+               <span class="glyphicon glyphicon-plus"></span>
+            </button>
              </div>
          </div>
          <div class="form-group">

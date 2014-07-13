@@ -139,11 +139,13 @@
             </td>
             <td align='right'>
                <div class="btn-group">
-                  <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_grupo={$value->codgrupo}#grupos" title="Eliminar">
-                     <span class="glyphicon glyphicon-trash"></span>
-                  </a>
-                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  <button class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" href="{$fsc->url()}&delete_grupo={$value->codgrupo}#grupos">
+                      <span class="glyphicon glyphicon-trash"></span>
+                      &nbsp; Eliminar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                      <span class="glyphicon glyphicon-floppy-disk"></span>
+                      &nbsp; Guardar
                   </button>
                </div>
             </td>

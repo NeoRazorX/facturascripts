@@ -29,15 +29,27 @@
                   <div class="panel-footer">
                      {if condition="$fsc->unstables"}
                         {if condition="$value['enabled']"}
-                        <a class="btn btn-sm btn-danger" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">Desactivar</a>
+                        <button class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            &nbsp; Desactivar
+                        </button>
                         {else}
-                        <a class="btn btn-sm btn-success" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">Activar</a>
+                        <button class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            &nbsp; Activar
+                        </button>
                         {/if}
                      {else}
                         {if condition="$value['enabled']"}
-                        <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}">Desactivar</a>
+                        <button class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&disable={$value['name']}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            &nbsp; Desactivar
+                        </button>
                         {else}
-                        <a class="btn btn-sm btn-success" href="{$fsc->url()}&enable={$value['name']}">Activar</a>
+                        <button class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&enable={$value['name']}">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            &nbsp; Activar
+                        </button>
                         {/if}
                      {/if}
                   </div>

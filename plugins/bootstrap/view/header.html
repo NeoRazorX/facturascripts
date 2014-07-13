@@ -141,42 +141,47 @@
          <div class="col-lg-10 col-sm-9">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group hidden-xs">
-                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
-                     <span class="glyphicon glyphicon-refresh"></span>
-                  </a>
+                  <button class="btn btn-sm btn-default" type="button" value="Recargar la página" title="Recargar la página" href="{$fsc->url()}">
+                      <span class="glyphicon glyphicon-refresh"></span>
+                  </button>
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
-                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
-                        <span class="glyphicon glyphicon-home"></span>
-                     </a>
+                     <button class="btn btn-sm btn-default active" type="button" value="Desmarcar como página de inicio" title="Desmarcar como página de inicio" href="{$fsc->url()}&amp;default_page=FALSE">
+                         <span class="glyphicon glyphicon-home"></span>
+                     </button>
                      {else}
-                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
-                        <span class="glyphicon glyphicon-home"></span>
-                     </a>
+                     <button class="btn btn-sm btn-default" type="button" value="Marcar como página de inicio" title="Marcar como página de inicio" href="{$fsc->url()}&amp;default_page=TRUE">
+                         <span class="glyphicon glyphicon-home"></span>
+                     </button>
                      {/if}
                   {/if}
                </div>
                
                <div class="btn-group hidden-xs">
                   {if condition="$fsc->ppage"}
-                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
-                     <span class="glyphicon glyphicon-arrow-left"></span>
-                     {$fsc->ppage->title}
-                  </a>
+                  <button class="btn btn-sm btn-primary" type="button" value="{$fsc->ppage->title}" title="{$fsc->ppage->title}" href="{$fsc->ppage->url()}">
+                      {$fsc->ppage->title}
+                  </button>
                   {/if}
-                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}">
-                     {$fsc->page->title}
-                  </a>
+                  <button class="btn btn-sm btn-primary" type="button" value="{$fsc->page->title}" title="{$fsc->page->title}" href="{$fsc->url()}">
+                      {$fsc->page->title}
+                  </button>
                </div>
                
                <div class="btn-group">
                   {loop="$fsc->buttons"}
                      {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
-                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">{$value->value}</a>
+                     <button class="btn btn-sm btn-success" id="{$value->id}" type="button" value="{$fsc->page->title}" title="{$fsc->page->title}" href="{$value->href}">
+                         {$value->value}
+                     </button>
                      {elseif condition="get_class($value)=='fs_button_img'"}
-                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
+                     <button class="btn btn-sm {if condition="$value->remove"}btn-danger{else}btn-default{/if}" id="{$value->id}" type="button" value="{$value->value}" title="{$value->value}" href="{$value->href}">
+                         {$value->value}
+                     </button>
                      {else}
-                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>
+                     <button class="btn btn-sm btn-default" id="{$value->id}" type="button" value="{$value->value}" title="{$value->value}" href="{$value->href}">
+                         {$value->value}
+                     </button>
                      {/if}
                   {/loop}
                </div>
