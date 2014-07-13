@@ -258,7 +258,6 @@
       $("#b_precios").click(function(event) {
          event.preventDefault();
          $("#modal_precios2").modal('show');
-         document.f_precios.codbar_0.focus();
       });
       $("#b_eliminar").click(function(event) {
          event.preventDefault();
@@ -269,7 +268,6 @@
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
          $("#modal_new_line").modal('show');
-         document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
          buscar_articulos();
@@ -344,7 +342,7 @@
                   {$value->descripcion}
                </td>
                <td>
-                  <input class="form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
+                  <input class="form-control" type="text" name="codbar_{$counter}" autocomplete="off" autofocus />
                </td>
                <td align="right">
                   {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}

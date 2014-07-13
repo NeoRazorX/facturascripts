@@ -10,7 +10,6 @@
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          $("#modal_enviar").modal('show');
-         document.enviar_email.email.focus();
       });
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
@@ -160,19 +159,19 @@
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Número:
+               Número
                <div class="form-control">{$fsc->albaran->numero}</div>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Número 2:
+               Número 2
                <input class="form-control" type="text" name="numero2" value="{$fsc->albaran->numero2}"/>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Serie:
+               Serie
                <select name="codserie" class="form-control">
                {loop="$fsc->serie->all()"}
                   <option value="{$value->codserie}"{if condition="$value->codserie==$fsc->albaran->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
@@ -182,33 +181,33 @@
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Ejercicio:
+               Ejercicio
                <div class="form-control">{$fsc->albaran->codejercicio}</div>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Fecha:
+               Fecha
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}" size="10"/>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Hora:
+               Hora
                <input class="form-control" type="text" name="hora" value="{$fsc->albaran->hora}" size="8"/>
             </div>
          </div>
          {if condition="$fsc->agente"}
          <div class="col-lg-3">
             <div class="form-group">
-               Agente:
+               Agente
                <a class="form-control" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
             </div>
          </div>
          {/if}
          <div class="col-lg-9">
             <div class="form-group">
-               Observaciones:
+               Observaciones
                <textarea class="form-control" name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
             </div>
          </div>

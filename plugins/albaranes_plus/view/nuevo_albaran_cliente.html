@@ -252,7 +252,6 @@
       if(window.location.hash.substring(1) == 'nuevo')
       {
          $("#modal_select_cliente").modal('show');
-         document.f_select_cliente.cliente.focus();
       }
    }
    $(document).ready(function() {
@@ -265,7 +264,6 @@
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
          $("#modal_new_line").modal('show');
-         document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
          buscar_articulos();
@@ -292,7 +290,7 @@
                <div class="form-group">
                   <label for="scodagente" class="col-sm-2 control-label">Nombre</label>
                   <div class="col-sm-10">
-                     <select name="cliente" class="form-control">
+                     <select name="cliente" class="form-control" autofocus >
                      {loop="$fsc->cliente->all_full()"}
                         {if condition="$value->is_default()"}
                         <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
@@ -327,7 +325,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <input type="text" name="query" size="40" autocomplete="off"/>
+                  <input type="text" name="query" size="40" autocomplete="off" autofocus />
                   <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                      <option value="">Todas las familias</option>
                      <option value="">------</option>

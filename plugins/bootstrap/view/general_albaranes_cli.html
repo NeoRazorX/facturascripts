@@ -26,11 +26,9 @@
       }
    }
    $(document).ready(function() {
-      document.f_custom_search.query.focus();
       $("#b_buscar_lineas").click(function(event) {
          event.preventDefault();
          $("#modal_buscar_lineas").modal('show');
-         document.f_buscar_lineas.buscar_lineas.focus();
       });
       $("#f_buscar_lineas").keyup(function() {
          buscar_lineas();

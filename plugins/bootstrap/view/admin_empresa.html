@@ -83,7 +83,7 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6">
                      Nombre:
-                     <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-6">
                      CIF/NIF:
@@ -145,7 +145,7 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6">
                      <label>Email:</label>
-                     <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off"/>
+                     <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-6">
                      <label>Contraseña:</label>
@@ -171,7 +171,7 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6">
                      <label>Host:</label>
-                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-2">
                      <label>Puerto:</label>
@@ -208,7 +208,7 @@
                <div class="panel-body">
                   <div class="form-group col-lg-3">
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
-                     <select name="codejercicio" class="form-control">
+                     <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
                         <option value="{$value->codejercicio}"{if condition="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
                      {/loop}
@@ -278,7 +278,7 @@
                <div class="panel-body">
                   <div class="form-group">
                      Lema:
-                     <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group">
                      Horario:

@@ -254,7 +254,6 @@
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          $("#modal_enviar").modal('show');
-         document.enviar_email.email.focus();
       });
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
@@ -265,7 +264,6 @@
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
          $("#modal_new_line").modal('show');
-         document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
          buscar_articulos();

@@ -5,7 +5,6 @@
       $("#b_nuevo_clan").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_nuevo_clan', 60);
-         document.f_nuevo_clan.nombre.focus();
       });
    });
 </script>
@@ -14,7 +13,7 @@
    <h1>Nuevo clan familiar</h1>
    <form name="f_nuevo_clan" action="{$fsc->url()}" method="post">
       Nombre:
-      <input type="text" name="nombre"/>
+      <input type="text" name="nombre" autofocus />
       <input class="submit" type="submit" value="Guardar"/>
    </form>
 </div>

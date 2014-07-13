@@ -86,7 +86,6 @@
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
       $("#modal_subcuentas").modal('show');
-      document.f_buscar_subcuentas.query.focus();
    }
    function buscar_subcuentas()
    {
@@ -175,7 +174,6 @@
    function asigna_concepto()
    {
       document.f_asiento.concepto.value = $("#s_idconceptopar option:selected").text();
-      document.f_asiento.concepto.focus();
    }
    $(document).ready(function() {
       $("#f_buscar_subcuentas").keyup(function() {
@@ -247,7 +245,7 @@
                  <option value="">---</option>
                  {loop="$fsc->concepto->all()"}<option value="{$value->idconceptopar}">{$value->concepto}</option>{/loop}
                </select>
-               <input name="concepto" type="text" autocomplete="off"/>
+               <input name="concepto" type="text" autocomplete="off" autofocus />
             </td>
             <td align="right">
                <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">

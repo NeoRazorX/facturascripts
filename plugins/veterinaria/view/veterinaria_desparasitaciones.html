@@ -10,7 +10,6 @@
       $("#b_nueva_desparasitacion").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_tipo_desparasitacion").show();
-         document.f_nueva_desparasitacion.id_desparasitacion.focus();
       });
    });
 </script>
@@ -26,7 +25,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Nombre:
-                  <input class="form-control" type="text" name="snombre" size="18" autocomplete="off"/>
+                  <input class="form-control" type="text" name="snombre" size="18" autocomplete="off" autofocus />
                </div>
             </div>
             <div class="modal-footer">

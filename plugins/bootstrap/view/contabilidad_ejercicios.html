@@ -5,7 +5,6 @@
       $("#b_nuevo_ejercicio").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_ejercicio").modal('show');
-         document.f_nuevo_ejercicio.nombre.focus();
       });
    });
 </script>
@@ -28,7 +27,7 @@
                <div class="form-group">
                   <label for="nombre" class="col-sm-2 control-label">Nombre</label>
                   <div class="col-sm-10">
-                     <input class="form-control" type="text" name="nombre" autocomplete="off"/>
+                     <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">

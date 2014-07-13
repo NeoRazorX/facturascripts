@@ -13,8 +13,6 @@
 
    <script type="text/javascript">
       $(document).ready(function() {
-         document.f_login.password.focus();
-         
          {if condition="$fsc->get_errors()"}
          $("#box_login").shake();
          {/if}
@@ -69,7 +67,7 @@
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" role="form">
                   <div class="form-group">
                      <label>Usuario</label>
-                     <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
+                     <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()" autofocus >
                      {loop name="$fsc->user->all()"}
                         {if condition="$value->nick == $nlogin"}
                         <option value="{$value->nick}" selected>{$value->nick}</option>

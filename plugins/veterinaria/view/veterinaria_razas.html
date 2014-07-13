@@ -10,7 +10,6 @@
       $("#b_nueva_raza").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_raza").show();
-         document.f_nueva_raza.sespecie.focus();
       });
    });
 </script>
@@ -26,7 +25,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Especie:
-                  <select name="sespecie">
+                  <select name="sespecie" autofocus >
                      {loop="$fsc->especie->all()"}
                      <option value="{$value->nombre}">{$value->nombre}</option>
                      {/loop}

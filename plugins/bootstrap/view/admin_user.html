@@ -24,7 +24,6 @@
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
-         document.f_nuevo_agente.nnombre.focus();
       });
    });
 </script>
@@ -47,7 +46,7 @@
                <div class="form-group">
                   <label for="nnombre" class="col-sm-2 control-label">Nombre</label>
                   <div class="col-sm-10">
-                     <input class="form-control" type="text" name="nnombre" autocomplete="off"/>
+                     <input class="form-control" type="text" name="nnombre" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">

@@ -37,7 +37,6 @@
       $("#b_buscar_cliente").click(function(event) {
          event.preventDefault();
          fs_show_popup('popup_buscar_cliente', 40);
-         document.f_buscar_cliente.buscar_cliente.focus();
       });
       $("#f_buscar_cliente").keyup(function() {
          buscar_cliente();
@@ -53,7 +52,7 @@
    <h1>Escribe el DNI del cliente</h1>
    <form id="f_buscar_cliente" name="f_buscar_cliente" action="{$fsc->url()}" method="post">
       <div style="text-align: center;">
-         <input type="text" name="buscar_cliente" size="40" autocomplete="off"/>
+         <input type="text" name="buscar_cliente" size="40" autocomplete="off" autofocus />
          <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
       </div>
    </form>

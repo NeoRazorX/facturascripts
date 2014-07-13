@@ -37,7 +37,6 @@
       else
          $("#cantidad_"+num).val(udl);
       recalcular();
-      document.f_albaran.codbar.focus();
    }
    function ajustar_pvpt(num)
    {
@@ -127,7 +126,6 @@
       }
    }
    $(document).ready(function() {
-      document.f_albaran.codbar.focus();
       $('#b_codbar').keypress(function(e) {
          if(e.which == 13)
             send_albaran();
@@ -162,7 +160,7 @@
       </tr>
    </table>
    <div class="new_line" style="padding: 3px;">
-      <input class="full" type="text" id="b_codbar" name="codbar" size="60" autocomplete="off" placeholder=" introduce el código de barras"/>
+      <input class="full" type="text" id="b_codbar" name="codbar" size="60" autocomplete="off" placeholder="Introduce el código de barras" autofocus />
    </div>
    <br/><br/>
    <div>

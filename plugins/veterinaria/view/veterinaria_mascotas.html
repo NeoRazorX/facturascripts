@@ -5,7 +5,6 @@
       $("#b_nueva").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_mascota").show();
-         document.f_nueva_mascota.nombre.focus();
       });
    });
 </script>
@@ -35,7 +34,7 @@
                </div>
                <div class="form-group">
                   Nombre de la mascota:
-                  <input type="text" name="nombre" maxlength="50" autocomplete="off"/>
+                  <input type="text" name="nombre" maxlength="50" autocomplete="off" autofocus />
                </div>
                <div class="form-group">
                   Chip:

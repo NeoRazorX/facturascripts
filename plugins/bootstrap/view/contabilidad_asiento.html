@@ -85,7 +85,6 @@
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
       $("#modal_subcuentas").modal('show');
-      document.f_buscar_subcuentas.query.focus();
    }
    function buscar_subcuentas()
    {
@@ -178,7 +177,6 @@
    function asigna_concepto()
    {
       document.f_asiento.concepto.value = $("#s_idconceptopar option:selected").text();
-      document.f_asiento.concepto.focus();
    }
    $(document).ready(function() {
       {if condition="$fsc->asiento->editable"}recalcular();{/if}
@@ -268,8 +266,7 @@
                      <input class="form-control datepicker" name="fecha" type="text" value="{$fsc->asiento->fecha}"/>
                   </td>
                   <td>
-                     <input class="form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}"
-                            autocomplete="off"/>
+                     <input class="form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}" autocomplete="off" autofocus />
                   </td>
                   <td>
                      <select class='form-control' name='divisa'>

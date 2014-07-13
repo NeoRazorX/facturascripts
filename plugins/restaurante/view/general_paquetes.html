@@ -37,7 +37,6 @@
          $("#search_results").html('');
          document.f_buscar_articulos.query.value = '';
          fs_show_popup('popup_buscar_articulos', 40);
-         document.f_buscar_articulos.query.focus();
       });
       $("#f_buscar_articulos").keyup(function() {
          buscar_articulos();
@@ -97,8 +96,8 @@
    <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post">
       <h1>Buscar artículos</h1>
       <div style="text-align: center;">
-         <input type="text" name="query" size="40" autocomplete="off"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+         <input type="text" name="query" size="40" autocomplete="off" autofocus />
+         <input class="search" type="image" src="view/img/zoom2.png" alt="Buscar"/>
       </div>
       <div id="search_results"></div>
    </form>
