@@ -80,7 +80,7 @@ class nuevo_albaran_cliente extends fs_controller
       else if( !$this->agente )
       {
          $this->new_error_msg('No tienes un <a href="'.$this->user->url().'">agente asociado</a>
-            a tu usuario, y por tanto no puedes hacer albaranes.');
+            a tu usuario, y por tanto no puedes hacer '.FS_ALBARANES.'.');
       }
       else if( isset($_POST['cliente']) )
       {
