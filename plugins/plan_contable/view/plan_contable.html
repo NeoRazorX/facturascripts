@@ -1,16 +1,20 @@
 {include="header"}
 
 <div class="rounded">
-   <h1>Selecciona el archivo CSV:</h1>
-   <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
-      <input type="hidden" name="archivo" value="TRUE"/>
-      <input type="file" name="farchivo"/>
-      <input class="submit" type="submit" value="Procesar"/>
-   </form>
+   <div class="container-fluid">
+      <div class="row">
+         <h4>Selecciona el archivo CSV</h4>
+         <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+            <input type="hidden" name="archivo" value="TRUE"/>
+            <input type="file" name="farchivo"/>
+            <input class="submit" type="submit" value="Procesar"/>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div class="advice">
-   Debes seleccionar un archivo csv con todas las cuentas, subcuentas, epígrafes y grupos,
+<div class="alert alert-info">
+   Debes seleccionar un archivo CSV con todas las cuentas, subcuentas, epígrafes y grupos,
    es decir, con todos los niveles contables, separados en código y descripción.
    <a class="link" href="plugins/plan_contable/extra/colombia.csv">Aquí tienes un ejemplo</a>.
 </div>
