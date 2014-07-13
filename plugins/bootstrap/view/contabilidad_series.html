@@ -69,9 +69,9 @@
          <input type="hidden" name="codserie" value="{$value->codserie}"/>
          <tr>
             <td>
-               <button class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" href="#" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
+               <a class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
                    <span class="glyphicon glyphicon-trash"></span>
-               </button>
+               </a>
             </td>
             <td>{$value->codserie}</td>
             <td>

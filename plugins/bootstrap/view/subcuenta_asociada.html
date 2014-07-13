@@ -85,10 +85,10 @@
 {if condition="$fsc->tipo == 'cli' AND $fsc->subcuenta"}
 <div class="well well-sm">
    <div>
-      <button class="btn btn-sm btn-default" type="button" value="Volver al cliente" title="Volver al cliente" href="{$fsc->cliente->url()}">
+      <a class="btn btn-sm btn-default" type="button" value="Volver al cliente" title="Volver al cliente" href="{$fsc->cliente->url()}">
          <span class="glyphicon glyphicon-arrow-left"></span>
-         Volver al cliente
-      </button>
+         &nbsp; Volver al cliente
+      </a>
    </div>
    <h2 style="margin: 10px 0px 10px 0px;">
       En el ejercicio {$fsc->subcuenta_a->codejercicio},
@@ -169,10 +169,10 @@
 {elseif condition="$fsc->tipo == 'pro' AND $fsc->subcuenta"}
 <div class="well well-sm">
    <div>
-      <button class="btn btn-sm btn-default" type="button" value="Volver al proveedor" title="Volver al proveedor" href="{$fsc->proveedor->url()}">
+      <a class="btn btn-sm btn-default" type="button" value="Volver al proveedor" title="Volver al proveedor" href="{$fsc->proveedor->url()}">
          <span class="glyphicon glyphicon-arrow-left"></span>
          Volver al proveedor
-      </button>
+      </a>
    </div>
    <h2 style="margin: 10px 0px 10px 0px;">
       En el ejercicio {$fsc->subcuenta_a->codejercicio},

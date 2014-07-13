@@ -173,10 +173,10 @@
          </div>
       </div>
       <div class="panel-footer">
-         <button class="btn btn-sm btn-danger" href="#" onclick="delete_almacen('{$fsc->url()}&delete={$value->codalmacen}')" title="Eliminar" value="Eliminar">
+         <a class="btn btn-sm btn-danger" onclick="delete_almacen('{$fsc->url()}&delete={$value->codalmacen}')" title="Eliminar" value="Eliminar">
             <span class="glyphicon glyphicon-trash"></span>
             &nbsp; Eliminar
-         </button>
+         </a>
          <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar" value="Guardar">
             <span class="glyphicon glyphicon-floppy-disk"></span>
             &nbsp; Guardar
