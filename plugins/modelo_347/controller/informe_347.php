@@ -60,7 +60,7 @@ class informe_347 extends fs_controller
       if( isset($_GET['eje']) )
          $this->excel();
       else
-         $this->buttons[] = new fs_button('b_download', 'descargar', $this->url().'&eje='.$this->sejercicio.'&cantidad='.$this->cantidad);
+         $this->buttons[] = new fs_button('b_download', 'Descargar', $this->url().'&eje='.$this->sejercicio.'&cantidad='.$this->cantidad);
    }
    
    private function informe_clientes()

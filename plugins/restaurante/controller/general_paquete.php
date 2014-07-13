@@ -90,8 +90,8 @@ class general_paquete extends fs_controller
       
       if($this->paquete)
       {
-         $this->buttons[] = new fs_button('b_articulo', 'ver artículo', $this->paquete->articulo->url());
-         $this->buttons[] = new fs_button_img('b_eliminar_paquete', 'eliminar', 'trash.png',
+         $this->buttons[] = new fs_button('b_articulo', 'Ver artículo', $this->paquete->articulo->url());
+         $this->buttons[] = new fs_button_img('b_eliminar_paquete', 'Eliminar', 'trash.png',
                  $this->url()."&delete=".$this->paquete->referencia, TRUE);
       }
       else

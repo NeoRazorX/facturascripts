@@ -91,9 +91,9 @@ class tpv_yamyam extends fs_controller
          {
             if($this->caja->codagente == $this->user->codagente)
             {
-               $this->buttons[] = new fs_button('b_opciones_tpv', 'opciones');
-               $this->buttons[] = new fs_button_img('b_cancelar_ticket', 'borrar ticket', 'trash.png', '#', TRUE);
-               $this->buttons[] = new fs_button_img('b_cerrar_caja', 'cerrar caja', 'remove.png', '#', TRUE);
+               $this->buttons[] = new fs_button('b_opciones_tpv', 'Opciones');
+               $this->buttons[] = new fs_button_img('b_cancelar_ticket', 'Borrar ticket', 'trash.png', '#', TRUE);
+               $this->buttons[] = new fs_button_img('b_cerrar_caja', 'Cerrar caja', 'remove.png', '#', TRUE);
                
                if( isset($_GET['cerrar_caja']) )
                   $this->cerrar_caja();
@@ -114,9 +114,9 @@ class tpv_yamyam extends fs_controller
          }
          else if( isset($_POST['d_inicial']) )
          {
-            $this->buttons[] = new fs_button('b_opciones_tpv', 'opciones');
-            $this->buttons[] = new fs_button_img('b_cancelar_ticket', 'borrar ticket', 'trash.png', '#', TRUE);
-            $this->buttons[] = new fs_button_img('b_cerrar_caja', 'cerrar caja', 'remove.png', '#', TRUE);
+            $this->buttons[] = new fs_button('b_opciones_tpv', 'Opciones');
+            $this->buttons[] = new fs_button_img('b_cancelar_ticket', 'Borrar ticket', 'trash.png', '#', TRUE);
+            $this->buttons[] = new fs_button_img('b_cerrar_caja', 'Cerrar caja', 'remove.png', '#', TRUE);
             
             $this->caja = new caja();
             $this->caja->codagente = $this->user->codagente;

@@ -54,7 +54,7 @@ class general_clanes extends fs_controller
             $this->new_error_msg('Imposible guardar el clan familiar.');
       }
       
-      $this->buttons[] = new fs_button_img('b_nuevo_clan', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_clan', 'Nuevo');
    }
 }
 

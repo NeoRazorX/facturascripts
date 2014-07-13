@@ -1,84 +1,98 @@
 {include="header"}
 
-<div class="rounded">
-   <h1>
-      <form name="f_347" action="{$fsc->url()}" method="post">
-         Clientes que han comprado más de
-         <input type="text" name="cantidad" value="{$fsc->cantidad}" size="8" autocomplete="off"/>
-         {$fsc->simbolo_divisa()} en el año
-         <select name="ejercicio" onchange="document.f_347.submit()">
-         {loop="$fsc->ejercicio->all()"}
-            {if condition="$fsc->sejercicio==$value->year()"}
-            <option value="{$value->year()}" selected="selected">{$value->year()}</option>
-            {else}
-            <option value="{$value->year()}">{$value->year()}</option>
-            {/if}
-         {/loop}
-         </select>
-      </form>
-   </h1>
-   <table class="list">
-      <tr>
-         <th align="left">Cliente</th>
-         <th align="right">1º trimestre</th>
-         <th align="right">2º trimestre</th>
-         <th align="right">3º trimestre</th>
-         <th align="right">4º trimestre</th>
-         <th align="right">Total</th>
-      </tr>
-      {loop="$fsc->datos_cli['filas']"}
-      <tr>
-         <td><a class="link" href="{$value['cliente']->url()}">{$value['cliente']->nombre}</a></td>
-         <td align="right">{$fsc->show_precio($value['t1'])}</td>
-         <td align="right">{$fsc->show_precio($value['t2'])}</td>
-         <td align="right">{$fsc->show_precio($value['t3'])}</td>
-         <td align="right">{$fsc->show_precio($value['t4'])}</td>
-         <td align="right">{$fsc->show_precio($value['total'])}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][0])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][1])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][2])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][3])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][4])}</b></td>
-      </tr>
-   </table>
+<div class="container-fluid">
+   <div class="row">
+      <h4>
+         <form name="f_347" action="{$fsc->url()}" method="post">
+            Clientes que han comprado más de
+            <input type="text" name="cantidad" value="{$fsc->cantidad}" size="8" autocomplete="off"/>
+            {$fsc->simbolo_divisa()} en el año
+            <select name="ejercicio" onchange="document.f_347.submit()">
+            {loop="$fsc->ejercicio->all()"}
+               {if condition="$fsc->sejercicio==$value->year()"}
+               <option value="{$value->year()}" selected="selected">{$value->year()}</option>
+               {else}
+               <option value="{$value->year()}">{$value->year()}</option>
+               {/if}
+            {/loop}
+            </select>
+         </form>
+      </h4>
+      
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th align="left">Cliente</th>
+                  <th align="right">1º trimestre</th>
+                  <th align="right">2º trimestre</th>
+                  <th align="right">3º trimestre</th>
+                  <th align="right">4º trimestre</th>
+                  <th align="right">Total</th>
+               </tr>
+            </thead>
+            {loop="$fsc->datos_cli['filas']"}
+            <tr>
+               <td><a class="link" href="{$value['cliente']->url()}">{$value['cliente']->nombre}</a></td>
+               <td align="right">{$fsc->show_precio($value['t1'])}</td>
+               <td align="right">{$fsc->show_precio($value['t2'])}</td>
+               <td align="right">{$fsc->show_precio($value['t3'])}</td>
+               <td align="right">{$fsc->show_precio($value['t4'])}</td>
+               <td align="right">{$fsc->show_precio($value['total'])}</td>
+            </tr>
+            {/loop}
+            <tr>
+               <td></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][0])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][1])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][2])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][3])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_cli['totales'][4])}</b></td>
+            </tr>
+         </table>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
-   <h1>
-      Proveedores que nos han vendido más de {$fsc->show_precio($fsc->cantidad)} en el año {$fsc->sejercicio}
-   </h1>
-   <table class="list">
-      <tr>
-         <th align="left">Proveedor</th>
-         <th align="right">1º trimestre</th>
-         <th align="right">2º trimestre</th>
-         <th align="right">3º trimestre</th>
-         <th align="right">4º trimestre</th>
-         <th align="right">Total</th>
-      </tr>
-      {loop="$fsc->datos_pro['filas']"}
-      <tr>
-         <td><a class="link" href="{$value['proveedor']->url()}">{$value['proveedor']->nombre}</a></td>
-         <td align="right">{$fsc->show_precio($value['t1'])}</td>
-         <td align="right">{$fsc->show_precio($value['t2'])}</td>
-         <td align="right">{$fsc->show_precio($value['t3'])}</td>
-         <td align="right">{$fsc->show_precio($value['t4'])}</td>
-         <td align="right">{$fsc->show_precio($value['total'])}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][0])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][1])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][2])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][3])}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][4])}</b></td>
-      </tr>
-   </table>
+<div class="container-fluid">
+   <div class="row">
+      <h4>
+         Proveedores que nos han vendido más de {$fsc->show_precio($fsc->cantidad)} en el año {$fsc->sejercicio}
+      </h4>
+      
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th align="left">Proveedor</th>
+                  <th align="right">1º trimestre</th>
+                  <th align="right">2º trimestre</th>
+                  <th align="right">3º trimestre</th>
+                  <th align="right">4º trimestre</th>
+                  <th align="right">Total</th>
+               </tr>
+            </thead>
+            {loop="$fsc->datos_pro['filas']"}
+            <tr>
+               <td><a class="link" href="{$value['proveedor']->url()}">{$value['proveedor']->nombre}</a></td>
+               <td align="right">{$fsc->show_precio($value['t1'])}</td>
+               <td align="right">{$fsc->show_precio($value['t2'])}</td>
+               <td align="right">{$fsc->show_precio($value['t3'])}</td>
+               <td align="right">{$fsc->show_precio($value['t4'])}</td>
+               <td align="right">{$fsc->show_precio($value['total'])}</td>
+            </tr>
+            {/loop}
+            <tr>
+               <td></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][0])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][1])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][2])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][3])}</b></td>
+               <td align="right"><b>{$fsc->show_precio($fsc->datos_pro['totales'][4])}</b></td>
+            </tr>
+         </table>
+      </div>
+   </div>
 </div>
 
 {include="footer"}

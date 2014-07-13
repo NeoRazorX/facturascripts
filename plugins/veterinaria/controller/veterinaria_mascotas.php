@@ -22,7 +22,7 @@ class veterinaria_mascotas extends fs_controller
       $this->raza = new raza();
       $this->custom_search = TRUE;
       
-      $this->buttons[] = new fs_button('b_nueva', 'nueva');
+      $this->buttons[] = new fs_button('b_nueva', 'Nueva');
       
       if( isset($_POST['nombre']) )
       {

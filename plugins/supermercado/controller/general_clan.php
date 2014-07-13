@@ -88,7 +88,7 @@ class general_clan extends fs_controller
          }
          
          $this->page->title = 'Clan '.$this->clan->codclan;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          $this->clientes = $this->clan->get_clientes();
       }
       else
