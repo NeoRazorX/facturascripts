@@ -80,9 +80,9 @@ class contabilidad_ejercicio extends fs_controller
             $this->ppage = $this->page->get('contabilidad_ejercicios');
             $this->page->title = $this->ejercicio->codejercicio.' ('.$this->ejercicio->nombre.')';
             
-            $this->buttons[] = new fs_button('b_importar', 'importar');
-            $this->buttons[] = new fs_button('b_exportar', 'exportar', $this->url().'&export=TRUE');
-            $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+            $this->buttons[] = new fs_button('b_importar', 'Importar');
+            $this->buttons[] = new fs_button('b_exportar', 'Exportar', $this->url().'&export=TRUE');
+            $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
             
             if( isset($_GET['cerrar']) AND isset($_GET['petid']) )
             {

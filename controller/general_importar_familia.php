@@ -227,17 +227,17 @@ class general_importar_familia extends fs_controller
                   else
                   {
                      $this->new_message("Comprobación finalizada. Pulsa el botón <b>procesar</b> para comenzar.");
-                     $this->buttons[] = new fs_button_img('b_start', 'procesar', 'play.png', $this->url().'&action=start');
+                     $this->buttons[] = new fs_button_img('b_start', 'Procesar', 'play.png', $this->url().'&action=start');
                   }
                }
                else
                {
                   $this->new_message("Comprobando ... ".$this->family_data->lineas_procesadas.
                           "/".$this->family_data->lineas);
-                  $this->buttons[] = new fs_button_img('b_pause_import', 'pausar', 'pause.png');
+                  $this->buttons[] = new fs_button_img('b_pause_import', 'Pausar', 'pause.png');
                }
                
-               $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+               $this->buttons[] = new fs_button_img('b_cancelar', 'Cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
             }
             else if($this->family_data->action == 'start')
             {
@@ -255,8 +255,8 @@ class general_importar_familia extends fs_controller
                   $this->new_message("Procesando ... ".$this->family_data->lineas_procesadas.
                           "/".$this->family_data->lineas);
                   
-                  $this->buttons[] = new fs_button_img('b_pause_import', 'pausar', 'pause.png');
-                  $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+                  $this->buttons[] = new fs_button_img('b_pause_import', 'Pausar', 'pause.png');
+                  $this->buttons[] = new fs_button_img('b_cancelar', 'Cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
                }
             }
          }

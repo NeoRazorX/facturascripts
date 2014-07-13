@@ -95,19 +95,19 @@ class general_albaran_prov extends fs_controller
          if( isset($_POST['actualizar_precios']) )
             $this->actualizar_precios();
          
-         $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbpro='.$this->albaran->idalbaran, TRUE);
+         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=general_copy_albaran&idalbpro='.$this->albaran->idalbaran, TRUE);
          
          if( $this->albaran->ptefactura )
          {
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
          }
          else if( isset($this->albaran->idfactura) )
          {
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url());
+            $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
          }
          
-         $this->buttons[] = new fs_button('b_precios', 'precios');
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button('b_precios', 'Frecios');
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de proveedor no encontrado!");

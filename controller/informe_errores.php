@@ -129,7 +129,7 @@ class informe_errores extends fs_controller
                fwrite($file, join(';', $this->informe)."\n------\n" );
             }
             else
-               $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+               $this->buttons[] = new fs_button_img('b_cancelar', 'Cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
             
             fclose($file);
          }
@@ -139,7 +139,7 @@ class informe_errores extends fs_controller
          $file = fopen('tmp/informe_errores.txt', 'w');
          if($file)
          {
-            $this->buttons[] = new fs_button_img('b_cancelar', 'cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
+            $this->buttons[] = new fs_button_img('b_cancelar', 'Cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
             
             if($_POST['modelo'] == 'todo')
             {

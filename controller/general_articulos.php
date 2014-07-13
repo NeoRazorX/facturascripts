@@ -53,12 +53,12 @@ class general_articulos extends fs_controller
       $articulo = new articulo();
       
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'nuevo', 'add.png', '#nuevo');
-      $this->buttons[] = new fs_button('b_tarifas', 'tarifas', '#tarifas');
-      $this->buttons[] = new fs_button('b_modificar_iva', 'modificar iva', '#mod-iva');
+      $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'Nuevo', 'add.png', '#nuevo');
+      $this->buttons[] = new fs_button('b_tarifas', 'Tarifas', '#tarifas');
+      $this->buttons[] = new fs_button('b_modificar_iva', 'Modificar IVA', '#mod-iva');
       
       if( !isset($_GET['public']) )
-         $this->buttons[] = new fs_button('b_publicos', 'publicos', $this->url().'&public=TRUE');
+         $this->buttons[] = new fs_button('b_publicos', 'Públicos', $this->url().'&public=TRUE');
       
       if( isset($_POST['codtarifa']) )
       {

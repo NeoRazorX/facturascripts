@@ -96,11 +96,11 @@ class contabilidad_factura_prov extends fs_controller
             $this->page->title = $this->factura->codigo;
             
             if($this->factura->idasiento)
-               $this->buttons[] = new fs_button('b_ver_asiento', 'asiento', $this->factura->asiento_url());
+               $this->buttons[] = new fs_button('b_ver_asiento', 'Asiento', $this->factura->asiento_url());
             else
-               $this->buttons[] = new fs_button('b_gen_asiento', 'generar asiento', $this->url().'&gen_asiento=TRUE&petid='.$this->random_string());
+               $this->buttons[] = new fs_button('b_gen_asiento', 'Generar asiento', $this->url().'&gen_asiento=TRUE&petid='.$this->random_string());
             
-            $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+            $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          }
       }
       else

@@ -180,7 +180,7 @@ class general_cliente extends fs_controller
       if($this->cliente)
       {
          $this->page->title = $this->cliente->codcliente;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          
          $this->offset = 0;
          if( isset($_GET['offset']) )

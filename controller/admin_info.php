@@ -47,7 +47,7 @@ class admin_info extends fs_controller
       }
       else
       {
-         $this->buttons[] = new fs_button_img('b_clean_cache', 'limpiar la cache', 'trash.png', $this->url()."&clean_cache=TRUE", TRUE);
+         $this->buttons[] = new fs_button_img('b_clean_cache', 'Limpiar la cache', 'trash.png', $this->url()."&clean_cache=TRUE", TRUE);
       }
       
       if( isset($_GET['clean_cache']) )

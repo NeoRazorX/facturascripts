@@ -31,7 +31,7 @@ class contabilidad_ejercicios extends fs_controller
    protected function process()
    {
       $this->ejercicio = new ejercicio();
-      $this->buttons[] = new fs_button_img('b_nuevo_ejercicio', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_ejercicio', 'Nuevo');
       
       if( isset($_GET['delete']) )
       {

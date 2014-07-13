@@ -42,7 +42,7 @@ class contabilidad_banco extends fs_controller
       if($this->banco)
       {
          $this->page->title = $this->banco->entidad;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg('Banco no encontrado.');

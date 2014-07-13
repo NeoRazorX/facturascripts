@@ -71,15 +71,15 @@ class contabilidad_subcuenta extends fs_controller
          
          if( file_exists('tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf') )
          {
-            $this->buttons[] = new fs_button_img('b_libro_mayor', 'libro mayor', 'print.png',
+            $this->buttons[] = new fs_button_img('b_libro_mayor', 'Libro mayor', 'print.png',
                'tmp/libro_mayor/'.$this->subcuenta->idsubcuenta.'.pdf', FALSE, TRUE);
          }
          else
          {
-            $this->buttons[] = new fs_button('b_libro_mayor', 'generar libro mayor', $this->url().'&genlm=TRUE');
+            $this->buttons[] = new fs_button('b_libro_mayor', 'Generar libro mayor', $this->url().'&genlm=TRUE');
          }
          
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          
          /// comprobamos la subcuenta
          $this->subcuenta->test();

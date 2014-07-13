@@ -69,14 +69,14 @@ class general_familia extends fs_controller
          $this->page->title = $this->familia->codfamilia;
          $this->impuesto = new impuesto();
          
-         $this->buttons[] = new fs_button('b_stats_familia', 'estadísticas');
-         $this->buttons[] = new fs_button('b_herramientas_familia', 'herramientas');
+         $this->buttons[] = new fs_button('b_stats_familia', 'Estadísticas');
+         $this->buttons[] = new fs_button('b_herramientas_familia', 'Herramientas');
          
          if( $this->pag_importar )
-            $this->buttons[] = new fs_button('b_importar_familia', 'importar');
+            $this->buttons[] = new fs_button('b_importar_familia', 'Importar');
          
-         $this->buttons[] = new fs_button('b_download_familia', 'exportar', $this->url().'&download=TRUE');
-         $this->buttons[] = new fs_button_img('b_eliminar_familia', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button('b_download_familia', 'Exportar', $this->url().'&download=TRUE');
+         $this->buttons[] = new fs_button_img('b_eliminar_familia', 'Eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_POST['multiplicar']) )
          {

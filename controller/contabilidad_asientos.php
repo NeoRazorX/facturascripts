@@ -39,10 +39,10 @@ class contabilidad_asientos extends fs_controller
       if($naurl)
          $this->buttons[] = new fs_button_img('b_nuevo_asiento', 'Nuevo', 'add.png', $naurl->url());
       
-      $this->buttons[] = new fs_button_img('b_renumerar', 'renumerar', 'play.png', $this->url().'&renumerar=TRUE');
+      $this->buttons[] = new fs_button_img('b_renumerar', 'Renumerar', 'play.png', $this->url().'&renumerar=TRUE');
       
       if( !isset($_GET['descuadrados']) )
-         $this->buttons[] = new fs_button('b_descuadrados', 'descuadrados', $this->url().'&descuadrados=TRUE');
+         $this->buttons[] = new fs_button('b_descuadrados', 'Descuadrados', $this->url().'&descuadrados=TRUE');
       
       if( isset($_GET['delete']) )
       {

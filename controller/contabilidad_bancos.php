@@ -34,7 +34,7 @@ class contabilidad_bancos extends fs_controller
    {
       $this->banco = new banco();
       $this->proveedor = new proveedor();
-      $this->buttons[] = new fs_button_img('b_nuevo_banco', 'nuevo');
+      $this->buttons[] = new fs_button_img('b_nuevo_banco', 'Nuevo');
       
       if( isset($_POST['entidad']) )
       {

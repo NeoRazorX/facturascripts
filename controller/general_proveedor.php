@@ -161,7 +161,7 @@ class general_proveedor extends fs_controller
       if($this->proveedor)
       {
          $this->page->title = $this->proveedor->codproveedor;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          
          $this->offset = 0;
          if( isset($_GET['offset']) )

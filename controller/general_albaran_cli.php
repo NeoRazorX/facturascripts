@@ -123,8 +123,8 @@ class general_albaran_cli extends fs_controller
                $this->generar_factura();
          }
          
-         $this->buttons[] = new fs_button('b_copiar', 'copiar', 'index.php?page=general_copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
-         $this->buttons[] = new fs_button_img('b_imprimir', 'imprimir', 'print.png');
+         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=general_copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
+         $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
          
          /// comprobamos si se pueden enviar emails
          if( $this->empresa->can_send_mail() )
@@ -135,7 +135,7 @@ class general_albaran_cli extends fs_controller
                $this->cliente_email = $cliente->email;
             }
             
-            $this->buttons[] = new fs_button_img('b_enviar', 'enviar', 'send.png');
+            $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
             
             if( isset($_POST['email']) )
             {
@@ -145,14 +145,14 @@ class general_albaran_cli extends fs_controller
          
          if( $this->albaran->ptefactura )
          {
-            $this->buttons[] = new fs_button('b_facturar', 'generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
          }
          else if( isset($this->albaran->idfactura) )
          {
-            $this->buttons[] = new fs_button('b_ver_factura', 'factura', $this->albaran->factura_url());
+            $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
          }
          
-         $this->buttons[] = new fs_button_img('b_remove_albaran', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");

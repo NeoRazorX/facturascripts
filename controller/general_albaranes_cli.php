@@ -42,13 +42,13 @@ class general_albaranes_cli extends fs_controller
          $albaran = new albaran_cliente();
          $this->custom_search = TRUE;
          
-         $this->buttons[] = new fs_button_img('b_nuevo_albaran', 'nuevo', 'add.png', 'index.php?page=general_nuevo_albaran');
-         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'agrupar', 'index.php?page=general_agrupar_albaranes_cli');
-         $this->buttons[] = new fs_button_img('b_buscar_lineas', 'lineas', 'zoom.png');
+         $this->buttons[] = new fs_button_img('b_nuevo_albaran', 'Nuevo', 'add.png', 'index.php?page=general_nuevo_albaran');
+         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=general_agrupar_albaranes_cli');
+         $this->buttons[] = new fs_button_img('b_buscar_lineas', 'Lineas', 'zoom.png');
          
          if( !isset($_GET['ptefactura']) )
          {
-            $this->buttons[] = new fs_button('b_pendientes', 'pendientes', $this->url()."&amp;ptefactura=TRUE");
+            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptefactura=TRUE");
          }
          
          if( isset($_POST['delete']) )

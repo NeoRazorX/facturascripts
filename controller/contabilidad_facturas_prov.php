@@ -49,7 +49,7 @@ class contabilidad_facturas_prov extends fs_controller
             $this->new_error_msg("Factura no encontrada.");
       }
       
-      $this->buttons[] = new fs_button_img('b_nueva', 'nueva');
+      $this->buttons[] = new fs_button_img('b_nueva', 'Nueva');
       
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);

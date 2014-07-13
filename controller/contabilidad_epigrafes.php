@@ -40,6 +40,7 @@ class contabilidad_epigrafes extends fs_controller
       $this->ejercicio = new ejercicio();
       $grupo0 = new grupo_epigrafes();
       $epi0 = new epigrafe();
+
       
       if( isset($_POST['ngrupo']) ) /// nuevo grupo
       {
@@ -63,6 +64,10 @@ class contabilidad_epigrafes extends fs_controller
       }
       else if( isset($_GET['grupo']) ) /// ver grupo
       {
+         $npage = $this->page->get('contabilidad_epigrafes');
+         if($npage)
+            $this->buttons[] = new fs_button_img('b_nuevo_epigrafe', 'Nuevo epígrafe', 'add.png', $npage->url().'#nuevo_epigrafe');
+		  
          $this->epigrafe = FALSE;
          $this->grupo = $grupo0->get($_GET['grupo']);
          if($this->grupo AND isset($_POST['descripcion']) )
@@ -190,7 +195,7 @@ class contabilidad_epigrafes extends fs_controller
          $this->ppage = $this->page->get($this->page->name);
          $this->page->title = 'Grupo: '.$this->grupo->codgrupo;
          $this->resultados = $this->grupo->get_epigrafes();
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else if($this->epigrafe)
       {
@@ -201,7 +206,7 @@ class contabilidad_epigrafes extends fs_controller
          
          $this->page->title = 'Epigrafe: '.$this->epigrafe->codepigrafe;
          $this->resultados = $this->epigrafe->get_cuentas();
-         $this->buttons[] = new fs_button_img('b_eliminar', 'eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else if( isset($_POST['ejercicio']) ) /// mostrar grupos de este ejercicio
       {
@@ -212,6 +217,11 @@ class contabilidad_epigrafes extends fs_controller
       }
       else
       {
+		  
+      $npage = $this->page->get('contabilidad_epigrafes');
+      if($npage)
+         $this->buttons[] = new fs_button_img('b_nuevo_grupo', 'Nuevo grupo', 'add.png', $npage->url().'#nuevo_grupo');
+
          $this->grupo = FALSE;
          $this->epigrafe = FALSE;
          $this->resultados = $grupo0->all_from_ejercicio($this->empresa->codejercicio);

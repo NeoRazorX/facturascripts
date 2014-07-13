@@ -49,7 +49,7 @@ class admin_user extends fs_controller
          
          /// no puedes eliminar tu propio usuario
          if($this->user->nick != $this->suser->nick)
-            $this->buttons[] = new fs_button_img('b_eliminar_usuario', 'eliminar', 'trash.png', '#', TRUE);
+            $this->buttons[] = new fs_button_img('b_eliminar_usuario', 'Eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_POST['ncodagente']) )
          {
