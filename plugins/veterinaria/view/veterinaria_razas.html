@@ -9,71 +9,81 @@
    $(document).ready(function() {
       $("#b_nueva_raza").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_raza');
+         $("#modal_nueva_raza").show();
          document.f_nueva_raza.sespecie.focus();
       });
    });
 </script>
 
-<div class="popup" id="popup_nueva_raza">
-   <h1>Nueva raza</h1>
-   <form name="f_nueva_raza" action="{$fsc->url()}" method="post">
-      <table>
-         <tr>
-            <td align="right">Especie:</td>
-            <td>
-               <select name="sespecie">
-                  {loop="$fsc->especie->all()"}
-                  <option value="{$value->nombre}">{$value->nombre}</option>
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Nombre:</td>
-            <td><input type="text" name="snombre" size="18" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_nueva_raza">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nueva_raza" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva raza</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Especie:
+                  <select name="sespecie">
+                     {loop="$fsc->especie->all()"}
+                     <option value="{$value->nombre}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Nombre:
+                  <input type="text" name="snombre" size="18" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar" value="Guardar">
+                 <span class="glyphicon glyphicon-floppy-disk"></span>
+                 &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
 {loop="$fsc->raza->all()"}
-<div class="rounded">
-   <form action="{$fsc->url()}" method="POST">
-      <input type="hidden" name="idraza" value="{$value->id_raza}"/>
-      <h1>
-         Código: {$value->id_raza}
-         <span>
-            <a class="delete" href="#" onclick="delete_razas('{$fsc->url()}&delete={$value->id_raza}')">eliminar</a> &nbsp;
-            <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-         </span>
-      </h1>
-      <div class="bloque">
-         Especie:
-         <select name="sespecie">
-            {loop="$fsc->especie->all()"}
-               {if condition="$value2->nombre==$value1->especie"}
-               <option value="{$value2->nombre}" selected="selected">{$value2->nombre}</option>
-               {else}
-               <option value="{$value2->nombre}">{$value2->nombre}</option>
-               {/if}
-            {/loop}
-         </select>
-      </div>
-      <div class="bloque">
-         Nombre:
-         <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
-      </div>
-   </form>
+<div class="container-fluid">
+   <div class="row">
+      <form action="{$fsc->url()}" method="POST">
+         <input type="hidden" name="idraza" value="{$value->id_raza}"/>
+         <h4>
+            Código: {$value->id_raza}
+            <span>
+               <a class="delete" href="#" onclick="delete_razas('{$fsc->url()}&delete={$value->id_raza}')">Eliminar</a> &nbsp;
+               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </span>
+         </h4>
+         <div class="bloque">
+            Especie:
+            <select name="sespecie">
+               {loop="$fsc->especie->all()"}
+                  {if condition="$value2->nombre==$value1->especie"}
+                  <option value="{$value2->nombre}" selected="selected">{$value2->nombre}</option>
+                  {else}
+                  <option value="{$value2->nombre}">{$value2->nombre}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+         <div class="bloque">
+            Nombre:
+            <input type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
+         </div>
+      </form>
+   </div>
 </div>
 {/loop}
 
-<div class="rounded">
+<div class="container-fluid">
    <div class="new_line">
       <a id="b_nueva_raza" href="#">Nueva raza</a>
    </div>

@@ -1,15 +1,13 @@
 {include="header"}
 
-<div class="rounded">
-   <div class="container-fluid">
-      <div class="row">
-         <h4>Selecciona el archivo CSV</h4>
-         <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
-            <input type="hidden" name="archivo" value="TRUE"/>
-            <input type="file" name="farchivo"/>
-            <input class="submit" type="submit" value="Procesar"/>
-         </form>
-      </div>
+<div class="container-fluid">
+   <div class="row">
+      <h4>Selecciona el archivo CSV</h4>
+      <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+         <input type="hidden" name="archivo" value="TRUE"/>
+         <input type="file" name="farchivo"/>
+         <input class="submit" type="submit" value="Procesar"/>
+      </form>
    </div>
 </div>
 

@@ -4,72 +4,70 @@
    $(document).ready(function() {
       $("#b_nueva").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva');
+         $("#modal_nueva_mascota").show();
          document.f_nueva_mascota.nombre.focus();
       });
    });
 </script>
 
-<div class="popup" id="popup_nueva">
-   <h1>Nueva mascota</h1>
-   <form name="f_nueva_mascota" action="{$fsc->url()}" method="post">
-      <table>
-         <tr>
-            <td align="right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
-            <td>
-               <select name="cliente">
-                  {loop="$fsc->cliente->all_full()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+<div class="modal fade" id="modal_nueva_mascota">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nueva_mascota" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva mascota</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <a class="link" href="{$fsc->cliente->url()}">Cliente</a>:
+                  <select name="cliente">
+                     {loop="$fsc->cliente->all_full()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                        {else}
+                        <option value="{$value->codcliente}">{$value->nombre}</option>
+                        {/if}
                      {else}
-                     <option value="{$value->codcliente}">{$value->nombre}</option>
-                     {/if}
-                  {else}
-                  <option value="">¡¡¡No tienes clientes!!!</option>
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Nombre de la mascota:</td>
-            <td>
-               <input type="text" name="nombre" maxlength="50" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Chip:</td>
-            <td>
-               <input type="text" name="chip" maxlength="50" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Pasaporte:</td>
-            <td>
-               <input type="text" name="pasaporte" maxlength="50" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right"><a class="link" href="{$fsc->raza->url()}">Raza</a>:</td>
-            <td>
-               <select name="raza">
-                  {loop="$fsc->raza->all()"}
-                     <option value="{$value->id_raza}">{$value->especie} {$value->nombre}</option>
-                  {else}
-                     <option value="">¡¡¡No tienes razas creadas!!!</option>
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+                     <option value="">¡¡¡No tienes clientes!!!</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Nombre de la mascota:
+                  <input type="text" name="nombre" maxlength="50" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Chip:
+                  <input type="text" name="chip" maxlength="50" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Pasaporte:
+                  <input type="text" name="pasaporte" maxlength="50" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  <a class="link" href="{$fsc->raza->url()}">Raza</a>:
+                  <select name="raza">
+                     {loop="$fsc->raza->all()"}
+                        <option value="{$value->id_raza}">{$value->especie} {$value->nombre}</option>
+                     {else}
+                        <option value="">¡¡¡No tienes razas creadas!!!</option>
+                     {/loop}
+                  </select>
+               </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar" value="Guardar">
+                 <span class="glyphicon glyphicon-floppy-disk"></span>
+                 &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
+<div class="container-fluid">
    <table class="list">
       <tr>
          <th align="left">Nombre</th>
