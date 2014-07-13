@@ -1,32 +1,40 @@
 {include="header"}
 
-<div class="rounded">
-   <div class="select">
-      <a href="{$fsc->url()}"{if condition="$fsc->hoy"} class="selected"{/if}>Ventas de hoy</a>
-      <a href="{$fsc->url()}&ayer=TRUE"{if condition="!$fsc->hoy"} class="selected"{/if}>Ayer</a>
+<div class="container-fluid">
+	<div class="row">
+      <div class="col-lg-2">
+         <div class="list-group">
+            <a href="{$fsc->url()}" class="list-group-item{if condition="$fsc->hoy"} active{/if}">Ventas de hoy</a>
+            <a href="{$fsc->url()}&ayer=TRUE" class="list-group-item{if condition="!$fsc->hoy"} active{/if}">Ayer</a>
+         </div>
+      </div>
+      <div class="col-lg-10">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th align='left'>Artículo</th>
+                     <th align='right'>Cantidad</th>
+                     <th align='right'>Precio medio</th>
+                  </tr>
+                  {loop="$fsc->articulos"}
+                  <tr>
+                     <td>
+                        <a class="link" href="{$value['url']}">{$value['referencia']}</a>
+                        {$value['descripcion']}
+                     </td>
+                     <td align='right'>{$value['cantidad']}</td>
+                     <td align='right'>{$fsc->show_precio($value['precio'])}</td>
+                  </tr>
+                  {else}
+                  <tr>
+                     <td colspan="3" align="center">Sin resultados</td>
+                  </tr>
+                  {/loop}
+            </table>
+         </div>
+      </div>
    </div>
-   <br/><br/>
-   <table class="list">
-      <tr>
-         <th align='left'>Artículo</th>
-         <th align='right'>Cantidad</th>
-         <th align='right'>Precio medio</th>
-      </tr>
-      {loop="$fsc->articulos"}
-      <tr>
-         <td>
-            <a class="link" href="{$value['url']}">{$value['referencia']}</a>
-            {$value['descripcion']}
-         </td>
-         <td align='right'>{$value['cantidad']}</td>
-         <td align='right'>{$fsc->show_precio($value['precio'])}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="3">Sin resultados.</td>
-      </tr>
-      {/loop}
-   </table>
 </div>
 
 {include="footer"}
