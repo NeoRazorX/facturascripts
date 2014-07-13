@@ -15,7 +15,7 @@
    <form id="f_cajas" action="{$fsc->url()}" method="post">
       <div class="container-fluid" style="margin-bottom: 10px;">
          <div class="row">
-            <div class="col-lg-4" style="padding-left: 0px;">
+            <div class="col-lg-6" style="padding-left: 0px;">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
                   <span class="glyphicon glyphicon-check"></span>
                </button>
@@ -23,13 +23,7 @@
                   <span class="glyphicon glyphicon-unchecked"></span>
                </button>
             </div>
-            <div class="col-lg-4" style="text-align: center;">
-               <a class="btn btn-sm btn-danger" href="{$fsc->url()}&cerrar=TRUE">
-                  <span class="glyphicon glyphicon-briefcase"></span>
-                  &nbsp; cerrar caja
-               </a>
-            </div>
-            <div class="col-lg-4" style="text-align: right; padding-right: 0px;">
+            <div class="col-lg-6" style="text-align: right; padding-right: 0px;">
                <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar

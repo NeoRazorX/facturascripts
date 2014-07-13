@@ -31,5 +31,9 @@ class pedidos_cliente extends fs_controller
    protected function process()
    {
       $this->pedido = new pedido_cliente();
+      
+      $npage = $this->page->get('pedidos_cliente');
+      if($npage)
+         $this->buttons[] = new fs_button_img('b_nuevo_pedido', 'Nuevo', 'add.png', $npage->url().'#nuevo');
    }
 }

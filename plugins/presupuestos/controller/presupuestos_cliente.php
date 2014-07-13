@@ -31,5 +31,9 @@ class presupuestos_cliente extends fs_controller
    protected function process()
    {
       $this->presupuesto = new presupuesto_cliente();
+      
+      $npage = $this->page->get('presupuestos_cliente');
+      if($npage)
+         $this->buttons[] = new fs_button_img('b_nuevo_presupuesto', 'Nuevo', 'add.png', $npage->url().'#nuevo');
    }
 }
