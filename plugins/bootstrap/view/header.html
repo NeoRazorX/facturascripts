@@ -141,66 +141,42 @@
          <div class="col-lg-10 col-sm-9">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group hidden-xs">
-                  <button class="btn btn-sm btn-default" type="button" value="Recargar la página" title="Recargar la página" href="{$fsc->url()}">
-                      <span class="glyphicon glyphicon-refresh"></span>
-                  </button>
+                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </a>
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
-                     <button class="btn btn-sm btn-default active" type="button" value="Desmarcar como página de inicio" title="Desmarcar como página de inicio" href="{$fsc->url()}&amp;default_page=FALSE">
-                         <span class="glyphicon glyphicon-home"></span>
-                     </button>
+                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
                      {else}
-                     <button class="btn btn-sm btn-default" type="button" value="Marcar como página de inicio" title="Marcar como página de inicio" href="{$fsc->url()}&amp;default_page=TRUE">
-                         <span class="glyphicon glyphicon-home"></span>
-                     </button>
+                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
                      {/if}
                   {/if}
                </div>
                
                <div class="btn-group hidden-xs">
                   {if condition="$fsc->ppage"}
-                  <button class="btn btn-sm btn-primary" type="button" value="{$fsc->ppage->title}" title="{$fsc->ppage->title}" href="{$fsc->ppage->url()}">
-                      {$fsc->ppage->title}
-                  </button>
+                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                     {$fsc->ppage->title}
+                  </a>
                   {/if}
-                  <button class="btn btn-sm btn-primary" type="button" value="{$fsc->page->title}" title="{$fsc->page->title}" href="{$fsc->url()}">
-                      {$fsc->page->title}
-                  </button>
+                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}">
+                     {$fsc->page->title}
+                  </a>
                </div>
                
                <div class="btn-group">
                   {loop="$fsc->buttons"}
                      {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
-                     <button class="btn btn-sm btn-success" id="{$value->id}" type="button" value="{$fsc->page->title}" title="{$fsc->page->title}" href="{$value->href}">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        {$value->value}
-                     </button>
+                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">{$value->value}</a>
                      {elseif condition="get_class($value)=='fs_button_img'"}
-                     <button class="btn btn-sm {if condition="$value->remove OR strtolower($value->value)=='cerrar caja'"}btn-danger{else}btn-default{/if}" id="{$value->id}" type="button" value="{$value->value}" title="{$value->value}" href="{$value->href}">
-                        {if condition="$value->remove"}<span class="glyphicon glyphicon-trash"></span>{/if}
-                        {if condition="strtolower($value->value)=='lineas'"}<span class="glyphicon glyphicon-tasks"></span>{/if}
-                        {if condition="strtolower($value->value)=='renumerar'"}<span class="glyphicon glyphicon-list"></span>{/if}
-                        {if condition="strtolower($value->value)=='cerrar caja'"}<span class="glyphicon glyphicon-briefcase"></span>{/if}
-                        {if condition="strtolower($value->value)=='imprimir'"}<span class="glyphicon glyphicon-print"></span>{/if}
-                        {$value->value}
-                     </button>
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">{$value->value}</a>
                      {else}
-                     <button class="btn btn-sm btn-default" id="{$value->id}" type="button" value="{$value->value}" title="{$value->value}" href="{$value->href}">
-                        {if condition="strtolower($value->value)=='imagen'"}<span class="glyphicon glyphicon-picture"></span>{/if}
-                        {if condition="strtolower($value->value)=='agrupar'"}<span class="glyphicon glyphicon-magnet"></span>{/if}
-                        {if condition="strtolower($value->value)=='pendientes'"}<span class="glyphicon glyphicon-list"></span>{/if}
-                        {if condition="strtolower($value->value)=='descuadrados'"}<span class="glyphicon glyphicon-tasks"></span>{/if}
-                        {if condition="strtolower($value->value)=='tarifas'"}<span class="glyphicon glyphicon-list-alt"></span>{/if}
-                        {if condition="strtolower($value->value)=='modificar iva'"}<span class="glyphicon glyphicon-book"></span>{/if}
-                        {if condition="strtolower($value->value)=='públicos'"}<span class="glyphicon glyphicon-eye-open"></span>{/if}
-                        {if condition="strtolower($value->value)=='grupos'"}<span class="glyphicon glyphicon-user"></span>{/if}
-                        {if condition="strtolower($value->value)=='huecos'"}<span class="glyphicon glyphicon-tasks"></span>{/if}
-                        {if condition="strtolower($value->value)=='cuentas especiales'"}<span class="glyphicon glyphicon-list"></span>{/if}
-                        {if condition="strtolower($value->value)=='balances'"}<span class="glyphicon glyphicon-indent-left"></span>{/if}
-                        {if condition="strtolower($value->value)=='copiar'"}<span class="glyphicon glyphicon-retweet"></span>{/if}
-                        {if condition="strtolower($value->value)=='generar factura'"}<span class="glyphicon glyphicon-file"></span>{/if}
-                        {$value->value}
-                     </button>
+                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">{$value->value}</a>
                      {/if}
                   {/loop}
                </div>
@@ -210,7 +186,7 @@
             {if condition="$fsc->custom_search"}
             <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
                <div class="input-group">
-                  <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+                  <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="buscar">
                   <span class="input-group-btn">
                      <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
