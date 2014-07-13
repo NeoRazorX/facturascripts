@@ -46,7 +46,7 @@ class nuevo_albaran_cliente extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'nuevo '.FS_ALBARAN, 'general', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'nuevo '.FS_ALBARAN, 'ventas', FALSE, FALSE);
    }
    
    protected function process()

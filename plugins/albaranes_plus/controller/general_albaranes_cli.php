@@ -28,7 +28,7 @@ class general_albaranes_cli extends fs_controller
 
    public function __construct()
    {
-      parent::__construct(__CLASS__, FS_ALBARANES.' de cliente', 'general', FALSE, TRUE, TRUE);
+      parent::__construct(__CLASS__, FS_ALBARANES.' de cliente', 'ventas', FALSE, TRUE, TRUE);
    }
    
    protected function process()

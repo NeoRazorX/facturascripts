@@ -38,7 +38,7 @@ class megafacturador extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('megafacturador', 'MegaFacturador', 'general', FALSE, TRUE);
+      parent::__construct('megafacturador', 'MegaFacturador', 'ventas', FALSE, TRUE);
    }
    
    protected function process()
