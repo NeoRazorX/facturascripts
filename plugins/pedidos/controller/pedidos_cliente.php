@@ -21,7 +21,10 @@ require_model('pedido_cliente.php');
 
 class pedidos_cliente extends fs_controller
 {
-   public $pedido;
+   public $buscar_lineas;
+   public $lineas;
+   public $resultados;
+   public $offset;
    
    public function __construct()
    {
@@ -30,10 +33,119 @@ class pedidos_cliente extends fs_controller
    
    protected function process()
    {
-      $this->pedido = new pedido_cliente();
+      if( isset($_POST['buscar_lineas']) )
+      {
+         $this->buscar_lineas();
+      }
+      else
+      {
+		 $pedido = new pedido_cliente();
+         $this->custom_search = TRUE;
+         
+         $this->buttons[] = new fs_button_img('b_nuevo_pedido', 'Nuevo', 'add.png', 'index.php?page=nuevo_pedido_cliente');
+         $this->buttons[] = new fs_button('b_agrupar_pedidos', 'Agrupar', 'index.php?page=agrupar_pedidos_cli');
+         $this->buttons[] = new fs_button_img('b_buscar_lineas', 'Lineas', 'zoom.png');
+         
+         if( !isset($_GET['ptealbaran']) )
+         {
+            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptealbaran=TRUE");
+         }
+         
+         if( isset($_POST['delete']) )
+         {
+            $this->delete_pedido();
+         }
+         
+         $this->offset = 0;
+         if( isset($_GET['offset']) )
+            $this->offset = intval($_GET['offset']);
+         
+         if($this->query)
+         {
+            $this->resultados = $pedido->search($this->query, $this->offset);
+         }
+         else if( isset($_GET['ptealbaran']) )
+         {
+            $this->new_advice('Estos son los pedidos pendientes de albaranar. Haz clic <a class="link" href="'.$this->url().
+                 '">aquí</a> para volver a la vista normal.');
+            $this->resultados = $pedido->all_ptealbaran($this->offset);
+         }
+         else
+            $this->resultados = $pedido->all($this->offset);
+      }
+
+   
+   public function anterior_url()
+   {
+      $url = '';
+      $extra = '';
       
-      $npage = $this->page->get('pedidos_cliente');
-      if($npage)
-         $this->buttons[] = new fs_button_img('b_nuevo_pedido', 'Nuevo', 'add.png', $npage->url().'#nuevo');
+      if( isset($_GET['ptealbaran']) )
+         $extra = '&ptealbaran=TRUE';
+      
+      if($this->query!='' AND $this->offset>'0')
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      else if($this->query=='' AND $this->offset>'0')
+         $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      
+      return $url;
    }
+   
+   public function siguiente_url()
+   {
+      $url = '';
+      $extra = '';
+      
+      if( isset($_GET['ptealbaran']) )
+         $extra = '&ptealbaran=TRUE';
+      
+      if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
+         $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      
+      return $url;
+   }
+   
+   public function buscar_lineas()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/lineas_pedidos';
+      
+      $this->buscar_lineas = $_POST['buscar_lineas'];
+      $linea = new linea_pedido_cliente();
+      $this->lineas = $linea->search($this->buscar_lineas);
+   }
+   
+   private function delete_pedido()
+   {
+      $ped1 = new pedido_cliente();
+      $ped1 = $ped1->get($_POST['delete']);
+      if($ped1)
+      {
+         /// ¿Actualizamos el stock de los artículos?
+         if( isset($_POST['stock']) )
+         {
+            $articulo = new articulo();
+            
+            foreach($ped1->get_lineas() as $linea)
+            {
+               $art0 = $articulo->get($linea->referencia);
+               if($art0)
+               {
+                  $art0->sum_stock($ped1->codalmacen, $linea->cantidad);
+                  $art0->save();
+               }
+            }
+         }
+         
+         if( $ped1->delete() )
+            $this->new_message("Pedido ".$ped1->codigo." borrado correctamente.");
+         else
+            $this->new_error_msg("¡Imposible borrar el Pedido!");
+      }
+      else
+         $this->new_error_msg("¡Pedido no encontrado!");
+   }
+
 }
