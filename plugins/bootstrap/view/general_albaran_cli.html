@@ -151,12 +151,6 @@
          <div class="col-lg-10">
             <h3 style="margin: 0px;"><a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a></h3>
          </div>
-         <div class="col-lg-2 text-right">
-            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-         </div>
          <div class="col-lg-2">
             <div class="form-group">
                Número
@@ -210,6 +204,12 @@
                Observaciones
                <textarea class="form-control" name="observaciones" cols="60">{$fsc->albaran->observaciones}</textarea>
             </div>
+         </div>
+         <div class="col-lg-2">
+            <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
          </div>
       </div>
    </div>
