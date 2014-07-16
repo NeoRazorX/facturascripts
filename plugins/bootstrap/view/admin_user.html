@@ -211,9 +211,9 @@
                <tr>
                   <td>
                     {if condition="$value->enabled"}
-                    <input class="form-control" type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
+                    <input type="checkbox" name="enabled[]" value="{$value->name}" checked="checked"/>
                     {else}
-                    <input class="form-control" type="checkbox" name="enabled[]" value="{$value->name}"/>
+                    <input type="checkbox" name="enabled[]" value="{$value->name}"/>
                     {/if}
                     {$value->name}
                   </td>
