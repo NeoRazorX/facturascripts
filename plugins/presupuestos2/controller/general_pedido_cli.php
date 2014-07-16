@@ -19,11 +19,11 @@
  */
 
 require_once 'base/fs_pdf.php';
-require_model('presupuesto_cliente.php');
+require_model('pedido_cliente.php');
 require_model('articulo.php');
 require_model('cliente.php');
 require_model('ejercicio.php');
-require_model('pedido_cliente.php');
+require_model('albaran_cliente.php');
 require_model('familia.php');
 require_model('fs_var.php');
 require_model('impuesto.php');
@@ -32,59 +32,59 @@ require_model('serie.php');
 require_once 'extras/phpmailer/class.phpmailer.php';
 require_once 'extras/phpmailer/class.smtp.php';
 
-class general_presupuesto_cli extends fs_controller
+class general_pedido_cli extends fs_controller
 {
    public $agente;
-   public $presupuesto;
+   public $pedido;
    public $cliente;
    public $cliente_email;
    public $ejercicio;
    public $familia;
    public $impuesto;
-   public $nuevo_presupuesto_url;
+   public $nuevo_pedido_url;
    public $serie;
    
    public function __construct()
    {
-      parent::__construct('general_presupuesto_cli', 'Presupuesto de cliente', 'ventas', FALSE, FALSE);
+      parent::__construct('general_pedido_cli', 'Pedido de cliente', 'ventas', FALSE, FALSE);
    }
    
    protected function process()
    {
-      $this->ppage = $this->page->get('general_presupuestos_cli');
+      $this->ppage = $this->page->get('general_pedidos_cli');
       $this->agente = FALSE;
-      $presupuesto = new presupuesto_cliente();
-      $this->presupuesto = FALSE;
+      $pedido = new pedido_cliente();
+      $this->pedido = FALSE;
       $this->cliente = new cliente();
       $this->cliente_email = '';
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
-      $this->nuevo_presupuesto_url = FALSE;
+      $this->nuevo_pedido_url = FALSE;
       $this->serie = new serie();
       
       /**
-       * Comprobamos si el usuario tiene acceso a general_nuevo_presupuesto,
+       * Comprobamos si el usuario tiene acceso a general_nuevo_pedido,
        * necesario para poder añadir líneas.
        */
-      if( $this->user->have_access_to('general_nuevo_presupuesto', FALSE) )
+      if( $this->user->have_access_to('general_nuevo_pedido', FALSE) )
       {
-         $nuevoprep = $this->page->get('general_nuevo_presupuesto');
+         $nuevoprep = $this->page->get('general_nuevo_pedido');
          if($nuevoprep)
-            $this->nuevo_presupuesto_url = $nuevoprep->url();
+            $this->nuevo_pedido_url = $nuevoprep->url();
       }
       
-      if( isset($_POST['idpresupuesto']) )
+      if( isset($_POST['idpedido']) )
       {
-         $this->presupuesto = $presupuesto->get($_POST['idpresupuesto']);
+         $this->pedido = $pedido->get($_POST['idpedido']);
          $this->modificar();
       }
       else if( isset($_GET['id']) )
       {
-         $this->presupuesto = $presupuesto->get($_GET['id']);
+         $this->pedido = $pedido->get($_GET['id']);
       }
       
-      if( $this->presupuesto AND isset($_GET['imprimir']) )
+      if( $this->pedido AND isset($_GET['imprimir']) )
       {
          if($_GET['imprimir'] == 'simple')
          {
@@ -95,39 +95,39 @@ class general_presupuesto_cli extends fs_controller
             $this->generar_pdf_cuartilla();
          }
       }
-      else if( $this->presupuesto )
+      else if( $this->pedido )
       {
-         $this->page->title = $this->presupuesto->codigo;
-         $this->agente = $this->presupuesto->get_agente();
+         $this->page->title = $this->pedido->codigo;
+         $this->agente = $this->pedido->get_agente();
          
          /**
           * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: general_presupuesto_cli_edit.html para los
-          * presupuestos editables y general_presupuesto_cli.html para los demás.
+          * en dos archivos: general_pedido_cli_edit.html para los
+          * pedidos editables y general_pedido_cli.html para los demás.
           */
-         if($this->presupuesto->ptepedido)
-            $this->template = 'general_presupuesto_cli_edit';
+         if($this->pedido->ptealbaran)
+            $this->template = 'general_pedido_cli_edit';
          else
-            $this->template = 'general_presupuesto_cli';
+            $this->template = 'general_pedido_cli';
          
-         /// comprobamos el presupuesto
-         $this->presupuesto->full_test();
+         /// comprobamos el pedido
+         $this->pedido->full_test();
          
-         if( isset($_GET['pedidor']) AND isset($_GET['petid']) AND $this->presupuesto->ptepedido )
+         if( isset($_GET['albaranr']) AND isset($_GET['petid']) AND $this->pedido->ptealbaran )
          {
             if( $this->duplicated_petition($_GET['petid']) )
                $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
             else
-               $this->generar_pedido();
+               $this->generar_albaran();
          }
          
-         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=general_copy_presupuesto&idprecli='.$this->presupuesto->idpresupuesto, TRUE);
+         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=general_copy_pedido&idprecli='.$this->pedido->idpedido, TRUE);
          $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
          
          /// comprobamos si se pueden enviar emails
          if( $this->empresa->can_send_mail() )
          {
-            $cliente = $this->cliente->get($this->presupuesto->codcliente);
+            $cliente = $this->cliente->get($this->pedido->codcliente);
             if($cliente)
             {
                $this->cliente_email = $cliente->email;
@@ -141,86 +141,86 @@ class general_presupuesto_cli extends fs_controller
             }
          }
          
-         if( $this->presupuesto->ptepedido )
+         if( $this->pedido->ptealbaran )
          {
-            $this->buttons[] = new fs_button('b_pedidor', 'Generar pedido', $this->url()."&pedidor=TRUE&petid=".$this->random_string());
+            $this->buttons[] = new fs_button('b_albaranr', 'Generar '.FS_ALBARAN, $this->url()."&albaranr=TRUE&petid=".$this->random_string());
          }
-         else if( isset($this->presupuesto->idpedido) )
+         else if( isset($this->pedido->idalbaran) )
          {
-            $this->buttons[] = new fs_button('b_ver_pedido', 'Pedido', $this->presupuesto->pedido_url());
+            $this->buttons[] = new fs_button('b_ver_albaran',  FS_ALBARAN, $this->pedido->albaran_url());
          }
          
-         $this->buttons[] = new fs_button_img('b_remove_presupuesto', 'Eliminar', 'trash.png', '#', TRUE);
+         $this->buttons[] = new fs_button_img('b_remove_pedido', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
-         $this->new_error_msg("¡Presupuesto de cliente no encontrado!");
+         $this->new_error_msg("¡Pedido de cliente no encontrado!");
    }
    
    public function url()
    {
-      if( !isset($this->presupuesto) )
+      if( !isset($this->pedido) )
          return parent::url();
-      else if($this->presupuesto)
-         return $this->presupuesto->url();
+      else if($this->pedido)
+         return $this->pedido->url();
       else
          return $this->page->url();
    }
    
    private function modificar()
    {
-      $this->presupuesto->numero2 = $_POST['numero2'];
-      $this->presupuesto->hora = $_POST['hora'];
-      $this->presupuesto->observaciones = $_POST['observaciones'];
+      $this->pedido->numero2 = $_POST['numero2'];
+      $this->pedido->hora = $_POST['hora'];
+      $this->pedido->observaciones = $_POST['observaciones'];
       
-      if($this->presupuesto->ptepedido)
+      if($this->pedido->ptealbaran)
       {
          /// obtenemos los datos del ejercicio para acotar la fecha
-         $eje0 = $this->ejercicio->get( $this->presupuesto->codejercicio );
+         $eje0 = $this->ejercicio->get( $this->pedido->codejercicio );
          if($eje0)
-            $this->presupuesto->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+            $this->pedido->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
          else
-            $this->new_error_msg('No se encuentra el ejercicio asociado al presupuesto');
+            $this->new_error_msg('No se encuentra el ejercicio asociado al pedido');
          
          /// ¿cambiamos el cliente?
-         if($_POST['cliente'] != $this->presupuesto->codcliente)
+         if($_POST['cliente'] != $this->pedido->codcliente)
          {
             $cliente = $this->cliente->get($_POST['cliente']);
             if($cliente)
             {
                foreach($cliente->get_direcciones() as $d)
                {
-                  if($d->dompedidocion)
+                  if($d->get_direcciones)
                   {
-                     $this->presupuesto->codcliente = $cliente->codcliente;
-                     $this->presupuesto->cifnif = $cliente->cifnif;
-                     $this->presupuesto->nombrecliente = $cliente->nombrecomercial;
-                     $this->presupuesto->apartado = $d->apartado;
-                     $this->presupuesto->ciudad = $d->ciudad;
-                     $this->presupuesto->coddir = $d->id;
-                     $this->presupuesto->codpais = $d->codpais;
-                     $this->presupuesto->codpostal = $d->codpostal;
-                     $this->presupuesto->direccion = $d->direccion;
-                     $this->presupuesto->provincia = $d->provincia;
+                     $this->pedido->codcliente = $cliente->codcliente;
+                     $this->pedido->cifnif = $cliente->cifnif;
+                     $this->pedido->nombrecliente = $cliente->nombrecomercial;
+                     $this->pedido->apartado = $d->apartado;
+                     $this->pedido->ciudad = $d->ciudad;
+                     $this->pedido->coddir = $d->id;
+                     $this->pedido->codpais = $d->codpais;
+                     $this->pedido->codpostal = $d->codpostal;
+                     $this->pedido->direccion = $d->direccion;
+                     $this->pedido->provincia = $d->provincia;
                      break;
                   }
                }
             }
          }
          
-         $serie = $this->serie->get($this->presupuesto->codserie);
+         $serie = $this->serie->get($this->pedido->codserie);
          
          /// ¿cambiamos la serie?
-         if($_POST['serie'] != $this->presupuesto->codserie)
+         if($_POST['serie'] != $this->pedido->codserie)
          {
-            $this->presupuesto->codserie = $_POST['serie'];
-            $this->presupuesto->new_codigo();
+            $this->pedido->codserie = $_POST['serie'];
+            $this->pedido->new_codigo();
          }
          
          if( isset($_POST['lineas']) )
          {
-            $this->presupuesto->neto = 0;
-            $this->presupuesto->totaliva = 0;
-            $lineas = $this->presupuesto->get_lineas();
+            $this->pedido->neto = 0;
+            $this->pedido->totaliva = 0;
+            $lineas = $this->pedido->get_lineas();
             $articulo = new articulo();
             
             /// eliminamos las líneas que no encontremos en el $_POST
@@ -245,7 +245,7 @@ class general_presupuesto_cli extends fs_controller
                      /// actualizamos el stock
                      $art0 = $articulo->get($l->referencia);
                      if($art0)
-                        $art0->sum_stock($this->presupuesto->codalmacen, $l->cantidad);
+                        $art0->sum_stock($this->pedido->codalmacen, $l->cantidad);
                   }
                   else
                      $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
@@ -297,13 +297,13 @@ class general_presupuesto_cli extends fs_controller
                         
                         if( $lineas[$k]->save() )
                         {
-                           $this->presupuesto->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
-                           $this->presupuesto->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                           $this->pedido->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
+                           $this->pedido->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
                            
                            /// actualizamos el stock
                            $art0 = $articulo->get($value->referencia);
                            if($art0)
-                              $art0->sum_stock($this->presupuesto->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
+                              $art0->sum_stock($this->pedido->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
                         }
                         else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
@@ -317,7 +317,7 @@ class general_presupuesto_cli extends fs_controller
                      $art0 = $articulo->get( $_POST['referencia_'.$num] );
                      if($art0)
                      {
-                        $linea = new linea_presupuesto_cliente();
+                        $linea = new linea_pedido_cliente();
                         $linea->referencia = $art0->referencia;
                         
                         if( isset($_POST['desc_'.$num]) )
@@ -345,7 +345,7 @@ class general_presupuesto_cli extends fs_controller
                            }
                         }
                         
-                        $linea->idpresupuesto = $this->presupuesto->idpresupuesto;
+                        $linea->idpedido = $this->pedido->idpedido;
                         $linea->cantidad = floatval($_POST['cantidad_'.$num]);
                         $linea->pvpunitario = floatval($_POST['pvp_'.$num]);
                         $linea->dtopor = floatval($_POST['dto_'.$num]);
@@ -354,11 +354,11 @@ class general_presupuesto_cli extends fs_controller
                         
                         if( $linea->save() )
                         {
-                           $this->presupuesto->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
-                           $this->presupuesto->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                           $this->pedido->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
+                           $this->pedido->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
                            
                            /// actualizamos el stock
-                           $art0->sum_stock($this->presupuesto->codalmacen, 0 - $linea->cantidad);
+                           $art0->sum_stock($this->pedido->codalmacen, 0 - $linea->cantidad);
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
@@ -370,51 +370,51 @@ class general_presupuesto_cli extends fs_controller
             }
             
             /// redondeamos
-            $this->presupuesto->neto = round($this->presupuesto->neto, 2);
-            $this->presupuesto->totaliva = round($this->presupuesto->totaliva, 2);
-            $this->presupuesto->total = $this->presupuesto->neto + $this->presupuesto->totaliva;
+            $this->pedido->neto = round($this->pedido->neto, 2);
+            $this->pedido->totaliva = round($this->pedido->totaliva, 2);
+            $this->pedido->total = $this->pedido->neto + $this->pedido->totaliva;
          }
       }
       
-      if( $this->presupuesto->save() )
+      if( $this->pedido->save() )
       {
-         $this->new_message("Presupuesto modificado correctamente.");
-         $this->new_change('Presupuesto Cliente '.$this->presupuesto->codigo, $this->presupuesto->url());
+         $this->new_message("Pedido modificado correctamente.");
+         $this->new_change('Pedido Cliente '.$this->pedido->codigo, $this->pedido->url());
       }
       else
-         $this->new_error_msg("¡Imposible modificar el presupuesto!");
+         $this->new_error_msg("¡Imposible modificar el pedido!");
    }
    
-   private function generar_pedido()
+   private function generar_albaran()
    {
-      $pedido = new pedido_cliente();
-      $pedido->apartado = $this->presupuesto->apartado;
-      $pedido->automatica = TRUE;
-      $pedido->cifnif = $this->presupuesto->cifnif;
-      $pedido->ciudad = $this->presupuesto->ciudad;
-      $pedido->codagente = $this->presupuesto->codagente;
-      $pedido->codalmacen = $this->presupuesto->codalmacen;
-      $pedido->codcliente = $this->presupuesto->codcliente;
-      $pedido->coddir = $this->presupuesto->coddir;
-      $pedido->coddivisa = $this->presupuesto->coddivisa;
-      $pedido->tasaconv = $this->presupuesto->tasaconv;
-      $pedido->codejercicio = $this->presupuesto->codejercicio;
-      $pedido->codpago = $this->presupuesto->codpago;
-      $pedido->codpais = $this->presupuesto->codpais;
-      $pedido->codpostal = $this->presupuesto->codpostal;
-      $pedido->codserie = $this->presupuesto->codserie;
-      $pedido->direccion = $this->presupuesto->direccion;
-      $pedido->editable = FALSE;
-      $pedido->neto = $this->presupuesto->neto;
-      $pedido->nombrecliente = $this->presupuesto->nombrecliente;
-      $pedido->observaciones = $this->presupuesto->observaciones;
-      $pedido->provincia = $this->presupuesto->provincia;
-      $pedido->total = $this->presupuesto->total;
-      $pedido->totaliva = $this->presupuesto->totaliva;
+      $albaran = new albaran_cliente();
+      $albaran->apartado = $this->pedido->apartado;
+      $albaran->automatica = TRUE;
+      $albaran->cifnif = $this->pedido->cifnif;
+      $albaran->ciudad = $this->pedido->ciudad;
+      $albaran->codagente = $this->pedido->codagente;
+      $albaran->codalmacen = $this->pedido->codalmacen;
+      $albaran->codcliente = $this->pedido->codcliente;
+      $albaran->coddir = $this->pedido->coddir;
+      $albaran->coddivisa = $this->pedido->coddivisa;
+      $albaran->tasaconv = $this->pedido->tasaconv;
+      $albaran->codejercicio = $this->pedido->codejercicio;
+      $albaran->codpago = $this->pedido->codpago;
+      $albaran->codpais = $this->pedido->codpais;
+      $albaran->codpostal = $this->pedido->codpostal;
+      $albaran->codserie = $this->pedido->codserie;
+      $albaran->direccion = $this->pedido->direccion;
+      $albaran->editable = FALSE;
+      $albaran->neto = $this->pedido->neto;
+      $albaran->nombrecliente = $this->pedido->nombrecliente;
+      $albaran->observaciones = $this->pedido->observaciones;
+      $albaran->provincia = $this->pedido->provincia;
+      $albaran->total = $this->pedido->total;
+      $albaran->totaliva = $this->pedido->totaliva;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
-      $eje0 = $this->ejercicio->get($pedido->codejercicio);
-      $pedido->fecha = $eje0->get_best_fecha($pedido->fecha);
+      $eje0 = $this->ejercicio->get($albaran->codejercicio);
+      $albaran->fecha = $eje0->get_best_fecha($albaran->fecha);
       
       $regularizacion = new regularizacion_iva();
       
@@ -422,19 +422,19 @@ class general_presupuesto_cli extends fs_controller
       {
          $this->new_error_msg("El ejercicio está cerrado.");
       }
-      else if( $regularizacion->get_fecha_inside($pedido->fecha) )
+      else if( $regularizacion->get_fecha_inside($albaran->fecha) )
       {
          $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más pedidos en esa fecha.");
+            No se pueden añadir más ".FS_ALBARANES." en esa fecha.");
       }
-      else if( $pedido->save() )
+      else if( $albaran->save() )
       {
          $continuar = TRUE;
-         foreach($this->presupuesto->get_lineas() as $l)
+         foreach($this->pedido->get_lineas() as $l)
          {
-            $n = new linea_pedido_cliente();
-            $n->idpresupuesto = $l->idpresupuesto;
-            $n->idpedido = $pedido->idpedido;
+            $n = new linea_albaran_cliente();
+            $n->idpedido = $l->idpedido;
+            $n->idalbaran = $albaran->idalbaran;
             $n->cantidad = $l->cantidad;
             $n->codimpuesto = $l->codimpuesto;
             $n->descripcion = $l->descripcion;
@@ -457,27 +457,27 @@ class general_presupuesto_cli extends fs_controller
          
          if($continuar)
          {
-            $this->presupuesto->idpedido = $pedido->idpedido;
-            $this->presupuesto->ptepedido = FALSE;
-            if( !$this->presupuesto->save() )
+            $this->pedido->idalbaran = $albaran->idalbaran;
+            $this->pedido->ptealbaran = FALSE;
+            if( !$this->pedido->save() )
             {
-               $this->new_error_msg("¡Imposible vincular el presupuesto con el nueva pedido!");
-               if( $pedido->delete() )
-                  $this->new_error_msg("El pedido se ha borrado.");
+               $this->new_error_msg("¡Imposible vincular el pedido con el nueva albarán!");
+               if( $albaran->delete() )
+                  $this->new_error_msg("El albarán se ha borrado.");
                else
-                  $this->new_error_msg("¡Imposible borrar el pedido!");
+                  $this->new_error_msg("¡Imposible borrar el albarán!");
             }
          }
          else
          {
-            if( $pedido->delete() )
-               $this->new_error_msg("El pedido se ha borrado.");
+            if( $albaran->delete() )
+               $this->new_error_msg("El albarán se ha borrado.");
             else
-               $this->new_error_msg("¡Imposible borrar el pedido!");
+               $this->new_error_msg("¡Imposible borrar el albarán!");
          }
       }
       else
-         $this->new_error_msg("¡Imposible guardar el pedido!");
+         $this->new_error_msg("¡Imposible guardar el albarán!");
    }
    
    private function generar_pdf_simple($archivo = FALSE)
@@ -489,11 +489,11 @@ class general_presupuesto_cli extends fs_controller
       }
       
       $pdf_doc = new fs_pdf();
-      $pdf_doc->pdf->addInfo('Title', 'Presupuesto '. $this->presupuesto->codigo);
-      $pdf_doc->pdf->addInfo('Subject', 'Presupuesto de cliente ' . $this->presupuesto->codigo);
+      $pdf_doc->pdf->addInfo('Title', 'Pedido '. $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Subject', 'Pedido de cliente ' . $this->pedido->codigo);
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
-      $lineas = $this->presupuesto->get_lineas();
+      $lineas = $this->pedido->get_lineas();
       if($lineas)
       {
          $linea_actual = 0;
@@ -532,31 +532,31 @@ class general_presupuesto_cli extends fs_controller
             
             /*
              * Esta es la tabla con los datos del cliente:
-             * Albarán:             Fecha:
+             * Pedido:             Fecha:
              * Cliente:             CIF/NIF:
              * Dirección:           Teléfonos:
              */
             $pdf_doc->new_table();
             $pdf_doc->add_table_row(
                array(
-                   'campo1' => "<b>Presupuesto:</b>",
-                   'dato1' => $this->presupuesto->codigo,
+                   'campo1' => "<b>Pedido:</b>",
+                   'dato1' => $this->pedido->codigo,
                    'campo2' => "<b>Fecha:</b>",
-                   'dato2' => $this->presupuesto->fecha
+                   'dato2' => $this->pedido->fecha
                )
             );
             $pdf_doc->add_table_row(
                array(
                    'campo1' => "<b>Cliente:</b>",
-                   'dato1' => $this->presupuesto->nombrecliente,
+                   'dato1' => $this->pedido->nombrecliente,
                    'campo2' => "<b>CIF/NIF:</b>",
-                   'dato2' => $this->presupuesto->cifnif
+                   'dato2' => $this->pedido->cifnif
                )
             );
             $pdf_doc->add_table_row(
                array(
                    'campo1' => "<b>Dirección:</b>",
-                   'dato1' => $this->presupuesto->direccion.' CP: '.$this->presupuesto->codpostal.' - '.$this->presupuesto->ciudad.' ('.$this->presupuesto->provincia.')',
+                   'dato1' => $this->pedido->direccion.' CP: '.$this->pedido->codpostal.' - '.$this->pedido->ciudad.' ('.$this->pedido->provincia.')',
                    'campo2' => "<b>Teléfonos:</b>",
                    'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
                )
@@ -578,7 +578,7 @@ class general_presupuesto_cli extends fs_controller
             
             
             /*
-             * Creamos la tabla con las lineas del presupuesto:
+             * Creamos la tabla con las lineas del pedido:
              * 
              * Descripción    PVP   DTO   Cantidad    Importe
              */
@@ -604,10 +604,10 @@ class general_presupuesto_cli extends fs_controller
                
                $fila = array(
                   'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
-                  'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->presupuesto->coddivisa),
+                  'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->pedido->coddivisa),
                   'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 0) . " %",
                   'cantidad' => $lineas[$linea_actual]->cantidad,
-                  'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->presupuesto->coddivisa)
+                  'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->pedido->coddivisa)
                );
                
                if($lineas[$linea_actual]->referencia != '0')
@@ -635,14 +635,14 @@ class general_presupuesto_cli extends fs_controller
             /*
              * Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
              */
-            if($this->presupuesto->observaciones == '')
+            if($this->pedido->observaciones == '')
             {
                $salto = '';
             }
             else
             {
-               $salto = "\n<b>Observaciones</b>: " . $this->presupuesto->observaciones;
-               $saltos += count( explode("\n", $this->presupuesto->observaciones) ) - 1;
+               $salto = "\n<b>Observaciones</b>: " . $this->pedido->observaciones;
+               $saltos += count( explode("\n", $this->pedido->observaciones) ) - 1;
             }
             
             if($saltos < $lppag)
@@ -666,7 +666,7 @@ class general_presupuesto_cli extends fs_controller
             $titulo = array('pagina' => '<b>Página</b>', 'neto' => '<b>Neto</b>',);
             $fila = array(
                 'pagina' => $pagina . '/' . ceil(count($lineas) / $lppag),
-                'neto' => $this->show_precio($this->presupuesto->neto, $this->presupuesto->coddivisa),
+                'neto' => $this->show_precio($this->pedido->neto, $this->pedido->coddivisa),
             );
             $opciones = array(
                 'cols' => array(
@@ -678,11 +678,11 @@ class general_presupuesto_cli extends fs_controller
             foreach($impuestos as $i => $value)
             {
                $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = $this->show_precio($value, $this->presupuesto->coddivisa);
+               $fila['iva'.$i] = $this->show_precio($value, $this->pedido->coddivisa);
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
             $titulo['liquido'] = '<b>Total</b>';
-            $fila['liquido'] = $this->show_precio($this->presupuesto->total, $this->presupuesto->coddivisa);
+            $fila['liquido'] = $this->show_precio($this->pedido->total, $this->pedido->coddivisa);
             $opciones['cols']['liquido'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
             $pdf_doc->add_table_row($fila);
@@ -712,11 +712,11 @@ class general_presupuesto_cli extends fs_controller
       $this->template = FALSE;
       
       $pdf_doc = new fs_pdf();
-      $pdf_doc->pdf->addInfo('Title', 'Presupuesto '. $this->presupuesto->codigo);
-      $pdf_doc->pdf->addInfo('Subject', 'Presupuesto de cliente ' . $this->presupuesto->codigo);
+      $pdf_doc->pdf->addInfo('Title', 'Pedido '. $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Subject', 'Pedido de cliente ' . $this->pedido->codigo);
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
-      $lineas = $this->presupuesto->get_lineas();
+      $lineas = $this->pedido->get_lineas();
       if($lineas)
       {
          $linea_actual = 0;
@@ -731,9 +731,9 @@ class general_presupuesto_cli extends fs_controller
                $pdf_doc->pdf->ezNewPage();
             
             /// encabezado
-            $texto = "<b>Presupuesto:</b> ".$this->presupuesto->codigo."\n".
-                    "<b>Fecha:</b> ".$this->presupuesto->fecha."\n".
-                    "<b>SR. D:</b> ".$this->presupuesto->nombrecliente;
+            $texto = "<b>Pedido:</b> ".$this->pedido->codigo."\n".
+                    "<b>Fecha:</b> ".$this->pedido->fecha."\n".
+                    "<b>SR. D:</b> ".$this->pedido->nombrecliente;
             $pdf_doc->pdf->ezText($texto, 12, array('justification' => 'right'));
             $pdf_doc->pdf->ezText("\n", 12);
             
@@ -757,8 +757,8 @@ class general_presupuesto_cli extends fs_controller
                       'unidades' => $lineas[$linea_actual]->cantidad,
                       'descripcion' => $lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion,
                       'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 2).' %',
-                      'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->presupuesto->coddivisa),
-                      'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->presupuesto->coddivisa)
+                      'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->pedido->coddivisa),
+                      'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->pedido->coddivisa)
                   )
                );
                
@@ -779,12 +779,12 @@ class general_presupuesto_cli extends fs_controller
             );
             
             /// Rellenamos el hueco que falta hasta donde debe aparecer la última tabla
-            if($this->presupuesto->observaciones == '')
+            if($this->pedido->observaciones == '')
                $salto = '';
             else
             {
-               $salto = "\n<b>Observaciones</b>: " . $this->presupuesto->observaciones;
-               $saltos += count( explode("\n", $this->presupuesto->observaciones) ) - 1;
+               $salto = "\n<b>Observaciones</b>: " . $this->pedido->observaciones;
+               $saltos += count( explode("\n", $this->pedido->observaciones) ) - 1;
             }
             
             if($saltos < $lppag)
@@ -801,9 +801,9 @@ class general_presupuesto_cli extends fs_controller
             /// Escribimos los totales
             $opciones = array('justification' => 'right');
             $neto = '<b>Pag</b>: ' . $pagina . '/' . ceil(count($lineas) / $lppag);
-            $neto .= '        <b>Neto</b>: ' . $this->show_precio($this->presupuesto->neto, $this->presupuesto->coddivisa);
-            $neto .= '    <b>IVA</b>: ' . $this->show_precio($this->presupuesto->totaliva, $this->presupuesto->coddivisa);
-            $neto .= '    <b>Total</b>: ' . $this->show_precio($this->presupuesto->total, $this->presupuesto->coddivisa);
+            $neto .= '        <b>Neto</b>: ' . $this->show_precio($this->pedido->neto, $this->pedido->coddivisa);
+            $neto .= '    <b>IVA</b>: ' . $this->show_precio($this->pedido->totaliva, $this->pedido->coddivisa);
+            $neto .= '    <b>Total</b>: ' . $this->show_precio($this->pedido->total, $this->pedido->coddivisa);
             $pdf_doc->pdf->ezText($neto, 12, $opciones);
             
             $pagina++;
@@ -815,7 +815,7 @@ class general_presupuesto_cli extends fs_controller
    
    private function enviar_email()
    {
-      $cliente = $this->cliente->get($this->presupuesto->codcliente);
+      $cliente = $this->cliente->get($this->pedido->codcliente);
       
       if( $this->empresa->can_send_mail() AND $cliente )
       {
@@ -835,7 +835,7 @@ class general_presupuesto_cli extends fs_controller
          $fsvar = new fs_var();
          $mailop = $fsvar->array_get($mailop);
          
-         $filename = 'presupuesto_'.$this->presupuesto->codigo.'.pdf';
+         $filename = 'pedido_'.$this->pedido->codigo.'.pdf';
          $this->generar_pdf_simple($filename);
          if( file_exists('tmp/enviar/'.$filename) )
          {
@@ -854,8 +854,8 @@ class general_presupuesto_cli extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
-            $mail->Subject = $this->empresa->nombre . ': Su presupuesto '.$this->presupuesto->codigo;
-            $mail->AltBody = 'Buenos días, le adjunto su presupuesto '.$this->presupuesto->codigo.".\n".$this->empresa->email_firma;
+            $mail->Subject = $this->empresa->nombre . ': Su pedido '.$this->pedido->codigo;
+            $mail->AltBody = 'Buenos días, le adjunto su pedido '.$this->pedido->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;
             $mail->MsgHTML( nl2br($_POST['mensaje']) );
             $mail->AddAttachment('tmp/enviar/'.$filename);

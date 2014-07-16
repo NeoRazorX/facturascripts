@@ -95,12 +95,12 @@
             <table class="list">
                <tr>
                   <th align="left">Fecha</th>
-                  <th>Pedido</th>
+                  <th>Presupuesto</th>
                   <th align="right">PVP</th>
                   <th align="right">Dto</th>
                   <th align="right">Total+IVA</th>
                </tr>
-               {loop="$fsc->articulo->get_lineas_pedido_prov(0, 10)"}
+               {loop="$fsc->articulo->get_lineas_presupuesto_prov(0, 10)"}
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
@@ -165,12 +165,12 @@
             <table class="list">
                <tr>
                   <th align="left">Fecha</th>
-                  <th>Pedido</th>
+                  <th>Presupuesto</th>
                   <th align="right">PVP</th>
                   <th align="right">Dto</th>
                   <th align="right">Total+IVA</th>
                </tr>
-               {loop="$fsc->articulo->get_lineas_pedido_cli(0, 10)"}
+               {loop="$fsc->articulo->get_lineas_presupuesto_cli(0, 10)"}
                <tr>
                   <td>{$value->show_fecha()}</td>
                   <td align="center"><a class="link" target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>

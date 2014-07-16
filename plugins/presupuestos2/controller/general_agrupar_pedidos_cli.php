@@ -18,16 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('presupuesto_cliente.php');
+require_model('pedido_cliente.php');
 require_model('cliente.php');
 require_model('ejercicio.php');
-require_model('pedido_cliente.php');
+require_model('albaran_cliente.php');
 require_model('regularizacion_iva.php');
 require_model('serie.php');
 
-class general_agrupar_presupuestos_cli extends fs_controller
+class general_agrupar_pedidos_cli extends fs_controller
 {
-   public $presupuesto;
+   public $pedido;
    public $cliente;
    public $desde;
    public $hasta;
@@ -39,13 +39,13 @@ class general_agrupar_presupuestos_cli extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_agrupar_presupuestos_cli', 'Agrupar presupuestos', 'general', FALSE, FALSE);
+      parent::__construct('general_agrupar_pedidos_cli', 'Agrupar pedidos', 'general', FALSE, FALSE);
    }
    
    protected function process()
    {
-      $this->ppage = $this->page->get('general_presupuestos_cli');
-      $this->presupuesto = new presupuesto_cliente();
+      $this->ppage = $this->page->get('general_pedidos_cli');
+      $this->pedido = new pedido_cliente();
       $this->cliente = new cliente();
       $this->serie = new serie();
       $this->neto = 0;
@@ -65,7 +65,7 @@ class general_agrupar_presupuestos_cli extends fs_controller
       if( isset($_POST['observaciones']) )
          $this->observaciones = $_POST['observaciones'];
       
-      if( isset($_POST['idpresupuesto']) )
+      if( isset($_POST['idpedido']) )
       {
          $this->agrupar();
       }
@@ -73,7 +73,7 @@ class general_agrupar_presupuestos_cli extends fs_controller
       {
          $this->save_codcliente($_POST['cliente']);
          
-         $this->resultados = $this->presupuesto->search_from_cliente($_POST['cliente'],
+         $this->resultados = $this->pedido->search_from_cliente($_POST['cliente'],
                  $_POST['desde'], $_POST['hasta'], $_POST['serie'], $_POST['observaciones']);
          
          if($this->resultados)
@@ -92,35 +92,35 @@ class general_agrupar_presupuestos_cli extends fs_controller
    private function agrupar()
    {
       $continuar = TRUE;
-      $presupuestos = array();
+      $pedidos = array();
       
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
          $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
-               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">presupuestos</a>
-               para ver si los presupuestos se han guardado correctamente.');
+               y se han enviado dos peticiones. Mira en <a href="'.$this->ppage->url().'">pedidos</a>
+               para ver si los pedidos se han guardado correctamente.');
          $continuar = FALSE;
       }
       else
       {
-         foreach($_POST['idpresupuesto'] as $id)
-            $presupuestos[] = $this->presupuesto->get($id);
+         foreach($_POST['idpedido'] as $id)
+            $pedidos[] = $this->pedido->get($id);
          
          $codejercicio = NULL;
-         foreach($presupuestos as $presu)
+         foreach($pedidos as $presu)
          {
             if( !isset($codejercicio) )
                $codejercicio = $presu->codejercicio;
             
-            if( !$presu->ptepedido )
+            if( !$presu->ptealbaran )
             {
-               $this->new_error_msg("El pedido <a href='".$presu->url()."'>".$presu->codigo."</a> ya está aprobado.");
+               $this->new_error_msg("El ".FS_ALBARAN." <a href='".$presu->url()."'>".$presu->codigo."</a> ya está aprobado.");
                $continuar = FALSE;
                break;
             }
             else if($presu->codejercicio != $codejercicio)
             {
-               $this->new_error_msg("Los ejercicios de los presupuestos no coinciden.");
+               $this->new_error_msg("Los ejercicios de los pedidos no coinciden.");
                $continuar = FALSE;
                break;
             }
@@ -145,90 +145,90 @@ class general_agrupar_presupuestos_cli extends fs_controller
       {
          if( isset($_POST['individuales']) )
          {
-            foreach($presupuestos as $presu)
-               $this->generar_pedido( array($presu) );
+            foreach($pedidos as $presu)
+               $this->generar_albaran( array($presu) );
          }
          else
-            $this->generar_pedido($presupuestos);
+            $this->generar_albaran($pedidos);
       }
    }
    
-   private function generar_pedido($presupuestos)
+   private function generar_albaran($pedidos)
    {
       $continuar = TRUE;
       
-      $pedido = new pedido_cliente();
-      $pedido->automatica = TRUE;
-      $pedido->codalmacen = $presupuestos[0]->codalmacen;
-      $pedido->coddivisa = $presupuestos[0]->coddivisa;
-      $pedido->tasaconv = $presupuestos[0]->tasaconv;
-      $pedido->codejercicio = $presupuestos[0]->codejercicio;
-      $pedido->codpago = $presupuestos[0]->codpago;
-      $pedido->codserie = $presupuestos[0]->codserie;
-      $pedido->editable = FALSE;
+      $albaran = new albaran_cliente();
+      $albaran->automatica = TRUE;
+      $albaran->codalmacen = $pedidos[0]->codalmacen;
+      $albaran->coddivisa = $pedidos[0]->coddivisa;
+      $albaran->tasaconv = $pedidos[0]->tasaconv;
+      $albaran->codejercicio = $pedidos[0]->codejercicio;
+      $albaran->codpago = $pedidos[0]->codpago;
+      $albaran->codserie = $pedidos[0]->codserie;
+      $albaran->editable = FALSE;
       
       /// obtenemos los datos actuales del cliente, por si ha habido cambios
-      $cliente = $this->cliente->get($presupuestos[0]->codcliente);
+      $cliente = $this->cliente->get($pedidos[0]->codcliente);
       if($cliente)
       {
          foreach($cliente->get_direcciones() as $dir)
          {
-            if($dir->dompedidocion)
+            if($dir->get_direcciones)
             {
-               $pedido->apartado = $dir->apartado;
-               $pedido->cifnif = $cliente->cifnif;
-               $pedido->ciudad = $dir->ciudad;
-               $pedido->codcliente = $cliente->codcliente;
-               $pedido->coddir = $dir->id;
-               $pedido->codpais = $dir->codpais;
-               $pedido->codpostal = $dir->codpostal;
-               $pedido->direccion = $dir->direccion;
-               $pedido->nombrecliente = $cliente->nombrecomercial;
-               $pedido->provincia = $dir->provincia;
+               $albaran->apartado = $dir->apartado;
+               $albaran->cifnif = $cliente->cifnif;
+               $albaran->ciudad = $dir->ciudad;
+               $albaran->codcliente = $cliente->codcliente;
+               $albaran->coddir = $dir->id;
+               $albaran->codpais = $dir->codpais;
+               $albaran->codpostal = $dir->codpostal;
+               $albaran->direccion = $dir->direccion;
+               $albaran->nombrecliente = $cliente->nombrecomercial;
+               $albaran->provincia = $dir->provincia;
                break;
             }
          }
       }
       
       /// calculamos neto e iva
-      foreach($presupuestos as $presu)
+      foreach($pedidos as $presu)
       {
          foreach($presu->get_lineas() as $l)
          {
-            $pedido->neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
-            $pedido->totaliva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
+            $albaran->neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
+            $albaran->totaliva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
          }
       }
       /// redondeamos
-      $pedido->neto = round($pedido->neto, 2);
-      $pedido->totaliva = round($pedido->totaliva, 2);
-      $pedido->total = $pedido->neto + $pedido->totaliva;
+      $albaran->neto = round($albaran->neto, 2);
+      $albaran->totaliva = round($albaran->totaliva, 2);
+      $albaran->total = $albaran->neto + $albaran->totaliva;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $ejercicio = new ejercicio();
-      $eje0 = $ejercicio->get($pedido->codejercicio);
-      $pedido->fecha = $eje0->get_best_fecha($pedido->fecha);
+      $eje0 = $ejercicio->get($albaran->codejercicio);
+      $albaran->fecha = $eje0->get_best_fecha($albaran->fecha);
       
       /*
-       * comprobamos que la fecha del pedido no esté dentro de un periodo de
+       * comprobamos que la fecha del albarán no esté dentro de un periodo de
        * IVA regularizado.
        */
       $regularizacion = new regularizacion_iva();
       
-      if( $regularizacion->get_fecha_inside($pedido->fecha) )
+      if( $regularizacion->get_fecha_inside($albaran->fecha) )
       {
          $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más pedidos en esa fecha.');
+            No se pueden añadir más '.FS_ALBARANES.' en esa fecha.');
       }
-      else if( $pedido->save() )
+      else if( $albaran->save() )
       {
-         foreach($presupuestos as $presu)
+         foreach($pedidos as $presu)
          {
             foreach($presu->get_lineas() as $l)
             {
-               $n = new linea_pedido_cliente();
-               $n->idpresupuesto = $presu->idpresupuesto;
-               $n->idpedido = $pedido->idpedido;
+               $n = new linea_albaran_cliente();
+               $n->idpedido = $presu->idpedido;
+               $n->idalbaran = $albaran->idalbaran;
                $n->cantidad = $l->cantidad;
                $n->codimpuesto = $l->codimpuesto;
                $n->descripcion = $l->descripcion;
@@ -253,14 +253,14 @@ class general_agrupar_presupuestos_cli extends fs_controller
          
          if($continuar)
          {
-            foreach($presupuestos as $presu)
+            foreach($pedidos as $presu)
             {
-               $presu->idpedido = $pedido->idpedido;
-               $presu->ptepedido = FALSE;
+               $presu->idalbaran = $albaran->idalbaran;
+               $presu->ptealbaran = FALSE;
                
                if( !$presu->save() )
                {
-                  $this->new_error_msg("¡Imposible vincular el presupuesto con el nuevo pedido!");
+                  $this->new_error_msg("¡Imposible vincular el pedido con el nuevo albarán!");
                   $continuar = FALSE;
                   break;
                }
@@ -268,13 +268,13 @@ class general_agrupar_presupuestos_cli extends fs_controller
          }
          else
          {
-            if( $pedido->delete() )
-               $this->new_error_msg("El pedido se ha borrado.");
+            if( $albaran->delete() )
+               $this->new_error_msg("El albarán se ha borrado.");
             else
-               $this->new_error_msg("¡Imposible borrar el pedido!");
+               $this->new_error_msg("¡Imposible borrar el albarán!");
          }
       }
       else
-         $this->new_error_msg("¡Imposible guardar el pedido!");
+         $this->new_error_msg("¡Imposible guardar el albarán!");
    }
 }

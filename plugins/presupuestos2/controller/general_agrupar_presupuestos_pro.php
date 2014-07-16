@@ -19,14 +19,11 @@
  */
 
 require_model('presupuesto_proveedor.php');
-require_model('asiento.php');
 require_model('ejercicio.php');
 require_model('pedido_proveedor.php');
-require_model('partida.php');
 require_model('proveedor.php');
 require_model('regularizacion_iva.php');
 require_model('serie.php');
-require_model('subcuenta.php');
 
 class general_agrupar_presupuestos_pro extends fs_controller
 {
@@ -253,16 +250,6 @@ class general_agrupar_presupuestos_pro extends fs_controller
                   break;
                }
             }
-            
-            if( $continuar )
-               $this->generar_asiento($pedido);
-            else
-            {
-               if( $pedido->delete() )
-                  $this->new_error_msg("El pedido se ha borrado.");
-               else
-                  $this->new_error_msg("¡Imposible borrar el pedido!");
-            }
          }
          else
          {
@@ -274,134 +261,5 @@ class general_agrupar_presupuestos_pro extends fs_controller
       }
       else
          $this->new_error_msg("¡Imposible guardar el pedido!");
-   }
-   
-   private function generar_asiento($pedido)
-   {
-      $proveedor = new proveedor();
-      $proveedor = $proveedor->get($pedido->codproveedor);
-      $subcuenta_prov = $proveedor->get_subcuenta($pedido->codejercicio);
-      
-      if( !$this->empresa->contintegrada )
-      {
-         $this->new_message("<a href='".$pedido->url()."'>Pedido</a> generada correctamente.");
-         $this->new_change('Pedido Proveedor '.$pedido->codigo, $pedido->url(), TRUE);
-      }
-      else if( !$subcuenta_prov )
-      {
-         $this->new_message("El proveedor no tiene asociada una subcuenta, y por tanto no se generará
-            un asiento. Aun así el <a href='".$pedido->url()."'>pedido</a> se ha generado correctamente.");
-      }
-      else
-      {
-         $asiento = new asiento();
-         $asiento->codejercicio = $pedido->codejercicio;
-         $asiento->concepto = "Su pedido ".$pedido->codigo." - ".$pedido->nombre;
-         $asiento->documento = $pedido->codigo;
-         $asiento->editable = FALSE;
-         $asiento->fecha = $pedido->fecha;
-         $asiento->importe = $pedido->total;
-         $asiento->tipodocumento = "Pedido de proveedor";
-         if( $asiento->save() )
-         {
-            $asiento_correcto = TRUE;
-            $subcuenta = new subcuenta();
-            $partida0 = new partida();
-            $partida0->idasiento = $asiento->idasiento;
-            $partida0->concepto = $asiento->concepto;
-            $partida0->idsubcuenta = $subcuenta_prov->idsubcuenta;
-            $partida0->codsubcuenta = $subcuenta_prov->codsubcuenta;
-            $partida0->haber = $pedido->total;
-            $partida0->coddivisa = $pedido->coddivisa;
-            $partida0->tasaconv = $pedido->tasaconv;
-            if( !$partida0->save() )
-            {
-               $asiento_correcto = FALSE;
-               $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida0->codsubcuenta."!");
-            }
-            
-            /// generamos una partida por cada impuesto
-            $subcuenta_iva = $subcuenta->get_by_codigo('4720000000', $asiento->codejercicio);
-            foreach($pedido->get_lineas_iva() as $li)
-            {
-               if($subcuenta_iva AND $asiento_correcto)
-               {
-                  $partida1 = new partida();
-                  $partida1->idasiento = $asiento->idasiento;
-                  $partida1->concepto = $asiento->concepto;
-                  $partida1->idsubcuenta = $subcuenta_iva->idsubcuenta;
-                  $partida1->codsubcuenta = $subcuenta_iva->codsubcuenta;
-                  $partida1->debe = $li->totaliva;
-                  $partida1->idcontrapartida = $subcuenta_prov->idsubcuenta;
-                  $partida1->codcontrapartida = $subcuenta_prov->codsubcuenta;
-                  $partida1->cifnif = $proveedor->cifnif;
-                  $partida1->documento = $asiento->documento;
-                  $partida1->tipodocumento = $asiento->tipodocumento;
-                  $partida1->codserie = $pedido->codserie;
-                  $partida1->pedido = $pedido->numero;
-                  $partida1->baseimponible = $li->neto;
-                  $partida1->iva = $li->iva;
-                  $partida1->coddivisa = $pedido->coddivisa;
-                  $partida1->tasaconv = $pedido->tasaconv;
-                  if( !$partida1->save() )
-                  {
-                     $asiento_correcto = FALSE;
-                     $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida1->codsubcuenta."!");
-                  }
-               }
-            }
-            
-            $subcuenta_compras = $subcuenta->get_by_codigo('6000000000', $asiento->codejercicio);
-            if($subcuenta_compras AND $asiento_correcto)
-            {
-               $partida2 = new partida();
-               $partida2->idasiento = $asiento->idasiento;
-               $partida2->concepto = $asiento->concepto;
-               $partida2->idsubcuenta = $subcuenta_compras->idsubcuenta;
-               $partida2->codsubcuenta = $subcuenta_compras->codsubcuenta;
-               $partida2->debe = $pedido->neto;
-               $partida2->coddivisa = $pedido->coddivisa;
-               $partida2->tasaconv = $pedido->tasaconv;
-               if( !$partida2->save() )
-               {
-                  $asiento_correcto = FALSE;
-                  $this->new_error_msg("¡Imposible generar la partida para la subcuenta ".$partida2->codsubcuenta."!");
-               }
-            }
-            
-            if( $asiento_correcto )
-            {
-               $pedido->idasiento = $asiento->idasiento;
-               if( $pedido->save() )
-               {
-                  $this->new_message("<a href='".$pedido->url()."'>Pedido</a> generado correctamente.");
-                  $this->new_change('Pedido Proveedor '.$pedido->codigo, $pedido->url(), TRUE);
-               }
-               else
-                  $this->new_error_msg("¡Imposible añadir el asiento al pedido!");
-            }
-            else
-            {
-               if( $asiento->delete() )
-               {
-                  $this->new_message("El asiento se ha borrado.");
-                  if( $pedido->delete() )
-                     $this->new_message("El pedido se ha borrado.");
-                  else
-                     $this->new_error_msg("¡Imposible borrar el pedido!");
-               }
-               else
-                  $this->new_error_msg("¡Imposible borrar el asiento!");
-            }
-         }
-         else
-         {
-            $this->new_error_msg("¡Imposible guardar el asiento!");
-            if( $pedido->delete() )
-               $this->new_error_msg("El pedido se ha borrado.");
-            else
-               $this->new_error_msg("¡Imposible borrar el pedido!");
-         }
-      }
    }
 }
