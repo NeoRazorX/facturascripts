@@ -99,6 +99,19 @@ class registro_sat extends fs_model
       return $estados;
    }
    
+    public function prioridad()
+   {
+      $prioridad = array(
+          1 => 'Urgente',
+          2 => 'Prioridad alta',
+          3 => 'Prioridad media',
+          4 => 'Prioridad baja',
+      );
+      
+      return $prioridad;
+   }
+   
+   
    public function nombre_estado()
    {
       $estados = $this->estados();

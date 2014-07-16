@@ -46,13 +46,26 @@ class listado_sat extends fs_controller
       
       if( isset($_GET['id']) )
       {
-         $this->template = "edita";
-         $this->page->title = "Edita SAT: ".$_GET['id'];
-         
+        if(isset($_GET['opcion']))
+        {
+        if($_GET['opcion']=="imprimir")
+        {
+            $this->resultado=$this->registro_sat->get($_GET['id']);
+             $this->template = "imprimir";
+        }
+
+        }
+        else
+        {
+            $this->template = "edita";
+          $this->page->title = "Edita SAT: ".$_GET['id'];
+     
          $this->edita_sat();
+        }
       }
       else if( isset($_GET['opcion']) )
       {
+         
          if($_GET['opcion'] == "nuevosat")
          {
             $this->page->title = "Nuevo SAT";
@@ -78,6 +91,8 @@ class listado_sat extends fs_controller
                $this->nuevo_cliente();
             }
          }
+         
+
       }
       else
       {
@@ -111,26 +126,6 @@ class listado_sat extends fs_controller
       }
    }
    
-   public function devuelveEstado($id_estado)
-   {
-      $sql = "Select nombre_estado from sat_estado where id_estado=".$id_estado;
-      $data = $this->db->select($sql);
-      
-      if($id_estado == 0)
-      {
-         $data[0]['nombre_estado'] == "Sin estado";
-      }
-      
-      if($data)
-      {
-         return $data[0];
-      }
-      else
-      {
-         return array();
-      }
-   }
-   
    public function agrega_sat()
    {
       $cliente = $this->cliente->get($_GET['codcliente']);
@@ -156,6 +151,7 @@ class listado_sat extends fs_controller
          $this->registro_sat->averia = $_POST['averia'];
          $this->registro_sat->accesorios = $_POST['accesorios'];
          $this->registro_sat->observaciones = $_POST['observaciones'];
+         $this->registro_sat->estado = $_POST['estado'];
          
          if( $this->registro_sat->save() )
          {
@@ -247,5 +243,19 @@ class listado_sat extends fs_controller
          $estados[] = array('id_estado' => $i, 'nombre_estado' => $value);
       
       return $estados;
+   }
+   
+   public function listar_prioridad()
+   {
+      $prioridad = array();
+      
+      /**
+       * En registro_sat::estados() nos devuelve un array con todos los estados,
+       * pero como queremos también el id, pues hay que hacer este bucle para sacarlos.
+       */
+      foreach($this->registro_sat->prioridad() as $i => $value)
+         $prioridad[] = array('id_prioridad' => $i, 'nombre_prioridad' => $value);
+      
+      return $prioridad;
    }
 }

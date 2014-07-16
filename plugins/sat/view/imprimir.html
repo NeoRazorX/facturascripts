@@ -85,13 +85,12 @@
 </div>
            </div>
       <div class="panel-footer">
-        <button type="button" class="btn btn-sm btn-primary" value="Guardar" onclick="this.disabled=true;this.form.submit();">
+        <button type="button" class="btn btn-sm btn-primary" value="Guardar" onclick="javascript:window.open('{$fsc->url()}&opcion=imprimir&id=1','','width=600,height=400,left=50,top=50,toolbar=yes');">
          <span class="glyphicon glyphicon-floppy-saved"></span> Guardar
         </button>
          <button type="button" class="btn btn-sm" onclick="windows.print();" />
          <span class="glyphicon glyphicon-print" ></span> Imprimir
         </button>
-          <button class="btn btn-sm" onclick="window.print();"><span class="glyphicon glyphicon-print" ></span> Imprimir</button>
       </div>
    </div>
 </form>
@@ -107,3 +106,4 @@
 
 <!-- container -->
 {include="footer"}
+ <script>
