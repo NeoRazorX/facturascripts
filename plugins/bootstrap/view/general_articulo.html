@@ -1,11 +1,5 @@
 {include="header"}
 
-<!-- 
- ESTILO INCOMPLETO
- NO HAY BOTON ¿NUEVA TARIFA? EN EL BTN-TOOLBAR
- POSIBLE ERROR CON REEMPLAZAR MASIVO
--->
-
 {if condition="$fsc->articulo"}
 <script type="text/javascript">
    function recalcular()
@@ -124,7 +118,69 @@
          }
       });
    }
+   function show_div(name)
+   {
+      $("#div_generales").hide();
+      $("#div_precios").hide();
+      $("#div_stock").hide();
+      $("#div_equivalentes").hide();
+      $("#div_buscar").hide();
+      $("#b_generales").removeClass('active');
+      $("#b_precios").removeClass('active');
+      $("#b_stock").removeClass('active');
+      $("#b_equivalentes").removeClass('active');
+      $("#b_buscar").removeClass('active');
+      
+      if(name == 'precios')
+      {
+         $("#div_precios").show();
+         $("#b_precios").addClass('active');
+      }
+      else if(name == 'stock')
+      {
+         $("#div_stock").show();
+         $("#b_stock").addClass('active');
+      }
+      else if(name == 'equivalentes')
+      {
+         $("#div_equivalentes").show();
+         $("#b_equivalentes").addClass('active');
+      }
+      else if(name == 'buscar')
+      {
+         $("#div_buscar").show();
+         $("#b_buscar").addClass('active');
+      }
+      else
+      {
+         $("#div_generales").show();
+         $("#b_generales").addClass('active');
+      }
+   }
    $(document).ready(function() {
+      show_div('generales');
+      
+      $("#b_generales").click(function() {
+         event.preventDefault();
+         show_div('generales');
+      });
+      $("#b_precios").click(function() {
+         event.preventDefault();
+         show_div('precios');
+      });
+      $("#b_stock").click(function() {
+         event.preventDefault();
+         show_div('stock');
+      });
+      $("#b_equivalentes").click(function() {
+         event.preventDefault();
+         show_div('equivalentes');
+      });
+      $("#b_buscar").click(function() {
+         event.preventDefault();
+         show_div('buscar');
+      });
+      
       $("#b_eliminar_articulo").click(function(event) {
          event.preventDefault();
          if( confirm("¿Estas seguro de que deseas eliminar este articulo?") )
@@ -161,6 +217,295 @@
    });
 </script>
 
+<ul class="nav nav-tabs" role="tablist">
+   <li id="b_generales"><a href="#">Datos generales</a></li>
+   <li id="b_precios"><a href="#">Precios</a></li>
+   <li id="b_stock"><a href="#">Stock</a></li>
+   {if condition="$fsc->equivalentes"}
+   <li id="b_equivalentes"><a href="#">Equivalentes</a></li>
+   {/if}
+   <li id="b_buscar"><a href="#">Buscar...</a></li>
+</ul>
+
+<form action="{$fsc->url()}" method="post" class="post">
+   <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+   <div id="div_generales" class="container-fluid">
+      <div class="row" style="padding-top: 10px;">
+         <div class="form-group col-lg-3">
+            Referencia:
+            <input class="form-control" type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-6">
+            Descripción:
+            <input class="form-control" type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            <a href="{$fsc->familia->url()}">Familia</a>:
+            <select class="form-control" name="codfamilia">
+            {loop="$fsc->familia->all()"}
+               {if condition="$value->codfamilia===$fsc->articulo->codfamilia"}
+               <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+               {else}
+               <option value="{$value->codfamilia}">{$value->descripcion}</option>
+               {/if}
+            {/loop}
+            </select>
+         </div>
+         <div class="form-group col-lg-4">
+            Código de barras:
+            <input class="form-control" type="text" name="codbarras" value="{$fsc->articulo->codbarras}" autocomplete="off"/>
+         </div>
+         <div class="col-lg-8">
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="bloqueado" value="TRUE"{if condition="$fsc->articulo->bloqueado"} checked="checked"{/if}/>
+                  Bloqueado
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="secompra" value="TRUE"{if condition="$fsc->articulo->secompra"} checked="checked"{/if}/>
+                  Se compra
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="sevende" value="TRUE"{if condition="$fsc->articulo->sevende"} checked="checked"{/if}/>
+                  Se vende
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="publico" value="TRUE"{if condition="$fsc->articulo->publico"} checked="checked"{/if}/>
+                  Público
+               </label>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="form-group col-lg-6">
+            Código de equivalencia:
+            <input class="form-control" type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}" autocomplete="off"/>
+            <p class="help-block">Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.</p>
+         </div>
+         <div class="form-group col-lg-6">
+            <label>
+               <input type="checkbox" name="destacado" value="TRUE"{if condition="$fsc->articulo->destacado"} checked="checked"{/if}/>
+               Destacar frente a productos equivalentes
+            </label>
+         </div>
+      </div>
+      <div class="row">
+         <div class="form-group col-lg-3">
+            Stock:
+            <input class="form-control" type="text" name="stockfis" value="{$fsc->articulo->stockfis}" disabled="disabled"/>
+         </div>
+         <div class="form-group col-lg-3">
+            Stock mínimo:
+            <input class="form-control" type="text" name="stockmin" value="{$fsc->articulo->stockmin}" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            Stock máximo:
+            <input class="form-control" type="text" name="stockmax" value="{$fsc->articulo->stockmax}" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            <label>
+               <input type="checkbox" name="controlstock" value="TRUE"{if condition="$fsc->articulo->controlstock"} checked="checked"{/if}/>
+               Permitir ventas sin stock
+            </label>
+         </div>
+         <div class="form-group col-lg-12">
+            Observaciones:
+            <textarea class="form-control" name="observaciones" rows="3">{$fsc->articulo->observaciones}</textarea>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div id="div_stock">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Almacén</th>
+               <th>Cantidad</th>
+               <th>Reservada</th>
+               <th>Disponible</th>
+               <th>Pendiente de recibir</th>
+               <th align="right">Acción</th>
+            </tr>
+         </thead>
+         {loop="$fsc->stocks"}
+         <tr>
+            <form action="{$fsc->url()}" method="post" class="form">
+               <input type="hidden" name="idstock" value="{$value->idstock}"/>
+               <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td>{$value->codalmacen} {$value->nombre}</td>
+               <td align="center">
+                  <button class="btn btn-sm btn-default" type="button" onclick="sum_stock('{$counter}', -1)">
+                     <span class="glyphicon glyphicon-floppy-minus"></span>
+                  </button>
+                  <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3" autocomplete="off"/>
+                  <button class="btn btn-sm btn-default" type="button" onclick="sum_stock('{$counter}', 1)">
+                     <span class="glyphicon glyphicon-floppy-plus"></span>
+                  </button>
+               </td>
+               <td align="center">{$value->reservada}</td>
+               <td align="center">{$value->disponible}</td>
+               <td align="center">{$value->pterecibir}</td>
+               <td align="right">
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </form>
+         </tr>
+         {/loop}
+         {if condition="$fsc->nuevos_almacenes"}
+         <tr>
+            <form action="{$fsc->url()}" method="post">
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td>
+                  <select class="form-control" name="almacen">
+                     {loop="$fsc->nuevos_almacenes"}
+                     <option value="{$value->codalmacen}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td align="center"><input class="form-control" type="text" name="cantidad" value="0" autocomplete="off"/></td>
+               <td align="center"></td>
+               <td align="center"></td>
+               <td align="center"></td>
+               <td align="right">
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </form>
+         </tr>
+         {/if}
+      </table>
+   </div>
+</div>
+
+<div id="div_buscar" style="padding-top: 10px;">
+   <ul>
+      <li><a id="b_buscar_albcli" href="#">{$albaranes} de cliente</a></li>
+      <li><a id="b_buscar_albpro" href="#">{$albaranes} de proveedor</a></li>
+      <li><a id="b_buscar_faccli" href="#">Facturas de cliente</a></li>
+      <li><a id="b_buscar_facpro" href="#">Facturas de proveedor</a></li>
+   </ul>
+</div>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+   <div id="div_precios" style="margin-top: 10px;">
+      <div class="container-fluid">
+         <div class="row">
+            <div class="form-group col-lg-4">
+               <a href="{$fsc->impuesto->url()}">IVA</a>:
+               <select class="form-control" name="codimpuesto">
+               {loop="$fsc->impuesto->all()"}
+                  {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
+                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+            <div class="form-group col-lg-4">
+               Último cambio de precio:
+               <div class="form-control">{$fsc->articulo->factualizado}</div>
+            </div>
+            <div class="col-lg-4 text-right">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th align="left">Tarifa</th>
+                  <th>Dto</th>
+                  <th>PVP</th>
+                  <th>PVP+IVA</th>
+               </tr>
+            </thead>
+            {if condition="$fsc->articulo->costemedio!=0"}
+            <tr>
+               <td>Coste</td>
+               <td align="center">0.00</td>
+               <td align="center">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
+               <td align="center">{$fsc->show_precio($fsc->articulo->costemedio_iva())}</td>
+            </tr>
+            {/if}
+            <tr>
+               <td>General</td>
+               <td align="center">0.00</td>
+               <td>
+                  <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
+                  <input type="text" class="form-control" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="text" class="form-control" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+               </td>
+            </tr>
+            {loop="$fsc->articulo->get_tarifas(TRUE)"}
+            <tr>
+               <td><a href="{$value->url()}">{$value->nombre}</a></td>
+               <td>
+                  <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
+                  <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
+                  <input type="text" class="form-control" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="text" class="form-control" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="text" class="form-control" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
+               </td>
+            </tr>
+            {/loop}
+            <tr>
+               <td colspan="4" class="bg-success text-center">
+                  <a href="index.php?page=general_articulos#tarifas">Nueva tarifa</a>
+               </td>
+            </tr>
+         </table>
+      </div>
+   </div>
+</form>
+
+<div id="div_equivalentes">
+         <h3>Artículos equivalentes:</h3>
+         {if condition="$fsc->equivalentes"}
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <tr>
+                  <th align="left">Artículo</th>
+                  <th align="right">PVP+IVA</th>
+                  <th align="right">Stock</th>
+               </tr>
+               {loop="$fsc->equivalentes"}
+               <tr>
+                  <td><a href="{$value->url()}">{$value->referencia}</a></td>
+                  <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
+                  <td align="right">{$value->stockfis}</td>
+               </tr>
+               {/loop}
+            </table>
+         </div>
+         {else}
+            No hay artículos equivalentes.
+         {/if}
+</div>
+
 <div class="modal fade" id="modal_articulo_imagen">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -192,313 +537,6 @@
          </form>
        </div>
    </div>
-</div>
-
-<div class="modal fade" id="modal_buscar">
-   Cargando...
-</div>
-
-<div class="well well-sm">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <form action="{$fsc->url()}" method="post">
-         <div style="padding-left: 5px;">
-            <b>Referencia:</b>
-            <input type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off" autofocus />
-            <div class="pull_right">
-               {if condition="$fsc->articulo->bloqueado"}
-               <input type="checkbox" name="bloqueado" value="TRUE" checked="checked" id="articulo_bloqueado"/>
-               {else}
-               <input type="checkbox" name="bloqueado" value="TRUE" id="articulo_bloqueado"/>
-               {/if}
-               <label for="articulo_bloqueado">Bloqueado</label>
-               &nbsp;
-               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                   &nbsp; Guardar
-               </button>
-            </div>
-         </div>
-         <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-         <div class="form-group">
-            Descripción:
-            <input type="text" name="descripcion" value="{$fsc->articulo->descripcion}" size="60" autocomplete="off"/>
-         </div>
-         <div class="form-group">
-            <a href="{$fsc->familia->url()}">Familia</a>:
-            <select class="form-control" name="codfamilia">
-            {loop="$fsc->familia->all()"}
-               {if condition="$value->codfamilia===$fsc->articulo->codfamilia"}
-                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
-               {else}
-                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
-               {/if}
-            {/loop}
-            </select>
-         </div>
-         <div class="form-group">
-            Código de barras:
-            <input type="text" name="codbarras" value="{$fsc->articulo->codbarras}" autocomplete="off"/>
-         </div>
-         <div style="padding-left: 5px;">
-            Código de equivalencia:
-            <input type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}" autocomplete="off"/>
-            Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.
-            <div class="form-group">
-            {if condition="$fsc->articulo->destacado"}
-               <input type="checkbox" name="destacado" value="TRUE" checked="checked" id="articulo_destacado"/>
-            {else}
-               <input type="checkbox" name="destacado" value="TRUE" id="articulo_destacado"/>
-            {/if}
-            <label for="articulo_destacado">Destacar frente a productos equivalentes</label>
-            </div>
-         </div>
-         <div>
-            <div class="form-group">
-               {if condition="$fsc->articulo->secompra"}
-               <input type="checkbox" name="secompra" value="TRUE" checked="checked" id="articulo_secompra"/>
-               {else}
-               <input type="checkbox" name="secompra" value="TRUE" id="articulo_secompra"/>
-               {/if}
-               <label for="articulo_secompra">Se compra</label>
-            </div>
-            <div class="form-group">
-               {if condition="$fsc->articulo->sevende"}
-               <input type="checkbox" name="sevende" value="TRUE" checked="checked" id="articulo_sevende"/>
-               {else}
-               <input type="checkbox" name="sevende" value="TRUE" id="articulo_sevende"/>
-               {/if}
-               <label for="articulo_sevende">Se vende</label>
-            </div>
-            <div class="form-group">
-               {if condition="$fsc->articulo->publico"}
-               <input type="checkbox" name="publico" value="TRUE" checked="checked" id="articulo_publico"/>
-               {else}
-               <input type="checkbox" name="publico" value="TRUE" id="articulo_publico"/>
-               {/if}
-               <label for="articulo_publico">Público</label>
-            </div>
-         </div>
-         <div>
-            Observaciones:
-            <br/>
-            <textarea name="observaciones" cols="60" rows="3">{$fsc->articulo->observaciones}</textarea>
-         </div>
-         <div>
-            <div class="form-group">
-               Stock:
-               <input type="text" name="stockfis" value="{$fsc->articulo->stockfis}" size="5" disabled="disabled"/>
-            </div>
-            <div class="form-group">
-               Stock mínimo:
-               <input type="text" name="stockmin" value="{$fsc->articulo->stockmin}" size="5" autocomplete="off"/>
-            </div>
-            <div class="form-group">
-               Stock máximo:
-               <input type="text" name="stockmax" value="{$fsc->articulo->stockmax}" size="5" autocomplete="off"/>
-            </div>
-            <div class="form-group">
-               {if condition="$fsc->articulo->controlstock"}
-               <input type="checkbox" name="controlstock" value="TRUE" checked="checked" id="articulo_controlstock"/>
-               {else}
-               <input type="checkbox" name="controlstock" value="TRUE" id="articulo_controlstock"/>
-               {/if}
-               <label for="articulo_controlstock">Permitir ventas sin stock</label>
-            </div>
-         </div>
-         </form>
-      </div>
-      <div class="well well-sm">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <tr>
-                  <th align="left">Almacén</th>
-                  <th>Cantidad</th>
-                  <th>Reservada</th>
-                  <th>Disponible</th>
-                  <th>Pendiente de recibir</th>
-               </tr>
-               {loop="$fsc->stocks"}
-               <tr>
-                  <form action="{$fsc->url()}" method="post">
-                     <input type="hidden" name="idstock" value="{$value->idstock}"/>
-                     <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
-                     <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-                     <td>{$value->codalmacen} {$value->nombre}</td>
-                     <td align="center">
-                        <button class="btn btn-sm btn-default" type="button" value="-" title="-" onclick="sum_stock('{$counter}', -1)">
-                           <span class="glyphicon glyphicon-floppy-minus"></span>
-                       </button>
-                        <input type="text" id="stock_cantidad_{$counter}" name="cantidad" value="{$value->cantidad}" size="3" autocomplete="off"/>
-                        <button class="btn btn-sm btn-default" type="button" value="+" title="+" onclick="sum_stock('{$counter}', 1)">
-                           <span class="glyphicon glyphicon-floppy-plus"></span>
-                       </button>
-                     </td>
-                     <td align="center">{$value->reservada}</td>
-                     <td align="center">{$value->disponible}</td>
-                     <td align="center">{$value->pterecibir}</td>
-                     <td align="right">
-                        <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                            <span class="glyphicon glyphicon-floppy-disk"></span>
-                            &nbsp; Guardar
-                        </button>
-                     </td>
-                  </form>
-               </tr>
-               {/loop}
-               {if condition="$fsc->nuevos_almacenes"}
-               <tr>
-                  <form action="{$fsc->url()}" method="post">
-                     <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-                     <td>
-                        <select class="form-control" name="almacen">
-                           {loop="$fsc->nuevos_almacenes"}
-                           <option value="{$value->codalmacen}">{$value->nombre}</option>
-                           {/loop}
-                        </select>
-                     </td>
-                     <td align="center"><input type="text" name="cantidad" value="0" size="3" autocomplete="off"/></td>
-                     <td align="center"></td>
-                     <td align="center"></td>
-                     <td align="center"></td>
-                     <td align="right">
-                        <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                            <span class="glyphicon glyphicon-floppy-disk"></span>
-                            &nbsp; Guardar
-                        </button>
-                     </td>
-                  </form>
-               </tr>
-               {/if}
-            </table>
-         </div>
-      </div>
-      
-      <div class="well well-sm">
-         <h2 style="margin: 0px;">Buscar en...</h2>
-         <ul class="bloque">
-            <li><a id="b_buscar_albcli" href="#">{$albaranes}<br/>de<br/>cliente</a></li>
-            <li><a id="b_buscar_albpro" href="#">{$albaranes}<br/>de<br/>proveedor</a></li>
-            <li class="verde"><a id="b_buscar_faccli" href="#">Facturas<br/>de<br/>cliente</a></li>
-            <li class="verde"><a id="b_buscar_facpro" href="#">Facturas<br/>de<br/>proveedor</a></li>
-         </ul>
-      </div>
-   </td>
-   <td valign="top" width="350">
-      <div class="well well-sm">
-         <form action="{$fsc->url()}" method="post">
-            <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
-            <h2 style="margin: 0px 0px 15px 0px;">
-               Precios:
-               <span class="pull_right">
-                  <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                      <span class="glyphicon glyphicon-floppy-disk"></span>
-                      &nbsp; Guardar
-                  </button>
-               </span>
-            </h2>
-            <div class="table-responsive">
-               <table class="table table-hover">
-                  <tr>
-                     <th align="left">IVA</th>
-                     <th align="right">Último cambio de precio</th>
-                  </tr>
-                  <tr>
-                     <td>
-                        <select class="form-control" name="codimpuesto">
-                        {loop="$fsc->impuesto->all()"}
-                           {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
-                           <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
-                           {else}
-                           <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                           {/if}
-                        {/loop}
-                        </select>
-                     </td>
-                     <td align="right">{$fsc->articulo->factualizado}</td>
-                  </tr>
-               </table>
-            </div>
-            <br/>
-            <div class="table-responsive">
-               <table class="table table-hover">
-                  <tr>
-                     <th align="left">Tarifa</th>
-                     <th>Dto</th>
-                     <th>PVP</th>
-                     <th>PVP+IVA</th>
-                  </tr>
-                  {if condition="$fsc->articulo->costemedio!=0"}
-                  <tr>
-                     <td>Coste</td>
-                     <td align="center">0.00</td>
-                     <td align="center">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
-                     <td align="center">{$fsc->show_precio($fsc->articulo->costemedio_iva())}</td>
-                  </tr>
-                  {/if}
-                  <tr>
-                     <td>General</td>
-                     <td align="center">0.00</td>
-                     <td>
-                        <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
-                        <input type="text" class="form-control" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" size="5" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
-                     </td>
-                     <td>
-                        <input type="text" class="form-control" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" size="5" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
-                     </td>
-                  </tr>
-                  {loop="$fsc->articulo->get_tarifas(TRUE)"}
-                  <tr>
-                     <td><a href="{$value->url()}">{$value->nombre}</a></td>
-                     <td>
-                        <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
-                        <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
-                        <input type="text" class="form-control" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
-                     </td>
-                     <td>
-                        <input type="text" class="form-control" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
-                     </td>
-                     <td>
-                        <input type="text" class="form-control" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
-                     </td>
-                  </tr>
-                  {/loop}
-                  <tr>
-                     <td colspan="4">
-                        <div class="new_line">
-                           <a class="new_line" href="index.php?page=general_articulos#tarifas">Nueva tarifa</a>
-                        </div>
-                     </td>
-                  </tr>
-               </table>
-            </div>
-         </form>
-      </div>
-      
-      <div class="well well-sm">
-         <h3>Artículos equivalentes:</h3>
-         {if condition="$fsc->equivalentes"}
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <tr>
-                  <th align="left">Artículo</th>
-                  <th align="right">PVP+IVA</th>
-                  <th align="right">Stock</th>
-               </tr>
-               {loop="$fsc->equivalentes"}
-               <tr>
-                  <td><a href="{$value->url()}">{$value->referencia}</a></td>
-                  <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
-                  <td align="right">{$value->stockfis}</td>
-               </tr>
-               {/loop}
-            </table>
-         </div>
-         {else}
-            No hay artículos equivalentes.
-         {/if}
-      </div>
-   </table>
 </div>
 {else}
 <div class="well well-sm" style="text-align: center;">

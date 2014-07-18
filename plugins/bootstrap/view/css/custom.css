@@ -28,16 +28,17 @@ ul.dropdown-menu li a:first-letter {
    margin: 5px;
 }
 
-.popup {
-   display: none;
-}
-
 .alert {
    margin: 5px;
 }
 
+.alert a {
+   color: white;
+   text-decoration: underline;
+}
+
 .modal-header .close {
-   color: #333333;
+   color: #222222;
 }
 
 .modal-footer {

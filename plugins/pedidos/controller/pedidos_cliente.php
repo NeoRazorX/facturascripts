@@ -39,7 +39,7 @@ class pedidos_cliente extends fs_controller
       }
       else
       {
-		 $pedido = new pedido_cliente();
+         $pedido = new pedido_cliente();
          $this->custom_search = TRUE;
          
          $this->buttons[] = new fs_button_img('b_nuevo_pedido', 'Nuevo', 'add.png', 'index.php?page=nuevo_pedido_cliente');
@@ -73,7 +73,7 @@ class pedidos_cliente extends fs_controller
          else
             $this->resultados = $pedido->all($this->offset);
       }
-
+   }
    
    public function anterior_url()
    {

@@ -32,6 +32,13 @@ class admin_info extends fs_controller
       $fsvar = new fs_var();
       $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
       
+      if( isset($_GET['fix']) )
+      {
+         $cron_vars['cron_error'] = FALSE;
+         $cron_vars['cron_lock'] = FALSE;
+         $fsvar->array_save($cron_vars);
+      }
+      
       if( !$cron_vars['cron_exists'] )
       {
          $this->buttons[] = new fs_button_img('b_clean_cache', 'Limpiar la cache', 'trash.png', $this->url()."&clean_cache=TRUE", TRUE);
@@ -40,7 +47,7 @@ class admin_info extends fs_controller
       }
       else if( $cron_vars['cron_error'] )
       {
-         $this->new_error_msg('Parece que ha habido un error con el cron.');
+         $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="'.$this->url().'&fix=TRUE">aquí</a> para corregirlo.');
       }
       else if( $cron_vars['cron_lock'] )
       {

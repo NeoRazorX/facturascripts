@@ -359,7 +359,7 @@ class pedido_cliente extends fs_model
    {
       $pedilist = array();
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " WHERE ptealbaran = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
+              " WHERE editable = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
          foreach($pedidos as $p)

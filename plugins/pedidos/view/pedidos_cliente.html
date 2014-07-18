@@ -4,16 +4,22 @@
    <table class="table table-hover">
       <thead>
          <tr>
+            <th></th>
             <th align="left">Código + Cliente</th>
             <th align="left">Observaciones</th>
             <th align="right">Total</th>
             <th align="right">Fecha</th>
          </tr>
       </thead>
-      {loop="$fsc->pedido->all()"}
+      {loop="$fsc->resultados"}
       <tr>
+         <td align="center">
+            {if condition="!$value->ptefactura"}
+            <span class="glyphicon glyphicon-paperclip" title="hay un albarán asociado"></span>
+            {/if}
+         </td>
          <td>
-            <a class="link" href="{$value->url()}">{$value->codigo}</a>
+            <a href="{$value->url()}">{$value->codigo}</a>
             {$value->nombrecliente}
          </td>
          <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
