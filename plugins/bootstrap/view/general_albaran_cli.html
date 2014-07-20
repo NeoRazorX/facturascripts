@@ -15,6 +15,19 @@
          event.preventDefault();
          $("#modal_eliminar").modal('show');
       });
+      $("#b_new_line").click(function(event) {
+         event.preventDefault();
+         $("#search_results").html('');
+         document.f_buscar_articulos.query.value = '';
+         $("#modal_new_line").modal('show');
+      });
+      $("#f_buscar_articulos").keyup(function() {
+         buscar_articulos();
+      });
+      $("#f_buscar_articulos").submit(function(event) {
+         event.preventDefault();
+         buscar_articulos();
+      });
    });
 </script>
 
@@ -26,12 +39,10 @@
             <h4 class="modal-title">Imprimir {$albaran}</h4>
          </div>
          <div class="modal-body">
-            <center>
-               <ul class="bloque">
-                  <li><a target="_blank" href="{$fsc->url()}&imprimir=simple" autofocus >{$albaran}<br/>simple</a></li>
-                  <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Cuartilla<br/>sin logotipo</a></li>
-               </ul>
-            </center>
+            <ul class="bloque">
+               <li><a target="_blank" href="{$fsc->url()}&imprimir=simple" autofocus >{$albaran} simple</a></li>
+               <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Cuartilla sin logotipo</a></li>
+            </ul>
          </div>
       </div>
    </div>

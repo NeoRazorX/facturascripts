@@ -12,32 +12,36 @@
 {/if}
 
 {if condition="$fsc->results"}
-<table class="list">
-   <tr>
-      <th>Referencia + descripción</th>
-      <th>Cod. equivalencia</th>
-      <th align="right">PVP</th>
-      <th align="right">PVP+IVA</th>
-      <th align="right">Stock</th>
-   </tr>
-   {loop="$fsc->results"}
-   <tr>
-      {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
-         <a class="link" href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
-         <a class="link" href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
-            {$value->referencia}</a> {$value->descripcion}
-      </td>
-      <td>{$value->equivalencia}</td>
-      <td align="right">
-         <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span>
-      </td>
-      <td align="right">
-         <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
-      </td>
-      <td align="right">{$value->stockfis}</td>
-   </tr>
-   {/loop}
-</table>
+<div class="table-responsive">
+   <table class="table table-hover" id="lineas_albaran">
+      <thead>
+         <tr>
+            <th>Referencia + descripción</th>
+            <th>Cod. equivalencia</th>
+            <th align="right">PVP</th>
+            <th align="right">PVP+IVA</th>
+            <th align="right">Stock</th>
+         </tr>
+      </thead>
+      {loop="$fsc->results"}
+      <tr>
+         {if condition="$value->bloqueado"}<td class="locked">{else}<td>{/if}
+            <a class="link" href="#new_line" onclick="get_precios('{$value->referencia}')">[+]</a>
+            <a class="link" href="#new_line" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+               {$value->referencia}</a> {$value->descripcion}
+         </td>
+         <td>{$value->equivalencia}</td>
+         <td align="right">
+            <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span>
+         </td>
+         <td align="right">
+            <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
+         </td>
+         <td align="right">{$value->stockfis}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
 {else}
 <div class="message">
    No se han encontrado resultados para la búsqueda <b>{$fsc->query}</b>.

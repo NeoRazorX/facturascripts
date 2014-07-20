@@ -1,19 +1,23 @@
 {if condition="$fsc->regiva"}
    <h1>Regularización del periódo {$fsc->regiva->periodo}</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Periodo</th>
-         <th>Fecha de inicio</th>
-         <th>Fecha fin</th>
-      </tr>
-      <tr>
-         <td><a class="link" href="{$fsc->regiva->ejercicio_url()}">{$fsc->regiva->codejercicio}</a></td>
-         <td>{$fsc->regiva->periodo}</td>
-         <td align="center">{$fsc->regiva->fechainicio}</td>
-         <td align="center">{$fsc->regiva->fechafin}</td>
-      </tr>
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Ejercicio</th>
+               <th align="left">Periodo</th>
+               <th>Fecha de inicio</th>
+               <th>Fecha fin</th>
+            </tr>
+         </thead>
+         <tr>
+            <td><a class="link" href="{$fsc->regiva->ejercicio_url()}">{$fsc->regiva->codejercicio}</a></td>
+            <td>{$fsc->regiva->periodo}</td>
+            <td align="center">{$fsc->regiva->fechainicio}</td>
+            <td align="center">{$fsc->regiva->fechafin}</td>
+         </tr>
+      </table>
+   </div>
    
    <br/><br/>
    
@@ -22,26 +26,30 @@
       {$fsc->regiva->fechaasiento}
    </center>
    
-   <table class="list">
-      <tr>
-         <th align="left">Subcuenta</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-      </tr>
-      {loop="$fsc->regiva->get_partidas()"}
-      <tr>
-         <td>
-            <a class="link" href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a>
-         </td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="3">Sin datos</td>
-      </tr>
-      {/loop}
-   </table>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Subcuenta</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+            </tr>
+         </thead>
+         {loop="$fsc->regiva->get_partidas()"}
+         <tr>
+            <td>
+               <a class="link" href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a>
+            </td>
+            <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         </tr>
+         {else}
+         <tr>
+            <td colspan="3">Sin datos</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
    
    <br/><br/>
    
