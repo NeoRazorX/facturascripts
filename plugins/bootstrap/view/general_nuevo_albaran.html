@@ -327,7 +327,7 @@
    <input type="hidden" name="tipoalbaran" value="cliente"/>
    <div class="popup" id="modal_tpv_opciones"/>
       <h3>Guardar como...</h3>
-      <table>
+      <table align="center">
          <tr>
             <td align="right"><a href="{$fsc->agente->url()}">Agente</a>:</td>
             <td colspan="3">
@@ -346,7 +346,7 @@
             <td align="right">Fecha:</td>
             <td><input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/></td>
             <td align="right">Hora:</td>
-            <td><input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
+            <td><input class="form-control" type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/></td>
          </tr>
          <tr id="tr_clientes">
             <td align="right"><a href="{$fsc->cliente->url()}">Cliente</a>:</td>
@@ -436,15 +436,15 @@
          </tr>
          <tr id="tr_numero2">
             <td align="right">Número 2:</td>
-            <td colspan="3"><input type="text" name="numero2" autocomplete="off"/></td>
+            <td colspan="3"><input class="form-control" type="text" name="numero2" autocomplete="off"/></td>
          </tr>
          <tr id="tr_numproveedor">
             <td align="right">Num. proveedor:</td>
-            <td colspan="3"><input type="text" name="numproveedor" autocomplete="off"/></td>
+            <td colspan="3"><input class="form-control" type="text" name="numproveedor" autocomplete="off"/></td>
          </tr>
          <tr>
             <td align="right">Observaciones:</td>
-            <td colspan="3"><textarea name="observaciones" cols="50"></textarea></td>
+            <td colspan="3"><textarea class="form-control" name="observaciones" cols="50"></textarea></td>
          </tr>
          <tr>
             <td colspan="4" align="right">
