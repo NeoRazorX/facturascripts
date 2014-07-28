@@ -1,14 +1,16 @@
 {include="header"}
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th><b>FacturaScripts</b></th>
-         <th><b>PHP</b></th>
-         <th><b>Base de datos</b></th>
-         <th><b>Motor de base de datos</b></th>
-         <th><b>Memcache</b></th>
-      </tr>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th>FacturaScripts</th>
+            <th>PHP</th>
+            <th>Base de datos</th>
+            <th>Motor de base de datos</th>
+            <th>Memcache</th>
+         </tr>
+      </thead>
       <tr>
          <td align="center">{$fsc->version()}</td>
          <td align="center">{$fsc->php_version()}</td>
@@ -19,57 +21,84 @@
    </table>
 </div>
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <td align="right"><b>Sistema Operativo:</b></td>
-         <td>{$fsc->uname()}</td>
-      </tr>
-      {if condition="$fsc->linux()"}
-      <tr>
-         <td align="right"><b>Uptime:</b></td>
-         <td>{$fsc->sys_uptime()}</td>
-      </tr>
-      <tr>
-         <td align="right"><b>Memoria:</b></td>
-         <td><pre>{$fsc->sys_free()}</pre></td>
-      </tr>
-      <tr>
-         <td align="right"><b>Disco duro:</b></td>
-         <td><pre>{$fsc->sys_df()}</pre></td>
-      </tr>
-      {/if}
-   </table>
-</div>
-
-<div class="rounded">
-   <h2 style="margin: 0px 5px 5px 5px;">Bloqueos en la base de datos:</h2>
-   <table class="list">
-      <tr>
-         <th align="left">Base de datos</th>
-         <th align="left">relname</th>
-         <th align="left">relation</th>
-         <th align="left">transaction ID</th>
-         <th align="left">PID</th>
-         <th align="left">modo</th>
-         <th align="left">granted</th>
-      </tr>
-      {loop="$fsc->get_locks()"}
-      <tr>
-         <td>{$value.database}</td>
-         <td>{$value.relname}</td>
-         <td>{$value.relation}</td>
-         <td>{$value.transactionid}</td>
-         <td>{$value.pid}</td>
-         <td>{$value.mode}</td>
-         <td>{$value.granted}</td>
-      </tr>
-      {else}
-      <tr>
-         <td colspan="7">Ningún bloqueo detectado.</td>
-      </tr>
-      {/loop}
-   </table>
+<div class="panel-group" id="accordion" style="margin: 10px;">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_so">Sistema operativo</a>
+         </h3>
+      </div>
+      <div id="collapse_so" class="panel-collapse collapse in">
+         <div class="panel-body">{$fsc->uname()}</div>
+         {if condition="$fsc->linux()"}
+         <div class="panel-footer">
+            <b>Uptime:</b> {$fsc->sys_uptime()}
+         </div>
+         {/if}
+      </div>
+   </div>
+   
+   {if condition="$fsc->linux()"}
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_mem">Memoria</a>
+         </h3>
+      </div>
+      <div id="collapse_mem" class="panel-collapse collapse">
+         <div class="panel-body"><pre>{$fsc->sys_free()}</pre></div>
+      </div>
+   </div>
+   
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_dd">Disco duro</a>
+         </h3>
+      </div>
+      <div id="collapse_dd" class="panel-collapse collapse">
+         <div class="panel-body"><pre>{$fsc->sys_df()}</pre></div>
+      </div>
+   </div>
+   {/if}
+   
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_bloq">Bloqueos en la base de datos</a>
+         </h3>
+      </div>
+      <div id="collapse_bloq" class="panel-collapse collapse">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th align="left">Base de datos</th>
+                     <th align="left">relname</th>
+                     <th align="left">relation</th>
+                     <th align="left">transaction ID</th>
+                     <th align="left">PID</th>
+                     <th align="left">modo</th>
+                     <th align="left">granted</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->get_locks()"}
+               <tr>
+                  <td>{$value.database}</td>
+                  <td>{$value.relname}</td>
+                  <td>{$value.relation}</td>
+                  <td>{$value.transactionid}</td>
+                  <td>{$value.pid}</td>
+                  <td>{$value.mode}</td>
+                  <td>{$value.granted}</td>
+               </tr>
+               {else}
+               <tr><td colspan="7" align="center">Ningún bloqueo detectado</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+   </div>
 </div>
 
 {include="footer"}

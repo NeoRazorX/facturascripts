@@ -27,7 +27,7 @@ class contabilidad_balance extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_balance', 'Balance', 'contabilidad', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Balance', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()
@@ -64,5 +64,3 @@ class contabilidad_balance extends fs_controller
          return parent::url();
    }
 }
-
-?>

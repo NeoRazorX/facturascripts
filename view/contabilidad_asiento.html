@@ -1,12 +1,17 @@
 {include="header"}
 
+<!-- 
+ ESTILO INCOMPLETO
+ NO HAY BOTON NUEVO PAIS EN EL BTN-TOOLBAR
+-->
+
 {if condition="$fsc->asiento"}
 <script type="text/javascript">
    var numlineas = 0;
    function add_partida()
    {
       numlineas++;
-      $("#partidas").append("<div class='rounded' id='partida_"+numlineas+"'>\n\
+      $("#partidas").append("<div class='well well-sm' id='partida_"+numlineas+"'>\n\
          <table width='100%'>\n\
             <tr>\n\
                <td>\n\
@@ -18,17 +23,17 @@
                   </tr>\n\
                   <tr>\n\
                      <td>\n\
-                        <input type='hidden' name='idpartida_"+numlineas+"' value='-1'/>\n\
-                        <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text' size='10'\n\
+                        <input class='form-control' type='hidden' name='idpartida_"+numlineas+"' value='-1'/>\n\
+                        <input id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text'\n\
                            onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-                        <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' size='8' disabled='disabled'/>\n\
+                        <input type='text' id='saldo_"+numlineas+"' name='saldo_"+numlineas+"' value='0' disabled='disabled'/>\n\
                      </td>\n\
                      <td>\n\
-                        <input class='full' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0' size='5'\n\
+                        <input class='form-control' type='text' id='debe_"+numlineas+"' name='debe_"+numlineas+"' value='0'\n\
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                      <td>\n\
-                        <input class='full' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0' size='5'\n\
+                        <input class='form-control' type='text' id='haber_"+numlineas+"' name='haber_"+numlineas+"' value='0'\n\
                            onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>\n\
                      </td>\n\
                   </tr>\n\
@@ -53,21 +58,21 @@
          </tr>\n\
          <tr>\n\
             <td>\n\
-               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text' size='10'\n\
+               <input id='codcontrapartida_"+num+"' name='codcontrapartida_"+num+"' type='text'\n\
                   onclick=\"show_buscar_subcuentas('"+num+"','contrapartida')\" autocomplete='off' placeholder='Seleccionar'/>\n\
-               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' size='8' disabled='disabled'/>\n\
+               <input type='text' id='saldoc_"+num+"' name='saldoc_"+num+"' value='0' disabled='disabled'/>\n\
             </td>\n\
             <td>\n\
-               <select id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
+               <select class='form-control' id='iva_"+num+"' name='iva_"+num+"' onchange='recalcular()'>\n\
                   <option value='0'>---</option>\n\
                   {loop="$fsc->impuesto->all()"}<option value='{$value->iva}'>{$value->descripcion}</option>{/loop}\n\
                </select>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' size='5' autocomplete='off'/>\n\
+               <input class='form-control' type='text' id='baseimp_"+num+"' name='baseimp_"+num+"' value='0' autocomplete='off'/>\n\
             </td>\n\
             <td>\n\
-               <input class='full' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"' size='10'/>\n\
+               <input class='form-control' type='text' id='cifnif_"+num+"' name='cifnif_"+num+"'/>\n\
             </td>\n\
          </tr>\n\
          </table>");
@@ -79,15 +84,13 @@
       document.f_buscar_subcuentas.tipo.value = tipo;
       document.f_buscar_subcuentas.numlinea.value = num;
       document.f_buscar_subcuentas.query.value = '';
-      fs_show_popup('popup_subcuentas', 40);
-      document.f_buscar_subcuentas.query.focus();
+      $("#modal_subcuentas").modal('show');
    }
    function buscar_subcuentas()
    {
       if(document.f_buscar_subcuentas.query.value == '')
       {
          $("#subcuentas").html('');
-         fs_resize_popup("popup_subcuentas", 40);
       }
       else
       {
@@ -104,7 +107,6 @@
                if( m[1] == document.f_buscar_subcuentas.query.value )
                {
                   $("#subcuentas").html(datos);
-                  fs_resize_popup("popup_subcuentas", 40);
                }
             }
          });
@@ -123,7 +125,7 @@
          $("#codcontrapartida_"+num).val(codsubcuenta);
          $("#saldoc_"+num).val(saldo);
       }
-      fs_hide_popups();
+      $("#modal_subcuentas").modal('hide');
    }
    function clean_partida(num)
    {
@@ -175,7 +177,6 @@
    function asigna_concepto()
    {
       document.f_asiento.concepto.value = $("#s_idconceptopar option:selected").text();
-      document.f_asiento.concepto.focus();
    }
    $(document).ready(function() {
       {if condition="$fsc->asiento->editable"}recalcular();{/if}
@@ -206,169 +207,200 @@
    });
 </script>
 
-<div class="popup" id="popup_subcuentas" style="min-width: 80%">
-   <form id="f_buscar_subcuentas" name="f_buscar_subcuentas">
-      <input type="hidden" name="fecha"/>
-      <input type="hidden" name="tipo"/>
-      <input type="hidden" name="numlinea"/>
-      <h1>Buscar subcuentas</h1>
-      <div style="text-align: center;">
-         <input type="text" name="query" size="40"/>
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+<div class="modal fade" id="modal_subcuentas">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" role="form" name="f_buscar_subcuentas">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar subcuenta</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input class="form-control" type="hidden" name="fecha"/>
+                  <input class="form-control" type="hidden" name="tipo"/>
+                  <input class="form-control" type="hidden" name="numlinea"/>
+                  <label for="ncodagente" class="col-sm-2 control-label">Búsqueda</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="query" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nemail" class="col-sm-2 control-label">Resultado</label>
+                  <div class="col-sm-10" id="subcuentas">
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();" title="Buscar">
+                   <span class="glyphicon glyphicon-search"></span>
+                   &nbsp; Buscar
+                </button>
+            </div>
+         </form>
       </div>
-   </form>
-   <div id="subcuentas"></div>
+   </div>
 </div>
 
 {if condition="$fsc->asiento->editable"}
    <form id="f_asiento" name="f_asiento" action="{$fsc->url()}" method="post">
-      <input type="hidden" name="numlineas" value="0"/>
-      <div class="rounded">
-         <table class="list">
-            <tr>
-               <th width="130" align="left">Fecha</th>
-               <th align="left">Concepto</th>
-               <th align="left">Divisa</th>
-               <th>Importe</th>
-               <th>Descuadre</th>
-               <td rowspan="2" align="right" width="100">
-                  <input class="submit" type="submit" value="Guardar"/>
-               </td>
-            </tr>
-            <tr>
-               <td>
-                  <input class="tcal" name="fecha" type="text" value="{$fsc->asiento->fecha}" size="10"/>
-               </td>
-               <td>
-                  <input class="full" name="concepto" type="text" value="{$fsc->asiento->concepto}"
-                         maxlength="250" autocomplete="off"/>
-               </td>
-               <td>
-                  <select name='divisa'>
-                  {loop="$fsc->divisa->all()"}
-                     {if condition="$value->is_default()"}
-                        <option value='{$value->coddivisa}' selected='selected'>{$value->descripcion}</option>
-                     {else}
-                        <option value='{$value->coddivisa}'>{$value->descripcion}</option>
-                     {/if}
-                  {/loop}
-                  </select>
-               </td>
-               <td>
-                  <input class="full" type="text" name="importe" value="0" size="6" disabled="disabled"/>
-               </td>
-               <td>
-                  <input class="full" type="text" name="descuadre" value="0" size="6" disabled="disabled"/>
-               </td>
-            </tr>
-         </table>
+      <input class="form-control" type="hidden" name="numlineas" value="0"/>
+      <div class="well well-sm">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <tr>
+                  <th width="130" align="left">Fecha</th>
+                  <th align="left">Concepto</th>
+                  <th align="left">Divisa</th>
+                  <th>Importe</th>
+                  <th>Descuadre</th>
+                  <td rowspan="2" align="right" width="100">
+                     <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        &nbsp; Guardar
+                     </button>
+                  </td>
+               </tr>
+               <tr>
+                  <td>
+                     <input class="form-control datepicker" name="fecha" type="text" value="{$fsc->asiento->fecha}"/>
+                  </td>
+                  <td>
+                     <input class="form-control" name="concepto" type="text" value="{$fsc->asiento->concepto}" autocomplete="off" autofocus />
+                  </td>
+                  <td>
+                     <select class='form-control' name='divisa'>
+                     {loop="$fsc->divisa->all()"}
+                        {if condition="$value->is_default()"}
+                           <option value='{$value->coddivisa}' selected='selected'>{$value->descripcion}</option>
+                        {else}
+                           <option value='{$value->coddivisa}'>{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </td>
+                  <td>
+                     <input class="form-control" type="text" name="importe" value="0" disabled="disabled"/>
+                  </td>
+                  <td>
+                     <input class="form-control" type="text" name="descuadre" value="0" disabled="disabled"/>
+                  </td>
+               </tr>
+            </table>
+         </div>
       </div>
       
       <div id="partidas">
       {loop="$fsc->asiento->get_partidas()"}
-      <div class='rounded' id='partida_{$counter+1}'>
-         <table width='100%'>
-            <tr>
-               <td>
-               <table>
-                  <tr>
-                     <th align='left'>
-                        <a class="link" href="{$value->subcuenta_url()}">Subcuenta</a>+saldo
-                     </th>
-                     <th align='left'>Debe</th>
-                     <th align='left'>Haber</th>
-                  </tr>
-                  <tr>
-                     <td>
-                        <input type="hidden" name="idpartida_{$counter+1}" value="{$value->idpartida}"/>
-                        <input id='codsubcuenta_{$counter+1}' name='codsubcuenta_{$counter+1}' type='text' size='10'
-                               value="{$value->codsubcuenta}" onclick="show_buscar_subcuentas('{$counter+1}','subcuenta')"
-                               autocomplete='off' placeholder='Seleccionar'/>
-                        <input type='text' id='saldo_{$counter+1}' name='saldo_{$counter+1}' value='0' size='8' disabled='disabled'/>
-                     </td>
-                     <td>
-                        <input class='full' type='text' id='debe_{$counter+1}' name='debe_{$counter+1}' value='{$value->debe}' size='5'
-                               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
-                     </td>
-                     <td>
-                        <input class='full' type='text' id='haber_{$counter+1}' name='haber_{$counter+1}' value='{$value->haber}' size='5'
-                               onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
-                     </td>
-                  </tr>
-               </table>
-               </td>
-               <td id='contrapartida_{$counter+1}'>
-                  <table width="100%">
+      <div class='well well-sm' id='partida_{$counter+1}'>
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <tr>
+                  <td>
+                  <table>
                      <tr>
                         <th align='left'>
-                           <a class="link" href="{$value->contrapartida_url()}">Contrapartida</a>+saldo
+                           <a href="{$value->subcuenta_url()}">Subcuenta</a>+saldo
                         </th>
-                        <th align='left'>IVA</th>
-                        <th align='left'>Base Imp.</th>
-                        <th align='left'>CIF/NIF</th>
+                        <th align='left'>Debe</th>
+                        <th align='left'>Haber</th>
                      </tr>
                      <tr>
                         <td>
-                           <input id='codcontrapartida_{$counter+1}' name='codcontrapartida_{$counter+1}' type='text'
-                              value='{$value->codcontrapartida}' onclick="show_buscar_subcuentas('{$counter+1}','contrapartida')"
-                              size='10' autocomplete='off' placeholder='Seleccionar'/>
-                           <input type='text' id='saldoc_{$counter+1}' name='saldoc_{$counter+1}' value='0' size='8' disabled='disabled'/>
+                           <input class="form-control" type="hidden" name="idpartida_{$counter+1}" value="{$value->idpartida}"/>
+                           <input id='codsubcuenta_{$counter+1}' name='codsubcuenta_{$counter+1}' type='text'
+                                  value="{$value->codsubcuenta}" onclick="show_buscar_subcuentas('{$counter+1}','subcuenta')"
+                                  autocomplete='off' placeholder='Seleccionar'/>
+                           <input type='text' id='saldo_{$counter+1}' name='saldo_{$counter+1}' value='0' disabled='disabled'/>
                         </td>
                         <td>
-                           <select id='iva_{$counter+1}' name='iva_{$counter+1}' onchange='recalcular()'>
-                              <option value='0'>---</option>
-                              {loop="$fsc->impuesto->all()"}
-                                 {if condition="$value1->iva==$value2->iva"}
-                                    <option value='{$value->iva}' selected="selected">{$value->descripcion}</option>
-                                 {else}
-                                    <option value='{$value->iva}'>{$value->descripcion}</option>
-                                 {/if}
-                              {/loop}
-                           </select>
+                           <input class='form-control' type='text' id='debe_{$counter+1}' name='debe_{$counter+1}' value='{$value->debe}'
+                                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
                         </td>
                         <td>
-                           <input class='full' type='text' id='baseimp_{$counter+1}' name='baseimp_{$counter+1}'
-                              value='{$value->baseimponible}' size='5' autocomplete='off'/>
-                        </td>
-                        <td>
-                           <input class='full' type='text' id='cifnif_{$counter+1}' name='cifnif_{$counter+1}'
-                              value="{$value->cifnif}" size='10'/>
+                           <input class='form-control' type='text' id='haber_{$counter+1}' name='haber_{$counter+1}' value='{$value->haber}'
+                                  onclick='this-select()' onkeyup='recalcular()' autocomplete='off'/>
                         </td>
                      </tr>
                   </table>
-               </td>
-               <td align='right'>
-                  <input class="delete" type='button' value='x' onclick="clean_partida('{$counter+1}')"/>
-               </td>
-            </tr>
-         </table>
+                  </td>
+                  <td id='contrapartida_{$counter+1}'>
+                     <table width="100%">
+                        <tr>
+                           <th align='left'>
+                              <a href="{$value->contrapartida_url()}">Contrapartida</a>+saldo
+                           </th>
+                           <th align='left'>IVA</th>
+                           <th align='left'>Base Imp.</th>
+                           <th align='left'>CIF/NIF</th>
+                        </tr>
+                        <tr>
+                           <td>
+                              <input id='codcontrapartida_{$counter+1}' name='codcontrapartida_{$counter+1}' type='text'
+                                 value='{$value->codcontrapartida}' onclick="show_buscar_subcuentas('{$counter+1}','contrapartida')"
+                                 autocomplete='off' placeholder='Seleccionar'/>
+                              <input type='text' id='saldoc_{$counter+1}' name='saldoc_{$counter+1}' value='0' disabled='disabled'/>
+                           </td>
+                           <td>
+                              <select class='form-control' id='iva_{$counter+1}' name='iva_{$counter+1}' onchange='recalcular()'>
+                                 <option value='0'>---</option>
+                                 {loop="$fsc->impuesto->all()"}
+                                    {if condition="$value1->iva==$value2->iva"}
+                                       <option value='{$value->iva}' selected="selected">{$value->descripcion}</option>
+                                    {else}
+                                       <option value='{$value->iva}'>{$value->descripcion}</option>
+                                    {/if}
+                                 {/loop}
+                              </select>
+                           </td>
+                           <td>
+                              <input class='form-control' type='text' id='baseimp_{$counter+1}' name='baseimp_{$counter+1}'
+                                 value='{$value->baseimponible}' autocomplete='off'/>
+                           </td>
+                           <td>
+                              <input class='form-control' type='text' id='cifnif_{$counter+1}' name='cifnif_{$counter+1}'
+                                 value="{$value->cifnif}"/>
+                           </td>
+                        </tr>
+                     </table>
+                  </td>
+                  <td align='right'>
+                     <button class="btn btn-sm btn-danger" type="button" value="x" title="x" onclick="clean_partida('{$counter+1}')">
+                        <span class="glyphicon glyphicon-remove"></span>
+                     </button>
+                  </td>
+               </tr>
+            </table>
+         </div>
       </div>
       {/loop}
       </div>
-      <div class="rounded">
+      <div class="well well-sm">
          <div class="new_line"><a href="#" onclick="add_partida(); return false;">Añadir línea...</a></div>
       </div>
    </form>
 {else}
-   <div class="rounded">
-      <table class="list">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Ejercicio</th>
+               <th>Fecha</th>
+               <th>Concepto</th>
+               <th>Documento</th>
+               <th align="right">Importe</th>
+            </tr>
+         </thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th>Fecha</th>
-            <th>Concepto</th>
-            <th>Documento</th>
-            <th align="right">Importe</th>
-         </tr>
-         <tr>
-            <td><a class='link' href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
+            <td><a href="{$fsc->asiento->ejercicio_url()}">{$fsc->asiento->codejercicio}</a></td>
             <td align="center">{$fsc->asiento->fecha}</td>
             <td align="center">{$fsc->asiento->concepto}</td>
             <td align="center">
                {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
                {if condition="$fsc->asiento->documento"}
-                  <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+               <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
                {else}
-                  -
+               -
                {/if}
             </td>
             <td align="right">{$fsc->show_precio($fsc->asiento->importe)}</td>
@@ -376,18 +408,20 @@
       </table>
    </div>
    
-   <div class="rounded">
-      <table class="list">
-         <tr>
-            <th align="left">Concepto</th>
-            <th>Subcuenta</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">IVA</th>
-            <th align="right">Base imponible</th>
-            <th>Contrapartida</th>
-            <th>CIF/NIF</th>
-         </tr>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Concepto</th>
+               <th>Subcuenta</th>
+               <th align="right">Debe</th>
+               <th align="right">Haber</th>
+               <th align="right">IVA</th>
+               <th align="right">Base imponible</th>
+               <th>Contrapartida</th>
+               <th>CIF/NIF</th>
+            </tr>
+         </thead>
          {loop="$fsc->asiento->get_partidas()"}
          <tr>
             <td>{$value->concepto}</td>
@@ -412,7 +446,7 @@
    </div>
 {/if}
 {else}
-<div class="rounded" style="text-align: center;">
+<div class="well well-sm" style="text-align: center;">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

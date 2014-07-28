@@ -1,159 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->empresa->nombre}</title>
-   <meta name="description" content="Facturación y contabilidad fácil, libre y con actualizaciones constantes.
-         Es software libre bajo licencia GNU/AGPL." />
-   <meta name="keywords" content="facturascripts, facturación, contabilidad, abanq, eneboo, facturalux, facturaplus"/>
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet" type="text/css" href="view/login/login.css" />
-   <script type="text/javascript" src="view/js/jquery.js"></script>
+   <link href="view/css/bootstrap-yeti.min.css" rel="stylesheet" />
+   <link href="view/css/datepicker.css" rel="stylesheet" />
+   <link href="view/css/custom.css" rel="stylesheet" />
+   <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
+   <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
    <script type="text/javascript">
-{if condition="$demo"}
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-417932-8']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-{/if}
       $(document).ready(function() {
-         {if condition="$demo"}
-         document.f_login.user.focus();
-         {else}
+         {if condition="$fsc->get_errors()"}
+         $("#box_login").shake();
+         {/if}
          document.f_login.password.focus();
-         {/if}
-         {if condition="!$demo"}
-         $("#b_new_password").click(function() {
-            $("#popup_new_password").show();
-            document.f_new_password.new_password.focus();
-         });
-         {/if}
-         $("#fs_feedback").click(function() {
-            $("#fs_feedback").hide();
-            $("#popup_feedback").show();
-            document.feedback.feedback_text.focus();
-         });
-         $("#b_sql").click(function() {
-            $("#b_sql").hide();
-            $("#popup_sql").show();
-         });
       });
    </script>
 </head>
 <body>
-   {if condition="$fsc->get_errors()"}
-      <div class="error">
-         <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+   <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
+      <div class="container-fluid">
+         <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+               <span class="sr-only">Toggle navigation</span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
+         </div>
+         
+         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+               <li>
+                  <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
+                     <span class="glyphicon glyphicon-question-sign"></span>
+                  </a>
+               </li>
+            </ul>
+         </div>
       </div>
+   </nav>
+   
+   {if condition="$fsc->get_errors()"}
+   <div class="alert alert-danger">
+      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+   </div>
    {/if}
    {if condition="$fsc->get_messages()"}
-      <div class="message">
-         <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
-      </div>
+   <div class="alert alert-success">
+      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+   </div>
+   {/if}
+   {if condition="$fsc->get_advices()"}
+   <div class="alert alert-info">
+      <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
+   </div>
    {/if}
    
-   <div class="header">
-      <h1><a href="index.php">{$fsc->empresa->nombre}</a></h1>
-      
-      {if condition="$nlogin"}
-         <h2>¡Hola {$nlogin}! Bienvenid@ a FacturaScripts {$fsc->version()}</h2>
-         Si no eres {$nlogin} ignora este saludo.
-      {else}
-         <h2>¡Hola! Bienvenid@ a FacturaScripts {$fsc->version()}</h2>
-      {/if}
-      
-      <br/>
-      
-      <div class="popup">
-         {if condition="$demo"}
-            <div style="text-align: center;">Escribe tu nombre y entra.</div>
-            <br/>
-            <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
-               <input type="text" class="full" name="user" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
-               <input type="hidden" name="password" value="demo"/>
-               <br/>
-               <input type="submit" class="full" value="entrar"/>
-            </form>
-         {else}
-            <form name="f_login" action="index.php?nlogin={$nlogin}" method="post">
-               <select name="user" onchange="document.f_login.password.focus()">
-               {loop name="$fsc->user->all()"}
-                  {if condition="$value->nick == $nlogin"}
-                  <option value="{$value->nick}" selected>{$value->nick}</option>
-                  {else}
-                  <option value="{$value->nick}">{$value->nick}</option>
-                  {/if}
-               {/loop}
-               </select>
-               <input type="password" name="password" maxlength="20" placeholder="contraseña"/>
-               <a id="b_new_password" class="link" href="#new_password">¿Has olvidado la contraseña?</a>
-               <br/><br/>
-               <input type="submit" class="full" value="entrar"/>
-            </form>
+   <div class="container">
+      <div class="row">
+         <div class="col-md-6{if condition="!$db_history"} col-md-offset-3{/if}">
+            <div class="well well-lg" id="box_login">
+               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
+                  <div class="form-group">
+                     <label>Usuario</label>
+                     <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
+                     {loop name="$fsc->user->all()"}
+                        {if condition="$value->nick == $nlogin"}
+                        <option value="{$value->nick}" selected>{$value->nick}</option>
+                        {else}
+                        <option value="{$value->nick}">{$value->nick}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <label>Contraseña</label>
+                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <p class="help-block">
+                        <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
+                     </p>
+                  </div>
+                  <div class="text-right">
+                     <button class="btn btn-sm btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-log-in"></span>
+                        &nbsp; Iniciar sesión
+                     </button>
+                  </div>
+               </form>
+            </div>
+            
+            <div class="well well-sm" style="text-align: center; font-size: 11px;">
+               Consultas: {$fsc->selects()} |
+               Transacciones: {$fsc->transactions()} |
+               Procesado en: {$fsc->duration()}
+            </div>
+         </div>
+         {if condition="$db_history"}
+         <div class="col-md-6">
+            <div class="panel panel-warning" style="margin: 5px;">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Consultas SQL:</h3>
+               </div>
+               <div class="panel-body">
+                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+                  {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+                  </ol>
+               </div>
+            </div>
+         </div>
          {/if}
       </div>
-      
-      <p>
-         Consultas: {$fsc->selects()}, Transacciones: {$fsc->transactions()},
-         Procesado en: {$fsc->duration()}
-      </p>
-      
-      <div style="margin-top: 70px;">
-         <div style="display: inline-block; padding: 15px; background-color: white; border-radius: 50%; border: 2px solid #456E8C;">
-            <a href="http://www.facturascripts.com/community/item/imprimir-tickets-desde-windows-llevo-toda-la-tarde-programando-para-poder-618.html" target="_blank">
-               <img src="view/img/impresora-tickets.png"/>
-            </a>
+   </div>
+   
+   <div class="modal fade" id="modal_new_password">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <form name="f_new_password" action="index.php" method="post" class="form" role="form">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">
+                     <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+                  </button>
+                  <h4 class="modal-title">¿Has olvidado la contraseña?</h4>
+               </div>
+               <div class="modal-body">
+                  <div class="form-group">
+                     <label>Usuario</label>
+                     <select name="user" class="form-control">
+                     {loop name="$fsc->user->all()"}
+                        {if condition="$value->nick == $nlogin"}
+                        <option value="{$value->nick}" selected>{$value->nick}</option>
+                        {else}
+                        <option value="{$value->nick}">{$value->nick}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group">
+                     <label>Nueva contraseña</label>
+                     <input type="password" class="form-control" name="new_password" maxlength="20" placeholder="Nueva contraseña" autofocus/>
+                     <input type="password" class="form-control" name="new_password2" maxlength="20" placeholder="Repite la nueva contraseña"/>
+                  </div>
+                  <div class="form-group">
+                     <label>Contraseña de la base de datos</label>
+                     <input type="password" class="form-control" name="db_password" maxlength="20" placeholder="Contraseña de la base de datos"/>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
+               </div>
+            </form>
          </div>
       </div>
    </div>
    
-   <div class="bottom_frame">
-      <a id="b_news" target="_blank" href="http://www.facturascripts.com/community/item/facturascripts-2014-6-ya-esta-listo-novedades-ya-se-pueden-editar-grupos-361.html">Novedades</a>
-      {if condition="$db_history"}
-      <a id="b_sql" href="#sql">SQL</a>
-      <a href="doc/" target="_blank">Documentación</a>
-      {/if}
-   </div>
-   <a id="fs_feedback" href="#feedback">Ayuda</a>
-   
-   {if condition="!$demo"}
-   <a name="new_password"></a>
-   <div class="popup" id="popup_new_password" style="display: none;">
-      <h1>¿Has olvidado la contraseña?</h1>
-      <form name="f_new_password" action="index.php" method="post">
-         <select name="user" onchange="document.f_login.password.focus()">
-            {loop name="$fsc->user->all()"}
-               {if condition="$value->nick == $nlogin"}
-               <option value="{$value->nick}" selected>{$value->nick}</option>
-               {else}
-               <option value="{$value->nick}">{$value->nick}</option>
-               {/if}
-            {/loop}
-         </select>
-         <input type="password" name="new_password" maxlength="20" placeholder="nueva contraseña"/>
-         <input type="password" name="new_password2" maxlength="20" placeholder="repite la nueva contraseña"/>
-         <input type="password" name="db_password" maxlength="20" placeholder="contraseña de la base de datos"/>
-         <br/>
-         <input type="submit" class="full" value="cambiar"/>
-      </form>
-   </div>
-   <br/>
-   {/if}
-   
-   <a name="feedback"></a>
    {include="feedback"}
-   <br/>
    
-   {if condition="$db_history"}
-   <a name="sql"></a>
-   <div class="popup" id="popup_sql" style="display: none;">
-      <h1>Consultas SQL:</h1>
-      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-12">
+            {if condition="$db_history"}
+            <div class="panel panel-warning" style="margin: 5px; display: none;">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Consultas SQL:</h3>
+               </div>
+               <div class="panel-body">
+                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+                  {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+                  </ol>
+               </div>
+            </div>
+            {/if}
+         </div>
+      </div>
    </div>
-   {/if}
 </body>
 </html>

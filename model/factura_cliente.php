@@ -191,9 +191,9 @@ class factura_cliente extends fs_model
    public function url()
    {
       if( is_null($this->idfactura) )
-         return 'index.php?page=contabilidad_facturas_cli';
+         return 'index.php?page=ventas_facturas';
       else
-         return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
+         return 'index.php?page=ventas_factura&id='.$this->idfactura;
    }
    
    public function asiento_url()
@@ -215,9 +215,9 @@ class factura_cliente extends fs_model
    public function cliente_url()
    {
       if( is_null($this->codcliente) )
-         return "index.php?page=general_clientes";
+         return "index.php?page=ventas_clientes";
       else
-         return "index.php?page=general_cliente&cod=".$this->codcliente;
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
    }
    
    public function get_agente()
@@ -635,7 +635,7 @@ class factura_cliente extends fs_model
                if( !$aux )
                {
                   $this->new_error_msg("Esta factura es un posible duplicado de
-                     <a href='index.php?page=contabilidad_factura_cli&id=".$fac['idfactura']."'>esta otra</a>.
+                     <a href='index.php?page=ventas_factura&id=".$fac['idfactura']."'>esta otra</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
                   $status = FALSE;
                }

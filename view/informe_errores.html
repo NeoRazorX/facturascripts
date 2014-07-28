@@ -1,35 +1,49 @@
 {if condition="!$fsc->informe['started']"}
    {include="header"}
    
-   <div class="rounded">
-      <form action="{$fsc->url()}" method="post">
-         <div class="bloque">
-            Comprobar
-            <select name="modelo">
-               <option value="todo">Todo</option>
-               <option value="">-------</option>
-               <option value="asiento">Asientos</option>
-               <option value="factura cliente">Facturas de cliente</option>
-               <option value="factura proveedor">Facturas de proveedor</option>
-               <option value="albaran cliente">{$albaranes} de cliente</option>
-               <option value="albaran proveedor">{$albaranes} de proveedor</option>
-            </select>
-            hasta el ejercicio
-            <select name="ejercicio">
-            {loop="$fsc->ejercicio->all()"}
-               <option value="{$value->codejercicio}">{$value->nombre}</option>
-            {/loop}
-               <option value="">---</option>
-               <option value="">Todos</option>
-            </select>
-            <label>
-               <input type="checkbox" name="duplicados" value="TRUE"/>
-               detectar duplicados.
-            </label>
-            <input class="submit" type="submit" value="comprobar"/>
+   <form action="{$fsc->url()}" method="post" class="form-inline">
+      <div class="panel panel-info" style="margin: 5px;">
+         <div class="panel-heading">
+            <h3 class="panel-title">Opciones</h3>
          </div>
-      </form>
-   </div>
+         <div class="panel-body">
+            <div class="form-group">
+               Comprobar
+               <select class="form-control" name="modelo">
+                  <option value="todo">Todo</option>
+                  <option value="">-------</option>
+                  <option value="asiento">Asientos</option>
+                  <option value="factura cliente">Facturas de cliente</option>
+                  <option value="factura proveedor">Facturas de proveedor</option>
+                  <option value="albaran cliente">{$albaranes} de cliente</option>
+                  <option value="albaran proveedor">{$albaranes} de proveedor</option>
+               </select>
+            </div>
+            <div class="form-group">
+               Hasta el ejercicio
+               <select class="form-control" name="ejercicio">
+                  {loop="$fsc->ejercicio->all()"}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+                  {/loop}
+                  <option value="">---</option>
+                  <option value="">Todos</option>
+               </select>
+            </div>
+            <div class="form-group">
+               <label>
+                  <input type="checkbox" name="duplicados" value="TRUE"/>
+                  Detectar duplicados
+               </label>
+            </div>
+         </div>
+         <div class="panel-footer">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
+               <span class="glyphicon glyphicon-eye-open"></span>
+               &nbsp; Mostrar
+            </button>
+         </div>
+      </div>
+   </form>
    
    {include="footer"}
 {elseif condition="!$fsc->ajax"}
@@ -67,65 +81,57 @@
       });
    </script>
    
-   <br/>
-   
    <div id="informe_errores">
-      <div class="advice">Cargando...</div>
+      <div class="alert alert-info" role="alert">Cargando...</div>
    </div>
    
    {include="footer"}
 {else}
    {if condition="$fsc->informe['model']=='fin'"}
       <!--FIN_PROCESO-->
-      <div class="advice">Comprobación finalizada.</div>
+      <div class="alert alert-info" role="alert">Comprobación finalizada.</div>
    {else}
       <!--{$fsc->informe['show_page']}-->
-      <div class="advice">
+      <div class="alert alert-info" role="alert">
          Comprobado hasta {$fsc->informe['model']} {$fsc->informe['offset']}...
          {$fsc->duration()}
       </div>
    {/if}
    
-   <div class="rounded">
-      <div class="paginas">
-         {loop="$fsc->all_pages()"}
-            {if condition="$value.selected"}
-               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
-            {else}
-               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
-            {/if}
-         {/loop}
-      </div>
-      <br/>
-      <table class="list">
-         <tr>
-            <th align="left"></th>
-            <th align="left">Modelo</th>
-            <th align="left">Ejercicio</th>
-            <th align="left">Identificador</th>
-            <th align="right">Fecha</th>
-         </tr>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left"></th>
+               <th align="left">Modelo</th>
+               <th align="left">Ejercicio</th>
+               <th align="left">Identificador</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
          {loop="$fsc->errores"}
          <tr>
             <td>{if condition="$value.fix"}Corregido{else}-{/if}</td>
             <td>{$value.model}</td>
             <td>{$value.ejercicio}</td>
-            <td><a class="link" href="{$value.url}">{$value.id}</a></td>
+            <td><a href="{$value.url}">{$value.id}</a></td>
             <td align="right">{$value.fecha}</td>
          </tr>
          {else}
-         <tr><td colspan="5">Nada que mostrar.</td></tr>
+         <tr>
+            <td colspan="5" align="center">Nada que mostrar</td>
+         </tr>
          {/loop}
       </table>
-      <br/>
-      <div class="paginas">
-         {loop="$fsc->all_pages()"}
-            {if condition="$value.selected"}
-               <a class="actual" href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
-            {else}
-               <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
-            {/if}
-         {/loop}
-      </div>
+   </div>
+   
+   <div style="text-align: center;">
+      <ul class="pagination">
+      {loop="$fsc->all_pages()"}
+         <li{if condition="$value.selected"} class="active"{/if}>
+            <a href="{$fsc->url()}&show_page={$value.page}">{$value.num}</a>
+         </li>
+      {/loop}
+      </ul>
    </div>
 {/if}

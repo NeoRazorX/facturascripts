@@ -63,9 +63,9 @@ class familia extends fs_model
    public function url()
    {
       if( is_null($this->codfamilia) )
-         return "index.php?page=general_familias";
+         return "index.php?page=ventas_familias";
       else
-         return "index.php?page=general_familia&cod=".$this->codfamilia;
+         return "index.php?page=ventas_familia&cod=".$this->codfamilia;
    }
    
    public function is_default()

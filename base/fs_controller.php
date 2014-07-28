@@ -77,7 +77,6 @@ class fs_controller
     * @var type 
     */
    public $template;
-   public $css_file;
    
    /**
     * TRUE si queremos mostrar el cuadro de búsqueda.
@@ -134,7 +133,6 @@ class fs_controller
          $this->db = new fs_postgresql();
       
       $this->cache = new fs_cache();
-      $this->set_css_file();
       
       /// comprobamos la versión de PHP
       if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
@@ -633,39 +631,6 @@ class fs_controller
             Header('location: '.$url);
          }
       }
-   }
-   
-   /**
-    * Selecciona la hoja de estilos
-    */
-   private function set_css_file()
-   {
-      if( isset($_GET['css_file']) )
-      {
-         if( file_exists('view/css/'.$_GET['css_file']) )
-         {
-            $this->css_file = $_GET['css_file'];
-            setcookie('css_file', $_GET['css_file'], time()+FS_COOKIES_EXPIRE);
-         }
-         else
-         {
-            $this->new_error_msg("Archivo CSS no encontrado.");
-            $this->css_file = 'base.css';
-         }
-      }
-      else if( isset($_COOKIE['css_file']) )
-      {
-         if( file_exists('view/css/'.$_COOKIE['css_file']) )
-            $this->css_file = $_COOKIE['css_file'];
-         else
-         {
-            $this->new_error_msg("Archivo CSS no encontrado.");
-            $this->css_file = 'base.css';
-            setcookie('css_file', $this->css_file, time()+FS_COOKIES_EXPIRE);
-         }
-      }
-      else
-         $this->css_file = 'base.css';
    }
    
    /**

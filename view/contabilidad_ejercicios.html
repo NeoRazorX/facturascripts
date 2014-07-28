@@ -4,63 +4,78 @@
    $(document).ready(function() {
       $("#b_nuevo_ejercicio").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_ejercicio');
-         document.f_nuevo_ejercicio.nombre.focus();
+         $("#modal_nuevo_ejercicio").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_ejercicio">
-   <form name="f_nuevo_ejercicio" action="{$fsc->url()}" method="post">
-      <h1>Nuevo ejercicio</h1>
-      <table>
-         <tr>
-            <td align="right">Código:</td>
-            <td>
-               <input type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" size="4" maxlength="4" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Nombre:</td>
-            <td><input type="text" name="nombre" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Fecha de inicio:</td>
-            <td><input class="tcal" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" size="12"/></td>
-         </tr>
-         <tr>
-            <td align="right">Fecha fin:</td>
-            <td><input class="tcal" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" size="12"/></td>
-         </tr>
-         <tr>
-            <td align="right">Estado:</td>
-            <td>
-               <select name="estado">
-                  <option value="ABIERTO">ABIERTO</option>
-                  <option value="CERRADO">CERRADO</option>
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_nuevo_ejercicio">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" name="f_nuevo_ejercicio" action ="{$fsc->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo ejercicio</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="codejercicio" class="col-sm-2 control-label">Código</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" autocomplete="off" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="fechainicio" class="col-sm-2 control-label">Fecha de inicio</label>
+                  <div class="col-sm-10">
+                     <input class="form-control datepicker" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}" />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="fechafin" class="col-sm-2 control-label">Fecha fin</label>
+                  <div class="col-sm-10">
+                     <input class="form-control datepicker" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}" />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="estado" class="col-sm-2 control-label">Estado</label>
+                  <div class="col-sm-10">
+                     <select name="estado" class="form-control">
+                        <option value="ABIERTO">ABIERTO</option>
+                        <option value="CERRADO">CERRADO</option>
+                     </select>
+                   </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Código + nombre</th>
-         <th>Fecha de inicio</th>
-         <th>Fecha fin</th>
-         <th align="right">Estado</th>
-      </tr>
+<div class="table-responsive" style="margin: 5px;">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Código + Nombre</th>
+            <th>Fecha de inicio</th>
+            <th>Fecha fin</th>
+            <th align="right">Estado</th>
+         </tr>
+      </thead>
       {loop="$fsc->ejercicio->all()"}
       <tr>
-         <td><a class="link" href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
+         <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
          <td align="center">{$value->fechainicio}</td>
          <td align="center">{$value->fechafin}</td>
          <td align="right">{$value->estado}</td>

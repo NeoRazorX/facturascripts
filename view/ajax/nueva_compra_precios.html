@@ -1,0 +1,129 @@
+{if condition="$fsc->get_errors()"}
+   <div class="alert alert-danger">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="alert alert-success">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
+{if condition="$fsc->articulo"}
+<div style="padding: 5px;">
+   <h3>
+      <a target="_blank" href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
+   </h3>
+   <p>{$fsc->articulo->descripcion}</p>
+   <p>{$fsc->articulo->observaciones}</p>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left">Stock</th>
+            <th class="text-left">Stock mínimo</th>
+            <th class="text-left">Stock máximo</th>
+            <th class="text-right">Coste</th>
+            <th class="text-right">Coste+IVA</th>
+            <th></th>
+         </tr>
+      </thead>
+      <tr>
+         <td class="text-left">{$fsc->articulo->stockfis}</td>
+         <td class="text-left">{$fsc->articulo->stockmin}</td>
+         <td class="text-left">{$fsc->articulo->stockmax}</td>
+         <td class="text-right">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->costemedio}','0','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_precio($fsc->articulo->costemedio_iva())}
+            </a>
+         </td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->costemedio}','0','{$fsc->articulo->get_iva()}')">
+               <span class="glyphicon glyphicon-shopping-cart" title="añadir"></span>
+            </a>
+         </td>
+      </tr>
+   </table>
+</div>
+
+{if condition="$fsc->articulo->get_equivalentes()"}
+<div class="table-responsive">
+   <table class="table table-hover">
+      <caption>Artículos equivalentes</caption>
+      <thead>
+         <tr>
+            <th class="text-left">Artículo</th>
+            <th class="text-right">Coste</th>
+            <th class="text-right">Coste+IVA</th>
+            <th class="text-right">Stock</th>
+         </tr>
+      </thead>
+      {loop="$fsc->articulo->get_equivalentes()"}
+      <tr>
+         <td>
+            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->costemedio}','0','{$value->get_iva()}')">
+               {$value->referencia}
+            </a>
+         </td>
+         <td class="text-right">{$fsc->show_precio($value->costemedio)}</td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->costemedio}','0','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_precio($value->costemedio_iva())}
+            </a>
+         </td>
+         <td class="text-right">{$value->stockfis}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="4">No hay artículos equivalentes</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+{/if}
+
+{if condition="$fsc->articulo->get_lineas_albaran_prov(0, 10)"}
+<div class="table-responsive">
+   <table class="table table-hover">
+      <caption>Últimas compras</caption>
+      <thead>
+         <tr>
+            <th class="text-left">Fecha</th>
+            <th>{$albaran}</th>
+            <th class="text-right">PVP</th>
+            <th class="text-right">Dto</th>
+            <th class="text-right">Total+IVA</th>
+         </tr>
+      </thead>
+      {loop="$fsc->articulo->get_lineas_albaran_prov(0, 10)"}
+      <tr>
+         <td>{$value->show_fecha()}</td>
+         <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_precio($value->pvpunitario)}
+            </a>
+         </td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_numero($value->dtopor)} %
+            </a>
+         </td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_precio($value->total_iva2())}
+            </a>
+         </td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="5">Nunca se ha comprado este artículo</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+{/if}
+{/if}

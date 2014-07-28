@@ -31,7 +31,7 @@ class contabilidad_epigrafes extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('contabilidad_epigrafes', 'Grupos y epígrafes', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Grupos y epígrafes', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()

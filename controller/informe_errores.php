@@ -33,7 +33,7 @@ class informe_errores extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('informe_errores', 'Errores', 'informes', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Errores', 'informes', FALSE, TRUE);
    }
    
    protected function process()
@@ -398,5 +398,3 @@ class informe_errores extends fs_controller
       return $allp;
    }
 }
-
-?>

@@ -1,159 +1,206 @@
 {if condition="$fsc->get_errors()"}
-   <div class="error">
-      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   <div class="alert alert-danger">
+      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
 {if condition="$fsc->get_messages()"}
-   <div class="message">
-      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   <div class="alert alert-info">
+      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
 
 {if condition="$fsc->articulo"}
    {if condition="$fsc->buscar_tipo=='albcli'"}
-      <h1>{$albaranes} de cliente</h1>
-      <table class="list">
-         <tr>
-            <th align="left">{$albaran}</th>
-            <th align="left">Descripción</th>
-            <th align="right">Cantidad</th>
-            <th align="right">Total+IVA</th>
-            <th align="right">Fecha</th>
-         </tr>
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">{$albaranes} de cliente</h4>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">{$albaran}</th>
+               <th align="left">Descripción</th>
+               <th align="right">Cantidad</th>
+               <th align="right">Total+IVA</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
-            <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
-         <tr><td colspan="5">Sin resultados.</td></tr>
+         <tr><td colspan="5" align="center">Sin resultados</td></tr>
          {/loop}
-         <tr><td colspan="5">&nbsp;</td></tr>
-         <tr>
-            <td>
-            {if condition="$fsc->buscar_offset > 0"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">anterior</a>
-            {/if}
-            </td>
-            <td colspan="3"></td>
-            <td align="right">
-            {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">siguiente</a>
-            {/if}
-            </td>
-         </tr>
       </table>
+      <ul class="pager">
+         {if condition="$fsc->buscar_offset > 0"}
+         <li>
+            <a class="previous" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">
+               <span class="glyphicon glyphicon-chevron-left"></span>
+               &nbsp; anterior
+            </a>
+         </li>
+         {/if}
+         
+         {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
+         <li>
+            <a class="next" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">
+               siguiente &nbsp;
+               <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+         </li>
+         {/if}
+      </ul>
+   </div>
    {elseif condition="$fsc->buscar_tipo=='albpro'"}
-      <h1>{$albaranes} de proveedor</h1>
-      <table class="list">
-         <tr>
-            <th align="left">{$albaran}</th>
-            <th align="left">Descripción</th>
-            <th align="right">Cantidad</th>
-            <th align="right">Total+IVA</th>
-            <th align="right">Fecha</th>
-         </tr>
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">{$albaranes} de proveedor</h4>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">{$albaran}</th>
+               <th align="left">Descripción</th>
+               <th align="right">Cantidad</th>
+               <th align="right">Total+IVA</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
-            <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
-         <tr><td colspan="5">Sin resultados.</td></tr>
+         <tr><td colspan="5" align="center">Sin resultados</td></tr>
          {/loop}
-         <tr><td colspan="5">&nbsp;</td></tr>
-         <tr>
-            <td>
-            {if condition="$fsc->buscar_offset > 0"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">anterior</a>
-            {/if}
-            </td>
-            <td colspan="3"></td>
-            <td align="right">
-            {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">siguiente</a>
-            {/if}
-            </td>
-         </tr>
       </table>
+      <ul class="pager">
+         {if condition="$fsc->buscar_offset > 0"}
+         <li>
+            <a class="previous" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">
+               <span class="glyphicon glyphicon-chevron-left"></span>
+               &nbsp; anterior
+            </a>
+         </li>
+         {/if}
+         
+         {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
+         <li>
+            <a class="next" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">
+               siguiente &nbsp;
+               <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+         </li>
+         {/if}
+      </ul>
+   </div>
    {elseif condition="$fsc->buscar_tipo=='faccli'"}
-      <h1>Facturas de cliente</h1>
-      <table class="list">
-         <tr>
-            <th align='left'>Factura</th>
-            <th align="left">Descripción</th>
-            <th align="right">Cantidad</th>
-            <th align="right">Total+IVA</th>
-            <th align="right">Fecha</th>
-         </tr>
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Facturas de cliente</h4>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align='left'>Factura</th>
+               <th align="left">Descripción</th>
+               <th align="right">Cantidad</th>
+               <th align="right">Total+IVA</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
-            <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
-         <tr><td colspan="5">Sin resultados.</td></tr>
+         <tr><td colspan="5" align="center">Sin resultados</td></tr>
          {/loop}
-         <tr><td colspan="5">&nbsp;</td></tr>
-         <tr>
-            <td>
-            {if condition="$fsc->buscar_offset > 0"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">anterior</a>
-            {/if}
-            </td>
-            <td colspan="3"></td>
-            <td align="right">
-            {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">siguiente</a>
-            {/if}
-            </td>
-         </tr>
       </table>
+      <ul class="pager">
+         {if condition="$fsc->buscar_offset > 0"}
+         <li>
+            <a class="previous" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">
+               <span class="glyphicon glyphicon-chevron-left"></span>
+               &nbsp; anterior
+            </a>
+         </li>
+         {/if}
+         
+         {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
+         <li>
+            <a class="next" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">
+               siguiente &nbsp;
+               <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+         </li>
+         {/if}
+      </ul>
+   </div>
    {elseif condition="$fsc->buscar_tipo=='facpro'"}
-      <h1>Factuas de proveedor</h1>
-      <table class="list">
-         <tr>
-            <th align='left'>Factura</th>
-            <th align="left">Descripción</th>
-            <th align="right">Cantidad</th>
-            <th align="right">Total+IVA</th>
-            <th align="right">Fecha</th>
-         </tr>
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Factuas de proveedor</h4>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align='left'>Factura</th>
+               <th align="left">Descripción</th>
+               <th align="right">Cantidad</th>
+               <th align="right">Total+IVA</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
-            <td><a class='link' target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+            <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
             <td align="right">{$value->cantidad}</td>
             <td align="right">{$fsc->show_precio($value->total_iva())}</td>
             <td align="right">{$value->show_fecha()}</td>
          </tr>
          {else}
-         <tr><td colspan="5">Sin resultados.</td></tr>
+         <tr><td colspan="5" align="center">Sin resultados</td></tr>
          {/loop}
-         <tr><td colspan="5">&nbsp;</td></tr>
-         <tr>
-            <td>
-            {if condition="$fsc->buscar_offset > 0"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">anterior</a>
-            {/if}
-            </td>
-            <td colspan="3"></td>
-            <td align="right">
-            {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
-            <a class="button" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">siguiente</a>
-            {/if}
-            </td>
-         </tr>
       </table>
+      <ul class="pager">
+         {if condition="$fsc->buscar_offset > 0"}
+         <li>
+            <a class="previous" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset-$fsc->buscar_limit}');">
+               <span class="glyphicon glyphicon-chevron-left"></span>
+               &nbsp; anterior
+            </a>
+         </li>
+         {/if}
+         
+         {if condition="count($fsc->buscar_resultados) == $fsc->buscar_limit"}
+         <li>
+            <a class="next" href="#" onclick="buscar_articulo_en('{$fsc->buscar_tipo}', '{$fsc->buscar_offset+$fsc->buscar_limit}');">
+               siguiente &nbsp;
+               <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+         </li>
+         {/if}
+      </ul>
    {else}
       ¡Tipo desconocido!
    {/if}

@@ -17,10 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/fs_access.php';
-
 require_model('agente.php');
 require_model('ejercicio.php');
+require_model('fs_access.php');
 
 class admin_user extends fs_controller
 {
@@ -30,7 +29,7 @@ class admin_user extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_user', 'Usuario', 'admin', TRUE, FALSE);
+      parent::__construct(__CLASS__, 'Usuario', 'admin', TRUE, FALSE);
    }
    
    public function process()
@@ -200,5 +199,3 @@ class admin_user extends fs_controller
       return $returnlist;
    }
 }
-
-?>

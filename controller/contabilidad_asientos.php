@@ -27,7 +27,7 @@ class contabilidad_asientos extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_asientos', 'Asientos', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Asientos', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
@@ -100,5 +100,3 @@ class contabilidad_asientos extends fs_controller
       return $url;
    }
 }
-
-?>

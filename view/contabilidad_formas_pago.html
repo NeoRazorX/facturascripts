@@ -6,7 +6,7 @@
       var i = 0;
       while( $("#delete_"+i).length > 0 )
       {
-         $("#delete_"+i).attr('checked', true);
+         $("#delete_"+i).prop('checked', true);
          i++;
       }
    }
@@ -15,114 +15,135 @@
       var i = 0;
       while( $("#delete_"+i).length > 0 )
       {
-         $("#delete_"+i).attr('checked', false);
+         $("#delete_"+i).prop('checked', true);
          i++;
       }
    }
    $(document).ready(function() {
-      $("#b_nueva_forma_pago").click(function(event) {
+      $("#b_nueva_forma_pago, #b_nueva_forma_pago2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nueva_forma_pago');
-         document.f_nueva_forma_pago.codpago.focus();
+         $("#modal_nueva_forma_pago").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nueva_forma_pago">
-   <h1>Nueva forma de pago</h1>
-   <form name="f_nueva_forma_pago" action="{$fsc->url()}" method="post">
-      <table>
-         <tr>
-            <td align="right">Código:</td>
-            <td><input type="text" name="codpago" size="4" maxlength="10" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">Generar Recibos:</td>
-            <td>
-               <select name="genrecibos">
-                  <option value="Emitidos">Emitidos</option>
-                  <option value="Pagados">Pagados</option>
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td></td>
-            <td>
-               <label>
-                  <input type="checkbox" name="domiciliado" value="TRUE"/>
-                  Domiciliado
-               </label>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_nueva_forma_pago">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form class="form" role="form" name="f_nueva_forma_pago" action ="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva forma de pago</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="codpago" autocomplete="off" autofocus />
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Generar Recibos:
+                  <select name="genrecibos" class="form-control">
+                     <option value="Emitidos">Emitidos</option>
+                     <option value="Pagados">Pagados</option>
+                  </select>
+               </div>
+               <div class="form-group">
+                  <label>
+                     <input type="checkbox" name="domiciliado" value="TRUE"/>
+                     Domiciliado
+                  </label>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
-   <form action="{$fsc->url()}" method="POST">
-      <div>
-         <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
-         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+<div class="well well-sm">
+   <form action="{$fsc->url()}" method="post" class="form" role="form">
+      <div class="container-fluid" style="margin-bottom: 10px;">
+         <div class="row">
+            <div class="col-lg-6" style="padding-left: 0px;">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+            <div class="col-lg-6" style="text-align: right; padding-right: 0px;">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
       </div>
       
-      <br/>
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th>Eliminar</th>
+                  <th align="left">Código</th>
+                  <th align="left">Descripción</th>
+                  <th>Generar Recibos</th>
+                  <th>Domiciliado</th>
+               </tr>
+            </thead>
+            {loop="$fsc->forma_pago->all()"}
+            <tr>
+               <td align="center">
+                  <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
+               </td>
+               <td>
+                  {$value->codpago}
+                  <input class="form-control" type="hidden" name="codpago_{$counter}" value="{$value->codpago}"/>
+               </td>
+               <td>
+                  <input class="form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" autocomplete="off"/>
+               </td>
+               <td align="center">
+                  <select name="genrecibos_{$counter}" class="form-control">
+                     <option value="Emitidos"{if condition="$value->genrecibos=='Emitidos'"} selected="selected"{/if}>Emitidos</option>
+                     <option value="Pagados"{if condition="$value->genrecibos=='Pagados'"} selected="selected"{/if}>Pagados</option>
+                  </select>
+               </td>
+               <td align="center">
+                  <input type="checkbox" name="domiciliado_{$counter}" value="TRUE"{if condition="$value->domiciliado"} checked="TRUE"{/if}/>
+               </td>
+            </tr>
+            {/loop}
+         </table>
+      </div>
       
-      <table class="list">
-         <tr>
-            <th>Eliminar</th>
-            <th align="left">Código</th>
-            <th align="left">Descripción</th>
-            <th>Generar Recibos</th>
-            <th>Domiciliado</th>
-         </tr>
-         {loop="$fsc->forma_pago->all()"}
-         <tr>
-            <td align="center">
-               <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
-            </td>
-            <td>
-               {$value->codpago}
-               <input type="hidden" name="codpago_{$counter}" value="{$value->codpago}"/>
-            </td>
-            <td>
-               <input class="full" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
-            </td>
-            <td align="center">
-               <select name="genrecibos_{$counter}">
-                  <option value="Emitidos"{if condition="$value->genrecibos=='Emitidos'"} selected="selected"{/if}>Emitidos</option>
-                  <option value="Pagados"{if condition="$value->genrecibos=='Pagados'"} selected="selected"{/if}>Pagados</option>
-               </select>
-            </td>
-            <td align="center">
-               <input type="checkbox" name="domiciliado_{$counter}" value="TRUE"{if condition="$value->domiciliado"} checked="TRUE"{/if}/>
-            </td>
-         </tr>
-         {/loop}
-         <tr>
-            <td colspan="6">
-               <div class="new_line">
-                  <a id="b_nueva_forma_pago" href="#">Nueva forma de pago</a>
-               </div>
-            </td>
-         </tr>
-      </table>
-      
-      <br/>
-      
-      <div>
-         <input class="button" type="button" value="Todo" onclick="fs_marcar_todo()"/>
-         <input class="button" type="button" value="Nada" onclick="fs_marcar_nada()"/>
-         <input class="submit pull_right" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-lg-6" style="padding-left: 0px;">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+            <div class="col-lg-6" style="text-align: right; padding-right: 0px;">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
       </div>
    </form>
 </div>

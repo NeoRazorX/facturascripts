@@ -31,7 +31,7 @@ class contabilidad_subcuenta extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_subcuenta', 'Subcuenta', 'contabilidad', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Subcuenta', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()

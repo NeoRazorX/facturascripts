@@ -27,7 +27,7 @@ class admin_almacenes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_almacenes', 'Almacenes', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Almacenes', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -74,5 +74,3 @@ class admin_almacenes extends fs_controller
       }
    }
 }
-
-?>

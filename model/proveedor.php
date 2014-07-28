@@ -110,9 +110,9 @@ class proveedor extends fs_model
    public function url()
    {
       if( is_null($this->codproveedor) )
-         return "index.php?page=general_proveedores";
+         return "index.php?page=compras_proveedores";
       else
-         return "index.php?page=general_proveedor&cod=".$this->codproveedor;
+         return "index.php?page=compras_proveedor&cod=".$this->codproveedor;
    }
    
    public function is_default()
@@ -122,8 +122,7 @@ class proveedor extends fs_model
    
    public function get($cod)
    {
-      $prov = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codproveedor = ".$this->var2str($cod).";");
+      $prov = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($cod).";");
       if($prov)
          return new proveedor($prov[0]);
       else

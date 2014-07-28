@@ -1,56 +1,25 @@
-   {if condition="$demo"}
-   <div class="rounded">
-      <table width="100%">
-         <tr>
-            <td>
-               <h1>¿Te está gustando FacturaScripts?</h1>
-               <p>Pues lo puedes usar muy fácilemnte en tu negocio. Tienes 3 opciones:</p>
-               <ul>
-                  <li>Descarga FacturaScripts e instálalo en tu ordenador.</li>
-                  <li>Descarga FacturaScripts y cópialo a tu hosting, como un wordpress.</li>
-                  <li>
-                     Si no tienes ni idea de apache, ni hostings, simplemente escríbeme un email a
-                     <b>neorazorx@gmail.com</b> y yo te lo instalo en un servidor por un módico precio ;-)
-                  </li>
-               </ul>
-            </td>
-            <td align="right">
-               <a href="http://www.facturascripts.com/community/download.php">
-                  <img src="view/img/download.png" alt="descargar" title="descargar FacturaScripts"/>
-               </a>
-            </td>
-         </tr>
-      </table>
-   </div>
-   {/if}
    {if condition="$db_history"}
-   <div class="history">
-      <h1>Consultas SQL:</h1>
-      <ol>{loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}</ol>
+   <div class="panel panel-warning" style="margin: 5px;">
+      <div class="panel-heading">
+         <h3 class="panel-title">Consultas SQL:</h3>
+      </div>
+      <div class="panel-body">
+         <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+            {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+         </ol>
+      </div>
    </div>
    {/if}
-   </div>
-   
-   <div class="footer">
-      <table>
-         <tr>
-            <td class="left">
-               CSS:
-               {if condition="$fsc->css_file=='base.css'"}
-                  <a class="selected" href="{$fsc->url()}&css_file=base.css">normal</a>
-                  <a href="{$fsc->url()}&css_file=touch.css">touch</a>
-               {else}
-                  <a href="{$fsc->url()}&css_file=base.css">normal</a>
-                  <a class="selected" href="{$fsc->url()}&css_file=touch.css">touch</a>
-               {/if}
-            </td>
-            <td class="right">
-               Consultas: {$fsc->selects()} |
-               Transacciones: {$fsc->transactions()} |
-               Procesado en: {$fsc->duration()}
-            </td>
-         </tr>
-      </table>
+   <div class="container-fluid" style="margin-top: 20px;">
+      <div class="row">
+         <div class="col-lg-6 col-md-6 col-xs-6">
+            <span class="label label-default">Consultas: {$fsc->selects()}</span>
+            <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
+         </div>
+         <div class="col-lg-6 col-md-6 col-xs-6" style="text-align: right;">
+            <span class="label label-default">Procesado en: {$fsc->duration()}</span>
+         </div>
+      </div>
    </div>
 </body>
 </html>

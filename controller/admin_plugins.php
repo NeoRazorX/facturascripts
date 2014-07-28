@@ -23,7 +23,7 @@ class admin_plugins extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_plugins', 'Plugins', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Plugins', 'admin', TRUE, TRUE);
    }
    
    protected function process()

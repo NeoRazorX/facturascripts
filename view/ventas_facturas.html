@@ -1,0 +1,94 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+      $("#b_huecos").click(function() {
+         $("#modal_huecos").modal('show');
+      });
+   });
+</script>
+
+<div class="modal fade" id="modal_huecos">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Huecos</h4>
+         </div>
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Código</th>
+                     <th>Fecha</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->factura->huecos()"}
+               <tr>
+                  <td align="center">{$value.codigo}</td>
+                  <td align="center">{$value.fecha}</td>
+               </tr>
+               {else}
+               <tr><td colspan="2" align="center">No hay huecos</td></tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+
+{if condition="$fsc->query!=''"}
+<h1>Resultados de "{$fsc->query}":</h1>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th align="left">Código + Cliente</th>
+            <th align="left">Observaciones</th>
+            <th align="right">Total</th>
+            <th align="right">Fecha</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center">
+            {if condition="$value->idasiento"}
+            <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
+            {/if}
+         </td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+
+{include="footer"}

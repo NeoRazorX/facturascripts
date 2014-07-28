@@ -28,7 +28,7 @@ class contabilidad_cuenta extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_cuenta', 'Cuenta', 'contabilidad', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Cuenta', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()

@@ -1,0 +1,90 @@
+{include="header"}
+
+{if condition="$fsc->familia"}
+   {if condition="!$fsc->ready"}
+   <script type="text/javascript">
+      var procesar = true;
+      var timeout = setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
+      $(document).ready(function() {
+         $("#b_pause_import").click(function(event) {
+            event.preventDefault();
+            if(procesar)
+            {
+               clearTimeout(timeout);
+               procesar = false;
+            }
+            else
+            {
+               timeout = setTimeout("location.href = '{$fsc->url()}&action={$fsc->family_data->action}';", 1500);
+               procesar = true;
+            }
+         });
+      });
+   </script>
+   {/if}
+
+   {if condition="$fsc->family_data"}
+   <div class="well well-sm">
+   <h1>
+      <a href="{$fsc->familia->url()}">{$fsc->familia->codfamilia}</a>
+   </h1>
+   <ul class="horizontal">
+      <li>Impuesto: {$fsc->family_data->codimpuesto}</li>
+      <li>Sufijo: {$fsc->family_data->sufijo}</li>
+      {if condition="$fsc->family_data->no_nuevos"}
+         <li>NO añadir artículos nuevos.</li>
+      {/if}
+      {if condition="$fsc->family_data->con_iva"}
+         <li>precios con IVA incluido.</li>
+      {/if}
+      {if condition="$fsc->family_data->pvp_max"}
+         <li>Asignar el precio máximo.</li>
+      {/if}
+      {if condition="$fsc->family_data->bloquear"}
+         <li>Bloquear artículos no actualizados.</li>
+      {/if}
+      <li>Líneas: {$fsc->family_data->lineas}</li>
+   </ul>
+   <ul class="horizontal">
+      <li>
+         Nuevos:
+         {$fsc->family_data->articulos_nuevos}
+      </li>
+      <li>
+         Actualizados:
+         {$fsc->family_data->articulos_actualizados}
+      </li>
+      <li>
+         Sin modificar:
+         {$fsc->family_data->articulos_sin_modificar}
+      </li>
+      <li>
+         Suben de precio:
+         {$fsc->family_data->pvp_suben}
+      </li>
+      <li>
+         Bajan de precio:
+         {$fsc->family_data->pvp_bajan}
+      </li>
+      <li>
+         Mismo precio:
+         {$fsc->family_data->pvp_igual}
+      </li>
+      <li>
+         Diferencia de precio (%):
+         {$fsc->family_data->pvp_diferencia}
+      </li>
+   </ul>
+   </div>
+   {else}
+   <div class="well well-sm" style="text-align: center;">
+      <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+   </div>
+   {/if}
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

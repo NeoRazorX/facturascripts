@@ -25,13 +25,12 @@ class admin_paises extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('admin_paises', 'Paises', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Paises', 'admin', TRUE, TRUE);
    }
    
    protected function process()
    {
       $this->pais = new pais();
-      $this->buttons[] = new fs_button('b_nuevo_pais', 'Nuevo');
       
       if( isset($_POST['scodpais']) )
       {

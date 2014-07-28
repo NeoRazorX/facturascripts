@@ -168,9 +168,9 @@ class articulo extends fs_model
    public function url()
    {
       if( is_null($this->referencia) )
-         return "index.php?page=general_articulos";
+         return "index.php?page=ventas_articulos";
       else
-         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
+         return "index.php?page=ventas_articulo&ref=".urlencode($this->referencia);
    }
    
    public function get($ref)

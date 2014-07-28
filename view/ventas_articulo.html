@@ -1,0 +1,577 @@
+{include="header"}
+
+{if condition="$fsc->articulo"}
+<script type="text/javascript">
+   function recalcular()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      var dto = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#dto_"+i) )
+         {
+            dto = parseFloat( $("#dto_"+i).val() );
+            if( isNaN(dto) )
+               dto = 0;
+            
+            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
+            $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+         }
+      }
+   }
+   function cambiar_pvp()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      $("#pvpi").val( pvp * (100 + iva)/100 );
+      recalcular();
+   }
+   function cambiar_pvpi()
+   {
+      var iva = parseFloat( $("#iva").val() );
+      var pvpi = parseFloat( $("#pvpi").val() );
+      $("#pvp").val( (100 * pvpi) / (100 + iva) );
+      recalcular();
+   }
+   function ajustar_dto()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var dto = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#dto_"+i) )
+         {
+            dto = parseFloat( $("#dto_"+i).val() );
+            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
+            $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+         }
+      }
+   }
+   function ajustar_pvp()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var npvp = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#pvp_"+i) )
+         {
+            npvp = parseFloat( $("#pvp_"+i).val() );
+            
+            if(pvp == 0)
+            {
+               $("#pvp").val(npvp);
+               cambiar_pvp();
+               pvp = parseFloat( $("#pvp").val() );
+               iva = parseFloat( $("#iva").val() );
+            }
+            
+            $("#dto_"+i).val( 100 - (100*npvp)/pvp );
+            $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
+         }
+      }
+   }
+   function ajustar_pvpi()
+   {
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var npvp = 0;
+      var npvpi = 0;
+      for(var i=0; i<100; i++)
+      {
+         if( $("#pvp_"+i) )
+         {
+            npvpi = parseFloat( $("#pvpi_"+i).val() );
+            
+            if(parseFloat($("#pvpi").val()) == 0)
+            {
+               $("#pvpi").val(npvpi);
+               cambiar_pvpi();
+               pvp = parseFloat( $("#pvp").val() );
+               iva = parseFloat( $("#iva").val() );
+            }
+            
+            npvp = (100*npvpi)/(100+iva);
+            $("#pvp_"+i).val( npvp );
+            $("#dto_"+i).val( 100 - (100*npvp)/pvp );
+         }
+      }
+   }
+   function buscar_articulo_en(donde, offset)
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: 'buscar='+donde+'&offset='+offset,
+         success: function(datos) {
+            $("#div_buscar_results").html(datos);
+         }
+      });
+   }
+   function show_div(name)
+   {
+      $("#div_generales").hide();
+      $("#div_precios").hide();
+      $("#div_stock").hide();
+      $("#div_equivalentes").hide();
+      $("#div_buscar").hide();
+      $("#b_generales").removeClass('active');
+      $("#b_precios").removeClass('active');
+      $("#b_stock").removeClass('active');
+      $("#b_equivalentes").removeClass('active');
+      $("#b_buscar").removeClass('active');
+      
+      if(name == 'precios')
+      {
+         $("#div_precios").show();
+         $("#b_precios").addClass('active');
+      }
+      else if(name == 'stock')
+      {
+         $("#div_stock").show();
+         $("#b_stock").addClass('active');
+      }
+      else if(name == 'equivalentes')
+      {
+         $("#div_equivalentes").show();
+         $("#b_equivalentes").addClass('active');
+      }
+      else if(name == 'buscar')
+      {
+         $("#div_buscar").show();
+         $("#b_buscar").addClass('active');
+      }
+      else
+      {
+         $("#div_generales").show();
+         $("#b_generales").addClass('active');
+      }
+   }
+   $(document).ready(function() {
+      show_div(window.location.hash.substring(1));
+      $("#b_generales").click(function() {
+         event.preventDefault();
+         show_div('generales');
+      });
+      $("#b_precios").click(function() {
+         event.preventDefault();
+         show_div('precios');
+      });
+      $("#b_stock").click(function() {
+         event.preventDefault();
+         show_div('stock');
+      });
+      $("#b_equivalentes").click(function() {
+         event.preventDefault();
+         show_div('equivalentes');
+      });
+      $("#b_buscar").click(function() {
+         event.preventDefault();
+         show_div('buscar');
+      });
+      
+      $("#b_eliminar_articulo").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Estas seguro de que deseas eliminar este articulo?") )
+            window.location.href = "{$fsc->ppage->url()}&delete={function="urlencode($fsc->articulo->referencia)"}";
+      });
+      $("#b_imagen").click(function(event) {
+         event.preventDefault();
+         $("#modal_articulo_imagen").modal('show');
+      });
+      $("#b_buscar_albcli").click(function(event) {
+         event.preventDefault();
+         $("#div_buscar_results").html('Cargando...');
+         $("#modal_buscar").modal('show');
+         buscar_articulo_en('albcli', 0);
+      });
+      $("#b_buscar_albpro").click(function(event) {
+         event.preventDefault();
+         $("#div_buscar_results").html('Cargando...');
+         $("#modal_buscar").modal('show');
+         buscar_articulo_en('albpro', 0);
+      });
+      $("#b_buscar_faccli").click(function(event) {
+         event.preventDefault();
+         $("#div_buscar_results").html('Cargando...');
+         $("#modal_buscar").modal('show');
+         buscar_articulo_en('faccli', 0);
+      });
+      $("#b_buscar_facpro").click(function(event) {
+         event.preventDefault();
+         $("#div_buscar_results").html('Cargando...');
+         $("#modal_buscar").modal('show');
+         buscar_articulo_en('facpro', 0);
+      });
+   });
+</script>
+
+<ul class="nav nav-tabs" role="tablist">
+   <li id="b_generales"><a href="#">Datos generales</a></li>
+   <li id="b_precios"><a href="#precios">Precios</a></li>
+   <li id="b_stock"><a href="#stocks">Stock</a></li>
+   {if condition="$fsc->equivalentes"}
+   <li id="b_equivalentes"><a href="#equivalentes">Equivalentes</a></li>
+   {/if}
+   <li id="b_buscar"><a href="#buscar">Buscar...</a></li>
+</ul>
+
+<form action="{$fsc->url()}" method="post" class="post">
+   <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+   <div id="div_generales" class="container-fluid">
+      <div class="row" style="padding-top: 10px;">
+         <div class="form-group col-lg-3">
+            Referencia:
+            <input class="form-control" type="text" name="nreferencia" value="{$fsc->articulo->referencia}" maxlength="18" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-6">
+            Descripción:
+            <input class="form-control" type="text" name="descripcion" value="{$fsc->articulo->descripcion}" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            <a href="{$fsc->familia->url()}">Familia</a>:
+            <select class="form-control" name="codfamilia">
+            {loop="$fsc->familia->all()"}
+               {if condition="$value->codfamilia===$fsc->articulo->codfamilia"}
+               <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+               {else}
+               <option value="{$value->codfamilia}">{$value->descripcion}</option>
+               {/if}
+            {/loop}
+            </select>
+         </div>
+         <div class="form-group col-lg-4">
+            Código de barras:
+            <input class="form-control" type="text" name="codbarras" value="{$fsc->articulo->codbarras}" autocomplete="off"/>
+         </div>
+         <div class="col-lg-8">
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="bloqueado" value="TRUE"{if condition="$fsc->articulo->bloqueado"} checked="checked"{/if}/>
+                  Bloqueado
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="secompra" value="TRUE"{if condition="$fsc->articulo->secompra"} checked="checked"{/if}/>
+                  Se compra
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="sevende" value="TRUE"{if condition="$fsc->articulo->sevende"} checked="checked"{/if}/>
+                  Se vende
+               </label>
+            </div>
+            <div class="checkbox-inline">
+               <label>
+                  <input type="checkbox" name="publico" value="TRUE"{if condition="$fsc->articulo->publico"} checked="checked"{/if}/>
+                  Público
+               </label>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="form-group col-lg-6">
+            Código de equivalencia:
+            <input class="form-control" type="text" name="equivalencia" value="{$fsc->articulo->equivalencia}" autocomplete="off"/>
+            <p class="help-block">Dos o más artículos son equivalentes si tienen el mismo código de equivalencia.</p>
+         </div>
+         <div class="form-group col-lg-6">
+            <label>
+               <input type="checkbox" name="destacado" value="TRUE"{if condition="$fsc->articulo->destacado"} checked="checked"{/if}/>
+               Destacar frente a productos equivalentes
+            </label>
+         </div>
+      </div>
+      <div class="row">
+         <div class="form-group col-lg-3">
+            Stock:
+            <input class="form-control" type="text" name="stockfis" value="{$fsc->articulo->stockfis}" disabled="disabled"/>
+         </div>
+         <div class="form-group col-lg-3">
+            Stock mínimo:
+            <input class="form-control" type="number" name="stockmin" value="{$fsc->articulo->stockmin}" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            Stock máximo:
+            <input class="form-control" type="number" name="stockmax" value="{$fsc->articulo->stockmax}" autocomplete="off"/>
+         </div>
+         <div class="form-group col-lg-3">
+            <label>
+               <input type="checkbox" name="controlstock" value="TRUE"{if condition="$fsc->articulo->controlstock"} checked="checked"{/if}/>
+               Permitir ventas sin stock
+            </label>
+         </div>
+         <div class="form-group col-lg-12">
+            Observaciones:
+            <textarea class="form-control" name="observaciones" rows="3">{$fsc->articulo->observaciones}</textarea>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->url()}#precios" method="post" class="form">
+   <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+   <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
+   <div id="div_precios" style="margin-top: 10px;">
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th align="left">Tarifa</th>
+                  <th align="right">Dto</th>
+                  <th align="right">PVP</th>
+                  <th align="right">PVP+IVA</th>
+               </tr>
+            </thead>
+            {if condition="$fsc->articulo->costemedio!=0"}
+            <tr>
+               <td><div class="form-control">Coste</div></td>
+               <td><div class="form-control text-right">0.00</div></td>
+               <td><div class="form-control text-right">{$fsc->show_precio($fsc->articulo->costemedio)}</div></td>
+               <td><div class="form-control text-right">{$fsc->show_precio($fsc->articulo->costemedio_iva())}</div></td>
+            </tr>
+            {/if}
+            <tr>
+               <td><div class="form-control">General</div></td>
+               <td><div class="form-control text-right">0.00</div></td>
+               <td>
+                  <input type="number" class="form-control text-right" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="number" class="form-control text-right" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+               </td>
+            </tr>
+            {loop="$fsc->articulo->get_tarifas(TRUE)"}
+            <tr>
+               <td>
+                  <div class="form-control"><a href="{$value->url()}">{$value->nombre}</a></div>
+               </td>
+               <td>
+                  <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
+                  <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
+                  <input type="number" class="form-control text-right" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="number" class="form-control text-right" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="number" class="form-control text-right" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
+               </td>
+            </tr>
+            {/loop}
+            <tr>
+               <td colspan="4" class="text-center">
+                  <a class="btn-block bg-info" style="padding: 5px;" href="index.php?page=general_articulos#tarifas">Nueva tarifa</a>
+               </td>
+            </tr>
+         </table>
+      </div>
+      <div class="container-fluid">
+         <div class="row">
+            <div class="form-group col-lg-3">
+               <a href="{$fsc->impuesto->url()}">IVA</a>:
+               <select class="form-control" name="codimpuesto">
+               {loop="$fsc->impuesto->all()"}
+                  {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
+                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+            <div class="form-group col-lg-3">
+               Último cambio de precio:
+               <div class="form-control">{$fsc->articulo->factualizado}</div>
+            </div>
+            <div class="col-lg-6 text-right">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div id="div_stock">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Almacén</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">Reservada</th>
+               <th class="text-right">Disponible</th>
+               <th class="text-right">Pendiente de recibir</th>
+               <th class="text-right">Acción</th>
+            </tr>
+         </thead>
+         {loop="$fsc->stocks"}
+         <tr>
+            <form action="{$fsc->url()}#stock" method="post" class="form">
+               <input type="hidden" name="idstock" value="{$value->idstock}"/>
+               <input type="hidden" name="almacen" value="{$value->codalmacen}"/>
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td><div class="form-control">{$value->codalmacen} {$value->nombre}</div></td>
+               <td>
+                  <input type="number" class="form-control text-right" name="cantidad" value="{$value->cantidad}" autocomplete="off"/>
+               </td>
+               <td><div class="form-control text-right">{$value->reservada}</div></td>
+               <td><div class="form-control text-right">{$value->disponible}</div></td>
+               <td><div class="form-control text-right">{$value->pterecibir}</div></td>
+               <td class="text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </form>
+         </tr>
+         {/loop}
+         {if condition="$fsc->nuevos_almacenes"}
+         <tr>
+            <form action="{$fsc->url()}#stock" method="post" class="form">
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <td>
+                  <select class="form-control" name="almacen">
+                     {loop="$fsc->nuevos_almacenes"}
+                     <option value="{$value->codalmacen}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td align="center"><input class="form-control text-right" type="text" name="cantidad" value="1" autocomplete="off"/></td>
+               <td align="center"><div class="form-control text-right">0</div></td>
+               <td align="center"><div class="form-control text-right">0</div></td>
+               <td align="center"><div class="form-control text-right">0</div></td>
+               <td align="right">
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </form>
+         </tr>
+         {/if}
+      </table>
+   </div>
+</div>
+
+<div id="div_buscar" class="container-fluid" style="padding-top: 10px;">
+   <div class="row">
+      <div class="col-lg-3">
+         <div class="well">
+            <span class="glyphicon glyphicon-list"></span> &nbsp;
+            <a id="b_buscar_albcli" href="#">{$albaranes} de cliente</a>
+         </div>
+      </div>
+      <div class="col-lg-3">
+         <div class="well">
+            <span class="glyphicon glyphicon-list"></span> &nbsp;
+            <a id="b_buscar_albpro" href="#">{$albaranes} de proveedor</a>
+         </div>
+      </div>
+      <div class="col-lg-3">
+         <div class="well">
+            <span class="glyphicon glyphicon-list"></span> &nbsp;
+            <a id="b_buscar_faccli" href="#">Facturas de cliente</a>
+         </div>
+      </div>
+      <div class="col-lg-3">
+         <div class="well">
+            <span class="glyphicon glyphicon-list"></span> &nbsp;
+            <a id="b_buscar_facpro" href="#">Facturas de proveedor</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div id="div_equivalentes">
+   <h3>Artículos equivalentes:</h3>
+   {if condition="$fsc->equivalentes"}
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Artículo</th>
+               <th align="right">PVP+IVA</th>
+               <th align="right">Stock</th>
+            </tr>
+         </thead>
+         {loop="$fsc->equivalentes"}
+         <tr>
+            <td><a href="{$value->url()}">{$value->referencia}</a></td>
+            <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
+            <td align="right">{$value->stockfis}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   {else}
+      No hay artículos equivalentes.
+   {/if}
+</div>
+
+<form action="{$fsc->url()}" enctype="multipart/form-data" method="post" class="form">
+   <div class="modal fade" id="modal_articulo_imagen">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Imagen</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+               Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
+               {if condition="$fsc->articulo->imagen_url()"}
+                  <center>
+                     <img src="{$fsc->articulo->imagen_url()}" alt="{$fsc->articulo->referencia}"/>
+                     <br/>
+                     <a href="{$fsc->url()}&delete_img=TRUE">Eliminar imagen</a>
+                  </center>
+               {/if}
+               <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
+               <input type="hidden" name="imagen" value="TRUE"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary pull-right" onclick="this.disabled=true;this.form.submit();" title="Guardar" autofocus >
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div class="modal fade" id="modal_buscar">
+   <div class="modal-dialog" style="min-width: 75%;">
+      <div class="modal-content" id="div_buscar_results">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Buscar...</h4>
+         </div>
+         <div id="div_buscar_results" class="table-responsive"></div>
+      </div>
+   </div>
+</div>
+{else}
+<div class="well well-sm" style="text-align: center;">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

@@ -25,7 +25,7 @@ class admin_divisas extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_divisas', 'Divisas', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Divisas', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -88,5 +88,3 @@ class admin_divisas extends fs_controller
       }
    }
 }
-
-?>

@@ -164,9 +164,9 @@ class linea_albaran_proveedor extends fs_model
    public function articulo_url()
    {
       if( is_null($this->referencia) AND $this->referencia == ' ')
-         return "index.php?page=general_articulos";
+         return "index.php?page=ventas_articulos";
       else
-         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
+         return "index.php?page=ventas_articulo&ref=".urlencode($this->referencia);
    }
    
    public function exists()
@@ -174,8 +174,7 @@ class linea_albaran_proveedor extends fs_model
       if( is_null($this->idlinea) )
          return false;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function new_idlinea()

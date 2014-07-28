@@ -67,7 +67,7 @@ class tarifa_articulo extends fs_model
    
    public function url()
    {
-      return 'index.php?page=general_articulos#tarifas';
+      return 'index.php?page=ventas_articulos#tarifas';
    }
    
    public function pvp()
@@ -91,8 +91,7 @@ class tarifa_articulo extends fs_model
    
    public function get($id)
    {
-      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE id = ".$this->var2str($id).";");
+      $tarifa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
       if( $tarifa )
          return new tarifa_articulo($tarifa[0]);
       else
@@ -104,8 +103,7 @@ class tarifa_articulo extends fs_model
       if( is_null($this->id) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()

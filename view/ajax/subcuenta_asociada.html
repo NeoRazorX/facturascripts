@@ -15,14 +15,14 @@
 <table class="list">
    <tr>
       <th align="left">Código + Descripción</th>
-      <th align="right">debe</th>
-      <th align="right">haber</th>
-      <th align="right">saldo</th>
+      <th align="right">Debe</th>
+      <th align="right">Haber</th>
+      <th align="right">Saldo</th>
    </tr>
    {loop="$fsc->resultados"}
    <tr>
       <td>
-         <a class="link" href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codejercicio}','{$value->codsubcuenta}','{$value->descripcion}','{$value->debe}','{$value->haber}','{$value->saldo}')">
+         <a href="#" onclick="select_subcuenta('{$value->idsubcuenta}','{$value->codejercicio}','{$value->codsubcuenta}','{$value->descripcion}','{$value->debe}','{$value->haber}','{$value->saldo}')">
             {$value->codsubcuenta}</a>
          {$value->descripcion}
       </td>

@@ -121,9 +121,9 @@ class cliente extends fs_model
    public function url()
    {
       if( is_null($this->codcliente) )
-         return "index.php?page=general_clientes";
+         return "index.php?page=ventas_clientes";
       else
-         return "index.php?page=general_cliente&cod=".$this->codcliente;
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
    }
 
    public function is_default()

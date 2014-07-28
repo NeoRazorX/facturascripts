@@ -24,7 +24,7 @@ class admin_info extends fs_controller
 {
    public function __construct()
    {
-      parent::__construct('admin_info', 'Información del sistema', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
    }
    
    protected function process()

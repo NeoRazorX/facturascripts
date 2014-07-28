@@ -52,7 +52,7 @@ class tpv_recambios extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('tpv_recambios', 'Genérico', 'TPV', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'TPV Genérico', 'ventas', FALSE, TRUE);
    }
    
    protected function process()
@@ -566,5 +566,3 @@ class tpv_recambios extends fs_controller
       }
    }
 }
-
-?>

@@ -37,8 +37,7 @@ class contabilidad_regusiva extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_regusiva', 'Regularizaciones de IVA',
-              'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Regularizaciones de IVA', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
@@ -391,5 +390,3 @@ class contabilidad_regusiva extends fs_controller
          $this->new_error_msg('El ejercicio está cerrado.');
    }
 }
-
-?>

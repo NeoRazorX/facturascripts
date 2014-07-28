@@ -30,7 +30,7 @@ class informe_facturas extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('informe_facturas', 'Facturas', 'informes', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Facturas', 'informes', FALSE, TRUE);
    }
    
    protected function process()
@@ -471,5 +471,3 @@ class informe_facturas extends fs_controller
       return $stats;
    }
 }
-
-?>

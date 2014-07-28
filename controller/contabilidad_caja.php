@@ -28,7 +28,7 @@ class contabilidad_caja extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_caja', 'Caja', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Caja', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
@@ -102,5 +102,3 @@ class contabilidad_caja extends fs_controller
       return $url;
    }
 }
-
-?>

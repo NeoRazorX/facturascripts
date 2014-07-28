@@ -85,10 +85,11 @@ class factura_proveedor extends fs_model
          $this->codserie = $f['codserie'];
          $this->deabono = $this->str2bool($f['deabono']);
          $this->fecha = Date('d-m-Y', strtotime($f['fecha']));
-         if( is_null($f['hora']) )
-            $this->hora = '00:00:00';
-         else
+         
+         $this->hora = '00:00:00';
+         if( !is_null($f['hora']) )
             $this->hora = $f['hora'];
+         
          $this->idasiento = $this->intval($f['idasiento']);
          $this->idfactura = $this->intval($f['idfactura']);
          $this->idfacturarect = $this->intval($f['idfacturarect']);
@@ -166,9 +167,9 @@ class factura_proveedor extends fs_model
    public function url()
    {
       if( is_null($this->idfactura) )
-         return 'index.php?page=contabilidad_facturas_prov';
+         return 'index.php?page=compras_facturas';
       else
-         return 'index.php?page=contabilidad_factura_prov&id='.$this->idfactura;
+         return 'index.php?page=compras_factura&id='.$this->idfactura;
    }
    
    public function asiento_url()
@@ -572,7 +573,7 @@ class factura_proveedor extends fs_model
                if( !$aux )
                {
                   $this->new_error_msg("Esta factura es un posible duplicado de
-                     <a href='index.php?page=contabilidad_factura_pro&id=".$fac['idfactura']."'>esta otra</a>.
+                     <a href='index.php?page=compras_factura&id=".$fac['idfactura']."'>esta otra</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
                   $status = FALSE;
                }

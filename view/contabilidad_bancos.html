@@ -4,72 +4,73 @@
    $(document).ready(function() {
       $("#b_nuevo_banco, #b_nuevo_banco2").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_banco');
-         document.f_nuevo_banco.entidad.focus();
+         $("#modal_nuevo_banco").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_banco">
-   <h1>Nuevo banco</h1>
-   <form name="f_nuevo_banco" action="{$fsc->url()}" method="post">
-      <table>
-         <tr>
-            <td align="right">Entidad:</td>
-            <td>
-               <input class="full" type="text" name="entidad" maxlength="4" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">Nombre:</td>
-            <td>
-               <input class="full" type="text" name="nombre" size="50" autocomplete="off"/>
-            </td>
-         </tr>
-         <tr>
-            <td align="right">
-               <a class="link" href="{$fsc->proveedor->url()}">Proveedor</a>:
-            </td>
-            <td>
-               <select name="codproveedor">
-                  <option value="-1">-- No conectar a ningún proveedor --</option>
-                  <option value="-1">----------</option>
-                  {loop="$fsc->proveedor->all_full()"}
-                  <option value="{$value->codproveedor}">{$value->nombre}</option>
-                  {else}
-                  <option value="-1">-- No tienes proveedores --</option>
-                  {/loop}
-               </select>
-            </td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar"/>
-            </td>
-         </tr>
-      </table>
-   </form>
+<div class="modal fade" id="modal_nuevo_banco">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" role="form" name="f_nuevo_banco" action="{$fsc->url()}" method="POST">   
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo banco</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="entidad" class="col-sm-2 control-label">Entidad</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="entidad" autocomplete="off" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="nombre" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="codproveedor" class="col-sm-2 control-label"><a href="{$fsc->proveedor->url()}">Proveedor</a></label>
+                  <div class="col-sm-10">
+                     <select name="codproveedor" class="form-control">
+                        <option value="-1">No conectar a ningún proveedor</option>
+                        {loop="$fsc->proveedor->all_full()"}
+                        <option value="{$value->codproveedor}">{$value->nombre}</option>
+                        {else}
+                        <option value="-1">No tienes proveedores</option>
+                        {/loop}
+                     </select>
+                   </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Entidad</th>
-         <th align="left">Nombre</th>
-      </tr>
+<div class="table-responsive" style="margin: 5px;">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Entidad</th>
+            <th align="left">Nombre</th>
+         </tr>
+      </thead>
       {loop="$fsc->banco->all()"}
       <tr>
-         <td width="80"><a class="link" href="{$value->url()}">{$value->entidad}</a></td>
+         <td width="80"><a href="{$value->url()}">{$value->entidad}</a></td>
          <td>{$value->nombre}</td>
       </tr>
+      {else}
+      <tr><td colspan="3" align="center">No hay ningún banco</td></tr>
       {/loop}
-      <tr>
-         <td colspan="2">
-            <div class="new_line">
-               <a id="b_nuevo_banco" href="#">Nuevo banco</a>
-            </div>
-         </td>
-      </tr>
    </table>
 </div>
 

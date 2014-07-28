@@ -153,9 +153,9 @@ class albaran_proveedor extends fs_model
    public function url()
    {
       if( is_null($this->idalbaran) )
-         return 'index.php?page=general_albaranes_prov';
+         return 'index.php?page=compras_albaranes';
       else
-         return 'index.php?page=general_albaran_prov&id='.$this->idalbaran;
+         return 'index.php?page=compras_albaran&id='.$this->idalbaran;
    }
    
    public function factura_url()

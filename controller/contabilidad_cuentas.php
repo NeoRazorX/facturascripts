@@ -31,7 +31,7 @@ class contabilidad_cuentas extends fs_controller
 
    public function __construct()
    {
-      parent::__construct('contabilidad_cuentas', 'Cuentas', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Cuentas', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
@@ -110,5 +110,3 @@ class contabilidad_cuentas extends fs_controller
       return $url;
    }
 }
-
-?>

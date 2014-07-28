@@ -27,7 +27,7 @@ class contabilidad_bancos extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_bancos', 'Bancos', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Bancos', 'contabilidad', FALSE, TRUE);
    }
    
    protected function process()
@@ -70,5 +70,3 @@ class contabilidad_bancos extends fs_controller
       }
    }
 }
-
-?>

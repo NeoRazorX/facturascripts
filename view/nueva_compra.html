@@ -1,0 +1,526 @@
+{include="header"}
+
+{if condition="$fsc->proveedor_s"}
+<script type="text/javascript">
+   var numlineas = 0;
+   function recalcular()
+   {
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_dto = 0;
+      var l_iva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+         }
+      }
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( show_numero(neto) );
+      $("#aiva").html( show_numero(total_iva) );
+      $("#atotal").html( show_numero(neto + total_iva) );
+   }
+   function ajustar_total()
+   {
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_dto = 0;
+      var l_iva = 0;
+      var l_total = 0;
+      var l_totiva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            l_total = parseFloat( $("#total_"+i).val() );
+            if( isNaN(l_total) )
+               l_total = 0;
+            
+            if( l_total <= l_pvp*l_uds )
+            {
+               l_dto = 100 - 100*l_total/(l_pvp*l_uds);
+               if( isNaN(l_dto) )
+                  l_dto = 0;
+            }
+            else
+            {
+               l_dto = 0;
+               l_pvp = 100*l_total/(l_uds*(100-l_dto));
+               if( isNaN(l_pvp) )
+                  l_pvp = 0;
+            }
+            
+            l_totiva = l_total*(100+l_iva)/100;
+            $("#pvp_"+i).val(l_pvp);
+            $("#dto_"+i).val(l_dto);
+            $("#totiva_"+i).val(l_totiva);
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+         }
+      }
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( show_numero(neto) );
+      $("#aiva").html( show_numero(total_iva) );
+      $("#atotal").html( show_numero(neto + total_iva) );
+   }
+   function ajustar_totiva()
+   {
+      var l_uds = 0;
+      var l_pvp = 0;
+      var l_iva = 0;
+      var l_dto = 0;
+      var l_totiva = 0;
+      var neto = 0;
+      var total_iva = 0;
+      
+      for(var i=1; i<=numlineas; i++)
+      {
+         if($("#linea_"+i).length > 0)
+         {
+            l_uds = parseFloat( $("#cantidad_"+i).val() );
+            l_pvp = parseFloat( $("#pvp_"+i).val() );
+            l_dto = parseFloat( $("#dto_"+i).val() );
+            l_iva = parseFloat( $("#iva_"+i).val() );
+            l_totiva = parseFloat( $("#totiva_"+i).val() );
+            if( isNaN(l_totiva) )
+               l_totiva = 0;
+            
+            if( l_totiva <= l_pvp*l_uds*(100+l_iva)/100 )
+            {
+               l_dto = 100 - 100*l_totiva/(l_pvp*l_uds*(100+l_iva)/100);
+               if( isNaN(l_dto) )
+                  l_dto = 0;
+            }
+            else
+            {
+               l_dto = 0;
+               l_pvp = 10000*l_totiva/(l_uds*(100-l_dto)*(100+l_iva));
+               if( isNaN(l_pvp) )
+                  l_pvp = 0;
+            }
+            
+            $("#pvp_"+i).val(l_pvp);
+            $("#dto_"+i).val(l_dto);
+            $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
+            
+            neto += l_uds*l_pvp*(100-l_dto)/100;
+            total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
+         }
+      }
+      neto = fs_round(neto, 2);
+      total_iva = fs_round(total_iva, 2);
+      $("#aneto").html( show_numero(neto) );
+      $("#aiva").html( show_numero(total_iva) );
+      $("#atotal").html( show_numero(neto + total_iva) );
+   }
+   function aplicar_dto2(num)
+   {
+      var dto1 = parseFloat( $("#dto_"+num).val() );
+      var dto2 = parseFloat( prompt("Introduce el descuento adicional:") );
+      $("#dto_"+num).val( 100 - (100 - dto1)*(100-dto2)/100 );
+      recalcular();
+   }
+   function aux_all_impuestos(numlinea,iva)
+   {
+      var all_impuestos = [];
+      {loop="$fsc->impuesto->all()"}
+      all_impuestos[{$counter}] = '{$value->iva}';
+      {/loop}
+      
+      var html = "<select id=\"iva_"+numlinea+"\" class=\"form-control\" name=\"iva_"+numlinea+"\" onchange=\"recalcular()\">";
+      for(var i=0; i<all_impuestos.length; i++)
+      {
+         if(iva == all_impuestos[i])
+            html += "<option value=\""+all_impuestos[i]+"\" selected=\"selected\">"+all_impuestos[i]+" %</option>";
+         else
+            html += "<option value=\""+all_impuestos[i]+"\">"+all_impuestos[i]+" %</option>";
+      }
+      return html+"</select>";
+   }
+   function get_precios(ref)
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: "referencia4precios="+ref,
+         success: function(datos) {
+            $("#search_results").html(datos);
+         }
+      });
+   }
+   function add_articulo(ref,desc,pvp,dto,iva)
+   {
+      numlineas += 1;
+      $("#numlineas").val(numlineas);
+      desc = Base64.decode(desc);
+      $("#lineas_albaran").prepend("<tr id=\"linea_"+numlineas+"\">\n\
+         <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
+         <a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
+         <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
+         <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
+            "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
+         <td><button class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"$('#linea_"+numlineas+"').remove();recalcular();\">\n\
+            <span class=\"glyphicon glyphicon-trash\"></span></button></td>\n\
+         <td><input type=\"text\" class=\"form-control text-right\" id=\"pvp_"+numlineas+"\" name=\"pvp_"+numlineas+"\" value=\""+pvp+
+            "\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td><input type=\"text\" id=\"dto_"+numlineas+"\" name=\"dto_"+numlineas+"\" value=\""+dto+
+            "\" class=\"form-control text-right\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td><input class=\"btn btn-sm btn-default\" type=\"button\" value=\"+%\" onclick=\"aplicar_dto2("+numlineas+")\" title=\"aplicar descuento adicional\"/></td>\n\
+         <td><input type=\"text\" class=\"form-control text-right\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
+            "\" onkeyup=\"ajustar_total()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
+         <td>"+aux_all_impuestos(numlineas,iva)+"</td>\n\
+         <td><input type=\"text\" class=\"form-control text-right\" id=\"totiva_"+numlineas+"\" name=\"totiva_"+numlineas+
+            "\" onkeyup=\"ajustar_totiva()\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
+      recalcular();
+      $("#modal_articulos").modal('hide');
+   }
+   function new_articulo()
+   {
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}&new_articulo=TRUE',
+         dataType: 'html',
+         data: $("form[name=f_nuevo_articulo]").serialize(),
+         success: function(datos) {
+            $("#search_results").html(datos);
+         }
+      });
+   }
+   function buscar_articulos()
+   {
+      if(document.f_buscar_articulos.query.value == '')
+      {
+         $("#search_results").html('');
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_articulos]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_articulos.query.value )
+               {
+                  $("#search_results").html(datos);
+               }
+            }
+         });
+      }
+   }
+   $(document).ready(function() {
+      $("#i_new_line").click(function() {
+         $("#i_new_line").val("");
+         document.f_buscar_articulos.query.value = "";
+         $("#search_results").html("");
+         $("#modal_articulos").modal('show');
+      });
+      $("#i_new_line").keyup(function() {
+         document.f_buscar_articulos.query.value = $("#i_new_line").val();
+         buscar_articulos();
+      });
+      $("#f_buscar_articulos").keyup(function() {
+         buscar_articulos();
+      });
+      $("#f_buscar_articulos").submit(function(event) {
+         event.preventDefault();
+         buscar_articulos();
+      });
+   });
+</script>
+
+
+<div class="modal fade" id="modal_articulos">
+   <div class="modal-dialog" style="width: 950px;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Buscar artículos</h4>
+         </div>
+         <div class="modal-body">
+            <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
+               <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-md-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                        <label>
+                           <input type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                           sólo con stock
+                        </label>
+                     </div>
+                     <div class="col-md-6">
+                        <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                           <option value="">Todas las familias</option>
+                           <option value="">------</option>
+                           {loop="$fsc->familia->all()"}
+                           <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div id="search_results"></div>
+      </div>
+   </div>
+</div>
+
+
+<form id="f_new_albaran" class="form" name="f_new_albaran" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+   <input type="hidden" name="proveedor" value="{$fsc->proveedor_s->codproveedor}"/>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-8">
+            <h1>
+               <a href="{$fsc->proveedor_s->url()}">{$fsc->proveedor_s->nombre}</a>
+            </h1>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Fecha:
+               <input type="text" name="fecha" class="form-control datepicker" value="{$fsc->today()}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Hora:
+               <input type="text" name="hora" class="form-control" value="{$fsc->hour()}" autocomplete="off"/>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Referencia</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Cantidad</th>
+               <th></th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">Dto. %</th>
+               <th></th>
+               <th class="text-right">Total</th>
+               <th>IVA</th>
+               <th class="text-right">Total + IVA</th>
+            </tr>
+         </thead>
+         <tbody id="lineas_albaran">
+            <tr class="bg-info">
+               <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
+               <td colspan="9"></td>
+            </tr>
+            <tr>
+               <td colspan="7"></td>
+               <td>
+                  <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+               </td>
+               <td>
+                  <div id="aiva" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+               </td>
+               <td>
+                  <div id="atotal" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-3">
+            <div class="form-group">
+               <a href="{$fsc->agente->url()}">Agente</a>:
+               <select name="codagente" class="form-control">
+                  <option value="{$fsc->agente->codagente}">{$fsc->agente->get_fullname()}</option>
+                  {if condition="$fsc->user->admin"}
+                     <option value="{$fsc->agente->codagente}">-----</option>
+                     {loop="$fsc->agente->all()"}
+                     <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                     {/loop}
+                  {/if}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="form-group">
+               <a href="{$fsc->almacen->url()}">Almacén</a>:
+               <select name="almacen" class="form-control">
+                  {loop="$fsc->almacen->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                     {else}
+                     <option value="{$value->codalmacen}">{$value->nombre}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="form-group">
+               <a href="{$fsc->serie->url()}">Serie</a>:
+               <select name="serie" class="form-control">
+                  {loop="$fsc->serie->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->codserie}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="form-group">
+               <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+               <select name="forma_pago" class="form-control">
+                  {loop="$fsc->forma_pago->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->codpago}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="form-group">
+               <a href="{$fsc->divisa->url()}">Divisa</a>:
+               <select name="divisa" class="form-control">
+                  {loop="$fsc->divisa->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="form-group">
+               Núm. proveedor:
+               <input class="form-control" type="text" name="numproveedor" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-6">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones"></textarea>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-md-6">
+            <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">Cancelar</button>
+         </div>
+         <div class="col-md-6 text-right">
+            <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar...
+            </button>
+         </div>
+      </div>
+   </div>
+   
+   <div class="modal fade" id="modal_guardar">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Guardar como...</h4>
+            </div>
+            <div class="modal-body">
+               {loop="$fsc->tipos_a_guardar()"}
+               <div class="radio">
+                  <label>
+                     <input type="radio" name="tipo" value="{$value['tipo']}"{if condition="$counter==0"} checked="checked"{/if}/>
+                     {$value['nombre']}
+                  </label>
+               </div>
+               {/loop}
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+{else}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#modal_proveedor").modal('show');
+   });
+</script>
+
+<form class="form" action="{$fsc->url()}" method="post">
+   <div class="modal fade" id="modal_proveedor">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Selecciona el proveedor</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <select class="form-control" name="proveedor">
+                  {loop="$fsc->proveedor->all_full()"}
+                     <option value="{$value->codproveedor}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                  {/loop}
+                  </select>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-play"></span>
+                  &nbsp; Seleccionar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+{/if}
+
+{include="footer"}

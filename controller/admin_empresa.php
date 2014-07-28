@@ -39,7 +39,7 @@ class admin_empresa extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_empresa', 'Empresa', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Empresa', 'admin', TRUE, TRUE);
    }
    
    protected function process()

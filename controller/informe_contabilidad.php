@@ -26,7 +26,7 @@ class informe_contabilidad extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('informe_contabilidad', 'Contabilidad', 'informes', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Contabilidad', 'informes', FALSE, TRUE);
    }
    
    protected function process()
@@ -55,5 +55,3 @@ class informe_contabilidad extends fs_controller
       return file_exists('tmp/inventarios_balances/'.$codeje.'.pdf');
    }
 }
-
-?>

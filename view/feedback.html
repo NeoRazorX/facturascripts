@@ -1,42 +1,51 @@
-<div id="popup_feedback" class="popup" style="display: none;">
-   <h1>¿Necesitas ayuda?</h1>
-   <p>
-      La <a class="link" href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
-      está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
-      lo antes posible.
-   </p>
-   <br/>
-   <form name="feedback" action="{$community_url}/feedback.php" method="post" target="_blank">
-      <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
-      <div class="etiquetas">
-         <span>Elige una opción:</span>
-         <input id="feedback_question" type="radio" name="feedback_type" value="question" checked="checked">
-         <label for="feedback_question">Preguntar</label>
-         <input id="feedback_problem" type="radio" name="feedback_type" value="error">
-         <label for="feedback_problem">Informar de un error</label>
-         <input id="feedback_idea" type="radio" name="feedback_type" value="idea">
-         <label for="feedback_idea">Aportar una idea</label>
-         <label onclick="window.open('{$community_url}','_blank')">Buscar en la ayuda</label>
+<form name="f_feedback" action="{$community_url}/feedback.php" method="post" target="_blank" class="form" role="form">
+   <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+   <div class="modal fade" id="modal_feedback">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">¿Necesitas ayuda?</h4>
+            </div>
+            <div class="modal-body">
+               <p>
+                  La <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
+                  está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
+                  lo antes posible.
+               </p>
+               <div class="form-group">
+                  <select class="form-control" id="feedback_type" name="feedback_type">
+                     <option value="question">Preguntar</option>
+                     <option value="error">Informar de un error</option>
+                     <option value="idea">Aportar una idea</option>
+                  </select>
+               </div>
+               <div class="form-group">
+                  <label for="feedback_textarea">Observaciones</label>
+                  <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6" autofocus >{if condition="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
+               </div>
+               <div class="form-group">
+                  <label for="exampleInputEmail1">Tu email</label>
+                  {if condition="$fsc->empresa"}
+                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="Introduce tu email" value="{$fsc->empresa->email}"/>
+                  {else}
+                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="Introduce tu email"/>
+                  {/if}
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="submit" class="btn btn-sm btn-primary">
+                  <span class="glyphicon glyphicon-send"></span>
+                  &nbsp; Enviar
+               </button>
+            </div>
+         </div>
       </div>
-      <textarea name="feedback_text" rows="12">{if condition="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
-      <table width="100%">
-         <tr>
-            <td>
-               {if condition="$fsc->empresa"}
-               <input class="full" type="text" name="feedback_email" size="30" placeholder="introduce tu email" value="{$fsc->empresa->email}"/>
-               {else}
-               <input class="full" type="text" name="feedback_email" size="30" placeholder="introduce tu email"/>
-               {/if}
-            </td>
-            <td align="right">
-               <input class="submit" type="submit" value="enviar"/>
-            </td>
-         </tr>
-      </table>
-   </form>
-   {if condition="$fsc->empresa AND !$demo AND mt_rand(0,9)==0"}
-   <div style="display: none;">
-      <iframe src="{$community_url}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
    </div>
-   {/if}
+</form>
+
+{if condition="$fsc->empresa AND !$demo AND mt_rand(0,9)==0"}
+<div style="display: none;">
+   <iframe src="{$community_url}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
 </div>
+{/if}

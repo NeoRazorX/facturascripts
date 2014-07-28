@@ -4,23 +4,15 @@
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet" type="text/css" href="view/css/{$fsc->css_file}" />
-   <script type="text/javascript" src="view/js/jquery.js"></script>
-   <script type="text/javascript" src="view/js/tcal.js"></script>
+   <link href="view/css/bootstrap-yeti.min.css" rel="stylesheet" />
+   <link href="view/css/datepicker.css" rel="stylesheet" />
+   <link href="view/css/custom.css" rel="stylesheet" />
+   <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
+   <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="view/js/base.js"></script>
-   {if condition="$demo"}
-   <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-417932-8']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-   </script>
-   {/if}
    <script type="text/javascript">
       function show_precio(precio)
       {
@@ -32,148 +24,185 @@
       }
       function show_numero(numero)
       {
-         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+         return number_format(numero, {$nf0}, '{$nf1}', '{$nf2}');
       }
    </script>
 </head>
 <body>
-   <div class="header">
-      <div class="header_box">
-         <div id="header_folders">
-         {loop="$fsc->folders()"}
-            {if condition="$value==$fsc->page->folder"}
-               <a href="#" id="b_folder_{$value}" class="selected" onclick="fs_select_folder('{$value}')">{$value}</a>
-            {else}
-               <a href="#" id="b_folder_{$value}" onclick="fs_select_folder('{$value}')">{$value}</a>
-            {/if}
-         {/loop}
+   <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
+      <div class="container-fluid">
+         <!-- Brand and toggle get grouped for better mobile display -->
+         <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+               <span class="sr-only">Toggle navigation</span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
          </div>
-         <div id="header_logo">
-            <a id="fs_logo" href="index.php">{if condition="$demo"}FacturaScripts{else}{$fsc->empresa->nombre}{/if}</a>
-         </div>
-         <div id="header_user">
-            <a class="btn" href="#" id="b_user_list">{$fsc->user->nick}</a>
+         
+         <!-- Collect the nav links, forms, and other content for toggling -->
+         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+               {loop="$fsc->folders()"}
+               <li class="dropdown{if condition="$value==$fsc->page->folder"} active{/if}">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value}</a>
+                  <ul class="dropdown-menu">
+                     {loop="$fsc->pages($value)"}
+                     <li{if condition="$value->showing()"} class="active"{/if}><a href="{$value->url()}">{$value->title}</a></li>
+                     {/loop}
+                  </ul>
+               </li>
+               {/loop}
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right">
+               {if condition="$fsc->get_last_changes()"}
+               <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                     <span class="glyphicon glyphicon-time hidden-xs"></span>
+                     <span class="glyphicon glyphicon-time visible-xs"> Historial</span>
+                  </a>
+                  <ul class="dropdown-menu">
+                     {loop="$fsc->get_last_changes()"}
+                        <li title="{if condition="$value['nuevo']"}creado{else}modificado{/if} el {$value['cambio']}">
+                           <a href="{$value['url']}">
+                              {if condition="$value['nuevo']"}
+                              <span class="glyphicon glyphicon-file"></span> &nbsp;
+                              {else}
+                              <span class="glyphicon glyphicon-edit"></span> &nbsp;
+                              {/if}
+                              {$value['texto']}
+                           </a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </li>
+               {/if}
+               
+               <li>
+                  <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
+                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                     <span class="glyphicon glyphicon-question-sign visible-xs"> Ayuda</span>
+                  </a>
+               </li>
+               
+               <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
+                     <span class="glyphicon glyphicon-user hidden-xs"></span>
+                     <span class="glyphicon glyphicon-user visible-xs"> Usuario</span>
+                  </a>
+                  <ul class="dropdown-menu">
+                     <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>
+                     {if condition="$fsc->user->codagente"}
+                     <li><a href="{$fsc->user->get_agente_url()}">Agente: {$fsc->user->codagente}</a></li>
+                     {/if}
+                     {if condition="count($fsc->user->all())>1"}
+                        <li class="divider"></li>
+                        {loop name="$fsc->user->all()"}
+                           {if condition="$value->nick != $fsc->user->nick"}
+                           <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
+                           {/if}
+                        {/loop}
+                     {/if}
+                     <li class="divider"></li>
+                     <li>
+                        <a href="{$fsc->url()}&logout=TRUE">
+                           <span class="glyphicon glyphicon-log-out"></span> &nbsp;
+                           Cerrar sesión
+                        </a>
+                     </li>
+                  </ul>
+               </li>
+            </ul>
          </div>
       </div>
-   </div>
+   </nav>
    
    {if condition="$fsc->get_errors()"}
-   <div class="error">
+   <div class="alert alert-danger">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if condition="$fsc->get_messages()"}
-   <div class="message">
+   <div class="alert alert-success">
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if condition="$fsc->get_advices()"}
-   <div class="advice">
+   <div class="alert alert-info">
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    
-   {if condition="$fsc->page->name"}
-   <div class="header2">
-      <div class="header_box">
-         <div id="header_buttons">
-            <div id="header_location">
-               {if condition="$fsc->is_admin_page()"}
-               <img src="view/img/lock.png" alt="*" title="necesitas ser administrador para ver esta página"/>
-               {/if}
-               <a href="{$fsc->url()}"><img src="view/img/reload.png" alt="r" title="recargar la página"/></a>
-               {if condition="$fsc->page->show_on_menu"}
-                  {if condition="$fsc->page->is_default()"}
-                  <a href="{$fsc->url()}&amp;default_page=FALSE"><img src="view/img/star_on.png" alt="P" title="página predeterminada"/></a>
-                  {else}
-                  <a href="{$fsc->url()}&amp;default_page=TRUE"><img src="view/img/star_off.png" alt="p" title="marcar como página predeterminada"/></a>
+   <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
+      <div class="row">
+         <div class="col-lg-10 col-sm-9">
+            <div class="btn-toolbar" role="toolbar">
+               <div class="btn-group hidden-xs">
+                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </a>
+                  {if condition="$fsc->page->show_on_menu"}
+                     {if condition="$fsc->page->is_default()"}
+                     <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
+                     {else}
+                     <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                        <span class="glyphicon glyphicon-home"></span>
+                     </a>
+                     {/if}
                   {/if}
-               {/if}
-               &nbsp;
-               {if condition="$fsc->ppage"}<a class="link" href="{$fsc->ppage->url()}">{$fsc->ppage->title}</a> »{/if}
-               {$fsc->page->title}
+               </div>
+               
+               <div class="btn-group hidden-xs">
+                  {if condition="$fsc->ppage"}
+                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                     {$fsc->ppage->title}
+                  </a>
+                  {/if}
+                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}">
+                     {$fsc->page->title}
+                  </a>
+               </div>
+               
+               <div class="btn-group">
+                  {loop="$fsc->buttons"}
+                     {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
+                     <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">
+                        {$value->value}
+                     </a>
+                     {elseif condition="get_class($value)=='fs_button_img'"}
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">
+                        {$value->value}
+                     </a>
+                     {else}
+                     <a id="{$value->id}" class="btn btn-sm btn-default" href="{$value->href}">
+                        {$value->value}
+                     </a>
+                     {/if}
+                  {/loop}
+               </div>
             </div>
-            {loop="$fsc->buttons"}{$value->HTML()}{/loop}
          </div>
-         <div id="header_search">
+         <div class="col-lg-2 col-sm-3">
             {if condition="$fsc->custom_search"}
-            <form name="f_custom_search" action="{$fsc->url()}" method="post">
-               <input type="text" name="query" value="{$fsc->query}" size="20" autocomplete="off"/>
-               <input type="image" src="view/img/zoom2.png" alt="buscar" onclick="this.disabled=true;this.form.submit();"/>
+            <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
             </form>
             {/if}
          </div>
       </div>
    </div>
-   {/if}
-   <div class="pages">
-      {loop="$fsc->folders()"}
-         <div id="folder_{$value}">
-            <img id="folder_{$value}_img" src="view/img/flecha_submenu.png" alt="*"/>
-            <ul>
-            {loop="$fsc->pages($value)"}
-               {if condition="$value->showing()"}
-                  <li class="selected"><a href="{$value->url()}">{$value->title}</a></li>
-               {else}
-                  <li><a href="{$value->url()}">{$value->title}</a></li>
-               {/if}
-            {/loop}
-            </ul>
-         </div>
-      {/loop}
-      <div id="user_list">
-         <img id="user_list_img" src="view/img/flecha_submenu.png" alt="*"/>
-         <ul>
-            <li><a href="{$fsc->user->url()}">Tus datos de usuario</a></li>
-            {if condition="$fsc->user->codagente"}
-            <li><a href="{$fsc->user->get_agente_url()}">Tus datos de agente</a></li>
-            {/if}
-            {if condition="!$demo"}
-               {if condition="count($fsc->user->all())>1"}
-                  <li><hr/></li>
-                  {loop name="$fsc->user->all()"}
-                     {if condition="$value->nick != $fsc->user->nick"}
-                     <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
-                     {/if}
-                  {/loop}
-               {/if}
-            {/if}
-            <li><hr/></li>
-            <li><a href="{$fsc->url()}&logout=TRUE">Cerrar sesión</a></li>
-         </ul>
-      </div>
-   </div>
-   <div class="bottom_frame">
-      {if condition="$fsc->get_last_changes()"}
-      <a id="fs_last_changes" href="#">Historial</a>
-      {/if}
-      {if condition="$db_history"}
-      <a href="doc/" target="_blank">Documentación</a>
-      {/if}
-   </div>
-   <a id="fs_feedback" href="#">Ayuda</a>
-   <div id="shadow"></div>
-   <a id="b_close_popup" href="#" onclick="fs_hide_popups(); return false;">
-      <img src="view/img/close.png" alt="close"/>
-   </a>
-   <div class="main_div">
-      {if condition="$fsc->get_last_changes()"}
-      <div class="popup" id="popup_last_changes" style="min-width: 400px;">
-         <h1>Últimos cambios</h1>
-         <table class="list">
-            <tr>
-               <th></th>
-               <th align="left">Página</th>
-               <th align="right">Modificación</th>
-            </tr>
-            {loop="$fsc->get_last_changes()"}
-            <tr>
-               <td>{if condition="$value['nuevo']"}N{/if}</td>
-               <td><a class="link" href="{$value['url']}">{$value['texto']}</a></td>
-               <td align="right">{$value['cambio']}</td>
-            </tr>
-            {/loop}
-         </table>
-      </div>
-      {/if}
-      {include="feedback"}
+   
+   {include="feedback"}

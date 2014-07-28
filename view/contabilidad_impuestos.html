@@ -9,68 +9,97 @@
    $(document).ready(function() {
       $("#b_nuevo_impuesto").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_impuesto');
-         document.f_nuevo_impuesto.codimpuesto.focus();
+         $("#modal_nuevo_impuesto").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_impuesto">
-   <form name="f_nuevo_impuesto" action="{$fsc->url()}" method="post">
-      <h1>Nuevo impuesto</h1>
-      <table>
+<form class="form-horizontal" role="form" name="f_nuevo_impuesto" action="{$fsc->url()}" method="post">
+   <div class="modal fade" id="modal_nuevo_impuesto">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo impuesto</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="codimpuesto" class="col-sm-2 control-label">Código</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="codimpuesto" autocomplete="off" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="iva" class="col-sm-2 control-label">% IVA</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="number" name="iva" value="0" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="recargo" class="col-sm-2 control-label">% Recargo</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="number" name="recargo" value="0" autocomplete="off"/>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Guardar
+                </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
-            <td align="right">Código:</td>
-            <td><input type="text" name="codimpuesto" size="10" maxlength="10" autocomplete="off"/></td>
+            <th align="left">Código</th>
+            <th align="left">Descripción</th>
+            <th align="left">% IVA</th>
+            <th align="left">% Recargo</th>
+            <th align="right">Acciones</th>
          </tr>
+      </thead>
+      {loop="$fsc->impuesto->all()"}
+      <form class="form" role="form" action ="{$fsc->url()}" method="post">
+         <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
          <tr>
-            <td align="right">Descripción:</td>
-            <td><input type="text" name="descripcion" autocomplete="off"/></td>
-         </tr>
-         <tr>
-            <td align="right">IVA:</td>
-            <td><input type="text" name="iva" value="0" size="4" autocomplete="off"/> %</td>
-         </tr>
-         <tr>
-            <td align="right">Recargo:</td>
-            <td><input type="text" name="recargo" value="0" size="4" autocomplete="off"/> %</td>
-         </tr>
-         <tr>
-            <td colspan="2" align="right">
-               <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            <td>
+               <div class="form-control">{$value->codimpuesto}</div>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="number" name="iva" value="{$value->iva}" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="number" name="recargo" value="{$value->recargo}" autocomplete="off"/>
+            </td>
+            <td align="right">
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-danger" type="button" title="Eliminar" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </button>
+                  <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
             </td>
          </tr>
-      </table>
-   </form>
-</div>
-
-{loop="$fsc->impuesto->all()"}
-<div class="rounded">
-   <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="codimpuesto" value="{$value->codimpuesto}"/>
-      <div class="pull_right">
-         <a class="delete" href="#" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">eliminar</a>
-         &nbsp;
-         <input class="submit" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-      </div>
-      <h1>{$value->codimpuesto}</h1>
-      <div class="bloque">
-         Descripción: <input type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
-      </div>
-      <div class="bloque">
-         IVA: <input type="text" name="iva" value="{$value->iva}" size="4" autocomplete="off"/> %
-      </div>
-      <div class="bloque">
-         Recargo: <input type="text" name="recargo" value="{$value->recargo}" size="4" autocomplete="off"/> %
-      </div>
-   </form>
-</div>
-{/loop}
-
-<div class="rounded">
-   <div class="new_line">
-      <a id="b_nuevo_impuesto" href="#">Nuevo impuesto</a>
-   </div>
+      </form>
+      {/loop}
+   </table>
 </div>
 
 {include="footer"}

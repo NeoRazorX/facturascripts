@@ -40,7 +40,7 @@ class contabilidad_ejercicio extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('contabilidad_ejercicio', 'Ejercicio', 'contabilidad', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Ejercicio', 'contabilidad', FALSE, FALSE);
    }
    
    protected function process()

@@ -9,8 +9,8 @@
          dataType: 'html',
          data: 'idregiva='+id,
          success: function(datos) {
-            $("#popup_full_regiva").html(datos);
-            fs_show_popup('popup_full_regiva');
+            $("#modal_full_regiva").html(datos);
+            $("#modal_full_regiva").modal('show');
          }
       });
    }
@@ -36,63 +36,73 @@
       $("#b_nueva_regiva").click(function(event) {
          event.preventDefault();
          $("#lineas_regiva").html('');
-         fs_show_popup('popup_nueva_regiva', 120);
+         $("#modal_nueva_regiva").modal('show');
       });
    });
 </script>
 
-<div id="popup_nueva_regiva" class="popup">
-   <h1>Nueva regularización de IVA</h1>
-   <form name="f_nueva_regiva" action="{$fsc->url()}" method="post">
-      <input type="hidden" name="proceso" value=""/>
-      <table class="list">
-         <tr>
-            <th>Periodo</th>
-            <th>Desde</th>
-            <th>Hasta</th>
-         </tr>
-         <tr>
-            <td>
-               <select name="periodo">
-                  {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
-                  {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
-                  {if condition="$fsc->periodo=='T3'"}<option selected="selected">T3</option>{else}<option>T3</option>{/if}
-                  {if condition="$fsc->periodo=='T4'"}<option selected="selected">T4</option>{else}<option>T4</option>{/if}
-               </select>
-            </td>
-            <td>
-               <input type="text" class="tcal" name="desde" size="10" value="{$fsc->fecha_desde}"/>
-            </td>
-            <td>
-               <input type="text" class="tcal" name="hasta" size="10" value="{$fsc->fecha_hasta}"/>
-            </td>
-         </tr>
-      </table>
-      <table width="100%">
-         <tr>
-            <td align="right">
-               <input class="button" type="button" value="completar" onclick="completar_regiva()"/>
-            </td>
-         </tr>
-      </table>
-      <div id="lineas_regiva"></div>
-   </form>
+<div class="modal fade" id="modal_nueva_regiva">
+   <div class="modal-dialog">
+      <div class="modal-content">
+		 <form class="form-horizontal" class="form" role="form" name="f_nueva_regiva" action ="{$fsc->url()}" method="POST">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva regularización de IVA</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="periodo" class="col-sm-2 control-label">Período</label>
+                  <div class="col-sm-10">
+                      <select name="periodo" class="form-control">
+                         {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
+                         {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
+                         {if condition="$fsc->periodo=='T3'"}<option selected="selected">T3</option>{else}<option>T3</option>{/if}
+                         {if condition="$fsc->periodo=='T4'"}<option selected="selected">T4</option>{else}<option>T4</option>{/if}
+                      </select>
+                   </div>
+               </div>
+               <div class="form-group">
+                  <label for="desde" class="col-sm-2 control-label">Desde</label>
+                  <div class="col-sm-10">
+                     <input class="form-control datepicker" type="text" name="desde" value="{$fsc->fecha_desde}" autofocus />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="hasta" class="col-sm-2 control-label">Hasta</label>
+                  <div class="col-sm-10">
+                     <input class="form-control datepicker" type="text" name="hasta" value="{$fsc->fecha_hasta}"/>
+                  </div>
+               </div>
+               <div class="form-group" id="lineas_regiva">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" onclick="completar_regiva()" title="Completar">
+                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   &nbsp; Completar
+                </button>
+            </div>
+         </form>
+      </div>
+   </div>
 </div>
 
-<div id="popup_full_regiva" class="popup"></div>
+<div id="modal_full_regiva" class="modal fade"></div>
 
-<div class="rounded">
-   <table class="list">
-      <tr>
-         <th align="left">Periodo@Ejercicio</th>
-         <th align="left">Fecha del asiento</th>
-         <th align="left">Fecha de inicio</th>
-         <th align="right">Fecha fin</th>
-      </tr>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Periodo@Ejercicio</th>
+            <th align="left">Fecha del asiento</th>
+            <th align="left">Fecha de inicio</th>
+            <th align="right">Fecha de fin</th>
+         </tr>
+      </thead>
       {loop="$fsc->regiva->all()"}
       <tr>
          <td>
-            <a class="link" href="#" onclick="full_regiva('{$value->idregiva}')">
+            <a href="#" onclick="full_regiva('{$value->idregiva}')">
                {$value->periodo}@{$value->codejercicio}
             </a>
          </td>
@@ -101,9 +111,7 @@
          <td align="right">{$value->fechafin}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="4">Sin resultados.</td>
-      </tr>
+      <tr><td colspan="4" align="center">Sin resultados</td></tr>
       {/loop}
    </table>
 </div>

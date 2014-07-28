@@ -28,8 +28,9 @@ class informe_articulos extends fs_controller
    public $top_ventas;
    public $top_compras;
 
-   public function __construct() {
-      parent::__construct('informe_articulos', 'Artículos', 'informes', FALSE, TRUE);
+   public function __construct()
+   {
+      parent::__construct(__CLASS__, 'Artículos', 'informes', FALSE, TRUE);
    }
    
    protected function process()
@@ -43,5 +44,3 @@ class informe_articulos extends fs_controller
       $this->top_compras = $linea_alb_pro->top_by_articulo();
    }
 }
-
-?>

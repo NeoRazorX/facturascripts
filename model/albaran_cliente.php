@@ -186,9 +186,9 @@ class albaran_cliente extends fs_model
    public function url()
    {
       if( is_null($this->idalbaran) )
-         return 'index.php?page=general_albaranes_cli';
+         return 'index.php?page=ventas_albaranes';
       else
-         return 'index.php?page=general_albaran_cli&id='.$this->idalbaran;
+         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
    }
    
    public function factura_url()
@@ -200,9 +200,9 @@ class albaran_cliente extends fs_model
       else
       {
          if( is_null($this->idfactura) )
-            return 'index.php?page=contabilidad_facturas_cli';
+            return 'index.php?page=ventas_facturas';
          else
-            return 'index.php?page=contabilidad_factura_cli&id='.$this->idfactura;
+            return 'index.php?page=ventas_factura&id='.$this->idfactura;
       }
    }
    
@@ -217,9 +217,9 @@ class albaran_cliente extends fs_model
    public function cliente_url()
    {
       if( is_null($this->codcliente) )
-         return "index.php?page=general_clientes";
+         return "index.php?page=ventas_clientes";
       else
-         return "index.php?page=general_cliente&cod=".$this->codcliente;
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
    }
    
    public function get_lineas()

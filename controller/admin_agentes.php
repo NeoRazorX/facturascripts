@@ -25,7 +25,7 @@ class admin_agentes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_agentes', 'Agentes', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Agentes', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -76,5 +76,3 @@ class admin_agentes extends fs_controller
       }
    }
 }
-
-?>

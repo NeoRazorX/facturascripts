@@ -24,7 +24,7 @@ class admin_pages extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('admin_pages', 'Páginas', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Páginas', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -217,5 +217,3 @@ class admin_pages extends fs_controller
       }
    }
 }
-
-?>

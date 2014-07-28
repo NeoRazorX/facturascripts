@@ -6,42 +6,57 @@
    });
 </script>
 
-<div class="rounded">
-   {if condition="$fsc->query!=''"}<h1>Resultados de la búsqueda '{$fsc->query}':</h1>{/if}
-   <table class="list">
-      <tr>
-         <th></th>
-         <th align="left">Ejercicio + Número</th>
-         <th align="left">Concepto</th>
-         <th align="right">Importe</th>
-         <th align="right">Fecha</th>
-      </tr>
+{if condition="$fsc->query!=''"}
+<h1>Resultados de la búsqueda '{$fsc->query}':</h1>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th align="left">Ejercicio + Número</th>
+            <th align="left">Concepto</th>
+            <th align="right">Importe</th>
+            <th align="right">Fecha</th>
+         </tr>
+      </thead>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">{if condition="$value->editable"}E{/if}</td>
-         <td>{$value->codejercicio} <a class="link" href="{$value->url()}">{$value->numero}</a></td>
-         <td><a class="link" href="{$value->url()}">{$value->concepto}</a></td>
+         <td align="center">
+            {if condition="$value->editable"}
+            <span class="glyphicon glyphicon-pencil" title="editable"></span>
+            {/if}
+         </td>
+         <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
+         <td><a href="{$value->url()}">{$value->concepto}</a></td>
          <td align="right">{$fsc->show_precio($value->importe)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="5">Nada que mostrar.</td></tr>
+      <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
       {/loop}
-      <tr><td colspan="5">&nbsp;</td></tr>
-      <tr>
-         <td colspan="2">
-         {if condition="$fsc->anterior_url()!=''"}
-         <a class="button" href="{$fsc->anterior_url()}">anterior</a>
-         {/if}
-         </td>
-         <td colspan="2"></td>
-         <td align="right">
-         {if condition="$fsc->siguiente_url()!=''"}
-         <a class="button" href="{$fsc->siguiente_url()}">siguiente</a>
-         {/if}
-         </td>
-      </tr>
    </table>
 </div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
 
 {include="footer"}
