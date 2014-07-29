@@ -26,12 +26,15 @@
             <h4 class="modal-title">Imprimir {$albaran}</h4>
          </div>
          <div class="modal-body">
-            <center>
-               <ul class="bloque">
-                  <li><a target="_blank" href="{$fsc->url()}&imprimir=simple" autofocus >{$albaran}<br/>simple</a></li>
-                  <li class="verde"><a target="_blank" href="{$fsc->url()}&imprimir=carta">Cuartilla<br/>sin logotipo</a></li>
-               </ul>
-            </center>
+            <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
+               <span class="glyphicon glyphicon-print"></span>
+               &nbsp; {$albaran} simple
+            </a>
+            
+            <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
+               <span class="glyphicon glyphicon-print"></span>
+               &nbsp; Cuartilla sin logotipo
+            </a>
          </div>
       </div>
    </div>
@@ -43,26 +46,22 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar {albaran}</h4>
+               <h4 class="modal-title">Enviar {$albaran}</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="email" class="col-sm-2 control-label">Email del cliente</label>
-                  <div class="col-sm-10">
-                     <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off" autofocus />
-                  </div>
+                  Email del cliente:
+                  <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off" autofocus />
                </div>
                <div class="form-group">
-                  <label for="snombre" class="col-sm-2 control-label">Mensaje</label>
-                  <div class="col-sm-10">
-                     <textarea name="mensaje" rows="6" cols="50">Buenos días, le adjunto su {albaran} {$fsc->albaran->codigo}.
+                  Mensaje:
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {albaran} {$fsc->albaran->codigo}.
 {$fsc->empresa->email_firma}</textarea>
-                  </div>
                </div>
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Enviar">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
+                   <span class="glyphicon glyphicon-send"></span>
                    &nbsp; Enviar
                 </button>
             </div>
@@ -157,6 +156,44 @@
                <input class="form-control" type="text" name="hora" value="{$fsc->albaran->hora}"/>
             </div>
          </div>
+         
+      </div>
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">PVP</th>
+               <th align="right">Dto</th>
+               <th align="right">Total</th>
+               <th align="right">IVA</th>
+               <th align="right">Total+IVA</th>
+            </tr>
+         </thead>
+         {loop="$fsc->albaran->get_lineas()"}
+         <tr>
+            <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            <td align="right">{$value->cantidad}</td>
+            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="4"></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</b></td>
+         </tr>
+      </table>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row">
          {if condition="$fsc->agente"}
          <div class="col-lg-3">
             <div class="form-group">
@@ -176,39 +213,6 @@
       </div>
    </div>
 </form>
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">Dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total+IVA</th>
-         </tr>
-      </thead>
-      {loop="$fsc->albaran->get_lineas()"}
-      <tr>
-         <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         <td align="right">{$value->cantidad}</td>
-         <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
-         <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-         <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
-         <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-         <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td colspan="4"></td>
-         <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</b></td>
-         <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</b></td>
-         <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</b></td>
-      </tr>
-   </table>
-</div>
 {else}
 <div class="well well-sm" style="text-align: center;">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>

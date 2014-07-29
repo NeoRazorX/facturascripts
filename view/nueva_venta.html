@@ -178,7 +178,7 @@
       desc = Base64.decode(desc);
       $("#lineas_albaran").prepend("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
-         <a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></td>\n\
+         <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
          <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
          <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
             "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
@@ -344,10 +344,7 @@
          <tbody id="lineas_albaran">
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
-               <td colspan="9"></td>
-            </tr>
-            <tr>
-               <td colspan="7"></td>
+               <td colspan="6"></td>
                <td>
                   <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
@@ -449,7 +446,10 @@
       </div>
       <div class="row">
          <div class="col-md-6">
-            <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">Cancelar</button>
+            <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
+               <span class="glyphicon glyphicon-refresh"></span>
+               &nbsp; Reiniciar...
+            </button>
          </div>
          <div class="col-md-6 text-right">
             <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">

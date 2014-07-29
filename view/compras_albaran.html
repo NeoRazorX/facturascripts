@@ -56,7 +56,7 @@
 <form id="f_precios" class="form" name="f_precios" action="{$fsc->url()}" method="post">
    <input type="hidden" name="actualizar_precios" value="TRUE"/>
    <div class="modal fade" id="modal_precios2">
-      <div class="modal-dialog">
+      <div class="modal-dialog" style="min-width: 900px;">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -85,18 +85,20 @@
                      <td>
                         <input class="form-control" type="text" name="codbar_{$counter}" autocomplete="off"/>
                      </td>
-                     <td align="right">
-                        {$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}
+                     <td>
+                        <div class="form-control">
+                           {$fsc->show_numero($value->pvpunitario)}
+                        </div>
                      </td>
-                     <td align="right">
-                        <input class="form-control" style="text-align: right;" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
+                     <td>
+                        <input class="form-control text-right" type="text" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off"/>
                      </td>
                   </tr>
                   {/loop}
                </table>
             </div>
             <div class="modal-footer">
-               <div class="btn-group">
+               <div class="btn-group pull-left">
                   <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
                      <span class="glyphicon glyphicon-check"></span>
                   </button>
@@ -104,6 +106,7 @@
                      <span class="glyphicon glyphicon-unchecked"></span>
                   </button>
                </div>
+               
                <label>
                   <input type="checkbox" name="update_all" value="TRUE"/>
                   Actualizar descripción y código de barras
@@ -174,24 +177,6 @@
             </div>
          </div>
       </div>
-      <div class="row">
-         <div class="col-lg-3">
-            {if condition="$fsc->agente"}
-            <div class="form-group">
-               Agente:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-            {/if}
-         </div>
-         <div class="col-lg-9">
-            <div class="form-group">
-               Observaciones:
-               <textarea class="form-control" name="observaciones" rows="2">{$fsc->albaran->observaciones}</textarea>
-            </div>
-         </div>
-      </div>
    </div>
    
    <div class="table-responsive">
@@ -225,6 +210,27 @@
             <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</b></td>
          </tr>
       </table>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-3">
+            {if condition="$fsc->agente"}
+            <div class="form-group">
+               Agente:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+            {/if}
+         </div>
+         <div class="col-lg-9">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones" rows="2">{$fsc->albaran->observaciones}</textarea>
+            </div>
+         </div>
+      </div>
    </div>
 </form>
 {else}

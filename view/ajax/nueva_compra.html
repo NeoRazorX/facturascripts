@@ -18,7 +18,7 @@
          <tr>
             <th class="text-left">Referencia + descripción</th>
             <th class="text-right">Coste</th>
-            <th class="text-right">Coste+IVA</th>
+            <th class="text-right">PVP</th>
             <th class="text-right">Stock</th>
          </tr>
       </thead>
@@ -37,8 +37,14 @@
             <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->costemedio}','0','{$value->get_iva()}')">
                {$value->referencia}</a> {$value->descripcion}
          </td>
-         <td class="text-right">{$fsc->show_precio($value->costemedio)}</td>
-         <td class="text-right">{$fsc->show_precio($value->costemedio_iva())}</td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->costemedio}','0','{$value->get_iva()}')">
+               {$fsc->show_precio($value->costemedio)}</a>
+         </td>
+         <td class="text-right">
+            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+               {$fsc->show_precio($value->pvp)}</a>
+         </td>
          <td class="text-right">{$value->stockfis}</td>
       </tr>
       {/loop}
