@@ -53,11 +53,11 @@ class ventas_agrupar_albaranes extends fs_controller
       $this->neto = 0;
       $this->total = 0;
       
-      $this->desde = Date('d-m-Y');
+      $this->desde = Date('01-m-Y');
       if( isset($_POST['desde']) )
          $this->desde = $_POST['desde'];
       
-      $this->hasta = Date('d-m-Y');
+      $this->hasta = Date('t-m-Y');
       if( isset($_POST['hasta']) )
          $this->hasta = $_POST['hasta'];
       
