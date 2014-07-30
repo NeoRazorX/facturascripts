@@ -477,7 +477,7 @@
             </tr>
          </thead>
          <tbody id="lineas_albaran">
-         {loop="$fsc->albaran->get_lineas()"}
+            {loop="$fsc->albaran->get_lineas()"}
             <tr id="linea_{$counter}">
                <td>
                   <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
@@ -525,29 +525,29 @@
                          onclick="this.select()" onkeyup="ajustar_totiva('{$counter}')" autocomplete="off"/>
                </td>
             </tr>
-         {/loop}
-         <tr class="bg-info">
-            <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
-            <td colspan="5"></td>
-            <td class="text-right">
-               <span id="aneto" class="form-control" style="font-weight: bold;"></span>
-               <p class="help-block">
-                  {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}
-               </p>
-            </td>
-            <td class="text-right">
-               <span id="aiva" class="form-control" style="font-weight: bold;"></span>
-               <p class="help-block">
-                  {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}
-               </p>
-            </td>
-            <td class="text-right">
-               <span id="atotal" class="form-control" style="font-weight: bold;"></span>
-               <p class="help-block">
-                  {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}
-               </p>
-            </td>
-         </tr>
+            {/loop}
+            <tr class="bg-info">
+               <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
+               <td colspan="5"></td>
+               <td class="text-right">
+                  <span id="aneto" class="form-control" style="font-weight: bold;"></span>
+                  <p class="help-block">
+                     {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}
+                  </p>
+               </td>
+               <td class="text-right">
+                  <span id="aiva" class="form-control" style="font-weight: bold;"></span>
+                  <p class="help-block">
+                     {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}
+                  </p>
+               </td>
+               <td class="text-right">
+                  <span id="atotal" class="form-control" style="font-weight: bold;"></span>
+                  <p class="help-block">
+                     {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}
+                  </p>
+               </td>
+            </tr>
          </tbody>
       </table>
    </div>

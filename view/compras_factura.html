@@ -7,6 +7,20 @@
          event.preventDefault();
          $("#modal_eliminar").modal('show');
       });
+      $("#b_lineas").click(function(event) {
+         event.preventDefault();
+         $("#li_lineas_iva").removeClass('active');
+         $("#div_lineas_iva").hide();
+         $("#li_lineas").addClass('active');
+         $("#div_lineas").show();
+      });
+      $("#b_lineas_iva").click(function(event) {
+         event.preventDefault();
+         $("#li_lineas").removeClass('active');
+         $("#div_lineas").hide();
+         $("#li_lineas_iva").addClass('active');
+         $("#div_lineas_iva").show();
+      });
    });
 </script>
 
@@ -15,27 +29,20 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Eliminar factura</h4>
+            <h4 class="modal-title">¿Realmente desea eliminar esta factura?</h4>
          </div>
-         <div class="modal-body">
-            <div class="form-group">
-               <div class="col-sm-12">
-                  {if condition="$fsc->factura->idasiento"}
-                  <ul>
-                     <li>Hay un asiento asociado que será eliminado junto con la factura.</li>
-                  </ul>
-                  {/if}
-                  ¿Realmente desea eliminar esta factura?
-               </div>
-            </div>
+         {if condition="$fsc->factura->idasiento"}
+         <div class="alert alert-info">
+            Hay un asiento asociado que será eliminado junto con la factura.
          </div>
+         {/if}
          <div class="modal-footer">
-            <a class="btn btn-sm btn-primary" type="button" value="Eliminar" title="Eliminar" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
-                <span class="glyphicon glyphicon-trash"></span>
-                &nbsp; Eliminar
+            <a class="btn btn-sm btn-danger" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
+               <span class="glyphicon glyphicon-trash"></span>
+               &nbsp; Eliminar
             </a>
          </div>
-       </div>
+      </div>
    </div>
 </div>
 
@@ -54,7 +61,9 @@
                &nbsp; Guardar
             </button>
          </div>
-         <div class="col-lg-3">
+      </div>
+      <div class="row">
+         <div class="col-lg-2">
             <div class="form-group">
                Número:
                <div class="form-control">{$fsc->factura->numero}</div>
@@ -66,13 +75,13 @@
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->factura->numproveedor}"/>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-2">
             <div class="form-group">
                Serie:
                <div class="form-control">{$fsc->factura->codserie}</div>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->factura->codejercicio}</div>
@@ -84,62 +93,60 @@
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->factura->fecha}"/>
             </div>
          </div>
-         <div class="col-lg-9">
-            <div class="form-group">
-               Observaciones:
-               <textarea class="form-control" name="observaciones" cols="60">{$fsc->factura->observaciones}</textarea>
-            </div>
-         </div>
       </div>
    </div>
-</form>
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
+   
+   <ul class="nav nav-tabs" role="tablist">
+      <li id="li_lineas" class="active">
+         <a href="#" id="b_lineas">Líneas</a>
+      </li>
+      <li id="li_lineas_iva">
+         <a href="#" id="b_lineas_iva">Líneas de IVA</a>
+      </li>
+   </ul>
+   
+   <div class="table-responsive" id="div_lineas">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">{$albaran}</th>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">PVP</th>
+               <th align="right">Dto</th>
+               <th align="right">Total</th>
+               <th align="right">IVA</th>
+               <th align="right">Total+IVA</th>
+            </tr>
+         </thead>
+         {loop="$fsc->factura->get_lineas()"}
          <tr>
-            <th align="left">{$albaran}</th>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">Dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total+IVA</th>
+            <td>
+               <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+               {$value->albaran_numero()}
+            </td>
+            <td>
+               <a href="{$value->articulo_url()}">{$value->referencia}</a>
+               {$value->descripcion}
+            </td>
+            <td align="right">{$value->cantidad}</td>
+            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
+            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
          </tr>
-      </thead>
-      {loop="$fsc->factura->get_lineas()"}
-      <tr>
-         <td>
-            <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
-            {$value->albaran_numero()}
-         </td>
-         <td>
-            <a href="{$value->articulo_url()}">{$value->referencia}</a>
-            {$value->descripcion}
-         </td>
-         <td align="right">{$value->cantidad}</td>
-         <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
-         <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-         <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
-         <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-         <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
-      </tr>
-      {/loop}
-      <tr>
-         <td colspan="5"></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
-         <td align="right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
-      </tr>
-   </table>
-</div>
-
-<div class="panel panel-default" style="margin: 5px;">
-   <div class="panel-heading">
-      <h3 class="panel-title">Líneas de IVA</h3>
+         {/loop}
+         <tr>
+            <td colspan="5"></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
+         </tr>
+      </table>
    </div>
-   <div class="table-responsive">
+   
+   <div class="table-responsive" id="div_lineas_iva" style="display: none;">
       <table class="table table-hover">
          <thead>
             <tr>
@@ -161,7 +168,18 @@
          {/loop}
       </table>
    </div>
-</div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones">{$fsc->factura->observaciones}</textarea>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
 {else}
 <div class="well well-sm" style="text-align: center;">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>

@@ -26,23 +26,21 @@
             <th class="text-left">Stock mínimo</th>
             <th class="text-left">Stock máximo</th>
             <th class="text-right">Coste</th>
-            <th class="text-right">Coste+IVA</th>
-            <th></th>
+            <th class="text-right">PVP</th>
          </tr>
       </thead>
       <tr>
          <td class="text-left">{$fsc->articulo->stockfis}</td>
          <td class="text-left">{$fsc->articulo->stockmin}</td>
          <td class="text-left">{$fsc->articulo->stockmax}</td>
-         <td class="text-right">{$fsc->show_precio($fsc->articulo->costemedio)}</td>
          <td class="text-right">
             <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->costemedio}','0','{$fsc->articulo->get_iva()}')">
-               {$fsc->show_precio($fsc->articulo->costemedio_iva())}
+               {$fsc->show_precio($fsc->articulo->costemedio)}
             </a>
          </td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->costemedio}','0','{$fsc->articulo->get_iva()}')">
-               <span class="glyphicon glyphicon-shopping-cart" title="añadir"></span>
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','0','{$fsc->articulo->get_iva()}')">
+               {$fsc->show_precio($fsc->articulo->pvp)}
             </a>
          </td>
       </tr>
