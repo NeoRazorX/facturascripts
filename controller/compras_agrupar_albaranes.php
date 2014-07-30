@@ -40,7 +40,7 @@ class compras_agrupar_albaranes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Agrupar '.FS_ALBARANES, 'general', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Agrupar '.FS_ALBARANES, 'compras', FALSE, FALSE);
    }
    
    protected function process()
