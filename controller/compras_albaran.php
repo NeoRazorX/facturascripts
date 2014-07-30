@@ -92,31 +92,33 @@ class compras_albaran extends fs_controller
             $this->template = 'compras_albaran';
          
          /// comprobamos el albarán
-         $this->albaran->full_test();
-         
-         if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
+         if( $this->albaran->full_test() )
          {
-            if( $this->duplicated_petition($_GET['petid']) )
-               $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
-            else
-               $this->generar_factura();
+            if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
+            {
+               if( $this->duplicated_petition($_GET['petid']) )
+                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               else
+                  $this->generar_factura();
+            }
+            
+            if( isset($_POST['actualizar_precios']) )
+               $this->actualizar_precios();
+            
+            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbpro='.$this->albaran->idalbaran, TRUE);
+            
+            if( $this->albaran->ptefactura )
+            {
+               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            }
+            else if( isset($this->albaran->idfactura) )
+            {
+               $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
+            }
+            
+            $this->buttons[] = new fs_button('b_precios', 'Precios');
          }
          
-         if( isset($_POST['actualizar_precios']) )
-            $this->actualizar_precios();
-         
-         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbpro='.$this->albaran->idalbaran, TRUE);
-         
-         if( $this->albaran->ptefactura )
-         {
-            $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
-         }
-         else if( isset($this->albaran->idfactura) )
-         {
-            $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
-         }
-         
-         $this->buttons[] = new fs_button('b_precios', 'Frecios');
          $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else

@@ -113,43 +113,44 @@ class ventas_albaran extends fs_controller
             $this->template = 'ventas_albaran';
          
          /// comprobamos el albarán
-         $this->albaran->full_test();
-         
-         if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
+         if( $this->albaran->full_test() )
          {
-            if( $this->duplicated_petition($_GET['petid']) )
-               $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
-            else
-               $this->generar_factura();
-         }
-         
-         $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
-         $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
-         
-         /// comprobamos si se pueden enviar emails
-         if( $this->empresa->can_send_mail() )
-         {
-            $cliente = $this->cliente->get($this->albaran->codcliente);
-            if($cliente)
+            if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
             {
-               $this->cliente_email = $cliente->email;
+               if( $this->duplicated_petition($_GET['petid']) )
+                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               else
+                  $this->generar_factura();
             }
             
-            $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
+            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
+            $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
             
-            if( isset($_POST['email']) )
+            /// comprobamos si se pueden enviar emails
+            if( $this->empresa->can_send_mail() )
             {
-               $this->enviar_email();
+               $cliente = $this->cliente->get($this->albaran->codcliente);
+               if($cliente)
+               {
+                  $this->cliente_email = $cliente->email;
+               }
+               
+               $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
+               
+               if( isset($_POST['email']) )
+               {
+                  $this->enviar_email();
+               }
             }
-         }
          
-         if( $this->albaran->ptefactura )
-         {
-            $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
-         }
-         else if( isset($this->albaran->idfactura) )
-         {
-            $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
+            if( $this->albaran->ptefactura )
+            {
+               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
+            }
+            else if( isset($this->albaran->idfactura) )
+            {
+               $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
+            }
          }
          
          $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);

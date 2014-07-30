@@ -309,8 +309,7 @@ class albaran_cliente extends fs_model
       }
       else
       {
-         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
-            ¡Avisa al informático!");
+         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva. ¡Avisa al informático!");
          return FALSE;
       }
    }
@@ -322,6 +321,7 @@ class albaran_cliente extends fs_model
       /// comprobamos las líneas
       $neto = 0;
       $iva = 0;
+      $hay_lineas = FALSE;
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -329,10 +329,15 @@ class albaran_cliente extends fs_model
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
+         $hay_lineas = TRUE;
       }
       
-      /// comprobamos los totales
-      if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
+      if(!$hay_lineas)
+      {
+         $this->new_error_msg("Este ".FS_ALBARAN." no tiene líneas.");
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
       {
          $this->new_error_msg("Valor neto de ".FS_ALBARAN." incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
@@ -357,7 +362,7 @@ class albaran_cliente extends fs_model
       
       /// comprobamos las facturas asociadas
       $linea_factura = new linea_factura_cliente();
-      $facturas = $linea_factura->facturas_from_albaran( $this->idalbaran );
+      $facturas = $linea_factura->facturas_from_albaran($this->idalbaran);
       if($facturas)
       {
          if( count($facturas) > 1 )
@@ -371,8 +376,7 @@ class albaran_cliente extends fs_model
          else if($facturas[0]->idfactura != $this->idfactura)
          {
             $this->new_error_msg("Este ".FS_ALBARAN." esta asociado a una <a href='".$this->factura_url().
-                    "'>factura</a> incorrecta. La correcta es <a href='".$facturas[0]->url().
-                    "'>esta</a>.");
+                    "'>factura</a> incorrecta. La correcta es <a href='".$facturas[0]->url()."'>esta</a>.");
             $status = FALSE;
          }
       }

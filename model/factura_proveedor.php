@@ -512,12 +512,11 @@ class factura_proveedor extends fs_model
       if( isset($this->idasiento) )
       {
          $asiento = $this->get_asiento();
-         if( $asiento )
+         if($asiento)
          {
             if($asiento->tipodocumento != 'Factura de proveedor' OR $asiento->documento != $this->codigo)
             {
-               $this->new_error_msg("Esta factura apunta a un <a href='".$this->asiento_url().
-                       "'>asiento incorrecto</a>.");
+               $this->new_error_msg("Esta factura apunta a un <a href='".$this->asiento_url()."'>asiento incorrecto</a>.");
                $status = FALSE;
             }
             else
