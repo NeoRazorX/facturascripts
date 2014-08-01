@@ -31,7 +31,6 @@
 <body>
    <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
       <div class="container-fluid">
-         <!-- Brand and toggle get grouped for better mobile display -->
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                <span class="sr-only">Toggle navigation</span>
@@ -42,7 +41,6 @@
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
          </div>
          
-         <!-- Collect the nav links, forms, and other content for toggling -->
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
@@ -171,7 +169,7 @@
                
                <div class="btn-group">
                   {loop="$fsc->buttons"}
-                     {if condition="strtolower($value->value)=='nuevo' OR strtolower($value->value)=='nueva'"}
+                     {if condition="stripos($value->value, 'nuev')!==FALSE"}
                      <a id="{$value->id}" class="btn btn-sm btn-success" href="{$value->href}">
                         {$value->value}
                      </a>

@@ -507,6 +507,8 @@
                   <select class="form-control" name="proveedor">
                   {loop="$fsc->proveedor->all_full()"}
                      <option value="{$value->codproveedor}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                  {else}
+                     <option value="">¡No hay proveedores! ¡¡¡Crea uno!!!</option>
                   {/loop}
                   </select>
                </div>

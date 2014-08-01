@@ -43,13 +43,13 @@ class contabilidad_cuentas extends fs_controller
       $ce = new cuenta_especial();
       $this->cuentas_especiales = $ce->all();
       
+      $this->buttons[] = new fs_button('b_nueva_cuenta', 'Nueva');
       $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales');
       $this->buttons[] = new fs_button('b_balances', 'Balances', 'index.php?page=contabilidad_balances');
       
+      $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       if( isset($_GET['delete']) )
       {

@@ -3,21 +3,25 @@
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
+      $("#b_nueva_cuenta").click(function(event) {
+         event.preventDefault();
+         $("#modal_nueva_cuenta").modal('show');
+      });
       $("#b_cuentas_especiales").click(function(event) {
          event.preventDefault();
          $("#modal_cuentas_especiales").modal('show');
       });
       $("#b_show_cuentas").click(function() {
+         $("#li_subcuentas").removeClass('active');
          $("#resultados_subcuentas").hide();
-         $("#resultados_cuentas").show('slow');
-         $("#b_show_cuentas").addClass('selected');
-         $("#b_show_subcuentas").removeClass('selected');
+         $("#li_cuentas").addClass('active');
+         $("#resultados_cuentas").show();
       });
       $("#b_show_subcuentas").click(function() {
+         $("#li_cuentas").removeClass('active');
          $("#resultados_cuentas").hide();
-         $("#resultados_subcuentas").show('slow');
-         $("#b_show_subcuentas").addClass('selected');
-         $("#b_show_cuentas").removeClass('selected');
+         $("#li_subcuentas").addClass('active');
+         $("#resultados_subcuentas").show();
       });
       {if condition="$fsc->resultados"}
       $("#resultados_subcuentas").hide();
@@ -27,6 +31,27 @@
    });
 </script>
 
+<div class="modal fade" id="modal_nueva_cuenta">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Nueva Cuenta</h4>
+         </div>
+         <div class="media-body">
+            <p style="padding: 10px;">
+               Las cuentas contables pertenecen a un epígrafe, que pertenece a su vez a un grupo.
+               Para crear una nueva cuenta tienes que ir a grupos y navegar hasta el epígrafe
+               donde quieras crearla.
+            </p>
+         </div>
+         <div class="modal-footer">
+            <a class="btn btn-sm btn-primary" href="index.php?page=contabilidad_epigrafes">Grupos y epigrafe</a>
+         </div>
+      </div>
+   </div>
+</div>
+
 <div class="modal fade" id="modal_cuentas_especiales">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -34,104 +59,114 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title">Cuentas especiales</h4>
          </div>
-         <div class="modal-body">
-            <div class="form-group">
-               <div class="table-responsive">
-                  <table class="table table-hover">
-                     <tr>
-                        <th align="left" width="100">Código</th>
-                        <th align="left">Descripción</th>
-                     </tr>
-                     {loop="$fsc->cuentas_especiales"}
-                     <tr>
-                        <td>{$value->idcuentaesp}</td>
-                        <td>{$value->descripcion}</td>
-                     </tr>
-                     {else}
-                     <tr><td colspan="2" align="center">Sin resultados</td></tr>
-                     {/loop}
-                  </table>
-               </div>
-            </div>
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th align="left" width="100">Código</th>
+                     <th align="left">Descripción</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->cuentas_especiales"}
+               <tr>
+                  <td>{$value->idcuentaesp}</td>
+                  <td>{$value->descripcion}</td>
+               </tr>
+               {else}
+               <tr>
+                  <td colspan="2" align="center">Sin resultados</td>
+               </tr>
+               {/loop}
+            </table>
          </div>
       </div>
    </div>
 </div>
 
 {if condition="$fsc->query==''"}
-<div class="container-fluid">
+<div class="container-fluid" style="margin-bottom: 10px;">
    <div class="row">
-      <div class="col-lg-3">
-         <div class="panel panel-info">
-            <div class="panel-heading">
-               <h3 class="panel-title">Ejercicio</h3>
-            </div>
-            <div class="panel-body">
-               <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post" class="form">
-                  <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
-                  {loop="$fsc->ejercicio->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
-                     {else}
-                     <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
-                     {/if}
-                  {/loop}
-                  </select>
-               </form>
-            </div>
-            <div class="panel-footer">
-               <button class="btn btn-sm btn-info" type="submit">
-                  <span class="glyphicon glyphicon-search"></span>
-               </button>
-            </div>
-         </div>
+      <div class="col-lg-10">
+         <a class="btn btn-sm btn-default" href="index.php?page=contabilidad_epigrafes">
+            <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Grupos y epígrafes
+         </a>
       </div>
-      <div class="col-lg-9">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th align="left">Ejercicio</th>
-                     <th align="left">Código + Descripción</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->resultados"}
-               <tr>
-                  <td>{$value->codejercicio}</td>
-                  <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
-               </tr>
+      <div class="col-lg-2 text-right">
+         <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post" class="form">
+            <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
+            {loop="$fsc->ejercicio->all()"}
+               {if condition="$value->is_default()"}
+               <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
                {else}
-               <tr><td colspan="2" align="center">Sin resultados</td></tr>
-               {/loop}
-            </table>
-         </div>
-         
-         <ul class="pager" id="ul_paginador">
-            <li class="previous{if condition="$fsc->anterior_url()==''"} disabled{/if}"><a href="{$fsc->anterior_url()}">&larr; Anteriores</a></li>
-            <li class="next{if condition="$fsc->siguiente_url()==''"} disabled{/if}"><a href="{$fsc->siguiente_url()}">Siguientes &rarr;</a></li>
-         </ul>
+               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+               {/if}
+            {/loop}
+            </select>
+         </form>
       </div>
    </div>
 </div>
-{else}
-<div class="well well-sm">
-   <div class="select">
-      &nbsp; Resultados de la búsqueda '{$fsc->query}': &nbsp;
-      {if condition="$fsc->resultados"}
-      <a id="b_show_cuentas" href="#" class="selected">Cuentas</a>
-      <a id="b_show_subcuentas" href="#">Subcuentas</a>
-      {else}
-      <a id="b_show_cuentas" href="#">Cuentas</a>
-      <a id="b_show_subcuentas" href="#" class="selected">Subcuentas</a>
-      {/if}
-   </div>
-   <br/><br/>
-   <div class="table-responsive">
-      <table class="table table-hover" id="resultados_cuentas">
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th align="left">Ejercicio</th>
             <th align="left">Código + Descripción</th>
          </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td>
+            <a href="{$value->url()}">{$value->codcuenta}</a>
+            {$value->descripcion}
+         </td>
+      </tr>
+      {else}
+      <tr><td colspan="2" align="center">Sin resultados</td></tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anterior
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguiente &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+{else}
+<h3>Resultados de la búsqueda '{$fsc->query}':</h3>
+
+<ul class="nav nav-tabs">
+  <li{if condition="$fsc->resultados"} class="active"{/if} id="li_cuentas">
+     <a id="b_show_cuentas" href="#">Cuentas</a>
+  </li>
+  <li{if condition="!$fsc->resultados"} class="active"{/if} id="li_subcuentas">
+     <a id="b_show_subcuentas" href="#">Subcuentas</a>
+  </li>
+</ul>
+
+<div id="resultados_cuentas">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Ejercicio</th>
+               <th align="left">Código + Descripción</th>
+            </tr>
+         </thead>
          {loop="$fsc->resultados"}
          <tr>
             <td>{$value->codejercicio}</td>
@@ -140,20 +175,30 @@
          {else}
          <tr><td colspan="2" align="center">Sin resultados</td></tr>
          {/loop}
-         <tr>
-            <td colspan="2">
-              <ul class="pager">
-				 {if condition="$fsc->anterior_url()!=''"}
-				 <li class="previous"><a href="{$fsc->anterior_url()}">&larr; Anterior</a></li>
-				 {/if}
-				 {if condition="$fsc->siguiente_url()!=''"}
-				 <li class="next"><a href="{$fsc->siguiente_url()}">Siguiente &rarr;</a></li>
-				 {/if}
-             </ul>
-            </td>
-         </tr>
       </table>
-      <table class="table table-hover" id="resultados_subcuentas">
+   </div>
+   <ul class="pager">
+      {if condition="$fsc->anterior_url()!=''"}
+      <li class="previous">
+         <a href="{$fsc->anterior_url()}">
+            <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anterior
+         </a>
+      </li>
+      {/if}
+      
+      {if condition="$fsc->siguiente_url()!=''"}
+      <li class="next">
+         <a href="{$fsc->siguiente_url()}">
+            Siguiente &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+         </a>
+      </li>
+      {/if}
+   </ul>
+</div>
+
+<div id="resultados_subcuentas">
+   <table class="table table-hover">
+      <thead>
          <tr>
             <th align="left">Ejercicio</th>
             <th align="left">Código + Descripción</th>
@@ -161,19 +206,19 @@
             <th align="right">Haber</th>
             <th align="right">Saldo</th>
          </tr>
-         {loop="$fsc->resultados2"}
-         <tr>
-            <td>{$value->codejercicio}</td>
-            <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
-            <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
-         </tr>
-         {else}
-         <tr><td colspan="5" align="center">Sin resultados</td></tr>
-         {/loop}
-      </table>
-   </div>
+      </thead>
+      {loop="$fsc->resultados2"}
+      <tr>
+         <td>{$value->codejercicio}</td>
+         <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
+         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
+      </tr>
+      {else}
+      <tr><td colspan="5" align="center">Sin resultados</td></tr>
+      {/loop}
+   </table>
 </div>
 {/if}
 

@@ -326,7 +326,7 @@ class contabilidad_ejercicio extends fs_controller
          else
          {
             $this->new_message('Datos importados correctamente.');
-            $this->new_message("Ahora es el momento de <a href='index.php?page=general_clientes#nuevo'>"
+            $this->new_message("Ahora es el momento de <a href='index.php?page=ventas_clientes#nuevo'>"
                     . "añadir algún cliente</a>, si todavía no lo has hecho.");
             $import_step = 0;
          }

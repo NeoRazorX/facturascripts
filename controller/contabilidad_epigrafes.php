@@ -41,7 +41,6 @@ class contabilidad_epigrafes extends fs_controller
       $grupo0 = new grupo_epigrafes();
       $epi0 = new epigrafe();
 
-      
       if( isset($_POST['ngrupo']) ) /// nuevo grupo
       {
          $this->epigrafe = FALSE;

@@ -167,7 +167,7 @@
       </form>
       {/loop}
       <form name="f_nueva_tarifa" action="{$fsc->url()}" method="post" class="form">
-         <tr>
+         <tr class="bg-info">
             <td>
                <input class="form-control" type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" maxlength="6" autocomplete="off"/>
             </td>

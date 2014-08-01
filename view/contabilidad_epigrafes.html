@@ -1,9 +1,5 @@
 {include="header"}
 
-<!-- 
- NO HAY BOTON ¿NUEVO GRUPO? EN EL BTN-TOOLBAR
--->
-
 <script type="text/javascript">
    $(document).ready(function() {
       $("#b_nuevo_grupo, #b_nuevo_grupo2").click(function(event) {
@@ -141,52 +137,45 @@
    </table>
 </div>
 {else}
-<div class="container-fluid">
+<div class="container-fluid" style="margin-bottom: 10px;">
    <div class="row">
-      <div class="col-lg-3">
-         <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post">
-            <div class="panel panel-info">
-               <div class="panel-heading">
-                  <h3 class="panel-title">Ejercicio:</h3>
-               </div>
-               <div class="panel-body">
-                  <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
-                     {loop="$fsc->ejercicio->all()"}
-                        {if condition="$value->codejercicio==$fsc->codejercicio"}
-                        <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
-                        {else}
-                        <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
-                        {/if}
-                     {/loop}
-                  </select>
-               </div>
-               <div class="panel-footer">
-                  <button class="btn btn-sm btn-info" type="submit">
-                     <span class="glyphicon glyphicon-search"></span>
-                  </button>
-               </div>
-            </div>
+      <div class="col-lg-2">
+         <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post" class="post">
+            <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
+            {loop="$fsc->ejercicio->all()"}
+               {if condition="$value->codejercicio==$fsc->codejercicio"}
+               <option value="{$value->codejercicio}" selected="selected">{$value->nombre} ({$value->codejercicio})</option>
+               {else}
+               <option value="{$value->codejercicio}">{$value->nombre} ({$value->codejercicio})</option>
+               {/if}
+            {/loop}
+            </select>
          </form>
       </div>
-      <div class="col-lg-9">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th align="left">Código</td>
-                     <th align="left">Descripción</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->resultados"}
-               <tr>
-                  <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
-                  <td>{$value->descripcion}</td>
-               </tr>
-               {/loop}
-            </table>
-         </div>
+      <div class="col-lg-10 text-right">
+         <a class="btn btn-sm btn-default" href="index.php?page=contabilidad_cuentas">
+            Cuentas &nbsp;
+            <span class="glyphicon glyphicon-chevron-right"></span>
+         </a>
       </div>
    </div>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Código</td>
+            <th align="left">Descripción</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codgrupo}</a></td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {/loop}
+   </table>
 </div>
 {/if}
 

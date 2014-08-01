@@ -1021,4 +1021,22 @@ class fs_controller
       
       return $this->last_changes;
    }
+   
+   /**
+    * Devuelve el HTML con la primera "página" de la comunidad, es decir,
+    * el índice de tutoriales.
+    */
+   public function get_community_html()
+   {
+      if( file_exists('tmp/community_index.html') AND mt_rand(0, 99) != 0 )
+      {
+         return file_get_contents('tmp/community_index.html');
+      }
+      else
+      {
+         $html = file_get_contents('http://www.facturascripts.com/community/iframe.php');
+         file_put_contents('tmp/community_index.html', $html);
+         return $html;
+      }
+   }
 }
