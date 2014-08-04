@@ -119,6 +119,12 @@ class registro_sat extends fs_model
       return $estados[$this->estado];
    }
    
+   public function nombre_prioridad()
+   {
+      $prioridades = $this->prioridad();
+      return $prioridades[$this->prioridad];
+   }
+   
    public function url()
    {
       if( is_null($this->nsat) )
