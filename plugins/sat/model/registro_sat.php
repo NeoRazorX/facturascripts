@@ -53,6 +53,7 @@ class registro_sat extends fs_model
          $this->modelo = $s['modelo'];
          $this->codcliente = $s['codcliente'];
          $this->estado = intval($s['estado']);
+         $this->prioridad = intval($s['prioridad']);
          $this->averia = $s['averia'];
          $this->accesorios = $s['accesorios'];
          $this->observaciones = $s['observaciones'];
@@ -64,7 +65,7 @@ class registro_sat extends fs_model
       else
       {
          $this->nsat = NULL;
-         $this->prioridad = 0;
+         $this->prioridad = 3;
          $this->fcomienzo = date('d-m-Y');
          $this->ffin = NULL;
          $this->modelo = '';

@@ -75,9 +75,10 @@ class listado_sat extends fs_controller
                if( isset($_POST['modelo']) )
                {
                   $this->template = "edita";
-                  $this->page->title = "Edita SAT: ".$nsat;
+                  
                   
                   $nsat = $this->agrega_sat();
+                  $this->page->title = "Edita SAT: ".$nsat;
                   $this->resultado = $this->registro_sat->get($nsat);
                }
                else
@@ -151,7 +152,7 @@ class listado_sat extends fs_controller
          $this->registro_sat->averia = $_POST['averia'];
          $this->registro_sat->accesorios = $_POST['accesorios'];
          $this->registro_sat->observaciones = $_POST['observaciones'];
-         $this->registro_sat->estado = $_POST['estado'];
+         $this->registro_sat->prioridad = $_POST['prioridad'];
          
          if( $this->registro_sat->save() )
          {
@@ -199,7 +200,8 @@ class listado_sat extends fs_controller
          $this->resultado->averia = $_POST['averia'];
          $this->resultado->accesorios = $_POST['accesorios'];
          $this->resultado->observaciones = $_POST['observaciones'];
-         
+         $this->resultado->estado = $_POST['estado'];
+         $this->resultado->prioridad = $_POST['prioridad'];
          if( $this->resultado->save() )
          {
             $this->new_message('Datos del SAT guardados correctamente.');
@@ -250,7 +252,7 @@ class listado_sat extends fs_controller
       $prioridad = array();
       
       /**
-       * En registro_sat::estados() nos devuelve un array con todos los estados,
+       * En registro_sat::prioridad() nos devuelve un array con todos los prioridades,
        * pero como queremos también el id, pues hay que hacer este bucle para sacarlos.
        */
       foreach($this->registro_sat->prioridad() as $i => $value)
