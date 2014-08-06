@@ -23,6 +23,13 @@
                   <span class="glyphicon glyphicon-unchecked"></span>
                </button>
             </div>
+            
+            {if condition="$fsc->show_cerrar"}
+            <a class="btn btn-sm btn-danger" href="{$fsc->url()}&cerrar=TRUE">
+               <span class="glyphicon glyphicon-lock"></span>
+               &nbsp; Cerrar caja
+            </a>
+            {/if}
          </div>
          <div class="col-lg-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">

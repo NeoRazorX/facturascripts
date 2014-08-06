@@ -299,7 +299,7 @@ class contabilidad_ejercicio extends fs_controller
          if( file_exists('tmp/ejercicio.xml') )
             unlink('tmp/ejercicio.xml');
          
-         if( in_array($_POST['fuente'], array('espanya', 'colombia', 'panama', 'peru') ) )
+         if( in_array($_POST['fuente'], array('espanya', 'colombia', 'panama', 'peru', 'venezuela') ) )
          {
             copy('extras/'.$_POST['fuente'].'.xml', 'tmp/ejercicio.xml');
          }

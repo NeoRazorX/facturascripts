@@ -7,87 +7,52 @@
          window.location.href = url;
    }
    $(document).ready(function() {
-      $("#b_nueva_serie").click(function(event) {
-         event.preventDefault();
-         $("#modal_nueva_serie").modal('show');
-      });
+      
    });
 </script>
-
-<div class="modal fade" id="modal_nueva_serie">
-   <div class="modal-dialog">
-      <div class="modal-content">
-		 <form class="form-horizontal" class="form" role="form" name="f_nueva_serie" action ="{$fsc->url()}" method="POST">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nueva serie</h4>
-            </div>
-            <div class="modal-body">
-               <div class="form-group">
-                  <label for="codserie" class="col-sm-2 control-label">Código</label>
-                  <div class="col-sm-10">
-                     <input class="form-control" type="text" name="codserie" autocomplete="off" autofocus />
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label for="descripcion" class="col-sm-2 control-label">Descripción</label>
-                  <div class="col-sm-10">
-                     <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label for="siniva" class="col-sm-2 control-label">Sin IVA</label>
-                  <div class="col-sm-10">
-                     <input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/>
-                  </div>
-               </div>
-            </div>
-            <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                   &nbsp; Guardar
-                </button>
-            </div>
-         </form>
-      </div>
-   </div>
-</div>
 
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">¿Eliminar?</th>
             <th align="left">Código</th>
             <th align="left">Descripción</th>
             <th align="left">Sin IVA</th>
-            <th align="right">¿Guardar?</th>
+            <th align="right">Acciones</th>
          </tr>
       </thead>
       {loop="$fsc->serie->all()"}
       <form action ="{$fsc->url()}" method="post">
          <input type="hidden" name="codserie" value="{$value->codserie}"/>
          <tr>
-            <td>
-               <a class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
-                   <span class="glyphicon glyphicon-trash"></span>
-               </a>
-            </td>
-            <td>{$value->codserie}</td>
-            <td>
-               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
-            </td>
-            <td>
-               <input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/>
-            </td>
+            <td><div class="form-control">{$value->codserie}</div></td>
+            <td><input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/></td>
+            <td><input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/></td>
             <td align="right">
-               <button class="btn btn-sm btn-primary pull-right" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+               <div class="btn-group">
+                  <a class="btn btn-sm btn-danger" title="Eliminar" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                  <button class="btn btn-sm btn-primary pull-right" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
+            </td>
+         </tr>
+      </form>
+      {/loop}
+      <form class="form" name="f_nueva_serie" action ="{$fsc->url()}" method="post">
+         <tr class="bg-info">
+            <td><input class="form-control" type="text" name="codserie" placeholder="Nuevo código..." autocomplete="off"/></td>
+            <td><input class="form-control" type="text" name="descripcion" autocomplete="off"/></td>
+            <td><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
+            <td align="right">
+               <button class="btn btn-sm btn-primary pull-right" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                </button>
             </td>
          </tr>
       </form>
-      {/loop}
    </table>
 </div>
 

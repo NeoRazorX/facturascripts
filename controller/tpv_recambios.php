@@ -52,7 +52,7 @@ class tpv_recambios extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'TPV Genérico', 'ventas', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'TPV Genérico', 'TPV', FALSE, TRUE);
    }
    
    protected function process()
@@ -74,9 +74,13 @@ class tpv_recambios extends fs_controller
          }
       }
       else if( $this->query != '' )
+      {
          $this->new_search();
+      }
       else if( isset($_POST['referencia4precios']) )
+      {
          $this->get_precios_articulo();
+      }
       else
       {
          $this->agente = $this->user->get_agente();

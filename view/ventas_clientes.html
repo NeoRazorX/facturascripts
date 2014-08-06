@@ -154,11 +154,11 @@
             </td>
             <td align='right'>
                <div class="btn-group">
-                  <a class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar" href="{$fsc->url()}&delete_grupo={$value->codgrupo}#grupos">
-                      <span class="glyphicon glyphicon-trash"></span>
+                  <a class="btn btn-sm btn-danger" title="Eliminar" href="{$fsc->url()}&delete_grupo={$value->codgrupo}#grupos">
+                     <span class="glyphicon glyphicon-trash"></span>
                   </a>
-                  <button class="btn btn-sm btn-primary" type="submit" value="Guardar" title="Guardar" onclick="this.disabled=true;this.form.submit();">
-                      <span class="glyphicon glyphicon-floppy-disk"></span>
+                  <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
                   </button>
                </div>
             </td>
@@ -171,7 +171,7 @@
                <input class="form-control" type="text" name="codgrupo" value="{$fsc->grupo->get_new_codigo()}" maxlength="6" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control" type="text" name="nombre" size="15" maxlength="50" autocomplete="off"/>
+               <input class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nuevo grupo" autocomplete="off"/>
             </td>
             <td>
                <select name="codtarifa" class="form-control">

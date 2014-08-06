@@ -24,65 +24,54 @@
    {/if}
 
    {if condition="$fsc->family_data"}
-   <div class="well well-sm">
-   <h1>
-      <a href="{$fsc->familia->url()}">{$fsc->familia->codfamilia}</a>
-   </h1>
-   <ul class="horizontal">
-      <li>Impuesto: {$fsc->family_data->codimpuesto}</li>
-      <li>Sufijo: {$fsc->family_data->sufijo}</li>
-      {if condition="$fsc->family_data->no_nuevos"}
-         <li>NO añadir artículos nuevos.</li>
-      {/if}
-      {if condition="$fsc->family_data->con_iva"}
-         <li>precios con IVA incluido.</li>
-      {/if}
-      {if condition="$fsc->family_data->pvp_max"}
-         <li>Asignar el precio máximo.</li>
-      {/if}
-      {if condition="$fsc->family_data->bloquear"}
-         <li>Bloquear artículos no actualizados.</li>
-      {/if}
-      <li>Líneas: {$fsc->family_data->lineas}</li>
-   </ul>
-   <ul class="horizontal">
-      <li>
-         Nuevos:
-         {$fsc->family_data->articulos_nuevos}
-      </li>
-      <li>
-         Actualizados:
-         {$fsc->family_data->articulos_actualizados}
-      </li>
-      <li>
-         Sin modificar:
-         {$fsc->family_data->articulos_sin_modificar}
-      </li>
-      <li>
-         Suben de precio:
-         {$fsc->family_data->pvp_suben}
-      </li>
-      <li>
-         Bajan de precio:
-         {$fsc->family_data->pvp_bajan}
-      </li>
-      <li>
-         Mismo precio:
-         {$fsc->family_data->pvp_igual}
-      </li>
-      <li>
-         Diferencia de precio (%):
-         {$fsc->family_data->pvp_diferencia}
-      </li>
-   </ul>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-12">
+            <h1>
+               <a href="{$fsc->familia->url()}">{$fsc->familia->codfamilia}</a>
+            </h1>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-6">
+            <ul class="list-group">
+               <li class="list-group-item">Impuesto: {$fsc->family_data->codimpuesto}</li>
+               <li class="list-group-item">Sufijo: {$fsc->family_data->sufijo}</li>
+               {if condition="$fsc->family_data->no_nuevos"}
+               <li class="list-group-item">NO añadir artículos nuevos.</li>
+               {/if}
+               {if condition="$fsc->family_data->con_iva"}
+               <li class="list-group-item">precios con IVA incluido.</li>
+               {/if}
+               {if condition="$fsc->family_data->pvp_max"}
+               <li class="list-group-item">Asignar el precio máximo.</li>
+               {/if}
+               {if condition="$fsc->family_data->bloquear"}
+               <li class="list-group-item">Bloquear artículos no actualizados.</li>
+               {/if}
+               <li class="list-group-item">Líneas: {$fsc->family_data->lineas}</li>
+            </ul>
+         </div>
+         <div class="col-lg-6">
+            <ul class="list-group">
+               <li class="list-group-item">Nuevos: {$fsc->family_data->articulos_nuevos}</li>
+               <li class="list-group-item">Actualizados: {$fsc->family_data->articulos_actualizados}</li>
+               <li class="list-group-item">Sin modificar: {$fsc->family_data->articulos_sin_modificar}</li>
+               <li class="list-group-item">Suben de precio: {$fsc->family_data->pvp_suben}</li>
+               <li class="list-group-item">Bajan de precio: {$fsc->family_data->pvp_bajan}</li>
+               <li class="list-group-item">Mismo precio: {$fsc->family_data->pvp_igual}</li>
+               <li class="list-group-item">Diferencia de precio (%): {$fsc->family_data->pvp_diferencia}</li>
+            </ul>
+         </div>
+      </div>
    </div>
    {else}
-   <div class="well well-sm" style="text-align: center;">
+   <div class="text-center">
       <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
    </div>
    {/if}
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

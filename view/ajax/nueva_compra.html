@@ -1,14 +1,14 @@
 <!--{$fsc->query}-->
 
 {if condition="$fsc->get_errors()"}
-   <div class="alert alert-danger">
-      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
-   </div>
+<div class="alert alert-danger">
+   <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+</div>
 {/if}
 {if condition="$fsc->get_messages()"}
-   <div class="alert alert-success">
-      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
-   </div>
+<div class="alert alert-success">
+   <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+</div>
 {/if}
 
 {if condition="$fsc->results"}

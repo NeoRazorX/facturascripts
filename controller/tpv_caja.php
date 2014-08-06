@@ -19,7 +19,7 @@
 
 require_model('caja.php');
 
-class contabilidad_caja extends fs_controller
+class tpv_caja extends fs_controller
 {
    public $caja;
    public $offset;
@@ -28,7 +28,7 @@ class contabilidad_caja extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Caja', 'contabilidad', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Caja', 'TPV', FALSE, TRUE);
    }
    
    protected function process()
@@ -78,10 +78,9 @@ class contabilidad_caja extends fs_controller
             $this->show_cerrar = TRUE;
       }
       
+      $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       $this->resultados = $this->caja->all($this->offset);
    }
