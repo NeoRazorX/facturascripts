@@ -119,17 +119,17 @@
    </nav>
    
    {if condition="$fsc->get_errors()"}
-   <div class="alert alert-danger">
+   <div class="alert alert-danger hidden-print">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if condition="$fsc->get_messages()"}
-   <div class="alert alert-success">
+   <div class="alert alert-success hidden-print">
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if condition="$fsc->get_advices()"}
-   <div class="alert alert-info">
+   <div class="alert alert-info hidden-print">
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}

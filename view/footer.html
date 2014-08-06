@@ -1,5 +1,5 @@
    {if condition="$db_history"}
-   <div class="panel panel-default" style="margin: 5px;">
+   <div class="panel panel-default hidden-print" style="margin: 5px;">
       <div class="panel-heading">
          <h3 class="panel-title">Consultas SQL:</h3>
       </div>
@@ -10,7 +10,7 @@
       </div>
    </div>
    {/if}
-   <div class="container-fluid" style="margin-top: 20px;">
+   <div class="container-fluid hidden-print" style="margin-top: 20px;">
       <div class="row">
          <div class="col-lg-6 col-md-6 col-xs-6">
             <span class="label label-default">Consultas: {$fsc->selects()}</span>
