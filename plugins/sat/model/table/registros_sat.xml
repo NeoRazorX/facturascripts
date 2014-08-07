@@ -16,6 +16,11 @@
       <tipo>integer</tipo>
    </columna>
    <columna>
+      <nombre>fentrada</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
       <nombre>fcomienzo</nombre>
       <tipo>date</tipo>
       <nulo>NO</nulo>
@@ -50,6 +55,10 @@
    </columna>
    <columna>
       <nombre>observaciones</nombre>
+      <tipo>text</tipo>
+   </columna>
+   <columna>
+      <nombre>posicion</nombre>
       <tipo>text</tipo>
    </columna>
    <restriccion>

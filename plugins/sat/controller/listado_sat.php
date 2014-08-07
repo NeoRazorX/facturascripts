@@ -200,6 +200,7 @@ class listado_sat extends fs_controller
          $this->resultado->averia = $_POST['averia'];
          $this->resultado->accesorios = $_POST['accesorios'];
          $this->resultado->observaciones = $_POST['observaciones'];
+         $this->resultado->posicion = $_POST['posicion'];
          $this->resultado->estado = $_POST['estado'];
          $this->resultado->prioridad = $_POST['prioridad'];
          if( $this->resultado->save() )

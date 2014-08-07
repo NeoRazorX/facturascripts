@@ -22,6 +22,7 @@ class registro_sat extends fs_model
 {
    public $nsat;
    public $prioridad;
+   public $fentrada;
    public $fcomienzo;
    public $ffin;
    public $modelo;
@@ -30,6 +31,7 @@ class registro_sat extends fs_model
    public $averia;
    public $accesorios;
    public $observaciones;
+   public $posicion;
    
    /// Estos datos los usas, pero no los guardas en la base de datos
    public $nombre_cliente;
@@ -57,7 +59,7 @@ class registro_sat extends fs_model
          $this->averia = $s['averia'];
          $this->accesorios = $s['accesorios'];
          $this->observaciones = $s['observaciones'];
-         
+         $this->posicion = $s['posicion'];
          $this->nombre_cliente = $s['nombre'];
          $this->telefono1_cliente = $s['telefono1'];
          $this->telefono2_cliente = $s['telefono2'];
@@ -66,6 +68,7 @@ class registro_sat extends fs_model
       {
          $this->nsat = NULL;
          $this->prioridad = 3;
+         $this->fentrada = date('d-m-Y');
          $this->fcomienzo = date('d-m-Y');
          $this->ffin = NULL;
          $this->modelo = '';
@@ -74,6 +77,7 @@ class registro_sat extends fs_model
          $this->averia = '';
          $this->accesorios = '';
          $this->observaciones = '';
+         $this->posicion = '';
          
          $this->nombre_cliente = '';
          $this->telefono1_cliente = '';
@@ -147,9 +151,9 @@ class registro_sat extends fs_model
    
    public function get($id)
    {
-      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad, registros_sat.fcomienzo, registros_sat.ffin,
+      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad,registros_sat.fentrada, registros_sat.fcomienzo, registros_sat.ffin,
          registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2,
-         registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones
+         registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
          FROM registros_sat, clientes
          WHERE registros_sat.codcliente = clientes.codcliente AND nsat = ".$this->var2str($id).";";
       $data = $this->db->select($sql);
@@ -177,6 +181,7 @@ class registro_sat extends fs_model
       $this->averia = $this->no_html($this->averia);
       $this->accesorios = $this->no_html($this->accesorios);
       $this->observaciones = $this->no_html($this->observaciones);
+      $this->posicion = $this->no_html($this->posicion);
       
       /// realmente no quería comprobar nada, simplemente eliminar el html de las variables
       return TRUE;
@@ -192,16 +197,16 @@ class registro_sat extends fs_model
                fcomienzo = ".$this->var2str($this->fcomienzo).", ffin = ".$this->var2str($this->ffin).",
                modelo = ".$this->var2str($this->modelo).", codcliente = ".$this->var2str($this->codcliente).",
                estado = ".$this->var2str($this->estado).", averia = ".$this->var2str($this->averia).",
-               accesorios = ".$this->var2str($this->accesorios).", observaciones = ".$this->var2str($this->observaciones)."
+               accesorios = ".$this->var2str($this->accesorios).", observaciones = ".$this->var2str($this->observaciones).", posicion = ".$this->var2str($this->posicion)."
                WHERE nsat = ".$this->var2str($this->nsat).";";
             
             return $this->db->exec($sql);
          }
          else
          {
-            $sql = "INSERT INTO registros_sat (prioridad,fcomienzo,ffin,modelo,codcliente,estado,
+            $sql = "INSERT INTO registros_sat (prioridad,fentrada,fcomienzo,ffin,modelo,codcliente,estado,
                averia,accesorios,observaciones) VALUES (".$this->var2str($this->prioridad).",
-               ".$this->var2str($this->fcomienzo).",".$this->var2str($this->ffin).",
+               ".$this->var2str($this->fentrada).",".$this->var2str($this->fcomienzo).",".$this->var2str($this->ffin).",
                ".$this->var2str($this->modelo).",".$this->var2str($this->codcliente).",
                ".$this->var2str($this->estado).",".$this->var2str($this->averia).",
                ".$this->var2str($this->accesorios).",".$this->var2str($this->observaciones).");";
@@ -228,9 +233,9 @@ class registro_sat extends fs_model
    {
       $satlist = array();
       
-      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad, registros_sat.fcomienzo, registros_sat.ffin,
+      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad,registros_sat.fentrada, registros_sat.fcomienzo, registros_sat.ffin,
          registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2,
-         registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones
+         registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
          FROM registros_sat, clientes
          WHERE registros_sat.codcliente = clientes.codcliente ORDER BY fcomienzo DESC, nsat DESC;";
       $data = $this->db->select($sql);
