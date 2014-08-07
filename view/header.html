@@ -60,7 +60,7 @@
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                      <span class="glyphicon glyphicon-time hidden-xs"></span>
-                     <span class="glyphicon glyphicon-time visible-xs"> Historial</span>
+                     <span class="visible-xs">Historial</span>
                   </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->get_last_changes()"}
@@ -82,14 +82,14 @@
                <li>
                   <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
                      <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
-                     <span class="glyphicon glyphicon-question-sign visible-xs"> Ayuda</span>
+                     <span class="visible-xs">Ayuda</span>
                   </a>
                </li>
                
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
                      <span class="glyphicon glyphicon-user hidden-xs"></span>
-                     <span class="glyphicon glyphicon-user visible-xs"> Usuario</span>
+                     <span class="visible-xs"> Usuario</span>
                   </a>
                   <ul class="dropdown-menu">
                      <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>

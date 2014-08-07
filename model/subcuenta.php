@@ -114,6 +114,11 @@ class subcuenta extends fs_model
       return '';
    }
    
+   public function get_descripcion_64()
+   {
+      return base64_encode($this->descripcion);
+   }
+   
    public function tasaconv()
    {
       if( isset($this->coddivisa) )

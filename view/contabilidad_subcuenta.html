@@ -17,8 +17,8 @@
    });
 </script>
 
-<form id="f_subcuenta" action="{$fsc->url()}&offset={$fsc->offset}" method="post">
-   <input class="form-control" type="hidden" name="puntear" value="TRUE"/>
+<form id="f_subcuenta" class="form" action="{$fsc->url()}&offset={$fsc->offset}" method="post">
+   <input type="hidden" name="puntear" value="TRUE"/>
    
    <div class="table-responsive">
       <table class="table table-hover">
@@ -40,24 +40,32 @@
                   <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
                </div>
             </td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($fsc->subcuenta->saldo, $fsc->subcuenta->coddivisa)}</td>
+            <td><div class="form-control text-right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</div></td>
+            <td><div class="form-control text-right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</div></td>
+            <td><div class="form-control text-right">{$fsc->show_precio($fsc->subcuenta->saldo, $fsc->subcuenta->coddivisa)}</div></td>
          </tr>
       </table>
    </div>
    
-   <div style="margin: 5px;">
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
-         <span class="glyphicon glyphicon-check"></span>
-      </button>
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
-         <span class="glyphicon glyphicon-unchecked"></span>
-      </button>
-      <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
-         <span class="glyphicon glyphicon-floppy-disk"></span>
-         &nbsp; Guardar
-      </button>
+   <div class="container-fluid" style="margin-bottom: 10px;">
+      <div class="row">
+         <div class="col-lg-6">
+            <div class="btn-group">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+         </div>
+         <div class="col-lg-6 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+         </div>
+      </div>
    </div>
    
    <div class="table-responsive">
@@ -116,25 +124,33 @@
          {/if}
          {/loop}
          <tr>
-            <td colspan="11" class="bg-success">
-               <a href="index.php?page=contabilidad_nuevo_asiento" style="display: block; text-align: center;">Nuevo Asiento...</a>
+            <td colspan="11">
+               <a class="btn btn-sm btn-block btn-success" href="index.php?page=contabilidad_nuevo_asiento">Nuevo Asiento...</a>
             </td>
          </tr>
       </table>
    </div>
    
    {if condition="$total>10"}
-   <div style="margin: 5px;">
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
-         <span class="glyphicon glyphicon-check"></span>
-      </button>
-      <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
-         <span class="glyphicon glyphicon-unchecked"></span>
-      </button>
-      <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
-         <span class="glyphicon glyphicon-floppy-disk"></span>
-         &nbsp; Guardar
-      </button>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-6">
+            <div class="btn-group">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+         </div>
+         <div class="col-lg-6 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+         </div>
+      </div>
    </div>
    {/if}
 </form>

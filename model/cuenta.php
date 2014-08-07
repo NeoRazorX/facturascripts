@@ -115,8 +115,7 @@ class cuenta extends fs_model
       if( is_null($this->idcuenta) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
    }
    
    public function test()
@@ -124,7 +123,9 @@ class cuenta extends fs_model
       $this->descripcion = $this->no_html($this->descripcion);
       
       if( strlen($this->codcuenta)>0 AND strlen($this->descripcion)>0 )
+      {
          return TRUE;
+      }
       else
       {
          $this->new_error_msg('Faltan datos en la cuenta');
@@ -168,15 +169,13 @@ class cuenta extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idcuenta = ".$this->var2str($this->idcuenta).";");
    }
    
    public function all($offset=0)
    {
       $cuenlist = array();
-      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
+      $cuentas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY codejercicio DESC, codcuenta ASC", FS_ITEM_LIMIT, $offset);
       if($cuentas)
       {
          foreach($cuentas as $c)
@@ -188,8 +187,7 @@ class cuenta extends fs_model
    public function full_from_epigrafe($id)
    {
       $cuenlist = array();
-      $cuentas = $this->db->select("SELECT * FROM ".$this->table_name."
-         WHERE idepigrafe = ".$this->var2str($id)." ORDER BY codcuenta ASC;");
+      $cuentas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idepigrafe = ".$this->var2str($id)." ORDER BY codcuenta ASC;");
       if($cuentas)
       {
          foreach($cuentas as $c)

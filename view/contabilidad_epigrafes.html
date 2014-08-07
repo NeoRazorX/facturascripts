@@ -2,15 +2,15 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $("#b_nuevo_grupo, #b_nuevo_grupo2").click(function(event) {
+      $("#b_nuevo_grupo").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_grupo").modal('show');
       });
-      $("#b_nuevo_epigrafe, #b_nuevo_epigrafe2").click(function(event) {
+      $("#b_nuevo_epigrafe").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_epigrafe").modal('show');
       });
-      $("#b_nueva_cuenta, #b_nueva_cuenta2").click(function(event) {
+      $("#b_nueva_cuenta").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_cuenta").modal('show');
       });
@@ -78,6 +78,11 @@
          <td>{$value->descripcion}</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="2">
+            <a id="b_nuevo_epigrafe" class="btn btn-sm btn-block btn-success" href="#nuevo_epigrafe">Nuevo epigrafe...</a>
+         </td>
+      </tr>
    </table>
 </div>
 {elseif condition="$fsc->epigrafe"}
@@ -130,8 +135,8 @@
       </tr>
       {/loop}
       <tr>
-         <td colspan="3" class="bg-success">
-            <a id="b_nueva_cuenta" href="#" style="display: block; text-align: center;">Nueva Cuenta...</a>
+         <td colspan="3">
+            <a id="b_nueva_cuenta" class="btn btn-sm btn-block btn-success" href="#">Nueva Cuenta...</a>
          </td>
       </tr>
    </table>
@@ -175,6 +180,11 @@
          <td>{$value->descripcion}</td>
       </tr>
       {/loop}
+      <tr>
+         <td colspan="2">
+            <a id="b_nuevo_grupo" class="btn btn-sm btn-block btn-success" href="#nuevo_grupo">Nuevo grupo...</a>
+         </td>
+      </tr>
    </table>
 </div>
 {/if}

@@ -19,127 +19,139 @@
    });
 </script>
 
-<div class="well well-sm">
-   <form action="{$fsc->url()}" method="post">
-      <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
-      <h3>
-         Copiar a un nuevo...
-         <span>
-            <button class="btn btn-sm btn-primary" type="submit" value="Copiar" title="Copiar" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Copiar
-            </button>
-         </span>
-      </h3>
-      <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
-         <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>{$albaran} de cliente</option>
-         <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>{$albaran} de proveedor</option>
-      </select>
-      <div class="form-group" id="clientes">
-         de
-         <select class="form-control" name="cliente">
-         {loop="$fsc->cliente->all_full()"}
-            {if condition="$fsc->tipo_albaran=='cliente'"}
-               {if condition="$value->codcliente==$fsc->albaran->codcliente"}
-               <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
-               {else}
-               <option value="{$value->codcliente}">{$value->nombre}</option>
-               {/if}
-            {else}
-            <option value="{$value->codcliente}">{$value->nombre}</option>
-            {/if}
-         {/loop}
-         </select>
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-3">
+            <div class="form-group">
+               Copiar a un nuevo...
+               <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
+                  <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>{$albaran} de cliente</option>
+                  <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>{$albaran} de proveedor</option>
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-5">
+            <div class="form-group" id="clientes">
+               Cliente:
+               <select class="form-control" name="cliente">
+               {loop="$fsc->cliente->all_full()"}
+                  {if condition="$fsc->tipo_albaran=='cliente'"}
+                     {if condition="$value->codcliente==$fsc->albaran->codcliente"}
+                     <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                     {else}
+                     <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/if}
+                  {else}
+                  <option value="{$value->codcliente}">{$value->nombre}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+            <div class="form-group" id="proveedores">
+               Proveedor:
+               <select class="form-control" name="proveedor">
+               {loop="$fsc->proveedor->all_full()"}
+                  {if condition="$fsc->tipo_albaran=='proveedor'"}
+                     {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}
+                     <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
+                     {else}
+                     <option value="{$value->codproveedor}">{$value->nombre}</option>
+                     {/if}
+                  {else}
+                  <option value="{$value->codproveedor}">{$value->nombre}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Fecha:
+               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Hora:
+               <input class="form-control" type="text" name="hora" value="{$fsc->hour()}" autocomplete="off"/>
+            </div>
+         </div>
       </div>
-      <div class="form-group" id="proveedores">
-         de
-         <select class="form-control" name="proveedor">
-         {loop="$fsc->proveedor->all_full()"}
-            {if condition="$fsc->tipo_albaran=='proveedor'"}
-               {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}
-               <option value="{$value->codproveedor}" selected="selected">{$value->nombre}</option>
-               {else}
-               <option value="{$value->codproveedor}">{$value->nombre}</option>
-               {/if}
-            {else}
-            <option value="{$value->codproveedor}">{$value->nombre}</option>
-            {/if}
-         {/loop}
-         </select>
+      <div class="row">
+         <div class="col-lg-2">
+            <div class="form-group">
+               Almacén:
+               <select class="form-control" name="almacen">
+               {loop="$fsc->almacen->all()"}
+                  {if condition="$value->codalmacen==$fsc->albaran->codalmacen"}
+                  <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                  {else}
+                  <option value="{$value->codalmacen}">{$value->nombre}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Serie:
+               <select class="form-control" name="serie">
+               {loop="$fsc->serie->all()"}
+                  {if condition="$value->codserie==$fsc->albaran->codserie"}
+                  <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codserie}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Forma de pago:
+               <select class="form-control" name="forma_pago">
+               {loop="$fsc->forma_pago->all()"}
+                  {if condition="$value->codpago==$fsc->albaran->codpago"}
+                  <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codpago}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Divisa:
+               <select class="form-control" name="divisa">
+               {loop="$fsc->divisa->all()"}
+                  {if condition="$value->coddivisa==$fsc->albaran->coddivisa"}
+                  <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
+         </div>
       </div>
-      <div class="form-group">
-         con fecha
-         <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10" autocomplete="off"/>
-         y hora
-         <input type="text" name="hora" value="{$fsc->hour()}" size="8" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-         desde el almacén
-         <select class="form-control" name="almacen">
-         {loop="$fsc->almacen->all()"}
-            {if condition="$value->codalmacen==$fsc->albaran->codalmacen"}
-               <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
-            {else}
-               <option value="{$value->codalmacen}">{$value->nombre}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
-      <div class="form-group">
-         pertenece a la serie
-         <select class="form-control" name="serie">
-         {loop="$fsc->serie->all()"}
-            {if condition="$value->codserie==$fsc->albaran->codserie"}
-               <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
-            {else}
-               <option value="{$value->codserie}">{$value->descripcion}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
-      <div class="form-group">
-         forma de pago
-         <select class="form-control" name="forma_pago">
-         {loop="$fsc->forma_pago->all()"}
-            {if condition="$value->codpago==$fsc->albaran->codpago"}
-               <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
-            {else}
-               <option value="{$value->codpago}">{$value->descripcion}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
-      <div class="form-group">
-         divisa
-         <select class="form-control" name="divisa">
-         {loop="$fsc->divisa->all()"}
-            {if condition="$value->coddivisa==$fsc->albaran->coddivisa"}
-               <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
-            {else}
-               <option value="{$value->coddivisa}">{$value->descripcion}</option>
-            {/if}
-         {/loop}
-         </select>
-      </div>
-      <div>
-         observaciones:
-         <textarea name="observaciones" cols="50">Copia del {$albaran} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
-      </div>
-   </form>
-</div>
-
-<div class="well well-sm">
+   </div>
+   
    <div class="table-responsive">
       <table class="table table-hover">
-         <tr>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">Dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total+IVA</th>
-         </tr>
+         <thead>
+            <tr>
+               <th align="left">Artículo</th>
+               <th align="right">Cantidad</th>
+               <th align="right">PVP</th>
+               <th align="right">Dto</th>
+               <th align="right">Total</th>
+               <th align="right">IVA</th>
+               <th align="right">Total+IVA</th>
+            </tr>
+         </thead>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
             <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
@@ -151,18 +163,33 @@
             <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
-      </table>
-   </div>
-   <br/><br/>
-   <div class="table-responsive">
-      <table class="table table-hover">
          <tr>
-            <td><b>Neto:</b> {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</td>
-            <td align="center"><b>IVA:</b> {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</td>
-            <td align="right"><b>Total:</b> {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</td>
+            <td colspan="4"></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</b></td>
          </tr>
       </table>
    </div>
-</div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones">Copia del {$albaran} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Copiar
+            </button>
+         </div>
+      </div>
+   </div>
+</form>
 
 {include="footer"}

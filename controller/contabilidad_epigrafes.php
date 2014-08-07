@@ -63,10 +63,6 @@ class contabilidad_epigrafes extends fs_controller
       }
       else if( isset($_GET['grupo']) ) /// ver grupo
       {
-         $npage = $this->page->get('contabilidad_epigrafes');
-         if($npage)
-            $this->buttons[] = new fs_button_img('b_nuevo_epigrafe', 'Nuevo epígrafe', 'add.png', $npage->url().'#nuevo_epigrafe');
-		  
          $this->epigrafe = FALSE;
          $this->grupo = $grupo0->get($_GET['grupo']);
          if($this->grupo AND isset($_POST['descripcion']) )
@@ -216,11 +212,6 @@ class contabilidad_epigrafes extends fs_controller
       }
       else
       {
-		  
-      $npage = $this->page->get('contabilidad_epigrafes');
-      if($npage)
-         $this->buttons[] = new fs_button_img('b_nuevo_grupo', 'Nuevo grupo', 'add.png', $npage->url().'#nuevo_grupo');
-
          $this->grupo = FALSE;
          $this->epigrafe = FALSE;
          $this->resultados = $grupo0->all_from_ejercicio($this->empresa->codejercicio);
