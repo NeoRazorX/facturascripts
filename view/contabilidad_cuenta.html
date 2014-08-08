@@ -47,7 +47,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
                    <span class="glyphicon glyphicon-floppy-disk"></span>
                    &nbsp; Guardar
                 </button>
@@ -75,6 +75,7 @@
             <td>
                <select name="idcuentaesp" class="form-control">
                   <option value="---">Ninguna</option>
+                  <option value="---">-------</option>
                   {loop="$fsc->cuentas_especiales()"}
                   <option value="{$value->idcuentaesp}"{if condition="$value->idcuentaesp==$fsc->cuenta->idcuentaesp"} selected="selected"{/if}>
                      {$value->descripcion}

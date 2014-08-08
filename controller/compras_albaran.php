@@ -229,7 +229,7 @@ class compras_albaran extends fs_controller
                         if( isset($_POST['desc_'.$num]) )
                            $lineas[$k]->descripcion = $_POST['desc_'.$num];
                         
-                        if( $serie->siniva )
+                        if( $serie->siniva OR $proveedor->regimeniva == 'Exento' )
                         {
                            $lineas[$k]->codimpuesto = NULL;
                            $lineas[$k]->iva = 0;
@@ -279,7 +279,7 @@ class compras_albaran extends fs_controller
                         else
                            $linea->descripcion = $art0->descripcion;
                         
-                        if( $serie->siniva )
+                        if( $serie->siniva OR $proveedor->regimeniva == 'Exento' )
                         {
                            $linea->codimpuesto = NULL;
                            $linea->iva = 0;

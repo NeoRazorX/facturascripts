@@ -327,7 +327,7 @@ class tpv_recambios extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva )
+                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;

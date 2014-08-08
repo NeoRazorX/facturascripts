@@ -233,7 +233,7 @@ class nueva_compra extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva )
+                     if( $serie->siniva OR $proveedor->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
