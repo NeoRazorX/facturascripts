@@ -51,7 +51,7 @@ class presupuesto_cliente extends fs_model
    
    public function __construct($p = FALSE)
    {
-      parent::__construct('presupuestoscli', 'plugins/presupuestos/');
+      parent::__construct('presupuestoscli', 'plugins/presupuestos_y_pedidos/');
       
       if($p)
       {
@@ -70,7 +70,7 @@ class presupuesto_cliente extends fs_model
          $this->codpostal = $p['codpostal'];
          $this->codserie = $p['codserie'];
          $this->direccion = $p['direccion'];
-         $this->editable = $p['editable'];
+         $this->editable = $this->str2bool($p['editable']);
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
          $this->idpresupuesto = $this->intval($p['idpresupuesto']);
          $this->neto = floatval($p['neto']);
@@ -123,9 +123,9 @@ class presupuesto_cliente extends fs_model
    public function url()
    {
       if( is_null($this->idpresupuesto) )
-         return 'index.php?page=ver_presupuesto_cli';
+         return 'index.php?page=ventas_presupuestos';
       else
-         return 'index.php?page=ver_presupuesto_cli&id='.$this->idpresupuesto;
+         return 'index.php?page=ventas_presupuesto&id='.$this->idpresupuesto;
    }
    
    public function get($id)

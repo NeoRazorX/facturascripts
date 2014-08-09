@@ -41,7 +41,7 @@ class linea_pedido_cliente extends fs_model
    
    public function __construct($l = FALSE)
    {
-      parent::__construct('lineaspedidoscli', 'plugins/pedidos/');
+      parent::__construct('lineaspedidoscli', 'plugins/presupuestos_y_pedidos/');
       
       if( !isset(self::$pedidos) )
          self::$pedidos = array();

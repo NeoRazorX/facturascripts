@@ -35,7 +35,7 @@ class linea_presupuesto_cliente extends fs_model
    
    public function __construct($l = FALSE)
    {
-      parent::__construct('lineaspresupuestoscli', 'plugins/presupuestos/');
+      parent::__construct('lineaspresupuestoscli', 'plugins/presupuestos_y_pedidos/');
       
       if($l)
       {
@@ -80,9 +80,9 @@ class linea_presupuesto_cliente extends fs_model
    public function url()
    {
       if( is_null($this->idpresupuesto) )
-         return 'index.php?page=ver_presupuesto_cli';
+         return 'index.php?page=ventas_presupuestos';
       else
-         return 'index.php?page=ver_presupuesto_cli&id='.$this->idpresupuesto;
+         return 'index.php?page=ventas_presupuesto&id='.$this->idpresupuesto;
    }
    
    public function articulo_url()
