@@ -129,7 +129,7 @@ class nueva_venta extends fs_controller
    {
       return array(
           array('tipo' => 'presupuesto', 'nombre' => 'Presupuesto a cliente'),
-          array('tipo' => 'pedido', 'nombre' => 'Pedido de cliente')
+          array('tipo' => 'pedido', 'nombre' => 'Pedido de cliente'),
           array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de cliente'),
           array('tipo' => 'factura', 'nombre' => 'Factura de cliente')
       );
@@ -305,7 +305,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
+                     if($serie->siniva)
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
@@ -506,7 +506,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
+                     if($serie->siniva)
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
@@ -707,7 +707,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
+                     if($serie->siniva)
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
