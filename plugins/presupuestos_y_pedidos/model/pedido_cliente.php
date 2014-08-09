@@ -2,7 +2,6 @@
 /*
  * This file is part of FacturaSctipts
  * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
- * Copyright (C) 2014  Francesc Pineda Segarra  shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,51 +26,41 @@ require_model('albaran_cliente.php');
 require_model('linea_pedido_cliente.php');
 require_model('secuencia.php');
 
-/**
- * Pedido de cliente
- */
 class pedido_cliente extends fs_model
 {
-   public $idpedido;
-   public $idalbaran;
-   public $codigo;
-   public $codserie;
-   public $codejercicio;
-   public $codcliente;
-   public $codagente;
-   public $codpago;
-   public $coddivisa;
-   public $codalmacen;
-   public $codpais;
-   public $coddir;
-   public $codpostal;
-   public $numero;
-   public $numero2;
-   public $nombrecliente;
-   public $cifnif;
-   public $direccion;
-   public $ciudad;
-   public $provincia;
    public $apartado;
+   public $cifnif;
+   public $ciudad;
+   public $codagente;
+   public $codalmacen;
+   public $codcliente;
+   public $coddir;
+   public $coddivisa;
+   public $codejercicio;
+   public $codigo;
+   public $codpago;
+   public $codpais;
+   public $codpostal;
+   public $codserie;
+   public $direccion;
+   public $editable;
    public $fecha;
-   public $hora;
+   public $idpedido;
    public $neto;
-   public $total;
-   public $totaliva;
-   public $totaleuros;
-   public $irpf;
-   public $totalirpf;
-   public $porcomision;
-   public $tasaconv;
-   public $recfinanciero;
-   public $totalrecargo;
+   public $nombrecliente;
+   public $numero;
    public $observaciones;
-   public $ptealbaran;
+   public $provincia;
+   public $tasaconv;
+   public $total;
+   public $totaleuros;
+   public $totaliva;
    
-   public function __construct($a=FALSE)
+   public function __construct($p = FALSE)
    {
-      parent::__construct('pedidoscli');
-      if($a)
+      parent::__construct('pedidoscli', 'plugins/pedidos/');
+      
+      if($p)
       {
          $this->idpedido = $this->intval($a['idpedido']);
          if( $this->str2bool($a['ptealbaran']) )
@@ -84,80 +73,65 @@ class pedido_cliente extends fs_model
             $this->ptealbaran = FALSE;
             $this->idalbaran = $this->intval($a['idalbaran']);
          }
-         $this->codigo = $a['codigo'];
-         $this->codagente = $a['codagente'];
-         $this->codserie = $a['codserie'];
-         $this->codejercicio = $a['codejercicio'];
-         $this->codcliente = $a['codcliente'];
-         $this->codpago = $a['codpago'];
-         $this->coddivisa = $a['coddivisa'];
-         $this->codalmacen = $a['codalmacen'];
-         $this->codpais = $a['codpais'];
-         $this->coddir = $a['coddir'];
-         $this->codpostal = $a['codpostal'];
-         $this->numero = $a['numero'];
-         $this->numero2 = $a['numero2'];
-         $this->nombrecliente = $a['nombrecliente'];
-         $this->cifnif = $a['cifnif'];
-         $this->direccion = $a['direccion'];
-         $this->ciudad = $a['ciudad'];
-         $this->provincia = $a['provincia'];
-         $this->apartado = $a['apartado'];
-         $this->fecha = Date('d-m-Y', strtotime($a['fecha']));
-         
-         $this->hora = '00:00:00';
-         if( !is_null($a['hora']) )
-            $this->hora = $a['hora'];
-         
-         $this->neto = floatval($a['neto']);
-         $this->total = floatval($a['total']);
-         $this->totaliva = floatval($a['totaliva']);
-         $this->totaleuros = floatval($a['totaleuros']);
-         $this->irpf = floatval($a['irpf']);
-         $this->totalirpf = floatval($a['totalirpf']);
-         $this->porcomision = floatval($a['porcomision']);
-         $this->tasaconv = floatval($a['tasaconv']);
-         $this->recfinanciero = floatval($a['recfinanciero']);
-         $this->totalrecargo = floatval($a['totalrecargo']);
-         $this->observaciones = $this->no_html($a['observaciones']);
+         $this->apartado = $p['apartado'];
+         $this->cifnif = $p['cifnif'];
+         $this->ciudad = $p['ciudad'];
+         $this->codagente = $p['codagente'];
+         $this->codalmacen = $p['codalmacen'];
+         $this->codcliente = $p['codcliente'];
+         $this->coddir = $p['coddir'];
+         $this->coddivisa = $p['coddivisa'];
+         $this->codejercicio = $p['codejercicio'];
+         $this->codigo = $p['codigo'];
+         $this->codpago = $p['codpago'];
+         $this->codpais = $p['codpais'];
+         $this->codpostal = $p['codpostal'];
+         $this->codserie = $p['codserie'];
+         $this->direccion = $p['direccion'];
+         $this->editable = $p['editable'];
+         $this->fecha = date('d-m-Y', strtotime($p['fecha']));
+         $this->idpedido = $p['idpedido'];
+         $this->neto = $p['neto'];
+         $this->nombrecliente = $p['nombrecliente'];
+         $this->numero = $p['numero'];
+         $this->observaciones = $p['observaciones'];
+         $this->provincia = $p['provincia'];
+         $this->tasaconv = $p['tasaconv'];
+         $this->total = $p['total'];
+         $this->totaleuros = $p['totaleuros'];
+         $this->totaliva = $p['totaliva'];
       }
       else
       {
+         $this->apartado = NULL;
+         $this->cifnif = NULL;
+         $this->ciudad = NULL;
+         $this->codagente = NULL;
+         $this->codalmacen = NULL;
+         $this->codcliente = NULL;
+         $this->coddir = NULL;
+         $this->coddivisa = NULL;
+         $this->codejercicio = NULL;
+         $this->codigo = NULL;
+         $this->codpago = NULL;
+         $this->codpais = NULL;
+         $this->codpostal = NULL;
+         $this->codserie = NULL;
+         $this->direccion = NULL;
+         $this->editable = TRUE;
+         $this->fecha = date('d-m-Y');
          $this->idpedido = NULL;
          $this->idalbaran = NULL;
-         $this->codigo = NULL;
-         $this->codagente = NULL;
-         $this->codserie = NULL;
-         $this->codejercicio = NULL;
-         $this->codcliente = NULL;
-         $this->codpago = NULL;
-         $this->coddivisa = NULL;
-         $this->codalmacen = NULL;
-         $this->codpais = NULL;
-         $this->coddir = NULL;
-         $this->codpostal = '';
-         $this->numero = NULL;
-         $this->numero2 = NULL;
-         $this->nombrecliente = NULL;
-         $this->cifnif = NULL;
-         $this->direccion = NULL;
-         $this->ciudad = NULL;
-         $this->provincia = NULL;
-         $this->apartado = NULL;
-         $this->fecha = Date('d-m-Y');
-         $this->hora = Date('H:i:s');
          $this->neto = 0;
-         $this->total = 0;
-         $this->totaliva = 0;
-         $this->totaleuros = 0;
-         $this->irpf = 0;
-         $this->totalirpf = 0;
-         $this->porcomision = NULL;
-         $this->tasaconv = 1;
-         $this->recfinanciero = 0;
-         $this->totalrecargo = 0;
-         $this->observaciones = NULL;
+         $this->nombrecliente = NULL;
+         $this->numero = 0;
+         $this->observaciones = '';
+         $this->provincia = NULL;
          $this->ptealbaran = TRUE;
+         $this->tasaconv = 1;
+         $this->total = 0;
+         $this->totaleuros = 0;
+         $this->totaliva = 0;
       }
    }
    
@@ -166,30 +140,12 @@ class pedido_cliente extends fs_model
       return '';
    }
    
-   public function show_hora($s=TRUE)
-   {
-      if($s)
-         return Date('H:i:s', strtotime($this->hora));
-      else
-         return Date('H:i', strtotime($this->hora));
-   }
-   
-   public function observaciones_resume()
-   {
-      if($this->observaciones == '')
-         return '-';
-      else if( strlen($this->observaciones) < 60 )
-         return $this->observaciones;
-      else
-         return substr($this->observaciones, 0, 50).'...';
-   }
-   
    public function url()
    {
       if( is_null($this->idpedido) )
-         return 'index.php?page=general_pedidos_cli';
+         return 'index.php?page=pedidos_cliente';
       else
-         return 'index.php?page=general_pedido_cli&id='.$this->idpedido;
+         return 'index.php?page=ver_pedido_cli&id='.$this->idpedido;
    }
    
    public function albaran_url()
@@ -201,9 +157,9 @@ class pedido_cliente extends fs_model
       else
       {
          if( is_null($this->idalbaran) )
-            return 'index.php?page=contabilidad_albaranes_cli';
+            return 'index.php?page=general_albaran_cli';
          else
-            return 'index.php?page=contabilidad_albaran_cli&id='.$this->idalbaran;
+            return 'index.php?page=general_albaran_cli&id='.$this->idfactura;
       }
    }
    
@@ -258,7 +214,7 @@ class pedido_cliente extends fs_model
       if( is_null($this->idpedido) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idalbaran).";");
    }
    
    public function new_idpedido()
@@ -270,6 +226,7 @@ class pedido_cliente extends fs_model
    
    public function new_codigo()
    {
+	   /* FALTA REVISAR */
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npedidocli');
       if($sec)
@@ -301,116 +258,7 @@ class pedido_cliente extends fs_model
    
    public function test()
    {
-      $this->observaciones = $this->no_html($this->observaciones);
-      $this->totaleuros = $this->total * $this->tasaconv;
       
-      if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
-      {
-         return TRUE;
-      }
-      else
-      {
-         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
-            ¡Avisa al informático!");
-         return FALSE;
-      }
-   }
-   
-   public function full_test($duplicados = TRUE)
-   {
-      $status = TRUE;
-      
-      /// comprobamos las líneas
-      $neto = 0;
-      $iva = 0;
-      foreach($this->get_lineas() as $l)
-      {
-         if( !$l->test() )
-            $status = FALSE;
-         
-         $neto += $l->pvptotal;
-         $iva += $l->pvptotal * $l->iva / 100;
-      }
-      
-      /// comprobamos los totales
-      if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
-      {
-         $this->new_error_msg("Valor neto de pedido incorrecto. Valor correcto: ".$neto);
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($this->totaliva, $iva, 2, TRUE) )
-      {
-         $this->new_error_msg("Valor totaliva de pedido incorrecto. Valor correcto: ".$iva);
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
-      {
-         $this->new_error_msg("Valor total de pedido incorrecto. Valor correcto: ".
-                 round($this->neto + $this->totaliva, 2));
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, 2, TRUE) )
-      {
-         $this->new_error_msg("Valor totaleuros de pedido incorrecto.
-            Valor correcto: ".round($this->total * $this->tasaconv, 2));
-         $status = FALSE;
-      }
-      
-      /// comprobamos los albaranes asociadas
-      $linea_albaran = new linea_albaran_cliente();
-      $albarans = $linea_albaran->albaranes_from_pedido( $this->idpedido );
-      if($albarans)
-      {
-         if( count($albarans) > 1 )
-         {
-            $msg = "Este pedido esta asociado a los siguientes ".FS_ALBARANES." (y no debería):";
-            foreach($albarans as $f)
-               $msg .= " <a href='".$f->url()."'>".$f->codigo."</a>";
-            $this->new_error_msg($msg);
-            $status = FALSE;
-         }
-         else if($albarans[0]->idalbaran != $this->idalbaran)
-         {
-            $this->new_error_msg("Este pedido esta asociado a un <a href='".$this->albaran_url().
-                    "'>".FS_ALBARAN."</a> incorrecto. El correcto es <a href='".$albarans[0]->url().
-                    "'>esta</a>.");
-            $status = FALSE;
-         }
-      }
-      else if( isset($this->idalbaran) )
-      {
-         $this->new_error_msg("Este pedido esta asociado a un <a href='".$this->albaran_url()."'>".FS_ALBARAN."</a> incorrecto.");
-         $status = FALSE;
-      }
-      
-      if($status AND $duplicados)
-      {
-         /// comprobamos si es un duplicado
-         $pedidos = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fecha = ".$this->var2str($this->fecha)."
-            AND codcliente = ".$this->var2str($this->codcliente)." AND total = ".$this->var2str($this->total)."
-            AND codagente = ".$this->var2str($this->codagente)." AND numero2 = ".$this->var2str($this->numero2)."
-            AND observaciones = ".$this->var2str($this->observaciones)." AND idpedido != ".$this->var2str($this->idpedido).";");
-         if($pedidos)
-         {
-            foreach($pedidos as $presu)
-            {
-               /// comprobamos las líneas
-               $aux = $this->db->select("SELECT referencia FROM lineaspedidoscli WHERE
-                  idpedido = ".$this->var2str($this->idpedido)."
-                  AND referencia NOT IN (SELECT referencia FROM lineaspedidoscli
-                  WHERE idpedido = ".$this->var2str($presu['idpedido']).");");
-               if( !$aux )
-               {
-                  $this->new_error_msg("Este pedido es un posible duplicado de
-                     <a href='index.php?page=general_pedido_cli&id=".$presu['idpedido']."'>este otro</a>.
-                     Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
-                  $status = FALSE;
-               }
-            }
-         }
-      }
-      
-      return $status;
    }
    
    public function save()
@@ -442,7 +290,7 @@ class pedido_cliente extends fs_model
                recfinanciero = ".$this->var2str($this->recfinanciero).",
                totalrecargo = ".$this->var2str($this->totalrecargo).",
                observaciones = ".$this->var2str($this->observaciones).",
-               ptealbaran = ".$this->var2str($this->ptealbaran)."
+               ptefactura = ".$this->var2str($this->ptefactura)."
                WHERE idpedido = ".$this->var2str($this->idpedido).";";
          }
          else
@@ -492,76 +340,79 @@ class pedido_cliente extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }
    
-   public function all($offset=0)
+   public function all($offset = 0)
    {
-      $presualist = array();
-      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $pedilist = array();
+      
+      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presualist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presualist;
+      
+      return $pedilist;
    }
    
    public function all_ptealbaran($offset=0, $order='DESC')
    {
-      $presualist = array();
+      $pedilist = array();
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " WHERE ptealbaran = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
+              " WHERE editable = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presualist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presualist;
+      return $pedilist;
    }
    
    public function all_from_cliente($codcliente, $offset=0)
    {
-      $presualist = array();
+      $pedilist = array();
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
               " WHERE codcliente = ".$this->var2str($codcliente).
               " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presualist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presualist;
+      return $pedilist;
    }
    
    public function all_from_agente($codagente, $offset=0)
    {
-      $presualist = array();
+      $pedilist = array();
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
               " WHERE codagente = ".$this->var2str($codagente).
               " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presualist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presualist;
+      return $pedilist;
    }
    
    public function all_desde($desde, $hasta)
    {
-      $presulist = array();
+      $pedilist = array();
       $pedidos = $this->db->select("SELECT * FROM ".$this->table_name.
          " WHERE fecha >= ".$this->var2str($desde)." AND fecha <= ".$this->var2str($hasta).
          " ORDER BY codigo ASC;");
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presulist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presulist;
+      return $pedilist;
    }
    
    public function search($query, $offset=0)
    {
-      $presulist = array();
+      $pedilist = array();
       $query = strtolower( $this->no_html($query) );
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
@@ -579,15 +430,15 @@ class pedido_cliente extends fs_model
       $pedidos = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presulist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presulist;
+      return $pedilist;
    }
    
    public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
    {
-      $presualist = array();
+      $albalist = array();
       $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
          " AND ptealbaran AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
          " AND codserie = ".$this->var2str($serie);
@@ -600,17 +451,17 @@ class pedido_cliente extends fs_model
       $pedidos = $this->db->select($sql);
       if($pedidos)
       {
-         foreach($pedidos as $a)
-            $presualist[] = new pedido_cliente($a);
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
       }
-      return $presualist;
+      return $pedilist;
    }
    
    public function cron_job()
    {
       /*
-       * Marcamos como ptealbaran = TRUE todos los pedidos de ejercicios
-       * ya cerrados. Así no se podrán modificar ni albaranar.
+       * Marcamos como ptealbaran = TRUE todos los albaranes de ejercicios
+       * ya cerrados. Así no se podrán modificar ni facturar.
        */
       $ejercicio = new ejercicio();
       foreach($ejercicio->all() as $eje)

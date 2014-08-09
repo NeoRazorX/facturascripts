@@ -2,7 +2,6 @@
 /*
  * This file is part of FacturaSctipts
  * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
- * Copyright (C) 2014  Francesc Pineda Segarra  shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,72 +19,60 @@
 
 require_once 'base/fs_model.php';
 
-/**
- * Línea de un pedido de cliente.
- */
 class linea_pedido_cliente extends fs_model
 {
-   public $idlinea; /// pkey
+   public $pvptotal;
    public $idpedido;
-   public $referencia;
-   public $descripcion;
    public $cantidad;
-   public $dtopor;
-   public $dtolineal;
+   public $descripcion;
+   public $idlinea; /// pkey
    public $codimpuesto;
    public $iva;
-   public $pvptotal;
+   public $dtopor;
    public $pvpsindto;
    public $pvpunitario;
-   public $irpf;
-   public $recargo;
+   public $referencia;
    
    private $codigo;
    private $fecha;
    private $pedido_url;
    
    private static $pedidos;
-
-   public function __construct($l=FALSE)
+   
+   public function __construct($l = FALSE)
    {
-      parent::__construct('lineaspedidoscli');
+      parent::__construct('lineaspedidoscli', 'plugins/pedidos/');
       
       if( !isset(self::$pedidos) )
          self::$pedidos = array();
       
       if($l)
       {
-         $this->idlinea = $this->intval($l['idlinea']);
-         $this->idpedido = $this->intval($l['idpedido']);
-         $this->referencia = $l['referencia'];
-         $this->descripcion = $l['descripcion'];
          $this->cantidad = floatval($l['cantidad']);
-         $this->dtopor = floatval($l['dtopor']);
-         $this->dtolineal = floatval($l['dtolineal']);
          $this->codimpuesto = $l['codimpuesto'];
+         $this->descripcion = $l['descripcion'];
+         $this->dtopor = floatval($l['dtopor']);
+         $this->idlinea = $l['idlinea'];
+         $this->idpedido = $l['idpedido'];
          $this->iva = floatval($l['iva']);
-         $this->pvptotal = floatval($l['pvptotal']);
          $this->pvpsindto = floatval($l['pvpsindto']);
+         $this->pvptotal = floatval($l['pvptotal']);
          $this->pvpunitario = floatval($l['pvpunitario']);
-         $this->irpf = floatval($l['irpf']);
-         $this->recargo = floatval($l['recargo']);
+         $this->referencia = $l['referencia'];
       }
       else
       {
+         $this->cantidad = 0;
+         $this->codimpuesto = NULL;
+         $this->descripcion = NULL;
+         $this->dtopor = 0;
          $this->idlinea = NULL;
          $this->idpedido = NULL;
-         $this->referencia = '';
-         $this->descripcion = '';
-         $this->cantidad = 0;
-         $this->dtopor = 0;
-         $this->dtolineal = 0;
-         $this->codimpuesto = NULL;
          $this->iva = 0;
-         $this->pvptotal = 0;
          $this->pvpsindto = 0;
+         $this->pvptotal = 0;
          $this->pvpunitario = 0;
-         $this->irpf = 0;
-         $this->recargo = 0;
+         $this->referencia = NULL;
       }
    }
    
@@ -94,72 +81,17 @@ class linea_pedido_cliente extends fs_model
       return '';
    }
    
-   private function fill()
-   {
-      $encontrado = FALSE;
-      foreach(self::$pedidos as $a)
-      {
-         if($a->idpedido == $this->idpedido)
-         {
-            $this->codigo = $a->codigo;
-            $this->fecha = $a->fecha;
-            $this->pedido_url = $a->url();
-            $encontrado = TRUE;
-            break;
-         }
-      }
-      if( !$encontrado )
-      {
-         $presu = new pedido_cliente();
-         $presu = $presu->get($this->idpedido);
-         if( $presu )
-         {
-            $this->codigo = $presu->codigo;
-            $this->fecha = $presu->fecha;
-            $this->pedido_url = $presu->url();
-            self::$pedidos[] = $presu;
-         }
-      }
-   }
-   
-   public function pvp_iva()
-   {
-      return $this->pvpunitario*(100+$this->iva)/100;
-   }
-   
    public function total_iva()
    {
       return $this->pvptotal*(100+$this->iva)/100;
    }
    
-   /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
-   public function total_iva2()
-   {
-      if($this->cantidad == 0)
-         return 0;
-      else
-         return $this->pvptotal*(100+$this->iva)/100/$this->cantidad;
-   }
-   
-   public function show_codigo()
-   {
-      if( !isset($this->codigo) )
-         $this->fill();
-      return $this->codigo;
-   }
-   
-   public function show_fecha()
-   {
-      if( !isset($this->fecha) )
-         $this->fill();
-      return $this->fecha;
-   }
-   
    public function url()
    {
-      if( !isset($this->pedido_url) )
-         $this->fill();
-      return $this->pedido_url;
+      if( is_null($this->idpedido) )
+         return 'index.php?page=ver_pedido_cli';
+      else
+         return 'index.php?page=ver_pedido_cli&id='.$this->idpedido;
    }
    
    public function articulo_url()
@@ -187,24 +119,7 @@ class linea_pedido_cliente extends fs_model
    
    public function test()
    {
-      $this->descripcion = $this->no_html($this->descripcion);
-      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-      $totalsindto = $this->pvpunitario * $this->cantidad;
       
-      if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
-      {
-         $this->new_error_msg("Error en el valor de pvptotal de la línea ".
-                 $this->referencia." del pedido. Valor correcto: ".$total);
-         return FALSE;
-      }
-      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
-      {
-         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".
-                 $this->referencia." del pedido. Valor correcto: ".$totalsindto);
-         return FALSE;
-      }
-      else
-         return TRUE;
    }
    
    public function save()
@@ -254,21 +169,24 @@ class linea_pedido_cliente extends fs_model
    
    public function clean_cache()
    {
-      $this->cache->delete('precli_top_articulos');
+      $this->cache->delete('pedcli_top_articulos');
    }
    
-   public function all_from_pedido($id)
+   public function all_from_pedido($idp)
    {
-      $linealist = array();
-      $lineas = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idpedido = ".$this->var2str($id)." ORDER BY idlinea ASC;");
-      if($lineas)
+      $plist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name.
+              " WHERE idpedido = ".$this->var2str($idp)." ORDER BY referencia ASC;");
+      if($data)
       {
-         foreach($lineas as $l)
-            $linealist[] = new linea_pedido_cliente($l);
+         foreach($data as $d)
+            $plist[] = new linea_pedido_cliente($d);
       }
-      return $linealist;
+      
+      return $plist;
    }
+   
    
    public function all_from_articulo($ref, $offset=0, $limit=FS_ITEM_LIMIT)
    {
@@ -316,7 +234,7 @@ class linea_pedido_cliente extends fs_model
       $query = strtolower( $this->no_html($query) );
       
       $sql = "SELECT * FROM ".$this->table_name." WHERE idpedido IN
-         (SELECT idpedido FROM pedidoscli WHERE codcliente = ".$this->var2str($codcliente).") AND ";
+         (SELECT idpedido FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).") AND ";
       if( is_numeric($query) )
       {
          $sql .= "(referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%')";
@@ -342,8 +260,8 @@ class linea_pedido_cliente extends fs_model
       $linealist = array();
       $ref = strtolower( $this->no_html($ref) );
       
-      $sql = "SELECT * FROM ".$this->table_name." WHERE idpedido IN
-         (SELECT idpedido FROM pedidoscli WHERE codcliente = ".$this->var2str($codcliente)."
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idalbaran IN
+         (SELECT idpedido FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente)."
          AND lower(observaciones) LIKE '".strtolower($obs)."%') AND ";
       if( is_numeric($ref) )
       {
@@ -369,8 +287,8 @@ class linea_pedido_cliente extends fs_model
    {
       $linealist = array();
       
-      $sql = "SELECT * FROM ".$this->table_name." WHERE idpedido IN
-         (SELECT idpedido FROM pedidoscli WHERE codcliente = ".$this->var2str($codcliente).")
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idalbaran IN
+         (SELECT idpedido FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).")
          ORDER BY idpedido DESC, idlinea ASC";
       
       $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
@@ -394,7 +312,7 @@ class linea_pedido_cliente extends fs_model
    
    public function top_by_articulo()
    {
-      $toplist = $this->cache->get_array('precli_top_articulos');
+      $toplist = $this->cache->get_array('pedcli_top_articulos');
       if( !$toplist )
       {
          $articulo = new articulo();
@@ -409,7 +327,7 @@ class linea_pedido_cliente extends fs_model
                   $toplist[] = array($art0, intval($l['ventas']));
             }
          }
-         $this->cache->set('precli_top_articulos', $toplist);
+         $this->cache->set('pedcli_top_articulos', $toplist);
       }
       return $toplist;
    }

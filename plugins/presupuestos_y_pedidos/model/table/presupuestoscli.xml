@@ -12,7 +12,7 @@
    </columna>
    <columna>
       <nombre>cifnif</nombre>
-      <tipo>character varying(20)</tipo>
+      <tipo>character varying(12)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
@@ -56,6 +56,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>codoportunidad</nombre>
+      <tipo>character varying(8)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>codpago</nombre>
       <tipo>character varying(10)</tipo>
       <nulo>NO</nulo>
@@ -81,26 +86,35 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>editable</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>estado</nombre>
+      <tipo>character varying(25)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>fecha</nombre>
       <tipo>date</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>hora</nombre>
-      <tipo>time without time zone</tipo>
+      <nombre>fechasalida</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>finoferta</nombre>
+      <tipo>date</tipo>
       <nulo>YES</nulo>
-      <defecto>now()</defecto>
    </columna>
    <columna>
       <nombre>idpresupuesto</nombre>
       <tipo>serial</tipo>
       <nulo>NO</nulo>
       <defecto>nextval('presupuestoscli_idpresupuesto_seq'::regclass)</defecto>
-   </columna>
-   <columna>
-      <nombre>idpedido</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>idprovincia</nombre>
@@ -111,13 +125,11 @@
       <nombre>irpf</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>neto</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>nombrecliente</nombre>
@@ -128,11 +140,6 @@
       <nombre>numero</nombre>
       <tipo>character varying(12)</tipo>
       <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>numero2</nombre>
-      <tipo>character varying(20)</tipo>
-      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>observaciones</nombre>
@@ -150,69 +157,40 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>ptepedido</nombre>
-      <tipo>boolean</tipo>
-      <nulo>NO</nulo>
-      <defecto>true</defecto>
-   </columna>
-   <columna>
       <nombre>recfinanciero</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>tasaconv</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>1</defecto>
    </columna>
    <columna>
       <nombre>total</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>totaleuros</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>totalirpf</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>totaliva</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
-      <defecto>0</defecto>
    </columna>
    <columna>
       <nombre>totalrecargo</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
-      <defecto>0</defecto>
+      <nulo>YES</nulo>
    </columna>
-   <restriccion>
-      <nombre>ca_presupuestoscli_series2</nombre>
-      <consulta>FOREIGN KEY (codserie)
-      REFERENCES series (codserie)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
-      <nombre>ca_presupuestoscli_ejercicios2</nombre>
-      <consulta>FOREIGN KEY (codejercicio)
-      REFERENCES ejercicios (codejercicio)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
-      <nombre>uniq_codigo_presupuestoscli</nombre>
-      <consulta>UNIQUE (codigo)</consulta>
-   </restriccion>
    <restriccion>
       <nombre>presupuestoscli_pkey</nombre>
       <consulta>PRIMARY KEY (idpresupuesto)</consulta>

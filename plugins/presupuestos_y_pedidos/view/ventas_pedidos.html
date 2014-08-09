@@ -1,0 +1,37 @@
+{include="header"}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th align="left">Código + Cliente</th>
+            <th align="left">Observaciones</th>
+            <th align="right">Total</th>
+            <th align="right">Fecha</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr>
+         <td align="center">
+            {if condition="!$value->ptefactura"}
+            <span class="glyphicon glyphicon-paperclip" title="hay un albarán asociado"></span>
+            {/if}
+         </td>
+         <td>
+            <a href="{$value->url()}">{$value->codigo}</a>
+            {$value->nombrecliente}
+         </td>
+         <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
+         <td align="right">{$fsc->show_precio($value->total)}</td>
+         <td align="right">{$value->fecha}</td>
+      </tr>
+      {else}
+      <tr>
+         <td colspan="4" align="center">Sin resultados</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+{include="footer"}
