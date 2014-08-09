@@ -1,33 +1,41 @@
 {if condition="$fsc->regiva"}
-   <h1>Regularización del periódo {$fsc->regiva->periodo}</h1>
-   <table class="list">
-      <tr>
-         <th align="left">Ejercicio</th>
-         <th align="left">Periodo</th>
-         <th>Fecha de inicio</th>
-         <th>Fecha fin</th>
-      </tr>
+<div class="modal-header">
+   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+   <h4 class="modal-title">Regularización del periódo {$fsc->regiva->periodo}</h4>
+</div>
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Ejercicio</th>
+            <th align="left">Periodo</th>
+            <th>Fecha de inicio</th>
+            <th>Fecha fin</th>
+            <th class="text-right">Asiento (fecha)</th>
+         </tr>
+      </thead>
       <tr>
          <td><a href="{$fsc->regiva->ejercicio_url()}">{$fsc->regiva->codejercicio}</a></td>
          <td>{$fsc->regiva->periodo}</td>
          <td align="center">{$fsc->regiva->fechainicio}</td>
          <td align="center">{$fsc->regiva->fechafin}</td>
+         <td class="text-right">
+            <a target="_blank" href="{$fsc->regiva->asiento_url()}">Asiento</a>
+            ({$fsc->regiva->fechaasiento})
+         </td>
       </tr>
    </table>
-   
-   <br/><br/>
-   
-   <center>
-      <a target="_blank" href="{$fsc->regiva->asiento_url()}">Asiento</a>
-      {$fsc->regiva->fechaasiento}
-   </center>
-   
-   <table class="list">
-      <tr>
-         <th align="left">Subcuenta</th>
-         <th align="right">Debe</th>
-         <th align="right">Haber</th>
-      </tr>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th align="left">Subcuenta</th>
+            <th align="right">Debe</th>
+            <th align="right">Haber</th>
+         </tr>
+      </thead>
       {loop="$fsc->regiva->get_partidas()"}
       <tr>
          <td>
@@ -42,13 +50,13 @@
       </tr>
       {/loop}
    </table>
-   
-   <br/><br/>
-   
-   <a class="delete" href="{$fsc->url()}&delete={$fsc->regiva->idregiva}">
-      <img src="view/img/trash.png"/>
-      eliminar
+</div>
+<div class="modal-footer">
+   <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$fsc->regiva->idregiva}">
+      <span class="glyphicon glyphicon-trash"></span>
+      &nbsp; Eliminar
    </a>
+</div>
 {else}
    <h1>Regularización no encontrada</h1>
 {/if}

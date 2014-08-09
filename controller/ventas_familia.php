@@ -61,7 +61,7 @@ class ventas_familia extends fs_controller
       
       if( $this->familia AND isset($_POST['stats']) )
       {
-         $this->template = 'ajax/general_familia_stats';
+         $this->template = 'ajax/ventas_familia_stats';
          $this->familia->stats();
       }
       else if($this->familia)

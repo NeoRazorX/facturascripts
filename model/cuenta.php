@@ -110,6 +110,22 @@ class cuenta extends fs_model
          return FALSE;
    }
    
+   /**
+    * Obtiene la primera cuenta especial seleccionada.
+    * @param type $id
+    * @param type $ejercicio
+    * @return boolean|\cuenta
+    */
+   public function get_cuentaesp($id, $ejercicio)
+   {
+      $cuenta = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE idcuentaesp = ".$this->var2str($id)." AND codejercicio = ".$this->var2str($ejercicio).";");
+      if($cuenta)
+         return new cuenta($cuenta[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idcuenta) )
@@ -234,5 +250,33 @@ class cuenta extends fs_model
             $cuenlist[] = new cuenta($c);
       }
       return $cuenlist;
+   }
+   
+   public function new_subcuenta($suma_codigo)
+   {
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($this->codejercicio);
+      if($eje0)
+      {
+         $codsubcuenta = intval( sprintf('%-0'.$eje0->longsubcuenta.'s', $this->codcuenta) ) + $suma_codigo;
+         $subcuenta = new subcuenta();
+         $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $this->codejercicio);
+         if($subc0)
+         {
+            return $subc0;
+         }
+         else
+         {
+            $subc0 = new subcuenta();
+            $subc0->codcuenta = $this->codcuenta;
+            $subc0->idcuenta = $this->idcuenta;
+            $subc0->codejercicio = $this->codejercicio;
+            $subc0->codsubcuenta = $codsubcuenta;
+            
+            return $subc0;
+         }
+      }
+      else
+         return FALSE;
    }
 }

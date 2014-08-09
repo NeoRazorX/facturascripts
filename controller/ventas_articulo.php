@@ -207,14 +207,13 @@ class ventas_articulo extends fs_controller
    
    private function buscar()
    {
-      $this->template = 'ajax/general_articulo';
+      $this->template = 'ajax/ventas_articulo';
       
       $this->buscar_limit = FS_ITEM_LIMIT;
       
+      $this->buscar_offset = 0;
       if( isset($_POST['offset']) )
          $this->buscar_offset = $_POST['offset'];
-      else
-         $this->buscar_offset = 0;
       
       $this->buscar_tipo = $_POST['buscar'];
       

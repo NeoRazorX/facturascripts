@@ -63,8 +63,8 @@
             <table class="table table-hover">
                <thead>
                   <tr>
-                     <th align="left" width="100">Código</th>
-                     <th align="left">Descripción</th>
+                     <th class="text-left" width="100">Código</th>
+                     <th class="text-left">Descripción</th>
                   </tr>
                </thead>
                {loop="$fsc->cuentas_especiales"}
@@ -111,8 +111,9 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Código + Descripción</th>
+            <th class="text-left">Ejercicio</th>
+            <th class="text-left">Código + Descripción</th>
+            <th class="text-right">Cuenta Especial</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -122,9 +123,10 @@
             <a href="{$value->url()}">{$value->codcuenta}</a>
             {$value->descripcion}
          </td>
+         <td class="text-right">{$value->idcuentaesp}</td>
       </tr>
       {else}
-      <tr><td colspan="2" align="center">Sin resultados</td></tr>
+      <tr><td colspan="3" align="center">Sin resultados</td></tr>
       {/loop}
    </table>
 </div>
@@ -163,8 +165,8 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Ejercicio</th>
-               <th align="left">Código + Descripción</th>
+               <th class="text-left">Ejercicio</th>
+               <th class="text-left">Código + Descripción</th>
             </tr>
          </thead>
          {loop="$fsc->resultados"}
@@ -200,20 +202,20 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Código + Descripción</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
+            <th class="text-left">Ejercicio</th>
+            <th class="text-left">Código + Descripción</th>
+            <th class="text-right">Debe</th>
+            <th class="text-right">Haber</th>
+            <th class="text-right">Saldo</th>
          </tr>
       </thead>
       {loop="$fsc->resultados2"}
       <tr>
          <td>{$value->codejercicio}</td>
          <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
       <tr><td colspan="5" align="center">Sin resultados</td></tr>

@@ -434,7 +434,7 @@
                   </thead>
                   {loop="$fsc->proveedor->get_subcuentas()"}
                   <tr>
-                     <td>{$value->codejercicio}</td>
+                     <td><div class="form-control">{$value->codejercicio}</div></td>
                      <td class="text-right">
                         <a class="btn btn-sm btn-default" href="index.php?page=subcuenta_asociada&pro={$fsc->proveedor->codproveedor}&idsc={$value->idsubcuenta}">
                            <span class="glyphicon glyphicon-wrench"></span>

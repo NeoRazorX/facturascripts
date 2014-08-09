@@ -27,6 +27,7 @@ class nueva_compra extends fs_controller
    public $proveedor;
    public $proveedor_s;
    public $results;
+   public $tipo;
    
    public function __construct()
    {
@@ -40,6 +41,19 @@ class nueva_compra extends fs_controller
       $this->familia = new familia();
       $this->impuesto = new impuesto();
       $this->results = array();
+      
+      if( isset($_GET['tipo']) )
+      {
+         $this->tipo = $_GET['tipo'];
+      }
+      else
+      {
+         foreach($this->tipos_a_guardar() as $t)
+         {
+            $this->tipo = $t['tipo'];
+            break;
+         }
+      }
       
       if( isset($_GET['new_articulo']) )
       {
@@ -72,6 +86,8 @@ class nueva_compra extends fs_controller
          
          if( isset($_POST['tipo']) )
          {
+            $this->tipo = $_POST['tipo'];
+            
             if($_POST['tipo'] == 'albaran')
             {
                $this->nuevo_albaran_proveedor();
@@ -95,6 +111,11 @@ class nueva_compra extends fs_controller
           array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de proveedor'),
           array('tipo' => 'factura', 'nombre' => 'Factura de proveedor')
       );
+   }
+   
+   public function url()
+   {
+      return 'index.php?page='.__CLASS__.'&tipo='.$this->tipo;
    }
    
    private function new_articulo()
@@ -124,6 +145,16 @@ class nueva_compra extends fs_controller
       
       $con_stock = isset($_POST['con_stock']);
       $this->results = $articulo->search($this->query, 0, $codfamilia, $con_stock);
+      
+      $proveedor = $this->proveedor->get($_POST['codproveedor']);
+      if($proveedor)
+      {
+         if($proveedor->regimeniva == 'Exento')
+         {
+            foreach($this->results as $i => $value)
+               $this->results[$i]->iva = 0;
+         }
+      }
    }
    
    private function nuevo_albaran_proveedor()

@@ -58,6 +58,7 @@ class tpv_recambios extends fs_controller
    protected function process()
    {
       $this->articulo = new articulo();
+      $this->cliente = new cliente();
       $this->familia = new familia();
       $this->results = array();
       
@@ -86,7 +87,6 @@ class tpv_recambios extends fs_controller
          $this->agente = $this->user->get_agente();
          $this->almacen = new almacen();
          $this->caja = new caja();
-         $this->cliente = new cliente();
          $this->divisa = new divisa();
          $this->ejercicio = new ejercicio();
          $this->forma_pago = new forma_pago();
@@ -177,6 +177,16 @@ class tpv_recambios extends fs_controller
       
       $con_stock = isset($_POST['con_stock']);
       $this->results = $this->articulo->search($this->query, 0, $codfamilia, $con_stock);
+      
+      $cliente = $this->cliente->get($_POST['codcliente']);
+      if($cliente)
+      {
+         if($cliente->regimeniva == 'Exento')
+         {
+            foreach($this->results as $i => $value)
+               $this->results[$i]->iva = 0;
+         }
+      }
    }
    
    private function get_precios_articulo()

@@ -180,10 +180,11 @@ class subcuenta extends fs_model
    
    public function get($id)
    {
-      $subc = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idsubcuenta = ".$this->var2str($id).";");
+      $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($id).";");
       if($subc)
+      {
          return new subcuenta($subc[0]);
+      }
       else
          return FALSE;
    }
@@ -194,12 +195,13 @@ class subcuenta extends fs_model
               " WHERE codsubcuenta = ".$this->var2str($cod).
               " AND codejercicio = ".$this->var2str($ejercicio).";");
       if($subc)
+      {
          return new subcuenta($subc[0]);
+      }
       else if($crear)
       {
          /// buscamos la subcuenta equivalente en otro ejercicio
-         $subc = $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE codsubcuenta = ".$this->var2str($cod).";");
+         $subc = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codsubcuenta = ".$this->var2str($cod).";");
          if($subc)
          {
             $old_sc = new subcuenta($subc[0]);
@@ -220,23 +222,35 @@ class subcuenta extends fs_model
                $new_sc->iva = $old_sc->iva;
                $new_sc->recargo = $old_sc->recargo;
                if( $new_sc->save() )
+               {
                   return $new_sc;
+               }
                else
                   return FALSE;
             }
             else
             {
-               $this->new_error_msg('No se ha encontrado la cuenta equivalente a '.
-                       $old_sc->codcuenta.' en el ejercicio '.$ejercicio.'.');
+               $this->new_error_msg('No se ha encontrado la cuenta equivalente a '.$old_sc->codcuenta.' en el ejercicio '.$ejercicio.'.');
                return FALSE;
             }
          }
          else
          {
-            $this->new_error_msg('No se ha encontrado ninguna subcuenta equivalente a '.
-                    $cod.' para copiar.');
+            $this->new_error_msg('No se ha encontrado ninguna subcuenta equivalente a '.$cod.' para copiar.');
             return FALSE;
          }
+      }
+      else
+         return FALSE;
+   }
+   
+   public function get_cuentaesp($id, $eje)
+   {
+      $data = $this->db->select("SELECT * FROM co_subcuentas WHERE idcuenta IN "
+         ."(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ".$this->var2str($id)." AND codejercicio = ".$this->var2str($eje).");");
+      if($data)
+      {
+         return new subcuenta($data[0]);
       }
       else
          return FALSE;
@@ -255,7 +269,9 @@ class subcuenta extends fs_model
               );";
       
       if( $this->db->select($sql) )
+      {
          return TRUE;
+      }
       else
          return FALSE;
    }
@@ -270,8 +286,7 @@ class subcuenta extends fs_model
       if( is_null($this->idsubcuenta) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
    public function test()
@@ -284,7 +299,9 @@ class subcuenta extends fs_model
       $this->saldo = $totales['saldo'];
       
       if( strlen($this->codsubcuenta)>0 AND strlen($this->descripcion)>0 )
+      {
          return TRUE;
+      }
       else
       {
          $this->new_error_msg('Faltan datos en la subcuenta.');

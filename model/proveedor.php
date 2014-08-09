@@ -155,7 +155,16 @@ class proveedor extends fs_model
       $sublist = array();
       $subcp = new subcuenta_proveedor();
       foreach($subcp->all_from_proveedor($this->codproveedor) as $s)
-         $sublist[] = $s->get_subcuenta();
+      {
+         $s2 = $s->get_subcuenta();
+         if($s2)
+         {
+            $sublist[] = $s2;
+         }
+         else
+            $s->delete();
+      }
+      
       return $sublist;
    }
    
@@ -171,34 +180,25 @@ class proveedor extends fs_model
             break;
          }
       }
-      if( !$subcuenta )
+      
+      if(!$subcuenta)
       {
          /// intentamos crear la subcuenta y asociarla
          $continuar = TRUE;
          
          $cuenta = new cuenta();
-         $cpro = $cuenta->get_by_codigo('400', $eje);
+         $cpro = $cuenta->get_cuentaesp('PROVEE', $eje);
          if($cpro)
          {
-            $codsubcuenta = 4000000000 + $this->codproveedor;
-            $subcuenta = new subcuenta();
-            $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $eje);
-            if( !$subc0 )
+            $subc0 = $cpro->new_subcuenta($this->codproveedor);
+            $subc0->descripcion = $this->nombre;
+            if( !$subc0->save() )
             {
-               $subc0 = new subcuenta();
-               $subc0->codcuenta = $cpro->codcuenta;
-               $subc0->idcuenta = $cpro->idcuenta;
-               $subc0->codejercicio = $eje;
-               $subc0->codsubcuenta = $codsubcuenta;
-               $subc0->descripcion = $this->nombre;
-               if( !$subc0->save() )
-               {
-                  $this->new_error_msg('Imposible crear la subcuenta para el proveedor '.$this->codproveedor);
-                  $continuar = FALSE;
-               }
+               $this->new_error_msg('Imposible crear la subcuenta para el proveedor '.$this->codproveedor);
+               $continuar = FALSE;
             }
             
-            if( $continuar )
+            if($continuar)
             {
                $scpro = new subcuenta_proveedor();
                $scpro->codejercicio = $eje;
@@ -206,7 +206,9 @@ class proveedor extends fs_model
                $scpro->codsubcuenta = $subc0->codsubcuenta;
                $scpro->idsubcuenta = $subc0->idsubcuenta;
                if( $scpro->save() )
+               {
                   $subcuenta = $subc0;
+               }
                else
                   $this->new_error_msg('Imposible asociar la subcuenta para el proveedor '.$this->codproveedor);
             }

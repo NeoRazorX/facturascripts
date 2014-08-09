@@ -159,7 +159,7 @@
          type: 'POST',
          url: '{$fsc->nuevo_albaran_url}',
          dataType: 'html',
-         data: "referencia4precios="+ref,
+         data: "referencia4precios="+ref+"codproveedor={$fsc->albaran->codproveedor}",
          success: function(datos) {
             $("#search_results").html(datos);
          }
@@ -373,7 +373,7 @@
          </div>
          <div class="modal-body">
             <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
-               <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
+               <input type="hidden" name="codproveedor" value="{$fsc->albaran->codproveedor}"/>
                <div class="container-fluid">
                   <div class="row">
                      <div class="col-md-6">

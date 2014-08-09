@@ -102,7 +102,7 @@
          type: 'POST',
          url: '{$fsc->url()}',
          dataType: 'html',
-         data: "referencia4precios="+ref,
+         data: "referencia4precios="+ref+"codcliente="+document.f_new_albaran.cliente.value,
          success: function(datos) {
             $("#search_results").html(datos);
          }
@@ -126,7 +126,6 @@
             "\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
          <td><input type=\"text\" id=\"dto_"+numlineas+"\" name=\"dto_"+numlineas+"\" value=\""+dto+
             "\" class=\"form-control text-right\" onkeyup=\"recalcular()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
-         <td><input class=\"btn btn-sm btn-default\" type=\"button\" value=\"+%\" onclick=\"aplicar_dto2("+numlineas+")\" title=\"aplicar descuento adicional\"/></td>\n\
          <td><input type=\"text\" class=\"form-control text-right\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
             "\" readonly/></td>\n\
          <td class=\"text-center\"><div class=\"form-control\">"+iva+"%</div></td>\n\
@@ -143,6 +142,8 @@
       }
       else
       {
+         document.f_buscar_articulos.codcliente.value = document.f_new_albaran.cliente.value;
+         
          $.ajax({
             type: 'POST',
             url: '{$fsc->url()}',
@@ -201,6 +202,7 @@
          </div>
          <div class="modal-body">
             <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
+               <input type="hidden" name="codcliente"/>
                <div class="container-fluid">
                   <div class="row">
                      <div class="col-md-6">
@@ -283,7 +285,6 @@
                <th></th>
                <th class="text-right">PVP</th>
                <th class="text-right">Dto. %</th>
-               <th></th>
                <th class="text-right">Total</th>
                <th>IVA</th>
                <th class="text-right">Total + IVA</th>
@@ -292,7 +293,7 @@
          <tbody id="lineas_albaran">
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..." autocomplete="off"/></td>
-               <td colspan="6"></td>
+               <td colspan="5"></td>
                <td>
                   <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
@@ -412,7 +413,3 @@
       </div>
    </div>
 </form>
-
-<div class="hidden">
-   <iframe src="http://localhost:10080" height="0"></iframe>
-</div>

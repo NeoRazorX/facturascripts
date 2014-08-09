@@ -94,7 +94,8 @@ class impuesto extends fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codimpuesto,descripcion,iva,recargo) VALUES "
-         . "('IVA21','IVA 21%','21','5.2'),('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
+         . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"
+         . "('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
    }
    
    public function url()

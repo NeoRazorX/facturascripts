@@ -49,7 +49,7 @@ class compras_facturas extends fs_controller
             $this->new_error_msg("Factura no encontrada.");
       }
       
-      $this->buttons[] = new fs_button('b_nueva', 'Nueva', 'index.php?page=nueva_compra');
+      $this->buttons[] = new fs_button('b_nueva', 'Nueva', 'index.php?page=nueva_compra&tipo=factura');
       
       $this->offset = 0;
       if( isset($_GET['offset']) )

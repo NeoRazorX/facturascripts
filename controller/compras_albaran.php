@@ -482,7 +482,7 @@ class compras_albaran extends fs_controller
             }
             
             /// generamos una partida por cada impuesto
-            $subcuenta_iva = $subcuenta->get_by_codigo('4720000000', $asiento->codejercicio);
+            $subcuenta_iva = $subcuenta->get_cuentaesp('IVASOP', $asiento->codejercicio);
             foreach($factura->get_lineas_iva() as $li)
             {
                if($subcuenta_iva AND $asiento_correcto)
@@ -512,7 +512,7 @@ class compras_albaran extends fs_controller
                }
             }
             
-            $subcuenta_compras = $subcuenta->get_by_codigo('6000000000', $asiento->codejercicio);
+            $subcuenta_compras = $subcuenta->get_cuentaesp('COMPRA', $asiento->codejercicio);
             if($subcuenta_compras AND $asiento_correcto)
             {
                $partida2 = new partida();

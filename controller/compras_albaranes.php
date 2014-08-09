@@ -42,7 +42,7 @@ class compras_albaranes extends fs_controller
          $albaran = new albaran_proveedor();
          $this->custom_search = TRUE;
          
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'Nuevo', 'index.php?page=nueva_compra');
+         $this->buttons[] = new fs_button('b_nuevo_albaran', 'Nuevo', 'index.php?page=nueva_compra&tipo=albaran');
          $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=compras_agrupar_albaranes');
          $this->buttons[] = new fs_button('b_buscar_lineas', 'Lineas');
          
@@ -110,7 +110,7 @@ class compras_albaranes extends fs_controller
    public function buscar_lineas()
    {
       /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_lineas_albaranes_prov';
+      $this->template = 'ajax/compras_lineas_albaranes';
       
       $this->buscar_lineas = $_POST['buscar_lineas'];
       $linea = new linea_albaran_proveedor();

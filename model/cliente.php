@@ -168,7 +168,16 @@ class cliente extends fs_model
       $subclist = array();
       $subc = new subcuenta_cliente();
       foreach($subc->all_from_cliente($this->codcliente) as $s)
-         $subclist[] = $s->get_subcuenta();
+      {
+         $s2 = $s->get_subcuenta();
+         if($s2)
+         {
+            $subclist[] = $s2;
+         }
+         else
+            $s->delete();
+      }
+      
       return $subclist;
    }
    
@@ -184,34 +193,25 @@ class cliente extends fs_model
             break;
          }
       }
-      if( !$subcuenta )
+      
+      if(!$subcuenta)
       {
          /// intentamos crear la subcuenta y asociarla
          $continuar = TRUE;
          
          $cuenta = new cuenta();
-         $ccli = $cuenta->get_by_codigo('430', $ejercicio);
-         if( $ccli )
+         $ccli = $cuenta->get_cuentaesp('CLIENT', $ejercicio);
+         if($ccli)
          {
-            $codsubcuenta = 4300000000 + $this->codcliente;
-            $subcuenta = new subcuenta();
-            $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $ejercicio);
-            if( !$subc0 )
+            $subc0 = $ccli->new_subcuenta($this->codcliente);
+            $subc0->descripcion = $this->nombre;
+            if( !$subc0->save() )
             {
-               $subc0 = new subcuenta();
-               $subc0->codcuenta = $ccli->codcuenta;
-               $subc0->idcuenta = $ccli->idcuenta;
-               $subc0->codejercicio = $ejercicio;
-               $subc0->codsubcuenta = $codsubcuenta;
-               $subc0->descripcion = $this->nombre;
-               if( !$subc0->save() )
-               {
-                  $this->new_error_msg('Imposible crear la subcuenta para el cliente '.$this->codcliente);
-                  $continuar = FALSE;
-               }
+               $this->new_error_msg('Imposible crear la subcuenta para el cliente '.$this->codcliente);
+               $continuar = FALSE;
             }
             
-            if( $continuar )
+            if($continuar)
             {
                $sccli = new subcuenta_cliente();
                $sccli->codcliente = $this->codcliente;
@@ -219,7 +219,9 @@ class cliente extends fs_model
                $sccli->codsubcuenta = $subc0->codsubcuenta;
                $sccli->idsubcuenta = $subc0->idsubcuenta;
                if( $sccli->save() )
+               {
                   $subcuenta = $subc0;
+               }
                else
                   $this->new_error_msg('Imposible asociar la subcuenta para el cliente '.$this->codcliente);
             }
@@ -234,8 +236,7 @@ class cliente extends fs_model
       if( is_null($this->codcliente) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE codcliente = ".$this->var2str($this->codcliente).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($this->codcliente).";");
    }
    
    public function get_new_codigo()

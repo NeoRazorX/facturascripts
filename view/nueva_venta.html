@@ -165,7 +165,7 @@
          type: 'POST',
          url: '{$fsc->url()}',
          dataType: 'html',
-         data: "referencia4precios="+ref,
+         data: "referencia4precios="+ref+"&codcliente={$fsc->cliente_s->codcliente}",
          success: function(datos) {
             $("#search_results").html(datos);
          }
@@ -264,7 +264,7 @@
          </div>
          <div class="modal-body">
             <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
-               <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
+               <input type="hidden" name="codcliente" value="{$fsc->cliente_s->codcliente}"/>
                <div class="container-fluid">
                   <div class="row">
                      <div class="col-md-6">
@@ -471,7 +471,7 @@
                {loop="$fsc->tipos_a_guardar()"}
                <div class="radio">
                   <label>
-                     <input type="radio" name="tipo" value="{$value['tipo']}"{if condition="$counter==0"} checked="checked"{/if}/>
+                     <input type="radio" name="tipo" value="{$value['tipo']}"{if condition="$value['tipo']==$fsc->tipo"} checked="checked"{/if}/>
                      {$value['nombre']}
                   </label>
                </div>

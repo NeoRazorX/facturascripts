@@ -333,7 +333,7 @@ class ventas_agrupar_albaranes extends fs_controller
             }
             
             /// generamos una partida por cada impuesto
-            $subcuenta_iva = $subcuenta->get_by_codigo('4770000000', $asiento->codejercicio);
+            $subcuenta_iva = $subcuenta->get_cuentaesp('IVAREP', $asiento->codejercicio);
             foreach($factura->get_lineas_iva() as $li)
             {
                if($subcuenta_iva AND $asiento_correcto)
@@ -363,7 +363,7 @@ class ventas_agrupar_albaranes extends fs_controller
                }
             }
             
-            $subcuenta_ventas = $subcuenta->get_by_codigo('7000000000', $asiento->codejercicio);
+            $subcuenta_ventas = $subcuenta->get_cuentaesp('VENTAS', $asiento->codejercicio);
             if($subcuenta_ventas AND $asiento_correcto)
             {
                $partida2 = new partida();

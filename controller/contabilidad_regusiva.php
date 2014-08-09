@@ -97,7 +97,9 @@ class contabilidad_regusiva extends fs_controller
             $this->new_error_msg('Tienes huecos en la facturación y por tanto no puedes regularizar el iva.');
          }
          else if($_POST['proceso'] == 'guardar')
+         {
             $this->guardar_regiva();
+         }
          else
             $this->completar_regiva();
       }
@@ -109,7 +111,9 @@ class contabilidad_regusiva extends fs_controller
             if($regiva0)
             {
                if( $regiva0->delete() )
+               {
                   $this->new_message('Regularización eliminada correctamente.');
+               }
                else
                   $this->new_error_msg('Imposible eliminar la regularización.');
             }
@@ -144,11 +148,10 @@ class contabilidad_regusiva extends fs_controller
          $saldo = 0;
          
          /// obtenemos el IVA soportado
-         $scta_ivasop = $subcuenta->get_by_codigo('4720000000', $eje0->codejercicio);
+         $scta_ivasop = $subcuenta->get_cuentaesp('IVASOP', $eje0->codejercicio);
          if($scta_ivasop)
          {
-            $tot_sop = $partida->totales_from_subcuenta_fechas($scta_ivasop->idsubcuenta,
-                    $_POST['desde'], $_POST['hasta']);
+            $tot_sop = $partida->totales_from_subcuenta_fechas($scta_ivasop->idsubcuenta, $_POST['desde'], $_POST['hasta']);
             
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
@@ -165,11 +168,10 @@ class contabilidad_regusiva extends fs_controller
          }
          
          /// obtenemos el IVA repercutido
-         $scta_ivarep = $subcuenta->get_by_codigo('4770000000', $eje0->codejercicio);
+         $scta_ivarep = $subcuenta->get_cuentaesp('IVAREP', $eje0->codejercicio);
          if($scta_ivarep)
          {
-            $tot_rep = $partida->totales_from_subcuenta_fechas($scta_ivarep->idsubcuenta,
-                    $_POST['desde'], $_POST['hasta']);
+            $tot_rep = $partida->totales_from_subcuenta_fechas($scta_ivarep->idsubcuenta, $_POST['desde'], $_POST['hasta']);
             
             /// invertimos el debe y el haber
             $this->aux_regiva[] = array(
@@ -189,7 +191,7 @@ class contabilidad_regusiva extends fs_controller
          {
             if($saldo > 0)
             {
-               $scta_ivaacr = $subcuenta->get_by_codigo('4750000000', $eje0->codejercicio);
+               $scta_ivaacr = $subcuenta->get_cuentaesp('IVAACR', $eje0->codejercicio);
                if($scta_ivaacr)
                {
                   $this->aux_regiva[] = array(
@@ -203,7 +205,7 @@ class contabilidad_regusiva extends fs_controller
             }
             else if($saldo < 0)
             {
-               $scta_ivadeu = $subcuenta->get_by_codigo('4700000000', $eje0->codejercicio);
+               $scta_ivadeu = $subcuenta->get_cuentaesp('IVADEU', $eje0->codejercicio);
                if($scta_ivadeu)
                {
                   $this->aux_regiva[] = array(
@@ -247,7 +249,7 @@ class contabilidad_regusiva extends fs_controller
          }
          
          /// obtenemos el IVA soportado
-         $scta_ivasop = $subcuenta->get_by_codigo('4720000000', $eje0->codejercicio);
+         $scta_ivasop = $subcuenta->get_cuentaesp('IVASOP', $eje0->codejercicio);
          if($scta_ivasop)
          {
             $par0 = new partida();
@@ -258,8 +260,7 @@ class contabilidad_regusiva extends fs_controller
             $par0->codsubcuenta = $scta_ivasop->codsubcuenta;
             $par0->idsubcuenta = $scta_ivasop->idsubcuenta;
             
-            $tot_sop = $par0->totales_from_subcuenta_fechas($scta_ivasop->idsubcuenta,
-                    $_POST['desde'], $_POST['hasta']);
+            $tot_sop = $par0->totales_from_subcuenta_fechas($scta_ivasop->idsubcuenta, $_POST['desde'], $_POST['hasta']);
             
             /// invertimos el debe y el haber
             $par0->debe = $tot_sop['haber'];
@@ -279,7 +280,7 @@ class contabilidad_regusiva extends fs_controller
          }
          
          /// obtenemos el IVA repercutido
-         $scta_ivarep = $subcuenta->get_by_codigo('4770000000', $eje0->codejercicio);
+         $scta_ivarep = $subcuenta->get_cuentaesp('IVAREP', $eje0->codejercicio);
          if($scta_ivarep)
          {
             $par1 = new partida();
@@ -290,8 +291,7 @@ class contabilidad_regusiva extends fs_controller
             $par1->codsubcuenta = $scta_ivarep->codsubcuenta;
             $par1->idsubcuenta = $scta_ivarep->idsubcuenta;
             
-            $tot_rep = $par1->totales_from_subcuenta_fechas($scta_ivarep->idsubcuenta,
-                    $_POST['desde'], $_POST['hasta']);
+            $tot_rep = $par1->totales_from_subcuenta_fechas($scta_ivarep->idsubcuenta, $_POST['desde'], $_POST['hasta']);
             
             /// invertimos el debe y el haber
             $par1->debe = $tot_rep['haber'];
@@ -314,7 +314,7 @@ class contabilidad_regusiva extends fs_controller
          {
             if($saldo > 0)
             {
-               $scta_ivaacr = $subcuenta->get_by_codigo('4750000000', $eje0->codejercicio);
+               $scta_ivaacr = $subcuenta->get_cuentaesp('IVAACR', $eje0->codejercicio);
                if($scta_ivaacr)
                {
                   $par2 = new partida();
@@ -337,7 +337,7 @@ class contabilidad_regusiva extends fs_controller
             }
             else if($saldo < 0)
             {
-               $scta_ivadeu = $subcuenta->get_by_codigo('4700000000', $eje0->codejercicio);
+               $scta_ivadeu = $subcuenta->get_cuentaesp('IVADEU', $eje0->codejercicio);
                if($scta_ivadeu)
                {
                   $par2 = new partida();
@@ -382,8 +382,7 @@ class contabilidad_regusiva extends fs_controller
                $this->new_error_msg('Error al guardar la regularización. Se ha eliminado el asiento.');
             }
             else
-               $this->new_error_msg('Error al guardar la regularización.
-                  No se ha podido eliminar el asiento.');
+               $this->new_error_msg('Error al guardar la regularización. No se ha podido eliminar el asiento.');
          }
       }
       else

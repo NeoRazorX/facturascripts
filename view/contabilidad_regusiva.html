@@ -9,7 +9,7 @@
          dataType: 'html',
          data: 'idregiva='+id,
          success: function(datos) {
-            $("#modal_full_regiva").html(datos);
+            $("#modal_full_regiva2").html(datos);
             $("#modal_full_regiva").modal('show');
          }
       });
@@ -41,10 +41,11 @@
    });
 </script>
 
-<div class="modal fade" id="modal_nueva_regiva">
-   <div class="modal-dialog">
-      <div class="modal-content">
-		 <form class="form-horizontal" role="form" name="f_nueva_regiva" action ="{$fsc->url()}" method="post">
+<form class="form-horizontal" role="form" name="f_nueva_regiva" action ="{$fsc->url()}" method="post">
+   <input type="hidden" name="proceso" value=""/>
+   <div class="modal fade" id="modal_nueva_regiva">
+      <div class="modal-dialog">
+         <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nueva regularización de IVA</h4>
@@ -73,21 +74,27 @@
                      <input class="form-control datepicker" type="text" name="hasta" value="{$fsc->fecha_hasta}"/>
                   </div>
                </div>
-               <div class="form-group" id="lineas_regiva">
-               </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" onclick="completar_regiva()" title="Completar">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
+               <button class="btn btn-sm btn-default" type="button" onclick="completar_regiva()">
+                   <span class="glyphicon glyphicon-play"></span>
                    &nbsp; Completar
                 </button>
             </div>
-         </form>
+            <div id="lineas_regiva"></div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div class="modal fade" id="modal_full_regiva">
+   <div class="modal-dialog">
+      <div class="modal-content" id="modal_full_regiva2">
+         
       </div>
    </div>
 </div>
 
-<div id="modal_full_regiva" class="modal fade"></div>
 
 <div class="table-responsive">
    <table class="table table-hover">
