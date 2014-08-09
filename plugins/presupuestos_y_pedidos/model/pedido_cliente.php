@@ -177,7 +177,7 @@ class pedido_cliente extends fs_model
    
    public function test()
    {
-      
+      return TRUE;
    }
    
    public function save()
@@ -186,7 +186,25 @@ class pedido_cliente extends fs_model
       {
          if( $this->exists() )
          {
-            
+            $sql = "UPDATE ".$this->table_name." SET apartado = ".$this->var2str($this->apartado).",
+               cifnif = ".$this->var2str($this->cifnif).", ciudad = ".$this->var2str($this->ciudad).",
+               codagente = ".$this->var2str($this->codagente).", codalmacen = ".$this->var2str($this->codalmacen).",
+               codcliente = ".$this->var2str($this->codcliente).", coddir = ".$this->var2str($this->coddir).",
+               coddivisa = ".$this->var2str($this->coddivisa).", codejercicio = ".$this->var2str($this->codejercicio).",
+               codigo = ".$this->var2str($this->codigo).", codpago = ".$this->var2str($this->codpago).",
+               codpais = ".$this->var2str($this->codpais).", codpostal = ".$this->var2str($this->codpostal).",
+               codserie = ".$this->var2str($this->codserie).", direccion = ".$this->var2str($this->direccion).",
+               editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).",
+               fechasalida = ".$this->var2str($this->fechasalida).", idpresupuesto = ".$this->var2str($this->idpresupuesto).",
+               irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
+               nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
+               observaciones = ".$this->var2str($this->observaciones).", porcomision = ".$this->var2str($this->porcomision).",
+               provincia = ".$this->var2str($this->provincia).", recfinanciero = ".$this->var2str($this->recfinanciero).",
+               servido = ".$this->var2str($this->servido).", tasaconv = ".$this->var2str($this->tasaconv).",
+               total = ".$this->var2str($this->total).", totaleuros = ".$this->var2str($this->totaleuros).",
+               totalirpf = ".$this->var2str($this->totalirpf).", totaliva = ".$this->var2str($this->totaliva).",
+               totalrecargo = ".$this->var2str($this->totalrecargo)." WHERE idpedido = ".$this->var2str($this->idpedido).";";
+            return $this->db->exec($sql);
          }
          else
          {
