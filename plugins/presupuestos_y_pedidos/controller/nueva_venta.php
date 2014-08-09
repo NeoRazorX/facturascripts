@@ -106,7 +106,7 @@ class nueva_venta extends fs_controller
             }
             else if($_POST['tipo'] == 'pedido')
             {
-               $this->nueva_pedido_cliente();
+               $this->nuevo_pedido_cliente();
             }            
             else if($_POST['tipo'] == 'albaran')
             {
