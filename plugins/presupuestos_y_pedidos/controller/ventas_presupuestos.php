@@ -53,8 +53,8 @@ class ventas_presupuestos extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptealbaran']) )
-         $extra = '&ptealbaran=TRUE';
+      if( isset($_GET['ptepedido']) )
+         $extra = '&ptepedido=TRUE';
       
       if($this->query!='' AND $this->offset>'0')
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
@@ -69,8 +69,8 @@ class ventas_presupuestos extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptealbaran']) )
-         $extra = '&ptealbaran=TRUE';
+      if( isset($_GET['ptepedido']) )
+         $extra = '&ptepedido=TRUE';
       
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
