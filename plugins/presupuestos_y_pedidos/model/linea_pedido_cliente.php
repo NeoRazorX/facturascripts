@@ -44,6 +44,7 @@ class linea_pedido_cliente extends fs_model
          $this->cantidad = floatval($l['cantidad']);
          $this->codimpuesto = $l['codimpuesto'];
          $this->descripcion = $l['descripcion'];
+         $this->dtolineal = floatval($l['dtolineal']);
          $this->dtopor = floatval($l['dtopor']);
          $this->idlinea = intval($l['idlinea']);
          $this->idpedido = $this->intval($l['idpedido']);
@@ -60,6 +61,7 @@ class linea_pedido_cliente extends fs_model
          $this->cantidad = 0;
          $this->codimpuesto = NULL;
          $this->descripcion = '';
+         $this->dtolineal = 0;
          $this->dtopor = 0;
          $this->idlinea = NULL;
          $this->idpedido = NULL;
@@ -125,7 +127,7 @@ class linea_pedido_cliente extends fs_model
          {
             $sql = "UPDATE ".$this->table_name." SET cantidad = ".$this->var2str($this->idlinea).",
                codimpuesto = ".$this->var2str($this->codimpuesto).", descripcion = ".$this->var2str($this->descripcion).",
-               dtopor = ".$this->var2str($this->dtopor).", idpedido = ".$this->var2str($this->idpedido).",
+               dtolineal = ".$this->var2str($this->dtolineal).", dtopor = ".$this->var2str($this->dtopor).", idpedido = ".$this->var2str($this->idpedido).",
                irpf = ".$this->var2str($this->irpf).", iva = ".$this->var2str($this->iva).",
                pvpsindto = ".$this->var2str($this->pvpsindto).", pvptotal = ".$this->var2str($this->pvptotal).",
                pvpunitario = ".$this->var2str($this->pvpunitario).", recargo = ".$this->var2str($this->recargo).",
@@ -134,10 +136,10 @@ class linea_pedido_cliente extends fs_model
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (cantidad,codimpuesto,descripcion,dtopor,
+            $sql = "INSERT INTO ".$this->table_name." (cantidad,codimpuesto,descripcion,dtolineal,dtopor,
                idpedido,irpf,iva,pvpsindto,pvptotal,pvpunitario,recargo,referencia)
                VALUES (".$this->var2str($this->cantidad).",".$this->var2str($this->codimpuesto).",
-               ".$this->var2str($this->descripcion).",".$this->var2str($this->dtopor).",
+               ".$this->var2str($this->descripcion).",".$this->var2str($this->dtolineal).",".$this->var2str($this->dtopor).",
                ".$this->var2str($this->idpedido).",".$this->var2str($this->irpf).",".$this->var2str($this->iva).",
                ".$this->var2str($this->pvpsindto).",".$this->var2str($this->pvptotal).",".$this->var2str($this->pvpunitario).",
                ".$this->var2str($this->recargo).",".$this->var2str($this->referencia).");";

@@ -108,7 +108,7 @@ class ventas_pedido extends fs_controller
           * en dos archivos: ventas_pedido_cli_edit.html para los
           * pedidos editables y ventas_pedido_cli.html para los demás.
           */
-         if( is_null($this->pedido->idpresupuesto) )
+         if( is_null($this->pedido->idalbaran) )
             $this->template = 'ventas_pedido_edit';
          else
             $this->template = 'ventas_pedido';
@@ -150,7 +150,7 @@ class ventas_pedido extends fs_controller
             }
             else
             {
-               $this->buttons[] = new fs_button('b_ver_albaran', FS_ALBARAN, $this->pedido->albaran_url());
+               $this->buttons[] = new fs_button('b_ver_albaran', 'Ver '.FS_ALBARAN, $this->pedido->albaran_url());
             }
          }
          

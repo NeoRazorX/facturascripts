@@ -150,7 +150,7 @@ class ventas_presupuesto extends fs_controller
             }
             else
             {
-               $this->buttons[] = new fs_button('b_ver_pedido', 'Pedido', $this->presupuesto->pedido_url());
+               $this->buttons[] = new fs_button('b_ver_pedido', 'Ver Pedido', $this->presupuesto->pedido_url());
             }
          }
          
