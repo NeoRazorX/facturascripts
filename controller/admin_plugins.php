@@ -155,7 +155,7 @@ class admin_plugins extends fs_controller
          {
             if( $p->delete() )
             {
-               $this->new_message('Se ha eliminado automáticamnte la página '.$p->name);
+               $this->new_message('Se ha eliminado automáticamente la página '.$p->name);
             }
          }
       }

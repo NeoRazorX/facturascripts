@@ -108,7 +108,7 @@ class ventas_presupuesto extends fs_controller
           * en dos archivos: ventas_presupuesto_cli_edit.html para los
           * presupuestos editables y ventas_presupuesto_cli.html para los demás.
           */
-         if( is_null($this->presupuesto->idpresupuesto) )
+         if( is_null($this->presupuesto->idpedido) )
             $this->template = 'ventas_presupuesto_edit';
          else
             $this->template = 'ventas_presupuesto';
