@@ -10,18 +10,42 @@
             <th align="right">Fecha</th>
          </tr>
       </thead>
-      {loop="$fsc->presupuesto->all()"}
+      {loop="$fsc->resultados"}
       <tr>
          <td>
-            <a class="link" href="{$value->url()}">{$value->codigo}</a>
+            <a href="{$value->url()}">{$value->codigo}</a>
             {$value->nombrecliente}
          </td>
          <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
          <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
+      {else}
+      <tr>
+         <td colspan="4">Sin resultados.</td>
+      </tr>
       {/loop}
    </table>
 </div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
 
 {include="footer"}

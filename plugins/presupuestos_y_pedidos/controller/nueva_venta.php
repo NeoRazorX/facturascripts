@@ -24,6 +24,7 @@ require_model('divisa.php');
 require_model('familia.php');
 require_model('forma_pago.php');
 require_model('impuesto.php');
+require_model('pedido.php');
 require_model('serie.php');
 
 class nueva_venta extends fs_controller
@@ -305,7 +306,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if($serie->siniva)
+                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
@@ -452,7 +453,6 @@ class nueva_venta extends fs_controller
       if($continuar)
       {
          $pedido->fecha = $_POST['fecha'];
-         $pedido->hora = $_POST['hora'];
          $pedido->codalmacen = $almacen->codalmacen;
          $pedido->codejercicio = $ejercicio->codejercicio;
          $pedido->codserie = $serie->codserie;
@@ -460,8 +460,6 @@ class nueva_venta extends fs_controller
          $pedido->coddivisa = $divisa->coddivisa;
          $pedido->tasaconv = $divisa->tasaconv;
          $pedido->codagente = $this->agente->codagente;
-         if( isset($_POST['numero2']) )
-            $pedido->numero2 = $_POST['numero2'];
          $pedido->observaciones = $_POST['observaciones'];
          
          foreach($cliente->get_direcciones() as $d)
@@ -506,7 +504,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if($serie->siniva)
+                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
@@ -707,7 +705,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if($serie->siniva)
+                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;
@@ -906,7 +904,7 @@ class nueva_venta extends fs_controller
                      else
                         $linea->descripcion = $articulo->descripcion;
                      
-                     if( $serie->siniva )
+                     if( $serie->siniva  OR $cliente->regimeniva == 'Exento' )
                      {
                         $linea->codimpuesto = NULL;
                         $linea->iva = 0;

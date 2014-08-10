@@ -232,7 +232,7 @@ class nueva_venta extends fs_controller
       
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
-         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guardar
                y se han enviado dos peticiones. Mira en <a href="'.$albaran->url().'">'.FS_ALBARANES.'</a>
                para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
@@ -433,7 +433,7 @@ class nueva_venta extends fs_controller
       
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
-         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guardar
                y se han enviado dos peticiones. Mira en <a href="'.$factura->url().'">Facturas</a>
                para ver si la factura se ha guardado correctamente.');
          $continuar = FALSE;

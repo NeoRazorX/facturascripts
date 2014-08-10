@@ -4,7 +4,6 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th></th>
             <th align="left">Código + Cliente</th>
             <th align="left">Observaciones</th>
             <th align="right">Total</th>
@@ -13,11 +12,6 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">
-            {if condition="!$value->ptealbaran"}
-            <span class="glyphicon glyphicon-paperclip" title="hay un pedido asociado"></span>
-            {/if}
-         </td>
          <td>
             <a href="{$value->url()}">{$value->codigo}</a>
             {$value->nombrecliente}
@@ -28,10 +22,30 @@
       </tr>
       {else}
       <tr>
-         <td colspan="4" align="center">Sin resultados</td>
+         <td colspan="4">Sin resultados.</td>
       </tr>
       {/loop}
    </table>
 </div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
 
 {include="footer"}

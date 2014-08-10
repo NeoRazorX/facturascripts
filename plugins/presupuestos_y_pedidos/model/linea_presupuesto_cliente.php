@@ -43,8 +43,8 @@ class linea_presupuesto_cliente extends fs_model
          $this->codimpuesto = $l['codimpuesto'];
          $this->descripcion = $l['descripcion'];
          $this->dtopor = floatval($l['dtopor']);
-         $this->idlinea = $l['idlinea'];
-         $this->idpresupuesto = $l['idpresupuesto'];
+         $this->idlinea = intval($l['idlinea']);
+         $this->idpresupuesto = intval($l['idpresupuesto']);
          $this->iva = floatval($l['iva']);
          $this->pvpsindto = floatval($l['pvpsindto']);
          $this->pvptotal = floatval($l['pvptotal']);
@@ -72,25 +72,12 @@ class linea_presupuesto_cliente extends fs_model
       return '';
    }
    
-   public function total_iva()
-   {
-      return $this->pvptotal*(100+$this->iva)/100;
-   }
-   
    public function url()
    {
       if( is_null($this->idpresupuesto) )
          return 'index.php?page=ventas_presupuestos';
       else
          return 'index.php?page=ventas_presupuesto&id='.$this->idpresupuesto;
-   }
-   
-   public function articulo_url()
-   {
-      if( is_null($this->referencia) AND $this->referencia == ' ')
-         return "index.php?page=general_articulos";
-      else
-         return "index.php?page=general_articulo&ref=".urlencode($this->referencia);
    }
    
    public function exists()
@@ -117,8 +104,7 @@ class linea_presupuesto_cliente extends fs_model
    {
       $plist = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idpresupuesto = ".$this->var2str($idp)." ORDER BY referencia ASC;");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($idp)." ORDER BY referencia ASC;");
       if($data)
       {
          foreach($data as $d)

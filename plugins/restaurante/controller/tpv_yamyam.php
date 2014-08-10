@@ -252,7 +252,7 @@ class tpv_yamyam extends fs_controller
       
       if( $this->duplicated_petition($_POST['petition_id']) )
       {
-         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón guadar
+         $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón Guardar
                y se han enviado dos peticiones. Mira en <a href="'.$this->albaran->url().'">'.FS_ALBARANES.'</a>
                para ver si el '.FS_ALBARAN.' se ha guardado correctamente.');
          $continuar = FALSE;
