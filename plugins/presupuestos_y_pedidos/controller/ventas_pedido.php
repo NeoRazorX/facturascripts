@@ -429,7 +429,7 @@ class ventas_pedido extends fs_controller
       else if( $regularizacion->get_fecha_inside($albaran->fecha) )
       {
          $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más albaranes en esa fecha.");
+            No se pueden añadir más {$albaranes} en esa fecha.");
       }
       else if( $albaran->save() )
       {
@@ -468,23 +468,23 @@ class ventas_pedido extends fs_controller
             }
             else
             {
-               $this->new_error_msg("¡Imposible vincular el pedido con el nuevo albaran!");
+               $this->new_error_msg("¡Imposible vincular el pedido con el nuevo {$albaran}!");
                if( $albaran->delete() )
-                  $this->new_error_msg("El albaran se ha borrado.");
+                  $this->new_error_msg("El {$albaran} se ha borrado.");
                else
-                  $this->new_error_msg("¡Imposible borrar el albaran!");
+                  $this->new_error_msg("¡Imposible borrar el {$albaran}!");
             }
          }
          else
          {
             if( $albaran->delete() )
-               $this->new_error_msg("El albaran se ha borrado.");
+               $this->new_error_msg("El {$albaran} se ha borrado.");
             else
-               $this->new_error_msg("¡Imposible borrar el albaran!");
+               $this->new_error_msg("¡Imposible borrar el {$albaran}!");
          }
       }
       else
-         $this->new_error_msg("¡Imposible guardar el albaran!");
+         $this->new_error_msg("¡Imposible guardar el {$albaran}!");
    }
    
    private function generar_pdf_simple($archivo = FALSE)

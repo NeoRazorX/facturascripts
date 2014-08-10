@@ -20,7 +20,7 @@
 
 require_once 'base/fs_model.php';
 require_model('agente.php');
-require_model('albaran_cliente.php');
+require_model('pedido_cliente.php');
 require_model('articulo.php');
 require_model('cliente.php');
 require_model('ejercicio.php');
@@ -192,7 +192,10 @@ class presupuesto_cliente extends fs_model
       }
       else
       {
-         return 'index.php?page=ventas_pedido&id='.$this->idpedido;
+         if( is_null($this->idpedido) )
+            return 'index.php?page=ventas_pedido';
+         else
+            return 'index.php?page=ventas_pedido&id='.$this->idpedido;
       }
    }
    
@@ -233,12 +236,28 @@ class presupuesto_cliente extends fs_model
          return FALSE;
    }
    
+   public function get_by_codigo($cod)
+   {
+      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
+      if($presupuesto)
+         return new presupuesto_cliente($pedido[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idpresupuesto) )
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
+   }
+   
+   public function new_idpresupuesto()
+   {
+      $newid = $this->db->nextval($this->table_name.'_idpresupuesto_seq');
+      if($newid)
+         $this->idpresupuesto = intval($newid);
    }
    
    public function new_codigo()
@@ -310,6 +329,7 @@ class presupuesto_cliente extends fs_model
          }
          else
          {
+            $this->new_idpresupuesto();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,codcliente,coddir,
                coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,direccion,editable,fecha,hora,idpedido,irpf,neto,
@@ -327,15 +347,8 @@ class presupuesto_cliente extends fs_model
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",
                ".$this->var2str($this->totaleuros).",".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",
                ".$this->var2str($this->totalrecargo).");";
-            
-            if( $this->db->exec($sql) )
-            {
-               $this->idpresupuesto = $this->db->lastval();
-               return TRUE;
-            }
-            else
-               return FALSE;
          }
+         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -357,7 +370,6 @@ class presupuesto_cliente extends fs_model
    public function all($offset=0)
    {
       $preslist = array();
-      
       $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($presupuestos)
       {
@@ -391,7 +403,6 @@ class presupuesto_cliente extends fs_model
          foreach($presupuesto as $p)
             $preslist[] = new presupuesto_cliente($p);
       }
-      
       return $preslist;
    }
    
@@ -449,12 +460,33 @@ class presupuesto_cliente extends fs_model
       return $preslist;
    }
    
+   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
+   {
+      $pedilist = array();
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
+         " AND idpedido AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
+         " AND codserie = ".$this->var2str($serie);
+      
+      if($obs != '')
+         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
+      
+      $sql .= " ORDER BY fecha DESC, codigo DESC;";
+      
+      $presupuestos = $this->db->select($sql);
+      if($presupuestos)
+      {
+         foreach($presupuestos as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+
    public function cron_job()
    {
       
    }
    
-   public function stats_last_days($numdays = 25)
+   public function stats_presupuestos_last_days($numdays = 25)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
@@ -488,7 +520,7 @@ class presupuesto_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_months($num = 11)
+   public function stats_presupuestos_last_months($num = 11)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
@@ -522,7 +554,7 @@ class presupuesto_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_years($num = 4)
+   public function stats_presupuestos_last_years($num = 4)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
@@ -560,7 +592,7 @@ class presupuesto_cliente extends fs_model
     * Devuelve un array con los datos estadísticos de las compras del cliente
     * en los cinco últimos años.
     */
-   public function stats_from_cli($codcliente)
+   public function stats_presupuestos_from_cli($codcliente)
    {
       $stats = array();
       $years = array();

@@ -201,7 +201,10 @@ class pedido_cliente extends fs_model
       }
       else
       {
-         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
+         if( is_null($this->idalbaran) )
+            return 'index.php?page=ventas_albaran';
+         else
+            return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
       }
    }
    
@@ -242,12 +245,28 @@ class pedido_cliente extends fs_model
          return FALSE;
    }
    
+   public function get_by_codigo($cod)
+   {
+      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
+      if($pedido)
+         return new pedido_cliente($pedido[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idpedido) )
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
+   }
+   
+   public function new_idpedido()
+   {
+      $newid = $this->db->nextval($this->table_name.'_idpedido_seq');
+      if($newid)
+         $this->idpedido = intval($newid);
    }
    
    public function new_codigo()
@@ -319,6 +338,7 @@ class pedido_cliente extends fs_model
          }
          else
          {
+            $this->new_idpedido();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
                codcliente,coddir,coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,
@@ -336,15 +356,8 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).");";
-            
-            if( $this->db->exec($sql) )
-            {
-               $this->idpedido = $this->db->lastval();
-               return TRUE;
-            }
-            else
-               return FALSE;
          }
+         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -366,7 +379,6 @@ class pedido_cliente extends fs_model
    public function all($offset=0)
    {
       $pedilist = array();
-      
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
@@ -400,7 +412,6 @@ class pedido_cliente extends fs_model
          foreach($pedidos as $p)
             $pedilist[] = new pedido_cliente($p);
       }
-      
       return $pedilist;
    }
    
@@ -458,12 +469,33 @@ class pedido_cliente extends fs_model
       return $pedilist;
    }
    
+   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
+   {
+      $pedilist = array();
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
+         " AND idalbaran AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
+         " AND codserie = ".$this->var2str($serie);
+      
+      if($obs != '')
+         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
+      
+      $sql .= " ORDER BY fecha DESC, codigo DESC;";
+      
+      $pedidos = $this->db->select($sql);
+      if($pedidos)
+      {
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
+      }
+      return $pedilist;
+   }
+
    public function cron_job()
    {
       
    }
    
-   public function stats_last_days($numdays = 25)
+   public function stats_pedidos_last_days($numdays = 25)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
@@ -497,7 +529,7 @@ class pedido_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_months($num = 11)
+   public function stats_pedidos_last_months($num = 11)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
@@ -531,7 +563,7 @@ class pedido_cliente extends fs_model
       return $stats;
    }
    
-   public function stats_last_years($num = 4)
+   public function stats_pedidos_last_years($num = 4)
    {
       $stats = array();
       $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
@@ -569,7 +601,7 @@ class pedido_cliente extends fs_model
     * Devuelve un array con los datos estadísticos de las compras del cliente
     * en los cinco últimos años.
     */
-   public function stats_from_cli($codcliente)
+   public function stats_pedidos_from_cli($codcliente)
    {
       $stats = array();
       $years = array();
