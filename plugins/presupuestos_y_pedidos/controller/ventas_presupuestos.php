@@ -119,8 +119,8 @@ class ventas_presupuestos extends fs_controller
    
    private function delete_presupuesto()
    {
-      $pre = new presupuesto_cliente();
-      $pre1 = $ped->get($_POST['delete']);
+      $pre1 = new presupuesto_cliente();
+      $pre1 = $pre1->get($_POST['delete']);
       if($pre1)
       {
          /// ¿Actualizamos el stock de los artículos?
@@ -133,7 +133,7 @@ class ventas_presupuestos extends fs_controller
                $art0 = $articulo->get($linea->referencia);
                if($art0)
                {
-                  $art0->sum_stock($alb1->codalmacen, $linea->cantidad);
+                  $art0->sum_stock($pre1->codalmacen, $linea->cantidad);
                   $art0->save();
                }
             }

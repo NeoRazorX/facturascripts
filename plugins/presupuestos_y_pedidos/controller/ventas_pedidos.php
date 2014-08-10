@@ -120,7 +120,7 @@ class ventas_pedidos extends fs_controller
    private function delete_pedido()
    {
       $ped1 = new pedido_cliente();
-      $ped1 = $alb1->get($_POST['delete']);
+      $ped1 = $ped->get($_POST['delete']);
       if($ped1)
       {
          /// ¿Actualizamos el stock de los artículos?
@@ -133,7 +133,7 @@ class ventas_pedidos extends fs_controller
                $art0 = $articulo->get($linea->referencia);
                if($art0)
                {
-                  $art0->sum_stock($alb1->codalmacen, $linea->cantidad);
+                  $art0->sum_stock($ped->codalmacen, $linea->cantidad);
                   $art0->save();
                }
             }
