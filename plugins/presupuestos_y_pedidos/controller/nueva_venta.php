@@ -24,7 +24,7 @@ require_model('divisa.php');
 require_model('familia.php');
 require_model('forma_pago.php');
 require_model('impuesto.php');
-require_model('pedido.php');
+require_model('pedido_cliente.php');
 require_model('serie.php');
 
 class nueva_venta extends fs_controller

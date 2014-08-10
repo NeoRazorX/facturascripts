@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('linea_pedido_cliente.php');
 
 class pedido_cliente extends fs_model
 {
@@ -147,9 +148,9 @@ class pedido_cliente extends fs_model
    public function url()
    {
       if( is_null($this->idpedido) )
-         return 'index.php?page=pedidos_cliente';
+         return 'index.php?page=ventas_pedidos';
       else
-         return 'index.php?page=ver_pedido_cli&id='.$this->idpedido;
+         return 'index.php?page=ventas_pedido&id='.$this->idpedido;
    }
    
    public function get_lineas()
@@ -167,12 +168,43 @@ class pedido_cliente extends fs_model
          return FALSE;
    }
    
+   private function new_codigo()
+   {
+      $sec = new secuencia();
+      $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npedidocli');
+      if($sec)
+      {
+         $this->numero = $sec->valorout;
+         $sec->valorout++;
+         $sec->save();
+      }
+      
+      if(!$sec OR $this->numero <= 1)
+      {
+         $numero = $this->db->select("SELECT MAX(".$this->db->sql_to_int('numero').") as num
+            FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).
+            " AND codserie = ".$this->var2str($this->codserie).";");
+         if($numero)
+            $this->numero = 1 + intval($numero[0]['num']);
+         else
+            $this->numero = 1;
+         
+         if($sec)
+         {
+            $sec->valorout = 1 + $this->numero;
+            $sec->save();
+         }
+      }
+      
+      $this->codigo = $this->codejercicio.sprintf('%02s', $this->codserie).sprintf('%06s', $this->numero);
+   }
+   
    public function exists()
    {
       if( is_null($this->idpedido) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idalbaran).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }
    
    public function test()
@@ -208,7 +240,8 @@ class pedido_cliente extends fs_model
          }
          else
          {
-            $sql = "INSER INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
+            $this->new_codigo();
+            $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
                codcliente,coddir,coddivisa,codejercicio,codigo,codpago,codpais,codpostal,codserie,
                direccion,editable,fecha,fechasalida,idpresupuesto,irpf,neto,nombrecliente,
                numero,observaciones,porcomision,provincia,recfinanciero,servido,tasaconv,total,totaleuros,
