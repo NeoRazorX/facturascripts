@@ -258,6 +258,7 @@ class nueva_venta extends fs_controller
          $presupuesto->codalmacen = $almacen->codalmacen;
          $presupuesto->codejercicio = $ejercicio->codejercicio;
          $presupuesto->codserie = $serie->codserie;
+         $presupuesto->codpago = $forma_pago->codpago;
          $presupuesto->coddivisa = $divisa->coddivisa;
          $presupuesto->tasaconv = $divisa->tasaconv;
          $presupuesto->codagente = $this->agente->codagente;

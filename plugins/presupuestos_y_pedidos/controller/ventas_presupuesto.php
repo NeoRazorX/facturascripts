@@ -150,7 +150,7 @@ class ventas_presupuesto extends fs_controller
             }
             else
             {
-               $this->buttons[] = new fs_button('b_ver_pedido', 'Ver Pedido', $this->presupuesto->pedido_url());
+               $this->buttons[] = new fs_button('b_ver_pedido', 'Ver pedido', $this->presupuesto->pedido_url());
             }
          }
          
@@ -172,11 +172,10 @@ class ventas_presupuesto extends fs_controller
    
    private function modificar()
    {
-      $this->presupuesto->numero2 = $_POST['numero2'];
       $this->presupuesto->hora = $_POST['hora'];
       $this->presupuesto->observaciones = $_POST['observaciones'];
       
-      if($this->presupuesto->ptepedido)
+      if($this->presupuesto->idpedido)
       {
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->presupuesto->codejercicio );
@@ -462,7 +461,7 @@ class ventas_presupuesto extends fs_controller
          if($continuar)
          {
             $this->presupuesto->idpresupuesto = $pedido->idpedido;
-            $this->presupuesto->ptepedido = FALSE;
+            $this->presupuesto->idpedido = NULL;
             if( $this->presupuesto->save() )
             {
                //$this->generar_asiento($factura);
@@ -540,7 +539,7 @@ class ventas_presupuesto extends fs_controller
             
             /*
              * Esta es la tabla con los datos del cliente:
-             * Albarán:             Fecha:
+             * Presupuesto:             Fecha:
              * Cliente:             CIF/NIF:
              * Dirección:           Teléfonos:
              */

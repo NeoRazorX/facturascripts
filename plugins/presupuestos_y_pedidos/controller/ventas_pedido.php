@@ -172,11 +172,10 @@ class ventas_pedido extends fs_controller
    
    private function modificar()
    {
-      $this->pedido->numero2 = $_POST['numero2'];
       $this->pedido->hora = $_POST['hora'];
       $this->pedido->observaciones = $_POST['observaciones'];
       
-      if($this->pedido->ptealbaran)
+      if($this->pedido->idalbaran)
       {
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->pedido->codejercicio );
@@ -437,8 +436,8 @@ class ventas_pedido extends fs_controller
          foreach($this->pedido->get_lineas() as $l)
          {
             $n = new linea_albaran_cliente();
-            $n->idpedido = $l->idpedido;
-            $n->idalbaran = $albaran->idalbaran;
+            $n->idpedido = $pedido->idpedido;
+            $n->idalbaran = $l->idalbaran;
             $n->cantidad = $l->cantidad;
             $n->codimpuesto = $l->codimpuesto;
             $n->descripcion = $l->descripcion;
@@ -461,8 +460,8 @@ class ventas_pedido extends fs_controller
          
          if($continuar)
          {
-            $this->pedido->idalbaran = $albaran->idalbaran;
-            $this->pedido->ptealbaran = FALSE;
+            $this->pedido->idpedido = $albaran->idalbaran;
+            $this->pedido->idalbaran = NULL;
             if( $this->pedido->save() )
             {
                //$this->generar_asiento($factura);
@@ -540,7 +539,7 @@ class ventas_pedido extends fs_controller
             
             /*
              * Esta es la tabla con los datos del cliente:
-             * Albarán:             Fecha:
+             * Pedido:             Fecha:
              * Cliente:             CIF/NIF:
              * Dirección:           Teléfonos:
              */

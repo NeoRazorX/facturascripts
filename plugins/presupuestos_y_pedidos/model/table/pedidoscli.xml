@@ -102,18 +102,13 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>idalbaran</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
       <nombre>idpedido</nombre>
       <tipo>serial</tipo>
       <nulo>NO</nulo>
       <defecto>nextval('pedidoscli_idpedido_seq'::regclass)</defecto>
    </columna>
    <columna>
-      <nombre>idpresupuesto</nombre>
+      <nombre>idalbaran</nombre>
       <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>

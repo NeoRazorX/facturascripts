@@ -26,6 +26,9 @@ require_model('ejercicio.php');
 require_model('linea_presupuesto_cliente.php');
 require_model('secuencia.php');
 
+/**
+ * Presupuesto de cliente
+ */
 class presupuesto_cliente extends fs_model
 {
    public $idpresupuesto;
@@ -91,7 +94,7 @@ class presupuesto_cliente extends fs_model
          $this->apartado = $p['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
 
-         $this->hora = '00:00:00';
+         $this->hora =  Date('H:i:s', strtotime($p['fecha']));
          if( !is_null($p['hora']) )
             $this->hora = $p['hora'];
 
@@ -115,6 +118,7 @@ class presupuesto_cliente extends fs_model
          $this->idpedido = NULL;
          $this->codigo = NULL;
          $this->codagente = NULL;
+         $this->codpago = NULL;
          $this->codserie = NULL;
          $this->codejercicio = NULL;
          $this->codcliente = NULL;
@@ -143,7 +147,7 @@ class presupuesto_cliente extends fs_model
          $this->recfinanciero = 0;
          $this->totalrecargo = 0;
          $this->observaciones = NULL;
-
+         
          $this->editable = TRUE;
       }
    }
@@ -288,10 +292,11 @@ class presupuesto_cliente extends fs_model
                codagente = ".$this->var2str($this->codagente).", codalmacen = ".$this->var2str($this->codalmacen).",
                codcliente = ".$this->var2str($this->codcliente).", coddir = ".$this->var2str($this->coddir).",
                coddivisa = ".$this->var2str($this->coddivisa).", codejercicio = ".$this->var2str($this->codejercicio).",
-               codigo = ".$this->var2str($this->codigo).",
+               codigo = ".$this->var2str($this->codigo).", codpago = ".$this->var2str($this->codpago).",
                codpais = ".$this->var2str($this->codpais).", codpostal = ".$this->var2str($this->codpostal).",
                codserie = ".$this->var2str($this->codserie).", direccion = ".$this->var2str($this->direccion).",
                editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).",
+               hora = ".$this->var2str($this->hora).", idpedido = ".$this->var2str($this->idpedido).",
                irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
                nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
                observaciones = ".$this->var2str($this->observaciones).", porcomision = ".$this->var2str($this->porcomision).",
@@ -306,15 +311,16 @@ class presupuesto_cliente extends fs_model
          {
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,codcliente,coddir,
-               coddivisa,codejercicio,codigo,codpais,codpostal,codserie,direccion,editable,fecha,irpf,neto,
+               coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,direccion,editable,fecha,hora,idpedido,irpf,neto,
                nombrecliente,numero,observaciones,porcomision,provincia,recfinanciero,tasaconv,total,totaleuros,totalirpf,
                totaliva,totalrecargo) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->ciudad).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
                ".$this->var2str($this->codcliente).",
                ".$this->var2str($this->coddir).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codejercicio).",
-               ".$this->var2str($this->codigo).",".$this->var2str($this->codpais).",
+               ".$this->var2str($this->codigo).",".$this->var2str($this->codpais).",".$this->var2str($this->codpago).",
                ".$this->var2str($this->codpostal).",".$this->var2str($this->codserie).",".$this->var2str($this->direccion).",
-               ".$this->var2str($this->editable).",".$this->var2str($this->fecha).",".$this->var2str($this->irpf).",
+               ".$this->var2str($this->editable).",".$this->var2str($this->fecha).",".$this->var2str($this->hora).",
+               ".$this->var2str($this->idpedido).",".$this->var2str($this->irpf).",
                ".$this->var2str($this->neto).",".$this->var2str($this->nombrecliente).",".$this->var2str($this->numero).",
                ".$this->var2str($this->observaciones).",".$this->var2str($this->porcomision).",".$this->var2str($this->provincia).",
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",
@@ -349,7 +355,7 @@ class presupuesto_cliente extends fs_model
    
    public function all($offset=0)
    {
-      $plist = array();
+      $preslist = array();
       
       $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($presupuestos)

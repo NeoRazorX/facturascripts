@@ -96,7 +96,7 @@ class pedido_cliente extends fs_model
          $this->apartado = $p['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
 
-         $this->hora = '00:00:00';
+         $this->hora =  Date('H:i:s', strtotime($p['fecha']));
          if( !is_null($p['hora']) )
             $this->hora = $p['hora'];
 
@@ -304,7 +304,7 @@ class pedido_cliente extends fs_model
                codigo = ".$this->var2str($this->codigo).", codpago = ".$this->var2str($this->codpago).",
                codpais = ".$this->var2str($this->codpais).", codpostal = ".$this->var2str($this->codpostal).",
                codserie = ".$this->var2str($this->codserie).", direccion = ".$this->var2str($this->direccion).",
-               editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).",
+               editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).", hora = ".$this->var2str($this->hora).",
                fechasalida = ".$this->var2str($this->fechasalida).", idalbaran = ".$this->var2str($this->idalbaran).",
                irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
                nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
@@ -321,7 +321,7 @@ class pedido_cliente extends fs_model
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
                codcliente,coddir,coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,
-               direccion,editable,fecha,fechasalida,idalbaran,irpf,neto,nombrecliente,
+               direccion,editable,fecha,hora,fechasalida,idalbaran,irpf,neto,nombrecliente,
                numero,observaciones,porcomision,provincia,recfinanciero,servido,tasaconv,total,totaleuros,
                totalirpf,totaliva,totalrecargo) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->ciudad).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
@@ -329,7 +329,7 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->codejercicio).",".$this->var2str($this->codigo).",".$this->var2str($this->codpago).",
                ".$this->var2str($this->codpais).",".$this->var2str($this->codpostal).",".$this->var2str($this->codserie).",
                ".$this->var2str($this->direccion).",".$this->var2str($this->editable).",".$this->var2str($this->fecha).",
-               ".$this->var2str($this->fechasalida).",".$this->var2str($this->idalbaran).",
+               ".$this->var2str($this->hora).",".$this->var2str($this->fechasalida).",".$this->var2str($this->idalbaran).",
                ".$this->var2str($this->irpf).",".$this->var2str($this->neto).",".$this->var2str($this->nombrecliente).",
                ".$this->var2str($this->numero).",".$this->var2str($this->observaciones).",".$this->var2str($this->porcomision).",
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",

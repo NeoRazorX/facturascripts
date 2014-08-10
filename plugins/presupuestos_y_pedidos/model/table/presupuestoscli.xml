@@ -101,6 +101,12 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>hora</nombre>
+      <tipo>time without time zone</tipo>
+      <nulo>YES</nulo>
+      <defecto>now()</defecto>
+   </columna>
+   <columna>
       <nombre>fechasalida</nombre>
       <tipo>date</tipo>
       <nulo>NO</nulo>
