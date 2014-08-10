@@ -49,7 +49,7 @@ class ventas_pedido extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pedido...', 'ventas', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Pedido', 'ventas', FALSE, FALSE);
    }
    
    protected function process()

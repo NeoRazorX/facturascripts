@@ -18,119 +18,157 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('articulo.php');
+require_model('cliente.php');
+require_model('ejercicio.php');
 require_model('linea_presupuesto_cliente.php');
+require_model('secuencia.php');
 
 class presupuesto_cliente extends fs_model
 {
-   public $apartado;
-   public $cifnif;
-   public $ciudad;
-   public $codagente;
-   public $codalmacen;
-   public $codcliente;
-   public $coddir;
-   public $coddivisa;
-   public $codejercicio;
-   public $codigo;
-   public $codpais;
-   public $codpostal;
-   public $codserie;
-   public $direccion;
-   public $editable;
-   public $fecha;
    public $idpresupuesto;
-   public $irpf;
-   public $neto;
-   public $nombrecliente;
+   public $idpedido;
+   public $codigo;
+   public $codserie;
+   public $codejercicio;
+   public $codcliente;
+   public $codagente;
+   public $codpago;
+   public $coddivisa;
+   public $codalmacen;
+   public $codpais;
+   public $coddir;
+   public $codpostal;
    public $numero;
-   public $observaciones;
-   public $porcomision;
+   public $nombrecliente;
+   public $cifnif;
+   public $direccion;
+   public $ciudad;
    public $provincia;
-   public $recfinanciero;
-   public $tasaconv;
+   public $apartado;
+   public $fecha;
+   public $hora;
+   public $neto;
    public $total;
-   public $totaleuros;
-   public $totalirpf;
    public $totaliva;
+   public $totaleuros;
+   public $irpf;
+   public $totalirpf;
+   public $porcomision;
+   public $tasaconv;
+   public $recfinanciero;
    public $totalrecargo;
+   public $observaciones;
+
+   public $editable;
    
    public function __construct($p = FALSE)
    {
       parent::__construct('presupuestoscli', 'plugins/presupuestos_y_pedidos/');
-      
       if($p)
       {
-         $this->apartado = $p['apartado'];
-         $this->cifnif = $p['cifnif'];
-         $this->ciudad = $p['ciudad'];
-         $this->codagente = $p['codagente'];
-         $this->codalmacen = $p['codalmacen'];
-         $this->codcliente = $p['codcliente'];
-         $this->coddir = $p['coddir'];
-         $this->coddivisa = $p['coddivisa'];
-         $this->codejercicio = $p['codejercicio'];
-         $this->codigo = $p['codigo'];
-         $this->codpais = $p['codpais'];
-         $this->codpostal = $p['codpostal'];
-         $this->codserie = $p['codserie'];
-         $this->direccion = $p['direccion'];
-         $this->editable = $this->str2bool($p['editable']);
-         $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
          $this->idpresupuesto = intval($p['idpresupuesto']);
-         $this->irpf = floatval($p['irpf']);
-         $this->neto = floatval($p['neto']);
-         $this->nombrecliente = $p['nombrecliente'];
+         $this->idpedido = intval($p['idpedido']);
+         $this->codigo = $p['codigo'];
+         $this->codagente = $p['codagente'];
+         $this->codpago = $p['codpago'];
+         $this->codserie = $p['codserie'];
+         $this->codejercicio = $p['codejercicio'];
+         $this->codcliente = $p['codcliente'];
+         $this->coddivisa = $p['coddivisa'];
+         $this->codalmacen = $p['codalmacen'];
+         $this->codpais = $p['codpais'];
+         $this->coddir = $p['coddir'];
+         $this->codpostal = $p['codpostal'];
          $this->numero = $p['numero'];
-         $this->observaciones = $p['observaciones'];
-         $this->porcomision = floatval($p['porcomision']);
+         $this->nombrecliente = $p['nombrecliente'];
+         $this->cifnif = $p['cifnif'];
+         $this->direccion = $p['direccion'];
+         $this->ciudad = $p['ciudad'];
          $this->provincia = $p['provincia'];
-         $this->recfinanciero = floatval($p['recfinanciero']);
-         $this->tasaconv = floatval($p['tasaconv']);
+         $this->apartado = $p['apartado'];
+         $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
+
+         $this->hora = '00:00:00';
+         if( !is_null($p['hora']) )
+            $this->hora = $p['hora'];
+
+         $this->neto = floatval($p['neto']);
          $this->total = floatval($p['total']);
-         $this->totaleuros = floatval($p['totaleuros']);
-         $this->totalirpf = floatval($p['totalirpf']);
          $this->totaliva = floatval($p['totaliva']);
+         $this->totaleuros = floatval($p['totaleuros']);
+         $this->irpf = floatval($p['irpf']);
+         $this->totalirpf = floatval($p['totalirpf']);
+         $this->porcomision = floatval($p['porcomision']);
+         $this->tasaconv = floatval($p['tasaconv']);
+         $this->recfinanciero = floatval($p['recfinanciero']);
          $this->totalrecargo = floatval($p['totalrecargo']);
+         $this->observaciones = $p['observaciones'];
+
+         $this->editable = $this->str2bool($p['editable']);
       }
       else
       {
-         $this->apartado = NULL;
-         $this->cifnif = NULL;
-         $this->ciudad = NULL;
-         $this->codagente = NULL;
-         $this->codalmacen = NULL;
-         $this->codcliente = NULL;
-         $this->coddir = NULL;
-         $this->coddivisa = NULL;
-         $this->codejercicio = NULL;
-         $this->codigo = NULL;
-         $this->codpais = NULL;
-         $this->codpostal = NULL;
-         $this->codserie = NULL;
-         $this->direccion = NULL;
-         $this->editable = TRUE;
-         $this->fecha = Date('d-m-Y');
          $this->idpresupuesto = NULL;
-         $this->irpf = 0;
-         $this->neto = 0;
-         $this->nombrecliente = NULL;
+         $this->idpedido = NULL;
+         $this->codigo = NULL;
+         $this->codagente = NULL;
+         $this->codserie = NULL;
+         $this->codejercicio = NULL;
+         $this->codcliente = NULL;
+         $this->coddivisa = NULL;
+         $this->codalmacen = NULL;
+         $this->codpais = NULL;
+         $this->coddir = NULL;
+         $this->codpostal = '';
          $this->numero = NULL;
-         $this->observaciones = '';
-         $this->porcomision = 0;
+         $this->nombrecliente = NULL;
+         $this->cifnif = NULL;
+         $this->direccion = NULL;
+         $this->ciudad = NULL;
          $this->provincia = NULL;
-         $this->recfinanciero = 0;
-         $this->tasaconv = 1;
+         $this->apartado = NULL;
+         $this->fecha = Date('d-m-Y');
+         $this->hora = Date('H:i:s');
+         $this->neto = 0;
          $this->total = 0;
-         $this->totaleuros = 0;
-         $this->totalirpf = 0;
          $this->totaliva = 0;
+         $this->totaleuros = 0;
+         $this->irpf = 0;
+         $this->totalirpf = 0;
+         $this->porcomision = NULL;
+         $this->tasaconv = 1;
+         $this->recfinanciero = 0;
          $this->totalrecargo = 0;
+         $this->observaciones = NULL;
+
+         $this->editable = TRUE;
       }
    }
    
    protected function install()
    {
       return '';
+   }
+   
+   public function show_hora($s=TRUE)
+   {
+      if($s)
+         return Date('H:i:s', strtotime($this->hora));
+      else
+         return Date('H:i', strtotime($this->hora));
+   }
+   
+   public function observaciones_resume()
+   {
+      if($this->observaciones == '')
+         return '-';
+      else if( strlen($this->observaciones) < 60 )
+         return $this->observaciones;
+      else
+         return substr($this->observaciones, 0, 50).'...';
    }
    
    public function url()
@@ -141,16 +179,64 @@ class presupuesto_cliente extends fs_model
          return 'index.php?page=ventas_presupuesto&id='.$this->idpresupuesto;
    }
    
+   public function pedido_url()
+   {
+      if( is_null($this->idpedido) )
+      {
+         return '#';
+      }
+      else
+      {
+         return 'index.php?page=ventas_pedido&id='.$this->idpedido;
+      }
+   }
+   
+   public function agente_url()
+   {
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
+      else
+         return "index.php?page=admin_agente&cod=".$this->codagente;
+   }
+   
+   public function cliente_url()
+   {
+      if( is_null($this->codcliente) )
+         return "index.php?page=ventas_clientes";
+      else
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
+   }
+   
+   public function get_lineas()
+   {
+      $linea = new linea_presupuesto_cliente();
+      return $linea->all_from_presupuesto($this->idpresupuesto);
+   }
+   
+   public function get_agente()
+   {
+      $agente = new agente();
+      return $agente->get($this->codagente);
+   }
+
    public function get($id)
    {
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($id).";");
-      if($data)
-         return new presupuesto_cliente($data[0]);
+      $presupuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($id).";");
+      if($presupuesto)
+         return new presupuesto_cliente($presupuesto[0]);
       else
          return FALSE;
    }
    
-   private function new_codigo()
+   public function exists()
+   {
+      if( is_null($this->idpresupuesto) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
+   }
+   
+   public function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npresupuestocli');
@@ -181,17 +267,12 @@ class presupuesto_cliente extends fs_model
       $this->codigo = $this->codejercicio.sprintf('%02s', $this->codserie).sprintf('%06s', $this->numero);
    }
    
-   public function exists()
+   public function test()
    {
-      if( is_null($this->idpresupuesto) )
-      {
-         return FALSE;
-      }
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
+      return TRUE;
    }
    
-   public function test()
+   public function full_test($duplicados = TRUE)
    {
       return TRUE;
    }
@@ -255,20 +336,256 @@ class presupuesto_cliente extends fs_model
    
    public function delete()
    {
+      if( $this->idpedido )
+      {
+         $pedido = new pedido_cliente();
+         $pedido = $pedido->get($this->idpedido);
+         if($pedido)
+            $pedido->delete();
+      }
+      
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
    }
    
-   public function all()
+   public function all($offset=0)
    {
       $plist = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC;");
+      $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($presupuestos)
+      {
+         foreach($presupuesto as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+   
+   public function all_ptepedir($offset=0, $order='DESC')
+   {
+      $preslist = array();
+      $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE idpedido IS NULL ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
+      if($presupuesto)
+      {
+         foreach($presupuesto as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+   
+   public function all_from_cliente($codcliente, $offset=0)
+   {
+      $preslist = array();
+      $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codcliente = ".$this->var2str($codcliente).
+              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($presupuestos)
+      {
+         foreach($presupuesto as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      
+      return $preslist;
+   }
+   
+   public function all_from_agente($codagente, $offset=0)
+   {
+      $preslist = array();
+      $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codagente = ".$this->var2str($codagente).
+              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      if($presupuestos)
+      {
+         foreach($presupuestos as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+   
+   public function all_desde($desde, $hasta)
+   {
+      $preslist = array();
+      $presupuestos = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE fecha >= ".$this->var2str($desde)." AND fecha <= ".$this->var2str($hasta).
+         " ORDER BY codigo ASC;");
+      if($presupuestos)
+      {
+         foreach($presupuestos as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+
+   public function search($query, $offset=0)
+   {
+      $preslist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+      {
+         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
+            OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
+      }
+      else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
+         $consulta .= "fecha = ".$this->var2str($query)." OR observaciones LIKE '%".$query."%'";
+      else
+         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
+      $consulta .= " ORDER BY fecha DESC, codigo DESC";
+      
+      $presupuestos = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+      if($presupuesto)
+      {
+         foreach($presupuesto as $p)
+            $preslist[] = new presupuesto_cliente($p);
+      }
+      return $preslist;
+   }
+   
+   public function cron_job()
+   {
+      
+   }
+   
+   public function stats_last_days($numdays = 25)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMDD')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
       if($data)
       {
          foreach($data as $d)
-            $plist[] = new presupuesto_cliente($d);
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months($num = 11)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0);
       }
       
-      return $plist;
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_years($num = 4)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('year' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMYYYY')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%Y')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY ano ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['ano']);
+            $stats[$i] = array(
+                'year' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   /*
+    * Devuelve un array con los datos estadísticos de las compras del cliente
+    * en los cinco últimos años.
+    */
+   public function stats_from_cli($codcliente)
+   {
+      $stats = array();
+      $years = array();
+      for($i=4; $i>=0; $i--)
+         $years[] = intval(Date('Y')) - $i;
+      
+      $meses = array('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic');
+      
+      foreach($years as $year)
+      {
+         for($i = 1; $i <= 12; $i++)
+         {
+            $stats[$year.'-'.$i]['mes'] = $meses[$i-1].' '.$year;
+            $stats[$year.'-'.$i]['compras'] = 0;
+         }
+         
+         if( strtolower(FS_DB_TYPE) == 'postgresql')
+            $sql_aux = "to_char(fecha,'FMMM')";
+         else
+            $sql_aux = "DATE_FORMAT(fecha, '%m')";
+         
+         $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+            FROM ".$this->table_name." WHERE fecha >= ".$this->var2str(Date('1-1-'.$year))."
+            AND fecha <= ".$this->var2str(Date('31-12-'.$year))." AND codcliente = ".$this->var2str($codcliente)."
+            GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+         if($data)
+         {
+            foreach($data as $d)
+               $stats[$year.'-'.intval($d['mes'])]['compras'] = number_format($d['total'], FS_NF0, '.', '');
+         }
+      }
+      
+      return $stats;
    }
 }

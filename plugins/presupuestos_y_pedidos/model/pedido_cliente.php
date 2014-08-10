@@ -106,7 +106,7 @@ class pedido_cliente extends fs_model
          $this->totaleuros = floatval($p['totaleuros']);
          $this->irpf = floatval($p['irpf']);
          $this->totalirpf = floatval($p['totalirpf']);
-         $this->porcomision = floatval($p['porcomision']); 
+         $this->porcomision = floatval($p['porcomision']);
          $this->tasaconv = floatval($p['tasaconv']);
          $this->recfinanciero = floatval($p['recfinanciero']);
          $this->totalrecargo = floatval($p['totalrecargo']);

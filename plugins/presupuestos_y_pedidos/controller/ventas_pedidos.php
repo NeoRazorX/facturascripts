@@ -140,7 +140,7 @@ class ventas_pedidos extends fs_controller
          }
          
          if( $ped1->delete() )
-            $this->new_message("Pedido ".$alb1->codigo." borrado correctamente.");
+            $this->new_message("Pedido ".$ped1->codigo." borrado correctamente.");
          else
             $this->new_error_msg("¡Imposible borrar el pedido!");
       }

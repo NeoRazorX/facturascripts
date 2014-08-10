@@ -17,7 +17,7 @@
             {$value->nombrecliente}
          </td>
          <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
-         <td align="right">{$fsc->show_precio($value->total)}</td>
+         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td align="right">{$value->fecha}</td>
       </tr>
       {else}

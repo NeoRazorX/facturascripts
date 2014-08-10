@@ -69,7 +69,7 @@ class linea_presupuesto_cliente extends fs_model
          $this->pvptotal = 0;
          $this->pvpunitario = 0;
          $this->recargo = 0;
-         $this->referencia = NULL;
+         $this->referencia = '';
       }
    }
    
@@ -77,7 +77,7 @@ class linea_presupuesto_cliente extends fs_model
    {
       return '';
    }
-      
+   
    public function pvp_iva()
    {
       return $this->pvpunitario*(100+$this->iva)/100;
@@ -171,5 +171,46 @@ class linea_presupuesto_cliente extends fs_model
       }
       
       return $plist;
+   }
+   
+   public function all_from_articulo($ref, $offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $linealist = array();
+      
+      $lineas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref)." ORDER BY idpresupuesto DESC", $limit, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_presupuesto_cliente($l);
+      }
+      
+      return $linealist;
+   }
+   
+   public function search($query='', $offset=0)
+   {
+      $linealist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+      {
+         $sql .= "referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%'";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%'";
+      }
+      $sql .= " ORDER BY idpresupuesto DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_presupuesto_cliente($l);
+      }
+      
+      return $linealist;
    }
 }
