@@ -78,21 +78,21 @@
             <th align="left">Cliente</th>
             <th align="left">Observaciones</th>
             <th align="right">Total</th>
-            <th align="right">Fecha</th>
+            <th align="right">Fecha y hora</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
       <tr>
          <td align="center">
             {if condition="!$value->ptefactura"}
-            <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
+            <span class="glyphicon glyphicon-paperclip" title="El albaran tiene vinculado una factura"></span>
             {/if}
          </td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right"><span title="{$value->hora}">{$value->fecha}</span></td>
+         <td align="right">{$value->fecha} {$value->hora}</td>
       </tr>
       {else}
       <tr>
