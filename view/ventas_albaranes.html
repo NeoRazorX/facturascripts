@@ -85,7 +85,7 @@
       <tr>
          <td align="center">
             {if condition="!$value->ptefactura"}
-            <span class="glyphicon glyphicon-paperclip" title="El albaran tiene vinculado una factura"></span>
+            <span class="glyphicon glyphicon-paperclip" title="El {$albaran} tiene vinculado una factura"></span>
             {/if}
          </td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
