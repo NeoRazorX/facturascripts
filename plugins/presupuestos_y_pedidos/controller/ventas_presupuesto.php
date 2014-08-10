@@ -436,8 +436,8 @@ class ventas_presupuesto extends fs_controller
          foreach($this->presupuesto->get_lineas() as $l)
          {
             $n = new linea_pedido_cliente();
-            $n->idpresupuesto = $presupuesto->idpresupuesto;
-            $n->idpedido = $l->idpedido;
+            $n->idpresupuesto = $l->idpresupuesto;
+            $n->idpedido = $pedido->idpedido;
             $n->cantidad = $l->cantidad;
             $n->codimpuesto = $l->codimpuesto;
             $n->descripcion = $l->descripcion;
@@ -460,8 +460,7 @@ class ventas_presupuesto extends fs_controller
          
          if($continuar)
          {
-            $this->presupuesto->idpresupuesto = $pedido->idpedido;
-            $this->presupuesto->idpedido = NULL;
+            $this->presupuesto->idpedido = $pedido->idpedido;
             if( $this->presupuesto->save() )
             {
                //$this->generar_asiento($factura);

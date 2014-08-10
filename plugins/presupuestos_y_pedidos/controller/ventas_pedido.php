@@ -436,8 +436,8 @@ class ventas_pedido extends fs_controller
          foreach($this->pedido->get_lineas() as $l)
          {
             $n = new linea_albaran_cliente();
-            $n->idpedido = $pedido->idpedido;
-            $n->idalbaran = $l->idalbaran;
+            $n->idpedido = $l->idpedido;
+            $n->idalbaran = $albaran->idalbaran;
             $n->cantidad = $l->cantidad;
             $n->codimpuesto = $l->codimpuesto;
             $n->descripcion = $l->descripcion;
@@ -460,8 +460,7 @@ class ventas_pedido extends fs_controller
          
          if($continuar)
          {
-            $this->pedido->idpedido = $albaran->idalbaran;
-            $this->pedido->idalbaran = NULL;
+            $this->pedido->idalbaran = $albaran->idalbaran;
             if( $this->pedido->save() )
             {
                //$this->generar_asiento($factura);

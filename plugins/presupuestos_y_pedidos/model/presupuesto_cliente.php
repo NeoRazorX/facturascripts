@@ -72,8 +72,8 @@ class presupuesto_cliente extends fs_model
       parent::__construct('presupuestoscli', 'plugins/presupuestos_y_pedidos/');
       if($p)
       {
-         $this->idpresupuesto = intval($p['idpresupuesto']);
-         $this->idpedido = intval($p['idpedido']);
+         $this->idpresupuesto = $this->intval($p['idpresupuesto']);
+         $this->idpedido = $this->intval($p['idpedido']);
          $this->codigo = $p['codigo'];
          $this->codagente = $p['codagente'];
          $this->codpago = $p['codpago'];
