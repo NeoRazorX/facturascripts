@@ -26,6 +26,8 @@ require_model('forma_pago.php');
 require_model('impuesto.php');
 require_model('pedido_cliente.php');
 require_model('serie.php');
+require_model('pedido_cliente.php');
+require_model('presupuesto_cliente.php');
 
 class nueva_venta extends fs_controller
 {

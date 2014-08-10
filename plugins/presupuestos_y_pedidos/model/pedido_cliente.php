@@ -18,131 +18,187 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('agente.php');
+require_model('albaran_cliente.php');
+require_model('articulo.php');
+require_model('cliente.php');
+require_model('ejercicio.php');
 require_model('linea_pedido_cliente.php');
+require_model('secuencia.php');
 
+/**
+ * Pedido de cliente
+ */
 class pedido_cliente extends fs_model
 {
-   public $apartado;
-   public $cifnif;
-   public $ciudad;
-   public $codagente;
-   public $codalmacen;
-   public $codcliente;
-   public $coddir;
-   public $coddivisa;
-   public $codejercicio;
-   public $codigo;
-   public $codpago;
-   public $codpais;
-   public $codpostal;
-   public $codserie;
-   public $direccion;
-   public $editable;
-   public $fecha;
-   public $fechasalida;
    public $idpedido;
-   public $idpresupuesto;
-   public $irpf;
-   public $neto;
-   public $nombrecliente;
+   public $idalbaran;
+   public $codigo;
+   public $codserie;
+   public $codejercicio;
+   public $codcliente;
+   public $codagente;
+   public $codpago;
+   public $coddivisa;
+   public $codalmacen;
+   public $codpais;
+   public $coddir;
+   public $codpostal;
    public $numero;
-   public $observaciones;
-   public $porcomision;
+   public $numero2;
+   public $nombrecliente;
+   public $cifnif;
+   public $direccion;
+   public $ciudad;
    public $provincia;
-   public $recfinanciero;
-   public $servido;
-   public $tasaconv;
+   public $apartado;
+   public $fecha;
+   public $hora;
+   public $neto;
    public $total;
-   public $totaleuros;
-   public $totalirpf;
    public $totaliva;
+   public $totaleuros;
+   public $irpf;
+   public $totalirpf;
+   public $porcomision;
+   public $tasaconv;
+   public $recfinanciero;
    public $totalrecargo;
+   public $observaciones;
+   public $ptealbaran;
+
+   public $editable;
+   public $servido;
+   public $fechasalida;
    
    public function __construct($p = FALSE)
    {
       parent::__construct('pedidoscli', 'plugins/presupuestos_y_pedidos/');
-      
       if($p)
       {
-         $this->apartado = $p['apartado'];
-         $this->cifnif = $p['cifnif'];
-         $this->ciudad = $p['ciudad'];
-         $this->codagente = $p['codagente'];
-         $this->codalmacen = $p['codalmacen'];
-         $this->codcliente = $p['codcliente'];
-         $this->coddir = $p['coddir'];
-         $this->coddivisa = $p['coddivisa'];
-         $this->codejercicio = $p['codejercicio'];
+         $this->idpedido = $this->intval($p['idpedido']);
+         if( $this->str2bool($p['ptealbaran']) )
+         {
+            $this->ptealbaran = TRUE;
+            $this->idalbaran = NULL;
+         }
+         else
+         {
+            $this->ptealbaran = FALSE;
+            $this->idalbaran = $this->intval($p['idalbaran']);
+         }
          $this->codigo = $p['codigo'];
-         $this->codpago = $p['codpago'];
-         $this->codpais = $p['codpais'];
-         $this->codpostal = $p['codpostal'];
+         $this->codagente = $p['codagente'];
          $this->codserie = $p['codserie'];
-         $this->direccion = $p['direccion'];
-         $this->editable = $this->str2bool($p['editable']);
-         $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
-         $this->fechasalida = Date('d-m-Y', strtotime($p['fechasalida']));
-         $this->idpedido = intval($p['idpedido']);
-         $this->idpresupuesto = $this->intval($p['idpresupuesto']);
-         $this->irpf = floatval($p['irpf']);
-         $this->neto = floatval($p['neto']);
-         $this->nombrecliente = $p['nombrecliente'];
+         $this->codejercicio = $p['codejercicio'];
+         $this->codcliente = $p['codcliente'];
+         $this->codpago = $p['codpago'];
+         $this->coddivisa = $p['coddivisa'];
+         $this->codalmacen = $p['codalmacen'];
+         $this->codpais = $p['codpais'];
+         $this->coddir = $p['coddir'];
+         $this->codpostal = $p['codpostal'];
          $this->numero = intval($p['numero']);
-         $this->observaciones = $p['observaciones'];
-         $this->porcomision = floatval($p['porcomision']);
+         $this->numero2 = intval($p['numero2']);
+         $this->nombrecliente = $p['nombrecliente'];
+         $this->cifnif = $p['cifnif'];
+         $this->direccion = $p['direccion'];
+         $this->ciudad = $p['ciudad'];
          $this->provincia = $p['provincia'];
-         $this->recfinanciero = floatval($p['recfinanciero']);
-         $this->servido = $this->str2bool($p['servido']);
-         $this->tasaconv = floatval($p['tasaconv']);
+         $this->apartado = $p['apartado'];
+         $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
+
+         $this->hora = '00:00:00';
+         if( !is_null($a['hora']) )
+            $this->hora = $a['hora'];
+
+         $this->neto = floatval($p['neto']);
          $this->total = floatval($p['total']);
-         $this->totaleuros = floatval($p['totaleuros']);
-         $this->totalirpf = floatval($p['totalirpf']);
          $this->totaliva = floatval($p['totaliva']);
+         $this->totaleuros = floatval($p['totaleuros']);
+         $this->irpf = floatval($p['irpf']);
+         $this->totalirpf = floatval($p['totalirpf']);
+         $this->porcomision = floatval($p['porcomision']); 
+         $this->tasaconv = floatval($p['tasaconv']);
+         $this->recfinanciero = floatval($p['recfinanciero']);
          $this->totalrecargo = floatval($p['totalrecargo']);
+         $this->observaciones = $p['observaciones'];
+
+         $this->editable = $this->str2bool($p['editable']);
+         $this->fechasalida = Date('d-m-Y', strtotime($p['fechasalida']));
+         $this->servido = $this->str2bool($p['servido']);
+
+/* Creo que es una confusion idpresupuesto, al igual que desde albaran
+ * debe ser el id del documento al que se puede aprobar
+ * y este ya esta indicado al inicio de este if. De ser asi se puede borrar
+ */
+//         $this->idpresupuesto = $this->intval($p['idpresupuesto']);
       }
       else
       {
-         $this->apartado = NULL;
-         $this->cifnif = NULL;
-         $this->ciudad = NULL;
-         $this->codagente = NULL;
-         $this->codalmacen = NULL;
-         $this->codcliente = NULL;
-         $this->coddir = NULL;
-         $this->coddivisa = NULL;
-         $this->codejercicio = NULL;
-         $this->codigo = NULL;
-         $this->codpago = NULL;
-         $this->codpais = NULL;
-         $this->codpostal = NULL;
-         $this->codserie = NULL;
-         $this->direccion = NULL;
-         $this->editable = TRUE;
-         $this->fecha = Date('d-m-Y');
-         $this->fechasalida = NULL;
          $this->idpedido = NULL;
-         $this->idpresupuesto = NULL;
-         $this->irpf = 0;
-         $this->neto = 0;
-         $this->nombrecliente = NULL;
+         $this->idalbaran = NULL;
+         $this->codigo = NULL;
+         $this->codagente = NULL;
+         $this->codserie = NULL;
+         $this->codejercicio = NULL;
+         $this->codcliente = NULL;
+         $this->codpago = NULL;
+         $this->coddivisa = NULL;
+         $this->codalmacen = NULL;
+         $this->codpais = NULL;
+         $this->coddir = NULL;
+         $this->codpostal = '';
          $this->numero = NULL;
-         $this->observaciones = '';
-         $this->porcomision = NULL;
+         $this->numero2 = NULL;
+         $this->nombrecliente = NULL;
+         $this->cifnif = NULL;
+         $this->direccion = NULL;
+         $this->ciudad = NULL;
          $this->provincia = NULL;
-         $this->recfinanciero = 0;
-         $this->servido = FALSE;
-         $this->tasaconv = 1;
+         $this->apartado = NULL;
+         $this->fecha = Date('d-m-Y');
+         $this->hora = Date('H:i:s');
+         $this->neto = 0;
          $this->total = 0;
-         $this->totaleuros = 0;
-         $this->totalirpf = 0;
          $this->totaliva = 0;
+         $this->totaleuros = 0;
+         $this->irpf = 0;
+         $this->totalirpf = 0;
+         $this->porcomision = NULL;
+         $this->tasaconv = 1;
+         $this->recfinanciero = 0;
          $this->totalrecargo = 0;
+         $this->observaciones = NULL;
+         $this->ptealbaran = TRUE;
+
+         $this->servido = FALSE;
+         $this->editable = TRUE;
+         $this->fechasalida = NULL;
       }
    }
    
    protected function install()
    {
       return '';
+   }
+   
+   public function show_hora($s=TRUE)
+   {
+      if($s)
+         return Date('H:i:s', strtotime($this->hora));
+      else
+         return Date('H:i', strtotime($this->hora));
+   }
+   
+   public function observaciones_resume()
+   {
+      if($this->observaciones == '')
+         return '-';
+      else if( strlen($this->observaciones) < 60 )
+         return $this->observaciones;
+      else
+         return substr($this->observaciones, 0, 50).'...';
    }
    
    public function url()
@@ -153,10 +209,47 @@ class pedido_cliente extends fs_model
          return 'index.php?page=ventas_pedido&id='.$this->idpedido;
    }
    
+   public function albaran_url()
+   {
+      if( $this->ptealbaran )
+      {
+         return '#';
+      }
+      else
+      {
+         if( is_null($this->idalbaran) )
+            return 'index.php?page=ventas_albaranes';
+         else
+            return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
+      }
+   }
+   
+   public function agente_url()
+   {
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
+      else
+         return "index.php?page=admin_agente&cod=".$this->codagente;
+   }
+   
+   public function cliente_url()
+   {
+      if( is_null($this->codcliente) )
+         return "index.php?page=ventas_clientes";
+      else
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
+   }
+   
    public function get_lineas()
    {
       $linea = new linea_pedido_cliente();
       return $linea->all_from_pedido($this->idpedido);
+   }
+   
+   public function get_agente()
+   {
+      $agente = new agente();
+      return $agente->get($this->codagente);
    }
    
    public function get($id)
@@ -168,7 +261,31 @@ class pedido_cliente extends fs_model
          return FALSE;
    }
    
-   private function new_codigo()
+   public function get_by_codigo($cod)
+   {
+      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
+      if($pedido)
+         return new pedido_cliente($pedido[0]);
+      else
+         return FALSE;
+   }
+   
+   public function exists()
+   {
+      if( is_null($this->idpedido) )
+         return FALSE;
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
+   }
+   
+   public function new_idpedido()
+   {
+      $newid = $this->db->nextval($this->table_name.'_idpedido_seq');
+      if($newid)
+         $this->idpedido = intval($newid);
+   }
+   
+   public function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npedidocli');
@@ -199,19 +316,16 @@ class pedido_cliente extends fs_model
       $this->codigo = $this->codejercicio.sprintf('%02s', $this->codserie).sprintf('%06s', $this->numero);
    }
    
-   public function exists()
-   {
-      if( is_null($this->idpedido) )
-         return FALSE;
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
-   }
-   
    public function test()
    {
       return TRUE;
    }
    
+   public function full_test($duplicados = TRUE)
+   {
+      return TRUE;
+   }
+
    public function save()
    {
       if( $this->test() )
@@ -240,6 +354,7 @@ class pedido_cliente extends fs_model
          }
          else
          {
+            $this->new_idpedido();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
                codcliente,coddir,coddivisa,codejercicio,codigo,codpago,codpais,codpostal,codserie,
@@ -257,15 +372,8 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).");";
-            
-            if( $this->db->exec($sql) )
-            {
-               $this->idpedido = $this->db->lastval();
-               return TRUE;
-            }
-            else
-               return FALSE;
          }
+         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -273,28 +381,47 @@ class pedido_cliente extends fs_model
    
    public function delete()
    {
+      if( $this->idalbaran )
+      {
+         $albaran = new albaran_cliente();
+         $albaran = $albaran->get($this->idalbaran);
+         if($albaran)
+            $albaran->delete();
+      }
+      
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }
    
-   public function all($offset = 0)
+   public function all($offset=0)
    {
       $pedilist = array();
-      
-      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
          foreach($pedidos as $p)
             $pedilist[] = new pedido_cliente($p);
       }
-      
+      return $pedilist;
+   }
+    
+   public function all_ptealbaran($offset=0, $order='DESC')
+   {
+      $pedilist = array();
+      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE ptealbaran = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
+      if($pedidos)
+      {
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
+      }
       return $pedilist;
    }
    
    public function all_from_cliente($codcliente, $offset=0)
    {
       $pedilist = array();
-      
-      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
+      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codcliente = ".$this->var2str($codcliente).
               " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
@@ -308,18 +435,31 @@ class pedido_cliente extends fs_model
    public function all_from_agente($codagente, $offset=0)
    {
       $pedilist = array();
-      
-      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($codagente).
+      $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+              " WHERE codagente = ".$this->var2str($codagente).
               " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
          foreach($pedidos as $p)
             $pedilist[] = new pedido_cliente($p);
       }
-      
       return $pedilist;
    }
    
+   public function all_desde($desde, $hasta)
+   {
+      $pedlist = array();
+      $pedidos = $this->db->select("SELECT * FROM ".$this->table_name.
+         " WHERE fecha >= ".$this->var2str($desde)." AND fecha <= ".$this->var2str($hasta).
+         " ORDER BY codigo ASC;");
+      if($pedidos)
+      {
+         foreach($pedidos as $p)
+            $pedlist[] = new pedido_cliente($p);
+      }
+      return $pedlist;
+   }
+
    public function search($query, $offset=0)
    {
       $pedilist = array();
@@ -328,7 +468,7 @@ class pedido_cliente extends fs_model
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
       {
-         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
+         $consulta .= "codigo LIKE '%".$query."%' OR numero2 LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
@@ -343,12 +483,173 @@ class pedido_cliente extends fs_model
          foreach($pedidos as $p)
             $pedilist[] = new pedido_cliente($p);
       }
-      
       return $pedilist;
    }
    
+   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
+   {
+      $pedilist = array();
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
+         " AND ptealbaran AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
+         " AND codserie = ".$this->var2str($serie);
+      
+      if($obs != '')
+         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
+      
+      $sql .= " ORDER BY fecha DESC, codigo DESC;";
+      
+      $pedidos = $this->db->select($sql);
+      if($pedidos)
+      {
+         foreach($pedidos as $p)
+            $pedilist[] = new pedido_cliente($p);
+      }
+      return $pedilist;
+   }
    public function cron_job()
    {
       
+   }
+   
+   public function stats_last_days($numdays = 25)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMDD')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months($num = 11)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_years($num = 4)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('year' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMYYYY')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%Y')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total
+         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
+         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY ano ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['ano']);
+            $stats[$i] = array(
+                'year' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   /*
+    * Devuelve un array con los datos estadísticos de las compras del cliente
+    * en los cinco últimos años.
+    */
+   public function stats_from_cli($codcliente)
+   {
+      $stats = array();
+      $years = array();
+      for($i=4; $i>=0; $i--)
+         $years[] = intval(Date('Y')) - $i;
+      
+      $meses = array('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic');
+      
+      foreach($years as $year)
+      {
+         for($i = 1; $i <= 12; $i++)
+         {
+            $stats[$year.'-'.$i]['mes'] = $meses[$i-1].' '.$year;
+            $stats[$year.'-'.$i]['compras'] = 0;
+         }
+         
+         if( strtolower(FS_DB_TYPE) == 'postgresql')
+            $sql_aux = "to_char(fecha,'FMMM')";
+         else
+            $sql_aux = "DATE_FORMAT(fecha, '%m')";
+         
+         $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+            FROM ".$this->table_name." WHERE fecha >= ".$this->var2str(Date('1-1-'.$year))."
+            AND fecha <= ".$this->var2str(Date('31-12-'.$year))." AND codcliente = ".$this->var2str($codcliente)."
+            GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+         if($data)
+         {
+            foreach($data as $d)
+               $stats[$year.'-'.intval($d['mes'])]['compras'] = number_format($d['total'], FS_NF0, '.', '');
+         }
+      }
+      
+      return $stats;
    }
 }
