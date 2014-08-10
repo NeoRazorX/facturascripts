@@ -46,6 +46,7 @@ class registro_sat extends fs_model
       {
          $this->nsat = intval($s['nsat']);
          $this->prioridad = intval($s['prioridad']);
+         $this->fentrada = date('d-m-Y', strtotime($s['fentrada']));
          $this->fcomienzo = date('d-m-Y', strtotime($s['fcomienzo']));
          
          $this->ffin = NULL;
@@ -144,9 +145,9 @@ class registro_sat extends fs_model
    public function cliente_url()
    {
       if( is_null($this->codcliente) )
-         return "index.php?page=general_clientes";
+         return "index.php?page=ventas_clientes";
       else
-         return "index.php?page=general_cliente&cod=".$this->codcliente;
+         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
    }
    
    public function get($id)
@@ -197,8 +198,8 @@ class registro_sat extends fs_model
                fcomienzo = ".$this->var2str($this->fcomienzo).", ffin = ".$this->var2str($this->ffin).",
                modelo = ".$this->var2str($this->modelo).", codcliente = ".$this->var2str($this->codcliente).",
                estado = ".$this->var2str($this->estado).", averia = ".$this->var2str($this->averia).",
-               accesorios = ".$this->var2str($this->accesorios).", observaciones = ".$this->var2str($this->observaciones).", posicion = ".$this->var2str($this->posicion)."
-               WHERE nsat = ".$this->var2str($this->nsat).";";
+               accesorios = ".$this->var2str($this->accesorios).", observaciones = ".$this->var2str($this->observaciones).",
+               posicion = ".$this->var2str($this->posicion)." WHERE nsat = ".$this->var2str($this->nsat).";";
             
             return $this->db->exec($sql);
          }
