@@ -211,7 +211,7 @@ class linea_factura_proveedor extends fs_model
    
    public function articulo_url()
    {
-      if( is_null($this->referencia) AND $this->referencia == ' ')
+      if( is_null($this->referencia) OR $this->referencia == ' ')
          return "index.php?page=ventas_articulos";
       else
          return "index.php?page=ventas_articulo&ref=".urlencode($this->referencia);

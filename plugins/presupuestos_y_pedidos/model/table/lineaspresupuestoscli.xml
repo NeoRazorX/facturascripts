@@ -80,4 +80,10 @@
       <nombre>lineaspresupuestoscli_pkey</nombre>
       <consulta>PRIMARY KEY (idlinea)</consulta>
    </restriccion>
+   <restriccion>
+      <nombre>ca_lineaspresupuestoscli_presupuestoscli</nombre>
+      <consulta>FOREIGN KEY (idpresupuesto)
+      REFERENCES presupuestoscli (idpresupuesto)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>

@@ -1,6 +1,6 @@
 {include="header"}
 
-{if condition="$fsc->albaran"}
+{if condition="$fsc->pedido"}
 <script type="text/javascript">
    var numlineas = 0;
    function recalcular()
@@ -157,9 +157,9 @@
    {
       $.ajax({
          type: 'POST',
-         url: '{$fsc->nuevo_albaran_url}',
+         url: '{$fsc->nuevo_pedido_url}',
          dataType: 'html',
-         data: "referencia4precios="+ref+"codcliente={$fsc->albaran->codcliente}",
+         data: "referencia4precios="+ref+"codcliente={$fsc->pedido->codcliente}",
          success: function(datos) {
             $("#search_results").html(datos);
          }
@@ -170,7 +170,7 @@
       numlineas += 1;
       $("#numlineas").val(numlineas);
       desc = Base64.decode(desc);
-      $("#lineas_albaran").prepend("<tr id=\"linea_"+numlineas+"\">\n\
+      $("#lineas_pedido").prepend("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"idlinea_"+numlineas+"\" value=\"-1\"/>\n\
             <input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
             <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
@@ -195,7 +195,7 @@
    {
       $.ajax({
          type: 'POST',
-         url: '{$fsc->nuevo_albaran_url}&new_articulo=TRUE',
+         url: '{$fsc->nuevo_pedido_url}&new_articulo=TRUE',
          dataType: 'html',
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
@@ -213,7 +213,7 @@
       {
          $.ajax({
             type: 'POST',
-            url: '{$fsc->nuevo_albaran_url}',
+            url: '{$fsc->nuevo_pedido_url}',
             dataType: 'html',
             data: $("form[name=f_buscar_articulos]").serialize(),
             success: function(datos) {
@@ -231,13 +231,13 @@
       recalcular();
       $("#b_imprimir").click(function(event) {
          event.preventDefault();
-         $("#modal_imprimir_albaran").modal('show');
+         $("#modal_imprimir_pedido").modal('show');
       });
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          $("#modal_enviar").modal('show');
       });
-      $("#b_remove_albaran").click(function(event) {
+      $("#b_remove_pedido").click(function(event) {
          event.preventDefault();
          $("#modal_eliminar").modal('show');
       });
@@ -261,17 +261,17 @@
    });
 </script>
 
-<div class="modal fade" id="modal_imprimir_albaran">
+<div class="modal fade" id="modal_imprimir_pedido">
    <div class="modal-dialog">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir {$albaran}</h4>
+            <h4 class="modal-title">Imprimir {$pedido}</h4>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
                <span class="glyphicon glyphicon-print"></span>
-               &nbsp; {$albaran} simple
+               &nbsp; Pedido simple
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
@@ -289,7 +289,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar {$albaran}</h4>
+               <h4 class="modal-title">Enviar Pedido</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -298,7 +298,7 @@
                </div>
                <div class="form-group">
                   Mensaje:
-                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {$albaran} {$fsc->albaran->codigo}.
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su Pedido {$fsc->pedido->codigo}.
 {$fsc->empresa->email_firma}</textarea>
                </div>
             </div>
@@ -314,13 +314,13 @@
 </form>
 
 <form action="{$fsc->ppage->url()}" method="post">
-   <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
+   <input type="hidden" name="delete" value="{$fsc->pedido->idpedido}"/>
    <div class="modal fade" id="modal_eliminar">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este {$albaran}?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este Pedido?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
@@ -334,9 +334,9 @@
                   &nbsp; Eliminar
                </button>
             </div>
-            {if condition="$fsc->albaran->idfactura"}
+            {if condition="$fsc->pedido->idfactura"}
             <div class="alert alert-info">
-               Hay una factura asociada que será eliminada junto con este {$albaran}.
+               Hay una factura asociada que será eliminada junto con este Pedido.
             </div>
             {/if}
          </div>
@@ -353,7 +353,7 @@
          </div>
          <div class="modal-body">
             <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
-               <input type="hidden" name="codcliente" value="{$fsc->albaran->codcliente}"/>
+               <input type="hidden" name="codcliente" value="{$fsc->pedido->codcliente}"/>
                <div class="container-fluid">
                   <div class="row">
                      <div class="col-md-6">
@@ -389,20 +389,20 @@
 </div>
 
 
-<form action="{$fsc->albaran->url()}" method="post">
-   <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
+<form action="{$fsc->pedido->url()}" method="post">
+   <input type="hidden" name="idpedido" value="{$fsc->pedido->idpedido}"/>
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
          <div class="col-lg-2 text-right">
             <h3 style="margin: 0px;">
-               <a href="{$fsc->albaran->cliente_url()}">Cliente actual</a>
+               <a href="{$fsc->pedido->cliente_url()}">Cliente actual</a>
             </h3>
          </div>
          <div class="col-lg-8">
             <select class="form-control" name="cliente">
             {loop="$fsc->cliente->all_full()"}
-               {if condition="$value->codcliente==$fsc->albaran->codcliente"}
+               {if condition="$value->codcliente==$fsc->pedido->codcliente"}
                <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
                {else}
                <option value="{$value->codcliente}">{$value->nombre}</option>
@@ -421,13 +421,7 @@
          <div class="col-lg-2">
             <div class="form-group">
                Número:
-               <div class="form-control">{$fsc->albaran->numero}</div>
-            </div>
-         </div>
-         <div class="col-lg-2">
-            <div class="form-group">
-               Número 2:
-               <input class="form-control" type="text" name="numero2" value="{$fsc->albaran->numero2}"/>
+               <div class="form-control">{$fsc->pedido->numero}</div>
             </div>
          </div>
          <div class="col-lg-2">
@@ -435,7 +429,7 @@
                Serie:
                <select name="serie" class="form-control">
                {loop="$fsc->serie->all()"}
-               <option value="{$value->codserie}"{if condition="$value->codserie==$fsc->albaran->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
+               <option value="{$value->codserie}"{if condition="$value->codserie==$fsc->pedido->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
                {/loop}
                </select>
             </div>
@@ -443,21 +437,31 @@
          <div class="col-lg-2">
             <div class="form-group">
                Ejercicio:
-               <div class="form-control">{$fsc->albaran->codejercicio}</div>
+               <div class="form-control">{$fsc->pedido->codejercicio}</div>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
                Fecha:
-               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
+               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->pedido->fecha}"/>
             </div>
          </div>
          <div class="col-lg-2">
             <div class="form-group">
                Hora:
-               <input class="form-control" type="text" name="hora" value="{$fsc->albaran->hora}"/>
+               <input class="form-control" type="text" name="hora" value="{$fsc->pedido->hora}"/>
             </div>
          </div>
+         {if condition="$fsc->agente"}
+         <div class="col-lg-2">
+            <div class="form-group">
+               Agente:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+         </div>
+         {/if}
       </div>
    </div>
    
@@ -476,8 +480,8 @@
                <th class="text-right">Total+IVA</th>
             </tr>
          </thead>
-         <tbody id="lineas_albaran">
-            {loop="$fsc->albaran->get_lineas()"}
+         <tbody id="lineas_pedido">
+            {loop="$fsc->pedido->get_lineas()"}
             <tr id="linea_{$counter}">
                <td>
                   <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
@@ -532,19 +536,19 @@
                <td class="text-right">
                   <span id="aneto" class="form-control" style="font-weight: bold;"></span>
                   <p class="help-block">
-                     {$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}
+                     {$fsc->show_precio($fsc->pedido->neto, $fsc->pedido->coddivisa)}
                   </p>
                </td>
                <td class="text-right">
                   <span id="aiva" class="form-control" style="font-weight: bold;"></span>
                   <p class="help-block">
-                     {$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}
+                     {$fsc->show_precio($fsc->pedido->totaliva, $fsc->pedido->coddivisa)}
                   </p>
                </td>
                <td class="text-right">
                   <span id="atotal" class="form-control" style="font-weight: bold;"></span>
                   <p class="help-block">
-                     {$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}
+                     {$fsc->show_precio($fsc->pedido->total, $fsc->pedido->coddivisa)}
                   </p>
                </td>
             </tr>
@@ -554,20 +558,10 @@
    
    <div class="container-fluid">
       <div class="row">
-         {if condition="$fsc->agente"}
-         <div class="col-lg-3">
-            <div class="form-group">
-               Agente:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-         </div>
-         {/if}
-         <div class="col-lg-9">
+         <div class="col-lg-12">
             <div class="form-group">
                Observaciones:
-               <textarea class="form-control" name="observaciones">{$fsc->albaran->observaciones}</textarea>
+               <textarea class="form-control" name="observaciones">{$fsc->pedido->observaciones}</textarea>
             </div>
          </div>
       </div>
@@ -588,7 +582,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

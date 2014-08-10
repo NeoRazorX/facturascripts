@@ -124,12 +124,6 @@
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Número 2:
-               <input class="form-control" type="text" name="numero2" value="{$fsc->pedido->numero2}"/>
-            </div>
-         </div>
-         <div class="col-lg-2">
-            <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                <select name="codserie" class="form-control">
                {loop="$fsc->serie->all()"}
@@ -156,6 +150,16 @@
                <input class="form-control" type="text" name="hora" value="{$fsc->pedido->hora}"/>
             </div>
          </div>
+         {if condition="$fsc->agente"}
+         <div class="col-lg-2">
+            <div class="form-group">
+               Agente:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+         </div>
+         {/if}
       </div>
    </div>
    <div class="table-responsive">
@@ -193,17 +197,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         {if condition="$fsc->agente"}
-         <div class="col-lg-3">
-            <div class="form-group">
-               Agente:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-         </div>
-         {/if}
-         <div class="col-lg-9">
+         <div class="col-lg-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones" rows="2">{$fsc->pedido->observaciones}</textarea>
@@ -213,7 +207,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

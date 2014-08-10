@@ -108,7 +108,7 @@ class ventas_pedido extends fs_controller
           * en dos archivos: ventas_pedido_cli_edit.html para los
           * pedidos editables y ventas_pedido_cli.html para los demás.
           */
-         if($this->pedido->ptealbaran)
+         if( is_null($this->pedido->idalbaran) )
             $this->template = 'ventas_pedido_edit';
          else
             $this->template = 'ventas_pedido';
@@ -116,7 +116,7 @@ class ventas_pedido extends fs_controller
          /// comprobamos el pedido
          if( $this->pedido->full_test() )
          {
-            if( isset($_GET['albaranar']) AND isset($_GET['petid']) AND $this->pedido->ptealbaran )
+            if( isset($_GET['albaranar']) AND isset($_GET['petid']) AND is_null($this->pedido->idalbaran) )
             {
                if( $this->duplicated_petition($_GET['petid']) )
                   $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
@@ -144,11 +144,11 @@ class ventas_pedido extends fs_controller
                }
             }
          
-            if( $this->pedido->ptealbaran )
+            if( is_null($this->pedido->idalbaran) )
             {
                $this->buttons[] = new fs_button('b_albaranar', 'Generar '.FS_ALBARAN, $this->url()."&albaranar=TRUE&petid=".$this->random_string());
             }
-            else if( isset($this->pedido->idalbaran) )
+            else
             {
                $this->buttons[] = new fs_button('b_ver_albaran', FS_ALBARAN, $this->pedido->albaran_url());
             }

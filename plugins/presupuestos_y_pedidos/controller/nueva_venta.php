@@ -25,6 +25,7 @@ require_model('familia.php');
 require_model('forma_pago.php');
 require_model('impuesto.php');
 require_model('pedido_cliente.php');
+require_model('presupuesto_cliente.php');
 require_model('serie.php');
 require_model('pedido_cliente.php');
 require_model('presupuesto_cliente.php');
@@ -254,16 +255,12 @@ class nueva_venta extends fs_controller
       if($continuar)
       {
          $presupuesto->fecha = $_POST['fecha'];
-         $presupuesto->hora = $_POST['hora'];
          $presupuesto->codalmacen = $almacen->codalmacen;
          $presupuesto->codejercicio = $ejercicio->codejercicio;
          $presupuesto->codserie = $serie->codserie;
-         $presupuesto->codpago = $forma_pago->codpago;
          $presupuesto->coddivisa = $divisa->coddivisa;
          $presupuesto->tasaconv = $divisa->tasaconv;
          $presupuesto->codagente = $this->agente->codagente;
-         if( isset($_POST['numero2']) )
-            $presupuesto->numero2 = $_POST['numero2'];
          $presupuesto->observaciones = $_POST['observaciones'];
          
          foreach($cliente->get_direcciones() as $d)

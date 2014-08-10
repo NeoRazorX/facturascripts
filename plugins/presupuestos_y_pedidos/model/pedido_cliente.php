@@ -45,7 +45,6 @@ class pedido_cliente extends fs_model
    public $coddir;
    public $codpostal;
    public $numero;
-   public $numero2;
    public $nombrecliente;
    public $cifnif;
    public $direccion;
@@ -65,7 +64,6 @@ class pedido_cliente extends fs_model
    public $recfinanciero;
    public $totalrecargo;
    public $observaciones;
-   public $ptealbaran;
 
    public $editable;
    public $servido;
@@ -77,29 +75,19 @@ class pedido_cliente extends fs_model
       if($p)
       {
          $this->idpedido = $this->intval($p['idpedido']);
-         if( $this->str2bool($p['ptealbaran']) )
-         {
-            $this->ptealbaran = TRUE;
-            $this->idalbaran = NULL;
-         }
-         else
-         {
-            $this->ptealbaran = FALSE;
-            $this->idalbaran = $this->intval($p['idalbaran']);
-         }
+         $this->idalbaran = $this->intval($p['idalbaran']);
          $this->codigo = $p['codigo'];
          $this->codagente = $p['codagente'];
+         $this->codpago = $p['codpago'];
          $this->codserie = $p['codserie'];
          $this->codejercicio = $p['codejercicio'];
          $this->codcliente = $p['codcliente'];
-         $this->codpago = $p['codpago'];
          $this->coddivisa = $p['coddivisa'];
          $this->codalmacen = $p['codalmacen'];
          $this->codpais = $p['codpais'];
          $this->coddir = $p['coddir'];
          $this->codpostal = $p['codpostal'];
-         $this->numero = intval($p['numero']);
-         $this->numero2 = intval($p['numero2']);
+         $this->numero = $p['numero'];
          $this->nombrecliente = $p['nombrecliente'];
          $this->cifnif = $p['cifnif'];
          $this->direccion = $p['direccion'];
@@ -109,8 +97,8 @@ class pedido_cliente extends fs_model
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
 
          $this->hora = '00:00:00';
-         if( !is_null($a['hora']) )
-            $this->hora = $a['hora'];
+         if( !is_null($p['hora']) )
+            $this->hora = $p['hora'];
 
          $this->neto = floatval($p['neto']);
          $this->total = floatval($p['total']);
@@ -125,14 +113,11 @@ class pedido_cliente extends fs_model
          $this->observaciones = $p['observaciones'];
 
          $this->editable = $this->str2bool($p['editable']);
-         $this->fechasalida = Date('d-m-Y', strtotime($p['fechasalida']));
          $this->servido = $this->str2bool($p['servido']);
-
-/* Creo que es una confusion idpresupuesto, al igual que desde albaran
- * debe ser el id del documento al que se puede aprobar
- * y este ya esta indicado al inicio de este if. De ser asi se puede borrar
- */
-//         $this->idpresupuesto = $this->intval($p['idpresupuesto']);
+         
+         $this->fechasalida = NULL;
+         if( isset($p['fechasalida']) )
+            $this->fechasalida = Date('d-m-Y', strtotime($p['fechasalida']));
       }
       else
       {
@@ -140,17 +125,16 @@ class pedido_cliente extends fs_model
          $this->idalbaran = NULL;
          $this->codigo = NULL;
          $this->codagente = NULL;
+         $this->codpago = NULL;
          $this->codserie = NULL;
          $this->codejercicio = NULL;
          $this->codcliente = NULL;
-         $this->codpago = NULL;
          $this->coddivisa = NULL;
          $this->codalmacen = NULL;
          $this->codpais = NULL;
          $this->coddir = NULL;
          $this->codpostal = '';
          $this->numero = NULL;
-         $this->numero2 = NULL;
          $this->nombrecliente = NULL;
          $this->cifnif = NULL;
          $this->direccion = NULL;
@@ -170,10 +154,9 @@ class pedido_cliente extends fs_model
          $this->recfinanciero = 0;
          $this->totalrecargo = 0;
          $this->observaciones = NULL;
-         $this->ptealbaran = TRUE;
-
-         $this->servido = FALSE;
+         
          $this->editable = TRUE;
+         $this->servido = FALSE;
          $this->fechasalida = NULL;
       }
    }
@@ -211,16 +194,13 @@ class pedido_cliente extends fs_model
    
    public function albaran_url()
    {
-      if( $this->ptealbaran )
+      if( is_null($this->idalbaran) )
       {
          return '#';
       }
       else
       {
-         if( is_null($this->idalbaran) )
-            return 'index.php?page=ventas_albaranes';
-         else
-            return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
+         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
       }
    }
    
@@ -261,28 +241,12 @@ class pedido_cliente extends fs_model
          return FALSE;
    }
    
-   public function get_by_codigo($cod)
-   {
-      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
-      if($pedido)
-         return new pedido_cliente($pedido[0]);
-      else
-         return FALSE;
-   }
-   
    public function exists()
    {
       if( is_null($this->idpedido) )
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
-   }
-   
-   public function new_idpedido()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idpedido_seq');
-      if($newid)
-         $this->idpedido = intval($newid);
    }
    
    public function new_codigo()
@@ -325,7 +289,7 @@ class pedido_cliente extends fs_model
    {
       return TRUE;
    }
-
+   
    public function save()
    {
       if( $this->test() )
@@ -341,7 +305,7 @@ class pedido_cliente extends fs_model
                codpais = ".$this->var2str($this->codpais).", codpostal = ".$this->var2str($this->codpostal).",
                codserie = ".$this->var2str($this->codserie).", direccion = ".$this->var2str($this->direccion).",
                editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).",
-               fechasalida = ".$this->var2str($this->fechasalida).", idpresupuesto = ".$this->var2str($this->idpresupuesto).",
+               fechasalida = ".$this->var2str($this->fechasalida).", idalbaran = ".$this->var2str($this->idalbaran).",
                irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
                nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
                observaciones = ".$this->var2str($this->observaciones).", porcomision = ".$this->var2str($this->porcomision).",
@@ -354,11 +318,10 @@ class pedido_cliente extends fs_model
          }
          else
          {
-            $this->new_idpedido();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
-               codcliente,coddir,coddivisa,codejercicio,codigo,codpago,codpais,codpostal,codserie,
-               direccion,editable,fecha,fechasalida,idpresupuesto,irpf,neto,nombrecliente,
+               codcliente,coddir,coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,
+               direccion,editable,fecha,fechasalida,idalbaran,irpf,neto,nombrecliente,
                numero,observaciones,porcomision,provincia,recfinanciero,servido,tasaconv,total,totaleuros,
                totalirpf,totaliva,totalrecargo) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->ciudad).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
@@ -366,14 +329,21 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->codejercicio).",".$this->var2str($this->codigo).",".$this->var2str($this->codpago).",
                ".$this->var2str($this->codpais).",".$this->var2str($this->codpostal).",".$this->var2str($this->codserie).",
                ".$this->var2str($this->direccion).",".$this->var2str($this->editable).",".$this->var2str($this->fecha).",
-               ".$this->var2str($this->fechasalida).",".$this->var2str($this->idpresupuesto).",
+               ".$this->var2str($this->fechasalida).",".$this->var2str($this->idalbaran).",
                ".$this->var2str($this->irpf).",".$this->var2str($this->neto).",".$this->var2str($this->nombrecliente).",
                ".$this->var2str($this->numero).",".$this->var2str($this->observaciones).",".$this->var2str($this->porcomision).",
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idpedido = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
@@ -395,6 +365,7 @@ class pedido_cliente extends fs_model
    public function all($offset=0)
    {
       $pedilist = array();
+      
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
@@ -403,12 +374,12 @@ class pedido_cliente extends fs_model
       }
       return $pedilist;
    }
-    
+   
    public function all_ptealbaran($offset=0, $order='DESC')
    {
       $pedilist = array();
       $pedidos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " WHERE ptealbaran = true ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
+              " WHERE idalbaran IS NULL ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
       if($pedidos)
       {
          foreach($pedidos as $p)
@@ -468,7 +439,7 @@ class pedido_cliente extends fs_model
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
       {
-         $consulta .= "codigo LIKE '%".$query."%' OR numero2 LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
+         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha
@@ -486,26 +457,6 @@ class pedido_cliente extends fs_model
       return $pedilist;
    }
    
-   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
-   {
-      $pedilist = array();
-      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
-         " AND ptealbaran AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
-         " AND codserie = ".$this->var2str($serie);
-      
-      if($obs != '')
-         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
-      
-      $sql .= " ORDER BY fecha DESC, codigo DESC;";
-      
-      $pedidos = $this->db->select($sql);
-      if($pedidos)
-      {
-         foreach($pedidos as $p)
-            $pedilist[] = new pedido_cliente($p);
-      }
-      return $pedilist;
-   }
    public function cron_job()
    {
       

@@ -45,6 +45,11 @@ class albaran_cliente extends fs_model
    public $coddir;
    public $codpostal;
    public $numero;
+   
+   /**
+    * Número del albarán en papel (opcional).
+    * @var type 
+    */
    public $numero2;
    public $nombrecliente;
    public $cifnif;

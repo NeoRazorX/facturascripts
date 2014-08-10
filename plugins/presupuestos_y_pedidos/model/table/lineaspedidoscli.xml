@@ -90,4 +90,10 @@
       <nombre>lineaspedidoscli_pkey</nombre>
       <consulta>PRIMARY KEY (idlinea)</consulta>
    </restriccion>
+   <restriccion>
+      <nombre>ca_lineaspedidoscli_pedidoscli</nombre>
+      <consulta>FOREIGN KEY (idpedido)
+      REFERENCES pedidoscli (idpedido)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>
