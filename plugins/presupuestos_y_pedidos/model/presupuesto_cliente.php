@@ -400,7 +400,7 @@ class presupuesto_cliente extends fs_model
               " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($presupuestos)
       {
-         foreach($presupuesto as $p)
+         foreach($presupuestos as $p)
             $preslist[] = new presupuesto_cliente($p);
       }
       return $preslist;
