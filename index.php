@@ -19,8 +19,6 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
-date_default_timezone_set('Europe/Madrid');
-
 if( !file_exists('config.php') )
 {
    include('view/no_config.html');
@@ -29,6 +27,7 @@ else
 {
    /// cargamos las constantes de configuración
    require_once 'config.php';
+   require_once 'base/config2.php';
    
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
@@ -42,7 +41,9 @@ else
          if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
          {
             if( file_exists('plugins/'.$f) )
+            {
                $GLOBALS['plugins'][] = $f;
+            }
             else
                unlink('tmp/enabled_plugins/'.$f);
          }
@@ -118,10 +119,6 @@ else
       $tpl->assign('db_history', FS_DB_HISTORY);
       $tpl->assign('demo', FS_DEMO);
       
-      if( !defined('FS_COMMUNITY_URL') )
-         define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
-      $tpl->assign('community_url', FS_COMMUNITY_URL);
-      
       if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
       {
          define('FS_NF0', 2);
@@ -134,13 +131,11 @@ else
       $tpl->assign('nf2', FS_NF2);
       $tpl->assign('pos_divisa', FS_POS_DIVISA);
       
-      if( !defined('FS_ALBARAN') OR !defined('FS_ALBARANES') )
+      /// cargamos las variables de config2
+      foreach($GLOBALS['config2'] as $i => $value)
       {
-         define('FS_ALBARAN', 'albarán');
-         define('FS_ALBARANES', 'albaranes');
+         $tpl->assign($i, $value);
       }
-      $tpl->assign('albaran', FS_ALBARAN);
-      $tpl->assign('albaranes', FS_ALBARANES);
       
       $tpl->draw( $fsc->template );
    }

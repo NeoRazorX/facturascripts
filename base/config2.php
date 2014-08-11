@@ -17,40 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// cargamos las constantes de configuración
-require_once 'config.php';
-require_once 'base/config2.php';
-
-if(strtolower(FS_DB_TYPE) == 'mysql')
+if( file_exists('tmp/config2.ini') )
 {
-   require_once 'base/fs_mysql.php';
-   $db = new fs_mysql();
+   $GLOBALS['config2'] = parse_ini_file('tmp/config2.ini');
 }
 else
 {
-   require_once 'base/fs_postgresql.php';
-   $db = new fs_postgresql();
+   $GLOBALS['config2'] = array(
+       'albaran' => 'albarán',
+       'albaranes' => 'albaranes',
+       'cifnif' => 'cif/nif',
+       'community_url' => 'http://www.facturascripts.com/community'
+   );
 }
 
-if( $db->connect() )
+foreach($GLOBALS['config2'] as $i => $value)
 {
-   if( isset($_GET['remote-printer']) )
-   {
-      if(FS_PRINTER == 'remote-printer')
-      {
-         if( file_exists('tmp/remote-printer.txt') )
-         {
-            echo file_get_contents('tmp/remote-printer.txt');
-            unlink('tmp/remote-printer.txt');
-         }
-      }
-      else
-         echo 'ERROR';
-   }
-   else
-      echo 'ERROR';
+   define('FS_'.strtoupper($i), $value);
 }
-else
-   echo 'ERROR';
-
-?>

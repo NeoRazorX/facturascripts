@@ -5,6 +5,8 @@
  * Si tienes alguna duda consulta -> http://code.google.com/p/facturascripts/issues/list
  */
 
+date_default_timezone_set('Europe/Madrid');
+
 /*
  * Configuración de la base de datos.
  * type: postgresql o mysql (mysql está en fase experimental).
@@ -85,9 +87,3 @@ define('FS_NF0', 2);
 define('FS_NF1', '.');
 define('FS_NF2', ' ');
 define('FS_POS_DIVISA', 'right');
-
-/*
- * ¿Como se llama al albarán en tu país?
- */
-define('FS_ALBARAN', 'albarán');
-define('FS_ALBARANES', 'albaranes');

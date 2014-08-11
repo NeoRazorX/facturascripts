@@ -17,13 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-date_default_timezone_set('Europe/Madrid');
+/// cargamos las constantes de configuración
+require_once 'config.php';
+require_once 'base/config2.php';
 
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
-
-/// cargamos las constantes de configuración
-require_once 'config.php';
 
 if(strtolower(FS_DB_TYPE) == 'mysql')
 {

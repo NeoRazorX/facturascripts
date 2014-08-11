@@ -1,0 +1,27 @@
+{include="header"}
+
+<form class="form" action="{$fsc->url()}" method="post">
+   <div class="container-fluid">
+      <div class="row">
+         {loop="$fsc->claves()"}
+         <div class="col-lg-2">
+            <div class="form-group">
+               {$value['nombre']}
+               <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>
+            </div>
+         </div>
+         {/loop}
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-12 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+         </div>
+      </div>
+   </div>
+</form>
+
+{include="footer"}

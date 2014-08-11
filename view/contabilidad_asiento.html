@@ -257,7 +257,7 @@
                <th class="text-right">Saldo</th>
                <th class="text-right">IVA</th>
                <th class="text-right">Base Imp.</th>
-               <th class="text-left">CIF/NIF</th>
+               <th class="text-left">{$cifnif}</th>
                <th></th>
             </tr>
          </thead>
@@ -363,7 +363,7 @@
                <th align="right">IVA</th>
                <th align="right">Base imponible</th>
                <th>Contrapartida</th>
-               <th>CIF/NIF</th>
+               <th>{$cifnif}</th>
             </tr>
          </thead>
          {loop="$fsc->asiento->get_partidas()"}
