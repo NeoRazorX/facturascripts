@@ -75,14 +75,14 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">¿Eliminar?</th>
-            <th align="left">Código</th>
-            <th align="left">Descripción</th>
-            <th align="left">Letra comprobante</th>
-            <th align="left">Prefijo comprobante</th>
-            <th align="left">Numero inicial comprobante</th>
-            <th align="left">Sin IVA</th>
-            <th align="right">¿Guardar?</th>
+            <th class="text-left">¿Eliminar?</th>
+            <th class="text-left">Código</th>
+            <th class="text-left">Descripción</th>
+            <th class="text-left">Letra comprobante</th>
+            <th class="text-left">Prefijo comprobante</th>
+            <th class="text-left">Numero inicial comprobante</th>
+            <th class="text-left">Sin IVA</th>
+            <th class="text-right">¿Guardar?</th>
          </tr>
       </thead>
       {loop="$fsc->serie->all()"}
@@ -110,7 +110,7 @@
             <td>
                <input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/>
             </td>
-            <td align="right">
+            <td class="text-right">
                <button class="btn btn-sm btn-primary pull-right" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                </button>

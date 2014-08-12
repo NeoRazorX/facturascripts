@@ -23,12 +23,12 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir {$albaran}</h4>
+            <h4 class="modal-title">Imprimir {#FS_ALBARAN#}</h4>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
                <span class="glyphicon glyphicon-print"></span>
-               &nbsp; {$albaran} simple
+               &nbsp; {#FS_ALBARAN#} simple
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
@@ -46,7 +46,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar {$albaran}</h4>
+               <h4 class="modal-title">Enviar {#FS_ALBARAN#}</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -55,7 +55,7 @@
                </div>
                <div class="form-group">
                   Mensaje:
-                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {$albaran} {$fsc->albaran->codigo}.
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {#FS_ALBARAN#} {$fsc->albaran->codigo}.
 {$fsc->empresa->email_firma}</textarea>
                </div>
             </div>
@@ -77,7 +77,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este {$albaran}?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este {#FS_ALBARAN#}?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
@@ -93,7 +93,7 @@
             </div>
             {if condition="$fsc->albaran->idfactura"}
             <div class="alert alert-info">
-               Hay una factura asociada que será eliminada junto con este {$albaran}.
+               Hay una factura asociada que será eliminada junto con este {#FS_ALBARAN#}.
             </div>
             {/if}
          </div>
@@ -162,24 +162,24 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Artículo</th>
-               <th align="right">Cantidad</th>
-               <th align="right">PVP</th>
-               <th align="right">Dto</th>
-               <th align="right">Total</th>
-               <th align="right">IVA</th>
-               <th align="right">Total+IVA</th>
+               <th class="text-left">Artículo</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">Dto</th>
+               <th class="text-right">Total</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Total+IVA</th>
             </tr>
          </thead>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
             <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
          <tr>

@@ -67,10 +67,10 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Código + Nombre</th>
+            <th class="text-left">Código + Nombre</th>
             <th>Fecha de inicio</th>
             <th>Fecha fin</th>
-            <th align="right">Estado</th>
+            <th class="text-right">Estado</th>
          </tr>
       </thead>
       {loop="$fsc->ejercicio->all()"}
@@ -78,7 +78,7 @@
          <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
          <td align="center">{$value->fechainicio}</td>
          <td align="center">{$value->fechafin}</td>
-         <td align="right">{$value->estado}</td>
+         <td class="text-right">{$value->estado}</td>
       </tr>
       {/loop}
    </table>

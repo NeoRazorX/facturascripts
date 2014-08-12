@@ -67,7 +67,7 @@ class ventas_pedidos extends fs_controller
          }
          else if( isset($_GET['ptealbaran']) )
          {
-            $this->new_advice('Estos son los pedidos pendientes de pasar a {$albaran}. Haz clic <a href="'.$this->url().
+            $this->new_advice('Estos son los pedidos pendientes de pasar a '.FS_ALBARAN.'. Haz clic <a href="'.$this->url().
                  '">aquí</a> para volver a la vista normal.');
             $this->resultados = $pedido->all_ptealbaran($this->offset);
          }

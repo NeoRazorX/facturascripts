@@ -116,27 +116,6 @@ else
       else
          $tpl->assign('nlogin', '');
       
-      $tpl->assign('db_history', FS_DB_HISTORY);
-      $tpl->assign('demo', FS_DEMO);
-      
-      if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
-      {
-         define('FS_NF0', 2);
-         define('FS_NF1', '.');
-         define('FS_NF2', ' ');
-         define('FS_POS_DIVISA', 'right');
-      }
-      $tpl->assign('nf0', FS_NF0);
-      $tpl->assign('nf1', FS_NF1);
-      $tpl->assign('nf2', FS_NF2);
-      $tpl->assign('pos_divisa', FS_POS_DIVISA);
-      
-      /// cargamos las variables de config2
-      foreach($GLOBALS['config2'] as $i => $value)
-      {
-         $tpl->assign($i, $value);
-      }
-      
       $tpl->draw( $fsc->template );
    }
    

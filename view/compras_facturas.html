@@ -15,11 +15,11 @@
       <thead>
          <tr>
             <th></th>
-            <th align="left">Código + Num. Proveedor</th>
-            <th align="left">Proveedor</th>
-            <th align="left">Observaciones</th>
-            <th align="right">Total</th>
-            <th align="right">Fecha</th>
+            <th class="text-left">Código + Num. Proveedor</th>
+            <th class="text-left">Proveedor</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -32,8 +32,8 @@
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
       <tr><td colspan="6" align="center">Ninguna factura encontrada</td></tr>

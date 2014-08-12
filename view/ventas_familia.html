@@ -170,11 +170,11 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Referencia + Descripción</th>
-            <th align="left">Cód. Equivalencia</th>
-            <th align="right">PVP</th>
-            <th align="right">PVP+IVA</th>
-            <th align="right">Stock</th>
+            <th class="text-left">Referencia + Descripción</th>
+            <th class="text-left">Cód. Equivalencia</th>
+            <th class="text-right">PVP</th>
+            <th class="text-right">PVP+IVA</th>
+            <th class="text-right">Stock</th>
          </tr>
       </thead>
       {loop="$fsc->articulos"}
@@ -185,9 +185,9 @@
             <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
          {/if}
          <td>{$value->equivalencia}</td>
-         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
-         <td align="right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
-         <td align="right">{$value->stockfis}</td>
+         <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
+         <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
+         <td class="text-right">{$value->stockfis}</td>
       </tr>
       {else}
       <tr>

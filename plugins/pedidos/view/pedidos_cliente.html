@@ -5,10 +5,10 @@
       <thead>
          <tr>
             <th></th>
-            <th align="left">Código + Cliente</th>
-            <th align="left">Observaciones</th>
-            <th align="right">Total</th>
-            <th align="right">Fecha</th>
+            <th class="text-left">Código + Cliente</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -23,8 +23,8 @@
             {$value->nombrecliente}
          </td>
          <td>{if condition="$value->observaciones==''"}-{else}{$value->observaciones}{/if}</td>
-         <td align="right">{$fsc->show_precio($value->total)}</td>
-         <td align="right">{$value->fecha}</td>
+         <td class="text-right">{$fsc->show_precio($value->total)}</td>
+         <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
       <tr>

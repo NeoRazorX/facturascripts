@@ -37,7 +37,7 @@
                   </div>
                </div>
                <div class="form-group">
-                  <label for="sdnicif" class="col-sm-2 control-label">{$cifnif}</label>
+                  <label for="sdnicif" class="col-sm-2 control-label">{#FS_CIFNIF#}</label>
                   <div class="col-sm-10">
                      <input class="form-control" type="text" name="sdnicif" autocomplete="off"/>
                   </div>
@@ -70,10 +70,10 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Código + Nombre + Apellidos</th>
-            <th align="left">DNI/CIF</th>
-            <th align="left">Teléfono</th>
-            <th align="right">email</th>
+            <th class="text-left">Código + Nombre + Apellidos</th>
+            <th class="text-left">DNI/CIF</th>
+            <th class="text-left">Teléfono</th>
+            <th class="text-right">email</th>
          </tr>
       </thead>
       {loop="$fsc->agente->all()"}
@@ -83,7 +83,7 @@
          </td>
          <td>{$value->dnicif}</td>
          <td>{if condition="$value->telefono==''"}-{else}{$value->telefono}{/if}</td>
-         <td align="right">{if condition="$value->email==''"}-{else}{$value->email}{/if}</td>
+         <td class="text-right">{if condition="$value->email==''"}-{else}{$value->email}{/if}</td>
       </tr>
       {/loop}
    </table>

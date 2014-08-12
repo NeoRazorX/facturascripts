@@ -15,10 +15,10 @@
       <thead>
          <tr>
             <th></th>
-            <th align="left">Ejercicio + Número</th>
-            <th align="left">Concepto</th>
-            <th align="right">Importe</th>
-            <th align="right">Fecha</th>
+            <th class="text-left">Ejercicio + Número</th>
+            <th class="text-left">Concepto</th>
+            <th class="text-right">Importe</th>
+            <th class="text-right">Fecha</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -30,8 +30,8 @@
          </td>
          <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
          <td><a href="{$value->url()}">{$value->concepto}</a></td>
-         <td align="right">{$fsc->show_precio($value->importe)}</td>
-         <td align="right">{$value->fecha}</td>
+         <td class="text-right">{$fsc->show_precio($value->importe)}</td>
+         <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
       <tr><td colspan="5" align="center">Nada que mostrar</td></tr>

@@ -7,8 +7,8 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Ejercicio</th>
-            <th align="left">Periodo</th>
+            <th class="text-left">Ejercicio</th>
+            <th class="text-left">Periodo</th>
             <th>Fecha de inicio</th>
             <th>Fecha fin</th>
             <th class="text-right">Asiento (fecha)</th>
@@ -31,9 +31,9 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Subcuenta</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
+            <th class="text-left">Subcuenta</th>
+            <th class="text-right">Debe</th>
+            <th class="text-right">Haber</th>
          </tr>
       </thead>
       {loop="$fsc->regiva->get_partidas()"}
@@ -41,8 +41,8 @@
          <td>
             <a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a>
          </td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
       </tr>
       {else}
       <tr>

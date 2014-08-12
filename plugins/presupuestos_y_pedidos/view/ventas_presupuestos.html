@@ -74,11 +74,11 @@
       <thead>
          <tr>
             <th></th>
-            <th align="left">Código</th>
-            <th align="left">Cliente</th>
-            <th align="left">Observaciones</th>
-            <th align="right">Total</th>
-            <th align="right">Fecha y hora</th>
+            <th class="text-left">Código</th>
+            <th class="text-left">Cliente</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha y hora</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -91,8 +91,8 @@
          <td><a href="{$value->url()}">{$value->codigo}</a></td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha} {$value->hora}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right">{$value->fecha} {$value->hora}</td>
       </tr>
       {else}
       <tr>

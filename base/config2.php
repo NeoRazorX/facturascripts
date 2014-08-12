@@ -17,6 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
+{
+   define('FS_NF0', 2);
+   define('FS_NF1', '.');
+   define('FS_NF2', ' ');
+   define('FS_POS_DIVISA', 'right');
+}
+
 if( file_exists('tmp/config2.ini') )
 {
    $GLOBALS['config2'] = parse_ini_file('tmp/config2.ini');

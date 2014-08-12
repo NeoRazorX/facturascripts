@@ -15,15 +15,15 @@
    <table class="table table-striped">
       <thead>
          <tr>
-            <th align="left">Entidad</th>
-            <th align="left">Nombre</th>
-            <th align="right">Cod. Proveedor</th>
+            <th class="text-left">Entidad</th>
+            <th class="text-left">Nombre</th>
+            <th class="text-right">Cod. Proveedor</th>
          </tr>
       </thead>
       <tr>
          <td>{$fsc->banco->entidad}</td>
          <td>{$fsc->banco->nombre}</td>
-         <td align="right">{$fsc->banco->codproveedor}</td>
+         <td class="text-right">{$fsc->banco->codproveedor}</td>
       </tr>
    </table>
 </div>
@@ -37,9 +37,9 @@
          <table class="table table-hover">
             <thead>
                <tr>
-                  <th align="left">Agencia</th>
-                  <th align="left">Nombre</th>
-                  <th align="left">Dirección</th>
+                  <th class="text-left">Agencia</th>
+                  <th class="text-left">Nombre</th>
+                  <th class="text-left">Dirección</th>
                   <th>Cod. Postal</th>
                   <th>Apartado</th>
                   <th>Población</th>
@@ -47,8 +47,8 @@
                   <th>Cod. Pais</th>
                   <th>Teléfono</th>
                   <th>Fax</th>
-                  <th align="left">Contaco</th>
-                  <th align="left">Observaciones</th>
+                  <th class="text-left">Contaco</th>
+                  <th class="text-left">Observaciones</th>
                </tr>
             </thead>
             {loop="$fsc->banco->get_sucursales()"}
@@ -83,9 +83,9 @@
          <table class="table table-hover">
             <thead>
                <tr>
-                  <th align="left">Código</th>
-                  <th align="left">Subcuenta</th>
-                  <th align="left">Descripción</th>
+                  <th class="text-left">Código</th>
+                  <th class="text-left">Subcuenta</th>
+                  <th class="text-left">Descripción</th>
                   <th>IBAN</th>
                </tr>
             </thead>

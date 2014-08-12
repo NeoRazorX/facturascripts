@@ -27,8 +27,8 @@
             <div class="form-group">
                Copiar a un nuevo...
                <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
-                  <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>{$albaran} de cliente</option>
-                  <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>{$albaran} de proveedor</option>
+                  <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}>{#FS_ALBARAN#} de cliente</option>
+                  <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}>{#FS_ALBARAN#} de proveedor</option>
                </select>
             </div>
          </div>
@@ -143,24 +143,24 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Artículo</th>
-               <th align="right">Cantidad</th>
-               <th align="right">PVP</th>
-               <th align="right">Dto</th>
-               <th align="right">Total</th>
-               <th align="right">IVA</th>
-               <th align="right">Total+IVA</th>
+               <th class="text-left">Artículo</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">Dto</th>
+               <th class="text-right">Total</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Total+IVA</th>
             </tr>
          </thead>
          {loop="$fsc->albaran->get_lineas()"}
          <tr>
             <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
          <tr>
@@ -177,7 +177,7 @@
          <div class="col-lg-12">
             <div class="form-group">
                Observaciones:
-               <textarea class="form-control" name="observaciones">Copia del {$albaran} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
+               <textarea class="form-control" name="observaciones">Copia del {#FS_ALBARAN#} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
             </div>
          </div>
       </div>

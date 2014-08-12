@@ -13,26 +13,26 @@
    {if condition="$fsc->buscar_tipo=='albcli'"}
    <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h4 class="modal-title">{$albaranes} de cliente</h4>
+      <h4 class="modal-title">{#FS_ALBARANES#} de cliente</h4>
    </div>
    <div class="table-responsive">
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left" style="text-transform: capitalize;">{$albaran}</th>
-               <th align="left">Descripción</th>
-               <th align="right">Cantidad</th>
-               <th align="right">Total+IVA</th>
-               <th align="right">Fecha</th>
+               <th align="left" style="text-transform: capitalize;">{#FS_ALBARAN#}</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">Total+IVA</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
             <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-            <td align="right">{$value->show_fecha()}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+            <td class="text-right">{$value->show_fecha()}</td>
          </tr>
          {else}
          <tr><td colspan="5" align="center">Sin resultados</td></tr>
@@ -61,26 +61,26 @@
    {elseif condition="$fsc->buscar_tipo=='albpro'"}
    <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h4 class="modal-title">{$albaranes} de proveedor</h4>
+      <h4 class="modal-title">{#FS_ALBARANES#} de proveedor</h4>
    </div>
    <div class="table-responsive">
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left" style="text-transform: capitalize;">{$albaran}</th>
-               <th align="left">Descripción</th>
-               <th align="right">Cantidad</th>
-               <th align="right">Total+IVA</th>
-               <th align="right">Fecha</th>
+               <th align="left" style="text-transform: capitalize;">{#FS_ALBARAN#}</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">Total+IVA</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
             <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-            <td align="right">{$value->show_fecha()}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+            <td class="text-right">{$value->show_fecha()}</td>
          </tr>
          {else}
          <tr><td colspan="5" align="center">Sin resultados</td></tr>
@@ -116,19 +116,19 @@
          <thead>
             <tr>
                <th align='left'>Factura</th>
-               <th align="left">Descripción</th>
-               <th align="right">Cantidad</th>
-               <th align="right">Total+IVA</th>
-               <th align="right">Fecha</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">Total+IVA</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
             <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-            <td align="right">{$value->show_fecha()}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+            <td class="text-right">{$value->show_fecha()}</td>
          </tr>
          {else}
          <tr><td colspan="5" align="center">Sin resultados</td></tr>
@@ -164,19 +164,19 @@
          <thead>
             <tr>
                <th align='left'>Factura</th>
-               <th align="left">Descripción</th>
-               <th align="right">Cantidad</th>
-               <th align="right">Total+IVA</th>
-               <th align="right">Fecha</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">Total+IVA</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->buscar_resultados"}
          <tr>
             <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
             <td>{$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->total_iva())}</td>
-            <td align="right">{$value->show_fecha()}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+            <td class="text-right">{$value->show_fecha()}</td>
          </tr>
          {else}
          <tr><td colspan="5" align="center">Sin resultados</td></tr>

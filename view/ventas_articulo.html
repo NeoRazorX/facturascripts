@@ -330,10 +330,10 @@
          <table class="table table-hover">
             <thead>
                <tr>
-                  <th align="left">Tarifa</th>
-                  <th align="right">Dto</th>
-                  <th align="right">PVP</th>
-                  <th align="right">PVP+IVA</th>
+                  <th class="text-left">Tarifa</th>
+                  <th class="text-right">Dto</th>
+                  <th class="text-right">PVP</th>
+                  <th class="text-right">PVP+IVA</th>
                </tr>
             </thead>
             {if condition="$fsc->articulo->costemedio!=0"}
@@ -474,13 +474,13 @@
       <div class="col-lg-3">
          <div class="well">
             <span class="glyphicon glyphicon-list"></span> &nbsp;
-            <a id="b_buscar_albcli" href="#">{$albaranes} de cliente</a>
+            <a id="b_buscar_albcli" href="#">{#FS_ALBARANES#} de cliente</a>
          </div>
       </div>
       <div class="col-lg-3">
          <div class="well">
             <span class="glyphicon glyphicon-list"></span> &nbsp;
-            <a id="b_buscar_albpro" href="#">{$albaranes} de proveedor</a>
+            <a id="b_buscar_albpro" href="#">{#FS_ALBARANES#} de proveedor</a>
          </div>
       </div>
       <div class="col-lg-3">
@@ -505,16 +505,16 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Artículo</th>
-               <th align="right">PVP+IVA</th>
-               <th align="right">Stock</th>
+               <th class="text-left">Artículo</th>
+               <th class="text-right">PVP+IVA</th>
+               <th class="text-right">Stock</th>
             </tr>
          </thead>
          {loop="$fsc->equivalentes"}
          <tr>
             <td><a href="{$value->url()}">{$value->referencia}</a></td>
-            <td align="right">{$fsc->show_precio($value->pvp_iva())}</td>
-            <td align="right">{$value->stockfis}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvp_iva())}</td>
+            <td class="text-right">{$value->stockfis}</td>
          </tr>
          {/loop}
       </table>

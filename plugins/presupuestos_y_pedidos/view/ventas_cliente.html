@@ -251,7 +251,7 @@
             </a>
             <a id="b_albaranes" href="{$fsc->url()}&listar=albaranes#albaranes" class="list-group-item" style="text-transform: capitalize;">
                <span class="glyphicon glyphicon-list"></span>
-               &nbsp; {$albaranes}
+               &nbsp; {#FS_ALBARANES#}
             </a>
             <a id="b_facturas" href="{$fsc->url()}&listar=facturas#facturas" class="list-group-item">
                <span class="glyphicon glyphicon-list"></span>
@@ -778,7 +778,7 @@
                <table class="table table-hover">
                   <thead>
                      <tr>
-                        <th class="text-left" style="text-transform: capitalize;">{$albaran}</th>
+                        <th class="text-left" style="text-transform: capitalize;">{#FS_ALBARAN#}</th>
                         <th class="text-left">Artículo</th>
                         <th class="text-right">Cantidad</th>
                         <th class="text-right">Total+IVA</th>
@@ -825,7 +825,7 @@
          
          <div class="panel panel-primary" id="panel_chart_albaranes_month">
             <div class="panel-heading">
-               <h3 class="panel-title">Estadísticas {$albaranes} anual</h3>
+               <h3 class="panel-title">Estadísticas {#FS_ALBARANES#} anual</h3>
             </div>
             <div class="panel-body">
                <div class="form-group col-lg-12">
@@ -945,7 +945,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Buscar en las líneas de los {$albaranes}</h4>
+               <h4 class="modal-title">Buscar en las líneas de los {#FS_ALBARANES#}</h4>
             </div>
             <div class="modal-body">
                <div class="container-fluid">

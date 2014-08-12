@@ -24,11 +24,11 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Descripción</th>
+               <th class="text-left">Descripción</th>
                <th>Ejercicio</th>
-               <th align="right">Debe</th>
-               <th align="right">Haber</th>
-               <th align="right">Saldo</th>
+               <th class="text-right">Debe</th>
+               <th class="text-right">Haber</th>
+               <th class="text-right">Saldo</th>
             </tr>
          </thead>
          <tr>
@@ -73,16 +73,16 @@
          <thead>
             <tr>
                <th title="puntear">P</th>
-               <th align="left">Asiento</th>
+               <th class="text-left">Asiento</th>
                <th>Fecha</th>
-               <th align="left">Concepto</th>
-               <th align="right">Debe</th>
-               <th align="right">Haber</th>
-               <th align="right">Saldo</th>
-               <th align="right">IVA</th>
-               <th align="right">Base imponible</th>
+               <th class="text-left">Concepto</th>
+               <th class="text-right">Debe</th>
+               <th class="text-right">Haber</th>
+               <th class="text-right">Saldo</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Base imponible</th>
                <th>Contrapartida</th>
-               <th>{$cifnif}</th>
+               <th>{#FS_CIFNIF#}</th>
             </tr>
          </thead>
          {$total=-1+count($fsc->resultados)}
@@ -94,13 +94,13 @@
             <td><a href="{$value->url()}">{$value->numero}</a></td>
             <td align="center">{$value->fecha}</td>
             <td><a href="{$value->url()}">{$value->concepto}</a></td>
-            <td align="right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->saldo, $fsc->subcuenta->coddivisa)}</td>
-            <td align="right">
+            <td class="text-right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_precio($value->saldo, $fsc->subcuenta->coddivisa)}</td>
+            <td class="text-right">
                {if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}
             </td>
-            <td align="right">
+            <td class="text-right">
                {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $fsc->subcuenta->coddivisa)}{else}-{/if}
             </td>
             <td align="center">
@@ -116,9 +116,9 @@
          </tr>
          {if condition="$counter==$total"}
          <tr>
-            <td colspan="4" align="right"><b>Sumas</b>:</td>
-            <td align="right"><b>{$fsc->show_precio($value->sum_debe, $fsc->subcuenta->coddivisa)}</b></td>
-            <td align="right"><b>{$fsc->show_precio($value->sum_haber, $fsc->subcuenta->coddivisa)}</b></td>
+            <td colspan="4" class="text-right"><b>Sumas</b>:</td>
+            <td class="text-right"><b>{$fsc->show_precio($value->sum_debe, $fsc->subcuenta->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($value->sum_haber, $fsc->subcuenta->coddivisa)}</b></td>
             <td colspan="5"></td>
          </tr>
          {/if}

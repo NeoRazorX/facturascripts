@@ -62,9 +62,9 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Descripción</th>
-               <th align="left">Cuenta especial</th>
-               <th align="left">Ejercicio</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-left">Cuenta especial</th>
+               <th class="text-left">Ejercicio</th>
                <th></th>
             </tr>
          </thead>
@@ -88,7 +88,7 @@
                   <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre}</a>
                </div>
             </td>
-            <td align="right">
+            <td class="text-right">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
@@ -103,18 +103,18 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Código + Descripción</th>
-            <th align="right">Debe</th>
-            <th align="right">Haber</th>
-            <th align="right">Saldo</th>
+            <th class="text-left">Código + Descripción</th>
+            <th class="text-right">Debe</th>
+            <th class="text-right">Haber</th>
+            <th class="text-right">Saldo</th>
          </tr>
       </thead>
       {loop="$fsc->cuenta->get_subcuentas()"}
       <tr>
          <td><a href="{$value->url()}">{$value->codsubcuenta}</a> {$value->descripcion}</td>
-         <td align="right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
-         <td align="right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->debe, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
+         <td class="text-right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {/loop}
       <tr>

@@ -48,10 +48,10 @@
                <th>Caja</th>
                <th>Agente</th>
                <th>Fecha inicial</th>
-               <th align="right">Dinero inicial</th>
+               <th class="text-right">Dinero inicial</th>
                <th>Fecha fin</th>
-               <th align="right">Diferencia</th>
-               <th align="right">Tickets</th>
+               <th class="text-right">Diferencia</th>
+               <th class="text-right">Tickets</th>
             </tr>
          </thead>
          {loop="$fsc->resultados"}
@@ -68,10 +68,10 @@
                {/if}
             </td>
             <td align="center">{$value->fecha_inicial}</td>
-            <td align="right">{$fsc->show_precio($value->dinero_inicial)}</td>
+            <td class="text-right">{$fsc->show_precio($value->dinero_inicial)}</td>
             <td align="center">{$value->show_fecha_fin()}</td>
-            <td align="right">{$fsc->show_precio($value->diferencia())}</td>
-            <td align="right">{$value->tickets}</td>
+            <td class="text-right">{$fsc->show_precio($value->diferencia())}</td>
+            <td class="text-right">{$value->tickets}</td>
          </tr>
          {else}
          <tr><td colspan="7" align="center">No hay datos</td></tr>

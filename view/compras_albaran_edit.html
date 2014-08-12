@@ -30,8 +30,8 @@
                numlineas = i;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );
@@ -80,8 +80,8 @@
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );
@@ -130,8 +130,8 @@
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );
@@ -272,7 +272,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este {$albaran}?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este {#FS_ALBARAN#}?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
@@ -288,7 +288,7 @@
             </div>
             {if condition="$fsc->albaran->idfactura"}
             <div class="alert alert-info">
-               Hay una factura asociada que será eliminada junto con este {$albaran}.
+               Hay una factura asociada que será eliminada junto con este {#FS_ALBARAN#}.
             </div>
             {/if}
          </div>
@@ -310,10 +310,10 @@
                   <thead>
                      <tr>
                         <th width="100">Actualizar</th>
-                        <th align="left">Artículo</th>
+                        <th class="text-left">Artículo</th>
                         <th>Código de barras</th>
-                        <th align="right">PVP</th>
-                        <th width="100" align="right">PVP+IVA</th>
+                        <th class="text-right">PVP</th>
+                        <th width="100" class="text-right">PVP+IVA</th>
                      </tr>
                   </thead>
                   {loop="$fsc->albaran->get_lineas()"}

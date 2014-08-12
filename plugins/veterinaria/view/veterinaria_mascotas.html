@@ -69,13 +69,13 @@
 <div class="container-fluid">
    <table class="list">
       <tr>
-         <th align="left">Nombre</th>
-         <th align="left">Propietario</th>
-         <th align="left">Chip</th>
-         <th align="left">Especie</th>
-         <th align="left">Raza</th>
-         <th align="left">Sexo</th>
-         <th align="right">F.Alta</th>
+         <th class="text-left">Nombre</th>
+         <th class="text-left">Propietario</th>
+         <th class="text-left">Chip</th>
+         <th class="text-left">Especie</th>
+         <th class="text-left">Raza</th>
+         <th class="text-left">Sexo</th>
+         <th class="text-right">F.Alta</th>
       </tr>
       {loop="$fsc->mascota->all()"}
       <tr>
@@ -85,7 +85,7 @@
          <td>{$value->especie}</td>
          <td>{$value->raza}</td>
          <td>{$value->sexo}</td>
-         <td align="right">{$value->fecha_alta}</td>
+         <td class="text-right">{$value->fecha_alta}</td>
       </tr>
       {else}
       <tr>

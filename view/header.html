@@ -16,15 +16,15 @@
    <script type="text/javascript">
       function show_precio(precio)
       {
-         {if condition="$pos_divisa=='right'"}
-         return number_format(precio, {$nf0}, '{$nf1}', '{$nf2}')+' {$fsc->simbolo_divisa()}';
+         {if condition="FS_POS_DIVISA=='right'"}
+         return number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}')+' {$fsc->simbolo_divisa()}';
          {else}
-         return '{$fsc->simbolo_divisa()}'+number_format(precio, {$nf0}, '{$nf1}', '{$nf2}');
+         return '{$fsc->simbolo_divisa()}'+number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
          {/if}
       }
       function show_numero(numero)
       {
-         return number_format(numero, {$nf0}, '{$nf1}', '{$nf2}');
+         return number_format(numero, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
       }
    </script>
 </head>

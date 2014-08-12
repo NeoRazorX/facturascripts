@@ -15,10 +15,10 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Código</th>
-            <th align="left">Descripción</th>
-            <th align="left">Sin IVA</th>
-            <th align="right">Acciones</th>
+            <th class="text-left">Código</th>
+            <th class="text-left">Descripción</th>
+            <th class="text-left">Sin IVA</th>
+            <th class="text-right">Acciones</th>
          </tr>
       </thead>
       {loop="$fsc->serie->all()"}
@@ -28,7 +28,7 @@
             <td><div class="form-control">{$value->codserie}</div></td>
             <td><input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/></td>
             <td><input type="checkbox" name="siniva" value="TRUE"{if condition="$value->siniva"} checked="checked"{/if} id="sin_iva_{$value->codserie}"/></td>
-            <td align="right">
+            <td class="text-right">
                <div class="btn-group">
                   <a class="btn btn-sm btn-danger" title="Eliminar" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
                      <span class="glyphicon glyphicon-trash"></span>
@@ -46,7 +46,7 @@
             <td><input class="form-control" type="text" name="codserie" placeholder="Nuevo código..." autocomplete="off"/></td>
             <td><input class="form-control" type="text" name="descripcion" autocomplete="off"/></td>
             <td><input type="checkbox" name="siniva" value="TRUE" id="serie_sin_iva"/></td>
-            <td align="right">
+            <td class="text-right">
                <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                </button>

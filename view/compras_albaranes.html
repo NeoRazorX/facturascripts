@@ -74,11 +74,11 @@
       <thead>
          <tr>
             <th></th>
-            <th align="left">Código + Núm. Proveedor</th>
-            <th align="left">Proveedor</th>
-            <th align="left">Observaciones</th>
-            <th align="right">Total</th>
-            <th align="right">Fecha</th>
+            <th class="text-left">Código + Núm. Proveedor</th>
+            <th class="text-left">Proveedor</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -91,12 +91,12 @@
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
          <td>{$value->nombre}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right"><span title="{$value->hora}">{$value->fecha}</span></td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right"><span title="{$value->hora}">{$value->fecha}</span></td>
       </tr>
       {else}
       <tr>
-         <td colspan="6" align="center">Ningún {$albaran} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6" align="center">Ningún {#FS_ALBARAN#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

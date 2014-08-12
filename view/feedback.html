@@ -1,4 +1,4 @@
-<form name="f_feedback" action="{$community_url}/feedback.php" method="post" target="_blank" class="form" role="form">
+<form name="f_feedback" action="{#FS_COMMUNITY_URL#}/feedback.php" method="post" target="_blank" class="form" role="form">
    <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
    <div class="modal fade" id="modal_feedback">
       <div class="modal-dialog">
@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                <p>
-                  La <a href="{$community_url}" target="_blank">comunidad FacturaScripts</a>
+                  La <a href="{#FS_COMMUNITY_URL#}" target="_blank">comunidad FacturaScripts</a>
                   está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
                   lo antes posible.
                </p>
@@ -44,8 +44,8 @@
    </div>
 </form>
 
-{if condition="$fsc->empresa AND !$demo AND mt_rand(0,9)==0"}
+{if condition="$fsc->empresa AND !FS_DEMO AND mt_rand(0,9)==0"}
 <div style="display: none;">
-   <iframe src="{$community_url}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
+   <iframe src="{#FS_COMMUNITY_URL#}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
 </div>
 {/if}

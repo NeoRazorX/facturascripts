@@ -6,25 +6,25 @@
    <div class="table-responsive">
       <table class="table table-hover">
          <tr>
-            <th align="left">Artículo</th>
-            <th align="right">Cantidad</th>
-            <th align="right">PVP</th>
-            <th align="right">Dto</th>
-            <th align="right">Total</th>
-            <th align="right">IVA</th>
-            <th align="right">Total + IVA</th>
+            <th class="text-left">Artículo</th>
+            <th class="text-right">Cantidad</th>
+            <th class="text-right">PVP</th>
+            <th class="text-right">Dto</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">IVA</th>
+            <th class="text-right">Total + IVA</th>
          </tr>
          {loop="$fsc->lineas"}
          <tr>
             <td>
                <a class="link" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}
             </td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->presupuesto->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->presupuesto->coddivisa)}</td>
-            <td align="right">{$value->iva} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->presupuesto->coddivisa)}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->presupuesto->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->presupuesto->coddivisa)}</td>
+            <td class="text-right">{$value->iva} %</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->presupuesto->coddivisa)}</td>
          </tr>
          {/loop}
       </table>

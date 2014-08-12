@@ -181,14 +181,14 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left" style="text-transform: capitalize;">{$albaran}</th>
-               <th align="left">Artículo</th>
-               <th align="right">Cantidad</th>
-               <th align="right">PVP</th>
-               <th align="right">Dto</th>
-               <th align="right">Total</th>
-               <th align="right">IVA</th>
-               <th align="right">Total+IVA</th>
+               <th align="left" style="text-transform: capitalize;">{#FS_ALBARAN#}</th>
+               <th class="text-left">Artículo</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">Dto</th>
+               <th class="text-right">Total</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Total+IVA</th>
             </tr>
          </thead>
          {loop="$fsc->factura->get_lineas()"}
@@ -201,19 +201,19 @@
                <a href="{$value->articulo_url()}">{$value->referencia}</a>
                {$value->descripcion}
             </td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
-            <td align="right">{$value->iva} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$value->iva} %</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
          </tr>
          {/loop}
          <tr>
             <td colspan="5"></td>
-            <td align="right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
-            <td align="right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
-            <td align="right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
          </tr>
       </table>
    </div>
@@ -222,20 +222,20 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Impuesto</th>
-               <th align="right">Neto</th>
-               <th align="right">IVA</th>
-               <th align="right">Total IVA</th>
-               <th align="right">Total</th>
+               <th class="text-left">Impuesto</th>
+               <th class="text-right">Neto</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Total IVA</th>
+               <th class="text-right">Total</th>
             </tr>
          </thead>
          {loop="$fsc->factura->get_lineas_iva()"}
          <tr>
             <td>{$value->codimpuesto}</td>
-            <td align="right">{$fsc->show_precio($value->neto, $fsc->factura->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->totaliva, $fsc->factura->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->totallinea, $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_precio($value->neto, $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->totaliva, $fsc->factura->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_precio($value->totallinea, $fsc->factura->coddivisa)}</td>
          </tr>
          {/loop}
       </table>

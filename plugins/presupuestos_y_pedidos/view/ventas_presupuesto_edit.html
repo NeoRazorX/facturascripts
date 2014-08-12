@@ -30,8 +30,8 @@
                numlineas = i;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );
@@ -80,8 +80,8 @@
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );
@@ -130,8 +130,8 @@
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
          }
       }
-      neto = fs_round(neto, 2);
-      total_iva = fs_round(total_iva, 2);
+      neto = fs_round(neto, {#FS_NF0#});
+      total_iva = fs_round(total_iva, {#FS_NF0#});
       $("#aneto").html( show_numero(neto) );
       $("#aiva").html( show_numero(total_iva) );
       $("#atotal").html( show_numero(neto + total_iva) );

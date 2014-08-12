@@ -69,11 +69,11 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Código + Núm. Proveedor</th>
-               <th align="left">Observaciones</th>
-               <th align="right">Neto</th>
-               <th align="right">Total</th>
-               <th align="right">Fecha</th>
+               <th class="text-left">Código + Núm. Proveedor</th>
+               <th class="text-left">Observaciones</th>
+               <th class="text-right">Neto</th>
+               <th class="text-right">Total</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->resultados"}
@@ -83,15 +83,15 @@
                   <a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}
             </td>
             <td>{$value->observaciones_resume()}</td>
-            <td align="right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
-            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-            <td align="right">{$value->fecha}</td>
+            <td class="text-right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+            <td class="text-right">{$value->fecha}</td>
          </tr>
          {/loop}
          <tr>
             <td colspan="2"></td>
-            <td align="right"><b>{$fsc->show_precio($fsc->neto)}</b></td>
-            <td align="right"><b>{$fsc->show_precio($fsc->total)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->neto)}</b></td>
+            <td class="text-right"><b>{$fsc->show_precio($fsc->total)}</b></td>
             <td></td>
          </tr>
       </table>

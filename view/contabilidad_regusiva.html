@@ -100,10 +100,10 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align="left">Periodo@Ejercicio</th>
-            <th align="left">Fecha del asiento</th>
-            <th align="left">Fecha de inicio</th>
-            <th align="right">Fecha de fin</th>
+            <th class="text-left">Periodo@Ejercicio</th>
+            <th class="text-left">Fecha del asiento</th>
+            <th class="text-left">Fecha de inicio</th>
+            <th class="text-right">Fecha de fin</th>
          </tr>
       </thead>
       {loop="$fsc->regiva->all()"}
@@ -115,7 +115,7 @@
          </td>
          <td>{$value->fechaasiento}</td>
          <td>{$value->fechainicio}</td>
-         <td align="right">{$value->fechafin}</td>
+         <td class="text-right">{$value->fechafin}</td>
       </tr>
       {else}
       <tr><td colspan="4" align="center">Sin resultados</td></tr>

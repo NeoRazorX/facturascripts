@@ -16,13 +16,13 @@
    <tr>
       <th>Referencia</th>
       <th>Descripción</th>
-      <th align="right">PVP+IVA</th>
+      <th class="text-right">PVP+IVA</th>
    </tr>
    {loop="$fsc->results"}
    <tr>
       <td><a class="link" href="{$fsc->cache_paquete->add_url($value->referencia)}">{$value->referencia}</a></td>
       <td>{$value->descripcion}</td>
-      <td align="right">
+      <td class="text-right">
          <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
       </td>
    </tr>

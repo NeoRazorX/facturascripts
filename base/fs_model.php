@@ -17,14 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Definimos algunas constantes
-if( !defined('FS_NF0') )
-   define('FS_NF0', 2);
-if( !defined('FS_NF1') )
-   define('FS_NF1', '.');
-if( !defined('FS_NF2') )
-   define('FS_NF2', ' ');
-
 require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
 

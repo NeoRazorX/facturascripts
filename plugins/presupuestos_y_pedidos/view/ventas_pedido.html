@@ -93,7 +93,7 @@
             </div>
             {if condition="$fsc->pedido->idalbaran"}
             <div class="alert alert-info">
-               Hay un {$albaran} asociado que será eliminada junto con este pedido.
+               Hay un {#FS_ALBARAN#} asociado que será eliminada junto con este pedido.
             </div>
             {/if}
          </div>
@@ -166,24 +166,24 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left">Artículo</th>
-               <th align="right">Cantidad</th>
-               <th align="right">PVP</th>
-               <th align="right">Dto</th>
-               <th align="right">Total</th>
-               <th align="right">IVA</th>
-               <th align="right">Total+IVA</th>
+               <th class="text-left">Artículo</th>
+               <th class="text-right">Cantidad</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">Dto</th>
+               <th class="text-right">Total</th>
+               <th class="text-right">IVA</th>
+               <th class="text-right">Total+IVA</th>
             </tr>
          </thead>
          {loop="$fsc->pedido->get_lineas()"}
          <tr>
             <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            <td align="right">{$value->cantidad}</td>
-            <td align="right">{$fsc->show_precio($value->pvpunitario, $fsc->pedido->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->pvptotal, $fsc->pedido->coddivisa)}</td>
-            <td align="right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td align="right">{$fsc->show_precio($value->total_iva(), $fsc->pedido->coddivisa)}</td>
+            <td class="text-right">{$value->cantidad}</td>
+            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->pedido->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->pedido->coddivisa)}</td>
+            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->pedido->coddivisa)}</td>
          </tr>
          {/loop}
          <tr>

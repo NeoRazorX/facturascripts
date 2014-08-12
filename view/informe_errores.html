@@ -15,8 +15,8 @@
                   <option value="asiento">Asientos</option>
                   <option value="factura cliente">Facturas de cliente</option>
                   <option value="factura proveedor">Facturas de proveedor</option>
-                  <option value="albaran cliente">{$albaranes} de cliente</option>
-                  <option value="albaran proveedor">{$albaranes} de proveedor</option>
+                  <option value="albaran cliente">{#FS_ALBARANES#} de cliente</option>
+                  <option value="albaran proveedor">{#FS_ALBARANES#} de proveedor</option>
                </select>
             </div>
             <div class="form-group">
@@ -102,11 +102,11 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th align="left"></th>
-               <th align="left">Modelo</th>
-               <th align="left">Ejercicio</th>
-               <th align="left">Identificador</th>
-               <th align="right">Fecha</th>
+               <th class="text-left"></th>
+               <th class="text-left">Modelo</th>
+               <th class="text-left">Ejercicio</th>
+               <th class="text-left">Identificador</th>
+               <th class="text-right">Fecha</th>
             </tr>
          </thead>
          {loop="$fsc->errores"}
@@ -115,7 +115,7 @@
             <td>{$value.model}</td>
             <td>{$value.ejercicio}</td>
             <td><a href="{$value.url}">{$value.id}</a></td>
-            <td align="right">{$value.fecha}</td>
+            <td class="text-right">{$value.fecha}</td>
          </tr>
          {else}
          <tr>

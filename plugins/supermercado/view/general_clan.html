@@ -99,15 +99,15 @@
 </form>
 
 <div class="rounded">
-   <h1>Últimos {$albaranes}</h1>
+   <h1>Últimos {#FS_ALBARANES#}</h1>
    <table class="list">
       <tr>
          <th></th>
-         <th align="left">código + número 2</th>
-         <th align="left">cliente</th>
-         <th align="left">observaciones</th>
-         <th align="right">total</th>
-         <th align="right">fecha</th>
+         <th class="text-left">código + número 2</th>
+         <th class="text-left">cliente</th>
+         <th class="text-left">observaciones</th>
+         <th class="text-right">total</th>
+         <th class="text-right">fecha</th>
       </tr>
       {loop="$fsc->clan->last_albaranes()"}
       <tr>
@@ -115,8 +115,8 @@
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
-         <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td align="right">{$value->fecha}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
       <tr>
