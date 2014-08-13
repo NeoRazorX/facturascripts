@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('articulo.php');
+require_model('albaran_proveedor.php');
 
 /**
  * Línea de un albarán de proveedor (boceto de una factura).
@@ -41,7 +43,6 @@ class linea_albaran_proveedor extends fs_model
    
    private $codigo;
    private $fecha;
-   private $albaran_url;
    
    private static $albaranes;
    
@@ -102,7 +103,6 @@ class linea_albaran_proveedor extends fs_model
          {
             $this->codigo = $a->codigo;
             $this->fecha = $a->fecha;
-            $this->albaran_url = $a->url();
             $encontrado = TRUE;
             break;
          }
@@ -115,7 +115,6 @@ class linea_albaran_proveedor extends fs_model
          {
             $this->codigo = $alb->codigo;
             $this->fecha = $alb->fecha;
-            $this->albaran_url = $alb->url();
             self::$albaranes[] = $alb;
          }
       }
@@ -154,11 +153,28 @@ class linea_albaran_proveedor extends fs_model
       return $this->fecha;
    }
    
+   public function show_nombre()
+   {
+      $nombre = 'desconocido';
+      
+      foreach(self::$albaranes as $a)
+      {
+         if($a->idalbaran == $this->idalbaran)
+         {
+            $nombre = $a->nombre;
+            break;
+         }
+      }
+      
+      return $nombre;
+   }
+   
    public function url()
    {
-      if( !isset($this->albaran_url) )
-         $this->fill();
-      return $this->albaran_url;
+      if( is_null($this->idalbaran) )
+         return 'index.php?page=compras_albaranes';
+      else
+         return 'index.php?page=compras_albaran&id='.$this->idalbaran;
    }
    
    public function articulo_url()
@@ -247,8 +263,7 @@ class linea_albaran_proveedor extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function clean_cache()

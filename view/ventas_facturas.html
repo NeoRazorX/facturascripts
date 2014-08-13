@@ -39,7 +39,7 @@
 </div>
 
 {if condition="$fsc->query!=''"}
-<h1>Resultados de "{$fsc->query}":</h1>
+<h3 class="text-center">Resultados de "{$fsc->query}":</h3>
 {/if}
 
 <div class="table-responsive">
@@ -54,7 +54,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
          <td align="center">
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
@@ -66,7 +66,7 @@
          <td class="text-right">{$value->fecha} {$value->hora}</td>
       </tr>
       {else}
-      <tr><td colspan="5" align="center">Ninguna factura encontrada</td></tr>
+      <tr><td colspan="5" align="center">Ninguna factura encontrada.</td></tr>
       {/loop}
    </table>
 </div>

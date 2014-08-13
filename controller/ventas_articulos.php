@@ -39,6 +39,16 @@ class ventas_articulos extends fs_controller
    
    protected function process()
    {
+      $this->custom_search = TRUE;
+      $articulo = new articulo();
+      $this->familia = new familia();
+      $this->impuesto = new impuesto();
+      $this->tarifa = new tarifa();
+      
+      $this->buttons[] = new fs_button('b_nuevo_articulo', 'Nuevo', '#nuevo');
+      $this->buttons[] = new fs_button('b_tarifas', 'Tarifas', '#tarifas');
+      $this->buttons[] = new fs_button('b_modificar_iva', 'Modificar IVA', '#mod-iva');
+      
       $this->codfamilia = '';
       if( isset($_POST['codfamilia']) )
          $this->codfamilia = $_POST['codfamilia'];
@@ -46,16 +56,6 @@ class ventas_articulos extends fs_controller
          $this->codfamilia = $_GET['codfamilia'];
       
       $this->con_stock = ( isset($_POST['con_stock']) OR isset($_GET['con_stock']) );
-      
-      $this->familia = new familia();
-      $this->impuesto = new impuesto();
-      $this->tarifa = new tarifa();
-      $articulo = new articulo();
-      
-      $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button_img('b_nuevo_articulo', 'Nuevo', 'add.png', '#nuevo');
-      $this->buttons[] = new fs_button('b_tarifas', 'Tarifas', '#tarifas');
-      $this->buttons[] = new fs_button('b_modificar_iva', 'Modificar IVA', '#mod-iva');
       
       if( !isset($_GET['public']) )
          $this->buttons[] = new fs_button('b_publicos', 'Públicos', $this->url().'&public=TRUE');
@@ -71,29 +71,37 @@ class ventas_articulos extends fs_controller
          $tar0->nombre = $_POST['nombre'];
          $tar0->incporcentual = 0-floatval($_POST['dtopor']);
          if( $tar0->save() )
+         {
             $this->new_message("Tarifa guardada correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible guardar la tarifa!");
       }
       else if( isset($_GET['delete_tarifa']) )
       {
-          $tar0 = $this->tarifa->get($_GET['delete_tarifa']);
-          if($tar0)
-          {
-             if( $tar0->delete() )
-                $this->new_message("Tarifa borrada correctamente.");
-             else
-                $this->new_error_msg("¡Imposible borrar la tarifa!");
-          }
-          else
-             $this->new_error_msg("¡La tarifa no existe!");
+         $tar0 = $this->tarifa->get($_GET['delete_tarifa']);
+         if($tar0)
+         {
+            if( $tar0->delete() )
+            {
+               $this->new_message("Tarifa borrada correctamente.");
+            }
+            else
+               $this->new_error_msg("¡Imposible borrar la tarifa!");
+         }
+         else
+            $this->new_error_msg("¡La tarifa no existe!");
       }
       else if( isset($_POST['mod_iva']) )
       {
          if($_POST['codimpuesto'] == $_POST['codimpuesto2'])
+         {
             $this->new_error_msg("¡Has seleccionado el mismo IVA dos veces!");
+         }
          else if( $articulo->move_codimpuesto($_POST['codimpuesto'], $_POST['codimpuesto2'], isset($_POST['mantener'])) )
+         {
             $this->new_message("Artículos modificados correctamente.");
+         }
          else
             $this->new_error_msg("¡Impodible modificar los artículos!");
       }
@@ -107,7 +115,9 @@ class ventas_articulos extends fs_controller
          $articulo->codfamilia = $_POST['codfamilia'];
          $articulo->set_impuesto($_POST['codimpuesto']);
          if( $articulo->save() )
+         {
             header('location: '.$articulo->url());
+         }
          else
             $this->new_error_msg("¡Error al crear el articulo!");
       }
@@ -117,7 +127,9 @@ class ventas_articulos extends fs_controller
          if($art)
          {
             if( $art->delete() )
+            {
                $this->new_message("Articulo ".$art->referencia." eliminado correctamente.");
+            }
             else
                $this->new_error_msg("¡Error al eliminarl el articulo!");
          }

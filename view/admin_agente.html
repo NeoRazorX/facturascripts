@@ -2,47 +2,7 @@
 
 {if condition="$fsc->agente"}
 <script type="text/javascript">
-   function comprobar_url()
-   {
-      $("#panel_generales").hide();
-      $("#panel_alb_cli").hide();
-      $("#panel_alb_pro").hide();
-      $("#panel_caja").hide();
-      $("#ul_paginador").hide();
-      $("#b_generales").removeClass('active');
-      $("#b_alb_cli").removeClass('active');
-      $("#b_alb_pro").removeClass('active');
-      $("#b_caja").removeClass('active');
-      
-      if(window.location.hash.substring(1) == 'alb_cli')
-      {
-         $("#panel_alb_cli").show();
-         $("#ul_paginador").show();
-         $("#b_alb_cli").addClass('active');
-      }
-      else if(window.location.hash.substring(1) == 'alb_pro')
-      {
-         $("#panel_alb_pro").show();
-         $("#ul_paginador").show();
-         $("#b_alb_pro").addClass('active');
-      }
-      else if(window.location.hash.substring(1) == 'caja')
-      {
-         $("#panel_caja").show();
-         $("#ul_paginador").show();
-         $("#b_caja").addClass('active');
-      }
-      else
-      {
-         $("#panel_generales").show();
-         $("#b_generales").addClass('active');
-      }
-   }
    $(document).ready(function() {
-      comprobar_url();
-      window.onpopstate = function(){ 
-         comprobar_url();
-      }
       $("#b_delete_agente").click(function(event) {
          event.preventDefault();
          if( confirm("¿Realmente desea eliminar el agente?") )
@@ -59,18 +19,14 @@
                <span class="glyphicon glyphicon-dashboard"></span>
                &nbsp; Datos generales
             </a>
-            <a id="b_alb_cli" href="{$fsc->url()}&listar=albaranes_cli#alb_cli" class="list-group-item">
-               <span class="glyphicon glyphicon-list"></span>
-               &nbsp; {#FS_ALBARANES#} de cliente
-            </a>
-            <a id="b_alb_pro" href="{$fsc->url()}&listar=albaranes_prov#alb_pro" class="list-group-item">
-               <span class="glyphicon glyphicon-list"></span>
-               &nbsp; {#FS_ALBARANES#} de proveedor
-            </a>
-            <a id="b_caja" href="{$fsc->url()}&listar=caja#caja" class="list-group-item">
-               <span class="glyphicon glyphicon-euro"></span>
-               &nbsp; Caja
-            </a>
+            {loop="$fsc->extensiones"}
+               {if condition="$value->type=='button'"}
+               <a id="b_{$value->from}" href="index.php?page={$value->from}&codagente={$fsc->agente->codagente}" class="list-group-item">
+                  <span class="glyphicon glyphicon-list"></span>
+                  &nbsp; {$value->text}
+               </a>
+               {/if}
+            {/loop}
          </div>
       </div>
       
@@ -114,140 +70,11 @@
                </div>
             </div>
          </form>
-         
-         <div class="table-responsive">
-            {if condition="$fsc->listar=='albaranes_cli'"}
-            <table class="table table-hover" id="panel_alb_cli">
-               <thead>
-                  <tr>
-                     <th></th>
-                     <th class="text-left">Código + Número 2</th>
-                     <th class="text-left">Cliente</th>
-                     <th class="text-left">Observaciones</th>
-                     <th class="text-right">Total</th>
-                     <th class="text-right">Fecha</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td align="center">
-                     {if condition="!$value->ptefactura"}
-                     <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
-                     {/if}
-                  </td>
-                  <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
-                  <td>{$value->nombrecliente}</td>
-                  <td>{$value->observaciones_resume()}</td>
-                  <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                  <td class="text-right">{$value->fecha}</td>
-               </tr>
-               {else}
-               <tr><td colspan="6" align="center">Ningún {#FS_ALBARAN#} encontrado</td></tr>
-               {/loop}
-            </table>
-            {elseif condition="$fsc->listar=='albaranes_prov'"}
-            <table class="table table-hover" id="panel_alb_pro">
-               <thead>
-                  <tr>
-                     <th></th>
-                     <th class="text-left">Código + Núm. Proveedor</th>
-                     <th class="text-left">Proveedor</th>
-                     <th class="text-left">Observaciones</th>
-                     <th class="text-right">Total</th>
-                     <th class="text-right">Fecha</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td align="center">
-                     {if condition="!$value->ptefactura"}
-                     <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
-                     {/if}
-                  </td>
-                  <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
-                  <td>{$value->nombre}</td>
-                  <td>{$value->observaciones_resume()}</td>
-                  <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                  <td class="text-right">{$value->fecha}</td>
-               </tr>
-               {else}
-               <tr><td colspan="6" align="center">Ningún {#FS_ALBARAN#} encontrado</td></tr>
-               {/loop}
-            </table>
-            {else}
-            <table class="table table-hover" id="panel_caja">
-               <thead>
-                  <tr>
-                     <th>Caja</th>
-                     <th>Fecha inicial</th>
-                     <th class="text-right">Dinero inicial</th>
-                     <th>Fecha fin</th>
-                     <th class="text-right">Diferencia</th>
-                     <th class="text-right">Tickets</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->listado"}
-               <tr>
-                  <td align="center">{$value->fs_id}</td>
-                  <td align="center">{$value->fecha_inicial}</td>
-                  <td class="text-right">{$fsc->show_precio($value->dinero_inicial)}</td>
-                  <td align="center">{$value->show_fecha_fin()}</td>
-                  <td class="text-right">{$fsc->show_precio($value->diferencia())}</td>
-                  <td class="text-right">{$value->tickets}</td>
-               </tr>
-               {else}
-               <tr><td colspan="6" align="center">No hay datos</td></tr>
-               {/loop}
-            </table>
-            {/if}
-         </div>
-         <ul class="pager" id="ul_paginador">
-            {if condition="$fsc->anterior_url()!=''"}
-            <li class="previous">
-               {if condition="$fsc->listar=='albaranes_cli'"}
-               <a href="{$fsc->anterior_url()}#alb_cli">
-                  <span class="glyphicon glyphicon-chevron-left"></span>
-                  Anteriores
-               </a>
-               {elseif condition="$fsc->listar=='albaranes_prov'"}
-               <a href="{$fsc->anterior_url()}#alb_pro">
-                  <span class="glyphicon glyphicon-chevron-left"></span>
-                  Anteriores
-               </a>
-               {else}
-               <a href="{$fsc->anterior_url()}#caja">
-                  <span class="glyphicon glyphicon-chevron-left"></span>
-                  Anteriores
-               </a>
-               {/if}
-            </li>
-            {/if}
-            {if condition="$fsc->siguiente_url()!=''"}
-            <li class="next">
-               {if condition="$fsc->listar=='albaranes_cli'"}
-               <a href="{$fsc->siguiente_url()}#alb_cli">
-                  Siguientes
-                  <span class="glyphicon glyphicon-chevron-right"></span>
-               </a>
-               {elseif condition="$fsc->listar=='albaranes_prov'"}
-               <a href="{$fsc->siguiente_url()}#alb_pro">
-                  Siguientes
-                  <span class="glyphicon glyphicon-chevron-right"></span>
-               </a>
-               {else}
-               <a href="{$fsc->siguiente_url()}#caja">
-                  Siguientes
-                  <span class="glyphicon glyphicon-chevron-right"></span>
-               </a>
-               {/if}
-            </li>
-            {/if}
-         </ul>
       </div>
    </div>
 </div>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

@@ -18,12 +18,9 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('agente.php');
-require_model('articulo.php');
 require_model('ejercicio.php');
 require_model('factura_proveedor.php');
 require_model('linea_albaran_proveedor.php');
-require_model('proveedor.php');
 require_model('secuencia.php');
 
 /**
@@ -164,30 +161,27 @@ class albaran_proveedor extends fs_model
          return '#';
       else
       {
-         $fac = new factura_proveedor();
-         $fac = $fac->get($this->idfactura);
-         if($fac)
-            return $fac->url();
+         if( is_null($this->idfactura) )
+            return 'index.php?page=compras_facturas';
          else
-            return '#';
+            return 'index.php?page=compras_factura&id='.$this->idfactura;
       }
    }
    
    public function agente_url()
    {
-      $agente = new agente();
-      $agente = $agente->get($this->codagente);
-      return $agente->url();
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
+      else
+         return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
    public function proveedor_url()
    {
-      $pro = new proveedor();
-      $pro2 = $pro->get($this->codproveedor);
-      if($pro2)
-         return $pro2->url();
+      if( is_null($this->codproveedor) )
+         return "index.php?page=compras_proveedores";
       else
-         return $pro->url();
+         return "index.php?page=compras_proveedor&cod=".$this->codproveedor;
    }
    
    public function get_lineas()
@@ -196,16 +190,9 @@ class albaran_proveedor extends fs_model
       return $linea->all_from_albaran($this->idalbaran);
    }
    
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
-   }
-   
    public function get($id)
    {
-      $albaran = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idalbaran = ".$this->var2str($id).";");
+      $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($albaran)
          return new albaran_proveedor($albaran[0]);
       else
@@ -217,8 +204,7 @@ class albaran_proveedor extends fs_model
       if( is_null($this->idalbaran) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function new_idalbaran()
@@ -364,7 +350,7 @@ class albaran_proveedor extends fs_model
                if( !$aux )
                {
                   $this->new_error_msg("Este ".FS_ALBARAN." es un posible duplicado de
-                     <a href='index.php?page=general_albaran_prov&id=".$alb['idalbaran']."'>este otro</a>.
+                     <a href='index.php?page=compras_albaran&id=".$alb['idalbaran']."'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
                   $status = FALSE;
                }
@@ -437,15 +423,13 @@ class albaran_proveedor extends fs_model
             $factura->delete();
       }
       
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
    public function all($offset=0)
    {
       $albalist = array();
-      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-              " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
+      $albaranes = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($albaranes)
       {
          foreach($albaranes as $a)
@@ -709,5 +693,3 @@ class albaran_proveedor extends fs_model
       return $stats;
    }
 }
-
-?>

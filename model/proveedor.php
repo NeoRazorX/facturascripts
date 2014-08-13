@@ -18,9 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('albaran_proveedor.php');
+require_model('cuenta.php');
 require_model('direccion_proveedor.php');
-require_model('factura_proveedor.php');
 require_model('subcuenta.php');
 require_model('subcuenta_proveedor.php');
 
@@ -136,18 +135,6 @@ class proveedor extends fs_model
          return sprintf('%06s', (1 + intval($cod[0]['cod'])));
       else
          return '000001';
-   }
-   
-   public function get_albaranes($offset=0)
-   {
-      $alb = new albaran_proveedor();
-      return $alb->all_from_proveedor($this->codproveedor, $offset);
-   }
-   
-   public function get_facturas($offset=0)
-   {
-      $fac = new factura_proveedor();
-      return $fac->all_from_proveedor($this->codproveedor, $offset);
    }
    
    public function get_subcuentas()

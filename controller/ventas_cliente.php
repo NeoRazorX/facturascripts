@@ -18,12 +18,12 @@
  */
 
 require_model('agente.php');
-require_model('albaran_cliente.php');
 require_model('cliente.php');
 require_model('cuenta_banco_cliente.php');
 require_model('direccion_cliente.php');
 require_model('divisa.php');
 require_model('forma_pago.php');
+require_model('fs_extension.php');
 require_model('grupo_clientes.php');
 require_model('pais.php');
 require_model('serie.php');
@@ -31,16 +31,13 @@ require_model('serie.php');
 class ventas_cliente extends fs_controller
 {
    public $agente;
-   public $buscar_lineas;
    public $cliente;
    public $cuenta_banco;
    public $divisa;
+   public $extensiones;
    public $forma_pago;
    public $grupo;
-   public $listado;
-   public $listar;
    public $pais;
-   public $offset;
    public $serie;
    
    public function __construct()
@@ -59,49 +56,53 @@ class ventas_cliente extends fs_controller
       $this->pais = new pais();
       $this->serie = new serie();
       
+      /// cargamos las extensiones
+      $fs_extension = new fs_extension();
+      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       /// cargamos el cliente
       $cliente = new cliente();
       $this->cliente = FALSE;
       if( isset($_POST['codcliente']) )
+      {
          $this->cliente = $cliente->get( $_POST['codcliente'] );
+      }
       else if( isset($_GET['cod']) )
          $this->cliente = $cliente->get($_GET['cod']);
       
-      
       /// ¿Hay que hacer algo más?
-      if( isset($_POST['buscar_lineas']) )
-      {
-         $this->buscar_lineas();
-      }
-      else if( isset($_GET['delete_cuenta']) )
+      if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
          $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
          if($cuenta)
          {
             if( $cuenta->delete() )
+            {
                $this->new_message('Cuenta bancaria eliminada correctamente.');
+            }
             else
                $this->new_error_msg('Imposible eliminar la cuenta bancaria.');
          }
          else
             $this->new_error_msg('Cuenta bancaria no encontrada.');
       }
-      else if( isset($_GET['delete_dir']) )
+      else if( isset($_GET['delete_dir']) ) /// eliminar dirección
       {
          $dir = new direccion_cliente();
          $dir0 = $dir->get($_GET['delete_dir']);
          if($dir0)
          {
             if( $dir0->delete() )
+            {
                $this->new_message('Dirección eliminada correctamente.');
+            }
             else
                $this->new_error_msg('Imposible eliminar la dirección.');
          }
          else
             $this->new_error_msg('Dirección no encontrada.');
       }
-      else if( isset($_POST['coddir']) )
+      else if( isset($_POST['coddir']) ) /// añadir/modificar dirección
       {
          $dir = new direccion_cliente();
          if($_POST['coddir'] != '')
@@ -117,11 +118,13 @@ class ventas_cliente extends fs_controller
          $dir->domfacturacion = isset($_POST['dirfact']);
          $dir->provincia = $_POST['provincia'];
          if( $dir->save() )
+         {
             $this->new_message("Dirección guardada correctamente.");
+         }
          else
             $this->new_message("¡Imposible guardar la dirección!");
       }
-      else if( isset($_POST['iban']) )
+      else if( isset($_POST['iban']) ) /// añadir/modificar dirección
       {
          if( isset($_POST['codcuenta']) )
          {
@@ -135,16 +138,20 @@ class ventas_cliente extends fs_controller
          $cuentab->descripcion = $_POST['descripcion'];
          
          if($_POST['ciban'] != '')
+         {
             $cuentab->iban = $this->calcular_iban($_POST['ciban']);
+         }
          else
             $cuentab->iban = $_POST['iban'];
          
          if( $cuentab->save() )
+         {
             $this->new_message('Cuenta bancaria guardada correctamente.');
+         }
          else
             $this->new_error_msg('Imposible guardar la cuenta bancaria.');
       }
-      else if( isset($_POST['codcliente']) )
+      else if( isset($_POST['codcliente']) ) /// modificar cliente
       {
          $this->cliente->nombre = $_POST['nombre'];
          $this->cliente->nombrecomercial = $_POST['nombrecomercial'];
@@ -161,18 +168,18 @@ class ventas_cliente extends fs_controller
          $this->cliente->regimeniva = $_POST['regimeniva'];
          $this->cliente->recargo = isset($_POST['recargo']);
          
-         if($_POST['codagente'] == '---')
-            $this->cliente->codagente = NULL;
-         else
+         $this->cliente->codagente = NULL;
+         if($_POST['codagente'] != '---')
             $this->cliente->codagente = $_POST['codagente'];
          
-         if($_POST['codgrupo'] == '---')
-            $this->cliente->codgrupo = NULL;
-         else
+         $this->cliente->codgrupo = NULL;
+         if($_POST['codgrupo'] != '---')
             $this->cliente->codgrupo = $_POST['codgrupo'];
          
          if( $this->cliente->save() )
+         {
             $this->new_message("Datos del cliente modificados correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible modificar los datos del cliente!");
       }
@@ -181,26 +188,8 @@ class ventas_cliente extends fs_controller
       {
          $this->page->title = $this->cliente->codcliente;
          $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
-         
-         $this->offset = 0;
-         if( isset($_GET['offset']) )
-            $this->offset = intval($_GET['offset']);
-         
-         $this->listar = 'albaranes';
-         if( isset($_GET['listar']) )
-         {
-            if( in_array($_GET['listar'], array('albaranes','facturas','articulos','stats')) )
-               $this->listar = $_GET['listar'];
-         }
-         
-         if($this->listar == 'facturas')
-            $this->listado = $this->cliente->get_facturas($this->offset);
-         else if($this->listar == 'articulos')
-            $this->listado = $this->ultimos_articulos();
-         else
-            $this->listado = $this->cliente->get_albaranes($this->offset);
       }
-      else if( !isset($_POST['buscar_lineas']) )
+      else
          $this->new_error_msg("¡Cliente no encontrado!");
    }
    
@@ -212,36 +201,6 @@ class ventas_cliente extends fs_controller
          return $this->cliente->url();
       else
          return $this->ppage->url();
-   }
-   
-   public function anterior_url()
-   {
-      if($this->offset > '0')
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset-FS_ITEM_LIMIT);
-      else
-         return '';
-   }
-   
-   public function siguiente_url()
-   {
-      if(count($this->listado) == FS_ITEM_LIMIT)
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
-      else
-         return '';
-   }
-   
-   public function buscar_lineas()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_lineas_albaranes_cli';
-      
-      $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
-      $linea = new linea_albaran_cliente();
-      
-      if($_POST['buscar_lineas_o'] == '')
-         $this->lineas = $linea->search_from_cliente($_POST['codcliente'], $this->buscar_lineas);
-      else
-         $this->lineas = $linea->search_from_cliente2($_POST['codcliente'], $this->buscar_lineas, $_POST['buscar_lineas_o']);
    }
    
    public function stats_last_months()
@@ -281,11 +240,5 @@ class ventas_cliente extends fs_controller
          $digitoControl = '0'.$digitoControl;
       
       return $codpais.$digitoControl.$ccc;
-   }
-   
-   private function ultimos_articulos()
-   {
-      $linea = new linea_albaran_cliente();
-      return $linea->last_from_cliente($this->cliente->codcliente);
    }
 }

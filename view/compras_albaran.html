@@ -193,7 +193,7 @@
             </tr>
          </thead>
          {loop="$fsc->albaran->get_lineas()"}
-         <tr>
+         <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
             <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
             <td class="text-right">{$value->cantidad}</td>
             <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->albaran->coddivisa)}</td>

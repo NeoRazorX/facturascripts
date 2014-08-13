@@ -139,9 +139,12 @@
          <div class="col-lg-10 col-sm-9">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group hidden-xs">
-                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
-                     <span class="glyphicon glyphicon-refresh"></span>
+                  {if condition="$fsc->ppage"}
+                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
+                     <span class="glyphicon glyphicon-arrow-left"></span>
+                     {$fsc->ppage->title}
                   </a>
+                  {/if}
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
                      <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
@@ -153,16 +156,7 @@
                      </a>
                      {/if}
                   {/if}
-               </div>
-               
-               <div class="btn-group hidden-xs">
-                  {if condition="$fsc->ppage"}
-                  <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
-                     <span class="glyphicon glyphicon-arrow-left"></span>
-                     {$fsc->ppage->title}
-                  </a>
-                  {/if}
-                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}">
+                  <a class="btn btn-sm btn-default active" href="{$fsc->url()}" title="recargar la página">
                      {$fsc->page->title}
                   </a>
                </div>

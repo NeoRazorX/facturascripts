@@ -25,6 +25,9 @@ if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('
    define('FS_POS_DIVISA', 'right');
 }
 
+if( !defined('FS_COMMUNITY_URL') )
+   define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
+
 if( file_exists('tmp/config2.ini') )
 {
    $GLOBALS['config2'] = parse_ini_file('tmp/config2.ini');
@@ -34,8 +37,7 @@ else
    $GLOBALS['config2'] = array(
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
-       'cifnif' => 'cif/nif',
-       'community_url' => 'http://www.facturascripts.com/community'
+       'cifnif' => 'cif/nif'
    );
 }
 

@@ -18,8 +18,6 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('albaran_cliente.php');
-require_model('albaran_proveedor.php');
 
 /**
  * El agente es el que se asocia a un albarán, factura o caja.
@@ -115,24 +113,13 @@ class agente extends fs_model
          return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
-   public function get_albaranes_cli($offset=0)
-   {
-      $alb = new albaran_cliente();
-      return $alb->all_from_agente($this->codagente, $offset);
-   }
-   
-   public function get_albaranes_prov($offset=0)
-   {
-      $alb = new albaran_proveedor();
-      return $alb->all_from_agente($this->codagente, $offset);
-   }
-   
    public function get($cod)
    {
-      $a = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codagente = ".$this->var2str($cod).";");
+      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($cod).";");
       if($a)
+      {
          return new agente($a[0]);
+      }
       else
          return FALSE;
    }
@@ -142,8 +129,7 @@ class agente extends fs_model
       if( is_null($this->codagente) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE codagente = ".$this->var2str($this->codagente).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
    
    public function test()
@@ -198,8 +184,7 @@ class agente extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE codagente = ".$this->var2str($this->codagente).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
    
    private function clean_cache()

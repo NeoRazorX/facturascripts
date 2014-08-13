@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('albaran_proveedor.php');
 require_model('cuenta_banco_proveedor.php');
 require_model('divisa.php');
+require_model('fs_extension.php');
 require_model('forma_pago.php');
 require_model('pais.php');
 require_model('proveedor.php');
@@ -27,13 +27,10 @@ require_model('serie.php');
 
 class compras_proveedor extends fs_controller
 {
-   public $buscar_lineas;
    public $cuenta_banco;
    public $divisa;
+   public $extensiones;
    public $forma_pago;
-   public $listado;
-   public $listar;
-   public $offset;
    public $pais;
    public $proveedor;
    public $serie;
@@ -52,49 +49,54 @@ class compras_proveedor extends fs_controller
       $this->pais = new pais();
       $this->serie = new serie();
       
+      /// cargamos las extensiones
+      $fs_extension = new fs_extension();
+      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       /// cargamos el proveedor
       $proveedor = new proveedor();
       $this->proveedor = FALSE;
       if( isset($_POST['codproveedor']) )
+      {
          $this->proveedor = $proveedor->get($_POST['codproveedor']);
+      }
       else if( isset($_GET['cod']) )
          $this->proveedor = $proveedor->get($_GET['cod']);
       
       
       /// ¿Hay que hacer algo más?
-      if( isset($_POST['buscar_lineas']) )
-      {
-         $this->buscar_lineas();
-      }
-      else if( isset($_GET['delete_cuenta']) )
+      if( isset($_GET['delete_cuenta']) ) /// eliminar una cuenta bancaria
       {
          $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
          if($cuenta)
          {
             if( $cuenta->delete() )
+            {
                $this->new_message('Cuenta bancaria eliminada correctamente.');
+            }
             else
                $this->new_error_msg('Imposible eliminar la cuenta bancaria.');
          }
          else
             $this->new_error_msg('Cuenta bancaria no encontrada.');
       }
-      else if( isset($_GET['delete_dir']) )
+      else if( isset($_GET['delete_dir']) ) /// eliminar una dirección
       {
          $dir = new direccion_proveedor();
          $dir0 = $dir->get($_GET['delete_dir']);
          if($dir0)
          {
             if( $dir0->delete() )
+            {
                $this->new_message('Dirección eliminada correctamente.');
+            }
             else
                $this->new_error_msg('Imposible eliminar la dirección.');
          }
          else
             $this->new_error_msg('Dirección no encontrada.');
       }
-      else if( isset($_POST['coddir']) )
+      else if( isset($_POST['coddir']) ) /// añadir/modificar una dirección
       {
          $direccion = new direccion_proveedor();
          if($_POST['coddir'] != '')
@@ -109,11 +111,13 @@ class compras_proveedor extends fs_controller
          $direccion->direccionppal = isset($_POST['direccionppal']);
          $direccion->provincia = $_POST['provincia'];
          if( $direccion->save() )
+         {
             $this->new_message("Dirección guardada correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible guardar la dirección!");
       }
-      else if( isset($_POST['iban']) )
+      else if( isset($_POST['iban']) ) /// añadir/modificar una cuenta bancaria
       {
          if( isset($_POST['codcuenta']) )
          {
@@ -127,16 +131,20 @@ class compras_proveedor extends fs_controller
          $cuentab->descripcion = $_POST['descripcion'];
          
          if($_POST['ciban'] != '')
+         {
             $cuentab->iban = $this->calcular_iban($_POST['ciban']);
+         }
          else
             $cuentab->iban = $_POST['iban'];
          
          if( $cuentab->save() )
+         {
             $this->new_message('Cuenta bancaria guardada correctamente.');
+         }
          else
             $this->new_error_msg('Imposible guardar la cuenta bancaria.');
       }
-      else if( isset($_POST['codproveedor']) )
+      else if( isset($_POST['codproveedor']) ) /// modificar el proveedor
       {
          $this->proveedor->nombre = $_POST['nombre'];
          $this->proveedor->nombrecomercial = $_POST['nombrecomercial'];
@@ -152,34 +160,19 @@ class compras_proveedor extends fs_controller
          $this->proveedor->coddivisa = $_POST['coddivisa'];
          $this->proveedor->regimeniva = $_POST['regimeniva'];
          if( $this->proveedor->save() )
+         {
             $this->new_message('Datos del proveedor modificados correctamente.');
+         }
          else
             $this->new_error_msg('¡Imposible modificar los datos del proveedor!');
       }
-      
       
       if($this->proveedor)
       {
          $this->page->title = $this->proveedor->codproveedor;
          $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
-         
-         $this->offset = 0;
-         if( isset($_GET['offset']) )
-            $this->offset = intval($_GET['offset']);
-         
-         $this->listar = 'albaranes';
-         if( isset($_GET['listar']) )
-         {
-            if( in_array($_GET['listar'], array('albaranes', 'facturas', 'stats')) )
-               $this->listar = $_GET['listar'];
-         }
-         
-         if($this->listar == 'albaranes')
-            $this->listado = $this->proveedor->get_albaranes($this->offset);
-         else
-            $this->listado = $this->proveedor->get_facturas($this->offset);
       }
-      else if( !isset($_POST['buscar_lineas']) )
+      else
          $this->new_error_msg("¡Proveedor no encontrado!");
    }
    
@@ -191,32 +184,6 @@ class compras_proveedor extends fs_controller
          return $this->proveedor->url();
       else
          return $this->ppage->url();
-   }
-   
-   public function anterior_url()
-   {
-      if($this->offset > '0')
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset-FS_ITEM_LIMIT);
-      else
-         return '';
-   }
-   
-   public function siguiente_url()
-   {
-      if(count($this->listado) == FS_ITEM_LIMIT)
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
-      else
-         return '';
-   }
-   
-   public function buscar_lineas()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/general_lineas_albaranes_prov';
-      
-      $this->buscar_lineas = $_POST['buscar_lineas']; /// necesario para el html
-      $linea = new linea_albaran_proveedor();
-      $this->lineas = $linea->search_from_proveedor($_POST['codproveedor'], $this->buscar_lineas);
    }
    
    public function stats_last_months()
@@ -258,5 +225,3 @@ class compras_proveedor extends fs_controller
       return $codpais.$digitoControl.$ccc;
    }
 }
-
-?>

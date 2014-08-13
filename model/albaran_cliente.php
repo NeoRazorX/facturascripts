@@ -18,9 +18,6 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('agente.php');
-require_model('articulo.php');
-require_model('cliente.php');
 require_model('ejercicio.php');
 require_model('factura_cliente.php');
 require_model('linea_albaran_cliente.php');
@@ -233,12 +230,6 @@ class albaran_cliente extends fs_model
       return $linea->all_from_albaran($this->idalbaran);
    }
    
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
-   }
-   
    public function get($id)
    {
       $albaran = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
@@ -410,7 +401,7 @@ class albaran_cliente extends fs_model
                if( !$aux )
                {
                   $this->new_error_msg("Este ".FS_ALBARAN." es un posible duplicado de
-                     <a href='index.php?page=general_albaran_cli&id=".$alb['idalbaran']."'>este otro</a>.
+                     <a href='index.php?page=ventas_albaran&id=".$alb['idalbaran']."'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
                   $status = FALSE;
                }

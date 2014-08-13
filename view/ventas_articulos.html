@@ -233,7 +233,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr>
+      <tr{if condition="$value->stockfis<0"} class="bg-warning"{/if}>
          <td>{$value->codfamilia}</td>
          {if condition="$value->bloqueado"}
             <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>

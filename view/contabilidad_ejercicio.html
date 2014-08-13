@@ -114,7 +114,7 @@
             <td><input class="form-control" type="text" name="nombre" value="{$fsc->ejercicio->nombre}" autocomplete="off"/></td>
             <td><input class="form-control datepicker" type="text" name="fechainicio" value="{$fsc->ejercicio->fechainicio}"/></td>
             <td><input class="form-control datepicker" type="text" name="fechafin" value="{$fsc->ejercicio->fechafin}"/></td>
-            <td><input class="form-control" type="text" name="longsubcuenta" value="{$fsc->ejercicio->longsubcuenta}"/></td>
+            <td><input class="form-control" type="number" name="longsubcuenta" value="{$fsc->ejercicio->longsubcuenta}"/></td>
             <td>
                <select name="estado" class="form-control">
                   <option value="ABIERTO"{if condition="$fsc->ejercicio->abierto()"} selected="selected"{/if}>ABIERTO</option>

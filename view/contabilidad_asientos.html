@@ -22,7 +22,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr>
+      <tr{if condition="$value->importe<=0"} class="bg-warning"{/if}>
          <td align="center">
             {if condition="$value->editable"}
             <span class="glyphicon glyphicon-pencil" title="editable"></span>

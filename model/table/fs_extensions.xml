@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_extensions.xml
+    Description:
+        Estructura de la tabla fs_extensions.
+-->
+<tabla>
+   <columna>
+      <nombre>page_from</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>id</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('fs_extensions_id_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>plugin</nombre>
+      <tipo>character varying(50)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>text</nombre>
+      <tipo>text</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>page_to</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>type</nombre>
+      <tipo>character varying(50)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>ca_fs_extensions_fs_pages</nombre>
+      <consulta>FOREIGN KEY (page_from) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>fs_extensions_pkey</nombre>
+      <consulta>PRIMARY KEY (id)</consulta>
+   </restriccion>
+</tabla>

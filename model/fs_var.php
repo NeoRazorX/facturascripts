@@ -66,13 +66,14 @@ class fs_var extends fs_model
    
    public function exists()
    {
-      if( isset($this->name) )
+      if( is_null($this->name) )
       {
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE name = ".$this->var2str($this->name).";");
+         return FALSE;
       }
       else
-         return FALSE;
+      {
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
+      }
    }
    
    public function test()

@@ -18,10 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('albaran_cliente.php');
 require_model('cuenta.php');
 require_model('direccion_cliente.php');
-require_model('factura_cliente.php');
 require_model('subcuenta.php');
 require_model('subcuenta_cliente.php');
 
@@ -140,21 +138,11 @@ class cliente extends fs_model
    {
       $cli = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod).";");
       if($cli)
+      {
          return new cliente($cli[0]);
+      }
       else
          return FALSE;
-   }
-   
-   public function get_albaranes($offset=0)
-   {
-      $alb = new albaran_cliente();
-      return $alb->all_from_cliente($this->codcliente, $offset);
-   }
-   
-   public function get_facturas($offset=0)
-   {
-      $fac = new factura_cliente();
-      return $fac->all_from_cliente($this->codcliente, $offset);
    }
    
    public function get_direcciones()

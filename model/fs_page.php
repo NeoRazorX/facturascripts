@@ -34,7 +34,7 @@ class fs_page extends fs_model
    
    public $extra_url;
    
-   /*
+   /**
     * Cuando un usuario no tiene asignada una página por defecto, se selecciona
     * la primera página importante a la que tiene acceso.
     */
@@ -49,10 +49,9 @@ class fs_page extends fs_model
          $this->title = $p['title'];
          $this->folder = $p['folder'];
          
+         $this->version = NULL;
          if( isset($p['version']) )
             $this->version = $p['version'];
-         else
-            $this->version = NULL;
          
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
          $this->important = $this->str2bool($p['important']);
@@ -70,6 +69,17 @@ class fs_page extends fs_model
       $this->exists = FALSE;
       $this->enabled = FALSE;
       $this->extra_url = '';
+   }
+   
+   public function __clone()
+   {
+      $page = new fs_page();
+      $page->name = $this->name;
+      $page->title = $this->title;
+      $page->folder = $this->folder;
+      $page->version = $this->version;
+      $page->show_on_menu = $this->show_on_menu;
+      $page->important = $this->important;
    }
    
    protected function install()
@@ -102,14 +112,12 @@ class fs_page extends fs_model
       if( is_null($this->name) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE name = ".$this->var2str($this->name).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
    }
    
    public function get($name)
    {
-      $p = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE name = ".$this->var2str($name).";");
+      $p = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
       if($p)
          return new fs_page($p[0]);
       else
@@ -145,8 +153,7 @@ class fs_page extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE name = ".$this->var2str($this->name).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
    }
    
    private function clean_cache()

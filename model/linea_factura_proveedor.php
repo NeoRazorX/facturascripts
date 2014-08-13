@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('albaran_proveedor.php');
+require_model('factura_proveedor.php');
 
 /**
  * Línea de una factura de proveedor.
@@ -42,10 +44,8 @@ class linea_factura_proveedor extends fs_model
    
    private $codigo;
    private $fecha;
-   private $factura_url;
    private $albaran_codigo;
    private $albaran_numero;
-   private $albaran_url;
    
    private static $facturas;
    private static $albaranes;
@@ -112,7 +112,6 @@ class linea_factura_proveedor extends fs_model
          {
             $this->codigo = $f->codigo;
             $this->fecha = $f->fecha;
-            $this->factura_url = $f->url();
             $encontrado = TRUE;
             break;
          }
@@ -125,7 +124,6 @@ class linea_factura_proveedor extends fs_model
          {
             $this->codigo = $fac->codigo;
             $this->fecha = $fac->fecha;
-            $this->factura_url = $fac->url();
             self::$facturas[] = $fac;
          }
       }
@@ -140,7 +138,6 @@ class linea_factura_proveedor extends fs_model
                $this->albaran_numero = $a->numero;
             else
                $this->albaran_numero = $a->numproveedor;
-            $this->albaran_url = $a->url();
             $encontrado = TRUE;
             break;
          }
@@ -156,7 +153,6 @@ class linea_factura_proveedor extends fs_model
                $this->albaran_numero = $alb->numero;
             else
                $this->albaran_numero = $alb->numproveedor;
-            $this->albaran_url = $alb->url();
             self::$albaranes[] = $alb;
          }
       }
@@ -181,11 +177,28 @@ class linea_factura_proveedor extends fs_model
       return $this->fecha;
    }
    
+   public function show_nombre()
+   {
+      $nombre = 'desconocido';
+      
+      foreach(self::$facturas as $a)
+      {
+         if($a->idfactura == $this->idfactura)
+         {
+            $nombre = $a->nombre;
+            break;
+         }
+      }
+      
+      return $nombre;
+   }
+   
    public function url()
    {
-      if( !isset($this->factura_url) )
-         $this->fill();
-      return $this->factura_url;
+      if( is_null($this->idfactura) )
+         return 'index.php?page=compras_facturas';
+      else
+         return 'index.php?page=compras_factura&id='.$this->idfactura;
    }
    
    public function albaran_codigo()
@@ -197,9 +210,10 @@ class linea_factura_proveedor extends fs_model
    
    public function albaran_url()
    {
-      if( !isset($this->albaran_url) )
-         $this->fill();
-      return $this->albaran_url;
+      if( is_null($this->idalbaran) )
+         return 'index.php?page=compras_albaranes';
+      else
+         return 'index.php?page=compras_albaran&id='.$this->idalbaran;
    }
    
    public function albaran_numero()
@@ -296,8 +310,7 @@ class linea_factura_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exit("DELETE FROM ".$this->table_name.
-              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exit("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function all_from_factura($id)

@@ -18,6 +18,8 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('albaran_cliente.php');
+require_model('factura_cliente.php');
 
 /**
  * Línea de una factura de cliente.
@@ -42,11 +44,9 @@ class linea_factura_cliente extends fs_model
    
    private $codigo;
    private $fecha;
-   private $factura_url;
    private $albaran_codigo;
    private $albaran_numero;
    private $albaran_fecha;
-   private $albaran_url;
    
    private static $facturas;
    private static $albaranes;
@@ -113,7 +113,6 @@ class linea_factura_cliente extends fs_model
          {
             $this->codigo = $f->codigo;
             $this->fecha = $f->fecha;
-            $this->factura_url = $f->url();
             $encontrado = TRUE;
             break;
          }
@@ -126,7 +125,6 @@ class linea_factura_cliente extends fs_model
          {
             $this->codigo = $fac->codigo;
             $this->fecha = $fac->fecha;
-            $this->factura_url = $fac->url();
             self::$facturas[] = $fac;
          }
       }
@@ -142,7 +140,6 @@ class linea_factura_cliente extends fs_model
             else
                $this->albaran_numero = $a->numero2;
             $this->albaran_fecha = $a->fecha;
-            $this->albaran_url = $a->url();
             $encontrado = TRUE;
             break;
          }
@@ -159,7 +156,6 @@ class linea_factura_cliente extends fs_model
             else
                $this->albaran_numero = $alb->numero2;
             $this->albaran_fecha = $alb->fecha;
-            $this->albaran_url = $alb->url();
             self::$albaranes[] = $alb;
          }
       }
@@ -184,11 +180,28 @@ class linea_factura_cliente extends fs_model
       return $this->fecha;
    }
    
+   public function show_nombrecliente()
+   {
+      $nombre = 'desconocido';
+      
+      foreach(self::$facturas as $a)
+      {
+         if($a->idfactura == $this->idfactura)
+         {
+            $nombre = $a->nombrecliente;
+            break;
+         }
+      }
+      
+      return $nombre;
+   }
+   
    public function url()
    {
-      if( !isset($this->factura_url) )
-         $this->fill();
-      return $this->factura_url;
+      if( is_null($this->idfactura) )
+         return 'index.php?page=ventas_facturas';
+      else
+         return 'index.php?page=ventas_factura&id='.$this->idfactura;
    }
    
    public function albaran_codigo()
@@ -200,9 +213,10 @@ class linea_factura_cliente extends fs_model
    
    public function albaran_url()
    {
-      if( !isset($this->albaran_url) )
-         $this->fill();
-      return $this->albaran_url;
+      if( is_null($this->idalbaran) )
+         return 'index.php?page=ventas_albaranes';
+      else
+         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
    }
    
    public function albaran_numero()
@@ -308,8 +322,7 @@ class linea_factura_cliente extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function all_from_factura($id)

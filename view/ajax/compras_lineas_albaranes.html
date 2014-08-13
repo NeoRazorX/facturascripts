@@ -22,7 +22,7 @@
       </tr>
    </thead>
    {loop="$fsc->lineas"}
-   <tr>
+   <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
       <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
       <td><a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
       <td class="text-right">{$value->cantidad}</td>

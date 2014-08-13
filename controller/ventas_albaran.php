@@ -100,12 +100,18 @@ class ventas_albaran extends fs_controller
       else if( $this->albaran )
       {
          $this->page->title = $this->albaran->codigo;
-         $this->agente = $this->albaran->get_agente();
+         
+         /// cargamos el agente
+         if( !is_null($this->albaran->codagente) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($this->albaran->codagente);
+         }
          
          /**
           * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: general_albaran_cli_edit.html para los
-          * albaranes editables y general_albaran_cli.html para los demás.
+          * en dos archivos: ventas_albaran_edit.html para los
+          * albaranes editables y ventas_albaran.html para los demás.
           */
          if($this->albaran->ptefactura)
             $this->template = 'ventas_albaran_edit';

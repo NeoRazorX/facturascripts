@@ -113,7 +113,13 @@ class ventas_factura extends fs_controller
             $this->factura->full_test();
             
             $this->page->title = $this->factura->codigo;
-            $this->agente = $this->factura->get_agente();
+            /// cargamos el agente
+            if( !is_null($this->factura->codagente) )
+            {
+               $agente = new agente();
+               $this->agente = $agente->get($this->factura->codagente);
+            }
+            
             $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
             
             if( $this->empresa->can_send_mail() )

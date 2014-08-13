@@ -2,30 +2,6 @@
 
 {if condition="$fsc->proveedor"}
 <script type="text/javascript">
-   function buscar_lineas()
-   {
-      if(document.f_buscar_lineas.buscar_lineas.value == '')
-      {
-         $("#search_results").html('');
-      }
-      else
-      {
-         $.ajax({
-            type: 'POST',
-            url: '{$fsc->url()}',
-            dataType: 'html',
-            data: $("form[name=f_buscar_lineas]").serialize(),
-            success: function(datos) {
-               var re = /<!--(.*?)-->/g;
-               var m = re.exec( datos );
-               if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
-               {
-                  $("#search_results").html(datos);
-               }
-            }
-         });
-      }
-   }
    function comprobar_url()
    {
       $("#panel_generales").hide();
@@ -33,15 +9,11 @@
       $("#panel_cuentas").hide();
       $("#panel_direcciones").hide();
       $("#div_subcuentas").hide();
-      $("#div_albaranes").hide();
-      $("#div_facturas").hide();
       $("#chart_albaranes_month").hide();
       $("#b_generales").removeClass('active');
       $("#b_facturacion").removeClass('active');
       $("#b_direcciones").removeClass('active');
       $("#b_subcuentas").removeClass('active');
-      $("#b_albaranes").removeClass('active');
-      $("#b_facturas").removeClass('active');
       $("#b_stats").removeClass('active');
       
       if(window.location.hash.substring(1) == 'facturacion')
@@ -59,16 +31,6 @@
       {
          $("#div_subcuentas").show();
          $("#b_subcuentas").addClass('active');
-      }
-      else if(window.location.hash.substring(1) == 'albaranes')
-      {
-         $("#div_albaranes").show();
-         $("#b_albaranes").addClass('active');
-      }
-      else if(window.location.hash.substring(1) == 'facturas')
-      {
-         $("#div_facturas").show();
-         $("#b_facturas").addClass('active');
       }
       else if(window.location.hash.substring(1) == 'stats')
       {
@@ -91,17 +53,6 @@
          if( confirm("¿Realmente desea eliminar este proveedor?") )
             window.location.href = '{$fsc->ppage->url()}&delete={$fsc->proveedor->codproveedor}';
       });
-      $("#b_buscar_lineas").click(function(event) {
-         event.preventDefault();
-         $("#modal_buscar_lineas").modal('show');
-      });
-      $("#f_buscar_lineas").keyup(function() {
-         buscar_lineas();
-      });
-      $("#f_buscar_lineas").submit(function(event) {
-         event.preventDefault();
-         buscar_lineas();
-      });
       $("#b_nueva_cuenta").click(function() {
          event.preventDefault();
          $("#modal_nueva_cuenta").modal('show');
@@ -113,7 +64,7 @@
    });
 </script>
 
-{if condition="$fsc->listar=='stats'"}
+{if condition="isset($_GET['stats'])"}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
    // Load the Visualization API and the piechart package.
@@ -164,19 +115,15 @@
                <span class="glyphicon glyphicon-credit-card"></span>
                &nbsp; Subcuentas
             </a>
-            <a id="b_albaranes" href="{$fsc->url()}&listar=albaranes#albaranes" class="list-group-item" style="text-transform: capitalize;">
-               <span class="glyphicon glyphicon-list"></span>
-               &nbsp; {#FS_ALBARANES#}
-            </a>
-            <a id="b_facturas" href="{$fsc->url()}&listar=facturas#facturas" class="list-group-item">
-               <span class="glyphicon glyphicon-list"></span>
-               &nbsp; Facturas
-            </a>
-            <a id="b_buscar_lineas" href="#" class="list-group-item">
-               <span class="glyphicon glyphicon-search"></span>
-               &nbsp; Buscar artículos
-            </a>
-            <a id="b_stats" href="{$fsc->url()}&listar=stats#stats" class="list-group-item">
+            {loop="$fsc->extensiones"}
+               {if condition="$value->type=='button'"}
+               <a id="b_{$value->from}" href="index.php?page={$value->from}&codproveedor={$fsc->proveedor->codproveedor}" class="list-group-item">
+                  <span class="glyphicon glyphicon-list"></span>
+                  &nbsp; {$value->text}
+               </a>
+               {/if}
+            {/loop}
+            <a id="b_stats" href="{$fsc->url()}&stats=TRUE#stats" class="list-group-item">
                <span class="glyphicon glyphicon-stats"></span>
                &nbsp; Estadísticas
             </a>
@@ -465,143 +412,10 @@
             </div>
          </div>
          
-         <div id="div_albaranes">
-            {if condition="$fsc->listar=='albaranes'"}
-            <div class="table-responsive">
-               <table class="table table-hover">
-                  <thead>
-                     <tr>
-                        <th></th>
-                        <th class="text-left">Código + Núm. Proveedor</th>
-                        <th class="text-left">Observaciones</th>
-                        <th class="text-right">Total</th>
-                        <th class="text-right">Fecha</th>
-                     </tr>
-                  </thead>
-                  {loop="$fsc->listado"}
-                  <tr>
-                     <td align="center">
-                        {if condition="!$value->ptefactura"}
-                        <span class="glyphicon glyphicon-paperclip"></span>
-                        {/if}
-                     </td>
-                     <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
-                     <td>{$value->observaciones_resume()}</td>
-                     <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                     <td class="text-right">{$value->fecha}</td>
-                  </tr>
-                  {else}
-                  <tr>
-                     <td colspan="5" align="center">Sin resultados</td>
-                  </tr>
-                  {/loop}
-               </table>
-            </div>
-            <ul class="pager">
-               {if condition="$fsc->anterior_url()!=''"}
-               <li class="previous">
-                  <a href="{$fsc->anterior_url()}#albaranes">
-                     <span class="glyphicon glyphicon-chevron-left"></span>
-                     &nbsp; Anterior
-                  </a>
-               </li>
-               {/if}
-               
-               {if condition="$fsc->siguiente_url()!=''"}
-               <li class="next">
-                  <a href="{$fsc->siguiente_url()}#albaranes">
-                     Siguiente &nbsp;
-                     <span class="glyphicon glyphicon-chevron-right"></span>
-                  </a>
-               </li>
-               {/if}
-            </ul>
-            {/if}
-         </div>
-         
-         <div id="div_facturas">
-            {if condition="$fsc->listar=='facturas'"}
-            <div class="table-responsive">
-               <table class="table table-hover">
-                  <thead>
-                     <tr>
-                        <th></th>
-                        <th class="text-left">Código + Núm. Proveedor</th>
-                        <th class="text-left">Observaciones</th>
-                        <th class="text-right">Total</th>
-                        <th class="text-right">Fecha</th>
-                     </tr>
-                  </thead>
-                  {loop="$fsc->listado"}
-                  <tr>
-                     <td align="center">
-                        {if condition="$value->idasiento"}
-                        <span class="glyphicon glyphicon-paperclip"></span>
-                        {/if}
-                     </td>
-                     <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
-                     <td>{$value->observaciones_resume()}</td>
-                     <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-                     <td class="text-right">{$value->fecha}</td>
-                  </tr>
-                  {else}
-                  <tr>
-                     <td colspan="5" align="center">Sin resultados</td>
-                  </tr>
-                  {/loop}
-               </table>
-            </div>
-            <ul class="pager">
-               {if condition="$fsc->anterior_url()!=''"}
-               <li class="previous">
-                  <a href="{$fsc->anterior_url()}#facturas">
-                     <span class="glyphicon glyphicon-chevron-left"></span>
-                     &nbsp; Anterior
-                  </a>
-               </li>
-               {/if}
-               
-               {if condition="$fsc->siguiente_url()!=''"}
-               <li class="next">
-                  <a href="{$fsc->siguiente_url()}#facturas">
-                     Siguiente &nbsp;
-                     <span class="glyphicon glyphicon-chevron-right"></span>
-                  </a>
-               </li>
-               {/if}
-            </ul>
-            {/if}
-         </div>
-         
          <div id="chart_albaranes_month" style="height: 400px;"></div>
       </div>
    </div>
 </div>
-
-<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action ="{$fsc->url()}" method="post">
-   <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-   <div class="modal fade" id="modal_buscar_lineas">
-      <div class="modal-dialog" style="width: 950px;">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Buscar en las líneas</h4>
-            </div>
-            <div class="modal-body">
-               <div class="input-group">
-                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off" autofocus />
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                     </button>
-                  </span>
-               </div>
-            </div>
-            <div id="search_results" class="table-responsive"></div>
-         </div>
-      </div>
-   </div>
-</form>
 
 <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post" class="form">
    <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>

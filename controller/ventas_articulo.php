@@ -22,6 +22,7 @@ require_model('articulo.php');
 require_model('factura_cliente.php');
 require_model('factura_proveedor.php');
 require_model('familia.php');
+require_model('fs_extension.php');
 require_model('impuesto.php');
 require_model('stock.php');
 
@@ -29,10 +30,6 @@ class ventas_articulo extends fs_controller
 {
    public $almacen;
    public $articulo;
-   public $buscar_limit;
-   public $buscar_offset;
-   public $buscar_resultados;
-   public $buscar_tipo;
    public $familia;
    public $impuesto;
    public $nuevos_almacenes;
@@ -48,6 +45,10 @@ class ventas_articulo extends fs_controller
    {
       $this->ppage = $this->page->get('ventas_articulos');
       $articulo = new articulo();
+      
+      /// cargamos las extensiones
+      $fs_extension = new fs_extension();
+      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       if( isset($_POST['pvpiva']) )
       {
@@ -121,9 +122,9 @@ class ventas_articulo extends fs_controller
          $this->articulo = $articulo->get($_GET['ref']);
          $this->articulo->set_imagen(NULL);
          if( $this->articulo->save() )
-               $this->new_message("Imagen del articulo eliminada correctamente");
-            else
-               $this->new_error_msg("¡Error al eliminar la imagen del articulo!");
+            $this->new_message("Imagen del articulo eliminada correctamente");
+         else
+            $this->new_error_msg("¡Error al eliminar la imagen del articulo!");
       }
       else if( isset($_POST['referencia']) )
       {
@@ -154,11 +155,7 @@ class ventas_articulo extends fs_controller
          $this->articulo = $articulo->get($_GET['ref']);
       }
       
-      if( $this->articulo AND isset($_POST['buscar']) )
-      {
-         $this->buscar();
-      }
-      else if($this->articulo)
+      if($this->articulo)
       {
          $this->page->title = $this->articulo->referencia;
          $this->buttons[] = new fs_button('b_imagen', 'Imagen');
@@ -203,42 +200,5 @@ class ventas_articulo extends fs_controller
          return $this->articulo->url();
       else
          return $this->page->url();
-   }
-   
-   private function buscar()
-   {
-      $this->template = 'ajax/ventas_articulo';
-      
-      $this->buscar_limit = FS_ITEM_LIMIT;
-      
-      $this->buscar_offset = 0;
-      if( isset($_POST['offset']) )
-         $this->buscar_offset = $_POST['offset'];
-      
-      $this->buscar_tipo = $_POST['buscar'];
-      
-      switch($this->buscar_tipo)
-      {
-         default:
-            $this->buscar_tipo = 'albcli';
-            $this->buscar_resultados = $this->articulo->get_lineas_albaran_cli($this->buscar_offset);
-            break;
-         
-         case 'albpro':
-            $this->buscar_resultados = $this->articulo->get_lineas_albaran_prov($this->buscar_offset);
-            break;
-         
-         case 'faccli':
-            $linea = new linea_factura_cliente();
-            $this->buscar_resultados = $linea->all_from_articulo($this->articulo->referencia,
-                    $this->buscar_offset);
-            break;
-         
-         case 'facpro':
-            $linea = new linea_factura_proveedor();
-            $this->buscar_resultados = $linea->all_from_articulo($this->articulo->referencia,
-                    $this->buscar_offset);
-            break;
-      }
    }
 }

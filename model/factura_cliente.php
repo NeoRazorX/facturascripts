@@ -18,11 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('agente.php');
-require_model('albaran_cliente.php');
-require_model('articulo.php');
 require_model('asiento.php');
-require_model('cliente.php');
 require_model('ejercicio.php');
 require_model('linea_iva_factura_cliente.php');
 require_model('linea_factura_cliente.php');
@@ -220,12 +216,6 @@ class factura_cliente extends fs_model
          return "index.php?page=ventas_cliente&cod=".$this->codcliente;
    }
    
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
-   }
-   
    public function get_asiento()
    {
       $asiento = new asiento();
@@ -307,7 +297,13 @@ class factura_cliente extends fs_model
                    * hasta que desaparezca el descuadre
                    */
                   $diferencia = round( ($this->neto-$t_neto) * 100 );
-                  usort($lineasi, 'cmp_linea_iva_fact_cli');
+                  usort($lineasi, function($a, $b) {
+                     if($a->totallinea == $b->totallinea)
+                        return 0;
+                     else
+                        return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                  });
+                  
                   foreach($lineasi as $i => $value)
                   {
                      if($diferencia > 0)
@@ -332,7 +328,13 @@ class factura_cliente extends fs_model
                    * hasta que desaparezca el descuadre
                    */
                   $diferencia = round( ($this->totaliva-$t_iva) * 100 );
-                  usort($lineasi, 'cmp_linea_iva_fact_cli');
+                  usort($lineasi, function($a, $b) {
+                     if($a->totallinea == $b->totallinea)
+                        return 0;
+                     else
+                        return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                  });
+                  
                   foreach($lineasi as $i => $value)
                   {
                      if($diferencia > 0)
@@ -363,8 +365,7 @@ class factura_cliente extends fs_model
    
    public function get($id)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idfactura = ".$this->var2str($id).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -373,8 +374,7 @@ class factura_cliente extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codigo = ".$this->var2str($cod).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
       if($fact)
          return new factura_cliente($fact[0]);
       else
@@ -386,8 +386,7 @@ class factura_cliente extends fs_model
       if( is_null($this->idfactura) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    public function new_idfactura()
@@ -718,8 +717,7 @@ class factura_cliente extends fs_model
          WHERE idfactura = ".$this->var2str($this->idfactura).";");
       
       /// eliminamos
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idfactura = ".$this->var2str($this->idfactura).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    private function clean_cache()
@@ -732,6 +730,20 @@ class factura_cliente extends fs_model
       $faclist = array();
       $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
          " ORDER BY fecha DESC, codigo DESC", $limit, $offset);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_cliente($f);
+      }
+      return $faclist;
+   }
+   
+   public function all_from_agente($codagente, $offset=0)
+   {
+      $faclist = array();
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+         " WHERE codagente = ".$this->var2str($codagente).
+         " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)

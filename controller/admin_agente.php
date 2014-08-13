@@ -17,16 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('caja.php');
 require_model('agente.php');
+require_model('fs_extension.php');
 
 class admin_agente extends fs_controller
 {
    public $agente;
-   public $caja;
-   public $listado;
-   public $listar;
-   public $offset;
+   public $extensiones;
    
    /*
     * Esta página está en la carpeta admin, pero no se necesita ser admin para usarla.
@@ -40,18 +37,25 @@ class admin_agente extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('admin_agentes');
-      $this->caja = new caja();
       
+      /// cargamos las extensiones
+      $fs_extension = new fs_extension();
+      $this->extensiones = $fs_extension->all_to(__CLASS__);
+      
+      $this->agente = FALSE;
       if( isset($_GET['cod']) )
       {
-         $this->agente = new agente();
-         $this->agente = $this->agente->get($_GET['cod']);
+         $agente = new agente();
+         $this->agente = $agente->get($_GET['cod']);
       }
-      else
-         $this->agente = FALSE;
       
-      if( $this->agente )
+      if($this->agente)
       {
+         $this->page->title .= ' ' . $this->agente->codagente;
+         
+         if($this->user->codagente != $this->agente->codagente)
+            $this->buttons[] = new fs_button_img('b_delete_agente', 'Eliminar', 'trash.png', '#', TRUE);
+         
          if( isset($_POST['nombre']) )
          {
             if( $this->user_can_edit() )
@@ -64,47 +68,14 @@ class admin_agente extends fs_controller
                $this->agente->porcomision = floatval($_POST['porcomision']);
                
                if( $this->agente->save() )
+               {
                   $this->new_message("Datos del agente guardados correctamente.");
+               }
                else
                   $this->new_error_msg("¡Imposible guardar los datos del agente!");
             }
             else
                $this->new_error_msg('No tienes permiso para modificar estos datos.');
-         }
-         
-         $this->page->title .= ' ' . $this->agente->codagente;
-         
-         if($this->user->codagente != $this->agente->codagente)
-            $this->buttons[] = new fs_button_img('b_delete_agente', 'Eliminar', 'trash.png', '#', TRUE);
-         
-         if( isset($_GET['offset']) )
-            $this->offset = intval($_GET['offset']);
-         else
-            $this->offset = 0;
-         
-         $this->listar = 'albaranes_cli';
-         if( isset($_GET['listar']) )
-         {
-            if($_GET['listar'] == 'albaranes_prov')
-               $this->listar = 'albaranes_prov';
-            else if($_GET['listar'] == 'caja')
-               $this->listar = 'caja';
-         }
-         
-         switch($this->listar)
-         {
-            default:
-               $this->listado = $this->caja->all_by_agente($this->agente->codagente, $this->offset);
-               break;
-            
-            case 'albaranes_cli':
-               $this->listado = $this->agente->get_albaranes_cli($this->offset);
-               break;
-            
-            case 'albaranes_prov':
-               $this->listado = $this->agente->get_albaranes_prov($this->offset);
-               break;
-            
          }
       }
       else
@@ -114,11 +85,17 @@ class admin_agente extends fs_controller
    private function user_can_edit()
    {
       if( FS_DEMO AND $this->user->codagente == $this->agente->codagente )
+      {
          return TRUE;
+      }
       else if( $this->user->admin )
+      {
          return TRUE;
+      }
       else if($this->user->codagente == $this->agente->codagente)
+      {
          return TRUE;
+      }
       else
          FALSE;
    }
@@ -131,21 +108,5 @@ class admin_agente extends fs_controller
          return $this->agente->url();
       else
          return $this->page->url();
-   }
-   
-   public function anterior_url()
-   {
-      if($this->offset > '0')
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset-FS_ITEM_LIMIT);
-      else
-         return '';
-   }
-   
-   public function siguiente_url()
-   {
-      if(count($this->listado) == FS_ITEM_LIMIT)
-         return $this->url()."&listar=".$this->listar."&offset=".($this->offset+FS_ITEM_LIMIT);
-      else
-         return '';
    }
 }

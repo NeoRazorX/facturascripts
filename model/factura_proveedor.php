@@ -18,14 +18,10 @@
  */
 
 require_once 'base/fs_model.php';
-require_model('agente.php');
-require_model('albaran_proveedor.php');
-require_model('articulo.php');
 require_model('asiento.php');
 require_model('ejercicio.php');
 require_model('linea_iva_factura_proveedor.php');
 require_model('linea_factura_proveedor.php');
-require_model('proveedor.php');
 require_model('secuencia.php');
 require_model('serie.php');
 
@@ -174,21 +170,18 @@ class factura_proveedor extends fs_model
    
    public function asiento_url()
    {
-      $asiento = $this->get_asiento();
-      if($asiento)
-         return $asiento->url();
+      if( is_null($this->idasiento) )
+         return 'index.php?page=contabilidad_asientos';
       else
-         return '#';
+         return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
    public function proveedor_url()
    {
-      $pro = new proveedor();
-      $pro0 = $pro->get($this->codproveedor);
-      if($pro0)
-         return $pro0->url();
+      if( is_null($this->codproveedor) )
+         return "index.php?page=compras_proveedores";
       else
-         return '#';
+         return "index.php?page=compras_proveedor&cod=".$this->codproveedor;
    }
    
    public function get_lineas()
@@ -266,7 +259,13 @@ class factura_proveedor extends fs_model
                    * hasta que desaparezca el descuadre
                    */
                   $diferencia = round( ($this->neto-$t_neto) * 100 );
-                  usort($lineasi, 'cmp_linea_iva_fact_pro');
+                  usort($lineasi, function($a, $b) {
+                     if($a->totallinea == $b->totallinea)
+                        return 0;
+                     else
+                        return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                  });
+                  
                   foreach($lineasi as $i => $value)
                   {
                      if($diferencia > 0)
@@ -291,7 +290,13 @@ class factura_proveedor extends fs_model
                    * hasta que desaparezca el descuadre
                    */
                   $diferencia = round( ($this->totaliva-$t_iva) * 100 );
-                  usort($lineasi, 'cmp_linea_iva_fact_pro');
+                  usort($lineasi, function($a, $b) {
+                     if($a->totallinea == $b->totallinea)
+                        return 0;
+                     else
+                        return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                  });
+                  
                   foreach($lineasi as $i => $value)
                   {
                      if($diferencia > 0)
@@ -328,8 +333,7 @@ class factura_proveedor extends fs_model
    
    public function get($id)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idfactura = ".$this->var2str($id).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
       if($fact)
          return new factura_proveedor($fact[0]);
       else
@@ -338,8 +342,7 @@ class factura_proveedor extends fs_model
    
    public function get_by_codigo($cod)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codigo = ".$this->var2str($cod).";");
+      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
       if($fact)
          return new factura_proveedor($fact[0]);
       else
@@ -351,8 +354,7 @@ class factura_proveedor extends fs_model
       if( is_null($this->idfactura) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    public function new_idfactura()
@@ -650,8 +652,7 @@ class factura_proveedor extends fs_model
          WHERE idfactura = ".$this->var2str($this->idfactura).";");
       
       /// eliminamos
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idfactura = ".$this->var2str($this->idfactura).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
    private function clean_cache()
@@ -853,5 +854,3 @@ class factura_proveedor extends fs_model
       return $stats;
    }
 }
-
-?>

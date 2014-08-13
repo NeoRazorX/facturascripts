@@ -20,18 +20,6 @@
 require_once 'base/fs_model.php';
 
 /**
- * Comparar dos linea_iva_factura_proveedor en función de su totallinea
- */
-function cmp_linea_iva_fact_pro($a, $b)
-{
-   if($a->totallinea == $b->totallinea)
-      return 0;
-   else
-      return ($a->totallinea < $b->totallinea) ? 1 : -1;
-}
-
-
-/**
  * La línea de IVA de una factura de proveedor.
  * Indica el neto, iva y total para un determinado IVA y una factura.
  */
@@ -86,8 +74,7 @@ class linea_iva_factura_proveedor extends fs_model
       if( is_null($this->idlinea) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function test()
@@ -134,8 +121,7 @@ class linea_iva_factura_proveedor extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idlinea = ".$this->var2str($this->idlinea).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idlinea = ".$this->var2str($this->idlinea).";");
    }
    
    public function all_from_factura($id)
