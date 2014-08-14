@@ -102,7 +102,13 @@ class ventas_presupuesto extends fs_controller
       else if( $this->presupuesto )
       {
          $this->page->title = $this->presupuesto->codigo;
-         $this->agente = $this->presupuesto->get_agente();
+         
+         /// cargamos el agente
+         if( !is_null($this->presupuesto->codagente) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($this->presupuesto->codagente);
+         }
          
          /**
           * Como es una plantilla compleja, he separado el código HTML
@@ -523,7 +529,7 @@ class ventas_presupuesto extends fs_controller
             else
             {
                $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-               $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               $pdf_doc->pdf->ezText(FS_CIFNIF.": ".$this->empresa->cifnif, 8, array('justification' => 'center'));
                
                $direccion = $this->empresa->direccion;
                if($this->empresa->codpostal)
@@ -556,7 +562,7 @@ class ventas_presupuesto extends fs_controller
                array(
                    'campo1' => "<b>Cliente:</b>",
                    'dato1' => $this->presupuesto->nombrecliente,
-                   'campo2' => "<b>CIF/NIF:</b>",
+                   'campo2' => "<b>".FS_CIFNIF.":</b>",
                    'dato2' => $this->presupuesto->cifnif
                )
             );

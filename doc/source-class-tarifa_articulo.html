@@ -8,7 +8,7 @@
 	<title>File tarifa_articulo.php</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
-	<script type="text/javascript" src="elementlist.js?2323499529"></script>
+	<script type="text/javascript" src="elementlist.js?3525696971"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360">
 
 </head>
@@ -62,6 +62,7 @@
 				<li><a href="class-fs_controller.html">fs_controller</a></li>
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
+				<li><a href="class-fs_extension.html">fs_extension</a></li>
 				<li><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -103,8 +104,6 @@
 			<h3>Functions</h3>
 			<ul>
 				<li><a href="function-bround.html">bround</a></li>
-				<li><a href="function-cmp_linea_iva_fact_cli.html">cmp_linea_iva_fact_cli</a></li>
-				<li><a href="function-cmp_linea_iva_fact_pro.html">cmp_linea_iva_fact_pro</a></li>
 				<li><a href="function-require_model.html">require_model</a></li>
 			</ul>
 		</div>
@@ -209,7 +208,7 @@
 </span><span id="67" class="l"><a class="l" href="#67"> 67: </a>   
 </span><span id="68" class="l"><a class="l" href="#68"> 68: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_url" href="#_url">url</a>()
 </span><span id="69" class="l"><a class="l" href="#69"> 69: </a>   {
-</span><span id="70" class="l"><a class="l" href="#70"> 70: </a>      <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=general_articulos#tarifas'</span>;
+</span><span id="70" class="l"><a class="l" href="#70"> 70: </a>      <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=ventas_articulos#tarifas'</span>;
 </span><span id="71" class="l"><a class="l" href="#71"> 71: </a>   }
 </span><span id="72" class="l"><a class="l" href="#72"> 72: </a>   
 </span><span id="73" class="l"><a class="l" href="#73"> 73: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_pvp" href="#_pvp">pvp</a>()
@@ -233,66 +232,64 @@
 </span><span id="91" class="l"><a class="l" href="#91"> 91: </a>   
 </span><span id="92" class="l"><a class="l" href="#92"> 92: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get" href="#_get">get</a>(<span class="php-var">$id</span>)
 </span><span id="93" class="l"><a class="l" href="#93"> 93: </a>   {
-</span><span id="94" class="l"><a class="l" href="#94"> 94: </a>      <span class="php-var">$tarifa</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="95" class="l"><a class="l" href="#95"> 95: </a>              <span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="96" class="l"><a class="l" href="#96"> 96: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$tarifa</span> )
-</span><span id="97" class="l"><a class="l" href="#97"> 97: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> tarifa_articulo(<span class="php-var">$tarifa</span>[<span class="php-num">0</span>]);
-</span><span id="98" class="l"><a class="l" href="#98"> 98: </a>      <span class="php-keyword1">else</span>
-</span><span id="99" class="l"><a class="l" href="#99"> 99: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="100" class="l"><a class="l" href="#100">100: </a>   }
-</span><span id="101" class="l"><a class="l" href="#101">101: </a>   
-</span><span id="102" class="l"><a class="l" href="#102">102: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_exists" href="#_exists">exists</a>()
-</span><span id="103" class="l"><a class="l" href="#103">103: </a>   {
-</span><span id="104" class="l"><a class="l" href="#104">104: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;id) )
-</span><span id="105" class="l"><a class="l" href="#105">105: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="106" class="l"><a class="l" href="#106">106: </a>      <span class="php-keyword1">else</span>
-</span><span id="107" class="l"><a class="l" href="#107">107: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="108" class="l"><a class="l" href="#108">108: </a>                 <span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="109" class="l"><a class="l" href="#109">109: </a>   }
-</span><span id="110" class="l"><a class="l" href="#110">110: </a>   
-</span><span id="111" class="l"><a class="l" href="#111">111: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_test" href="#_test">test</a>()
-</span><span id="112" class="l"><a class="l" href="#112">112: </a>   {
-</span><span id="113" class="l"><a class="l" href="#113">113: </a>      <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="114" class="l"><a class="l" href="#114">114: </a>   }
-</span><span id="115" class="l"><a class="l" href="#115">115: </a>   
-</span><span id="116" class="l"><a class="l" href="#116">116: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_save" href="#_save">save</a>()
-</span><span id="117" class="l"><a class="l" href="#117">117: </a>   {
-</span><span id="118" class="l"><a class="l" href="#118">118: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;exists() )
-</span><span id="119" class="l"><a class="l" href="#119">119: </a>      {
-</span><span id="120" class="l"><a class="l" href="#120">120: </a>         <span class="php-var">$sql</span> = <span class="php-quote">&quot;UPDATE &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; SET referencia = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;referencia).<span class="php-quote">&quot;,
-</span></span><span id="121" class="l"><a class="l" href="#121">121: </a><span class="php-quote">            codtarifa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codtarifa).<span class="php-quote">&quot;,
-</span></span><span id="122" class="l"><a class="l" href="#122">122: </a><span class="php-quote">            descuento = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descuento).<span class="php-quote">&quot;
-</span></span><span id="123" class="l"><a class="l" href="#123">123: </a><span class="php-quote">            WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>;
-</span><span id="124" class="l"><a class="l" href="#124">124: </a>      }
-</span><span id="125" class="l"><a class="l" href="#125">125: </a>      <span class="php-keyword1">else</span>
-</span><span id="126" class="l"><a class="l" href="#126">126: </a>      {
-</span><span id="127" class="l"><a class="l" href="#127">127: </a>         <span class="php-var">$sql</span> = <span class="php-quote">&quot;INSERT INTO &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; (referencia,codtarifa,descuento) VALUES
-</span></span><span id="128" class="l"><a class="l" href="#128">128: </a><span class="php-quote">            (&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;referencia).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codtarifa).<span class="php-quote">&quot;,
-</span></span><span id="129" class="l"><a class="l" href="#129">129: </a><span class="php-quote">            &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descuento).<span class="php-quote">&quot;);&quot;</span>;
-</span><span id="130" class="l"><a class="l" href="#130">130: </a>      }
-</span><span id="131" class="l"><a class="l" href="#131">131: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$sql</span>);
-</span><span id="132" class="l"><a class="l" href="#132">132: </a>   }
-</span><span id="133" class="l"><a class="l" href="#133">133: </a>   
-</span><span id="134" class="l"><a class="l" href="#134">134: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
-</span><span id="135" class="l"><a class="l" href="#135">135: </a>   {
-</span><span id="136" class="l"><a class="l" href="#136">136: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="137" class="l"><a class="l" href="#137">137: </a>              <span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="138" class="l"><a class="l" href="#138">138: </a>   }
-</span><span id="139" class="l"><a class="l" href="#139">139: </a>   
-</span><span id="140" class="l"><a class="l" href="#140">140: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_articulo" href="#_all_from_articulo">all_from_articulo</a>(<span class="php-var">$ref</span>)
-</span><span id="141" class="l"><a class="l" href="#141">141: </a>   {
-</span><span id="142" class="l"><a class="l" href="#142">142: </a>      <span class="php-var">$tarlist</span> = <span class="php-keyword1">array</span>();
-</span><span id="143" class="l"><a class="l" href="#143">143: </a>      <span class="php-var">$tarifas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="144" class="l"><a class="l" href="#144">144: </a>              <span class="php-quote">&quot; WHERE referencia = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ref</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="145" class="l"><a class="l" href="#145">145: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$tarifas</span> )
-</span><span id="146" class="l"><a class="l" href="#146">146: </a>      {
-</span><span id="147" class="l"><a class="l" href="#147">147: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$tarifas</span> <span class="php-keyword1">as</span> <span class="php-var">$t</span>)
-</span><span id="148" class="l"><a class="l" href="#148">148: </a>            <span class="php-var">$tarlist</span>[] = <span class="php-keyword1">new</span> tarifa_articulo(<span class="php-var">$t</span>);
-</span><span id="149" class="l"><a class="l" href="#149">149: </a>      }
-</span><span id="150" class="l"><a class="l" href="#150">150: </a>      <span class="php-keyword1">return</span> <span class="php-var">$tarlist</span>;
-</span><span id="151" class="l"><a class="l" href="#151">151: </a>   }
-</span><span id="152" class="l"><a class="l" href="#152">152: </a>}
-</span><span id="153" class="l"><a class="l" href="#153">153: </a></span></code></pre>
+</span><span id="94" class="l"><a class="l" href="#94"> 94: </a>      <span class="php-var">$tarifa</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="95" class="l"><a class="l" href="#95"> 95: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$tarifa</span> )
+</span><span id="96" class="l"><a class="l" href="#96"> 96: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> tarifa_articulo(<span class="php-var">$tarifa</span>[<span class="php-num">0</span>]);
+</span><span id="97" class="l"><a class="l" href="#97"> 97: </a>      <span class="php-keyword1">else</span>
+</span><span id="98" class="l"><a class="l" href="#98"> 98: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="99" class="l"><a class="l" href="#99"> 99: </a>   }
+</span><span id="100" class="l"><a class="l" href="#100">100: </a>   
+</span><span id="101" class="l"><a class="l" href="#101">101: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_exists" href="#_exists">exists</a>()
+</span><span id="102" class="l"><a class="l" href="#102">102: </a>   {
+</span><span id="103" class="l"><a class="l" href="#103">103: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;id) )
+</span><span id="104" class="l"><a class="l" href="#104">104: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="105" class="l"><a class="l" href="#105">105: </a>      <span class="php-keyword1">else</span>
+</span><span id="106" class="l"><a class="l" href="#106">106: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="107" class="l"><a class="l" href="#107">107: </a>   }
+</span><span id="108" class="l"><a class="l" href="#108">108: </a>   
+</span><span id="109" class="l"><a class="l" href="#109">109: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_test" href="#_test">test</a>()
+</span><span id="110" class="l"><a class="l" href="#110">110: </a>   {
+</span><span id="111" class="l"><a class="l" href="#111">111: </a>      <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="112" class="l"><a class="l" href="#112">112: </a>   }
+</span><span id="113" class="l"><a class="l" href="#113">113: </a>   
+</span><span id="114" class="l"><a class="l" href="#114">114: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_save" href="#_save">save</a>()
+</span><span id="115" class="l"><a class="l" href="#115">115: </a>   {
+</span><span id="116" class="l"><a class="l" href="#116">116: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;exists() )
+</span><span id="117" class="l"><a class="l" href="#117">117: </a>      {
+</span><span id="118" class="l"><a class="l" href="#118">118: </a>         <span class="php-var">$sql</span> = <span class="php-quote">&quot;UPDATE &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; SET referencia = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;referencia).<span class="php-quote">&quot;,
+</span></span><span id="119" class="l"><a class="l" href="#119">119: </a><span class="php-quote">            codtarifa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codtarifa).<span class="php-quote">&quot;,
+</span></span><span id="120" class="l"><a class="l" href="#120">120: </a><span class="php-quote">            descuento = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descuento).<span class="php-quote">&quot;
+</span></span><span id="121" class="l"><a class="l" href="#121">121: </a><span class="php-quote">            WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>;
+</span><span id="122" class="l"><a class="l" href="#122">122: </a>      }
+</span><span id="123" class="l"><a class="l" href="#123">123: </a>      <span class="php-keyword1">else</span>
+</span><span id="124" class="l"><a class="l" href="#124">124: </a>      {
+</span><span id="125" class="l"><a class="l" href="#125">125: </a>         <span class="php-var">$sql</span> = <span class="php-quote">&quot;INSERT INTO &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; (referencia,codtarifa,descuento) VALUES
+</span></span><span id="126" class="l"><a class="l" href="#126">126: </a><span class="php-quote">            (&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;referencia).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codtarifa).<span class="php-quote">&quot;,
+</span></span><span id="127" class="l"><a class="l" href="#127">127: </a><span class="php-quote">            &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descuento).<span class="php-quote">&quot;);&quot;</span>;
+</span><span id="128" class="l"><a class="l" href="#128">128: </a>      }
+</span><span id="129" class="l"><a class="l" href="#129">129: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$sql</span>);
+</span><span id="130" class="l"><a class="l" href="#130">130: </a>   }
+</span><span id="131" class="l"><a class="l" href="#131">131: </a>   
+</span><span id="132" class="l"><a class="l" href="#132">132: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
+</span><span id="133" class="l"><a class="l" href="#133">133: </a>   {
+</span><span id="134" class="l"><a class="l" href="#134">134: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="135" class="l"><a class="l" href="#135">135: </a>              <span class="php-quote">&quot; WHERE id = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;id).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="136" class="l"><a class="l" href="#136">136: </a>   }
+</span><span id="137" class="l"><a class="l" href="#137">137: </a>   
+</span><span id="138" class="l"><a class="l" href="#138">138: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_articulo" href="#_all_from_articulo">all_from_articulo</a>(<span class="php-var">$ref</span>)
+</span><span id="139" class="l"><a class="l" href="#139">139: </a>   {
+</span><span id="140" class="l"><a class="l" href="#140">140: </a>      <span class="php-var">$tarlist</span> = <span class="php-keyword1">array</span>();
+</span><span id="141" class="l"><a class="l" href="#141">141: </a>      <span class="php-var">$tarifas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="142" class="l"><a class="l" href="#142">142: </a>              <span class="php-quote">&quot; WHERE referencia = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ref</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="143" class="l"><a class="l" href="#143">143: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$tarifas</span> )
+</span><span id="144" class="l"><a class="l" href="#144">144: </a>      {
+</span><span id="145" class="l"><a class="l" href="#145">145: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$tarifas</span> <span class="php-keyword1">as</span> <span class="php-var">$t</span>)
+</span><span id="146" class="l"><a class="l" href="#146">146: </a>            <span class="php-var">$tarlist</span>[] = <span class="php-keyword1">new</span> tarifa_articulo(<span class="php-var">$t</span>);
+</span><span id="147" class="l"><a class="l" href="#147">147: </a>      }
+</span><span id="148" class="l"><a class="l" href="#148">148: </a>      <span class="php-keyword1">return</span> <span class="php-var">$tarlist</span>;
+</span><span id="149" class="l"><a class="l" href="#149">149: </a>   }
+</span><span id="150" class="l"><a class="l" href="#150">150: </a>}
+</span><span id="151" class="l"><a class="l" href="#151">151: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

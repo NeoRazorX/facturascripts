@@ -95,7 +95,7 @@ class presupuesto_cliente extends fs_model
          $this->apartado = $p['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
 
-         $this->hora =  Date('H:i:s', strtotime($p['fecha']));
+         $this->hora = '00:00:00';
          if( !is_null($p['hora']) )
             $this->hora = $p['hora'];
 
@@ -221,26 +221,11 @@ class presupuesto_cliente extends fs_model
       return $linea->all_from_presupuesto($this->idpresupuesto);
    }
    
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
-   }
-
    public function get($id)
    {
       $presupuesto = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($id).";");
       if($presupuesto)
          return new presupuesto_cliente($presupuesto[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_by_codigo($cod)
-   {
-      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
-      if($presupuesto)
-         return new presupuesto_cliente($pedido[0]);
       else
          return FALSE;
    }
@@ -260,7 +245,7 @@ class presupuesto_cliente extends fs_model
          $this->idpresupuesto = intval($newid);
    }
    
-   public function new_codigo()
+   private function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npresupuestocli');
@@ -384,9 +369,9 @@ class presupuesto_cliente extends fs_model
       $preslist = array();
       $presupuestos = $this->db->select_limit("SELECT * FROM ".$this->table_name.
               " WHERE idpedido IS NULL ORDER BY fecha ".$order.", codigo ".$order, FS_ITEM_LIMIT, $offset);
-      if($presupuesto)
+      if($presupuestos)
       {
-         foreach($presupuesto as $p)
+         foreach($presupuestos as $p)
             $preslist[] = new presupuesto_cliente($p);
       }
       return $preslist;
@@ -452,9 +437,9 @@ class presupuesto_cliente extends fs_model
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $presupuestos = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
-      if($presupuesto)
+      if($presupuestos)
       {
-         foreach($presupuesto as $p)
+         foreach($presupuestos as $p)
             $preslist[] = new presupuesto_cliente($p);
       }
       return $preslist;
@@ -479,152 +464,5 @@ class presupuesto_cliente extends fs_model
             $preslist[] = new presupuesto_cliente($p);
       }
       return $preslist;
-   }
-
-   public function cron_job()
-   {
-      
-   }
-   
-   public function stats_presupuestos_last_days($numdays = 25)
-   {
-      $stats = array();
-      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
-      
-      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
-      {
-         $i = intval($date);
-         $stats[$i] = array('day' => $i, 'total' => 0);
-      }
-      
-      if( strtolower(FS_DB_TYPE) == 'postgresql')
-         $sql_aux = "to_char(fecha,'FMDD')";
-      else
-         $sql_aux = "DATE_FORMAT(fecha, '%d')";
-      
-      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
-         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
-         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
-      if($data)
-      {
-         foreach($data as $d)
-         {
-            $i = intval($d['dia']);
-            $stats[$i] = array(
-                'day' => $i,
-                'total' => floatval($d['total'])
-            );
-         }
-      }
-      return $stats;
-   }
-   
-   public function stats_presupuestos_last_months($num = 11)
-   {
-      $stats = array();
-      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
-      
-      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
-      {
-         $i = intval($date);
-         $stats[$i] = array('month' => $i, 'total' => 0);
-      }
-      
-      if( strtolower(FS_DB_TYPE) == 'postgresql')
-         $sql_aux = "to_char(fecha,'FMMM')";
-      else
-         $sql_aux = "DATE_FORMAT(fecha, '%m')";
-      
-      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
-         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
-         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
-      if($data)
-      {
-         foreach($data as $d)
-         {
-            $i = intval($d['mes']);
-            $stats[$i] = array(
-                'month' => $i,
-                'total' => floatval($d['total'])
-            );
-         }
-      }
-      return $stats;
-   }
-   
-   public function stats_presupuestos_last_years($num = 4)
-   {
-      $stats = array();
-      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
-      
-      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
-      {
-         $i = intval($date);
-         $stats[$i] = array('year' => $i, 'total' => 0);
-      }
-      
-      if( strtolower(FS_DB_TYPE) == 'postgresql')
-         $sql_aux = "to_char(fecha,'FMYYYY')";
-      else
-         $sql_aux = "DATE_FORMAT(fecha, '%Y')";
-      
-      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total
-         FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)."
-         AND fecha <= ".$this->var2str(Date('d-m-Y'))."
-         GROUP BY ".$sql_aux." ORDER BY ano ASC;");
-      if($data)
-      {
-         foreach($data as $d)
-         {
-            $i = intval($d['ano']);
-            $stats[$i] = array(
-                'year' => $i,
-                'total' => floatval($d['total'])
-            );
-         }
-      }
-      return $stats;
-   }
-   
-   /*
-    * Devuelve un array con los datos estadísticos de las compras del cliente
-    * en los cinco últimos años.
-    */
-   public function stats_presupuestos_from_cli($codcliente)
-   {
-      $stats = array();
-      $years = array();
-      for($i=4; $i>=0; $i--)
-         $years[] = intval(Date('Y')) - $i;
-      
-      $meses = array('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic');
-      
-      foreach($years as $year)
-      {
-         for($i = 1; $i <= 12; $i++)
-         {
-            $stats[$year.'-'.$i]['mes'] = $meses[$i-1].' '.$year;
-            $stats[$year.'-'.$i]['compras'] = 0;
-         }
-         
-         if( strtolower(FS_DB_TYPE) == 'postgresql')
-            $sql_aux = "to_char(fecha,'FMMM')";
-         else
-            $sql_aux = "DATE_FORMAT(fecha, '%m')";
-         
-         $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
-            FROM ".$this->table_name." WHERE fecha >= ".$this->var2str(Date('1-1-'.$year))."
-            AND fecha <= ".$this->var2str(Date('31-12-'.$year))." AND codcliente = ".$this->var2str($codcliente)."
-            GROUP BY ".$sql_aux." ORDER BY mes ASC;");
-         if($data)
-         {
-            foreach($data as $d)
-               $stats[$year.'-'.intval($d['mes'])]['compras'] = number_format($d['total'], FS_NF0, '.', '');
-         }
-      }
-      
-      return $stats;
    }
 }

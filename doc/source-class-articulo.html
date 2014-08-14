@@ -8,7 +8,7 @@
 	<title>File articulo.php</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
-	<script type="text/javascript" src="elementlist.js?2323499529"></script>
+	<script type="text/javascript" src="elementlist.js?3525696971"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360">
 
 </head>
@@ -62,6 +62,7 @@
 				<li><a href="class-fs_controller.html">fs_controller</a></li>
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
+				<li><a href="class-fs_extension.html">fs_extension</a></li>
 				<li><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -103,8 +104,6 @@
 			<h3>Functions</h3>
 			<ul>
 				<li><a href="function-bround.html">bround</a></li>
-				<li><a href="function-cmp_linea_iva_fact_cli.html">cmp_linea_iva_fact_cli</a></li>
-				<li><a href="function-cmp_linea_iva_fact_pro.html">cmp_linea_iva_fact_pro</a></li>
 				<li><a href="function-require_model.html">require_model</a></li>
 			</ul>
 		</div>
@@ -310,9 +309,9 @@
 </span><span id="168" class="l"><a class="l" href="#168">168: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_url" href="#_url">url</a>()
 </span><span id="169" class="l"><a class="l" href="#169">169: </a>   {
 </span><span id="170" class="l"><a class="l" href="#170">170: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;referencia) )
-</span><span id="171" class="l"><a class="l" href="#171">171: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;index.php?page=general_articulos&quot;</span>;
+</span><span id="171" class="l"><a class="l" href="#171">171: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;index.php?page=ventas_articulos&quot;</span>;
 </span><span id="172" class="l"><a class="l" href="#172">172: </a>      <span class="php-keyword1">else</span>
-</span><span id="173" class="l"><a class="l" href="#173">173: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;index.php?page=general_articulo&amp;ref=&quot;</span>.<span class="php-keyword2">urlencode</span>(<span class="php-var">$this</span>-&gt;referencia);
+</span><span id="173" class="l"><a class="l" href="#173">173: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;index.php?page=ventas_articulo&amp;ref=&quot;</span>.<span class="php-keyword2">urlencode</span>(<span class="php-var">$this</span>-&gt;referencia);
 </span><span id="174" class="l"><a class="l" href="#174">174: </a>   }
 </span><span id="175" class="l"><a class="l" href="#175">175: </a>   
 </span><span id="176" class="l"><a class="l" href="#176">176: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get" href="#_get">get</a>(<span class="php-var">$ref</span>)

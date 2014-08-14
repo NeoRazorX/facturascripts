@@ -259,7 +259,7 @@ class ventas_factura extends fs_controller
                $pdf_doc->new_table();
                $pdf_doc->add_table_row(
                   array(
-                      'campos' => "<b>Factura de cliente:</b>\n<b>Fecha:</b>\n<b>CIF/NIF:</b>",
+                      'campos' => "<b>Factura de cliente:</b>\n<b>Fecha:</b>\n<b>".FS_CIFNIF.":</b>",
                       'factura' => $this->factura->codigo."\n".$this->factura->fecha."\n".$this->factura->cifnif,
                       'cliente' => $direccion
                   )
@@ -288,7 +288,7 @@ class ventas_factura extends fs_controller
                else
                {
                   $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-                  $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+                  $pdf_doc->pdf->ezText(FS_CIFNIF.": ".$this->empresa->cifnif, 8, array('justification' => 'center'));
                   
                   $direccion = $this->empresa->direccion;
                   if($this->empresa->codpostal)
@@ -321,7 +321,7 @@ class ventas_factura extends fs_controller
                   array(
                      'campo1' => "<b>Cliente:</b>",
                      'dato1' => $this->factura->nombrecliente,
-                     'campo2' => "<b>CIF/NIF:</b>",
+                     'campo2' => "<b>".FS_CIFNIF.":</b>",
                      'dato2' => $this->factura->cifnif
                   )
                );

@@ -8,7 +8,7 @@
 	<title>File subcuenta.php</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
-	<script type="text/javascript" src="elementlist.js?2323499529"></script>
+	<script type="text/javascript" src="elementlist.js?3525696971"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360">
 
 </head>
@@ -62,6 +62,7 @@
 				<li><a href="class-fs_controller.html">fs_controller</a></li>
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
+				<li><a href="class-fs_extension.html">fs_extension</a></li>
 				<li><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -103,8 +104,6 @@
 			<h3>Functions</h3>
 			<ul>
 				<li><a href="function-bround.html">bround</a></li>
-				<li><a href="function-cmp_linea_iva_fact_cli.html">cmp_linea_iva_fact_cli</a></li>
-				<li><a href="function-cmp_linea_iva_fact_pro.html">cmp_linea_iva_fact_pro</a></li>
 				<li><a href="function-require_model.html">require_model</a></li>
 			</ul>
 		</div>
@@ -256,323 +255,345 @@
 </span><span id="114" class="l"><a class="l" href="#114">114: </a>      <span class="php-keyword1">return</span> <span class="php-quote">''</span>;
 </span><span id="115" class="l"><a class="l" href="#115">115: </a>   }
 </span><span id="116" class="l"><a class="l" href="#116">116: </a>   
-</span><span id="117" class="l"><a class="l" href="#117">117: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_tasaconv" href="#_tasaconv">tasaconv</a>()
+</span><span id="117" class="l"><a class="l" href="#117">117: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_descripcion_64" href="#_get_descripcion_64">get_descripcion_64</a>()
 </span><span id="118" class="l"><a class="l" href="#118">118: </a>   {
-</span><span id="119" class="l"><a class="l" href="#119">119: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;coddivisa) )
-</span><span id="120" class="l"><a class="l" href="#120">120: </a>      {
-</span><span id="121" class="l"><a class="l" href="#121">121: </a>         <span class="php-var">$divisa</span> = <span class="php-keyword1">new</span> divisa();
-</span><span id="122" class="l"><a class="l" href="#122">122: </a>         <span class="php-var">$div0</span> = <span class="php-var">$divisa</span>-&gt;get(<span class="php-var">$this</span>-&gt;coddivisa);
-</span><span id="123" class="l"><a class="l" href="#123">123: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$div0</span>)
-</span><span id="124" class="l"><a class="l" href="#124">124: </a>            <span class="php-keyword1">return</span> <span class="php-var">$div0</span>-&gt;tasaconv;
-</span><span id="125" class="l"><a class="l" href="#125">125: </a>         <span class="php-keyword1">else</span>
-</span><span id="126" class="l"><a class="l" href="#126">126: </a>            <span class="php-keyword1">return</span> <span class="php-num">1</span>;
-</span><span id="127" class="l"><a class="l" href="#127">127: </a>      }
-</span><span id="128" class="l"><a class="l" href="#128">128: </a>      <span class="php-keyword1">else</span>
-</span><span id="129" class="l"><a class="l" href="#129">129: </a>         <span class="php-keyword1">return</span> <span class="php-num">1</span>;
-</span><span id="130" class="l"><a class="l" href="#130">130: </a>   }
-</span><span id="131" class="l"><a class="l" href="#131">131: </a>   
-</span><span id="132" class="l"><a class="l" href="#132">132: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_url" href="#_url">url</a>()
-</span><span id="133" class="l"><a class="l" href="#133">133: </a>   {
-</span><span id="134" class="l"><a class="l" href="#134">134: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;idsubcuenta) )
-</span><span id="135" class="l"><a class="l" href="#135">135: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=contabilidad_cuentas'</span>;
-</span><span id="136" class="l"><a class="l" href="#136">136: </a>      <span class="php-keyword1">else</span>
-</span><span id="137" class="l"><a class="l" href="#137">137: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=contabilidad_subcuenta&amp;id='</span>.<span class="php-var">$this</span>-&gt;idsubcuenta;
-</span><span id="138" class="l"><a class="l" href="#138">138: </a>   }
-</span><span id="139" class="l"><a class="l" href="#139">139: </a>   
-</span><span id="140" class="l"><a class="l" href="#140">140: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_cuenta" href="#_get_cuenta">get_cuenta</a>()
-</span><span id="141" class="l"><a class="l" href="#141">141: </a>   {
-</span><span id="142" class="l"><a class="l" href="#142">142: </a>      <span class="php-var">$cuenta</span> = <span class="php-keyword1">new</span> cuenta();
-</span><span id="143" class="l"><a class="l" href="#143">143: </a>      <span class="php-keyword1">return</span> <span class="php-var">$cuenta</span>-&gt;get(<span class="php-var">$this</span>-&gt;idcuenta);
-</span><span id="144" class="l"><a class="l" href="#144">144: </a>   }
-</span><span id="145" class="l"><a class="l" href="#145">145: </a>   
-</span><span id="146" class="l"><a class="l" href="#146">146: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_ejercicio" href="#_get_ejercicio">get_ejercicio</a>()
-</span><span id="147" class="l"><a class="l" href="#147">147: </a>   {
-</span><span id="148" class="l"><a class="l" href="#148">148: </a>      <span class="php-var">$eje</span> = <span class="php-keyword1">new</span> ejercicio();
-</span><span id="149" class="l"><a class="l" href="#149">149: </a>      <span class="php-keyword1">return</span> <span class="php-var">$eje</span>-&gt;get(<span class="php-var">$this</span>-&gt;codejercicio);
-</span><span id="150" class="l"><a class="l" href="#150">150: </a>   }
-</span><span id="151" class="l"><a class="l" href="#151">151: </a>   
-</span><span id="152" class="l"><a class="l" href="#152">152: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_partidas" href="#_get_partidas">get_partidas</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>)
-</span><span id="153" class="l"><a class="l" href="#153">153: </a>   {
-</span><span id="154" class="l"><a class="l" href="#154">154: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
-</span><span id="155" class="l"><a class="l" href="#155">155: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;all_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta, <span class="php-var">$offset</span>);
-</span><span id="156" class="l"><a class="l" href="#156">156: </a>   }
-</span><span id="157" class="l"><a class="l" href="#157">157: </a>   
-</span><span id="158" class="l"><a class="l" href="#158">158: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_partidas_full" href="#_get_partidas_full">get_partidas_full</a>()
-</span><span id="159" class="l"><a class="l" href="#159">159: </a>   {
-</span><span id="160" class="l"><a class="l" href="#160">160: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
-</span><span id="161" class="l"><a class="l" href="#161">161: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;full_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta);
-</span><span id="162" class="l"><a class="l" href="#162">162: </a>   }
-</span><span id="163" class="l"><a class="l" href="#163">163: </a>   
-</span><span id="164" class="l"><a class="l" href="#164">164: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_count_partidas" href="#_count_partidas">count_partidas</a>()
-</span><span id="165" class="l"><a class="l" href="#165">165: </a>   {
-</span><span id="166" class="l"><a class="l" href="#166">166: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
-</span><span id="167" class="l"><a class="l" href="#167">167: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;count_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta);
-</span><span id="168" class="l"><a class="l" href="#168">168: </a>   }
-</span><span id="169" class="l"><a class="l" href="#169">169: </a>   
-</span><span id="170" class="l"><a class="l" href="#170">170: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_totales" href="#_get_totales">get_totales</a>()
-</span><span id="171" class="l"><a class="l" href="#171">171: </a>   {
-</span><span id="172" class="l"><a class="l" href="#172">172: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
-</span><span id="173" class="l"><a class="l" href="#173">173: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;totales_from_subcuenta( <span class="php-var">$this</span>-&gt;idsubcuenta );
-</span><span id="174" class="l"><a class="l" href="#174">174: </a>   }
-</span><span id="175" class="l"><a class="l" href="#175">175: </a>   
-</span><span id="176" class="l"><a class="l" href="#176">176: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get" href="#_get">get</a>(<span class="php-var">$id</span>)
-</span><span id="177" class="l"><a class="l" href="#177">177: </a>   {
-</span><span id="178" class="l"><a class="l" href="#178">178: </a>      <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="179" class="l"><a class="l" href="#179">179: </a>              <span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="180" class="l"><a class="l" href="#180">180: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
-</span><span id="181" class="l"><a class="l" href="#181">181: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
-</span><span id="182" class="l"><a class="l" href="#182">182: </a>      <span class="php-keyword1">else</span>
-</span><span id="183" class="l"><a class="l" href="#183">183: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="184" class="l"><a class="l" href="#184">184: </a>   }
-</span><span id="185" class="l"><a class="l" href="#185">185: </a>   
-</span><span id="186" class="l"><a class="l" href="#186">186: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_by_codigo" href="#_get_by_codigo">get_by_codigo</a>(<span class="php-var">$cod</span>, <span class="php-var">$ejercicio</span>, <span class="php-var">$crear</span>=<span class="php-keyword1">FALSE</span>)
-</span><span id="187" class="l"><a class="l" href="#187">187: </a>   {
-</span><span id="188" class="l"><a class="l" href="#188">188: </a>      <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="189" class="l"><a class="l" href="#189">189: </a>              <span class="php-quote">&quot; WHERE codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$cod</span>).
-</span><span id="190" class="l"><a class="l" href="#190">190: </a>              <span class="php-quote">&quot; AND codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ejercicio</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="191" class="l"><a class="l" href="#191">191: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
-</span><span id="192" class="l"><a class="l" href="#192">192: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
-</span><span id="193" class="l"><a class="l" href="#193">193: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-var">$crear</span>)
-</span><span id="194" class="l"><a class="l" href="#194">194: </a>      {
-</span><span id="195" class="l"><a class="l" href="#195">195: </a>         <span class="php-comment">/// buscamos la subcuenta equivalente en otro ejercicio</span>
-</span><span id="196" class="l"><a class="l" href="#196">196: </a>         <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="197" class="l"><a class="l" href="#197">197: </a>                 <span class="php-quote">&quot; WHERE codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$cod</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="198" class="l"><a class="l" href="#198">198: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
-</span><span id="199" class="l"><a class="l" href="#199">199: </a>         {
-</span><span id="200" class="l"><a class="l" href="#200">200: </a>            <span class="php-var">$old_sc</span> = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
-</span><span id="201" class="l"><a class="l" href="#201">201: </a>            
-</span><span id="202" class="l"><a class="l" href="#202">202: </a>            <span class="php-comment">/// buscamos la cuenta equivalente es ESTE ejercicio</span>
-</span><span id="203" class="l"><a class="l" href="#203">203: </a>            <span class="php-var">$cuenta</span> = <span class="php-keyword1">new</span> cuenta();
-</span><span id="204" class="l"><a class="l" href="#204">204: </a>            <span class="php-var">$new_c</span> = <span class="php-var">$cuenta</span>-&gt;get_by_codigo(<span class="php-var">$old_sc</span>-&gt;codcuenta, <span class="php-var">$ejercicio</span>);
-</span><span id="205" class="l"><a class="l" href="#205">205: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$new_c</span>)
-</span><span id="206" class="l"><a class="l" href="#206">206: </a>            {
-</span><span id="207" class="l"><a class="l" href="#207">207: </a>               <span class="php-var">$new_sc</span> = <span class="php-keyword1">new</span> subcuenta();
-</span><span id="208" class="l"><a class="l" href="#208">208: </a>               <span class="php-var">$new_sc</span>-&gt;codcuenta = <span class="php-var">$new_c</span>-&gt;codcuenta;
-</span><span id="209" class="l"><a class="l" href="#209">209: </a>               <span class="php-var">$new_sc</span>-&gt;coddivisa = <span class="php-var">$old_sc</span>-&gt;coddivisa;
-</span><span id="210" class="l"><a class="l" href="#210">210: </a>               <span class="php-var">$new_sc</span>-&gt;codejercicio = <span class="php-var">$ejercicio</span>;
-</span><span id="211" class="l"><a class="l" href="#211">211: </a>               <span class="php-var">$new_sc</span>-&gt;codimpuesto = <span class="php-var">$old_sc</span>-&gt;codimpuesto;
-</span><span id="212" class="l"><a class="l" href="#212">212: </a>               <span class="php-var">$new_sc</span>-&gt;codsubcuenta = <span class="php-var">$old_sc</span>-&gt;codsubcuenta;
-</span><span id="213" class="l"><a class="l" href="#213">213: </a>               <span class="php-var">$new_sc</span>-&gt;descripcion = <span class="php-var">$old_sc</span>-&gt;descripcion;
-</span><span id="214" class="l"><a class="l" href="#214">214: </a>               <span class="php-var">$new_sc</span>-&gt;idcuenta = <span class="php-var">$new_c</span>-&gt;idcuenta;
-</span><span id="215" class="l"><a class="l" href="#215">215: </a>               <span class="php-var">$new_sc</span>-&gt;iva = <span class="php-var">$old_sc</span>-&gt;iva;
-</span><span id="216" class="l"><a class="l" href="#216">216: </a>               <span class="php-var">$new_sc</span>-&gt;recargo = <span class="php-var">$old_sc</span>-&gt;recargo;
-</span><span id="217" class="l"><a class="l" href="#217">217: </a>               <span class="php-keyword1">if</span>( <span class="php-var">$new_sc</span>-&gt;save() )
-</span><span id="218" class="l"><a class="l" href="#218">218: </a>                  <span class="php-keyword1">return</span> <span class="php-var">$new_sc</span>;
-</span><span id="219" class="l"><a class="l" href="#219">219: </a>               <span class="php-keyword1">else</span>
-</span><span id="220" class="l"><a class="l" href="#220">220: </a>                  <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="221" class="l"><a class="l" href="#221">221: </a>            }
-</span><span id="222" class="l"><a class="l" href="#222">222: </a>            <span class="php-keyword1">else</span>
-</span><span id="223" class="l"><a class="l" href="#223">223: </a>            {
-</span><span id="224" class="l"><a class="l" href="#224">224: </a>               <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'No se ha encontrado la cuenta equivalente a '</span>.
-</span><span id="225" class="l"><a class="l" href="#225">225: </a>                       <span class="php-var">$old_sc</span>-&gt;codcuenta.<span class="php-quote">' en el ejercicio '</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'.'</span>);
-</span><span id="226" class="l"><a class="l" href="#226">226: </a>               <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="227" class="l"><a class="l" href="#227">227: </a>            }
-</span><span id="228" class="l"><a class="l" href="#228">228: </a>         }
-</span><span id="229" class="l"><a class="l" href="#229">229: </a>         <span class="php-keyword1">else</span>
-</span><span id="230" class="l"><a class="l" href="#230">230: </a>         {
-</span><span id="231" class="l"><a class="l" href="#231">231: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'No se ha encontrado ninguna subcuenta equivalente a '</span>.
-</span><span id="232" class="l"><a class="l" href="#232">232: </a>                    <span class="php-var">$cod</span>.<span class="php-quote">' para copiar.'</span>);
-</span><span id="233" class="l"><a class="l" href="#233">233: </a>            <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="234" class="l"><a class="l" href="#234">234: </a>         }
-</span><span id="235" class="l"><a class="l" href="#235">235: </a>      }
-</span><span id="236" class="l"><a class="l" href="#236">236: </a>      <span class="php-keyword1">else</span>
-</span><span id="237" class="l"><a class="l" href="#237">237: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="238" class="l"><a class="l" href="#238">238: </a>   }
-</span><span id="239" class="l"><a class="l" href="#239">239: </a>   
-</span><span id="240" class="l"><a class="l" href="#240">240: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_is_outdated" href="#_is_outdated">is_outdated</a>()
-</span><span id="241" class="l"><a class="l" href="#241">241: </a>   {
-</span><span id="242" class="l"><a class="l" href="#242">242: </a>      <span class="php-var">$sql</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.
-</span><span id="243" class="l"><a class="l" href="#243">243: </a>              <span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot; AND (
-</span></span><span id="244" class="l"><a class="l" href="#244">244: </a><span class="php-quote">                 debe != (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
-</span></span><span id="245" class="l"><a class="l" href="#245">245: </a><span class="php-quote">                   WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
-</span></span><span id="246" class="l"><a class="l" href="#246">246: </a><span class="php-quote">                 OR haber != (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
-</span></span><span id="247" class="l"><a class="l" href="#247">247: </a><span class="php-quote">                   WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
-</span></span><span id="248" class="l"><a class="l" href="#248">248: </a><span class="php-quote">                 OR saldo != (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
-</span></span><span id="249" class="l"><a class="l" href="#249">249: </a><span class="php-quote">                   FROM co_partidas WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
-</span></span><span id="250" class="l"><a class="l" href="#250">250: </a><span class="php-quote">              );&quot;</span>;
-</span><span id="251" class="l"><a class="l" href="#251">251: </a>      
-</span><span id="252" class="l"><a class="l" href="#252">252: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-var">$sql</span>) )
-</span><span id="253" class="l"><a class="l" href="#253">253: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="254" class="l"><a class="l" href="#254">254: </a>      <span class="php-keyword1">else</span>
-</span><span id="255" class="l"><a class="l" href="#255">255: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="256" class="l"><a class="l" href="#256">256: </a>   }
-</span><span id="257" class="l"><a class="l" href="#257">257: </a>   
-</span><span id="258" class="l"><a class="l" href="#258">258: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_tiene_saldo" href="#_tiene_saldo">tiene_saldo</a>()
-</span><span id="259" class="l"><a class="l" href="#259">259: </a>   {
-</span><span id="260" class="l"><a class="l" href="#260">260: </a>      <span class="php-keyword1">return</span> !<span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$this</span>-&gt;debe, <span class="php-var">$this</span>-&gt;haber);
-</span><span id="261" class="l"><a class="l" href="#261">261: </a>   }
-</span><span id="262" class="l"><a class="l" href="#262">262: </a>   
-</span><span id="263" class="l"><a class="l" href="#263">263: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_exists" href="#_exists">exists</a>()
-</span><span id="264" class="l"><a class="l" href="#264">264: </a>   {
-</span><span id="265" class="l"><a class="l" href="#265">265: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;idsubcuenta) )
-</span><span id="266" class="l"><a class="l" href="#266">266: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="267" class="l"><a class="l" href="#267">267: </a>      <span class="php-keyword1">else</span>
-</span><span id="268" class="l"><a class="l" href="#268">268: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="269" class="l"><a class="l" href="#269">269: </a>                 <span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="270" class="l"><a class="l" href="#270">270: </a>   }
-</span><span id="271" class="l"><a class="l" href="#271">271: </a>   
-</span><span id="272" class="l"><a class="l" href="#272">272: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_test" href="#_test">test</a>()
-</span><span id="273" class="l"><a class="l" href="#273">273: </a>   {
-</span><span id="274" class="l"><a class="l" href="#274">274: </a>      <span class="php-var">$this</span>-&gt;descripcion = <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$this</span>-&gt;descripcion);
-</span><span id="275" class="l"><a class="l" href="#275">275: </a>      
-</span><span id="276" class="l"><a class="l" href="#276">276: </a>      <span class="php-var">$totales</span> = <span class="php-var">$this</span>-&gt;get_totales();
-</span><span id="277" class="l"><a class="l" href="#277">277: </a>      <span class="php-var">$this</span>-&gt;debe = <span class="php-var">$totales</span>[<span class="php-quote">'debe'</span>];
-</span><span id="278" class="l"><a class="l" href="#278">278: </a>      <span class="php-var">$this</span>-&gt;haber = <span class="php-var">$totales</span>[<span class="php-quote">'haber'</span>];
-</span><span id="279" class="l"><a class="l" href="#279">279: </a>      <span class="php-var">$this</span>-&gt;saldo = <span class="php-var">$totales</span>[<span class="php-quote">'saldo'</span>];
-</span><span id="280" class="l"><a class="l" href="#280">280: </a>      
-</span><span id="281" class="l"><a class="l" href="#281">281: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">strlen</span>(<span class="php-var">$this</span>-&gt;codsubcuenta)&gt;<span class="php-num">0</span> <span class="php-keyword1">AND</span> <span class="php-keyword2">strlen</span>(<span class="php-var">$this</span>-&gt;descripcion)&gt;<span class="php-num">0</span> )
-</span><span id="282" class="l"><a class="l" href="#282">282: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="283" class="l"><a class="l" href="#283">283: </a>      <span class="php-keyword1">else</span>
-</span><span id="284" class="l"><a class="l" href="#284">284: </a>      {
-</span><span id="285" class="l"><a class="l" href="#285">285: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Faltan datos en la subcuenta.'</span>);
-</span><span id="286" class="l"><a class="l" href="#286">286: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="287" class="l"><a class="l" href="#287">287: </a>      }
-</span><span id="288" class="l"><a class="l" href="#288">288: </a>   }
-</span><span id="289" class="l"><a class="l" href="#289">289: </a>   
-</span><span id="290" class="l"><a class="l" href="#290">290: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_save" href="#_save">save</a>()
-</span><span id="291" class="l"><a class="l" href="#291">291: </a>   {
-</span><span id="292" class="l"><a class="l" href="#292">292: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;test() )
-</span><span id="293" class="l"><a class="l" href="#293">293: </a>      {
-</span><span id="294" class="l"><a class="l" href="#294">294: </a>         <span class="php-var">$this</span>-&gt;clean_cache();
-</span><span id="295" class="l"><a class="l" href="#295">295: </a>         <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;exists() )
-</span><span id="296" class="l"><a class="l" href="#296">296: </a>         {
-</span><span id="297" class="l"><a class="l" href="#297">297: </a>            <span class="php-var">$sql</span> = <span class="php-quote">&quot;UPDATE &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; SET codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codsubcuenta).<span class="php-quote">&quot;,
-</span></span><span id="298" class="l"><a class="l" href="#298">298: </a><span class="php-quote">               idcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuenta).<span class="php-quote">&quot;, codcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codcuenta).<span class="php-quote">&quot;,
-</span></span><span id="299" class="l"><a class="l" href="#299">299: </a><span class="php-quote">               codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codejercicio).<span class="php-quote">&quot;,
-</span></span><span id="300" class="l"><a class="l" href="#300">300: </a><span class="php-quote">               coddivisa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;,
-</span></span><span id="301" class="l"><a class="l" href="#301">301: </a><span class="php-quote">               codimpuesto = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codimpuesto).<span class="php-quote">&quot;,
-</span></span><span id="302" class="l"><a class="l" href="#302">302: </a><span class="php-quote">               descripcion = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descripcion).<span class="php-quote">&quot;,
-</span></span><span id="303" class="l"><a class="l" href="#303">303: </a><span class="php-quote">               recargo = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;recargo).<span class="php-quote">&quot;, iva = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;iva).<span class="php-quote">&quot;,
-</span></span><span id="304" class="l"><a class="l" href="#304">304: </a><span class="php-quote">               debe = (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
-</span></span><span id="305" class="l"><a class="l" href="#305">305: </a><span class="php-quote">                 WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;),
-</span></span><span id="306" class="l"><a class="l" href="#306">306: </a><span class="php-quote">               haber = (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
-</span></span><span id="307" class="l"><a class="l" href="#307">307: </a><span class="php-quote">                 WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;),
-</span></span><span id="308" class="l"><a class="l" href="#308">308: </a><span class="php-quote">               saldo = (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
-</span></span><span id="309" class="l"><a class="l" href="#309">309: </a><span class="php-quote">                 FROM co_partidas WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
-</span></span><span id="310" class="l"><a class="l" href="#310">310: </a><span class="php-quote">               WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>;
-</span><span id="311" class="l"><a class="l" href="#311">311: </a>         }
-</span><span id="312" class="l"><a class="l" href="#312">312: </a>         <span class="php-keyword1">else</span>
-</span><span id="313" class="l"><a class="l" href="#313">313: </a>         {
-</span><span id="314" class="l"><a class="l" href="#314">314: </a>            <span class="php-var">$newid</span> = <span class="php-var">$this</span>-&gt;db-&gt;nextval(<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">'_idsubcuenta_seq'</span>);
-</span><span id="315" class="l"><a class="l" href="#315">315: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$newid</span>)
-</span><span id="316" class="l"><a class="l" href="#316">316: </a>            {
-</span><span id="317" class="l"><a class="l" href="#317">317: </a>               <span class="php-var">$this</span>-&gt;idsubcuenta = <span class="php-keyword2">intval</span>(<span class="php-var">$newid</span>);
-</span><span id="318" class="l"><a class="l" href="#318">318: </a>               <span class="php-var">$sql</span> = <span class="php-quote">&quot;INSERT INTO &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; (idsubcuenta,codsubcuenta,idcuenta,codcuenta,
-</span></span><span id="319" class="l"><a class="l" href="#319">319: </a><span class="php-quote">                  codejercicio,coddivisa,codimpuesto,descripcion,debe,haber,saldo,recargo,iva) VALUES
-</span></span><span id="320" class="l"><a class="l" href="#320">320: </a><span class="php-quote">                  (&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codsubcuenta).<span class="php-quote">&quot;,
-</span></span><span id="321" class="l"><a class="l" href="#321">321: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuenta).<span class="php-quote">&quot;,
-</span></span><span id="322" class="l"><a class="l" href="#322">322: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codcuenta).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codejercicio).<span class="php-quote">&quot;,
-</span></span><span id="323" class="l"><a class="l" href="#323">323: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codimpuesto).<span class="php-quote">&quot;,
-</span></span><span id="324" class="l"><a class="l" href="#324">324: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descripcion).<span class="php-quote">&quot;,0,0,0,
-</span></span><span id="325" class="l"><a class="l" href="#325">325: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;recargo).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;iva).<span class="php-quote">&quot;);&quot;</span>;
-</span><span id="326" class="l"><a class="l" href="#326">326: </a>            }
-</span><span id="327" class="l"><a class="l" href="#327">327: </a>         }
-</span><span id="328" class="l"><a class="l" href="#328">328: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$sql</span>);
-</span><span id="329" class="l"><a class="l" href="#329">329: </a>      }
-</span><span id="330" class="l"><a class="l" href="#330">330: </a>      <span class="php-keyword1">else</span>
-</span><span id="331" class="l"><a class="l" href="#331">331: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="332" class="l"><a class="l" href="#332">332: </a>   }
-</span><span id="333" class="l"><a class="l" href="#333">333: </a>   
-</span><span id="334" class="l"><a class="l" href="#334">334: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
-</span><span id="335" class="l"><a class="l" href="#335">335: </a>   {
-</span><span id="336" class="l"><a class="l" href="#336">336: </a>      <span class="php-var">$this</span>-&gt;clean_cache();
-</span><span id="337" class="l"><a class="l" href="#337">337: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot;
-</span></span><span id="338" class="l"><a class="l" href="#338">338: </a><span class="php-quote">         WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="339" class="l"><a class="l" href="#339">339: </a>   }
-</span><span id="340" class="l"><a class="l" href="#340">340: </a>   
-</span><span id="341" class="l"><a class="l" href="#341">341: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
-</span><span id="342" class="l"><a class="l" href="#342">342: </a>   {
-</span><span id="343" class="l"><a class="l" href="#343">343: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/libro_mayor/'</span>.<span class="php-var">$this</span>-&gt;idsubcuenta.<span class="php-quote">'.pdf'</span>) )
-</span><span id="344" class="l"><a class="l" href="#344">344: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/libro_mayor/'</span>.<span class="php-var">$this</span>-&gt;idsubcuenta.<span class="php-quote">'.pdf'</span>);
-</span><span id="345" class="l"><a class="l" href="#345">345: </a>      
-</span><span id="346" class="l"><a class="l" href="#346">346: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/libro_diario/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>) )
-</span><span id="347" class="l"><a class="l" href="#347">347: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/libro_diario/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>);
-</span><span id="348" class="l"><a class="l" href="#348">348: </a>      
-</span><span id="349" class="l"><a class="l" href="#349">349: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/inventarios_balances/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>) )
-</span><span id="350" class="l"><a class="l" href="#350">350: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/inventarios_balances/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>);
-</span><span id="351" class="l"><a class="l" href="#351">351: </a>   }
-</span><span id="352" class="l"><a class="l" href="#352">352: </a>   
-</span><span id="353" class="l"><a class="l" href="#353">353: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
-</span><span id="354" class="l"><a class="l" href="#354">354: </a>   {
-</span><span id="355" class="l"><a class="l" href="#355">355: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
-</span><span id="356" class="l"><a class="l" href="#356">356: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="357" class="l"><a class="l" href="#357">357: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
-</span><span id="358" class="l"><a class="l" href="#358">358: </a>      {
-</span><span id="359" class="l"><a class="l" href="#359">359: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
-</span><span id="360" class="l"><a class="l" href="#360">360: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
-</span><span id="361" class="l"><a class="l" href="#361">361: </a>      }
-</span><span id="362" class="l"><a class="l" href="#362">362: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
-</span><span id="363" class="l"><a class="l" href="#363">363: </a>   }
-</span><span id="364" class="l"><a class="l" href="#364">364: </a>   
-</span><span id="365" class="l"><a class="l" href="#365">365: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_cuenta" href="#_all_from_cuenta">all_from_cuenta</a>(<span class="php-var">$idcuenta</span>)
-</span><span id="366" class="l"><a class="l" href="#366">366: </a>   {
-</span><span id="367" class="l"><a class="l" href="#367">367: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
-</span><span id="368" class="l"><a class="l" href="#368">368: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="369" class="l"><a class="l" href="#369">369: </a>              <span class="php-quote">&quot; WHERE idcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$idcuenta</span>).<span class="php-quote">&quot; ORDER BY codsubcuenta ASC;&quot;</span>);
-</span><span id="370" class="l"><a class="l" href="#370">370: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
-</span><span id="371" class="l"><a class="l" href="#371">371: </a>      {
-</span><span id="372" class="l"><a class="l" href="#372">372: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
-</span><span id="373" class="l"><a class="l" href="#373">373: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
-</span><span id="374" class="l"><a class="l" href="#374">374: </a>      }
-</span><span id="375" class="l"><a class="l" href="#375">375: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
-</span><span id="376" class="l"><a class="l" href="#376">376: </a>   }
-</span><span id="377" class="l"><a class="l" href="#377">377: </a>   
-</span><span id="378" class="l"><a class="l" href="#378">378: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_ejercicio" href="#_all_from_ejercicio">all_from_ejercicio</a>(<span class="php-var">$codejercicio</span>)
-</span><span id="379" class="l"><a class="l" href="#379">379: </a>   {
-</span><span id="380" class="l"><a class="l" href="#380">380: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
-</span><span id="381" class="l"><a class="l" href="#381">381: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="382" class="l"><a class="l" href="#382">382: </a>              <span class="php-quote">&quot; WHERE codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codejercicio</span>).
-</span><span id="383" class="l"><a class="l" href="#383">383: </a>              <span class="php-quote">&quot; ORDER BY codsubcuenta ASC;&quot;</span>);
-</span><span id="384" class="l"><a class="l" href="#384">384: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
-</span><span id="385" class="l"><a class="l" href="#385">385: </a>      {
-</span><span id="386" class="l"><a class="l" href="#386">386: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
-</span><span id="387" class="l"><a class="l" href="#387">387: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
-</span><span id="388" class="l"><a class="l" href="#388">388: </a>      }
-</span><span id="389" class="l"><a class="l" href="#389">389: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
-</span><span id="390" class="l"><a class="l" href="#390">390: </a>   }
-</span><span id="391" class="l"><a class="l" href="#391">391: </a>   
-</span><span id="392" class="l"><a class="l" href="#392">392: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search" href="#_search">search</a>(<span class="php-var">$query</span>)
-</span><span id="393" class="l"><a class="l" href="#393">393: </a>   {
-</span><span id="394" class="l"><a class="l" href="#394">394: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
-</span><span id="395" class="l"><a class="l" href="#395">395: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
-</span><span id="396" class="l"><a class="l" href="#396">396: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="397" class="l"><a class="l" href="#397">397: </a>              <span class="php-quote">&quot; WHERE codsubcuenta LIKE '&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR codsubcuenta LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;'
-</span></span><span id="398" class="l"><a class="l" href="#398">398: </a><span class="php-quote">               OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%'
-</span></span><span id="399" class="l"><a class="l" href="#399">399: </a><span class="php-quote">               ORDER BY codejercicio DESC, codcuenta ASC;&quot;</span>);
-</span><span id="400" class="l"><a class="l" href="#400">400: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
-</span><span id="401" class="l"><a class="l" href="#401">401: </a>      {
-</span><span id="402" class="l"><a class="l" href="#402">402: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
-</span><span id="403" class="l"><a class="l" href="#403">403: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
-</span><span id="404" class="l"><a class="l" href="#404">404: </a>      }
-</span><span id="405" class="l"><a class="l" href="#405">405: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
-</span><span id="406" class="l"><a class="l" href="#406">406: </a>   }
-</span><span id="407" class="l"><a class="l" href="#407">407: </a>   
-</span><span id="408" class="l"><a class="l" href="#408">408: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search_by_ejercicio" href="#_search_by_ejercicio">search_by_ejercicio</a>(<span class="php-var">$ejercicio</span>, <span class="php-var">$query</span>)
-</span><span id="409" class="l"><a class="l" href="#409">409: </a>   {
-</span><span id="410" class="l"><a class="l" href="#410">410: </a>      <span class="php-var">$query</span> = <span class="php-var">$this</span>-&gt;escape_string( <span class="php-keyword2">strtolower</span>( <span class="php-keyword2">trim</span>(<span class="php-var">$query</span>) ) );
-</span><span id="411" class="l"><a class="l" href="#411">411: </a>      
-</span><span id="412" class="l"><a class="l" href="#412">412: </a>      <span class="php-var">$sublist</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'search_subcuenta_ejercicio_'</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'_'</span>.<span class="php-var">$query</span>);
-</span><span id="413" class="l"><a class="l" href="#413">413: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">count</span>(<span class="php-var">$sublist</span>) &lt; <span class="php-num">1</span> )
-</span><span id="414" class="l"><a class="l" href="#414">414: </a>      {
-</span><span id="415" class="l"><a class="l" href="#415">415: </a>         <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="416" class="l"><a class="l" href="#416">416: </a>              <span class="php-quote">&quot; WHERE codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ejercicio</span>).
-</span><span id="417" class="l"><a class="l" href="#417">417: </a>              <span class="php-quote">&quot; AND (codsubcuenta LIKE '&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR codsubcuenta LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;'
-</span></span><span id="418" class="l"><a class="l" href="#418">418: </a><span class="php-quote">               OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%')
-</span></span><span id="419" class="l"><a class="l" href="#419">419: </a><span class="php-quote">               ORDER BY codcuenta ASC;&quot;</span>);
-</span><span id="420" class="l"><a class="l" href="#420">420: </a>         
-</span><span id="421" class="l"><a class="l" href="#421">421: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
-</span><span id="422" class="l"><a class="l" href="#422">422: </a>         {
-</span><span id="423" class="l"><a class="l" href="#423">423: </a>            <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
-</span><span id="424" class="l"><a class="l" href="#424">424: </a>               <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
-</span><span id="425" class="l"><a class="l" href="#425">425: </a>         }
-</span><span id="426" class="l"><a class="l" href="#426">426: </a>         
-</span><span id="427" class="l"><a class="l" href="#427">427: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'search_subcuenta_ejercicio_'</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'_'</span>.<span class="php-var">$query</span>, <span class="php-var">$sublist</span>, <span class="php-num">300</span>);
-</span><span id="428" class="l"><a class="l" href="#428">428: </a>      }
-</span><span id="429" class="l"><a class="l" href="#429">429: </a>      
-</span><span id="430" class="l"><a class="l" href="#430">430: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
-</span><span id="431" class="l"><a class="l" href="#431">431: </a>   }
-</span><span id="432" class="l"><a class="l" href="#432">432: </a>}
-</span><span id="433" class="l"><a class="l" href="#433">433: </a></span></code></pre>
+</span><span id="119" class="l"><a class="l" href="#119">119: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">base64_encode</span>(<span class="php-var">$this</span>-&gt;descripcion);
+</span><span id="120" class="l"><a class="l" href="#120">120: </a>   }
+</span><span id="121" class="l"><a class="l" href="#121">121: </a>   
+</span><span id="122" class="l"><a class="l" href="#122">122: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_tasaconv" href="#_tasaconv">tasaconv</a>()
+</span><span id="123" class="l"><a class="l" href="#123">123: </a>   {
+</span><span id="124" class="l"><a class="l" href="#124">124: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;coddivisa) )
+</span><span id="125" class="l"><a class="l" href="#125">125: </a>      {
+</span><span id="126" class="l"><a class="l" href="#126">126: </a>         <span class="php-var">$divisa</span> = <span class="php-keyword1">new</span> divisa();
+</span><span id="127" class="l"><a class="l" href="#127">127: </a>         <span class="php-var">$div0</span> = <span class="php-var">$divisa</span>-&gt;get(<span class="php-var">$this</span>-&gt;coddivisa);
+</span><span id="128" class="l"><a class="l" href="#128">128: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$div0</span>)
+</span><span id="129" class="l"><a class="l" href="#129">129: </a>            <span class="php-keyword1">return</span> <span class="php-var">$div0</span>-&gt;tasaconv;
+</span><span id="130" class="l"><a class="l" href="#130">130: </a>         <span class="php-keyword1">else</span>
+</span><span id="131" class="l"><a class="l" href="#131">131: </a>            <span class="php-keyword1">return</span> <span class="php-num">1</span>;
+</span><span id="132" class="l"><a class="l" href="#132">132: </a>      }
+</span><span id="133" class="l"><a class="l" href="#133">133: </a>      <span class="php-keyword1">else</span>
+</span><span id="134" class="l"><a class="l" href="#134">134: </a>         <span class="php-keyword1">return</span> <span class="php-num">1</span>;
+</span><span id="135" class="l"><a class="l" href="#135">135: </a>   }
+</span><span id="136" class="l"><a class="l" href="#136">136: </a>   
+</span><span id="137" class="l"><a class="l" href="#137">137: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_url" href="#_url">url</a>()
+</span><span id="138" class="l"><a class="l" href="#138">138: </a>   {
+</span><span id="139" class="l"><a class="l" href="#139">139: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;idsubcuenta) )
+</span><span id="140" class="l"><a class="l" href="#140">140: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=contabilidad_cuentas'</span>;
+</span><span id="141" class="l"><a class="l" href="#141">141: </a>      <span class="php-keyword1">else</span>
+</span><span id="142" class="l"><a class="l" href="#142">142: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'index.php?page=contabilidad_subcuenta&amp;id='</span>.<span class="php-var">$this</span>-&gt;idsubcuenta;
+</span><span id="143" class="l"><a class="l" href="#143">143: </a>   }
+</span><span id="144" class="l"><a class="l" href="#144">144: </a>   
+</span><span id="145" class="l"><a class="l" href="#145">145: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_cuenta" href="#_get_cuenta">get_cuenta</a>()
+</span><span id="146" class="l"><a class="l" href="#146">146: </a>   {
+</span><span id="147" class="l"><a class="l" href="#147">147: </a>      <span class="php-var">$cuenta</span> = <span class="php-keyword1">new</span> cuenta();
+</span><span id="148" class="l"><a class="l" href="#148">148: </a>      <span class="php-keyword1">return</span> <span class="php-var">$cuenta</span>-&gt;get(<span class="php-var">$this</span>-&gt;idcuenta);
+</span><span id="149" class="l"><a class="l" href="#149">149: </a>   }
+</span><span id="150" class="l"><a class="l" href="#150">150: </a>   
+</span><span id="151" class="l"><a class="l" href="#151">151: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_ejercicio" href="#_get_ejercicio">get_ejercicio</a>()
+</span><span id="152" class="l"><a class="l" href="#152">152: </a>   {
+</span><span id="153" class="l"><a class="l" href="#153">153: </a>      <span class="php-var">$eje</span> = <span class="php-keyword1">new</span> ejercicio();
+</span><span id="154" class="l"><a class="l" href="#154">154: </a>      <span class="php-keyword1">return</span> <span class="php-var">$eje</span>-&gt;get(<span class="php-var">$this</span>-&gt;codejercicio);
+</span><span id="155" class="l"><a class="l" href="#155">155: </a>   }
+</span><span id="156" class="l"><a class="l" href="#156">156: </a>   
+</span><span id="157" class="l"><a class="l" href="#157">157: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_partidas" href="#_get_partidas">get_partidas</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="158" class="l"><a class="l" href="#158">158: </a>   {
+</span><span id="159" class="l"><a class="l" href="#159">159: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
+</span><span id="160" class="l"><a class="l" href="#160">160: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;all_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta, <span class="php-var">$offset</span>);
+</span><span id="161" class="l"><a class="l" href="#161">161: </a>   }
+</span><span id="162" class="l"><a class="l" href="#162">162: </a>   
+</span><span id="163" class="l"><a class="l" href="#163">163: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_partidas_full" href="#_get_partidas_full">get_partidas_full</a>()
+</span><span id="164" class="l"><a class="l" href="#164">164: </a>   {
+</span><span id="165" class="l"><a class="l" href="#165">165: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
+</span><span id="166" class="l"><a class="l" href="#166">166: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;full_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta);
+</span><span id="167" class="l"><a class="l" href="#167">167: </a>   }
+</span><span id="168" class="l"><a class="l" href="#168">168: </a>   
+</span><span id="169" class="l"><a class="l" href="#169">169: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_count_partidas" href="#_count_partidas">count_partidas</a>()
+</span><span id="170" class="l"><a class="l" href="#170">170: </a>   {
+</span><span id="171" class="l"><a class="l" href="#171">171: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
+</span><span id="172" class="l"><a class="l" href="#172">172: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;count_from_subcuenta(<span class="php-var">$this</span>-&gt;idsubcuenta);
+</span><span id="173" class="l"><a class="l" href="#173">173: </a>   }
+</span><span id="174" class="l"><a class="l" href="#174">174: </a>   
+</span><span id="175" class="l"><a class="l" href="#175">175: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_totales" href="#_get_totales">get_totales</a>()
+</span><span id="176" class="l"><a class="l" href="#176">176: </a>   {
+</span><span id="177" class="l"><a class="l" href="#177">177: </a>      <span class="php-var">$part</span> = <span class="php-keyword1">new</span> partida();
+</span><span id="178" class="l"><a class="l" href="#178">178: </a>      <span class="php-keyword1">return</span> <span class="php-var">$part</span>-&gt;totales_from_subcuenta( <span class="php-var">$this</span>-&gt;idsubcuenta );
+</span><span id="179" class="l"><a class="l" href="#179">179: </a>   }
+</span><span id="180" class="l"><a class="l" href="#180">180: </a>   
+</span><span id="181" class="l"><a class="l" href="#181">181: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get" href="#_get">get</a>(<span class="php-var">$id</span>)
+</span><span id="182" class="l"><a class="l" href="#182">182: </a>   {
+</span><span id="183" class="l"><a class="l" href="#183">183: </a>      <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="184" class="l"><a class="l" href="#184">184: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
+</span><span id="185" class="l"><a class="l" href="#185">185: </a>      {
+</span><span id="186" class="l"><a class="l" href="#186">186: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
+</span><span id="187" class="l"><a class="l" href="#187">187: </a>      }
+</span><span id="188" class="l"><a class="l" href="#188">188: </a>      <span class="php-keyword1">else</span>
+</span><span id="189" class="l"><a class="l" href="#189">189: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="190" class="l"><a class="l" href="#190">190: </a>   }
+</span><span id="191" class="l"><a class="l" href="#191">191: </a>   
+</span><span id="192" class="l"><a class="l" href="#192">192: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_by_codigo" href="#_get_by_codigo">get_by_codigo</a>(<span class="php-var">$cod</span>, <span class="php-var">$ejercicio</span>, <span class="php-var">$crear</span>=<span class="php-keyword1">FALSE</span>)
+</span><span id="193" class="l"><a class="l" href="#193">193: </a>   {
+</span><span id="194" class="l"><a class="l" href="#194">194: </a>      <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="195" class="l"><a class="l" href="#195">195: </a>              <span class="php-quote">&quot; WHERE codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$cod</span>).
+</span><span id="196" class="l"><a class="l" href="#196">196: </a>              <span class="php-quote">&quot; AND codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ejercicio</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="197" class="l"><a class="l" href="#197">197: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
+</span><span id="198" class="l"><a class="l" href="#198">198: </a>      {
+</span><span id="199" class="l"><a class="l" href="#199">199: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
+</span><span id="200" class="l"><a class="l" href="#200">200: </a>      }
+</span><span id="201" class="l"><a class="l" href="#201">201: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-var">$crear</span>)
+</span><span id="202" class="l"><a class="l" href="#202">202: </a>      {
+</span><span id="203" class="l"><a class="l" href="#203">203: </a>         <span class="php-comment">/// buscamos la subcuenta equivalente en otro ejercicio</span>
+</span><span id="204" class="l"><a class="l" href="#204">204: </a>         <span class="php-var">$subc</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$cod</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="205" class="l"><a class="l" href="#205">205: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$subc</span>)
+</span><span id="206" class="l"><a class="l" href="#206">206: </a>         {
+</span><span id="207" class="l"><a class="l" href="#207">207: </a>            <span class="php-var">$old_sc</span> = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$subc</span>[<span class="php-num">0</span>]);
+</span><span id="208" class="l"><a class="l" href="#208">208: </a>            
+</span><span id="209" class="l"><a class="l" href="#209">209: </a>            <span class="php-comment">/// buscamos la cuenta equivalente es ESTE ejercicio</span>
+</span><span id="210" class="l"><a class="l" href="#210">210: </a>            <span class="php-var">$cuenta</span> = <span class="php-keyword1">new</span> cuenta();
+</span><span id="211" class="l"><a class="l" href="#211">211: </a>            <span class="php-var">$new_c</span> = <span class="php-var">$cuenta</span>-&gt;get_by_codigo(<span class="php-var">$old_sc</span>-&gt;codcuenta, <span class="php-var">$ejercicio</span>);
+</span><span id="212" class="l"><a class="l" href="#212">212: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$new_c</span>)
+</span><span id="213" class="l"><a class="l" href="#213">213: </a>            {
+</span><span id="214" class="l"><a class="l" href="#214">214: </a>               <span class="php-var">$new_sc</span> = <span class="php-keyword1">new</span> subcuenta();
+</span><span id="215" class="l"><a class="l" href="#215">215: </a>               <span class="php-var">$new_sc</span>-&gt;codcuenta = <span class="php-var">$new_c</span>-&gt;codcuenta;
+</span><span id="216" class="l"><a class="l" href="#216">216: </a>               <span class="php-var">$new_sc</span>-&gt;coddivisa = <span class="php-var">$old_sc</span>-&gt;coddivisa;
+</span><span id="217" class="l"><a class="l" href="#217">217: </a>               <span class="php-var">$new_sc</span>-&gt;codejercicio = <span class="php-var">$ejercicio</span>;
+</span><span id="218" class="l"><a class="l" href="#218">218: </a>               <span class="php-var">$new_sc</span>-&gt;codimpuesto = <span class="php-var">$old_sc</span>-&gt;codimpuesto;
+</span><span id="219" class="l"><a class="l" href="#219">219: </a>               <span class="php-var">$new_sc</span>-&gt;codsubcuenta = <span class="php-var">$old_sc</span>-&gt;codsubcuenta;
+</span><span id="220" class="l"><a class="l" href="#220">220: </a>               <span class="php-var">$new_sc</span>-&gt;descripcion = <span class="php-var">$old_sc</span>-&gt;descripcion;
+</span><span id="221" class="l"><a class="l" href="#221">221: </a>               <span class="php-var">$new_sc</span>-&gt;idcuenta = <span class="php-var">$new_c</span>-&gt;idcuenta;
+</span><span id="222" class="l"><a class="l" href="#222">222: </a>               <span class="php-var">$new_sc</span>-&gt;iva = <span class="php-var">$old_sc</span>-&gt;iva;
+</span><span id="223" class="l"><a class="l" href="#223">223: </a>               <span class="php-var">$new_sc</span>-&gt;recargo = <span class="php-var">$old_sc</span>-&gt;recargo;
+</span><span id="224" class="l"><a class="l" href="#224">224: </a>               <span class="php-keyword1">if</span>( <span class="php-var">$new_sc</span>-&gt;save() )
+</span><span id="225" class="l"><a class="l" href="#225">225: </a>               {
+</span><span id="226" class="l"><a class="l" href="#226">226: </a>                  <span class="php-keyword1">return</span> <span class="php-var">$new_sc</span>;
+</span><span id="227" class="l"><a class="l" href="#227">227: </a>               }
+</span><span id="228" class="l"><a class="l" href="#228">228: </a>               <span class="php-keyword1">else</span>
+</span><span id="229" class="l"><a class="l" href="#229">229: </a>                  <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="230" class="l"><a class="l" href="#230">230: </a>            }
+</span><span id="231" class="l"><a class="l" href="#231">231: </a>            <span class="php-keyword1">else</span>
+</span><span id="232" class="l"><a class="l" href="#232">232: </a>            {
+</span><span id="233" class="l"><a class="l" href="#233">233: </a>               <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'No se ha encontrado la cuenta equivalente a '</span>.<span class="php-var">$old_sc</span>-&gt;codcuenta.<span class="php-quote">' en el ejercicio '</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'.'</span>);
+</span><span id="234" class="l"><a class="l" href="#234">234: </a>               <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="235" class="l"><a class="l" href="#235">235: </a>            }
+</span><span id="236" class="l"><a class="l" href="#236">236: </a>         }
+</span><span id="237" class="l"><a class="l" href="#237">237: </a>         <span class="php-keyword1">else</span>
+</span><span id="238" class="l"><a class="l" href="#238">238: </a>         {
+</span><span id="239" class="l"><a class="l" href="#239">239: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'No se ha encontrado ninguna subcuenta equivalente a '</span>.<span class="php-var">$cod</span>.<span class="php-quote">' para copiar.'</span>);
+</span><span id="240" class="l"><a class="l" href="#240">240: </a>            <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="241" class="l"><a class="l" href="#241">241: </a>         }
+</span><span id="242" class="l"><a class="l" href="#242">242: </a>      }
+</span><span id="243" class="l"><a class="l" href="#243">243: </a>      <span class="php-keyword1">else</span>
+</span><span id="244" class="l"><a class="l" href="#244">244: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="245" class="l"><a class="l" href="#245">245: </a>   }
+</span><span id="246" class="l"><a class="l" href="#246">246: </a>   
+</span><span id="247" class="l"><a class="l" href="#247">247: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_cuentaesp" href="#_get_cuentaesp">get_cuentaesp</a>(<span class="php-var">$id</span>, <span class="php-var">$eje</span>)
+</span><span id="248" class="l"><a class="l" href="#248">248: </a>   {
+</span><span id="249" class="l"><a class="l" href="#249">249: </a>      <span class="php-var">$data</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM co_subcuentas WHERE idcuenta IN &quot;</span>
+</span><span id="250" class="l"><a class="l" href="#250">250: </a>         .<span class="php-quote">&quot;(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot; AND codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$eje</span>).<span class="php-quote">&quot;);&quot;</span>);
+</span><span id="251" class="l"><a class="l" href="#251">251: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$data</span>)
+</span><span id="252" class="l"><a class="l" href="#252">252: </a>      {
+</span><span id="253" class="l"><a class="l" href="#253">253: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$data</span>[<span class="php-num">0</span>]);
+</span><span id="254" class="l"><a class="l" href="#254">254: </a>      }
+</span><span id="255" class="l"><a class="l" href="#255">255: </a>      <span class="php-keyword1">else</span>
+</span><span id="256" class="l"><a class="l" href="#256">256: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="257" class="l"><a class="l" href="#257">257: </a>   }
+</span><span id="258" class="l"><a class="l" href="#258">258: </a>   
+</span><span id="259" class="l"><a class="l" href="#259">259: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_is_outdated" href="#_is_outdated">is_outdated</a>()
+</span><span id="260" class="l"><a class="l" href="#260">260: </a>   {
+</span><span id="261" class="l"><a class="l" href="#261">261: </a>      <span class="php-var">$sql</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.
+</span><span id="262" class="l"><a class="l" href="#262">262: </a>              <span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot; AND (
+</span></span><span id="263" class="l"><a class="l" href="#263">263: </a><span class="php-quote">                 debe != (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
+</span></span><span id="264" class="l"><a class="l" href="#264">264: </a><span class="php-quote">                   WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
+</span></span><span id="265" class="l"><a class="l" href="#265">265: </a><span class="php-quote">                 OR haber != (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
+</span></span><span id="266" class="l"><a class="l" href="#266">266: </a><span class="php-quote">                   WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
+</span></span><span id="267" class="l"><a class="l" href="#267">267: </a><span class="php-quote">                 OR saldo != (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
+</span></span><span id="268" class="l"><a class="l" href="#268">268: </a><span class="php-quote">                   FROM co_partidas WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
+</span></span><span id="269" class="l"><a class="l" href="#269">269: </a><span class="php-quote">              );&quot;</span>;
+</span><span id="270" class="l"><a class="l" href="#270">270: </a>      
+</span><span id="271" class="l"><a class="l" href="#271">271: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-var">$sql</span>) )
+</span><span id="272" class="l"><a class="l" href="#272">272: </a>      {
+</span><span id="273" class="l"><a class="l" href="#273">273: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="274" class="l"><a class="l" href="#274">274: </a>      }
+</span><span id="275" class="l"><a class="l" href="#275">275: </a>      <span class="php-keyword1">else</span>
+</span><span id="276" class="l"><a class="l" href="#276">276: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="277" class="l"><a class="l" href="#277">277: </a>   }
+</span><span id="278" class="l"><a class="l" href="#278">278: </a>   
+</span><span id="279" class="l"><a class="l" href="#279">279: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_tiene_saldo" href="#_tiene_saldo">tiene_saldo</a>()
+</span><span id="280" class="l"><a class="l" href="#280">280: </a>   {
+</span><span id="281" class="l"><a class="l" href="#281">281: </a>      <span class="php-keyword1">return</span> !<span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$this</span>-&gt;debe, <span class="php-var">$this</span>-&gt;haber);
+</span><span id="282" class="l"><a class="l" href="#282">282: </a>   }
+</span><span id="283" class="l"><a class="l" href="#283">283: </a>   
+</span><span id="284" class="l"><a class="l" href="#284">284: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_exists" href="#_exists">exists</a>()
+</span><span id="285" class="l"><a class="l" href="#285">285: </a>   {
+</span><span id="286" class="l"><a class="l" href="#286">286: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;idsubcuenta) )
+</span><span id="287" class="l"><a class="l" href="#287">287: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="288" class="l"><a class="l" href="#288">288: </a>      <span class="php-keyword1">else</span>
+</span><span id="289" class="l"><a class="l" href="#289">289: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="290" class="l"><a class="l" href="#290">290: </a>   }
+</span><span id="291" class="l"><a class="l" href="#291">291: </a>   
+</span><span id="292" class="l"><a class="l" href="#292">292: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_test" href="#_test">test</a>()
+</span><span id="293" class="l"><a class="l" href="#293">293: </a>   {
+</span><span id="294" class="l"><a class="l" href="#294">294: </a>      <span class="php-var">$this</span>-&gt;descripcion = <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$this</span>-&gt;descripcion);
+</span><span id="295" class="l"><a class="l" href="#295">295: </a>      
+</span><span id="296" class="l"><a class="l" href="#296">296: </a>      <span class="php-var">$totales</span> = <span class="php-var">$this</span>-&gt;get_totales();
+</span><span id="297" class="l"><a class="l" href="#297">297: </a>      <span class="php-var">$this</span>-&gt;debe = <span class="php-var">$totales</span>[<span class="php-quote">'debe'</span>];
+</span><span id="298" class="l"><a class="l" href="#298">298: </a>      <span class="php-var">$this</span>-&gt;haber = <span class="php-var">$totales</span>[<span class="php-quote">'haber'</span>];
+</span><span id="299" class="l"><a class="l" href="#299">299: </a>      <span class="php-var">$this</span>-&gt;saldo = <span class="php-var">$totales</span>[<span class="php-quote">'saldo'</span>];
+</span><span id="300" class="l"><a class="l" href="#300">300: </a>      
+</span><span id="301" class="l"><a class="l" href="#301">301: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">strlen</span>(<span class="php-var">$this</span>-&gt;codsubcuenta)&gt;<span class="php-num">0</span> <span class="php-keyword1">AND</span> <span class="php-keyword2">strlen</span>(<span class="php-var">$this</span>-&gt;descripcion)&gt;<span class="php-num">0</span> )
+</span><span id="302" class="l"><a class="l" href="#302">302: </a>      {
+</span><span id="303" class="l"><a class="l" href="#303">303: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="304" class="l"><a class="l" href="#304">304: </a>      }
+</span><span id="305" class="l"><a class="l" href="#305">305: </a>      <span class="php-keyword1">else</span>
+</span><span id="306" class="l"><a class="l" href="#306">306: </a>      {
+</span><span id="307" class="l"><a class="l" href="#307">307: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Faltan datos en la subcuenta.'</span>);
+</span><span id="308" class="l"><a class="l" href="#308">308: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="309" class="l"><a class="l" href="#309">309: </a>      }
+</span><span id="310" class="l"><a class="l" href="#310">310: </a>   }
+</span><span id="311" class="l"><a class="l" href="#311">311: </a>   
+</span><span id="312" class="l"><a class="l" href="#312">312: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_save" href="#_save">save</a>()
+</span><span id="313" class="l"><a class="l" href="#313">313: </a>   {
+</span><span id="314" class="l"><a class="l" href="#314">314: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;test() )
+</span><span id="315" class="l"><a class="l" href="#315">315: </a>      {
+</span><span id="316" class="l"><a class="l" href="#316">316: </a>         <span class="php-var">$this</span>-&gt;clean_cache();
+</span><span id="317" class="l"><a class="l" href="#317">317: </a>         <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;exists() )
+</span><span id="318" class="l"><a class="l" href="#318">318: </a>         {
+</span><span id="319" class="l"><a class="l" href="#319">319: </a>            <span class="php-var">$sql</span> = <span class="php-quote">&quot;UPDATE &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; SET codsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codsubcuenta).<span class="php-quote">&quot;,
+</span></span><span id="320" class="l"><a class="l" href="#320">320: </a><span class="php-quote">               idcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuenta).<span class="php-quote">&quot;, codcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codcuenta).<span class="php-quote">&quot;,
+</span></span><span id="321" class="l"><a class="l" href="#321">321: </a><span class="php-quote">               codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codejercicio).<span class="php-quote">&quot;,
+</span></span><span id="322" class="l"><a class="l" href="#322">322: </a><span class="php-quote">               coddivisa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;,
+</span></span><span id="323" class="l"><a class="l" href="#323">323: </a><span class="php-quote">               codimpuesto = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codimpuesto).<span class="php-quote">&quot;,
+</span></span><span id="324" class="l"><a class="l" href="#324">324: </a><span class="php-quote">               descripcion = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descripcion).<span class="php-quote">&quot;,
+</span></span><span id="325" class="l"><a class="l" href="#325">325: </a><span class="php-quote">               recargo = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;recargo).<span class="php-quote">&quot;, iva = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;iva).<span class="php-quote">&quot;,
+</span></span><span id="326" class="l"><a class="l" href="#326">326: </a><span class="php-quote">               debe = (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
+</span></span><span id="327" class="l"><a class="l" href="#327">327: </a><span class="php-quote">                 WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;),
+</span></span><span id="328" class="l"><a class="l" href="#328">328: </a><span class="php-quote">               haber = (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
+</span></span><span id="329" class="l"><a class="l" href="#329">329: </a><span class="php-quote">                 WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;),
+</span></span><span id="330" class="l"><a class="l" href="#330">330: </a><span class="php-quote">               saldo = (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
+</span></span><span id="331" class="l"><a class="l" href="#331">331: </a><span class="php-quote">                 FROM co_partidas WHERE idsubcuenta=&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;)
+</span></span><span id="332" class="l"><a class="l" href="#332">332: </a><span class="php-quote">               WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>;
+</span><span id="333" class="l"><a class="l" href="#333">333: </a>         }
+</span><span id="334" class="l"><a class="l" href="#334">334: </a>         <span class="php-keyword1">else</span>
+</span><span id="335" class="l"><a class="l" href="#335">335: </a>         {
+</span><span id="336" class="l"><a class="l" href="#336">336: </a>            <span class="php-var">$newid</span> = <span class="php-var">$this</span>-&gt;db-&gt;nextval(<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">'_idsubcuenta_seq'</span>);
+</span><span id="337" class="l"><a class="l" href="#337">337: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$newid</span>)
+</span><span id="338" class="l"><a class="l" href="#338">338: </a>            {
+</span><span id="339" class="l"><a class="l" href="#339">339: </a>               <span class="php-var">$this</span>-&gt;idsubcuenta = <span class="php-keyword2">intval</span>(<span class="php-var">$newid</span>);
+</span><span id="340" class="l"><a class="l" href="#340">340: </a>               <span class="php-var">$sql</span> = <span class="php-quote">&quot;INSERT INTO &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; (idsubcuenta,codsubcuenta,idcuenta,codcuenta,
+</span></span><span id="341" class="l"><a class="l" href="#341">341: </a><span class="php-quote">                  codejercicio,coddivisa,codimpuesto,descripcion,debe,haber,saldo,recargo,iva) VALUES
+</span></span><span id="342" class="l"><a class="l" href="#342">342: </a><span class="php-quote">                  (&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codsubcuenta).<span class="php-quote">&quot;,
+</span></span><span id="343" class="l"><a class="l" href="#343">343: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuenta).<span class="php-quote">&quot;,
+</span></span><span id="344" class="l"><a class="l" href="#344">344: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codcuenta).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codejercicio).<span class="php-quote">&quot;,
+</span></span><span id="345" class="l"><a class="l" href="#345">345: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;codimpuesto).<span class="php-quote">&quot;,
+</span></span><span id="346" class="l"><a class="l" href="#346">346: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;descripcion).<span class="php-quote">&quot;,0,0,0,
+</span></span><span id="347" class="l"><a class="l" href="#347">347: </a><span class="php-quote">                  &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;recargo).<span class="php-quote">&quot;,&quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;iva).<span class="php-quote">&quot;);&quot;</span>;
+</span><span id="348" class="l"><a class="l" href="#348">348: </a>            }
+</span><span id="349" class="l"><a class="l" href="#349">349: </a>         }
+</span><span id="350" class="l"><a class="l" href="#350">350: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$sql</span>);
+</span><span id="351" class="l"><a class="l" href="#351">351: </a>      }
+</span><span id="352" class="l"><a class="l" href="#352">352: </a>      <span class="php-keyword1">else</span>
+</span><span id="353" class="l"><a class="l" href="#353">353: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="354" class="l"><a class="l" href="#354">354: </a>   }
+</span><span id="355" class="l"><a class="l" href="#355">355: </a>   
+</span><span id="356" class="l"><a class="l" href="#356">356: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
+</span><span id="357" class="l"><a class="l" href="#357">357: </a>   {
+</span><span id="358" class="l"><a class="l" href="#358">358: </a>      <span class="php-var">$this</span>-&gt;clean_cache();
+</span><span id="359" class="l"><a class="l" href="#359">359: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot;
+</span></span><span id="360" class="l"><a class="l" href="#360">360: </a><span class="php-quote">         WHERE idsubcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idsubcuenta).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="361" class="l"><a class="l" href="#361">361: </a>   }
+</span><span id="362" class="l"><a class="l" href="#362">362: </a>   
+</span><span id="363" class="l"><a class="l" href="#363">363: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
+</span><span id="364" class="l"><a class="l" href="#364">364: </a>   {
+</span><span id="365" class="l"><a class="l" href="#365">365: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/libro_mayor/'</span>.<span class="php-var">$this</span>-&gt;idsubcuenta.<span class="php-quote">'.pdf'</span>) )
+</span><span id="366" class="l"><a class="l" href="#366">366: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/libro_mayor/'</span>.<span class="php-var">$this</span>-&gt;idsubcuenta.<span class="php-quote">'.pdf'</span>);
+</span><span id="367" class="l"><a class="l" href="#367">367: </a>      
+</span><span id="368" class="l"><a class="l" href="#368">368: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/libro_diario/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>) )
+</span><span id="369" class="l"><a class="l" href="#369">369: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/libro_diario/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>);
+</span><span id="370" class="l"><a class="l" href="#370">370: </a>      
+</span><span id="371" class="l"><a class="l" href="#371">371: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/inventarios_balances/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>) )
+</span><span id="372" class="l"><a class="l" href="#372">372: </a>         <span class="php-keyword2">unlink</span>(<span class="php-quote">'tmp/inventarios_balances/'</span>.<span class="php-var">$this</span>-&gt;codejercicio.<span class="php-quote">'.pdf'</span>);
+</span><span id="373" class="l"><a class="l" href="#373">373: </a>   }
+</span><span id="374" class="l"><a class="l" href="#374">374: </a>   
+</span><span id="375" class="l"><a class="l" href="#375">375: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
+</span><span id="376" class="l"><a class="l" href="#376">376: </a>   {
+</span><span id="377" class="l"><a class="l" href="#377">377: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
+</span><span id="378" class="l"><a class="l" href="#378">378: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="379" class="l"><a class="l" href="#379">379: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
+</span><span id="380" class="l"><a class="l" href="#380">380: </a>      {
+</span><span id="381" class="l"><a class="l" href="#381">381: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
+</span><span id="382" class="l"><a class="l" href="#382">382: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
+</span><span id="383" class="l"><a class="l" href="#383">383: </a>      }
+</span><span id="384" class="l"><a class="l" href="#384">384: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
+</span><span id="385" class="l"><a class="l" href="#385">385: </a>   }
+</span><span id="386" class="l"><a class="l" href="#386">386: </a>   
+</span><span id="387" class="l"><a class="l" href="#387">387: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_cuenta" href="#_all_from_cuenta">all_from_cuenta</a>(<span class="php-var">$idcuenta</span>)
+</span><span id="388" class="l"><a class="l" href="#388">388: </a>   {
+</span><span id="389" class="l"><a class="l" href="#389">389: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
+</span><span id="390" class="l"><a class="l" href="#390">390: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="391" class="l"><a class="l" href="#391">391: </a>              <span class="php-quote">&quot; WHERE idcuenta = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$idcuenta</span>).<span class="php-quote">&quot; ORDER BY codsubcuenta ASC;&quot;</span>);
+</span><span id="392" class="l"><a class="l" href="#392">392: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
+</span><span id="393" class="l"><a class="l" href="#393">393: </a>      {
+</span><span id="394" class="l"><a class="l" href="#394">394: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
+</span><span id="395" class="l"><a class="l" href="#395">395: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
+</span><span id="396" class="l"><a class="l" href="#396">396: </a>      }
+</span><span id="397" class="l"><a class="l" href="#397">397: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
+</span><span id="398" class="l"><a class="l" href="#398">398: </a>   }
+</span><span id="399" class="l"><a class="l" href="#399">399: </a>   
+</span><span id="400" class="l"><a class="l" href="#400">400: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_ejercicio" href="#_all_from_ejercicio">all_from_ejercicio</a>(<span class="php-var">$codejercicio</span>)
+</span><span id="401" class="l"><a class="l" href="#401">401: </a>   {
+</span><span id="402" class="l"><a class="l" href="#402">402: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
+</span><span id="403" class="l"><a class="l" href="#403">403: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="404" class="l"><a class="l" href="#404">404: </a>              <span class="php-quote">&quot; WHERE codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codejercicio</span>).
+</span><span id="405" class="l"><a class="l" href="#405">405: </a>              <span class="php-quote">&quot; ORDER BY codsubcuenta ASC;&quot;</span>);
+</span><span id="406" class="l"><a class="l" href="#406">406: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
+</span><span id="407" class="l"><a class="l" href="#407">407: </a>      {
+</span><span id="408" class="l"><a class="l" href="#408">408: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
+</span><span id="409" class="l"><a class="l" href="#409">409: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
+</span><span id="410" class="l"><a class="l" href="#410">410: </a>      }
+</span><span id="411" class="l"><a class="l" href="#411">411: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
+</span><span id="412" class="l"><a class="l" href="#412">412: </a>   }
+</span><span id="413" class="l"><a class="l" href="#413">413: </a>   
+</span><span id="414" class="l"><a class="l" href="#414">414: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search" href="#_search">search</a>(<span class="php-var">$query</span>)
+</span><span id="415" class="l"><a class="l" href="#415">415: </a>   {
+</span><span id="416" class="l"><a class="l" href="#416">416: </a>      <span class="php-var">$sublist</span> = <span class="php-keyword1">array</span>();
+</span><span id="417" class="l"><a class="l" href="#417">417: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
+</span><span id="418" class="l"><a class="l" href="#418">418: </a>      <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="419" class="l"><a class="l" href="#419">419: </a>              <span class="php-quote">&quot; WHERE codsubcuenta LIKE '&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR codsubcuenta LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;'
+</span></span><span id="420" class="l"><a class="l" href="#420">420: </a><span class="php-quote">               OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%'
+</span></span><span id="421" class="l"><a class="l" href="#421">421: </a><span class="php-quote">               ORDER BY codejercicio DESC, codcuenta ASC;&quot;</span>);
+</span><span id="422" class="l"><a class="l" href="#422">422: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
+</span><span id="423" class="l"><a class="l" href="#423">423: </a>      {
+</span><span id="424" class="l"><a class="l" href="#424">424: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
+</span><span id="425" class="l"><a class="l" href="#425">425: </a>            <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
+</span><span id="426" class="l"><a class="l" href="#426">426: </a>      }
+</span><span id="427" class="l"><a class="l" href="#427">427: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
+</span><span id="428" class="l"><a class="l" href="#428">428: </a>   }
+</span><span id="429" class="l"><a class="l" href="#429">429: </a>   
+</span><span id="430" class="l"><a class="l" href="#430">430: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search_by_ejercicio" href="#_search_by_ejercicio">search_by_ejercicio</a>(<span class="php-var">$ejercicio</span>, <span class="php-var">$query</span>)
+</span><span id="431" class="l"><a class="l" href="#431">431: </a>   {
+</span><span id="432" class="l"><a class="l" href="#432">432: </a>      <span class="php-var">$query</span> = <span class="php-var">$this</span>-&gt;escape_string( <span class="php-keyword2">strtolower</span>( <span class="php-keyword2">trim</span>(<span class="php-var">$query</span>) ) );
+</span><span id="433" class="l"><a class="l" href="#433">433: </a>      
+</span><span id="434" class="l"><a class="l" href="#434">434: </a>      <span class="php-var">$sublist</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'search_subcuenta_ejercicio_'</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'_'</span>.<span class="php-var">$query</span>);
+</span><span id="435" class="l"><a class="l" href="#435">435: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">count</span>(<span class="php-var">$sublist</span>) &lt; <span class="php-num">1</span> )
+</span><span id="436" class="l"><a class="l" href="#436">436: </a>      {
+</span><span id="437" class="l"><a class="l" href="#437">437: </a>         <span class="php-var">$subcuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="438" class="l"><a class="l" href="#438">438: </a>              <span class="php-quote">&quot; WHERE codejercicio = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$ejercicio</span>).
+</span><span id="439" class="l"><a class="l" href="#439">439: </a>              <span class="php-quote">&quot; AND (codsubcuenta LIKE '&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR codsubcuenta LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;'
+</span></span><span id="440" class="l"><a class="l" href="#440">440: </a><span class="php-quote">               OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%')
+</span></span><span id="441" class="l"><a class="l" href="#441">441: </a><span class="php-quote">               ORDER BY codcuenta ASC;&quot;</span>);
+</span><span id="442" class="l"><a class="l" href="#442">442: </a>         
+</span><span id="443" class="l"><a class="l" href="#443">443: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$subcuentas</span>)
+</span><span id="444" class="l"><a class="l" href="#444">444: </a>         {
+</span><span id="445" class="l"><a class="l" href="#445">445: </a>            <span class="php-keyword1">foreach</span>(<span class="php-var">$subcuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$s</span>)
+</span><span id="446" class="l"><a class="l" href="#446">446: </a>               <span class="php-var">$sublist</span>[] = <span class="php-keyword1">new</span> subcuenta(<span class="php-var">$s</span>);
+</span><span id="447" class="l"><a class="l" href="#447">447: </a>         }
+</span><span id="448" class="l"><a class="l" href="#448">448: </a>         
+</span><span id="449" class="l"><a class="l" href="#449">449: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'search_subcuenta_ejercicio_'</span>.<span class="php-var">$ejercicio</span>.<span class="php-quote">'_'</span>.<span class="php-var">$query</span>, <span class="php-var">$sublist</span>, <span class="php-num">300</span>);
+</span><span id="450" class="l"><a class="l" href="#450">450: </a>      }
+</span><span id="451" class="l"><a class="l" href="#451">451: </a>      
+</span><span id="452" class="l"><a class="l" href="#452">452: </a>      <span class="php-keyword1">return</span> <span class="php-var">$sublist</span>;
+</span><span id="453" class="l"><a class="l" href="#453">453: </a>   }
+</span><span id="454" class="l"><a class="l" href="#454">454: </a>}
+</span><span id="455" class="l"><a class="l" href="#455">455: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

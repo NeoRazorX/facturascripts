@@ -18,6 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('agente.php');
+require_model('articulo.php');
+require_model('cliente.php');
+require_model('fs_extension.php');
 require_model('pedido_cliente.php');
 
 class ventas_pedidos extends fs_controller
@@ -34,17 +38,57 @@ class ventas_pedidos extends fs_controller
    
    protected function process()
    {
+      $pedido = new pedido_cliente();
+      
+      $this->offset = 0;
+      if( isset($_GET['offset']) )
+         $this->offset = intval($_GET['offset']);
+      
       if( isset($_POST['buscar_lineas']) )
       {
          $this->buscar_lineas();
       }
+      else if( isset($_GET['codagente']) )
+      {
+         $this->template = 'extension/ventas_pedidos_agente';
+         $this->ppage = clone $this->page;
+         $this->page->show_on_menu = FALSE;
+         $this->page->title = 'Filtro: agente';
+         
+         $agente = new agente();
+         $this->agente = $agente->get($_GET['codagente']);
+         $this->resultados = $pedido->all_from_agente($_GET['codagente'], $this->offset);
+      }
+      else if( isset($_GET['codcliente']) )
+      {
+         $this->template = 'extension/ventas_pedidos_cliente';
+         $this->ppage = clone $this->page;
+         $this->page->show_on_menu = FALSE;
+         $this->page->title = 'Filtro: cliente';
+         
+         $cliente = new cliente();
+         $this->cliente = $cliente->get($_GET['codcliente']);
+         $this->resultados = $pedido->all_from_cliente($_GET['codcliente'], $this->offset);
+      }
+      else if( isset($_GET['ref']) )
+      {
+         $this->template = 'extension/ventas_pedidos_articulo';
+         $this->ppage = clone $this->page;
+         $this->page->show_on_menu = FALSE;
+         $this->page->title = 'Filtro: artículo';
+         
+         $articulo = new articulo();
+         $this->articulo = $articulo->get($_GET['ref']);
+         
+         $linea = new linea_pedido_cliente();
+         $this->resultados = $linea->all_from_articulo($_GET['ref'], $this->offset);
+      }
       else
       {
-         $pedido = new pedido_cliente();
          $this->custom_search = TRUE;
+         $this->share_extension();
          
          $this->buttons[] = new fs_button('b_nuevo_pedido', 'Nuevo', 'index.php?page=nueva_venta&tipo=pedido');
-         $this->buttons[] = new fs_button('b_agrupar_pedidos', 'Agrupar', 'index.php?page=ventas_agrupar_pedidos');
          $this->buttons[] = new fs_button('b_buscar_lineas', 'Lineas');
          
          if( !isset($_GET['ptealbaran']) )
@@ -56,10 +100,6 @@ class ventas_pedidos extends fs_controller
          {
             $this->delete_pedido();
          }
-         
-         $this->offset = 0;
-         if( isset($_GET['offset']) )
-            $this->offset = intval($_GET['offset']);
          
          if($this->query)
          {
@@ -82,12 +122,30 @@ class ventas_pedidos extends fs_controller
       $extra = '';
       
       if( isset($_GET['ptealbaran']) )
+      {
          $extra = '&ptealbaran=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
+      {
+         $extra = '&codagente='.$_GET['codagente'];
+      }
+      else if( isset($_GET['codcliente']) )
+      {
+         $extra = '&codcliente='.$_GET['codcliente'];
+      }
+      else if( isset($_GET['ref']) )
+      {
+         $extra = '&ref='.$_GET['ref'];
+      }
       
       if($this->query!='' AND $this->offset>'0')
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      }
       else if($this->query=='' AND $this->offset>'0')
+      {
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT).$extra;
+      }
       
       return $url;
    }
@@ -98,12 +156,30 @@ class ventas_pedidos extends fs_controller
       $extra = '';
       
       if( isset($_GET['ptealbaran']) )
+      {
          $extra = '&ptealbaran=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
+      {
+         $extra = '&codagente='.$_GET['codagente'];
+      }
+      else if( isset($_GET['codcliente']) )
+      {
+         $extra = '&codcliente='.$_GET['codcliente'];
+      }
+      else if( isset($_GET['ref']) )
+      {
+         $extra = '&ref='.$_GET['ref'];
+      }
       
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      }
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT).$extra;
+      }
       
       return $url;
    }
@@ -141,11 +217,48 @@ class ventas_pedidos extends fs_controller
          }
          
          if( $ped1->delete() )
+         {
             $this->new_message("Pedido ".$ped1->codigo." borrado correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible borrar el pedido!");
       }
       else
          $this->new_error_msg("¡Pedido no encontrado!");
+   }
+   
+   private function share_extension()
+   {
+      /// cargamos la extensión para clientes
+      $fsext0 = new fs_extension();
+      if( !$fsext0->get_by(__CLASS__, 'ventas_cliente') )
+      {
+         $fsext = new fs_extension();
+         $fsext->from = __CLASS__;
+         $fsext->to = 'ventas_cliente';
+         $fsext->type = 'button';
+         $fsext->text = 'Pedidos';
+         $fsext->save();
+      }
+      
+      if( !$fsext0->get_by(__CLASS__, 'admin_agente') )
+      {
+         $fsext = new fs_extension();
+         $fsext->from = __CLASS__;
+         $fsext->to = 'admin_agente';
+         $fsext->type = 'button';
+         $fsext->text = 'Pedidos de clientes';
+         $fsext->save();
+      }
+      
+      if( !$fsext0->get_by(__CLASS__, 'ventas_articulo') )
+      {
+         $fsext = new fs_extension();
+         $fsext->from = __CLASS__;
+         $fsext->to = 'ventas_articulo';
+         $fsext->type = 'button';
+         $fsext->text = 'Pedidos de clientes';
+         $fsext->save();
+      }
    }
 }

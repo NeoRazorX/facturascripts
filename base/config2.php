@@ -37,7 +37,7 @@ else
    $GLOBALS['config2'] = array(
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
-       'cifnif' => 'cif/nif'
+       'cifnif' => 'CIF/NIF'
    );
 }
 

@@ -230,24 +230,9 @@ class pedido_cliente extends fs_model
       return $linea->all_from_pedido($this->idpedido);
    }
    
-   public function get_agente()
-   {
-      $agente = new agente();
-      return $agente->get($this->codagente);
-   }
-   
    public function get($id)
    {
       $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($id).";");
-      if($pedido)
-         return new pedido_cliente($pedido[0]);
-      else
-         return FALSE;
-   }
-   
-   public function get_by_codigo($cod)
-   {
-      $pedido = $this->db->select("SELECT * FROM ".$this->table_name." WHERE upper(codigo) = ".strtoupper($this->var2str($cod)).";");
       if($pedido)
          return new pedido_cliente($pedido[0]);
       else
@@ -262,7 +247,7 @@ class pedido_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }
    
-   public function new_idpedido()
+   private function new_idpedido()
    {
       $newid = $this->db->nextval($this->table_name.'_idpedido_seq');
       if($newid)

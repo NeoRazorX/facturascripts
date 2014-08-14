@@ -7,7 +7,7 @@
 	<title>Class cuenta</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
-	<script type="text/javascript" src="elementlist.js?2323499529"></script>
+	<script type="text/javascript" src="elementlist.js?3525696971"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360">
 
 </head>
@@ -61,6 +61,7 @@
 				<li><a href="class-fs_controller.html">fs_controller</a></li>
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
+				<li><a href="class-fs_extension.html">fs_extension</a></li>
 				<li><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -102,8 +103,6 @@
 			<h3>Functions</h3>
 			<ul>
 				<li><a href="function-bround.html">bround</a></li>
-				<li><a href="function-cmp_linea_iva_fact_cli.html">cmp_linea_iva_fact_cli</a></li>
-				<li><a href="function-cmp_linea_iva_fact_pro.html">cmp_linea_iva_fact_pro</a></li>
 				<li><a href="function-require_model.html">require_model</a></li>
 			</ul>
 		</div>
@@ -177,7 +176,7 @@ ejercicio y epígrafe, pero puede estar relacionada con muchas subcuentas.</p>
 		
 		
 
-		<b>Located at</b> <a href="source-class-cuenta.html#25-240" title="Go to source code">cuenta.php</a><br>
+		<b>Located at</b> <a href="source-class-cuenta.html#25-282" title="Go to source code">cuenta.php</a><br>
 	</div>
 
 
@@ -400,6 +399,50 @@ tabla.</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="get_cuentaesp" id="_get_cuentaesp">
+
+		<td class="attributes"><code>
+			 public 
+			boolean|<code><a href="class-cuenta.html">cuenta</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get_cuentaesp">#</a>
+		<code><a href="source-class-cuenta.html#113-127" title="Go to source code">get_cuentaesp</a>( <span>type <var>$id</var></span>, <span>type <var>$ejercicio</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Obtiene la primera cuenta especial seleccionada.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Obtiene la primera cuenta especial seleccionada.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$id</var></dt>
+					<dd><code>type</code><br>$id</dd>
+					<dt><var>$ejercicio</var></dt>
+					<dd><code>type</code><br>$ejercicio</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean|<code><a href="class-cuenta.html">cuenta</a></code></code><br>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="exists" id="_exists">
 
 		<td class="attributes"><code>
@@ -411,7 +454,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_exists">#</a>
-		<code><a href="source-class-cuenta.html#113-120" title="Go to source code">exists</a>( )</code>
+		<code><a href="source-class-cuenta.html#129-135" title="Go to source code">exists</a>( )</code>
 
 		<div class="description short">
 			
@@ -446,7 +489,7 @@ de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_test">#</a>
-		<code><a href="source-class-cuenta.html#122-133" title="Go to source code">test</a>( )</code>
+		<code><a href="source-class-cuenta.html#137-150" title="Go to source code">test</a>( )</code>
 
 		<div class="description short">
 			
@@ -479,7 +522,7 @@ de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-cuenta.html#135-167" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-cuenta.html#152-184" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			
@@ -514,7 +557,7 @@ objeto en la base de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_delete">#</a>
-		<code><a href="source-class-cuenta.html#169-173" title="Go to source code">delete</a>( )</code>
+		<code><a href="source-class-cuenta.html#186-189" title="Go to source code">delete</a>( )</code>
 
 		<div class="description short">
 			
@@ -549,7 +592,7 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all">#</a>
-		<code><a href="source-class-cuenta.html#175-186" title="Go to source code">all</a>( <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-cuenta.html#191-201" title="Go to source code">all</a>( <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -578,7 +621,7 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_full_from_epigrafe">#</a>
-		<code><a href="source-class-cuenta.html#188-199" title="Go to source code">full_from_epigrafe</a>( <span>mixed <var>$id</var></span> )</code>
+		<code><a href="source-class-cuenta.html#203-213" title="Go to source code">full_from_epigrafe</a>( <span>mixed <var>$id</var></span> )</code>
 
 		<div class="description short">
 			
@@ -607,7 +650,7 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all_from_ejercicio">#</a>
-		<code><a href="source-class-cuenta.html#201-212" title="Go to source code">all_from_ejercicio</a>( <span>mixed <var>$codejercicio</var></span>, <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-cuenta.html#215-226" title="Go to source code">all_from_ejercicio</a>( <span>mixed <var>$codejercicio</var></span>, <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -636,7 +679,7 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_full_from_ejercicio">#</a>
-		<code><a href="source-class-cuenta.html#214-225" title="Go to source code">full_from_ejercicio</a>( <span>mixed <var>$codejercicio</var></span> )</code>
+		<code><a href="source-class-cuenta.html#228-239" title="Go to source code">full_from_ejercicio</a>( <span>mixed <var>$codejercicio</var></span> )</code>
 
 		<div class="description short">
 			
@@ -665,7 +708,36 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_search">#</a>
-		<code><a href="source-class-cuenta.html#227-239" title="Go to source code">search</a>( <span>mixed <var>$query</var></span>, <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-cuenta.html#241-253" title="Go to source code">search</a>( <span>mixed <var>$query</var></span>, <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="new_subcuenta" id="_new_subcuenta">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_new_subcuenta">#</a>
+		<code><a href="source-class-cuenta.html#255-281" title="Go to source code">new_subcuenta</a>( <span>mixed <var>$suma_codigo</var></span> )</code>
 
 		<div class="description short">
 			

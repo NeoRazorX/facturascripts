@@ -102,7 +102,13 @@ class ventas_pedido extends fs_controller
       else if( $this->pedido )
       {
          $this->page->title = $this->pedido->codigo;
-         $this->agente = $this->pedido->get_agente();
+         
+         /// cargamos el agente
+         if( !is_null($this->pedido->codagente) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($this->pedido->codagente);
+         }
          
          /**
           * Como es una plantilla compleja, he separado el código HTML
@@ -523,7 +529,7 @@ class ventas_pedido extends fs_controller
             else
             {
                $pdf_doc->pdf->ezText("<b>".$this->empresa->nombre."</b>", 16, array('justification' => 'center'));
-               $pdf_doc->pdf->ezText("CIF/NIF: ".$this->empresa->cifnif, 8, array('justification' => 'center'));
+               $pdf_doc->pdf->ezText(FS_CIFNIF.": ".$this->empresa->cifnif, 8, array('justification' => 'center'));
                
                $direccion = $this->empresa->direccion;
                if($this->empresa->codpostal)
@@ -556,7 +562,7 @@ class ventas_pedido extends fs_controller
                array(
                    'campo1' => "<b>Cliente:</b>",
                    'dato1' => $this->pedido->nombrecliente,
-                   'campo2' => "<b>CIF/NIF:</b>",
+                   'campo2' => "<b>".FS_CIFNIF.":</b>",
                    'dato2' => $this->pedido->cifnif
                )
             );

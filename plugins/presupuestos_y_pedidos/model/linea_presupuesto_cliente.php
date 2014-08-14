@@ -37,9 +37,14 @@ class linea_presupuesto_cliente extends fs_model
    public $recargo;
    public $referencia;
    
+   private static $presupuestos;
+   
    public function __construct($l = FALSE)
    {
       parent::__construct('lineaspresupuestoscli', 'plugins/presupuestos_y_pedidos/');
+      
+      if( !isset(self::$presupuestos) )
+         self::$presupuestos = array();
       
       if($l)
       {
@@ -90,6 +95,81 @@ class linea_presupuesto_cliente extends fs_model
    public function total_iva()
    {
       return $this->pvptotal*(100+$this->iva)/100;
+   }
+   
+   public function show_codigo()
+   {
+      $codigo = 'desconocido';
+      
+      $encontrado = FALSE;
+      foreach(self::$presupuestos as $p)
+      {
+         if($p->idpresupuesto == $this->idpresupuesto)
+         {
+            $codigo = $p->codigo;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new presupuesto_cliente();
+         self::$presupuestos[] = $pre->get($this->idpresupuesto);
+         $codigo = self::$presupuestos[ count(self::$presupuestos)-1 ]->codigo;
+      }
+      
+      return $codigo;
+   }
+   
+   public function show_fecha()
+   {
+      $fecha = 'desconocida';
+      
+      $encontrado = FALSE;
+      foreach(self::$presupuestos as $p)
+      {
+         if($p->idpresupuesto == $this->idpresupuesto)
+         {
+            $fecha = $p->fecha;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new presupuesto_cliente();
+         self::$presupuestos[] = $pre->get($this->idpresupuesto);
+         $fecha = self::$presupuestos[ count(self::$presupuestos)-1 ]->fecha;
+      }
+      
+      return $fecha;
+   }
+   
+   public function show_nombrecliente()
+   {
+      $nombre = 'desconocido';
+      
+      $encontrado = FALSE;
+      foreach(self::$presupuestos as $p)
+      {
+         if($p->idpresupuesto == $this->idpresupuesto)
+         {
+            $nombre = $p->nombrecliente;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new presupuesto_cliente();
+         self::$presupuestos[] = $pre->get($this->idpresupuesto);
+         $nombre = self::$presupuestos[ count(self::$presupuestos)-1 ]->nombrecliente;
+      }
+      
+      return $nombre;
    }
    
    public function url()

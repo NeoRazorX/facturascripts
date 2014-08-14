@@ -36,9 +36,14 @@ class linea_pedido_cliente extends fs_model
    public $recargo;
    public $referencia;
    
+   private static $pedidos;
+   
    public function __construct($l = FALSE)
    {
       parent::__construct('lineaspedidoscli', 'plugins/presupuestos_y_pedidos/');
+      
+      if( !isset(self::$pedidos) )
+         self::$pedidos = array();
       
       if($l)
       {
@@ -89,6 +94,81 @@ class linea_pedido_cliente extends fs_model
    public function total_iva()
    {
       return $this->pvptotal*(100+$this->iva)/100;
+   }
+   
+   public function show_codigo()
+   {
+      $codigo = 'desconocido';
+      
+      $encontrado = FALSE;
+      foreach(self::$pedidos as $p)
+      {
+         if($p->idpedido == $this->idpedido)
+         {
+            $codigo = $p->codigo;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new pedido_cliente();
+         self::$pedidos[] = $pre->get($this->idpedido);
+         $codigo = self::$pedidos[ count(self::$pedidos)-1 ]->codigo;
+      }
+      
+      return $codigo;
+   }
+   
+   public function show_fecha()
+   {
+      $fecha = 'desconocida';
+      
+      $encontrado = FALSE;
+      foreach(self::$pedidos as $p)
+      {
+         if($p->idpedido == $this->idpedido)
+         {
+            $fecha = $p->fecha;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new pedido_cliente();
+         self::$pedidos[] = $pre->get($this->idpedido);
+         $fecha = self::$pedidos[ count(self::$pedidos)-1 ]->fecha;
+      }
+      
+      return $fecha;
+   }
+   
+   public function show_nombrecliente()
+   {
+      $nombre = 'desconocido';
+      
+      $encontrado = FALSE;
+      foreach(self::$pedidos as $p)
+      {
+         if($p->idpedido == $this->idpedido)
+         {
+            $nombre = $p->nombrecliente;
+            $encontrado = TRUE;
+            break;
+         }
+      }
+      
+      if( !$encontrado )
+      {
+         $pre = new pedido_cliente();
+         self::$pedidos[] = $pre->get($this->idpedido);
+         $nombre = self::$pedidos[ count(self::$pedidos)-1 ]->nombrecliente;
+      }
+      
+      return $nombre;
    }
    
    public function url()

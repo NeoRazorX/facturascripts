@@ -133,7 +133,7 @@ class nueva_venta extends fs_controller
    public function tipos_a_guardar()
    {
       return array(
-          array('tipo' => 'presupuesto', 'nombre' => 'Presupuesto a cliente'),
+          array('tipo' => 'presupuesto', 'nombre' => 'Presupuesto para cliente'),
           array('tipo' => 'pedido', 'nombre' => 'Pedido de cliente'),
           array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de cliente'),
           array('tipo' => 'factura', 'nombre' => 'Factura de cliente')
