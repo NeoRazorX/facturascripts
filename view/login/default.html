@@ -37,9 +37,18 @@
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
-                  <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
-                     <span class="glyphicon glyphicon-question-sign"></span>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
+                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                     <span class="visible-xs">Ayuda</span>
                   </a>
+                  <ul class="dropdown-menu">
+                     <li><a href="{#FS_COMMUNITY_URL#}/questions.php">Preguntas</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/errors.php">Errores</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/ideas.php">Sugerencias</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/all.php">Todo</a></li>
+                     <li class="divider"></li>
+                     <li><a href="#" data-toggle="modal" data-target="#modal_feedback">Escribir...</a></li>
+                  </ul>
                </li>
             </ul>
          </div>
