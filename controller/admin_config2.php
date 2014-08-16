@@ -49,6 +49,8 @@ class admin_config2 extends fs_controller
             
             fclose($file);
          }
+         
+         $this->new_message('Datos guardados correctamente.');
       }
    }
    
