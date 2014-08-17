@@ -76,57 +76,71 @@ class admin_plugins extends fs_controller
    
    private function enable_plugin($name)
    {
-      if( touch('tmp/enabled_plugins/'.$name) )
+      if( !file_exists('tmp/enabled_plugins/'.$name) )
       {
-         $GLOBALS['plugins'][] = $name;
-         
-         /// activamos las páginas del plugin
-         $page_list = array();
-         foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
+         if( touch('tmp/enabled_plugins/'.$name) )
          {
-            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+            $GLOBALS['plugins'][] = $name;
+            
+            /// activamos las páginas del plugin
+            $page_list = array();
+            foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
             {
-               $page_name = substr($f, 0, -4);
-               $page_list[] = $page_name;
-               
-               require_once 'plugins/'.$name.'/controller/'.$f;
-               $new_fsc = new $page_name();
-               
-               if( !$new_fsc->page->save() )
-                  $this->new_error_msg("Imposible guardar la página ".$page_name);
-               
-               unset($new_fsc);
+               if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+               {
+                  $page_name = substr($f, 0, -4);
+                  $page_list[] = $page_name;
+                  
+                  require_once 'plugins/'.$name.'/controller/'.$f;
+                  $new_fsc = new $page_name();
+                  
+                  if( !$new_fsc->page->save() )
+                     $this->new_error_msg("Imposible guardar la página ".$page_name);
+                  
+                  unset($new_fsc);
+               }
             }
+            
+            $this->new_message('Módulo <b>'.$name.'</b> activado correctamente.');
+            $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
+            $this->load_menu(TRUE);
+            
+            /// limpiamos la caché
+            $this->cache->clean();
          }
-         
-         $this->new_message('Módulo <b>'.$name.'</b> activado correctamente.');
-         $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
-         $this->load_menu(TRUE);
-         
-         /// limpiamos la caché
-         $this->cache->clean();
+         else
+            $this->new_error_msg('Imposible activar el módulo <b>'.$name.'</b>.');
       }
       else
-         $this->new_error_msg('Imposible activar el módulo <b>'.$name.'</b>.');
+	  {
+		  $this->new_error_msg('El módulo <b>'.$name.'</b> ya esta activado.');
+	  }
    }
    
    private function disable_plugin($name)
    {
-      if( unlink('tmp/enabled_plugins/'.$name) )
-      {
-         $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
-         
-         foreach($GLOBALS['plugins'] as $i => $value)
+	  if( file_exists('tmp/enabled_plugins/'.$name) )
+	  {
+         if( unlink('tmp/enabled_plugins/'.$name) )
          {
-            if($value == $name)
+            $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
+            
+            foreach($GLOBALS['plugins'] as $i => $value)
             {
-               unset($GLOBALS['plugins'][$i]);
-               break;
+               if($value == $name)
+               {
+                  unset($GLOBALS['plugins'][$i]);
+                  break;
+               }
             }
          }
-      }
-      else
-         $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
+         else
+            $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
+	  }
+	  else
+	  {
+		  $this->new_error_msg('El módulo <b>'.$name.'</b> ya esta desactivado.');
+	  }
       
       /*
        * Desactivamos las páginas que ya no existen
