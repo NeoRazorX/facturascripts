@@ -188,6 +188,12 @@ class albaran_cliente extends fs_model
    
    public function url()
    {
+// SI ES UN USUARIO AGENTE
+//      if( is_null($this->idalbaran) )
+//         return 'index.php?page=ventas_albaranes';
+//      else
+//         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
+// SI ES UN USUARIO CLIENTE
       if( is_null($this->idalbaran) )
          return 'index.php?page=b2b_ventas_albaranes';
       else
@@ -202,6 +208,12 @@ class albaran_cliente extends fs_model
       }
       else
       {
+// SI ES UN USUARIO AGENTE
+//         if( is_null($this->idfactura) )
+//            return 'index.php?page=b2b_ventas_facturas';
+//         else
+//            return 'index.php?page=b2b_ventas_factura&id='.$this->idfactura;
+// SI ES UN USUARIO CLIENTE
          if( is_null($this->idfactura) )
             return 'index.php?page=b2b_ventas_facturas';
          else

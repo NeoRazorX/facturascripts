@@ -119,6 +119,12 @@ class cliente extends fs_model
    
    public function url()
    {
+// SI ES UN USUARIO AGENTE
+//      if( is_null($this->codcliente) )
+//         return "index.php?page=ventas_clientes";
+//      else
+//         return "index.php?page=ventas_cliente&cod=".$this->codcliente;
+// SI ES UN USUARIO CLIENTE
       if( is_null($this->codcliente) )
          return "index.php?page=b2b_ventas_clientes";
       else
