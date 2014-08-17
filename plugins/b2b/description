@@ -1,1 +1,8 @@
 Proporciona una tienda online B2B (de empresa a empresa)
+
+<strong>Trabajo pendiente:</strong>
+- "B2B -> Clientes" deberia ser "Mi cuenta" enlazando a "index.php?page=b2b_ventas_cliente&cod=COD_CLIENTE"
+- "B2B -> Mis albaranes" deberia enlazar a "index.php?page=b2b_ventas_albaranes&codcliente=COD_CLIENTE"
+- "B2B -> Mis facturas" deberia enlazar a "index.php?page=b2b_ventas_facturas&codcliente=COD_CLIENTE"
+- El "Usuario" a iniciar debería ser un "Cliente" en lugar de un "Agente"
+- Capar bien los accesos que debe tener el usuario

@@ -109,7 +109,7 @@ class b2b_ventas_albaran extends fs_controller
          }
          
          /* Un cliente B2B no necesita editar sus albaranes*/
-         $this->template = 'ventas_albaran';
+         $this->template = 'b2b_ventas_albaran';
          
          /// comprobamos el albarán
          if( $this->albaran->full_test() )
@@ -122,7 +122,8 @@ class b2b_ventas_albaran extends fs_controller
                   $this->generar_factura();
             }
             
-            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
+// DEBE CAPARSE
+//            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
             $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
             
             /// comprobamos si se pueden enviar emails
@@ -144,15 +145,17 @@ class b2b_ventas_albaran extends fs_controller
          
             if( $this->albaran->ptefactura )
             {
-               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
+// DEBE CAPARSE
+//               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
             }
             else if( isset($this->albaran->idfactura) )
             {
                $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
             }
          }
-         
-         $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
+
+// DEBE CAPARSE         
+//         $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");
@@ -183,6 +186,7 @@ class b2b_ventas_albaran extends fs_controller
          else
             $this->new_error_msg('No se encuentra el ejercicio asociado al '.FS_ALBARAN);
          
+// DEBE CAPARSE
          /// ¿cambiamos el cliente?
          if($_POST['cliente'] != $this->albaran->codcliente)
          {

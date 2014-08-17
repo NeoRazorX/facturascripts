@@ -103,7 +103,8 @@ class b2b_ventas_albaranes extends fs_controller
          
          if( isset($_POST['delete']) )
          {
-            $this->delete_albaran();
+// DEBE CAPARSE
+//            $this->delete_albaran();
          }
          
          if($this->query)
@@ -237,16 +238,16 @@ class b2b_ventas_albaranes extends fs_controller
       else
          $this->new_error_msg("¡".FS_ALBARAN." no encontrado!");
    }
-   
+
    private function share_extension()
    {
       /// cargamos la extensión para clientes
       $fsext0 = new fs_extension();
-      if( !$fsext0->get_by(__CLASS__, 'ventas_cliente') )
+      if( !$fsext0->get_by(__CLASS__, 'b2b_ventas_cliente') )
       {
          $fsext = new fs_extension();
          $fsext->from = __CLASS__;
-         $fsext->to = 'ventas_cliente';
+         $fsext->to = 'b2b_ventas_cliente';
          $fsext->type = 'button';
          $fsext->text = ucfirst(FS_ALBARANES);
          $fsext->save();

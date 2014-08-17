@@ -58,7 +58,7 @@ class b2b_ventas_cliente extends fs_controller
       
       /// cargamos las extensiones
       $fs_extension = new fs_extension();
-      $this->extensiones = $fs_extension->all_to('ventas_cliente');
+      $this->extensiones = $fs_extension->all_to('b2b_ventas_cliente');
       
       /// cargamos el cliente
       $cliente = new cliente();
@@ -187,7 +187,7 @@ class b2b_ventas_cliente extends fs_controller
       if($this->cliente)
       {
          $this->page->title = $this->cliente->codcliente;
-         //Un cliente no debe poder borrarse a si mismo
+// DEBE CAPARSE
          //$this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else

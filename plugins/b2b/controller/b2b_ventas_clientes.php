@@ -35,6 +35,7 @@ class b2b_ventas_clientes extends fs_controller
    
    public function __construct()
    {
+// DEBE CAPARSE
 	  /*ESTA NO DEBE VERSE*/
       parent::__construct(__CLASS__, 'Clientes', 'B2B', FALSE, TRUE);
    }
@@ -42,8 +43,9 @@ class b2b_ventas_clientes extends fs_controller
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'Nuevo', 'add.png', '#nuevo');
-      $this->buttons[] = new fs_button('b_grupos_clientes', 'Grupos', '#grupos');
+// DEBE CAPARSE
+//      $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'Nuevo', 'add.png', '#nuevo');
+//      $this->buttons[] = new fs_button('b_grupos_clientes', 'Grupos', '#grupos');
       $this->cliente = new cliente();
       $this->grupo = new grupo_clientes();
       $this->pais = new pais();
