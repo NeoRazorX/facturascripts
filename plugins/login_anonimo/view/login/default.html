@@ -62,7 +62,7 @@
    
    <div class="container">
       <div class="row">
-         <div class="col-md-6{if condition="!FS_DB_HISTORY"} col-md-offset-3{/if}">
+         <div class="col-md-6 col-xs-12 {if condition="!FS_DB_HISTORY"} col-md-offset-3{/if}">
             <div class="well well-lg" id="box_login">
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" role="form">
                   <div class="form-group">
@@ -71,10 +71,10 @@
                   </div>
                   <div class="form-group">
                      <label>Contraseña</label>
-                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <input type="password" class="form-control input-xs" name="password" maxlength="20" placeholder="Contraseña"/>
                   </div>
                   <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
-                  <input type="submit" class="btn btn-primary pull-right" id="login" value="Iniciar sesión"/>
+                  <input type="submit" class="btn btn-primary btn-xs pull-right" id="login" value="Iniciar sesión"/>
                   <br/><br/>
                </form>
             </div>
@@ -86,7 +86,7 @@
             </div>
          </div>
          {if condition="FS_DB_HISTORY"}
-         <div class="col-md-6">
+         <div class="col-md-6 col-xs-12">
             <div class="panel panel-warning" style="margin: 5px;">
                <div class="panel-heading">
                   <h3 class="panel-title">Consultas SQL:</h3>
