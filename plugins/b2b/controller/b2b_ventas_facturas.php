@@ -19,65 +19,58 @@
  */
 
 require_model('agente.php');
-require_model('albaran_cliente.php');
 require_model('articulo.php');
 require_model('cliente.php');
+require_model('factura_cliente.php');
 require_model('fs_extension.php');
 
-class b2b_ventas_albaranes extends fs_controller
+class b2b_ventas_facturas extends fs_controller
 {
    public $agente;
    public $articulo;
-   public $buscar_lineas;
    public $cliente;
-   public $lineas;
+   public $factura;
    public $offset;
    public $resultados;
-
+   
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Mis '.FS_ALBARANES, 'B2B', FALSE, TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Mis Facturas', 'B2B', FALSE, TRUE);
    }
    
    protected function process()
    {
-      $albaran = new albaran_cliente();
+      $this->factura = new factura_cliente();
       
       $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       
-      if( isset($_POST['buscar_lineas']) )
+      if( isset($_GET['codagente']) )
       {
-         $this->buscar_lineas();
-      }
-      else if( isset($_GET['codagente']) )
-      {
-         $this->template = 'extension/ventas_albaranes_agente';
+         $this->template = 'extension/ventas_facturas_agente';
          $this->ppage = clone $this->page;
          $this->page->show_on_menu = FALSE;
          $this->page->title = 'Filtro: agente';
          
          $agente = new agente();
          $this->agente = $agente->get($_GET['codagente']);
-         $this->resultados = $albaran->all_from_agente($_GET['codagente'], $this->offset);
+         $this->resultados = $this->factura->all_from_agente($_GET['codagente'], $this->offset);
       }
       else if( isset($_GET['codcliente']) )
       {
-         $this->template = 'extension/ventas_albaranes_cliente';
+         $this->template = 'extension/ventas_facturas_cliente';
          $this->ppage = clone $this->page;
          $this->page->show_on_menu = FALSE;
          $this->page->title = 'Filtro: cliente';
          
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
-         
          $cliente = new cliente();
          $this->cliente = $cliente->get($_GET['codcliente']);
-         $this->resultados = $albaran->all_from_cliente($_GET['codcliente'], $this->offset);
+         $this->resultados = $this->factura->all_from_cliente($_GET['codcliente'], $this->offset);
       }
       else if( isset($_GET['ref']) )
       {
-         $this->template = 'extension/ventas_albaranes_articulo';
+         $this->template = 'extension/ventas_facturas_articulo';
          $this->ppage = clone $this->page;
          $this->page->show_on_menu = FALSE;
          $this->page->title = 'Filtro: artículo';
@@ -85,7 +78,7 @@ class b2b_ventas_albaranes extends fs_controller
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
          
-         $linea = new linea_albaran_cliente();
+         $linea = new linea_factura_cliente();
          $this->resultados = $linea->all_from_articulo($_GET['ref'], $this->offset);
       }
       else
@@ -93,33 +86,31 @@ class b2b_ventas_albaranes extends fs_controller
          $this->custom_search = TRUE;
          $this->share_extension();
          
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'Nuevo', 'index.php?page=nueva_venta&tipo=albaran');
-         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=ventas_agrupar_albaranes');
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
-         
-         if( !isset($_GET['ptefactura']) )
+         if( isset($_GET['delete']) )
          {
-            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptefactura=TRUE");
+            $fact = $this->factura->get($_GET['delete']);
+            if($fact)
+            {
+               if( $fact->delete() )
+               {
+                  $this->new_message("Factura eliminada correctamente.");
+               }
+               else
+                  $this->new_error_msg("¡Imposible eliminar la factura!");
+            }
+            else
+               $this->new_error_msg("¡Factura no encontrada!");
          }
          
-         if( isset($_POST['delete']) )
-         {
-// DEBE CAPARSE
-//            $this->delete_albaran();
-         }
+         $this->buttons[] = new fs_button('b_nueva', 'Nueva', 'index.php?page=nueva_venta&tipo=factura');
+         $this->buttons[] = new fs_button('b_huecos', 'Huecos');
          
-         if($this->query)
+         if($this->query != '')
          {
-            $this->resultados = $albaran->search($this->query, $this->offset);
-         }
-         else if( isset($_GET['ptefactura']) )
-         {
-            $this->new_advice('Estos son los '.FS_ALBARANES.' pendientes de facturar. Haz clic <a href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
-            $this->resultados = $albaran->all_ptefactura($this->offset);
+            $this->resultados = $this->factura->search($this->query, $this->offset);
          }
          else
-            $this->resultados = $albaran->all($this->offset);
+            $this->resultados = $this->factura->all($this->offset);
       }
    }
    
@@ -128,11 +119,7 @@ class b2b_ventas_albaranes extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptefactura']) )
-      {
-         $extra = '&ptefactura=TRUE';
-      }
-      else if( isset($_GET['codagente']) )
+      if( isset($_GET['codagente']) )
       {
          $extra = '&codagente='.$_GET['codagente'];
       }
@@ -162,11 +149,7 @@ class b2b_ventas_albaranes extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptefactura']) )
-      {
-         $extra = '&ptefactura=TRUE';
-      }
-      else if( isset($_GET['codagente']) )
+      if( isset($_GET['codagente']) )
       {
          $extra = '&codagente='.$_GET['codagente'];
       }
@@ -191,55 +174,6 @@ class b2b_ventas_albaranes extends fs_controller
       return $url;
    }
    
-   public function buscar_lineas()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/ventas_lineas_albaranes';
-      
-      $this->buscar_lineas = $_POST['buscar_lineas'];
-      $linea = new linea_albaran_cliente();
-      
-      if( isset($_POST['codcliente']) )
-      {
-         $this->lineas = $linea->search_from_cliente2($_POST['codcliente'], $this->buscar_lineas, $_POST['buscar_lineas_o']);
-      }
-      else
-      {
-         $this->lineas = $linea->search($this->buscar_lineas);
-      }
-   }
-   
-   private function delete_albaran()
-   {
-      $alb1 = new albaran_cliente();
-      $alb1 = $alb1->get($_POST['delete']);
-      if($alb1)
-      {
-         /// ¿Actualizamos el stock de los artículos?
-         if( isset($_POST['stock']) )
-         {
-            $articulo = new articulo();
-            
-            foreach($alb1->get_lineas() as $linea)
-            {
-               $art0 = $articulo->get($linea->referencia);
-               if($art0)
-               {
-                  $art0->sum_stock($alb1->codalmacen, $linea->cantidad);
-                  $art0->save();
-               }
-            }
-         }
-         
-         if( $alb1->delete() )
-            $this->new_message(FS_ALBARAN." ".$alb1->codigo." borrado correctamente.");
-         else
-            $this->new_error_msg("¡Imposible borrar el ".FS_ALBARAN."!");
-      }
-      else
-         $this->new_error_msg("¡".FS_ALBARAN." no encontrado!");
-   }
-
    private function share_extension()
    {
       /// cargamos la extensión para clientes
@@ -250,7 +184,7 @@ class b2b_ventas_albaranes extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'b2b_ventas_cliente';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_ALBARANES);
+         $fsext->text = 'Facturas';
          $fsext->save();
       }
       
@@ -260,7 +194,7 @@ class b2b_ventas_albaranes extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_ALBARANES).' de clientes';
+         $fsext->text = 'Facturas de clientes';
          $fsext->save();
       }
       
@@ -270,7 +204,7 @@ class b2b_ventas_albaranes extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_ALBARANES).' de clientes';
+         $fsext->text = 'Facturas de clientes';
          $fsext->save();
       }
    }
