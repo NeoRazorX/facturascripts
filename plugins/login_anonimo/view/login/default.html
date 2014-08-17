@@ -10,17 +10,17 @@
    <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
-
    <script type="text/javascript">
       $(document).ready(function() {
          {if condition="$fsc->get_errors()"}
          $("#box_login").shake();
          {/if}
+         document.f_login.user.focus();
       });
    </script>
 </head>
-<body style="background-color: #E9EAED;">
-   <nav class="navbar navbar-inverse" role="navigation" style="margin: 0px;">
+<body>
+   <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -35,9 +35,18 @@
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
-                  <a href="#" title="feedback" data-toggle="modal" data-target="#modal_feedback">
-                     <span class="glyphicon glyphicon-question-sign"></span>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
+                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                     <span class="visible-xs">Ayuda</span>
                   </a>
+                  <ul class="dropdown-menu">
+                     <li><a href="{#FS_COMMUNITY_URL#}/questions.php">Preguntas</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/errors.php">Errores</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/ideas.php">Sugerencias</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/all.php">Todo</a></li>
+                     <li class="divider"></li>
+                     <li><a href="#" data-toggle="modal" data-target="#modal_feedback">Escribir...</a></li>
+                  </ul>
                </li>
             </ul>
          </div>
@@ -61,44 +70,30 @@
    {/if}
    
    <div class="container">
-      <div class="row">
-         <div class="col-md-6 col-xs-12 {if condition="!FS_DB_HISTORY"} col-md-offset-3{/if}">
+      <div class="row" style="margin-top: 20px;">
+         <div class="col-md-4 col-md-offset-4">
             <div class="well well-lg" id="box_login">
-               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" role="form">
+               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
                   <div class="form-group">
                      <label>Usuario</label>
-                     <input type="text" class="form-control" name="user" autocomplete="off" placeholder="Usuario" autofocus  />
+                     <input type="text" name="user" class="form-control input-lg" placeholder="Usuario" autocomplete="off"/>
                   </div>
                   <div class="form-group">
                      <label>Contraseña</label>
-                     <input type="password" class="form-control input-xs" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <p class="help-block">
+                        <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
+                     </p>
                   </div>
-                  <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
-                  <input type="submit" class="btn btn-primary btn-xs pull-right" id="login" value="Iniciar sesión"/>
-                  <br/><br/>
+                  <div class="text-right">
+                     <button class="btn btn-sm btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-log-in"></span>
+                        &nbsp; Iniciar sesión
+                     </button>
+                  </div>
                </form>
             </div>
-            
-            <div class="well well-sm" style="text-align: center; font-size: 11px;">
-               Consultas: {$fsc->selects()} |
-               Transacciones: {$fsc->transactions()} |
-               Procesado en: {$fsc->duration()}
-            </div>
          </div>
-         {if condition="FS_DB_HISTORY"}
-         <div class="col-md-6 col-xs-12">
-            <div class="panel panel-warning" style="margin: 5px;">
-               <div class="panel-heading">
-                  <h3 class="panel-title">Consultas SQL:</h3>
-               </div>
-               <div class="panel-body">
-                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
-                  {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
-                  </ol>
-               </div>
-            </div>
-         </div>
-         {/if}
       </div>
    </div>
    
@@ -134,5 +129,43 @@
    </div>
    
    {include="feedback"}
+   
+   <div class="container-fluid" style="margin-top: 50px;">
+      <div class="row">
+         <div class="col-lg-12">
+            <hr/>
+         </div>
+      </div>
+      <div class="row">
+         {if condition="FS_DB_HISTORY"}
+         <div class="col-lg-12">
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Consultas SQL:</h3>
+               </div>
+               <div class="panel-body">
+                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+                  {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+                  </ol>
+               </div>
+            </div>
+         </div>
+         {/if}
+      </div>
+      <div class="row">
+         <div class="col-lg-4 col-md-4">
+            <small>
+               Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>.
+            </small>
+         </div>
+         <div class="col-lg-4 col-md-4 text-center">
+            <span class="label label-default">Consultas: {$fsc->selects()}</span>
+            <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
+         </div>
+         <div class="col-lg-4 col-md-4 text-right">
+            <span class="label label-default">Procesado en: {$fsc->duration()}</span>
+         </div>
+      </div>
+   </div>
 </body>
 </html>

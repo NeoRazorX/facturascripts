@@ -36,7 +36,9 @@
          <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="6" align="center">Ninguna factura encontrada.</td></tr>
+      <tr class="bg-warning">
+         <td colspan="6">Ninguna factura encontrada. Pulsa el botón <b>nueva</b> para crear una.</td>
+      </tr>
       {/loop}
    </table>
 </div>

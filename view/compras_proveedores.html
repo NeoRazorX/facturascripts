@@ -68,7 +68,7 @@
 </div>
 
 {if condition="$fsc->query!=''"}
-<h3>Resultados de la búsqueda "{$fsc->query}":</h3>
+<h3 class="text-center">Resultados de la búsqueda "{$fsc->query}":</h3>
 {/if}
 
 <div class="table-responsive">
@@ -87,8 +87,8 @@
          <td>{$value->observaciones_resume()}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="3" align="center">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+      <tr class="bg-warning">
+         <td colspan="3">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

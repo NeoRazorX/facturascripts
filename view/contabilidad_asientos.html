@@ -7,7 +7,7 @@
 </script>
 
 {if condition="$fsc->query!=''"}
-<h1>Resultados de la búsqueda '{$fsc->query}':</h1>
+<h3 class="text-center">Resultados de la búsqueda '{$fsc->query}':</h3>
 {/if}
 
 <div class="table-responsive">
@@ -34,7 +34,9 @@
          <td class="text-right">{$value->fecha}</td>
       </tr>
       {else}
-      <tr><td colspan="5" align="center">Nada que mostrar</td></tr>
+      <tr class="bg-warning">
+         <td colspan="5">Ningún asiento encontrado. Pulsa <b>Nuevo</b> para crear uno.</td>
+      </tr>
       {/loop}
    </table>
 </div>

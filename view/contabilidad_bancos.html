@@ -45,7 +45,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                    <span class="glyphicon glyphicon-floppy-disk"></span>
                    &nbsp; Guardar
                 </button>
@@ -69,7 +69,9 @@
          <td>{$value->nombre}</td>
       </tr>
       {else}
-      <tr><td colspan="3" align="center">No hay ningún banco</td></tr>
+      <tr class="bg-warning">
+         <td colspan="3">No hay ningún banco. Pulsa <b>Nuevo</b> para crear uno.</td>
+      </tr>
       {/loop}
    </table>
 </div>
