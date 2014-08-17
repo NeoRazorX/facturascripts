@@ -27,7 +27,7 @@ require_model('regularizacion_iva.php');
 require_model('serie.php');
 require_model('subcuenta.php');
 
-class ventas_agrupar_albaranes extends fs_controller
+class ventas_agrupar_presupuestos extends fs_controller
 {
    public $albaran;
    public $cliente;

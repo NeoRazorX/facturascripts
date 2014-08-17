@@ -196,26 +196,10 @@ class ventas_pedidos extends fs_controller
    
    private function delete_pedido()
    {
-      $ped1 = new pedido_cliente();
+      $ped = new pedido_cliente();
       $ped1 = $ped->get($_POST['delete']);
       if($ped1)
       {
-         /// ¿Actualizamos el stock de los artículos?
-         if( isset($_POST['stock']) )
-         {
-            $articulo = new articulo();
-            
-            foreach($ped1->get_lineas() as $linea)
-            {
-               $art0 = $articulo->get($linea->referencia);
-               if($art0)
-               {
-                  $art0->sum_stock($ped->codalmacen, $linea->cantidad);
-                  $art0->save();
-               }
-            }
-         }
-         
          if( $ped1->delete() )
          {
             $this->new_message("Pedido ".$ped1->codigo." borrado correctamente.");

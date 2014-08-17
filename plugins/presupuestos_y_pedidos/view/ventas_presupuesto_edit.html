@@ -266,12 +266,12 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir {$presupuesto}</h4>
+            <h4 class="modal-title">Imprimir presupuesto</h4>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
                <span class="glyphicon glyphicon-print"></span>
-               &nbsp; {$presupuesto} simple
+               &nbsp; presupuesto simple
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
@@ -289,7 +289,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar {$presupuesto}</h4>
+               <h4 class="modal-title">Enviar presupuesto</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -298,7 +298,7 @@
                </div>
                <div class="form-group">
                   Mensaje:
-                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {$presupuesto} {$fsc->presupuesto->codigo}.
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su presupuesto {$fsc->presupuesto->codigo}.
 {$fsc->empresa->email_firma}</textarea>
                </div>
             </div>
@@ -320,7 +320,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este {$presupuesto}?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este presupuesto?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
