@@ -6,7 +6,7 @@
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet"href="view/css/bootstrap-yeti.min.css" />
+   <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
    <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
@@ -176,7 +176,7 @@
                         {$value->value}
                      </a>
                      {elseif condition="get_class($value)=='fs_button_img'"}
-                     <a id="{$value->id}" class="btn btn-sm btn-xs{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">
+                     <a id="{$value->id}" class="btn btn-sm{if condition="$value->remove"} btn-danger{else} btn-default{/if}" href="{$value->href}">
                         {$value->value}
                      </a>
                      {else}
