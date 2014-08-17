@@ -1,0 +1,135 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $("#f_agrupar_cli input[name='idpedido[]']").prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $("#f_agrupar_cli input[name='idpedido[]']").prop('checked', false);
+   }
+</script>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-4">
+            Cliente:
+            <select name="cliente" class="form-control">
+            {loop="$fsc->cliente->all_full()"}
+               {if condition="$value->is_default()"}
+				   <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+               {else}
+				   <option value="{$value->codcliente}">{$value->nombre}</option>
+               {/if}
+            {/loop}
+            </select>
+         </div>
+         <div class="col-lg-2">
+            Serie:
+            <select name="serie" class="form-control">
+            {loop="$fsc->serie->all()"}
+				   {if condition="$value->codserie==$_POST.serie"}
+				   <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+				   {else}
+				   <option value="{$value->codserie}">{$value->descripcion}</option>
+				   {/if}
+				{/loop}
+            </select>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Desde:
+               <input type="text" name="desde" class="form-control datepicker" value="{$fsc->desde}"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Hasta:
+               <input type="text" name="hasta" class="form-control datepicker" value="{$fsc->hasta}"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Observaciones:
+               <input type="text" name="observaciones" class="form-control"/>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12 text-right">
+            <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-search"></span>
+               &nbsp; Buscar
+            </button>
+         </div>
+      </div>
+   </div>
+</form>
+
+{if condition="$fsc->resultados"}
+<form id="f_agrupar_cli" action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th align="left">Código</th>
+               <th align="left">Observaciones</th>
+               <th align="right">Neto</th>
+               <th align="right">Total</th>
+               <th align="right">Fecha</th>
+            </tr>
+         </thead>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td>
+               <input type="checkbox" name="idpedido[]" value="{$value->idpedido}" checked="checked"/>
+               <a href="{$value->url()}">{$value->codigo}</a>
+            </td>
+            <td>{$value->observaciones_resume()}</td>
+            <td align="right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
+            <td align="right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+            <td align="right">{$value->fecha}</td>
+         </tr>
+         {/loop}
+         <tr>
+            <td colspan="2"></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->neto)}</b></td>
+            <td align="right"><b>{$fsc->show_precio($fsc->total)}</b></td>
+            <td></td>
+         </tr>
+      </table>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-4">
+            <div class="btn-group">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+         </div>
+         <div class="col-lg-4 text-center">
+            <label>
+               <input type="checkbox" name="individuales" value="TRUE"/>
+               Generar {$albaranes} individuales
+            </label>
+         </div>
+         <div class="col-lg-4 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-file"></span>
+               &nbsp; Generar {$albaran}
+            </button>
+         </div>
+      </div>
+   </div>
+</form>
+{/if}
+
+{include="footer"}
