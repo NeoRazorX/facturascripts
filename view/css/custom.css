@@ -20,14 +20,6 @@ body {
    background-color: white;
 }
 
-/* Hack para conseguir SOLO la primera letra de una frase en minuscula
- * la primera palabra debe estar de la siguiente forma:
- * <span class="first-letter">Primera</span> palabra
- * */
-:first-letter {
-   text-transform: capitalize;
-}
-
 ul.dropdown-menu li a:first-letter {
    text-transform: uppercase;
 }

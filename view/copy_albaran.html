@@ -27,8 +27,8 @@
             <div class="form-group">
                Copiar a un nuevo...
                <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
-                  <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}><span class="first-letter">{#FS_ALBARAN#}</span> de cliente</option>
-                  <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}><span class="first-letter">{#FS_ALBARAN#}</span> de proveedor</option>
+                  <option value="cliente"{if condition="$fsc->tipo_albaran=='cliente'"} selected="selected"{/if}><span class="text-capitalize">{#FS_ALBARAN#}</span> de cliente</option>
+                  <option value="proveedor"{if condition="$fsc->tipo_albaran=='proveedor'"} selected="selected"{/if}><span class="text-capitalize">{#FS_ALBARAN#}</span> de proveedor</option>
                </select>
             </div>
          </div>
