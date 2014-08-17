@@ -17,21 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Saber quien gestiona el pago
+// Saber quien gestiona el cobro
 require_model('agente.php');
-// Saber quien cobra
-require_model('proveedor.php');
-// Saber que documento se paga
-require_model('factura_proveedor.php');
+// Saber quien paga
+require_model('cliente.php');
+// Saber que documento se cobra
+require_model('factura_cliente.php');
 require_model('fs_extension.php');
 
-class recibos_proveedores extends fs_controller
+class remesas_clientes extends fs_controller
 {
    
    
    public function __construct()
    {
-      parent::__construct('recibospro', 'Recibos de proveedores', 'informes');
+      parent::__construct('remesascli', 'Remesas de clientes', 'informes');
    }
    
    protected function process()

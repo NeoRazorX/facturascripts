@@ -28,7 +28,7 @@ class recibo_proveedor extends fs_model
    
    public function __construct($f=FALSE)
    {
-	   
+	   parent::__construct('recibospro');
    }
 
    protected function install()

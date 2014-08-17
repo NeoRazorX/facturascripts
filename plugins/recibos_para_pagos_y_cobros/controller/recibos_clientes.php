@@ -25,13 +25,13 @@ require_model('cliente.php');
 require_model('factura_cliente.php');
 require_model('fs_extension.php');
 
-class recibos extends fs_controller
+class recibos_clientes extends fs_controller
 {
    
    
    public function __construct()
    {
-      parent::__construct('recibos', 'Recibos de clientes', 'informes');
+      parent::__construct('reciboscli', 'Recibos de clientes', 'informes');
    }
    
    protected function process()

@@ -20,15 +20,15 @@
 require_once 'base/fs_model.php';
 
 /**
- * Recibo de un cliente.
+ * Remesa de un cliente.
  */
-class recibo_cliente extends fs_model
+class remesa_cliente extends fs_model
 {
 	
    
    public function __construct($f=FALSE)
    {
-	   parent::__construct('reciboscli');
+	   parent::__construct('remesas');
    }
 
    protected function install()
