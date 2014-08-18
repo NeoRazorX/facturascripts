@@ -35,7 +35,7 @@
             <td>
                <input class="form-control" type="text" name="descripcion" value="{$fsc->subcuenta->descripcion}" autocomplete="off"/>
             </td>
-            <td align="center">
+            <td class="text-center">
                <div class="form-control">
                   <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
                </div>
@@ -95,11 +95,11 @@
          {$total=-1+count($fsc->resultados)}
          {loop="$fsc->resultados"}
          <tr>
-            <td align="center">
+            <td class="text-center">
                <input type="checkbox" name="punteada[]" value="{$value->idpartida}"{if condition="$value->punteada"} checked="checked"{/if}/>
             </td>
             <td><a href="{$value->url()}">{$value->numero}</a></td>
-            <td align="center">{$value->fecha}</td>
+            <td class="text-center">{$value->fecha}</td>
             <td><a href="{$value->url()}">{$value->concepto}</a></td>
             <td class="text-right">{$fsc->show_precio($value->debe, $fsc->subcuenta->coddivisa)}</td>
             <td class="text-right">{$fsc->show_precio($value->haber, $fsc->subcuenta->coddivisa)}</td>
@@ -110,14 +110,14 @@
             <td class="text-right">
                {if condition="$value->baseimponible!=0"}{$fsc->show_precio($value->baseimponible, $fsc->subcuenta->coddivisa)}{else}-{/if}
             </td>
-            <td align="center">
+            <td class="text-center">
                {if condition="$value->codcontrapartida"}
                <a href="{$value->contrapartida_url()}">{$value->codcontrapartida}</a>
                {else}
                -
                {/if}
             </td>
-            <td align="center">
+            <td class="text-center">
                {if condition="$value->cifnif"}{$value->cifnif}{else}-{/if}
             </td>
          </tr>
@@ -131,7 +131,7 @@
          {/if}
          {/loop}
          <tr>
-            <td colspan="11">
+            <td colspan="11" class="text-center">
                <a class="btn btn-sm btn-block btn-success" href="index.php?page=contabilidad_nuevo_asiento">Nuevo Asiento...</a>
             </td>
          </tr>

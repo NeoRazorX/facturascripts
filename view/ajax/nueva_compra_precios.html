@@ -76,7 +76,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="4">No hay artículos equivalentes</td>
+         <td colspan="4" class="text-center">No hay artículos equivalentes.</td>
       </tr>
       {/loop}
    </table>
@@ -99,7 +99,7 @@
       {loop="$fsc->articulo->get_lineas_albaran_prov(0, 10)"}
       <tr>
          <td>{$value->show_fecha()}</td>
-         <td align="center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+         <td class="text-center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
          <td class="text-right">
             <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
                {$fsc->show_precio($value->pvpunitario)}
@@ -118,7 +118,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="5">Nunca se ha comprado este artículo</td>
+         <td colspan="5" class="text-center">Nunca se ha comprado este artículo.</td>
       </tr>
       {/loop}
    </table>

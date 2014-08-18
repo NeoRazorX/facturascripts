@@ -17,8 +17,8 @@
       <tr>
          <td><a href="{$fsc->regiva->ejercicio_url()}">{$fsc->regiva->codejercicio}</a></td>
          <td>{$fsc->regiva->periodo}</td>
-         <td align="center">{$fsc->regiva->fechainicio}</td>
-         <td align="center">{$fsc->regiva->fechafin}</td>
+         <td class="text-center">{$fsc->regiva->fechainicio}</td>
+         <td class="text-center">{$fsc->regiva->fechafin}</td>
          <td class="text-right">
             <a target="_blank" href="{$fsc->regiva->asiento_url()}">Asiento</a>
             ({$fsc->regiva->fechaasiento})
@@ -46,7 +46,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="3">Sin datos</td>
+         <td colspan="3" class="text-center">Sin datos.</td>
       </tr>
       {/loop}
    </table>

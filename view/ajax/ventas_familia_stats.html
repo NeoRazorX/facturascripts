@@ -11,11 +11,11 @@
          </tr>
       </thead>
       <tr>
-         <td align="center">{$fsc->familia->stats['articulos']}</td>
-         <td align="center">{$fsc->familia->stats['con_stock']}</td>
-         <td align="center">{$fsc->familia->stats['publicos']}</td>
-         <td align="center">{$fsc->familia->stats['bloqueados']}</td>
-         <td align="center">{$fsc->familia->stats['factualizado']}</td>
+         <td class="text-center">{$fsc->familia->stats['articulos']}</td>
+         <td class="text-center">{$fsc->familia->stats['con_stock']}</td>
+         <td class="text-center">{$fsc->familia->stats['publicos']}</td>
+         <td class="text-center">{$fsc->familia->stats['bloqueados']}</td>
+         <td class="text-center">{$fsc->familia->stats['factualizado']}</td>
       </tr>
    </table>
 </div>
@@ -39,7 +39,7 @@
          <td>{$value->telefono2}</td>
       </tr>
       {else}
-      <tr><td colspan="4">Sin proveedores</td></tr>
+      <tr><td colspan="4" class="text-center">Sin proveedores.</td></tr>
       {/loop}
    </table>
 </div>
