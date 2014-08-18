@@ -268,7 +268,7 @@ class informe_347 extends fs_controller
       
       echo "<tr><td></td></tr>
          <tr>
-            <td colspan='6'>Proveedores que nos han vendido mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
+            <td colspan='6' align='center'>Proveedores que nos han vendido mas de 3 005.06 euros en el ejercicio ".$this->sejercicio.".</td>
          </tr>
          <tr>
             <td>Proveedor</td>

@@ -31,7 +31,7 @@ class recibos_clientes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('reciboscli', 'Recibos de clientes', 'informes');
+      parent::__construct('recibos_clientes', 'Recibos de clientes', 'informes');
    }
    
    protected function process()

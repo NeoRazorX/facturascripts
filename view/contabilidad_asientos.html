@@ -23,7 +23,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->importe<=0"} class="bg-warning"{/if}>
-         <td align="center">
+         <td class="text-center">
             {if condition="$value->editable"}
             <span class="glyphicon glyphicon-pencil" title="editable"></span>
             {/if}
@@ -35,7 +35,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="5">Ningún asiento encontrado. Pulsa <b>Nuevo</b> para crear uno.</td>
+         <td colspan="5" class="text-center">Ningún asiento encontrado. Pulsa <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

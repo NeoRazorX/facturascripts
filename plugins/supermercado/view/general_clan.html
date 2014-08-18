@@ -111,7 +111,7 @@
       </tr>
       {loop="$fsc->clan->last_albaranes()"}
       <tr>
-         <td align="center">{if condition="!$value->ptefactura"}F{/if}</td>
+         <td class="text-center">{if condition="!$value->ptefactura"}F{/if}</td>
          <td><a class="link" href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
@@ -120,7 +120,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="6" align="center">Sin resultados.</td>
+         <td colspan="6" class="text-center">Sin resultados.</td>
       </tr>
       {/loop}
    </table>

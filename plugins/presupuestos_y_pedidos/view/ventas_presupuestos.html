@@ -83,7 +83,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">
+         <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="El presupuesto tiene vinculado un pedido"></span>
             {/if}
@@ -96,7 +96,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="6">Ningún presupuesto encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6" class="text-center">Ningún presupuesto encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

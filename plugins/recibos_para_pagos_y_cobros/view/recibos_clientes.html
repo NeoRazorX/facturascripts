@@ -1,13 +1,23 @@
 {include="header"}
 
-<h3 class="text-center">Pedidos de <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a></h3>
+<script type="text/javascript">
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+      $("#b_huecos").click(function() {
+         $("#modal_huecos").modal('show');
+      });
+   });
+</script>
+
+{if condition="$fsc->query!=''"}
+<h3 class="text-center">Resultados de "{$fsc->query}":</h3>
+{/if}
 
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
          <tr>
-            <th></th>
-            <th class="text-left">Código</th>
+            <th class="text-left">Código + Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
             <th class="text-right">Fecha y hora</th>
@@ -15,19 +25,14 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
-         <td class="text-center">
-            {if condition="$value->idalbaran"}
-            <span class="glyphicon glyphicon-paperclip" title="Hay un {#FS_ALBARAN#} asociado"></span>
-            {/if}
-         </td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha} {$value->hora}</td>
       </tr>
       {else}
-      <tr>
-         <td colspan="5" class="text-center">Ningún pedido encontrado.</td>
+      <tr class="bg-warning">
+         <td colspan="4" class="text-center">Ningun recibo encontrado.</td>
       </tr>
       {/loop}
    </table>

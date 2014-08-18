@@ -56,18 +56,18 @@
                <td>{$value->agencia}</td>
                <td>{$value->nombre}</td>
                <td>{$value->direccion}</td>
-               <td align="center">{$value->codpostal}</td>
-               <td align="center">{$value->apartado}</td>
-               <td align="center">{$value->poblacion}</td>
-               <td align="center">{$value->provincia}</td>
-               <td align="center">{$value->codpais}</td>
-               <td align="center">{$value->telefono}</td>
-               <td align="center">{$value->fax}</td>
+               <td class="text-center">{$value->codpostal}</td>
+               <td class="text-center">{$value->apartado}</td>
+               <td class="text-center">{$value->poblacion}</td>
+               <td class="text-center">{$value->provincia}</td>
+               <td class="text-center">{$value->codpais}</td>
+               <td class="text-center">{$value->telefono}</td>
+               <td class="text-center">{$value->fax}</td>
                <td>{$value->contacto}</td>
                <td>{$value->observaciones}</td>
             </tr>
             {else}
-            <tr><td colspan="12" align="center">No hay sucursales asociadas</td></tr>
+            <tr><td colspan="12" class="text-center">No hay sucursales asociadas</td></tr>
             {/loop}
          </table>
       </div>
@@ -94,10 +94,10 @@
                <td>{$value->codcuenta}</td>
                <td><a href="{$value->url()}">{$value->codsubcuenta}</a></td>
                <td><a href="{$value->url()}">{$value->descripcion}</a></td>
-               <td align="center">{$value->iban}</td>
+               <td class="text-center">{$value->iban}</td>
             </tr>
             {else}
-            <tr><td colspan="4" align="center">No hay cuentas asociadas</td></tr>
+            <tr><td colspan="4" class="text-center">No hay cuentas asociadas</td></tr>
             {/loop}
          </table>
       </div>

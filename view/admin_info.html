@@ -12,11 +12,11 @@
          </tr>
       </thead>
       <tr>
-         <td align="center">{$fsc->version()}</td>
-         <td align="center">{$fsc->php_version()}</td>
-         <td align="center">{$fsc->fs_db_name()}</td>
-         <td align="center">{$fsc->fs_db_version()}</td>
-         <td align="center">{$fsc->cache_version()}</td>
+         <td class="text-center">{$fsc->version()}</td>
+         <td class="text-center">{$fsc->php_version()}</td>
+         <td class="text-center">{$fsc->fs_db_name()}</td>
+         <td class="text-center">{$fsc->fs_db_version()}</td>
+         <td class="text-center">{$fsc->cache_version()}</td>
       </tr>
    </table>
 </div>
@@ -93,7 +93,7 @@
                   <td>{$value.granted}</td>
                </tr>
                {else}
-               <tr><td colspan="7" align="center">Ningún bloqueo detectado</td></tr>
+               <tr><td colspan="7" class="text-center">Ningún bloqueo detectado</td></tr>
                {/loop}
             </table>
          </div>

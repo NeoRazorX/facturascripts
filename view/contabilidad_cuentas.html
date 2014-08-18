@@ -74,7 +74,7 @@
                </tr>
                {else}
                <tr>
-                  <td colspan="2" align="center">Sin resultados</td>
+                  <td colspan="2" class="text-center">Sin resultados</td>
                </tr>
                {/loop}
             </table>
@@ -126,7 +126,7 @@
          <td class="text-right">{$value->idcuentaesp}</td>
       </tr>
       {else}
-      <tr><td colspan="3" align="center">Sin resultados</td></tr>
+      <tr><td colspan="3" class="text-center">Sin resultados</td></tr>
       {/loop}
    </table>
 </div>
@@ -175,7 +175,7 @@
             <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
          </tr>
          {else}
-         <tr><td colspan="2" align="center">Sin resultados</td></tr>
+         <tr><td colspan="2" class="text-center">Sin resultados</td></tr>
          {/loop}
       </table>
    </div>
@@ -218,7 +218,7 @@
          <td class="text-right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
-      <tr><td colspan="5" align="center">Sin resultados</td></tr>
+      <tr><td colspan="5" class="text-center">Sin resultados</td></tr>
       {/loop}
    </table>
 </div>

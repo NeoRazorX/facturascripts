@@ -83,7 +83,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
-         <td align="center">
+         <td class="text-center">
             {if condition="!$value->ptefactura"}
             <span class="glyphicon glyphicon-paperclip" title="facturado"></span>
             {/if}
@@ -96,7 +96,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="6">Ningún {#FS_ALBARAN#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6" class="text-center">Ningún {#FS_ALBARAN#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

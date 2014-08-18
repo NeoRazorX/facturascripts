@@ -26,11 +26,11 @@
                </thead>
                {loop="$fsc->factura->huecos()"}
                <tr>
-                  <td align="center">{$value.codigo}</td>
-                  <td align="center">{$value.fecha} {$value.hora}</td>
+                  <td class="text-center">{$value.codigo}</td>
+                  <td class="text-center">{$value.fecha} {$value.hora}</td>
                </tr>
                {else}
-               <tr><td colspan="2" align="center">No hay huecos</td></tr>
+               <tr><td colspan="2" class="text-center">No hay huecos</td></tr>
                {/loop}
             </table>
          </div>
@@ -55,7 +55,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
-         <td align="center">
+         <td class="text-center">
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
             {/if}
@@ -67,7 +67,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="5">Ninguna factura encontrada. Pulsa <b>Nueva</b> para crear una.</td>
+         <td colspan="5" class="text-center">Ninguna factura encontrada. Pulsa <b>Nueva</b> para crear una.</td>
       </tr>
       {/loop}
    </table>

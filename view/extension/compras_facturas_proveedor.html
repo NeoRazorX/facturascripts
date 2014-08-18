@@ -15,7 +15,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
-         <td align="center">
+         <td class="text-center">
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
             {/if}
@@ -27,7 +27,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="5" align="center">Ninguna factura encontrada.</td>
+         <td colspan="5" class="text-center">Ninguna factura encontrada.</td>
       </tr>
       {/loop}
    </table>

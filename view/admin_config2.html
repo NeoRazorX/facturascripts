@@ -6,11 +6,23 @@
          {loop="$fsc->claves()"}
          <div class="col-lg-2">
             <div class="form-group">
-               {$value['nombre']}
+               {$value['nombre']}:
+               
+               {if condition="$fsc->claves()!='zona horaria'"}
                <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>
+               {else}
+               Selecciona zona horaria:
+               <select class="form-control">
+                  {loop="$fsc->get_timezone_list()"}
+                     <option value="{$value['zone']}" {if condition="$value['zone']=='Europe/Madrid'"}selected="selected"{/if}>
+                     {$value['diff_from_GMT']} - {$value['zone']}
+                     </option>
+                  {/loop}
+               </select>
+               {/if}
             </div>
          </div>
-         {/loop}
+         {/loop}      
       </div>
       
       <div class="row">

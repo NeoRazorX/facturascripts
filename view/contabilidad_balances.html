@@ -13,12 +13,12 @@
       {loop="$fsc->balance->all()"}
       <tr>
          <td><a href="{$value->url()}">{$value->codbalance}</a></td>
-         <td align="center">{$value->naturaleza}</td>
-         <td align="center">{$value->nivel1}</td>
+         <td class="text-center">{$value->naturaleza}</td>
+         <td class="text-center">{$value->nivel1}</td>
          <td>{$value->descripcion1}</td>
       </tr>
       {else}
-      <tr><td colspan="4" align="center">No hay datos</td></tr>
+      <tr><td colspan="4" class="text-center">No hay datos</td></tr>
       {/loop}
    </table>
 </div>

@@ -56,25 +56,25 @@
          </thead>
          {loop="$fsc->resultados"}
          <tr>
-            <td align="center">
+            <td class="text-center">
                   <input type="checkbox" name="delete[]" value="{$value->id}"/>
             </td>
-            <td align="center">{$value->fs_id}</td>
-            <td align="center">
+            <td class="text-center">{$value->fs_id}</td>
+            <td class="text-center">
                {if condition="$value->agente"}
                <a href="{$value->agente->url()}">{$value->agente->get_fullname()}</a>
                {else}
                -
                {/if}
             </td>
-            <td align="center">{$value->fecha_inicial}</td>
+            <td class="text-center">{$value->fecha_inicial}</td>
             <td class="text-right">{$fsc->show_precio($value->dinero_inicial)}</td>
-            <td align="center">{$value->show_fecha_fin()}</td>
+            <td class="text-center">{$value->show_fecha_fin()}</td>
             <td class="text-right">{$fsc->show_precio($value->diferencia())}</td>
             <td class="text-right">{$value->tickets}</td>
          </tr>
          {else}
-         <tr><td colspan="7" align="center">No hay datos</td></tr>
+         <tr><td colspan="7" class="text-center">No hay datos</td></tr>
          {/loop}
       </table>
    </div>

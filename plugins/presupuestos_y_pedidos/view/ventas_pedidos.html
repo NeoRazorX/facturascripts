@@ -83,7 +83,7 @@
       </thead>
       {loop="$fsc->resultados"}
       <tr>
-         <td align="center">
+         <td class="text-center">
             {if condition="$value->idalbaran"}
             <span class="glyphicon glyphicon-paperclip" title="El pedido tiene vinculado un {#FS_ALBARAN#}"></span>
             {/if}
@@ -96,7 +96,7 @@
       </tr>
       {else}
       <tr>
-         <td colspan="6">Ningún pedido encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="6" class="text-center">Ningún pedido encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>
