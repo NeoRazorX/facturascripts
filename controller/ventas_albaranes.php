@@ -96,11 +96,6 @@ class ventas_albaranes extends fs_controller
          $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=ventas_agrupar_albaranes');
          $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
          
-         if( !isset($_GET['ptefactura']) )
-         {
-            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptefactura=TRUE");
-         }
-         
          if( isset($_POST['delete']) )
          {
             $this->delete_albaran();
@@ -112,8 +107,6 @@ class ventas_albaranes extends fs_controller
          }
          else if( isset($_GET['ptefactura']) )
          {
-            $this->new_advice('Estos son los '.FS_ALBARANES.' pendientes de facturar. Haz clic <a href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
             $this->resultados = $albaran->all_ptefactura($this->offset);
          }
          else

@@ -9,7 +9,11 @@
       }
       else if(window.location.hash.substring(1) == 'tarifas')
       {
-         $(this).addClass('active');
+         $("#ul_tabs li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#div_articulos").hide();
+         $("#b_tarifas").addClass('active');
          $("#div_tarifas").show();
          document.f_nueva_tarifa.nombre.focus();
       }
@@ -26,17 +30,13 @@
       }
       $("#b_tarifas").click(function(event) {
          event.preventDefault();
-         if( $(this).hasClass('active') )
-         {
-            $(this).removeClass('active');
-            $("#div_tarifas").hide();
-         }
-         else
-         {
-            $(this).addClass('active');
-            $("#div_tarifas").show();
-            document.f_nueva_tarifa.nombre.focus();
-         }
+         $("#ul_tabs li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#div_articulos").hide();
+         $(this).addClass('active');
+         $("#div_tarifas").show();
+         document.f_nueva_tarifa.nombre.focus();
       });
    });
 </script>
@@ -130,6 +130,99 @@
    </div>
 </div>
 
+{if condition="$fsc->query!=''"}
+<form name="custom_search2" action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="query" value="{$fsc->query}"/>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-7">
+            <h3 style="margin-top: 0px;">Resultados de la búsqueda "{$fsc->query}".</h3>
+         </div>
+         <div class="col-lg-2">
+            <div class="checkbox">
+               <label>
+                  <input type="checkbox" name="con_stock"{if condition="$fsc->con_stock"} checked="checked"{/if} value="TRUE" onchange="document.custom_search2.submit()"/>
+                  Sólo con stock
+               </label>
+            </div>
+         </div>
+         <div class="form-group col-lg-3">
+            <select class="form-control" name="codfamilia" onchange="document.custom_search2.submit()">
+               <option value="">Todas las familias</option>
+               <option value="">-----</option>
+               {loop="$fsc->familia->all()"}
+                  {if condition="$value->codfamilia==$fsc->codfamilia"}
+                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+      </div>
+   </div>
+</form>
+{/if}
+
+<ul class="nav nav-tabs" id="ul_tabs">
+   <li{if condition="!isset($_GET['public'])"} class="active"{/if}><a href="{$fsc->url()}">Todos</a></li>
+   <li{if condition="isset($_GET['public'])"} class="active"{/if}><a href="{$fsc->url()}&public=TRUE">Públicos</a></li>
+   <li id="b_tarifas"><a href="#tarifas">Tarifas</a></li>
+</ul>
+
+<div id="div_articulos">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Familia</th>
+               <th class="text-left">Referencia + Descripción</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">PVP+IVA</th>
+               <th class="text-right">Stock</th>
+            </tr>
+         </thead>
+         {loop="$fsc->resultados"}
+         <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
+            <td>{$value->codfamilia}</td>
+            {if condition="$value->bloqueado"}
+               <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            {else}
+               <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            {/if}
+            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
+            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
+            <td class="text-right">{$value->stockfis}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <ul class="pager" id="ul_paginador">
+      {if condition="$fsc->anterior_url()!=''"}
+      <li class="previous">
+         <a href="{$fsc->anterior_url()}">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            &nbsp; Anteriores
+         </a>
+      </li>
+      {/if}
+      
+      {if condition="$fsc->siguiente_url()!=''"}
+      <li class="next">
+         <a href="{$fsc->siguiente_url()}">
+            Siguientes &nbsp;
+            <span class="glyphicon glyphicon-chevron-right"></span>
+         </a>
+      </li>
+      {/if}
+   </ul>
+</div>
+
 <div id="div_tarifas" class="table-responsive" style="display: none;">
    <table class="table table-hover">
       <thead>
@@ -186,90 +279,5 @@
       </form>
    </table>
 </div>
-
-{if condition="$fsc->query!=''"}
-<form name="custom_search2" action="{$fsc->url()}" method="post" class="form">
-   <input type="hidden" name="query" value="{$fsc->query}"/>
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-lg-7">
-            <h3 style="margin-top: 0px;">Resultados de la búsqueda "{$fsc->query}".</h3>
-         </div>
-         <div class="col-lg-2">
-            <div class="checkbox">
-               <label>
-                  <input type="checkbox" name="con_stock"{if condition="$fsc->con_stock"} checked="checked"{/if} value="TRUE" onchange="document.custom_search2.submit()"/>
-                  Sólo con stock
-               </label>
-            </div>
-         </div>
-         <div class="form-group col-lg-3">
-            <select class="form-control" name="codfamilia" onchange="document.custom_search2.submit()">
-               <option value="">Todas las familias</option>
-               <option value="">-----</option>
-               {loop="$fsc->familia->all()"}
-                  {if condition="$value->codfamilia==$fsc->codfamilia"}
-                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
-                  {/if}
-               {/loop}
-            </select>
-         </div>
-      </div>
-   </div>
-</form>
-{/if}
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Familia</th>
-            <th class="text-left">Referencia + Descripción</th>
-            <th class="text-right">PVP</th>
-            <th class="text-right">PVP+IVA</th>
-            <th class="text-right">Stock</th>
-         </tr>
-      </thead>
-      {loop="$fsc->resultados"}
-      <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
-         <td>{$value->codfamilia}</td>
-         {if condition="$value->bloqueado"}
-            <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         {else}
-            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         {/if}
-         <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
-         <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
-         <td class="text-right">{$value->stockfis}</td>
-      </tr>
-      {else}
-      <tr class="bg-warning">
-         <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
-
-<ul class="pager" id="ul_paginador">
-   {if condition="$fsc->anterior_url()!=''"}
-   <li class="previous">
-      <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
-      </a>
-   </li>
-   {/if}
-   
-   {if condition="$fsc->siguiente_url()!=''"}
-   <li class="next">
-      <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
-      </a>
-   </li>
-   {/if}
-</ul>
 
 {include="footer"}

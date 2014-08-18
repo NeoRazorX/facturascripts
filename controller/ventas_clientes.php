@@ -42,7 +42,6 @@ class ventas_clientes extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'Nuevo', 'add.png', '#nuevo');
-      $this->buttons[] = new fs_button('b_grupos_clientes', 'Grupos', '#grupos');
       $this->cliente = new cliente();
       $this->grupo = new grupo_clientes();
       $this->pais = new pais();
@@ -135,7 +134,9 @@ class ventas_clientes extends fs_controller
          $this->offset = intval($_GET['offset']);
       
       if($this->query != '')
+      {
          $this->resultados = $this->cliente->search($this->query, $this->offset);
+      }
       else
          $this->resultados = $this->cliente->all($this->offset);
    }
@@ -143,20 +144,32 @@ class ventas_clientes extends fs_controller
    public function anterior_url()
    {
       $url = '';
+      
       if($this->query!='' AND $this->offset>'0')
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND $this->offset>'0')
+      {
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
+      
       return $url;
    }
    
    public function siguiente_url()
    {
       $url = '';
+      
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
+      
       return $url;
    }
 }

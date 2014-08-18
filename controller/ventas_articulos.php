@@ -46,19 +46,19 @@ class ventas_articulos extends fs_controller
       $this->tarifa = new tarifa();
       
       $this->buttons[] = new fs_button('b_nuevo_articulo', 'Nuevo', '#nuevo');
-      $this->buttons[] = new fs_button('b_tarifas', 'Tarifas', '#tarifas');
       $this->buttons[] = new fs_button('b_modificar_iva', 'Modificar IVA', '#mod-iva');
       
       $this->codfamilia = '';
       if( isset($_POST['codfamilia']) )
+      {
          $this->codfamilia = $_POST['codfamilia'];
+      }
       else if( isset($_GET['codfamilia']) )
+      {
          $this->codfamilia = $_GET['codfamilia'];
+      }
       
       $this->con_stock = ( isset($_POST['con_stock']) OR isset($_GET['con_stock']) );
-      
-      if( !isset($_GET['public']) )
-         $this->buttons[] = new fs_button('b_publicos', 'Públicos', $this->url().'&public=TRUE');
       
       if( isset($_POST['codtarifa']) )
       {
@@ -145,8 +145,6 @@ class ventas_articulos extends fs_controller
       }
       else if( isset($_GET['public']) )
       {
-         $this->new_advice('Estos son los artículos que tienes marcados como púbicos. Haz clic <a href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
          $this->resultados = $articulo->all_publico($this->offset);
       }
       else

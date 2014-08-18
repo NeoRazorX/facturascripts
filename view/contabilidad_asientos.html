@@ -10,6 +10,11 @@
 <h3 class="text-center">Resultados de la búsqueda '{$fsc->query}':</h3>
 {/if}
 
+<ul class="nav nav-tabs" role="tablist">
+   <li{if condition="!isset($_GET['descuadrados'])"} class="active"{/if}><a href="{$fsc->url()}">Todos</a></li>
+   <li{if condition="isset($_GET['descuadrados'])"} class="active"{/if}><a href="{$fsc->url()}&descuadrados=TRUE">Descuadrados</a></li>
+</ul>
+
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>

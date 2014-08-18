@@ -41,9 +41,6 @@ class contabilidad_asientos extends fs_controller
       
       $this->buttons[] = new fs_button_img('b_renumerar', 'Renumerar', 'play.png', $this->url().'&renumerar=TRUE');
       
-      if( !isset($_GET['descuadrados']) )
-         $this->buttons[] = new fs_button('b_descuadrados', 'Descuadrados', $this->url().'&descuadrados=TRUE');
-      
       if( isset($_GET['delete']) )
       {
          $asiento = $this->asiento->get($_GET['delete']);
@@ -63,19 +60,18 @@ class contabilidad_asientos extends fs_controller
             $this->new_message("Asientos renumerados.");
       }
       
+      $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
-      else
-         $this->offset = 0;
       
       if( isset($_GET['descuadrados']) )
       {
-         $this->new_advice('Estos son los asientos descuadrados. Haz clic <a class="link" href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
          $this->resultados = $this->asiento->descuadrados();
       }
       else if($this->query)
+      {
          $this->resultados = $this->asiento->search($this->query, $this->offset);
+      }
       else
          $this->resultados = $this->asiento->all($this->offset);
    }
@@ -83,20 +79,32 @@ class contabilidad_asientos extends fs_controller
    public function anterior_url()
    {
       $url = '';
+      
       if($this->query!='' AND $this->offset>'0')
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND $this->offset>'0')
+      {
          $url = $this->url()."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
+      
       return $url;
    }
    
    public function siguiente_url()
    {
       $url = '';
+      
       if($this->query!='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&query=".$this->query."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
       else if($this->query=='' AND count($this->resultados)==FS_ITEM_LIMIT)
+      {
          $url = $this->url()."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
+      
       return $url;
    }
 }

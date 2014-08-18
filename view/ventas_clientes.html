@@ -9,6 +9,10 @@
       }
       else if(window.location.hash.substring(1) == 'grupos')
       {
+         $("#ul_tabs li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#div_clientes").hide();
          $("#b_grupos_clientes").addClass('active');
          $("#div_grupos").show();
          document.f_new_grupo.nombre.focus();
@@ -22,17 +26,13 @@
       }
       $("#b_grupos_clientes").click(function(event) {
          event.preventDefault();
-         if( $(this).hasClass('active') )
-         {
-            $("#b_grupos_clientes").removeClass('active');
-            $("#div_grupos").hide();
-         }
-         else
-         {
-            $("#b_grupos_clientes").addClass('active');
-            $("#div_grupos").show();
-            document.f_new_grupo.nombre.focus();
-         }
+         $("#ul_tabs li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#div_clientes").hide();
+         $("#b_grupos_clientes").addClass('active');
+         $("#div_grupos").show();
+         document.f_new_grupo.nombre.focus();
       });
    });
 </script>
@@ -120,6 +120,60 @@
    </div>
 </form>
 
+{if condition="$fsc->query!=''"}
+<h3 class="text-center">Resultados de la búsqueda "{$fsc->query}":</h3>
+{/if}
+
+<ul class="nav nav-tabs" id="ul_tabs">
+   <li class="active"><a href="{$fsc->url()}">Todos</a></li>
+   <li id="b_grupos_clientes"><a href="#grupos">Grupos</a></li>
+</ul>
+
+<div id="div_clientes">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Código + Nombre</th>
+               <th class="text-left">{#FS_CIFNIF#}</th>
+               <th class="text-left">Observaciones</th>
+            </tr>
+         </thead>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td><a href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
+            <td>{$value->cifnif}</td>
+            <td>{$value->observaciones_resume()}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="3" class="text-center">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <ul class="pager" id="ul_paginador">
+      {if condition="$fsc->anterior_url()!=''"}
+      <li class="previous">
+         <a href="{$fsc->anterior_url()}">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            &nbsp; Anteriores
+         </a>
+      </li>
+      {/if}
+      
+      {if condition="$fsc->siguiente_url()!=''"}
+      <li class="next">
+         <a href="{$fsc->siguiente_url()}">
+            Siguientes &nbsp;
+            <span class="glyphicon glyphicon-chevron-right"></span>
+         </a>
+      </li>
+      {/if}
+   </ul>
+</div>
+
 <div id="div_grupos" class="table-responsive" style="display: none;">
    <table class="table table-hover">
       <thead>
@@ -191,52 +245,5 @@
       </form>
    </table>
 </div>
-
-{if condition="$fsc->query!=''"}
-<h3 class="text-center">Resultados de la búsqueda "{$fsc->query}":</h3>
-{/if}
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Código + Nombre</th>
-            <th class="text-left">{#FS_CIFNIF#}</th>
-            <th class="text-left">Observaciones</th>
-         </tr>
-      </thead>
-      {loop="$fsc->resultados"}
-      <tr>
-         <td><a href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
-         <td>{$value->cifnif}</td>
-         <td>{$value->observaciones_resume()}</td>
-      </tr>
-      {else}
-      <tr class="bg-warning">
-         <td colspan="3" class="text-center">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
-
-<ul class="pager" id="ul_paginador">
-   {if condition="$fsc->anterior_url()!=''"}
-   <li class="previous">
-      <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
-      </a>
-   </li>
-   {/if}
-   
-   {if condition="$fsc->siguiente_url()!=''"}
-   <li class="next">
-      <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
-      </a>
-   </li>
-   {/if}
-</ul>
 
 {include="footer"}
