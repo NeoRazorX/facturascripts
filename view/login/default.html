@@ -13,11 +13,24 @@
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
    <script type="text/javascript">
+      {if condition="FS_DEMO"}
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+         ga('create', 'UA-417932-8', 'auto');
+         ga('send', 'pageview');
+      {/if}
       $(document).ready(function() {
          {if condition="$fsc->get_errors()"}
          $("#box_login").shake();
          {/if}
+         
+         {if condition="FS_DEMO"}
+         document.f_login.user.focus();
+         {else}
          document.f_login.password.focus();
+         {/if}
       });
    </script>
 </head>
@@ -76,6 +89,14 @@
          <div class="col-md-4">
             <div class="well well-lg" id="box_login">
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
+                  {if condition="FS_DEMO"}
+                  <h1>Demo</h1>
+                  <input type="hidden" name="password" value="demo"/>
+                  <div class="form-group">
+                     Escribe tu nombre:
+                     <input type="text" class="form-control input-lg" name="user" maxlength="12" placeholder="Escribe tu nombre"/>
+                  </div>
+                  {else}
                   <div class="form-group">
                      <label>Usuario</label>
                      <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
@@ -95,6 +116,7 @@
                         <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
                      </p>
                   </div>
+                  {/if}
                   <div class="text-right">
                      <button class="btn btn-sm btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
                         <span class="glyphicon glyphicon-log-in"></span>
@@ -154,12 +176,9 @@
    
    {include="feedback"}
    
-   <div class="container-fluid" style="margin-top: 50px;">
-      <div class="row">
-         <div class="col-lg-12">
-            <hr/>
-         </div>
-      </div>
+   <hr style="margin-top: 50px;"/>
+   
+   <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
          {if condition="FS_DB_HISTORY"}
          <div class="col-lg-12">

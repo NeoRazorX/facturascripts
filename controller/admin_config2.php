@@ -45,6 +45,10 @@ class admin_config2 extends fs_controller
             $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'">aquí</a> para continuar.');
          }
       }
+      else if($guardar AND FS_DEMO)
+      {
+         $this->new_error_msg('En el modo demo no se pueden hacer cambios aquí para no molestar a los demás usuarios.');
+      }
       else if($guardar)
       {
          $file = fopen('tmp/config2.ini', 'w');
