@@ -108,7 +108,7 @@
                      {if condition="$fsc->user->codagente"}
                      <li><a href="{$fsc->user->get_agente_url()}">Agente: {$fsc->user->codagente}</a></li>
                      {/if}
-                     {if condition="count($fsc->user->all())>1"}
+                     {if condition="count($fsc->user->all())>1 AND !FS_DEMO"}
                         <li class="divider"></li>
                         {loop name="$fsc->user->all()"}
                            {if condition="$value->nick != $fsc->user->nick"}
