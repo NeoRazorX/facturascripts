@@ -505,9 +505,11 @@
             <div class="modal-body">
                <div class="form-group">
                   <select class="form-control" name="cliente">
-                  {loop="$fsc->cliente->all_full()"}
+                     {loop="$fsc->cliente->all_full()"}
                      <option value="{$value->codcliente}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-                  {/loop}
+                     {else}
+                     <option value="">¡No hay clientes! Crea uno desde Ventas &gt; Clientes.</option>
+                     {/loop}
                   </select>
                </div>
             </div>

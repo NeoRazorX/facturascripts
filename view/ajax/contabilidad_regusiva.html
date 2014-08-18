@@ -14,16 +14,16 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th align='left'>Subcuenta</th>
-            <th align='right'>Debe</th>
-            <th align='right'>Haber</th>
+            <th class="text-left">Subcuenta</th>
+            <th class="text-right">Debe</th>
+            <th class="text-right">Haber</th>
          </tr>
       </thead>
       {loop="$fsc->aux_regiva"}
       <tr>
          <td>{$value['subcuenta']}</td>
-         <td align='right'>{$fsc->show_precio($value['debe'])}</td>
-         <td align='right'>{$fsc->show_precio($value['haber'])}</td>
+         <td class="text-right">{$fsc->show_precio($value['debe'])}</td>
+         <td class="text-right">{$fsc->show_precio($value['haber'])}</td>
       </tr>
       {else}
       <tr class="bg-warning">

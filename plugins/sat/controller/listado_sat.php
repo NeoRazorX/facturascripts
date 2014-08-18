@@ -46,22 +46,20 @@ class listado_sat extends fs_controller
       
       if( isset($_GET['id']) )
       {
-        if(isset($_GET['opcion']))
-        {
-        if($_GET['opcion']=="imprimir")
-        {
-            $this->resultado=$this->registro_sat->get($_GET['id']);
-             $this->template = "imprimir";
-        }
-
-        }
-        else
-        {
+         if(isset($_GET['opcion']))
+         {
+            if($_GET['opcion']=="imprimir")
+            {
+               $this->resultado=$this->registro_sat->get($_GET['id']);
+               $this->template = "imprimir";
+            }
+         }
+         else
+         {
             $this->template = "edita";
-          $this->page->title = "Edita SAT: ".$_GET['id'];
-     
-         $this->edita_sat();
-        }
+            $this->page->title = "Edita SAT: ".$_GET['id'];
+            $this->edita_sat();
+         }
       }
       else if( isset($_GET['opcion']) )
       {
@@ -92,8 +90,6 @@ class listado_sat extends fs_controller
                $this->nuevo_cliente();
             }
          }
-         
-
       }
       else
       {

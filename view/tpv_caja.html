@@ -57,7 +57,7 @@
          {loop="$fsc->resultados"}
          <tr>
             <td class="text-center">
-                  <input type="checkbox" name="delete[]" value="{$value->id}"/>
+               <input type="checkbox" name="delete[]" value="{$value->id}"/>
             </td>
             <td class="text-center">{$value->fs_id}</td>
             <td class="text-center">
@@ -74,7 +74,9 @@
             <td class="text-right">{$value->tickets}</td>
          </tr>
          {else}
-         <tr class="bg-warning"><td colspan="7" class="text-center">No hay datos.</td></tr>
+         <tr class="bg-warning">
+            <td colspan="7" class="text-center">Sin resultados.</td>
+         </tr>
          {/loop}
       </table>
    </div>

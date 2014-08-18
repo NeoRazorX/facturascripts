@@ -171,22 +171,16 @@
       <thead>
          <tr>
             <th class="text-left">Referencia + Descripción</th>
-            <th class="text-left">Cód. Equivalencia</th>
+            <th class="text-right">Coste</th>
             <th class="text-right">PVP</th>
-            <th class="text-right">PVP+IVA</th>
             <th class="text-right">Stock</th>
          </tr>
       </thead>
       {loop="$fsc->articulos"}
-      <tr>
-         {if condition="$value->bloqueado"}
-            <td class="locked"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         {else}
-            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-         {/if}
-         <td>{$value->equivalencia}</td>
+      <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
+         <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+         <td class="text-right">{$fsc->show_precio($value->costemedio)}</td>
          <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
-         <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
          <td class="text-right">{$value->stockfis}</td>
       </tr>
       {else}
@@ -217,7 +211,7 @@
    {/if}
 </ul>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

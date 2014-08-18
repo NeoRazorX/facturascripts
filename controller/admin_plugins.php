@@ -101,7 +101,7 @@ class admin_plugins extends fs_controller
                }
             }
             
-            $this->new_message('Módulo <b>'.$name.'</b> activado correctamente.');
+            $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
             $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
             $this->load_menu(TRUE);
             
@@ -109,21 +109,17 @@ class admin_plugins extends fs_controller
             $this->cache->clean();
          }
          else
-            $this->new_error_msg('Imposible activar el módulo <b>'.$name.'</b>.');
+            $this->new_error_msg('Imposible activar el plugin <b>'.$name.'</b>.');
       }
-      else
-	  {
-		  $this->new_error_msg('El módulo <b>'.$name.'</b> ya esta activado.');
-	  }
    }
    
    private function disable_plugin($name)
    {
-	  if( file_exists('tmp/enabled_plugins/'.$name) )
-	  {
+      if( file_exists('tmp/enabled_plugins/'.$name) )
+      {
          if( unlink('tmp/enabled_plugins/'.$name) )
          {
-            $this->new_message('Módulo <b>'.$name.'</b> desactivado correctamente.');
+            $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
             
             foreach($GLOBALS['plugins'] as $i => $value)
             {
@@ -135,53 +131,49 @@ class admin_plugins extends fs_controller
             }
          }
          else
-            $this->new_error_msg('Imposible desactivar el módulo <b>'.$name.'</b>.');
-	  }
-	  else
-	  {
-		  $this->new_error_msg('El módulo <b>'.$name.'</b> ya esta desactivado.');
-	  }
-      
-      /*
-       * Desactivamos las páginas que ya no existen
-       */
-      foreach($this->page->all() as $p)
-      {
-         $encontrada = FALSE;
+            $this->new_error_msg('Imposible desactivar el plugin <b>'.$name.'</b>.');
          
-         if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
+         /*
+          * Desactivamos las páginas que ya no existen
+          */
+         foreach($this->page->all() as $p)
          {
-            $encontrada = TRUE;
-         }
-         else
-         {
-            foreach($GLOBALS['plugins'] as $plugin)
+            $encontrada = FALSE;
+            
+            if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
             {
-               if( file_exists(getcwd().'/plugins/'.$plugin.'/controller/'.$p->name.'.php') AND $name != $plugin)
+               $encontrada = TRUE;
+            }
+            else
+            {
+               foreach($GLOBALS['plugins'] as $plugin)
                {
-                  $encontrada = TRUE;
-                  break;
+                  if( file_exists(getcwd().'/plugins/'.$plugin.'/controller/'.$p->name.'.php') AND $name != $plugin)
+                  {
+                     $encontrada = TRUE;
+                     break;
+                  }
+               }
+            }
+            
+            if( !$encontrada )
+            {
+               if( $p->delete() )
+               {
+                  $this->new_message('Se ha eliminado automáticamente la página '.$p->name);
                }
             }
          }
          
-         if( !$encontrada )
+         /// borramos los archivos temporales del motor de plantillas
+         foreach( scandir(getcwd().'/tmp') as $f)
          {
-            if( $p->delete() )
-            {
-               $this->new_message('Se ha eliminado automáticamente la página '.$p->name);
-            }
+            if( substr($f, -4) == '.php' )
+               unlink('tmp/'.$f);
          }
+         
+         /// limpiamos la caché
+         $this->cache->clean();
       }
-      
-      /// borramos los archivos temporales del motor de plantillas
-      foreach( scandir(getcwd().'/tmp') as $f)
-      {
-         if( substr($f, -4) == '.php' )
-            unlink('tmp/'.$f);
-      }
-      
-      /// limpiamos la caché
-      $this->cache->clean();
    }
 }

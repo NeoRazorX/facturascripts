@@ -5,8 +5,6 @@
  * Si tienes alguna duda consulta -> http://code.google.com/p/facturascripts/issues/list
  */
 
-date_default_timezone_set('Europe/Madrid');
-
 /*
  * Configuración de la base de datos.
  * type: postgresql o mysql (mysql está en fase experimental).

@@ -2,12 +2,12 @@
 
 {if condition="$fsc->get_errors()"}
    <div class="alert alert-danger">
-      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+      <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
 {if condition="$fsc->get_messages()"}
    <div class="alert alert-success">
-      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+      <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
 {/if}
 
@@ -30,6 +30,8 @@
       <td class="text-right">{$value->show_fecha()}</td>
    </tr>
    {else}
-   <tr class="bg-warning"><td colspan="5" class="text-center">Sin resultados.</td></tr>
+   <tr class="bg-warning">
+      <td colspan="5" class="text-center">Sin resultados.</td>
+   </tr>
    {/loop}
 </table>

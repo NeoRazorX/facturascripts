@@ -37,7 +37,15 @@ class admin_config2 extends fs_controller
          }
       }
       
-      if($guardar)
+      if( isset($_GET['reset']) )
+      {
+         if( file_exists('tmp/config2.ini') )
+         {
+            unlink('tmp/config2.ini');
+            $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'">aquí</a> para continuar.');
+         }
+      }
+      else if($guardar)
       {
          $file = fopen('tmp/config2.ini', 'w');
          if($file)
@@ -70,14 +78,17 @@ class admin_config2 extends fs_controller
    * @return array
    * @link http://stackoverflow.com/a/9328760
    */
-   public function get_timezone_list() {
+   public function get_timezone_list()
+   {
       $zones_array = array();
+      
       $timestamp = time();
       foreach(timezone_identifiers_list() as $key => $zone) {
          date_default_timezone_set($zone);
          $zones_array[$key]['zone'] = $zone;
          $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
       }
+      
       return $zones_array;
    }
 }

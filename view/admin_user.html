@@ -183,7 +183,7 @@
       <table class="table table-hover">
          <thead>
             <tr>
-               <th>Autorizado</th>
+               <th width="100">Autorizado</th>
                <th class="text-left">Página</th>
                <th class="text-left">Menú</th>
             </tr>
@@ -199,9 +199,10 @@
             </tr>
             {/loop}
          {else}
-         <tr>
-            <td colspan="2" class="text-center">
-               <div class="bg-success text-center" style="padding: 10px;">Los administradores tienen acceso a cualquier página.</div>
+         <tr class="bg-warning">
+            <td></td>
+            <td colspan="2">
+               Los administradores tienen acceso a cualquier página.
             </td>
          </tr>
          {/if}
@@ -232,7 +233,7 @@
    {/if}
 </form>
 {else}
-<div class=" text-center">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

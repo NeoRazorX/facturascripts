@@ -35,6 +35,7 @@ if( file_exists('tmp/config2.ini') )
 else
 {
    $GLOBALS['config2'] = array(
+       'zona_horaria' => 'Europe/Madrid',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
        'cifnif' => 'CIF/NIF'
@@ -43,5 +44,12 @@ else
 
 foreach($GLOBALS['config2'] as $i => $value)
 {
-   define('FS_'.strtoupper($i), $value);
+   if($i == 'zona_horaria')
+   {
+      date_default_timezone_set($value);
+   }
+   else
+   {
+      define('FS_'.strtoupper($i), $value);
+   }
 }

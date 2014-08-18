@@ -41,7 +41,7 @@
    });
 </script>
 
-<form class="form-horizontal" role="form" name="f_nueva_regiva" action ="{$fsc->url()}" method="post">
+<form class="form-horizontal" role="form" name="f_nueva_regiva" action="{$fsc->url()}" method="post">
    <input type="hidden" name="proceso" value=""/>
    <div class="modal fade" id="modal_nueva_regiva">
       <div class="modal-dialog">
@@ -118,7 +118,9 @@
          <td class="text-right">{$value->fechafin}</td>
       </tr>
       {else}
-      <tr class="bg-warning"><td colspan="4" class="text-center">Sin resultados.</td></tr>
+      <tr class="bg-warning">
+         <td colspan="4">Sin resultados. Pulsa el botón <b>Nueva</b> para hacer una regularización de IVA.</td>
+      </tr>
       {/loop}
    </table>
 </div>

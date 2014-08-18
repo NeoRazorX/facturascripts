@@ -233,7 +233,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->stockfis<0"} class="bg-warning"{/if}>
+      <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
          <td>{$value->codfamilia}</td>
          {if condition="$value->bloqueado"}
             <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
@@ -246,7 +246,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="5" class="text-center">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>
