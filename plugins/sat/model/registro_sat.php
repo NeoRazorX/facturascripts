@@ -238,7 +238,7 @@ class registro_sat extends fs_model
          registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2,
          registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
          FROM registros_sat, clientes
-         WHERE registros_sat.codcliente = clientes.codcliente ORDER BY fcomienzo DESC, nsat DESC;";
+         WHERE registros_sat.codcliente = clientes.codcliente ORDER BY fcomienzo ASC, prioridad ASC,ffin ASC, fentrada ASC;";
       $data = $this->db->select($sql);
       if($data)
       {
@@ -249,20 +249,20 @@ class registro_sat extends fs_model
       return $satlist;
    }
    
-   public function search($query='', $desde='', $hasta='', $estado='todos')
+   public function search($buscar='', $desde='', $hasta='', $estado='todos')
    {
       $satlist = array();
       
-      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad, registros_sat.fcomienzo, registros_sat.ffin,
+      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad,registros_sat.fentrada, registros_sat.fcomienzo, registros_sat.ffin,
          registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2, registros_sat.estado,
-         registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones
+         registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
          FROM registros_sat, clientes
          WHERE registros_sat.codcliente = clientes.codcliente";
       
-      if($query != '')
+      if($buscar != '')
       {
-         $sql .= " AND ((lower(modelo) LIKE lower('%".$query."%')) OR (registros_sat.observaciones LIKE '%".$query."%')
-            OR (lower(nombre) LIKE lower('%".$query."%')))";
+         $sql .= " AND ((lower(modelo) LIKE lower('%".$buscar."%')) OR (registros_sat.observaciones LIKE '%".$buscar."%')
+            OR (lower(nombre) LIKE lower('%".$buscar."%')))";
       }
       
       if($desde != '')

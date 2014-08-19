@@ -7,6 +7,10 @@
    <div class="panel-body">
       <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
          <div class="form-group">
+            Buscar:
+            <input type="text" name="buscar" size="10"/>
+         </div>
+          <div class="form-group">
             Desde:
             <input class="form-control datepicker" type="text" name="desde" size="10"/>
          </div>
@@ -32,6 +36,16 @@
       <table class="table table-hover">
          <thead>
             <tr>
+               <th align="left">N sat</th>
+               <th align="left">Prioridad</th>
+               <th align="left">Fecha de entrada</th>
+               <th align="left">Fecha de comienzo</th>
+               <th align="left">Fecha de finalización</th>
+               <th align="left">Modelo</th>
+               <th align="left">Nombre</th>
+               <th align="left">Telefono</th>
+               <th align="left">Movil</th>
+               <th align="left">Estado</th>
                <th class="text-left">N sat</th>
                <th class="text-left">Prioridad</th>
                <th class="text-left">Fecha de comienzo</th>
@@ -47,6 +61,7 @@
          <tr>
             <td><a href="{$value->url()}">{$value->nsat}</a></td>
             <td>{$value->nombre_prioridad()}</td>
+            <td>{$value->fentrada}</td>
             <td>{$value->fcomienzo}</td>
             <td>{$value->ffin}</td>
             <td>{$value->modelo}</td>
