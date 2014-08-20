@@ -33,7 +33,7 @@ class ventas_presupuestos extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Presupuestos de cliente', 'ventas', FALSE, TRUE, TRUE);
+      parent::__construct(__CLASS__, ucfirst(FS_PRESUPUESTOS).' de cliente', 'ventas', FALSE, TRUE, TRUE);
    }
    
    protected function process()
@@ -91,11 +91,6 @@ class ventas_presupuestos extends fs_controller
          $this->buttons[] = new fs_button('b_nuevo_presupuesto', 'Nuevo', 'index.php?page=nueva_venta&tipo=presupuesto');
          $this->buttons[] = new fs_button('b_buscar_lineas', 'Lineas');
          
-         if( !isset($_GET['ptepedir']) )
-         {
-            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptepedir=TRUE");
-         }
-         
          if( isset($_POST['delete']) )
          {
             $this->delete_presupuesto();
@@ -105,10 +100,8 @@ class ventas_presupuestos extends fs_controller
          {
             $this->resultados = $presupuesto->search($this->query, $this->offset);
          }
-         else if( isset($_GET['ptepedir']) )
+         else if( isset($_GET['pendientes']) )
          {
-            $this->new_advice('Estos son los presupuesto pendientes de pedir. Haz clic <a href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
             $this->resultados = $presupuesto->all_ptepedir($this->offset);
          }
          else
@@ -218,13 +211,13 @@ class ventas_presupuestos extends fs_controller
          
          if( $pre1->delete() )
          {
-            $this->new_message("Presupuesto ".$pre1->codigo." borrado correctamente.");
+            $this->new_message(ucfirst(FS_PRESUPUESTO)." ".$pre1->codigo." borrado correctamente.");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el presupuesto!");
+            $this->new_error_msg("¡Imposible borrar el ".FS_PRESUPUESTO."!");
       }
       else
-         $this->new_error_msg("¡Presupuesto no encontrado!");
+         $this->new_error_msg("¡".ucfirst(FS_PRESUPUESTO)." no encontrado!");
    }
    
    private function share_extension()
@@ -237,7 +230,7 @@ class ventas_presupuestos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_cliente';
          $fsext->type = 'button';
-         $fsext->text = 'Presupuestos';
+         $fsext->text = ucfirst(FS_PRESUPUESTOS);
          $fsext->save();
       }
       
@@ -247,7 +240,7 @@ class ventas_presupuestos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = 'Presupuestos de clientes';
+         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de clientes';
          $fsext->save();
       }
       
@@ -257,7 +250,7 @@ class ventas_presupuestos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = 'Presupuestos de clientes';
+         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de clientes';
          $fsext->save();
       }
    }

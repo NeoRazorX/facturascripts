@@ -256,14 +256,14 @@ class albaran_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
-   public function new_idalbaran()
+   private function new_idalbaran()
    {
       $newid = $this->db->nextval($this->table_name.'_idalbaran_seq');
       if($newid)
          $this->idalbaran = intval($newid);
    }
    
-   public function new_codigo()
+   private function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'nalbarancli');

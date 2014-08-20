@@ -238,13 +238,6 @@ class presupuesto_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
    }
    
-   public function new_idpresupuesto()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idpresupuesto_seq');
-      if($newid)
-         $this->idpresupuesto = intval($newid);
-   }
-   
    private function new_codigo()
    {
       $sec = new secuencia();
@@ -314,7 +307,6 @@ class presupuesto_cliente extends fs_model
          }
          else
          {
-            $this->new_idpresupuesto();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,codcliente,coddir,
                coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,direccion,editable,fecha,hora,idpedido,irpf,neto,
@@ -332,8 +324,15 @@ class presupuesto_cliente extends fs_model
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",
                ".$this->var2str($this->totaleuros).",".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",
                ".$this->var2str($this->totalrecargo).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idpresupuesto = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;

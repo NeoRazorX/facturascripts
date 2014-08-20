@@ -133,8 +133,8 @@ class nueva_venta extends fs_controller
    public function tipos_a_guardar()
    {
       return array(
-          array('tipo' => 'presupuesto', 'nombre' => 'Presupuesto para cliente'),
-          array('tipo' => 'pedido', 'nombre' => 'Pedido de cliente'),
+          array('tipo' => 'presupuesto', 'nombre' => ucfirst(FS_PRESUPUESTO).' para cliente'),
+          array('tipo' => 'pedido', 'nombre' => ucfirst(FS_PEDIDO).' de cliente'),
           array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de cliente'),
           array('tipo' => 'factura', 'nombre' => 'Factura de cliente')
       );
@@ -364,21 +364,21 @@ class nueva_venta extends fs_controller
                
                if( $presupuesto->save() )
                {
-                  $this->new_message("<a href='".$presupuesto->url()."'>Presupuesto</a> guardado correctamente.");
-                  $this->new_change('Presupuesto a Cliente '.$presupuesto->codigo, $presupuesto->url(), TRUE);
+                  $this->new_message("<a href='".$presupuesto->url()."'>".ucfirst(FS_PRESUPUESTO)."</a> guardado correctamente.");
+                  $this->new_change(ucfirst(FS_PRESUPUESTO).' a Cliente '.$presupuesto->codigo, $presupuesto->url(), TRUE);
                }
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$presupuesto->url()."'>Presupuesto</a>!");
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$presupuesto->url()."'>".FS_PRESUPUESTO."</a>!");
             }
             else if( $presupuesto->delete() )
             {
-               $this->new_message("Presupuesto eliminado correctamente.");
+               $this->new_message(ucfirst(FS_PRESUPUESTO)." eliminado correctamente.");
             }
             else
-               $this->new_error_msg("¡Imposible eliminar el <a href='".$presupuesto->url()."'>Presupuesto</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$presupuesto->url()."'>".FS_PRESUPUESTO."</a>!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el presupuesto!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_PRESUPUESTO."!");
       }
    }
    
@@ -562,21 +562,21 @@ class nueva_venta extends fs_controller
                
                if( $pedido->save() )
                {
-                  $this->new_message("<a href='".$pedido->url()."'>Pedido</a> guardado correctamente.");
-                  $this->new_change('Presupuesto a Cliente '.$pedido->codigo, $pedido->url(), TRUE);
+                  $this->new_message("<a href='".$pedido->url()."'>".ucfirst(FS_PEDIDO)."</a> guardado correctamente.");
+                  $this->new_change(ucfirst(FS_PEDIDO)." a Cliente ".$pedido->codigo, $pedido->url(), TRUE);
                }
                else
-                  $this->new_error_msg("¡Imposible actualizar el <a href='".$pedido->url()."'>Pedido</a>!");
+                  $this->new_error_msg("¡Imposible actualizar el <a href='".$pedido->url()."'>".FS_PEDIDO."</a>!");
             }
             else if( $pedido->delete() )
             {
-               $this->new_message("Pedido eliminado correctamente.");
+               $this->new_message(ucfirst(FS_PEDIDO)." eliminado correctamente.");
             }
             else
-               $this->new_error_msg("¡Imposible eliminar el <a href='".$pedido->url()."'>Pedido</a>!");
+               $this->new_error_msg("¡Imposible eliminar el <a href='".$pedido->url()."'>".FS_PEDIDO."</a>!");
          }
          else
-            $this->new_error_msg("¡Imposible guardar el pedido!");
+            $this->new_error_msg("¡Imposible guardar el ".FS_PEDIDO."!");
       }
    }
    

@@ -247,14 +247,7 @@ class pedido_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }
    
-   private function new_idpedido()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idpedido_seq');
-      if($newid)
-         $this->idpedido = intval($newid);
-   }
-   
-   public function new_codigo()
+   private function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npedidocli');
@@ -323,7 +316,6 @@ class pedido_cliente extends fs_model
          }
          else
          {
-            $this->new_idpedido();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,
                codcliente,coddir,coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,
@@ -341,8 +333,15 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idpedido = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;

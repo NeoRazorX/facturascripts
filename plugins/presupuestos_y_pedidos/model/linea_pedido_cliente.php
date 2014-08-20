@@ -206,7 +206,7 @@ class linea_pedido_cliente extends fs_model
       {
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET cantidad = ".$this->var2str($this->idlinea).",
+            $sql = "UPDATE ".$this->table_name." SET cantidad = ".$this->var2str($this->cantidad).",
                codimpuesto = ".$this->var2str($this->codimpuesto).", descripcion = ".$this->var2str($this->descripcion).",
                dtolineal = ".$this->var2str($this->dtolineal).", dtopor = ".$this->var2str($this->dtopor).", idpedido = ".$this->var2str($this->idpedido).",
                irpf = ".$this->var2str($this->irpf).", iva = ".$this->var2str($this->iva).",

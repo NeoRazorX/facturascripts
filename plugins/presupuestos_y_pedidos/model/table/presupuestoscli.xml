@@ -109,7 +109,7 @@
    <columna>
       <nombre>fechasalida</nombre>
       <tipo>date</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>finoferta</nombre>

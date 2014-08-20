@@ -84,7 +84,7 @@
    <columna>
       <nombre>totalenalbaran</nombre>
       <tipo>double precision</tipo>
-      <nulo>NO</nulo>
+      <nulo>YES</nulo>
    </columna>
    <restriccion>
       <nombre>lineaspedidoscli_pkey</nombre>

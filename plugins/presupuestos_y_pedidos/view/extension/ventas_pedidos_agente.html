@@ -1,6 +1,8 @@
 {include="header"}
 
-<h3 class="text-center">Pedidos creados por <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a></h3>
+<h3 class="text-center">
+   <span class="text-capitalize">{#FS_PEDIDOS#}</span> creados por <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+</h3>
 
 <div class="table-responsive">
    <table class="table table-hover">
@@ -10,7 +12,8 @@
             <th class="text-left">Código + Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
-            <th class="text-right">Fecha y hora</th>
+            <th class="text-right">Fecha</th>
+            <th class="text-right">Hora</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
@@ -23,11 +26,13 @@
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td class="text-right">{$value->fecha} {$value->hora}</td>
+         <td class="text-right">{$value->fecha}</td>
+         <td class="text-right">{$value->hora}</td>
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="5" class="text-center">Ningún pedido encontrado.</td>
+         <td></td>
+         <td colspan="5">Ningún {#FS_PEDIDO#} encontrado.</td>
       </tr>
       {/loop}
    </table>

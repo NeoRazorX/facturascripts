@@ -23,7 +23,7 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir presupuesto</h4>
+            <h4 class="modal-title">Imprimir {#FS_PRESUPUESTO#}</h4>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
@@ -46,7 +46,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar presupuesto</h4>
+               <h4 class="modal-title">Enviar {#FS_PRESUPUESTO#}</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -55,7 +55,7 @@
                </div>
                <div class="form-group">
                   Mensaje:
-                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su presupuesto {$fsc->presupuesto->codigo}.
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {#FS_PRESUPUESTO#} {$fsc->presupuesto->codigo}.
 {$fsc->empresa->email_firma}</textarea>
                </div>
             </div>
@@ -77,7 +77,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este presupuesto?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este {#FS_PRESUPUESTO#}?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
@@ -93,7 +93,7 @@
             </div>
             {if condition="$fsc->presupuesto->idpedido"}
             <div class="alert alert-info">
-               Hay un pedido asociado que será eliminada junto con este presupuesto.
+               Hay un {#FS_PEDIDO#} asociado que será eliminada junto con este {#FS_PRESUPUESTO#}.
             </div>
             {/if}
          </div>

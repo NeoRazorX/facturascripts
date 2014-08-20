@@ -33,10 +33,10 @@
                <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="iva" value="{$value->iva}" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="iva" value="{$value->iva}" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="recargo" value="{$value->recargo}" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="recargo" value="{$value->recargo}" autocomplete="off"/>
             </td>
             <td class="text-right">
                <div class="btn-group">
@@ -60,10 +60,10 @@
                <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="iva" value="0" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="iva" value="0" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="recargo" value="0" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="recargo" value="0" autocomplete="off"/>
             </td>
             <td class="text-right">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">

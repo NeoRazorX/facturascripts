@@ -389,18 +389,18 @@ class factura_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
-   public function new_idfactura()
+   private function new_idfactura()
    {
       $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
       if($newid)
          $this->idfactura = intval($newid);
    }
    
-   public function new_codigo()
+   private function new_codigo()
    {
       /// buscamos un hueco
       $encontrado = FALSE;
-      $num = 1;
+      $num = intval(FS_NFACTURA_CLI); /// definido en el config2
       $fecha = $this->fecha;
       $numeros = $this->db->select("SELECT ".$this->db->sql_to_int('numero')." as numero,fecha
          FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).
@@ -451,11 +451,12 @@ class factura_cliente extends fs_model
       $this->totaleuros = $this->total * $this->tasaconv;
       
       if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      {
          return TRUE;
+      }
       else
       {
-         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.
-            ¡Avisa al informático!");
+         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva. ¡Avisa al informático!");
          return FALSE;
       }
    }
@@ -828,8 +829,8 @@ class factura_cliente extends fs_model
          foreach($ejercicio->all_abiertos() as $eje)
          {
             $codserie = '';
-            $num = 1;
-            $numeros = $this->db->select("SELECT codserie,".$this->db->sql_to_int('numero')." as numero,fecha
+            $num = intval(FS_NFACTURA_CLI); /// definido en el config2
+            $numeros = $this->db->select("SELECT codserie,".$this->db->sql_to_int('numero')." as numero,fecha,hora
                FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($eje->codejercicio).
                " ORDER BY codserie ASC, numero ASC;");
             if( $numeros )
@@ -839,7 +840,7 @@ class factura_cliente extends fs_model
                   if( $n['codserie'] != $codserie )
                   {
                      $codserie = $n['codserie'];
-                     $num = 1;
+                     $num = intval(FS_NFACTURA_CLI); /// definido en el config2
                   }
                   
                   if( intval($n['numero']) != $num )
@@ -848,7 +849,8 @@ class factura_cliente extends fs_model
                      {
                         $huecolist[] = array(
                             'codigo' => $eje->codejercicio . sprintf('%02s', $codserie) . sprintf('%06s', $num),
-                            'fecha' => Date('d-m-Y', strtotime($n['fecha']))
+                            'fecha' => Date('d-m-Y', strtotime($n['fecha'])),
+                            'hora' => $n['hora']
                         );
                         $num++;
                      }
@@ -858,7 +860,7 @@ class factura_cliente extends fs_model
                }
             }
          }
-         $this->cache->set('factura_cliente_huecos', $huecolist, 86400);
+         $this->cache->set('factura_cliente_huecos', $huecolist, 3600);
       }
       return $huecolist;
    }

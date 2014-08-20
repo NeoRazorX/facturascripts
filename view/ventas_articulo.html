@@ -133,19 +133,19 @@
    }
    $(document).ready(function() {
       show_div(window.location.hash.substring(1));
-      $("#b_generales").click(function() {
+      $("#b_generales").click(function(event) {
          event.preventDefault();
          show_div('generales');
       });
-      $("#b_precios").click(function() {
+      $("#b_precios").click(function(event) {
          event.preventDefault();
          show_div('precios');
       });
-      $("#b_stock").click(function() {
+      $("#b_stock").click(function(event) {
          event.preventDefault();
          show_div('stock');
       });
-      $("#b_equivalentes").click(function() {
+      $("#b_equivalentes").click(function(event) {
          event.preventDefault();
          show_div('equivalentes');
       });
@@ -274,7 +274,7 @@
 <form action="{$fsc->url()}#precios" method="post" class="form">
    <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
    <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
-   <div id="div_precios" style="margin-top: 10px;">
+   <div id="div_precios">
       <div class="table-responsive">
          <table class="table table-hover">
             <thead>
@@ -297,10 +297,10 @@
                <td><div class="form-control">General</div></td>
                <td><div class="form-control text-right">0.00</div></td>
                <td>
-                  <input type="number" class="form-control text-right" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+                  <input type="number" step="any" class="form-control text-right" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onchange="cambiar_pvp()" onkeyup="cambiar_pvp()" onclick="this.select()"/>
                </td>
                <td>
-                  <input type="number" class="form-control text-right" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" autocomplete="off" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+                  <input type="number" step="any" class="form-control text-right" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" autocomplete="off" onchange="cambiar_pvpi()" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
                </td>
             </tr>
             {loop="$fsc->articulo->get_tarifas(TRUE)"}
@@ -311,13 +311,13 @@
                <td>
                   <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                   <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
-                  <input type="number" class="form-control text-right" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" size="5" autocomplete="off" onkeyup="ajustar_dto()" onclick="this.select()"/>
+                  <input type="number" step="any" class="form-control text-right" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" autocomplete="off" onchange="ajustar_dto()" onkeyup="ajustar_dto()" onclick="this.select()"/>
                </td>
                <td>
-                  <input type="number" class="form-control text-right" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" size="5" autocomplete="off" onkeyup="ajustar_pvp()" onclick="this.select()"/>
+                  <input type="number" step="any" class="form-control text-right" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" autocomplete="off" onchange="ajustar_pvp()" onkeyup="ajustar_pvp()" onclick="this.select()"/>
                </td>
                <td>
-                  <input type="number" class="form-control text-right" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" size="5" autocomplete="off" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
+                  <input type="number" step="any" class="form-control text-right" id="pvpi_{$counter}" name="pvpiva_{$counter}" value="{$value->pvp_iva()}" autocomplete="off" onchange="ajustar_pvpi()" onkeyup="ajustar_pvpi()" onclick="this.select()"/>
                </td>
             </tr>
             {/loop}
@@ -378,7 +378,7 @@
                <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
                <td><div class="form-control">{$value->codalmacen} {$value->nombre}</div></td>
                <td>
-                  <input type="number" class="form-control text-right" name="cantidad" value="{$value->cantidad}" autocomplete="off"/>
+                  <input type="number" step="any" class="form-control text-right" name="cantidad" value="{$value->cantidad}" autocomplete="off"/>
                </td>
                <td><div class="form-control text-right">{$value->reservada}</div></td>
                <td><div class="form-control text-right">{$value->disponible}</div></td>
@@ -419,7 +419,6 @@
 </div>
 
 <div id="div_equivalentes">
-   <h3>Artículos equivalentes:</h3>
    {if condition="$fsc->equivalentes"}
    <div class="table-responsive">
       <table class="table table-hover">

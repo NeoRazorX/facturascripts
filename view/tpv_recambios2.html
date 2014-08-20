@@ -32,7 +32,7 @@
             l_dto = parseFloat( $("#dto_"+i).val() );
             l_iva = parseFloat( $("#iva_"+i).val() );
             $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
-            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            $("#totiva_"+i).val( fs_round(l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100, {#FS_NF0#}) );
             
             neto += l_uds*l_pvp*(100-l_dto)/100;
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
@@ -118,7 +118,7 @@
             <input type=\"hidden\" id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" value=\""+iva+"\"/>\n\
             <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
          <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
-         <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
+         <td><input type=\"number\" step=\"any\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
             "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
          <td><button class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"$('#linea_"+numlineas+"').remove();recalcular();\">\n\
             <span class=\"glyphicon glyphicon-trash\"></span></button></td>\n\
@@ -276,7 +276,7 @@
    </div>
    
    <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-condensed">
          <thead>
             <tr>
                <th class="text-left">Referencia</th>

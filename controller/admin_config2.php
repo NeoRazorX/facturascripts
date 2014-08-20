@@ -69,9 +69,13 @@ class admin_config2 extends fs_controller
    public function claves()
    {
       $clist = array();
+      $exclude = array('zona_horaria', 'nfactura_cli');
       
       foreach($GLOBALS['config2'] as $i => $value)
-         $clist[] = array('nombre' => $i, 'valor' => $value);
+      {
+         if( !in_array($i, $exclude) )
+            $clist[] = array('nombre' => $i, 'valor' => $value);
+      }
       
       return $clist;
    }

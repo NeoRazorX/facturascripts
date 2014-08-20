@@ -69,6 +69,11 @@
 <h3 class="text-center">Resultados de "{$fsc->query}":</h3>
 {/if}
 
+<ul class="nav nav-tabs" role="tablist">
+   <li{if condition="!isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}">Todos</a></li>
+   <li{if condition="isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}&pendientes=TRUE">Pendientes</a></li>
+</ul>
+
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
@@ -78,25 +83,28 @@
             <th class="text-left">Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
-            <th class="text-right">Fecha y hora</th>
+            <th class="text-right">Fecha</th>
+            <th class="text-right">Hora</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
       <tr>
          <td class="text-center">
             {if condition="$value->idalbaran"}
-            <span class="glyphicon glyphicon-paperclip" title="El pedido tiene vinculado un {#FS_ALBARAN#}"></span>
+            <span class="glyphicon glyphicon-paperclip" title="El {#FS_PEDIDO#} tiene vinculado un {#FS_ALBARAN#}"></span>
             {/if}
          </td>
          <td><a href="{$value->url()}">{$value->codigo}</a></td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
-         <td class="text-right">{$value->fecha} {$value->hora}</td>
+         <td class="text-right">{$value->fecha}</td>
+         <td class="text-right">{$value->show_hora()}</td>
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="6" class="text-center">Ningún pedido encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td></td>
+         <td colspan="6">Ningún {#FS_PEDIDO#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

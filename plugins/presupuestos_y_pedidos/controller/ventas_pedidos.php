@@ -33,7 +33,7 @@ class ventas_pedidos extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pedido de cliente', 'ventas', FALSE, TRUE, TRUE);
+      parent::__construct(__CLASS__, ucfirst(FS_PEDIDOS).' de cliente', 'ventas', FALSE, TRUE, TRUE);
    }
    
    protected function process()
@@ -91,11 +91,6 @@ class ventas_pedidos extends fs_controller
          $this->buttons[] = new fs_button('b_nuevo_pedido', 'Nuevo', 'index.php?page=nueva_venta&tipo=pedido');
          $this->buttons[] = new fs_button('b_buscar_lineas', 'Lineas');
          
-         if( !isset($_GET['ptealbaran']) )
-         {
-            $this->buttons[] = new fs_button('b_pendientes', 'Pendientes', $this->url()."&amp;ptealbaran=TRUE");
-         }
-         
          if( isset($_POST['delete']) )
          {
             $this->delete_pedido();
@@ -105,10 +100,8 @@ class ventas_pedidos extends fs_controller
          {
             $this->resultados = $pedido->search($this->query, $this->offset);
          }
-         else if( isset($_GET['ptealbaran']) )
+         else if( isset($_GET['pendientes']) )
          {
-            $this->new_advice('Estos son los pedidos pendientes de pasar a '.FS_ALBARAN.'. Haz clic <a href="'.$this->url().
-                 '">aquí</a> para volver a la vista normal.');
             $this->resultados = $pedido->all_ptealbaran($this->offset);
          }
          else
@@ -202,13 +195,13 @@ class ventas_pedidos extends fs_controller
       {
          if( $ped1->delete() )
          {
-            $this->new_message("Pedido ".$ped1->codigo." borrado correctamente.");
+            $this->new_message(ucfirst(FS_PEDIDO).' '.$ped1->codigo." borrado correctamente.");
          }
          else
-            $this->new_error_msg("¡Imposible borrar el pedido!");
+            $this->new_error_msg("¡Imposible borrar el ".FS_PEDIDO."!");
       }
       else
-         $this->new_error_msg("¡Pedido no encontrado!");
+         $this->new_error_msg("¡".ucfirst(FS_PEDIDO)." no encontrado!");
    }
    
    private function share_extension()
@@ -221,7 +214,7 @@ class ventas_pedidos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_cliente';
          $fsext->type = 'button';
-         $fsext->text = 'Pedidos';
+         $fsext->text = ucfirst(FS_PEDIDOS);
          $fsext->save();
       }
       
@@ -231,7 +224,7 @@ class ventas_pedidos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = 'Pedidos de clientes';
+         $fsext->text = ucfirst(FS_PEDIDOS).' de clientes';
          $fsext->save();
       }
       
@@ -241,7 +234,7 @@ class ventas_pedidos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = 'Pedidos de clientes';
+         $fsext->text = ucfirst(FS_PEDIDOS).' de clientes';
          $fsext->save();
       }
    }

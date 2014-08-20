@@ -21,7 +21,7 @@
             l_dto = parseFloat( $("#dto_"+i).val() );
             l_iva = parseFloat( $("#iva_"+i).val() );
             $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
-            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            $("#totiva_"+i).val( fs_round(l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100, {#FS_NF0#}) );
             
             neto += l_uds*l_pvp*(100-l_dto)/100;
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
@@ -170,12 +170,12 @@
       numlineas += 1;
       $("#numlineas").val(numlineas);
       desc = Base64.decode(desc);
-      $("#lineas_pedido").prepend("<tr id=\"linea_"+numlineas+"\">\n\
+      $("#lineas_pedido").append("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"idlinea_"+numlineas+"\" value=\"-1\"/>\n\
             <input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
             <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
          <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
-         <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
+         <td><input type=\"number\" step=\"any\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
             "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
          <td><button class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"$('#linea_"+numlineas+"').remove();recalcular();\">\n\
             <span class=\"glyphicon glyphicon-trash\"></span></button></td>\n\
@@ -266,12 +266,12 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir pedido</h4>
+            <h4 class="modal-title">Imprimir {#FS_PEDIDO#}</h4>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
                <span class="glyphicon glyphicon-print"></span>
-               &nbsp; pedido simple
+               &nbsp; {#FS_PEDIDO#} simple
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
@@ -289,7 +289,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar pedido</h4>
+               <h4 class="modal-title">Enviar {#FS_PEDIDO#}</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -298,12 +298,12 @@
                </div>
                <div class="form-group">
                   Mensaje:
-                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su pedido {$fsc->pedido->codigo}.
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {#FS_PEDIDO#} {$fsc->pedido->codigo}.
 {$fsc->empresa->email_firma}</textarea>
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Enviar">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                    <span class="glyphicon glyphicon-send"></span>
                    &nbsp; Enviar
                 </button>
@@ -313,14 +313,14 @@
    </div>
 </form>
 
-<form action="{$fsc->ppage->url()}" method="post">
+<form action="{$fsc->ppage->url()}" method="post" class="form">
    <input type="hidden" name="delete" value="{$fsc->pedido->idpedido}"/>
    <div class="modal fade" id="modal_eliminar">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este pedido?</h4>
+               <h4 class="modal-title">¿Realmente desea eliminar este {#FS_PEDIDO#}?</h4>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
@@ -336,7 +336,7 @@
             </div>
             {if condition="$fsc->pedido->idalbaran"}
             <div class="alert alert-info">
-               Hay un {#FS_ALBARAN#} asociado que será eliminado junto con este pedido.
+               Hay un {#FS_ALBARAN#} asociado que será eliminado junto con este {#FS_PEDIDO#}.
             </div>
             {/if}
          </div>
@@ -389,7 +389,7 @@
 </div>
 
 
-<form action="{$fsc->pedido->url()}" method="post">
+<form action="{$fsc->pedido->url()}" method="post" class="form">
    <input type="hidden" name="idpedido" value="{$fsc->pedido->idpedido}"/>
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="container-fluid">
@@ -452,11 +452,21 @@
                <input class="form-control" type="text" name="hora" value="{$fsc->pedido->hora}"/>
             </div>
          </div>
+         {if condition="$fsc->agente"}
+         <div class="col-lg-2">
+            <div class="form-group">
+               Agente:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+         </div>
+         {/if}
       </div>
    </div>
    
    <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-condensed">
          <thead>
             <tr>
                <th class="text-left">Referencia</th>
@@ -483,7 +493,7 @@
                   <input type="text" class="form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
                </td>
                <td>
-                  <input type="number" class="form-control text-right" name="cantidad_{$counter}" id="cantidad_{$counter}"
+                  <input type="number" step="any" class="form-control text-right" name="cantidad_{$counter}" id="cantidad_{$counter}"
                          value="{$value->cantidad}" onchange="recalcular()" autocomplete="off"/>
                </td>
                <td>
@@ -520,6 +530,8 @@
                </td>
             </tr>
             {/loop}
+         </tbody>
+         <tbody>
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
                <td colspan="5"></td>
@@ -548,17 +560,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         {if condition="$fsc->agente"}
-         <div class="col-lg-3">
-            <div class="form-group">
-               Agente:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-         </div>
-         {/if}
-         <div class="col-lg-9">
+         <div class="col-lg-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones">{$fsc->pedido->observaciones}</textarea>
@@ -582,7 +584,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

@@ -50,7 +50,7 @@ class ventas_pedido extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pedido', 'ventas', FALSE, FALSE);
+      parent::__construct(__CLASS__, ucfirst(FS_PEDIDO), 'ventas', FALSE, FALSE);
    }
    
    protected function process()
@@ -131,7 +131,6 @@ class ventas_pedido extends fs_controller
                   $this->generar_albaran();
             }
             
-            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_pedido&idpedcli='.$this->pedido->idpedido, TRUE);
             $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
             
             /// comprobamos si se pueden enviar emails
@@ -164,7 +163,7 @@ class ventas_pedido extends fs_controller
          $this->buttons[] = new fs_button_img('b_remove_pedido', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
-         $this->new_error_msg("¡Pedido de cliente no encontrado!");
+         $this->new_error_msg("¡".ucfirst(FS_PEDIDO)." de cliente no encontrado!");
    }
    
    public function url()
@@ -182,14 +181,14 @@ class ventas_pedido extends fs_controller
       $this->pedido->hora = $_POST['hora'];
       $this->pedido->observaciones = $_POST['observaciones'];
       
-      if($this->pedido->idalbaran)
+      if( is_null($this->pedido->idalbaran) )
       {
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->pedido->codejercicio );
          if($eje0)
             $this->pedido->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
          else
-            $this->new_error_msg('No se encuentra el ejercicio asociado al pedido');
+            $this->new_error_msg('No se encuentra el ejercicio asociado al '.FS_PEDIDO);
          
          /// ¿cambiamos el cliente?
          if($_POST['cliente'] != $this->pedido->codcliente)
@@ -216,6 +215,8 @@ class ventas_pedido extends fs_controller
                }
             }
          }
+         else
+            $cliente = $this->cliente->get($this->pedido->codcliente);
          
          $serie = $this->serie->get($this->pedido->codserie);
          
@@ -388,11 +389,11 @@ class ventas_pedido extends fs_controller
       
       if( $this->pedido->save() )
       {
-         $this->new_message("Pedido modificado correctamente.");
-         $this->new_change('Pedido Cliente '.$this->pedido->codigo, $this->pedido->url());
+         $this->new_message(ucfirst(FS_PEDIDO)." modificado correctamente.");
+         $this->new_change(ucfirst(FS_PEDIDO).' Cliente '.$this->pedido->codigo, $this->pedido->url());
       }
       else
-         $this->new_error_msg("¡Imposible modificar el pedido!");
+         $this->new_error_msg("¡Imposible modificar el ".FS_PEDIDO."!");
    }
    
    private function generar_albaran()
@@ -470,7 +471,7 @@ class ventas_pedido extends fs_controller
             $this->pedido->idalbaran = $albaran->idalbaran;
             if( $this->pedido->save() )
             {
-               //$this->generar_asiento($factura);
+               $this->new_message(ucfirst(FS_ALBARAN).' generado correctamente.');
             }
             else
             {
@@ -502,8 +503,8 @@ class ventas_pedido extends fs_controller
       }
       
       $pdf_doc = new fs_pdf();
-      $pdf_doc->pdf->addInfo('Title', 'Pedido '. $this->pedido->codigo);
-      $pdf_doc->pdf->addInfo('Subject', 'Pedido de cliente ' . $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Title', ucfirst(FS_PEDIDO).' '. $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Subject', ucfirst(FS_PEDIDO).' de cliente ' . $this->pedido->codigo);
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->pedido->get_lineas();
@@ -552,7 +553,7 @@ class ventas_pedido extends fs_controller
             $pdf_doc->new_table();
             $pdf_doc->add_table_row(
                array(
-                   'campo1' => "<b>Pedido:</b>",
+                   'campo1' => "<b>".ucfirst(FS_PEDIDO).":</b>",
                    'dato1' => $this->pedido->codigo,
                    'campo2' => "<b>Fecha:</b>",
                    'dato2' => $this->pedido->fecha
@@ -725,8 +726,8 @@ class ventas_pedido extends fs_controller
       $this->template = FALSE;
       
       $pdf_doc = new fs_pdf();
-      $pdf_doc->pdf->addInfo('Title', 'Pedido '. $this->pedido->codigo);
-      $pdf_doc->pdf->addInfo('Subject', 'Pedido de cliente ' . $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Title', ucfirst(FS_PEDIDO).' '. $this->pedido->codigo);
+      $pdf_doc->pdf->addInfo('Subject', ucfirst(FS_PEDIDO).' de cliente ' . $this->pedido->codigo);
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
       $lineas = $this->pedido->get_lineas();
@@ -744,7 +745,7 @@ class ventas_pedido extends fs_controller
                $pdf_doc->pdf->ezNewPage();
             
             /// encabezado
-            $texto = "<b>Pedido:</b> ".$this->pedido->codigo."\n".
+            $texto = "<b>".ucfirst(FS_PEDIDO).":</b> ".$this->pedido->codigo."\n".
                     "<b>Fecha:</b> ".$this->pedido->fecha."\n".
                     "<b>SR. D:</b> ".$this->pedido->nombrecliente;
             $pdf_doc->pdf->ezText($texto, 12, array('justification' => 'right'));
@@ -867,8 +868,8 @@ class ventas_pedido extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
-            $mail->Subject = $this->empresa->nombre . ': Su pedido '.$this->pedido->codigo;
-            $mail->AltBody = 'Buenos días, le adjunto su pedido '.$this->pedido->codigo.".\n".$this->empresa->email_firma;
+            $mail->Subject = $this->empresa->nombre . ': Su '.FS_PEDIDO.' '.$this->pedido->codigo;
+            $mail->AltBody = 'Buenos días, le adjunto su '.FS_PEDIDO.' '.$this->pedido->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;
             $mail->MsgHTML( nl2br($_POST['mensaje']) );
             $mail->AddAttachment('tmp/enviar/'.$filename);

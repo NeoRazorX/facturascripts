@@ -357,14 +357,14 @@ class factura_proveedor extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
    }
    
-   public function new_idfactura()
+   private function new_idfactura()
    {
       $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
       if($newid)
          $this->idfactura = intval($newid);
    }
    
-   public function new_codigo()
+   private function new_codigo()
    {
       /// buscamos un hueco
       $encontrado = FALSE;
@@ -419,7 +419,9 @@ class factura_proveedor extends fs_model
       $this->totaleuros = $this->total * $this->tasaconv;
       
       if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      {
          return TRUE;
+      }
       else
       {
          $this->new_error_msg("Error grave: El total no es la suma del neto y el iva.

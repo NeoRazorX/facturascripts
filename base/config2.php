@@ -38,7 +38,12 @@ else
        'zona_horaria' => 'Europe/Madrid',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
-       'cifnif' => 'CIF/NIF'
+       'cifnif' => 'CIF/NIF',
+       'pedido' => 'pedido',
+       'pedidos' => 'pedidos',
+       'presupuesto' => 'presupuesto',
+       'presupuestos' => 'presupuestos',
+       'nfactura_cli' => '1'
    );
 }
 

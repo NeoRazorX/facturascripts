@@ -166,6 +166,8 @@ class compras_albaran extends fs_controller
                $this->albaran->cifnif = $proveedor->cifnif;
             }
          }
+         else
+            $proveedor = $this->proveedor->get($this->albaran->codproveedor);
          
          $serie = $this->serie->get($this->albaran->codserie);
          

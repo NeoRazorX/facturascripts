@@ -244,7 +244,7 @@
                <input class="form-control" type="text" name="nombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="dtopor" value="{$value->dtopor()}" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="dtopor" value="{$value->dtopor()}" autocomplete="off"/>
             </td>
             <td class="text-right">
                <div class="btn-group">
@@ -268,7 +268,7 @@
                <input class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nueva Tarifa" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control text-right" type="number" name="dtopor" value="0" autocomplete="off"/>
+               <input class="form-control text-right" type="number" step="any" name="dtopor" value="0" autocomplete="off"/>
             </td>
             <td class="text-right">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">

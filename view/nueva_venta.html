@@ -21,7 +21,7 @@
             l_dto = parseFloat( $("#dto_"+i).val() );
             l_iva = parseFloat( $("#iva_"+i).val() );
             $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
-            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            $("#totiva_"+i).val( fs_round(l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100, {#FS_NF0#}) );
             
             neto += l_uds*l_pvp*(100-l_dto)/100;
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
@@ -176,11 +176,11 @@
       numlineas += 1;
       $("#numlineas").val(numlineas);
       desc = Base64.decode(desc);
-      $("#lineas_albaran").prepend("<tr id=\"linea_"+numlineas+"\">\n\
+      $("#lineas_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
          <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
          <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
-         <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
+         <td><input type=\"number\" step=\"any\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
             "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
          <td><button class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"$('#linea_"+numlineas+"').remove();recalcular();\">\n\
             <span class=\"glyphicon glyphicon-trash\"></span></button></td>\n\
@@ -250,6 +250,20 @@
       $("#f_buscar_articulos").submit(function(event) {
          event.preventDefault();
          buscar_articulos();
+      });
+      $("#b_lineas").click(function(event) {
+         event.preventDefault();
+         $("#li_opciones").removeClass('active');
+         $("#li_lineas").addClass('active');
+         $("#div_opciones").hide();
+         $("#div_lineas").show();
+      });
+      $("#b_opciones").click(function(event) {
+         event.preventDefault();
+         $("#li_lineas").removeClass('active');
+         $("#li_opciones").addClass('active');
+         $("#div_lineas").hide();
+         $("#div_opciones").show();
       });
    });
 </script>
@@ -325,8 +339,14 @@
          </div>
       </div>
    </div>
-   <div class="table-responsive">
-      <table class="table table-hover">
+   
+   <ul class="nav nav-tabs" role="tablist">
+      <li class="active" id="li_lineas"><a href="#" id="b_lineas">Líneas</a></li>
+      <li id="li_opciones"><a href="#" id="b_opciones">Más opciones...</a></li>
+   </ul>
+   
+   <div class="table-responsive" id="div_lineas">
+      <table class="table table-condensed">
          <thead>
             <tr>
                <th class="text-left">Referencia</th>
@@ -341,7 +361,8 @@
                <th class="text-right">Total + IVA</th>
             </tr>
          </thead>
-         <tbody id="lineas_albaran">
+         <tbody id="lineas_albaran"></tbody>
+         <tbody>
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..." autocomplete="off"/></td>
                <td colspan="6"></td>
@@ -360,7 +381,7 @@
    </div>
    
    <div class="container-fluid">
-      <div class="row">
+      <div class="row" id="div_opciones" style="display: none; padding-top: 20px;">
          <div class="col-lg-3">
             <div class="form-group">
                <a href="{$fsc->agente->url()}">Agente</a>:
@@ -489,12 +510,24 @@
 </form>
 {else}
 <script type="text/javascript">
+   var clientes = [
+      {loop="$fsc->cliente->all_full()"}
+      { value: '{function="str_replace("'", '', $value->nombre)"}', data: '{$value->codcliente}' },
+      {/loop}
+   ];
    $(document).ready(function() {
       $("#modal_cliente").modal('show');
+      $("#ac_clientes").autocomplete({
+         lookup: clientes,
+         onSelect: function (suggestion) {
+            document.f_nueva_venta.cliente.value = suggestion.data;
+         }
+      });
    });
 </script>
 
-<form class="form" action="{$fsc->url()}" method="post">
+<form name="f_nueva_venta" class="form" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="cliente"/>
    <div class="modal fade" id="modal_cliente">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -504,13 +537,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <select class="form-control" name="cliente">
-                     {loop="$fsc->cliente->all_full()"}
-                     <option value="{$value->codcliente}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-                     {else}
-                     <option value="">¡No hay clientes! Crea uno desde Ventas &gt; Clientes.</option>
-                     {/loop}
-                  </select>
+                  <input class="form-control" type="text" name="ac_cliente" id="ac_clientes" placeholder="buscar..." autocomplete="off" autofocus />
                </div>
             </div>
             <div class="modal-footer">

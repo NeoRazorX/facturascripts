@@ -215,6 +215,8 @@ class ventas_albaran extends fs_controller
                }
             }
          }
+         else
+            $cliente = $this->cliente->get($this->albaran->codcliente);
          
          $serie = $this->serie->get($this->albaran->codserie);
          

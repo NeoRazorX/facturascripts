@@ -143,7 +143,8 @@ class fs_controller
          $this->user = new fs_user();
          $this->page = new fs_page( array('name'=>$name, 'title'=>$title, 'folder'=>$folder,
              'version'=>$this->version(), 'show_on_menu'=>$shmenu, 'important'=>$important) );
-         $this->page->save();
+         if($name != '')
+            $this->page->save();
          
          $this->ppage = FALSE;
          $this->empresa = new empresa();

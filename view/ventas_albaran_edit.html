@@ -21,7 +21,7 @@
             l_dto = parseFloat( $("#dto_"+i).val() );
             l_iva = parseFloat( $("#iva_"+i).val() );
             $("#total_"+i).val( l_uds*l_pvp*(100-l_dto)/100 );
-            $("#totiva_"+i).val( l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100 );
+            $("#totiva_"+i).val( fs_round(l_uds*l_pvp*(100-l_dto)/100*(100+l_iva)/100, {#FS_NF0#}) );
             
             neto += l_uds*l_pvp*(100-l_dto)/100;
             total_iva += l_uds*l_pvp*(100-l_dto)/100*l_iva/100;
@@ -170,12 +170,12 @@
       numlineas += 1;
       $("#numlineas").val(numlineas);
       desc = Base64.decode(desc);
-      $("#lineas_albaran").prepend("<tr id=\"linea_"+numlineas+"\">\n\
+      $("#lineas_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"idlinea_"+numlineas+"\" value=\"-1\"/>\n\
             <input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
             <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
          <td><input type=\"text\" class=\"form-control\" name=\"desc_"+numlineas+"\" value=\""+desc+"\" onclick=\"this.select()\"/></td>\n\
-         <td><input type=\"number\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
+         <td><input type=\"number\" step=\"any\" id=\"cantidad_"+numlineas+"\" class=\"form-control text-right\" name=\"cantidad_"+numlineas+
             "\" onchange=\"recalcular()\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\"/></td>\n\
          <td><button class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"$('#linea_"+numlineas+"').remove();recalcular();\">\n\
             <span class=\"glyphicon glyphicon-trash\"></span></button></td>\n\
@@ -283,7 +283,7 @@
    </div>
 </div>
 
-<form class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="post">
+<form class="form" role="form" name="enviar_email" action="{$fsc->url()}" method="post">
    <div class="modal fade" id="modal_enviar">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -303,7 +303,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Enviar">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                    <span class="glyphicon glyphicon-send"></span>
                    &nbsp; Enviar
                 </button>
@@ -313,7 +313,7 @@
    </div>
 </form>
 
-<form action="{$fsc->ppage->url()}" method="post">
+<form action="{$fsc->ppage->url()}" method="post" class="form">
    <input type="hidden" name="delete" value="{$fsc->albaran->idalbaran}"/>
    <div class="modal fade" id="modal_eliminar">
       <div class="modal-dialog">
@@ -389,7 +389,7 @@
 </div>
 
 
-<form action="{$fsc->albaran->url()}" method="post">
+<form action="{$fsc->albaran->url()}" method="post" class="form">
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="container-fluid">
@@ -462,7 +462,7 @@
    </div>
    
    <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-condensed">
          <thead>
             <tr>
                <th class="text-left">Referencia</th>
@@ -489,7 +489,7 @@
                   <input type="text" class="form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/>
                </td>
                <td>
-                  <input type="number" class="form-control text-right" name="cantidad_{$counter}" id="cantidad_{$counter}"
+                  <input type="number" step="any" class="form-control text-right" name="cantidad_{$counter}" id="cantidad_{$counter}"
                          value="{$value->cantidad}" onchange="recalcular()" autocomplete="off"/>
                </td>
                <td>
@@ -526,6 +526,8 @@
                </td>
             </tr>
             {/loop}
+         </tbody>
+         <tbody>
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..."/></td>
                <td colspan="5"></td>
@@ -588,7 +590,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

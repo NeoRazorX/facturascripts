@@ -28,7 +28,6 @@ class admin_plugins extends fs_controller
    
    protected function process()
    {
-      $this->ppage = $this->page->get('admin_pages');
       $this->unstables = isset($_GET['unstable']);
       
       if(FS_DEMO)
