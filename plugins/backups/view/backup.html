@@ -1,0 +1,20 @@
+{include="header"}
+
+<div class="panel panel-info" style="margin: 5px;">
+   <div class="panel-heading">
+      <h3 class="panel-title">Backup del sistema</h3>
+   </div>
+   <div class="panel-body">
+      <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}&backup=true" method="post" class="form form-inline">
+        
+      
+         <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon">BACKUP</span>
+         </button>
+      
+      </form>
+   </div>
+   
+</div>
+
+{include="footer"}

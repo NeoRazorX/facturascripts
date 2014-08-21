@@ -1,0 +1,3 @@
+Permite Generar respaldos de nuestra base de datos en un archivo .sql para la descargar.
+<br/>
+<b>NOTA:</b> Trabaja solo con MYSQL 
