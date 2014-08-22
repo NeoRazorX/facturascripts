@@ -53,7 +53,7 @@ class listado_sat extends fs_controller
          {
             if($_GET['opcion']=="imprimir")
             {
-               $this->resultado=$this->registro_sat->get($_GET['id']);
+               $this->resultado = $this->registro_sat->get($_GET['id']);
                $this->template = "imprimir";
             }
          }
@@ -261,24 +261,9 @@ class listado_sat extends fs_controller
       return $prioridad;
    }
    
-      /*listar el dealle de sat*/
-  public function listar_sat_detalle()
+   /*listar el dealle de sat*/
+   public function listar_sat_detalle()
    {
-        return $this->detalles_sat->all();
-      
-   }
-   
-   /*fin*/
-  
-   
-  public function contar_sat_detalle()
-   {
-      $sql = "SELECT nsat,fecha,descripcion
-         FROM detalles_sat
-         WHERE nsat = ".$this->empresa->var2str($_GET['id']).";";
-        $result = mysql_query($sql);
-        $numero = mysql_num_rows($result); // obtenemos el número de filas
-       $this->num_detalles= $numero; //retornamos
-      
+      return $this->detalles_sat->all();
    }
 }

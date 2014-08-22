@@ -298,4 +298,11 @@ class registro_sat extends fs_model
       
       return $satlist;
    }
+   
+   public function num_detalles()
+   {
+      $sql = "SELECT count(*) as num FROM detalles_sat WHERE nsat = ".$this->var2str($this->nsat).";";
+      $result = $this->db->select($sql);
+      return $this->num_detalles = intval($result[0]['num']);
+   }
 }

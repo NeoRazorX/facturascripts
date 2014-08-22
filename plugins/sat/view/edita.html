@@ -6,10 +6,11 @@
       });
    });
 </script>
+
 <div class="modal fade" id="modal_nuevo_detalle">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form name="f_nuevo_cliente" action="{$fsc->url()}&opcion=nuevosat" method="post" class="form">
+         <form name="f_nuevo_cliente" action="{$fsc->resultado->url()}#detalles" method="post" class="form">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo detalle</h4>
@@ -17,7 +18,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Detalle:
-                  <input class="form-control" type="text" name="nombre" size="500" autocomplete="off"/>
+                  <textarea class="form-control" name="detalle" autofocus></textarea>
                </div>
             </div>
             <div class="modal-footer">
@@ -27,6 +28,7 @@
       </div>
    </div>
 </div>
+
 <form action="{$fsc->resultado->url()}" method="post" class="form">
    <div class="panel panel-info hidden-print" style="margin: 5px;">
       <div class="panel-heading">
@@ -51,7 +53,7 @@
          <div id="content">
             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
                <li class="active"><a href="#datos" data-toggle="tab"><span class="glyphicon glyphicon-wrench"></span> Datos del SAT</a></li>
-               <li><a href="#detalles" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge pull-left">{$fsc->contar_sat_detalle()}{$fsc->resultado->num_detalles}</span> Detalles</a></li>
+               <li><a href="#detalles" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge">{$fsc->resultado->num_detalles()}</span> Detalles</a></li>
                {if="'' == $fsc->resultado->observaciones"}
                <li><a href="#observacioes" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
                {else}
@@ -115,8 +117,8 @@
                   </div>
                </div>
                <div class="tab-pane" id="detalles">
-                   <button type="button" id="modal_nuevo_detalle"  class="btn btn-sm btn-primary" >
-                <span class="glyphicon glyphicon-plus"></span> Nuevo detalle
+                   <button type="button" id="b_nuevo_detalle" class="btn btn-sm btn-primary" >
+                      <span class="glyphicon glyphicon-plus"></span> Nuevo detalle
                     </button>
                   <table class="table table-hover">
                    <thead>
