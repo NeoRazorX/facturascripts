@@ -1,5 +1,40 @@
 {include="header"}
-
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_detalle").click(function() {
+         $("#modal_nuevo_detalle").modal('show');
+      });
+   });
+</script>
+<div class="modal fade" id="modal_nuevo_detalle">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_cliente" action="{$fsc->url()}&opcion=nuevosat" method="post" class="form">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo cliente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Nombre:
+                  <input class="form-control" type="text" name="nombre" size="30" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Telefono:
+                  <input class="form-control" type="text" name="telefono1" size="9" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Móvil:
+                  <input class="form-control" type="text" name="telefono2" size="9" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
 <form action="{$fsc->resultado->url()}" method="post" class="form">
    <div class="panel panel-info hidden-print" style="margin: 5px;">
       <div class="panel-heading">
@@ -88,6 +123,9 @@
                   </div>
                </div>
                <div class="tab-pane" id="detalles">
+                   <button type="button" id="modal_nuevo_detalle"  class="btn btn-sm btn-primary" >
+                <span class="glyphicon glyphicon-plus"></span> Nuevo detalle
+                    </button>
                   <table class="table table-hover">
                    <thead>
            	      <tr>
