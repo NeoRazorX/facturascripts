@@ -171,12 +171,21 @@ class listado_sat extends fs_controller
       }
    }
    
+   
+   
+   
    public function edita_sat()
    {
       $this->resultado = $this->registro_sat->get($_GET['id']);
       if($this->resultado AND isset($_POST['modelo']))
       {
-         $cliente = $this->cliente->get($this->resultado->codcliente);
+          if($_POST['detalle'])
+          {
+             $this->agrega_detalle(); 
+          }
+          else 
+          {
+              $cliente = $this->cliente->get($this->resultado->codcliente);
          if($cliente AND isset($_POST['nombre']))
          {
             $cliente->nombre = $_POST['nombre'];
@@ -210,6 +219,8 @@ class listado_sat extends fs_controller
          {
             $this->new_error_msg('Imposible guardar los datos del SAT.');
          }
+          }
+         
       }
       else if(!$this->resultado)
       {
@@ -265,5 +276,23 @@ class listado_sat extends fs_controller
    public function listar_sat_detalle()
    {
       return $this->detalles_sat->all();
+   }
+
+    public function agrega_detalle()
+   {
+
+
+         $detalle= new detalles_sat();
+         $detalle->descripcion = $_POST['detalle'];
+         if( $detalle->save() )
+         {
+            $this->new_message('Detalle guardados correctamente.');
+         }
+         else
+         {
+            $this->new_error_msg('Imposible guardar el detalle.');
+            return FALSE;
+         }
+ 
    }
 }
