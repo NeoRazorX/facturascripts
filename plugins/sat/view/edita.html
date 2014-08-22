@@ -24,12 +24,12 @@
          <div id="content">
             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
                <li class="active"><a href="#datos" data-toggle="tab"><span class="glyphicon glyphicon-wrench"></span> Datos del SAT</a></li>
+               <li><a href="#detalles" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge pull-left">{$fsc->contar_sat_detalle()}{$fsc->resultado->num_detalles}</span> Detalles</a></li>
                {if="'' == $fsc->resultado->observaciones"}
                <li><a href="#observacioes" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
                {else}
                <li><a href="#observacioes" data-toggle="tab" STYLE="color:blue"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
                {/if}
-               <li><a href="#comentarios" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge pull-left">42</span> Comentarios</a></li>
             </ul>
             
             <div id="my-tab-content" class="tab-content">
@@ -87,15 +87,30 @@
                      <textarea class="form-control" name="accesorios" cols="60">{$fsc->resultado->accesorios}</textarea>
                   </div>
                </div>
+               <div class="tab-pane" id="detalles">
+                  <table class="table table-hover">
+                   <thead>
+           	      <tr>
+               		<th class="text-left">Detalle</th>
+              		<th class="text-left">Fecha</th>
+          	      </tr>
+                   </thead>
+                  {loop="fsc->listar_sat_detalle()"}
+                     <tr>
+            		<td>{$value->descripcion}</td>
+            		<td>{$value->fecha}</td>
+           	    </tr>
+                 
+              {/loop}
+             </table>
+               </div>
                <div class="tab-pane" id="observacioes">
                   <div class="form-group col-lg">
                      <label>Observaciones:</label>
                      <textarea class="form-control" name="observaciones" cols="60">{$fsc->resultado->observaciones}</textarea>
                   </div>
                </div>
-               <div class="tab-pane" id="comentarios">
-                  <p>Aquí la lista de comentarios</p>
-               </div>
+
             </div>
          </div>
       </div>

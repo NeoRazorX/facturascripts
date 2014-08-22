@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : detalles_sat.xml
+    Description:
+        Estructura de la tabla detalles_sat.
+-->
+<tabla>
+<columna><nombre>id</nombre>
+<tipo>int(11)</tipo>
+<nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>descripcion</nombre>
+    <tipo>text</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>nsat</nombre>
+    <tipo>int(11)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>fecha</nombre>
+    <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>detalles_sat_pkey</nombre>
+    <consulta>PRIMARY KEY (id)</consulta>
+</restriccion>
+</tabla>

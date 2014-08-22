@@ -20,13 +20,16 @@
 
 require_model('cliente.php');
 require_model('registro_sat.php');
+require_model('detalles_sat.php');
 
 class listado_sat extends fs_controller
 {
    public $cliente;
    public $registro_sat;
+   public $detalles_sat;
    public $resultado;
    public $estado;
+   public $num_detalles;
    
    public function __construct()
    {
@@ -43,7 +46,7 @@ class listado_sat extends fs_controller
    {
       $this->cliente = new cliente();
       $this->registro_sat = new registro_sat();
-      
+      $this->detalles_sat = new detalles_sat();
       if( isset($_GET['id']) )
       {
          if(isset($_GET['opcion']))
@@ -256,5 +259,26 @@ class listado_sat extends fs_controller
          $prioridad[] = array('id_prioridad' => $i, 'nombre_prioridad' => $value);
       
       return $prioridad;
+   }
+   
+      /*listar el dealle de sat*/
+  public function listar_sat_detalle()
+   {
+        return $this->detalles_sat->all();
+      
+   }
+   
+   /*fin*/
+  
+   
+  public function contar_sat_detalle()
+   {
+      $sql = "SELECT nsat,fecha,descripcion
+         FROM detalles_sat
+         WHERE nsat = ".$this->empresa->var2str($_GET['id']).";";
+        $result = mysql_query($sql);
+        $numero = mysql_num_rows($result); // obtenemos el número de filas
+       $this->num_detalles= $numero; //retornamos
+      
    }
 }
