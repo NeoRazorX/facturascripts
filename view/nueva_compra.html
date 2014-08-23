@@ -220,14 +220,12 @@
          $("#nav_articulos").hide();
          $("#search_results").html('');
          $("#kiwimaru_results").html('');
+         $("#kiwimaru_results").hide();
          $("#nuevo_articulo").hide();
       }
       else
       {
-         $("#kiwimaru_results").hide();
-         $("#nav_articulos li").each(function() {
-            $( this ).removeClass("active");
-         });
+         $("#nav_articulos").show();
          
          $.getJSON('{$fsc->url()}', $("form[name=f_buscar_articulos]").serialize(), function(json) {
             var items = [];
@@ -254,35 +252,26 @@
             
             if( items.length == 0 )
             {
-               items.push("<tr><td colspan=\"4\" class=\"bg-warning\">Sin resultados.</td></tr>");
+               items.push("<tr><td colspan=\"4\" class=\"bg-warning\">Sin resultados. Usa la pestaña <b>Nuevo</b> para crear uno.</td></tr>");
             }
             
             $("#search_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
                <th class=\"text-left\">Referencia + descripción</th><th class=\"text-right\">Coste</th><th class=\"text-right\">PVP</th>\n\
                <th class=\"text-right\">Stock</th></tr></thead>"+items.join('')+"</table></div>");
             
-            $("#nav_articulos").show();
-            if( json.length > 0 )
+            if( json.length == 0 )
             {
-               $("#li_mis_articulos").addClass('active');
-               $("#nuevo_articulo").hide();
-               $("#search_results").show();
-            }
-            else
-            {
-               $("#li_nuevo_articulo").addClass('active');
-               $("#search_results").hide();
-               $("#nuevo_articulo").show();
                document.f_nuevo_articulo.referencia.value = document.f_buscar_articulos.query.value;
-               document.f_nuevo_articulo.referencia.focus();
             }
          });
          
          $.getJSON('{#FS_COMMUNITY_URL#}/kiwimaru.php', $("form[name=f_buscar_articulos]").serialize(), function(json) {
             var items = [];
             $.each(json, function(key, val) {
-               items.push( "<tr><td><a href=\""+val.link+"\" target=\"_blank\">"+val.tienda+"</a></td><td><b>"+val.referencia+'</b> '+val.descripcion+"</td>\n\
-                  <td class=\"text-right\">"+show_precio(val.precio)+"</td><td class=\"text-right\">"+val.fcomprobado+"</td></tr>" );
+               items.push( "<tr><td>"+val.sector+" / <a href=\""+val.link+"\" target=\"_blank\">"+val.tienda+"</a></td>\n\
+                  <td><b>"+val.referencia+'</b> '+val.descripcion+"</td>\n\
+                  <td class=\"text-right\">"+show_numero(val.precio)+" €</td>\n\
+                  <td class=\"text-right\">"+val.fcomprobado+"</td></tr>" );
             });
             
             if( items.length == 0 )
@@ -291,7 +280,7 @@
             }
             
             $("#kiwimaru_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
-               <th class=\"text-left\">Tienda</th><th class=\"text-left\">Referencia + descripción</th>\n\
+               <th class=\"text-left\">Sector / Tienda</th><th class=\"text-left\">Referencia + descripción</th>\n\
                <th class=\"text-right\">PVP+IVA</th><th class=\"text-right\">Comprobado</th></tr></thead>"+items.join('')+"</table></div>");
          });
       }
@@ -300,9 +289,14 @@
       $("#i_new_line").click(function() {
          $("#i_new_line").val("");
          document.f_buscar_articulos.query.value = "";
+         $("#nav_articulos li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#li_mis_articulos").addClass('active');
          $("#nav_articulos").hide();
          $("#search_results").html('');
          $("#kiwimaru_results").html('');
+         $("#kiwimaru_results").hide();
          $("#nuevo_articulo").hide();
          $("#modal_articulos").modal('show');
       });
