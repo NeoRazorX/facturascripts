@@ -175,7 +175,6 @@
    {
       numlineas += 1;
       $("#numlineas").val(numlineas);
-      desc = Base64.decode(desc);
       $("#lineas_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
          <td><input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
          <div class=\"form-control\"><a target=\"_blank\" href=\"index.php?page=ventas_articulo&ref="+ref+"\">"+ref+"</a></div></td>\n\
@@ -195,17 +194,22 @@
          <td><input type=\"text\" class=\"form-control text-right\" id=\"totiva_"+numlineas+"\" name=\"totiva_"+numlineas+
             "\" onkeyup=\"ajustar_totiva()\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
       recalcular();
-      $("#modal_articulos").modal('hide');
+      
+      $("#nav_articulos").hide();
+      $("#search_results").html('');
+      $("#kiwimaru_results").html('');
+      $("#nuevo_articulo").hide();
    }
    function new_articulo()
    {
       $.ajax({
          type: 'POST',
          url: '{$fsc->url()}&new_articulo=TRUE',
-         dataType: 'html',
+         dataType: 'json',
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
-            $("#search_results").html(datos);
+            document.f_buscar_articulos.query.value = document.f_nuevo_articulo.referencia.value;
+            buscar_articulos();
          }
       });
    }
@@ -213,23 +217,82 @@
    {
       if(document.f_buscar_articulos.query.value == '')
       {
+         $("#nav_articulos").hide();
          $("#search_results").html('');
+         $("#kiwimaru_results").html('');
+         $("#nuevo_articulo").hide();
       }
       else
       {
-         $.ajax({
-            type: 'POST',
-            url: '{$fsc->url()}',
-            dataType: 'html',
-            data: $("form[name=f_buscar_articulos]").serialize(),
-            success: function(datos) {
-               var re = /<!--(.*?)-->/g;
-               var m = re.exec( datos );
-               if( m[1] == document.f_buscar_articulos.query.value )
+         $("#kiwimaru_results").hide();
+         $("#nav_articulos li").each(function() {
+            $( this ).removeClass("active");
+         });
+         
+         $.getJSON('{$fsc->url()}', $("form[name=f_buscar_articulos]").serialize(), function(json) {
+            var items = [];
+            $.each(json, function(key, val) {
+               var tr_aux = '<tr>';
+               if(val.bloqueado)
                {
-                  $("#search_results").html(datos);
+                  tr_aux = "<tr class=\"bg-danger\">"
                }
+               else if(val.stockfis < val.stockmin)
+               {
+                  tr_aux = "<tr class=\"bg-warning\">";
+               }
+               else if(val.stockfis > val.stockmax)
+               {
+                  tr_aux = "<tr class=\"bg-info\">";
+               }
+               items.push(tr_aux+"<td><a href=\"#\" onclick=\"get_precios('"+val.referencia+"')\" title=\"más detalles\"><span class=\"glyphicon glyphicon-eye-open\"></span></a>\n\
+                  &nbsp; <a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.iva+"')\">"+val.referencia+'</a> '+val.descripcion+"</td>\n\
+                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.costemedio+"','0','"+val.iva+"')\">"+show_precio(val.costemedio)+"</a></td>\n\
+                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.iva+"')\">"+show_precio(val.pvp)+"</a></td>\n\
+                  <td class=\"text-right\">"+val.stockfis+"</td></tr>");
+            });
+            
+            if( items.length == 0 )
+            {
+               items.push("<tr><td colspan=\"4\" class=\"bg-warning\">Sin resultados.</td></tr>");
             }
+            
+            $("#search_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
+               <th class=\"text-left\">Referencia + descripción</th><th class=\"text-right\">Coste</th><th class=\"text-right\">PVP</th>\n\
+               <th class=\"text-right\">Stock</th></tr></thead>"+items.join('')+"</table></div>");
+            
+            $("#nav_articulos").show();
+            if( json.length > 0 )
+            {
+               $("#li_mis_articulos").addClass('active');
+               $("#nuevo_articulo").hide();
+               $("#search_results").show();
+            }
+            else
+            {
+               $("#li_nuevo_articulo").addClass('active');
+               $("#search_results").hide();
+               $("#nuevo_articulo").show();
+               document.f_nuevo_articulo.referencia.value = document.f_buscar_articulos.query.value;
+               document.f_nuevo_articulo.referencia.focus();
+            }
+         });
+         
+         $.getJSON('{#FS_COMMUNITY_URL#}/kiwimaru.php', $("form[name=f_buscar_articulos]").serialize(), function(json) {
+            var items = [];
+            $.each(json, function(key, val) {
+               items.push( "<tr><td><a href=\""+val.link+"\" target=\"_blank\">"+val.tienda+"</a></td><td><b>"+val.referencia+'</b> '+val.descripcion+"</td>\n\
+                  <td class=\"text-right\">"+show_precio(val.precio)+"</td><td class=\"text-right\">"+val.fcomprobado+"</td></tr>" );
+            });
+            
+            if( items.length == 0 )
+            {
+               items.push("<tr><td colspan=\"4\" class=\"bg-warning\">Sin resultados.</td></tr>");
+            }
+            
+            $("#kiwimaru_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
+               <th class=\"text-left\">Tienda</th><th class=\"text-left\">Referencia + descripción</th>\n\
+               <th class=\"text-right\">PVP+IVA</th><th class=\"text-right\">Comprobado</th></tr></thead>"+items.join('')+"</table></div>");
          });
       }
    }
@@ -237,7 +300,10 @@
       $("#i_new_line").click(function() {
          $("#i_new_line").val("");
          document.f_buscar_articulos.query.value = "";
-         $("#search_results").html("");
+         $("#nav_articulos").hide();
+         $("#search_results").html('');
+         $("#kiwimaru_results").html('');
+         $("#nuevo_articulo").hide();
          $("#modal_articulos").modal('show');
       });
       $("#i_new_line").keyup(function() {
@@ -265,12 +331,42 @@
          $("#div_lineas").hide();
          $("#div_opciones").show();
       });
+      $("#b_mis_articulos").click(function(event) {
+         event.preventDefault();
+         $("#nav_articulos li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#li_mis_articulos").addClass('active');
+         $("#kiwimaru_results").hide();
+         $("#nuevo_articulo").hide();
+         $("#search_results").show();
+      });
+      $("#b_kiwimaru").click(function(event) {
+         event.preventDefault();
+         $("#nav_articulos li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#li_kiwimaru").addClass('active');
+         $("#nuevo_articulo").hide();
+         $("#search_results").hide();
+         $("#kiwimaru_results").show();
+      });
+      $("#b_nuevo_articulo").click(function(event) {
+         event.preventDefault();
+         $("#nav_articulos li").each(function() {
+            $( this ).removeClass("active");
+         });
+         $("#li_nuevo_articulo").addClass('active');
+         $("#search_results").hide();
+         $("#kiwimaru_results").hide();
+         $("#nuevo_articulo").show();
+      });
    });
 </script>
 
 
 <div class="modal fade" id="modal_articulos">
-   <div class="modal-dialog" style="width: 950px;">
+   <div class="modal-dialog" style="min-width: 75%;">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -308,7 +404,47 @@
                </div>
             </form>
          </div>
+         <ul class="nav nav-tabs" id="nav_articulos" style="display: none;">
+            <li id="li_mis_articulos"><a href="#" id="b_mis_articulos">Mi catálogo</a></li>
+            <li id="li_kiwimaru"><a href="#" id="b_kiwimaru">Internet</a></li>
+            <li id="li_nuevo_articulo"><a href="#" id="b_nuevo_articulo">Nuevo...</a></li>
+         </ul>
          <div id="search_results"></div>
+         <div id="kiwimaru_results"></div>
+         <div id="nuevo_articulo" class="modal-body" style="display: none;">
+            <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post" class="form">
+               <div class="form-group">
+                  Referencia:
+                  <input class="form-control" type="text" name="referencia" maxlength="18" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+               <div class="form-group col-sm-6">
+                  <a href="{$fsc->familia->url()}">Familia</a>:
+                  <select name="codfamilia" class="form-control">
+                  {loop="$fsc->familia->all()"}
+                     <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                  {/loop}
+                  </select>
+               </div>
+               <div class="form-group col-sm-6">
+                  <a href="{$fsc->impuesto->url()}">IVA</a>:
+                  <select name="codimpuesto" class="form-control">
+                     {loop="$fsc->impuesto->all()"}
+                     <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;new_articulo();return false;">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
       </div>
    </div>
 </div>

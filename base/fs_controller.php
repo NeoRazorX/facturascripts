@@ -204,12 +204,9 @@ class fs_controller
                $this->buttons = array();
                
                $this->custom_search = FALSE;
-               if( isset($_POST['query']) )
-                  $this->query = $_POST['query'];
-               else if( isset($_GET['query']) )
-                  $this->query = $_GET['query'];
-               else
-                  $this->query = '';
+               $this->query = '';
+               if( isset($_REQUEST['query']) )
+                  $this->query = $_REQUEST['query'];
                
                $this->process();
             }

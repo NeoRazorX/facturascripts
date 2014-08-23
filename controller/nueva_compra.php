@@ -120,6 +120,9 @@ class nueva_compra extends fs_controller
    
    private function new_articulo()
    {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
       $art0 = new articulo();
       $art0->referencia = $_POST['referencia'];
       $art0->descripcion = $_POST['descripcion'];
@@ -127,26 +130,29 @@ class nueva_compra extends fs_controller
       $art0->set_impuesto($_POST['codimpuesto']);
       
       if( $art0->save() )
+      {
+         $art0->get_iva();
          $this->results[] = $art0;
+      }
       
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_compra';
+      header('Content-Type: application/json');
+      echo json_encode($this->results);
    }
    
    private function new_search()
    {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_compra';
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
       
       $articulo = new articulo();
       $codfamilia = '';
-      if( isset($_POST['codfamilia']) )
-         $codfamilia = $_POST['codfamilia'];
+      if( isset($_REQUEST['codfamilia']) )
+         $codfamilia = $_REQUEST['codfamilia'];
       
-      $con_stock = isset($_POST['con_stock']);
+      $con_stock = isset($_REQUEST['con_stock']);
       $this->results = $articulo->search($this->query, 0, $codfamilia, $con_stock);
       
-      $proveedor = $this->proveedor->get($_POST['codproveedor']);
+      $proveedor = $this->proveedor->get($_REQUEST['codproveedor']);
       if($proveedor)
       {
          if($proveedor->regimeniva == 'Exento')
@@ -154,7 +160,15 @@ class nueva_compra extends fs_controller
             foreach($this->results as $i => $value)
                $this->results[$i]->iva = 0;
          }
+         else
+         {
+            foreach($this->results as $i => $value)
+               $this->results[$i]->get_iva();
+         }
       }
+      
+      header('Content-Type: application/json');
+      echo json_encode($this->results);
    }
    
    private function nuevo_albaran_proveedor()
