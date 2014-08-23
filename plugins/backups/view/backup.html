@@ -4,12 +4,11 @@
    <div class="panel-heading">
       <h3 class="panel-title">Backup del sistema</h3>
    </div>
-   <div class="panel-body">
-      <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}&backup=true" method="post" class="form form-inline">
-        
-      
+   <div class="panel-body" style="text-align: center; padding-top: 20px;">
+      <form id="f_backup_db" name="f_backup_db" action="{$fsc->url()}&backup=true" method="post" class="form form-inline">
          <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-            <span class="glyphicon glyphicon">BACKUP</span>
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            &nbsp; Hacer cópia de seguridad
          </button>
       
       </form>

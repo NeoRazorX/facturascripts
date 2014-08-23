@@ -3,6 +3,7 @@
  * This file is part of FacturaSctipts
  * Copyright (C) 2014  Gisbel Jose Pena Gomez   gpg841@gmail.com
  * Copyright (C) 2014  Carlos Garcia Gomez         neorazorx@gmail.com
+ * Copyright (C) 2014  Francesc Pineda Segarra     shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,21 +28,26 @@ class backup extends fs_controller
       
       if( strtolower(FS_DB_TYPE) == 'mysql' AND isset($_GET['backup']) ) /// ES ISSET() SIRVE PARA SABER SI UNA VARIABLE ESTÁ DEFINIDA
       {
-         $this->backup_tables();
+         $this->backup_mysql_tables();
+      }
+      else
+      {
+		  $this->new_message('PostgreSQL todavía no está soportado.');
+		  //$this->backup_postgresql_tables();
       }
    }
    
-   public function backup_tables()
+   public function backup_mysql_tables()
    {
       $link = mysql_connect(FS_DB_HOST, FS_DB_USER, FS_DB_PASS);
       mysql_select_db(FS_DB_NAME,$link);
       
-		$tables = array();
-		$result = mysql_query('SHOW TABLES;');
-		while($row = mysql_fetch_row($result))
-		{
-			$tables[] = $row[0];
-		}
+      $tables = array();
+      $result = mysql_query('SHOW TABLES;');
+      while($row = mysql_fetch_row($result))
+      {
+         $tables[] = $row[0];
+      }
       
       $return = ''; /// TE FALTABA INICIALIZAR ESTA VARIABLE
       foreach($tables as $table)
@@ -98,5 +104,13 @@ class backup extends fs_controller
       }
       
       return $gfile;
+   }
+   
+   public function backup_postgresql_tables()
+   {
+	   /*
+	    * Mismo estilo de solución:
+	    * http://www.postgresql.org/message-id/43B43971.6060407@ydreams.com
+	    */
    }
 }
