@@ -86,7 +86,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-md-4">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             <div class="well well-lg" id="box_login">
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
                   {if condition="FS_DEMO"}
@@ -127,7 +127,7 @@
             </div>
          </div>
          
-         <div class="col-md-8">
+         <div class="col-lg-8 col-md-8 col-sm-8">
             {$fsc->get_community_html()}
          </div>
       </div>
@@ -181,7 +181,7 @@
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
          {if condition="FS_DB_HISTORY"}
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="panel panel-default">
                <div class="panel-heading">
                   <h3 class="panel-title">Consultas SQL:</h3>
@@ -196,16 +196,16 @@
          {/if}
       </div>
       <div class="row">
-         <div class="col-lg-4 col-md-4">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             <small>
                Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
-         <div class="col-lg-4 col-md-4 text-center">
+         <div class="col-lg-4 col-md-4 col-sm-4 text-center">
             <span class="label label-default">Consultas: {$fsc->selects()}</span>
             <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
          </div>
-         <div class="col-lg-4 col-md-4 text-right">
+         <div class="col-lg-4 col-md-4 col-sm-4 text-right">
             <span class="label label-default">Procesado en: {$fsc->duration()}</span>
          </div>
       </div>

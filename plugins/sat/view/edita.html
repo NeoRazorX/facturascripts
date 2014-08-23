@@ -37,15 +37,15 @@
          </h3>
       </div>
       <div class="panel-body ">
-         <div class="form-group col-lg-6">
+         <div class="form-group col-lg-6 col-md-6 col-sm-6">
             <label>Nombre:</label>
             <input class="form-control" type="text" name="nombre" value="{$fsc->resultado->nombre_cliente}" size="40"/>
          </div>
-         <div class="form-group col-lg-3">
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
             <label>Teléfono fijo:</label>
             <input class="form-control" type="text" name="telefono1" value="{$fsc->resultado->telefono1_cliente}" size="9"/>
          </div>
-         <div class="form-group col-lg-3">
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
             <label>Teléfono móvil:</label>
             <input class="form-control" type="text" name="telefono2" value="{$fsc->resultado->telefono2_cliente}" size="9"/>
          </div>
@@ -63,11 +63,11 @@
             
             <div id="my-tab-content" class="tab-content">
                <div class="tab-pane active" id="datos">
-                  <div class="form-group col-lg-9">
+                  <div class="form-group col-lg-9 col-md-9 col-sm-9">
                      <label><strong>Modelo:</strong></label>
                      <input class="form-control" type="text" name="modelo" value="{$fsc->resultado->modelo}" size="50"/>
                   </div>
-                 <div class="form-group col-lg-3">             
+                 <div class="form-group col-lg-3 col-md-3 col-sm-3">             
                     {if="'' == $fsc->resultado->posicion"}
                         <label STYLE="color:red">Posicion sin asignar</label>
                     {else}
@@ -75,7 +75,7 @@
                     {/if}
                     <input class="form-control" type="text" name="posicion" value="{$fsc->resultado->posicion}" size="20"/>
                  </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <label>Prioridad</label>         
                      <select name="prioridad" class="form-control">
                      {loop="fsc->listar_prioridad()"}
@@ -87,7 +87,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <label>Estado</label>         
                      <select name="estado" class="form-control">
                      {loop="fsc->listar_estados()"}
@@ -99,19 +99,19 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <label>Fecha de comienzo:</label>
                      <input class="form-control datepicker" type="text" name="fcomienzo" value="{$fsc->resultado->fcomienzo}" size="10"/>
                   </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <label>Fecha finalización:</label>
                      <input class="form-control datepicker" type="text" name="ffin" value="{$fsc->resultado->ffin}" size="10"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Avería:</label>
                      <textarea class="form-control" name="averia" cols="60">{$fsc->resultado->averia}</textarea>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Accesorios:</label>
                      <textarea class="form-control" name="accesorios" cols="60">{$fsc->resultado->accesorios}</textarea>
                   </div>

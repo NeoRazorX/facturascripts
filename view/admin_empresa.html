@@ -53,7 +53,7 @@
 
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-2">
+      <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
             <a id="b_generales" href="#generales" class="list-group-item active">
                <span class="glyphicon glyphicon-dashboard"></span>
@@ -74,26 +74,26 @@
          </div>
       </div>
       
-      <div class="col-lg-10">
+      <div class="col-lg-10 col-md-10 col-sm-10">
          <form name="f_empresa" action="{$fsc->page->url()}" method="post" class="form" role="form">
             <div class="panel panel-primary" id="panel_generales">
                <div class="panel-heading">
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      {#FS_CIFNIF#}:
                      <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Administrador:
                      <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="{$fsc->pais->url()}">País</a>:
                      <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
@@ -101,31 +101,31 @@
                         {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Provincia:
                      <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Ciudad:
                      <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Dirección:
                      <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Código Postal:
                      <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Teléfono:
                      <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Fax:
                      <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Web:
                      <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
                   </div>
@@ -143,11 +143,11 @@
                   <h3 class="panel-title">Email</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Email:</label>
                      <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Contraseña:</label>
                      <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="Contraseña"/>
                   </div>
@@ -169,26 +169,26 @@
                   <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena también estos datos</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Host:</label>
                      <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off" autofocus />
                   </div>
-                  <div class="form-group col-lg-2">
+                  <div class="form-group col-lg-2 col-md-2 col-sm-2">
                      <label>Puerto:</label>
                      <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      <label>Encriptación:</label>
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
                         <option value="tls"{if condition="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Usuario:</label>
                      <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
                   </div>
-                  <div class="col-lg-6">
+                  <div class="col-lg-6 col-md-6 col-sm-6">
                      <br/>
                      <a href="http://www.facturascripts.com/community/item/como-configurar-tu-cuenta-de-hotmail-en-facturascripts-el-email-que-vas-a-886.html" target="_blank">¿Necesitas ayuda?</a>
                   </div>
@@ -206,7 +206,7 @@
                   <h3 class="panel-title">Facturación</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
@@ -214,7 +214,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
@@ -222,7 +222,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Forma de pago:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
@@ -230,7 +230,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Divisa:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
@@ -238,7 +238,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
@@ -250,13 +250,13 @@
                      Pie de página de la factura:
                      <input class="form-control" type="text" name="pie_factura" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
                         <input type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
                         Contabilidad integrada
                      </label>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <button class="btn btn-sm btn-default" id="b_add_logo">
                         <span class="glyphicon glyphicon-picture"></span>
                         Añadir logotipo a las facturas

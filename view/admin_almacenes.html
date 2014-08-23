@@ -24,23 +24,23 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Código:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="scodalmacen" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Nombre:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="snombre" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">
                      <a href="{$fsc->pais->url()}">País</a>:
                   </label>
-                  <div class="col-lg-10">
-                     <select name="scodpais" class="form-control col-lg-10">
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="scodpais" class="form-control col-lg-10 col-md-10 col-sm-10">
                         {loop="$fsc->pais->all()"}
                         <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
                         {/loop}
@@ -48,44 +48,44 @@
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Provincia:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Provincia:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Ciudad:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Ciudad:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Dirección:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Dirección:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="sdireccion" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Código Postal:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código Postal:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Teléfono:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Teléfono:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="stelefono" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Fax:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Fax:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="sfax" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label class="col-lg-2 control-label">Contacto:</label>
-                  <div class="col-lg-10">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Contacto:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="scontacto" autocomplete="off"/>
                   </div>
                </div>
@@ -111,13 +111,13 @@
       <div class="panel-body">
          <div class="container-fluid">
             <div class="row">
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Nombre:
                      <input class="form-control" type="text" name="snombre" value="{$value->nombre}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      <a href="{$fsc->pais->url()}">País</a>
                      <select name="scodpais" class="form-control">
@@ -127,43 +127,43 @@
                      </select>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Provincia:
                      <input class="form-control" type="text" name="sprovincia" value="{$value->provincia}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Ciudad:
                      <input class="form-control" type="text" name="spoblacion" value="{$value->poblacion}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-6">
+               <div class="col-lg-6 col-md-6 col-sm-6">
                   <div class="form-group">
                      Dirección:
                      <input class="form-control" type="text" name="sdireccion" value="{$value->direccion}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Código Postal:
                      <input class="form-control" type="text" name="scodpostal" value="{$value->codpostal}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Teléfono:
                      <input class="form-control" type="text" name="stelefono" value="{$value->telefono}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Fax:
                      <input class="form-control" type="text" name="sfax" value="{$value->fax}" autocomplete="off"/>
                   </div>
                </div>
-               <div class="col-lg-3">
+               <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
                      Contacto:
                      <input class="form-control" type="text" name="scontacto" value="{$value->contacto}" autocomplete="off"/>

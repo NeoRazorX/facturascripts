@@ -52,8 +52,8 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="periodo" class="col-sm-2 control-label">Período</label>
-                  <div class="col-sm-10">
+                  <label for="periodo" class="col-lg-2 col-md-2 col-sm-2 control-label">Período</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                       <select name="periodo" class="form-control">
                          {if condition="$fsc->periodo=='T1'"}<option selected="selected">T1</option>{else}<option>T1</option>{/if}
                          {if condition="$fsc->periodo=='T2'"}<option selected="selected">T2</option>{else}<option>T2</option>{/if}
@@ -63,14 +63,14 @@
                    </div>
                </div>
                <div class="form-group">
-                  <label for="desde" class="col-sm-2 control-label">Desde</label>
-                  <div class="col-sm-10">
+                  <label for="desde" class="col-lg-2 col-md-2 col-sm-2 control-label">Desde</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control datepicker" type="text" name="desde" value="{$fsc->fecha_desde}"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="hasta" class="col-sm-2 control-label">Hasta</label>
-                  <div class="col-sm-10">
+                  <label for="hasta" class="col-lg-2 col-md-2 col-sm-2 control-label">Hasta</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control datepicker" type="text" name="hasta" value="{$fsc->fecha_hasta}"/>
                   </div>
                </div>

@@ -33,38 +33,38 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="ncodagente" class="col-sm-2 control-label">Código</label>
-                  <div class="col-sm-10">
+                  <label for="ncodagente" class="col-lg-2 col-md-2 col-sm-2 control-label">Código</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="nnombre" class="col-sm-2 control-label">Nombre</label>
-                  <div class="col-sm-10">
+                  <label for="nnombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="nnombre" autocomplete="off" autofocus />
                   </div>
                </div>
                <div class="form-group">
-                  <label for="napellidos" class="col-sm-2 control-label">Apellidos</label>
-                  <div class="col-sm-10">
+                  <label for="napellidos" class="col-lg-2 col-md-2 col-sm-2 control-label">Apellidos</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="napellidos" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="ndnicif" class="col-sm-2 control-label">{#FS_CIFNIF#}</label>
-                  <div class="col-sm-10">
+                  <label for="ndnicif" class="col-lg-2 col-md-2 col-sm-2 control-label">{#FS_CIFNIF#}</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="ndnicif" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="ntelefono" class="col-sm-2 control-label">Teléfono</label>
-                  <div class="col-sm-10">
+                  <label for="ntelefono" class="col-lg-2 col-md-2 col-sm-2 control-label">Teléfono</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="ntelefono" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="nemail" class="col-sm-2 control-label">Email</label>
-                  <div class="col-sm-10">
+                  <label for="nemail" class="col-lg-2 col-md-2 col-sm-2 control-label">Email</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="nemail" autocomplete="off"/>
                   </div>
                </div>
@@ -84,7 +84,7 @@
    <input type="hidden" name="modupages" value="TRUE"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="form-group col-lg-2">
+         <div class="form-group col-lg-2 col-md-2 col-sm-2">
             Nick:
             <input class="form-control" type="text" name="snick" value="{$fsc->suser->nick}" disabled="disabled"/>
             <div class="checkbox">
@@ -94,11 +94,11 @@
                </label>
             </div>
          </div>
-         <div class="form-group col-lg-2">
+         <div class="form-group col-lg-2 col-md-2 col-sm-2">
             Contraseña:
             <input class="form-control" type="password" name="spassword"/>
          </div>
-         <div class="form-group col-lg-3">
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
             <a href="{$fsc->agente->url()}">Agente</a>
             <select name="scodagente" class="form-control">
                <option value="">Ninguno</option>
@@ -110,7 +110,7 @@
                <a id="b_nuevo_agente" href="#">Crear un nuevo agente y asignarlo a este usuario</a>
             </p>
          </div>
-         <div class="form-group col-lg-3">
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
             Página de inicio
             <select name="udpage" class="form-control">
             {loop="$fsc->suser->get_menu()"}
@@ -124,7 +124,7 @@
             {/loop}
             </select>
          </div>
-         <div class="form-group col-lg-2">
+         <div class="form-group col-lg-2 col-md-2 col-sm-2">
             Ejercicio
             <select name="ejercicio" class="form-control">
             {loop="$fsc->ejercicio->all_abiertos()"}
@@ -158,7 +158,7 @@
    
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             {if condition="!$fsc->suser->admin"}
             <div class="btn-group">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
@@ -170,7 +170,7 @@
             </div>
             {/if}
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -212,7 +212,7 @@
    {if condition="!$fsc->suser->admin"}
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <div class="btn-group">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
                   <span class="glyphicon glyphicon-check"></span>
@@ -222,7 +222,7 @@
                </button>
             </div>
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar

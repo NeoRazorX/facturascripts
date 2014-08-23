@@ -376,7 +376,7 @@
                <input type="hidden" name="codproveedor" value="{$fsc->albaran->codproveedor}"/>
                <div class="container-fluid">
                   <div class="row">
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
                            <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
                            <span class="input-group-btn">
@@ -390,7 +390,7 @@
                            sólo con stock
                         </label>
                      </div>
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                            <option value="">Todas las familias</option>
                            <option value="">------</option>
@@ -413,12 +413,12 @@
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <h3 style="margin: 0px;">
                <a href="{$fsc->albaran->proveedor_url()}">Proveedor actual</a>
             </h3>
          </div>
-         <div class="col-lg-8">
+         <div class="col-lg-8 col-md-8 col-sm-8">
             <select class="form-control" name="proveedor">
             {loop="$fsc->proveedor->all_full()"}
                {if condition="$value->codproveedor==$fsc->albaran->codproveedor"}
@@ -429,7 +429,7 @@
             {/loop}
             </select>
          </div>
-         <div class="col-lg-2 text-left">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-left">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -437,18 +437,18 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">Número:
                <div class="form-control">{$fsc->albaran->numero}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Núm. proveedor:
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             Série:
             <select class="form-control" name="serie">
             {loop="$fsc->serie->all()"}
@@ -460,19 +460,19 @@
             {/loop}
             </select>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->albaran->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             {if condition="$fsc->agente"}
             <div class="form-group">
                Agente:
@@ -580,7 +580,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones">{$fsc->albaran->observaciones}</textarea>
@@ -588,13 +588,13 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <button class="btn btn-sm btn-default" type="button" onclick="location.reload();">
                <span class="glyphicon glyphicon-remove"></span>
                &nbsp; Deshacer
             </button>
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar

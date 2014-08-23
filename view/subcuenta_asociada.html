@@ -121,7 +121,7 @@
 {if condition="$fsc->tipo == 'cli'"}
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 col-md-12 col-sm-12">
          <h3>
             Subcuenta asignada para el cliente <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a>
             para el ejercicio {$fsc->codejercicio}
@@ -216,7 +216,7 @@
 {elseif condition="$fsc->tipo == 'pro'"}
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 col-md-12 col-sm-12">
          <h3>
             Subcuenta asignada para el proveedor <a href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
             para el ejercicio {$fsc->codejercicio}

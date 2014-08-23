@@ -125,12 +125,12 @@
    <input type="hidden" name="idalbaran" value="{$fsc->albaran->idalbaran}"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
-         <div class="col-lg-10">
+         <div class="col-lg-10 col-md-10 col-sm-10">
             <h3 style="margin: 0px;">
                <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a>
             </h3>
          </div>
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -138,19 +138,19 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número:
                <div class="form-control">{$fsc->albaran->numero}</div>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Núm. proveedor:
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                <select class="form-control" name="serie">
@@ -164,13 +164,13 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->albaran->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
@@ -214,7 +214,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             {if condition="$fsc->agente"}
             <div class="form-group">
                Agente:
@@ -224,7 +224,7 @@
             </div>
             {/if}
          </div>
-         <div class="col-lg-9">
+         <div class="col-lg-9 col-md-9 col-sm-9">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones" rows="2">{$fsc->albaran->observaciones}</textarea>

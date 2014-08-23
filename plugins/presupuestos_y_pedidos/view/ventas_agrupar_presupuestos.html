@@ -14,7 +14,7 @@
 <form action="{$fsc->url()}" method="post" class="form">
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-4">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             Cliente:
             <select name="cliente" class="form-control">
             {loop="$fsc->cliente->all_full()"}
@@ -26,7 +26,7 @@
             {/loop}
             </select>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             Serie:
             <select name="serie" class="form-control">
             {loop="$fsc->serie->all()"}
@@ -38,19 +38,19 @@
 				{/loop}
             </select>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Desde:
                <input type="text" name="desde" class="form-control datepicker" value="{$fsc->desde}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Hasta:
                <input type="text" name="hasta" class="form-control datepicker" value="{$fsc->hasta}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Observaciones:
                <input type="text" name="observaciones" class="form-control"/>
@@ -58,7 +58,7 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-12 text-right">
+         <div class="col-lg-12 col-md-12 col-sm-12 text-right">
             <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-search"></span>
                &nbsp; Buscar
@@ -105,7 +105,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-4">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             <div class="btn-group">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
                   <span class="glyphicon glyphicon-check"></span>
@@ -115,13 +115,13 @@
                </button>
             </div>
          </div>
-         <div class="col-lg-4 text-center">
+         <div class="col-lg-4 col-md-4 col-sm-4 text-center">
             <label>
                <input type="checkbox" name="individuales" value="TRUE"/>
                Generar {#FS_PEDIDO#} individuales
             </label>
          </div>
-         <div class="col-lg-4 text-right">
+         <div class="col-lg-4 col-md-4 col-sm-4 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-file"></span>
                &nbsp; Generar {#FS_PEDIDO#}

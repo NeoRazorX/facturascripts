@@ -205,7 +205,7 @@
                <input type="hidden" name="codcliente"/>
                <div class="container-fluid">
                   <div class="row">
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
                            <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
                            <span class="input-group-btn">
@@ -219,7 +219,7 @@
                            sólo con stock
                         </label>
                      </div>
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                            <option value="">Todas las familias</option>
                            <option value="">------</option>
@@ -242,7 +242,7 @@
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <div class="form-group">
                Cliente:
                <select class="form-control" name="cliente">
@@ -258,13 +258,13 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}"/>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Atiende:
                <div class="form-control">
@@ -310,13 +310,13 @@
    
    <div class="container-fluid">
       <div class="row" style="margin-bottom: 20px;">
-         <div class="col-md-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
                <span class="glyphicon glyphicon-refresh"></span>
                &nbsp; Reiniciar...
             </button>
          </div>
-         <div class="col-md-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-default" type="button" onclick="$('#row_opciones').show();">
                <span class="glyphicon glyphicon-list"></span>
                &nbsp; más opciones...
@@ -328,7 +328,7 @@
          </div>
       </div>
       <div class="row" id="row_opciones" style="display: none;">
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->almacen->url()}">Almacén</a>:
                <select name="almacen" class="form-control">
@@ -342,7 +342,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                <select name="serie" class="form-control">
@@ -356,7 +356,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                <select name="forma_pago" class="form-control">
@@ -370,7 +370,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->divisa->url()}">Divisa</a>:
                <select name="divisa" class="form-control">
@@ -384,19 +384,19 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones"></textarea>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Nº de tickets:
                <input class="form-control" type="number" name="num_tickets" value="1"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="checkbox">
                <label>
                   <input type="checkbox" name="imprimir_desc" value="TRUE"{if condition="$fsc->imprimir_descripciones"} checked="checked"{/if}/>

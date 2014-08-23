@@ -197,13 +197,13 @@
    <input type="hidden" name="numlineas" value="0"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" name="fecha" type="text" value="{$fsc->asiento->fecha}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Predefinido:
                <select id="s_idconceptopar" name="idconceptopar" onchange="asigna_concepto()" class="form-control">
@@ -212,13 +212,13 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Concepto:
                <input class="form-control" name="concepto" type="text" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Divisa:
                <select name='divisa' class='form-control'>
@@ -228,19 +228,19 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-1">
+         <div class="col-lg-1 col-md-1 col-sm-1">
             <div class="form-group">
                Importe:
                <input class="form-control" type="text" name="importe" value="0" readonly/>
             </div>
          </div>
-         <div class="col-lg-1">
+         <div class="col-lg-1 col-md-1 col-sm-1">
             <div class="form-group">
                Descuadre:
                <input class="form-control" type="text" name="descuadre" value="0" readonly/>
             </div>
          </div>
-         <div class="col-lg-1">
+         <div class="col-lg-1 col-md-1 col-sm-1">
             <button class="btn btn-sm btn-primary" type="submit">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -273,7 +273,7 @@
       
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <a href="#" class="btn btn-sm btn-block btn-success" onclick="add_partida();return false;">Añadir línea...</a>
          </div>
       </div>

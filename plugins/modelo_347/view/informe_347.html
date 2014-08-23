@@ -3,7 +3,7 @@
 <form name="f_347" action="{$fsc->url()}" method="post" class="form">
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Clientes que han comprado más de...
                <div class="input-group">
@@ -12,7 +12,7 @@
                </div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                en el año:
                <select class="form-control" name="ejercicio" onchange="document.f_347.submit()">
@@ -65,7 +65,7 @@
 
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 col-md-12 col-sm-12">
          <h4>
             Proveedores que nos han vendido más de <mark>{$fsc->show_precio($fsc->cantidad)}</mark>
             en el año <mark>{$fsc->sejercicio}</mark>

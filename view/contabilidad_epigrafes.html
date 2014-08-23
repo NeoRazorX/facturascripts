@@ -144,7 +144,7 @@
 {else}
 <div class="container-fluid" style="margin-bottom: 10px;">
    <div class="row">
-      <div class="col-lg-2">
+      <div class="col-lg-2 col-md-2 col-sm-2">
          <form name="f_filtro_cuentas" action="{$fsc->url()}" method="post" class="post">
             <select name="ejercicio" class="form-control" onchange="document.f_filtro_cuentas.submit()">
             {loop="$fsc->ejercicio->all()"}
@@ -157,7 +157,7 @@
             </select>
          </form>
       </div>
-      <div class="col-lg-10 text-right">
+      <div class="col-lg-10 col-md-10 col-sm-10 text-right">
          <a class="btn btn-sm btn-default" href="index.php?page=contabilidad_cuentas">
             Cuentas &nbsp;
             <span class="glyphicon glyphicon-chevron-right"></span>

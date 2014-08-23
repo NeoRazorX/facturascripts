@@ -356,7 +356,7 @@
                <input type="hidden" name="codcliente" value="{$fsc->albaran->codcliente}"/>
                <div class="container-fluid">
                   <div class="row">
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
                            <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
                            <span class="input-group-btn">
@@ -370,7 +370,7 @@
                            sólo con stock
                         </label>
                      </div>
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                            <option value="">Todas las familias</option>
                            <option value="">------</option>
@@ -394,12 +394,12 @@
    <input type="hidden" name="lineas" value="TRUE"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <h3 style="margin: 0px;">
                <a href="{$fsc->albaran->cliente_url()}">Cliente actual</a>
             </h3>
          </div>
-         <div class="col-lg-8">
+         <div class="col-lg-8 col-md-8 col-sm-8">
             <select class="form-control" name="cliente">
             {loop="$fsc->cliente->all_full()"}
                {if condition="$value->codcliente==$fsc->albaran->codcliente"}
@@ -410,7 +410,7 @@
             {/loop}
             </select>
          </div>
-         <div class="col-lg-2 text-left">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-left">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -418,19 +418,19 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número:
                <div class="form-control">{$fsc->albaran->numero}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número 2:
                <input class="form-control" type="text" name="numero2" value="{$fsc->albaran->numero2}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Serie:
                <select name="serie" class="form-control">
@@ -440,19 +440,19 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->albaran->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Hora:
                <input class="form-control" type="text" name="hora" value="{$fsc->albaran->hora}"/>
@@ -557,7 +557,7 @@
    <div class="container-fluid">
       <div class="row">
          {if condition="$fsc->agente"}
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Agente:
                <div class="form-control">
@@ -566,7 +566,7 @@
             </div>
          </div>
          {/if}
-         <div class="col-lg-9">
+         <div class="col-lg-9 col-md-9 col-sm-9">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones">{$fsc->albaran->observaciones}</textarea>
@@ -574,13 +574,13 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <button class="btn btn-sm btn-default" type="button" onclick="location.reload();">
                <span class="glyphicon glyphicon-remove"></span>
                &nbsp; Deshacer
             </button>
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar

@@ -13,7 +13,7 @@
 
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-2">
+      <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
             <a id="b_generales" href="{$fsc->url()}" class="list-group-item active">
                <span class="glyphicon glyphicon-dashboard"></span>
@@ -30,34 +30,34 @@
          </div>
       </div>
       
-      <div class="col-lg-10">
+      <div class="col-lg-10 col-md-10 col-sm-10">
          <form class="form" role="form" action="{$fsc->url()}" method="post">
             <div class="panel panel-primary" id="panel_generales">
                <div class="panel-heading">
                   <h3 class="panel-title">{$fsc->agente->get_fullname()}</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->agente->nombre}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Apellidos:
                      <input class="form-control" type="text" name="apellidos" value="{$fsc->agente->apellidos}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      DNI/CIF:
                      <input class="form-control" type="text" name="dnicif" value="{$fsc->agente->dnicif}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Teléfono:
                      <input class="form-control" type="text" name="telefono" value="{$fsc->agente->telefono}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-9">
+                  <div class="form-group col-lg-9 col-md-9 col-sm-9">
                      Email:
                      <input class="form-control" type="text" name="email" value="{$fsc->agente->email}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-3">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
                      % Comisión:
                      <input class="form-control" type="text" name="porcomision" value="{$fsc->agente->porcomision}" autocomplete="off"/>
                   </div>

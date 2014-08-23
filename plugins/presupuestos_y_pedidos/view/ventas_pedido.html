@@ -105,10 +105,10 @@
    <input type="hidden" name="idpedido" value="{$fsc->pedido->idpedido}"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
-         <div class="col-lg-10">
+         <div class="col-lg-10 col-md-10 col-sm-10">
             <h3 style="margin: 0px;"><a href="{$fsc->pedido->cliente_url()}">{$fsc->pedido->nombrecliente}</a></h3>
          </div>
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -116,13 +116,13 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número:
                <div class="form-control">{$fsc->pedido->numero}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                <select name="codserie" class="form-control">
@@ -132,26 +132,26 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->pedido->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->pedido->fecha}"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Hora:
                <input class="form-control" type="text" name="hora" value="{$fsc->pedido->hora}"/>
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Agente:
                <div class="form-control">
@@ -197,7 +197,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones" rows="2">{$fsc->pedido->observaciones}</textarea>

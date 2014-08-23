@@ -118,12 +118,12 @@
    <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-10">
+         <div class="col-lg-10 col-md-10 col-sm-10">
             <h3 style="margin: 10px 0px 10px 0px;">
                <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
             </h3>
          </div>
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -131,32 +131,32 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número:
                <input class="form-control" type="text" name="numero" value="{$fsc->factura->numero}" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Serie:
                <div class="form-control">{$fsc->factura->codserie}</div>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Ejercicio:
                <div class="form-control">{$fsc->factura->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->factura->fecha}"/>
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Agente:
                <div class="form-control">
@@ -243,7 +243,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones">{$fsc->factura->observaciones}</textarea>

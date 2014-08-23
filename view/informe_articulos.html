@@ -21,9 +21,9 @@
       <div class="container-fluid">
          <div class="row">
             {loop="$fsc->top_ventas"}
-            <div class="col-lg-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
             {else}
-            <div class="col-lg-12">Sin resultados</div>
+            <div class="col-lg-12 col-md-12 col-sm-12">Sin resultados.</div>
             {/loop}
          </div>
       </div>
@@ -38,9 +38,9 @@
       <div class="container-fluid">
          <div class="row">
             {loop="$fsc->top_compras"}
-            <div class="col-lg-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><a href="{$value.0->url()}">{$value.0->referencia}</a> ({$value.1})</div>
             {else}
-            <div class="col-lg-12">Sin resultados</div>
+            <div class="col-lg-12 col-md-12 col-sm-12">Sin resultados.</div>
             {/loop}
          </div>
       </div>
@@ -55,9 +55,9 @@
       <div class="container-fluid">
          <div class="row">
             {loop="$fsc->articulo->get_search_tags()"}
-            <div class="col-lg-3">{$value.tag} ({$value.count})</div>
+            <div class="col-lg-3 col-md-3 col-sm-3">{$value.tag} ({$value.count})</div>
             {else}
-            <div class="col-lg-12">Ninguna búsqueda realizada</div>
+            <div class="col-lg-12 col-md-12 col-sm-12">Ninguna búsqueda realizada.</div>
             {/loop}
          </div>
       </div>

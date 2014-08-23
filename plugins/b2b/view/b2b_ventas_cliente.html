@@ -92,7 +92,7 @@
 
 <div class="container-fluid">
    <div class="row">
-      <div class="col-lg-2">
+      <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
             <a id="b_generales" href="#" class="list-group-item active">
                <span class="glyphicon glyphicon-dashboard"></span>
@@ -125,7 +125,7 @@
          </div>
       </div>
       
-      <div class="col-lg-10">
+      <div class="col-lg-10 col-md-10 col-sm-10">
          <form action="{$fsc->url()}" method="post" class="form">
             <input type="hidden" name="codcliente" value="{$fsc->cliente->codcliente}"/>
             <div class="panel panel-primary" id="panel_generales">
@@ -133,35 +133,35 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->cliente->nombre}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre comercial:
                      <input class="form-control" type="text" name="nombrecomercial" value="{$fsc->cliente->nombrecomercial}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      {#FS_CIFNIF#}:
                      <input class="form-control" type="text" name="cifnif" value="{$fsc->cliente->cifnif}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      Teléfono 1:
                      <input class="form-control" type="text" name="telefono1" value="{$fsc->cliente->telefono1}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      Teléfono 2:
                      <input class="form-control" type="text" name="telefono2" value="{$fsc->cliente->telefono2}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      Fax:
                      <input class="form-control" type="text" name="fax" value="{$fsc->cliente->fax}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      Email:
                      <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" maxlength="50" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      Web:
                      <input class="form-control" type="text" name="web" value="{$fsc->cliente->web}" autocomplete="off"/>
                   </div>
@@ -183,7 +183,7 @@
                   <h3 class="panel-title">Facturación</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-4">
+                  <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      <a href="index.php?page=ventas_clientes#grupos">Grupo de clientes</a>
                      <select class="form-control" name="codgrupo">
                         <option value="---">Ninguno</option>
@@ -193,7 +193,7 @@
                         {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-2">
+                  <div class="form-group col-lg-2 col-md-2 col-sm-2">
                      <a href="{$fsc->serie->url()}">Serie</a>
                      <select class="form-control" name="codserie">
                      {loop="$fsc->serie->all()"}
@@ -201,7 +201,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>
                      <select class="form-control" name="codpago">
                      {loop="$fsc->forma_pago->all()"}
@@ -209,7 +209,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="{$fsc->divisa->url()}">Divisa</a>
                      <select class="form-control" name="coddivisa">
                      {loop="$fsc->divisa->all()"}
@@ -217,7 +217,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="http://www.facturascripts.com/community/item/regimen-de-iva-desde-la-version-2014-4b-se-puede-seleccionar-el-regimen-de-784.html" target="_blank">Régimen IVA</a>
                      <select class="form-control" name="regimeniva">
                      {loop="$fsc->cliente->regimenes_iva()"}
@@ -225,13 +225,13 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
                         <input type="checkbox" name="recargo" value="TRUE"{if condition="$fsc->cliente->recargo"} checked="checked"{/if}/>
                         Aplicar recargo de equivalencia
                      </label>
                   </div>
-                  <div class="form-group col-lg-6">
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <a href="{$fsc->agente->url()}">Agente asignado</a>
                      <select class="form-control" name="codagente">
                         <option value="---">Ninguno</option>
@@ -306,7 +306,7 @@
                      <h3 class="panel-title">{$value->descripcion}</h3>
                   </div>
                   <div class="panel-body">
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         <a href="{$fsc->pais->url()}">País</a>
                         <select class="form-control" name="pais">
                         {loop="$fsc->pais->all()"}
@@ -314,39 +314,39 @@
                         {/loop}
                         </select>
                      </div>
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Provincia:
                         <input class="form-control" type="text" name="provincia" value="{$value->provincia}"/>
                      </div>
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Ciudad:
                         <input class="form-control" type="text" name="ciudad" value="{$value->ciudad}"/>
                      </div>
-                     <div class="form-group col-lg-3">
+                     <div class="form-group col-lg-3 col-md-3 col-sm-3">
                         Código Postal:
                         <input class="form-control" type="text" name="codpostal" value="{$value->codpostal}" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-9">
+                     <div class="form-group col-lg-9 col-md-9 col-sm-9">
                         Dirección:
                         <input class="form-control" type="text" name="direccion" value="{$value->direccion}" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Apartado:
                         <input class="form-control" type="text" name="apartado" value="{$value->apartado}" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         <label>
                            <input type="checkbox" name="direnvio" value="TRUE"{if condition="$value->domenvio"} checked="checked"{/if}/>
                            Dirección de envío
                         </label>
                      </div>
-                     <div class="form-group col-lg-4">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         <label>
                            <input type="checkbox" name="dirfact" value="TRUE"{if condition="$value->domfacturacion"} checked="checked"{/if}/>
                            Dirección de facturación
                         </label>
                      </div>
-                     <div class="form-group col-lg-12">
+                     <div class="form-group col-lg-12 col-md-12 col-sm-12">
                         Descripción:
                         <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
                      </div>

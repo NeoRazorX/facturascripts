@@ -49,7 +49,7 @@
    
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="btn-group">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
                   <span class="glyphicon glyphicon-check"></span>
@@ -59,14 +59,14 @@
                </button>
             </div>
          </div>
-         <div class="col-lg-8 text-center">
+         <div class="col-lg-8 col-md-8 col-sm-8 text-center">
             <div class="btn-group">
             {loop="$fsc->paginas()"}
                <a class="btn btn-sm btn-default{if condition="$value.actual"} active{/if}" href="{$value.url}">{$value.num}</a>
             {/loop}
             </div>
          </div>
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar
@@ -141,7 +141,7 @@
    {if condition="$total>10"}
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="btn-group">
                <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()">
                   <span class="glyphicon glyphicon-check"></span>
@@ -151,14 +151,14 @@
                </button>
             </div>
          </div>
-         <div class="col-lg-8 text-center">
+         <div class="col-lg-8 col-md-8 col-sm-8 text-center">
             <div class="btn-group">
             {loop="$fsc->paginas()"}
                <a class="btn btn-sm btn-default{if condition="$value.actual"} active{/if}" href="{$value.url}">{$value.num}</a>
             {/loop}
             </div>
          </div>
-         <div class="col-lg-2 text-right">
+         <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar

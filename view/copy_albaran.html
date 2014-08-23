@@ -23,7 +23,7 @@
    <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Copiar a un nuevo...
                <select class="form-control" name="tipo" id="tipo_albaran" onchange="change_tipo_albaran()">
@@ -32,7 +32,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-5">
+         <div class="col-lg-5 col-md-5 col-sm-5">
             <div class="form-group" id="clientes">
                Cliente:
                <select class="form-control" name="cliente">
@@ -66,13 +66,13 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Hora:
                <input class="form-control" type="text" name="hora" value="{$fsc->hour()}" autocomplete="off"/>
@@ -80,7 +80,7 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Almacén:
                <select class="form-control" name="almacen">
@@ -94,7 +94,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Serie:
                <select class="form-control" name="serie">
@@ -108,7 +108,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Forma de pago:
                <select class="form-control" name="forma_pago">
@@ -122,7 +122,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Divisa:
                <select class="form-control" name="divisa">
@@ -174,7 +174,7 @@
    
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones">Copia del {#FS_ALBARAN#} de {$fsc->tipo_albaran} {$fsc->albaran->codigo}</textarea>
@@ -182,7 +182,7 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-12 text-right">
+         <div class="col-lg-12 col-md-12 col-sm-12 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Copiar

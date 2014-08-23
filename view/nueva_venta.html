@@ -281,7 +281,7 @@
                <input type="hidden" name="codcliente" value="{$fsc->cliente_s->codcliente}"/>
                <div class="container-fluid">
                   <div class="row">
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
                            <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
                            <span class="input-group-btn">
@@ -295,7 +295,7 @@
                            sólo con stock
                         </label>
                      </div>
-                     <div class="col-md-6">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
                            <option value="">Todas las familias</option>
                            <option value="">------</option>
@@ -320,18 +320,18 @@
    <input type="hidden" name="cliente" value="{$fsc->cliente_s->codcliente}"/>
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-8">
+         <div class="col-lg-8 col-md-8 col-sm-8">
             <h1>
                <a href="{$fsc->cliente_s->url()}">{$fsc->cliente_s->nombre}</a>
             </h1>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input type="text" name="fecha" class="form-control datepicker" value="{$fsc->today()}" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-2">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Hora:
                <input type="text" name="hora" class="form-control" value="{$fsc->hour()}" autocomplete="off"/>
@@ -382,7 +382,7 @@
    
    <div class="container-fluid">
       <div class="row" id="div_opciones" style="display: none; padding-top: 20px;">
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->agente->url()}">Agente</a>:
                <select name="codagente" class="form-control">
@@ -396,7 +396,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->almacen->url()}">Almacén</a>:
                <select name="almacen" class="form-control">
@@ -410,7 +410,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                <select name="serie" class="form-control">
@@ -424,7 +424,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                <select name="forma_pago" class="form-control">
@@ -438,7 +438,7 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->divisa->url()}">Divisa</a>:
                <select name="divisa" class="form-control">
@@ -452,13 +452,13 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                Número 2:
                <input class="form-control" type="text" name="numero2" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <div class="form-group">
                Observaciones:
                <textarea class="form-control" name="observaciones"></textarea>
@@ -466,13 +466,13 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-md-6">
+         <div class="col-lg-6 col-md-6 col-sm-6">
             <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
                <span class="glyphicon glyphicon-refresh"></span>
                &nbsp; Reiniciar...
             </button>
          </div>
-         <div class="col-md-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">
                <span class="glyphicon glyphicon-floppy-disk"></span>
                &nbsp; Guardar...
