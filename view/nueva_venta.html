@@ -270,7 +270,7 @@
 
 
 <div class="modal fade" id="modal_articulos">
-   <div class="modal-dialog" style="width: 950px;">
+   <div class="modal-dialog" style="min-width: 70%;">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -510,15 +510,11 @@
 </form>
 {else}
 <script type="text/javascript">
-   var clientes = [
-      {loop="$fsc->cliente->all_full()"}
-      { value: '{function="str_replace("'", '', $value->nombre)"}', data: '{$value->codcliente}' },
-      {/loop}
-   ];
    $(document).ready(function() {
       $("#modal_cliente").modal('show');
-      $("#ac_clientes").autocomplete({
-         lookup: clientes,
+      $("#ac_cliente").autocomplete({
+         serviceUrl: '{$fsc->url()}',
+         paramName: 'buscar_cliente',
          onSelect: function (suggestion) {
             document.f_nueva_venta.cliente.value = suggestion.data;
          }
@@ -537,7 +533,8 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <input class="form-control" type="text" name="ac_cliente" id="ac_clientes" placeholder="buscar..." autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="buscar..." autocomplete="off" autofocus />
+                  <p class="help-block"><a href="{$fsc->cliente->url()}#nuevo" target="_blank">Nuevo cliente</a>.</p>
                </div>
             </div>
             <div class="modal-footer">

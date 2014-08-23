@@ -306,14 +306,14 @@ class fs_postgresql extends fs_db
          if( count($aux) == 3 )
          {
             /// ¿Existe esa secuencia?
-            if( !$this->db->sequence_exists($aux[1]) )
+            if( !$this->sequence_exists($aux[1]) )
             {
                /// ¿En qué número debería empezar esta secuencia?
                $num = 1;
-               $aux_num = $this->db->select("SELECT MAX(".$colname."::integer) as num FROM ".$table_name.";");
+               $aux_num = $this->select("SELECT MAX(".$colname."::integer) as num FROM ".$table_name.";");
                if($aux_num)
                   $num += intval($aux_num[0]['num']);
-               $this->db->exec("CREATE SEQUENCE ".$aux[1]." START ".$num.";");
+               $this->exec("CREATE SEQUENCE ".$aux[1]." START ".$num.";");
             }
          }
       }

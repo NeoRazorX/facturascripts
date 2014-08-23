@@ -55,7 +55,11 @@ class nueva_compra extends fs_controller
          }
       }
       
-      if( isset($_GET['new_articulo']) )
+      if( isset($_REQUEST['buscar_proveedor']) )
+      {
+         $this->buscar_proveedor();
+      }
+      else if( isset($_GET['new_articulo']) )
       {
          $this->new_articulo();
       }
@@ -118,6 +122,21 @@ class nueva_compra extends fs_controller
       return 'index.php?page='.__CLASS__.'&tipo='.$this->tipo;
    }
    
+   private function buscar_proveedor()
+   {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
+      $json = array();
+      foreach($this->proveedor->search($_REQUEST['buscar_proveedor']) as $pro)
+      {
+         $json[] = array('value' => $pro->nombre, 'data' => $pro->codproveedor);
+      }
+      
+      header('Content-Type: application/json');
+      echo json_encode( array('query' => $_REQUEST['buscar_proveedor'], 'suggestions' => $json) );
+   }
+   
    private function new_articulo()
    {
       /// desactivamos la plantilla HTML
@@ -169,6 +188,15 @@ class nueva_compra extends fs_controller
       
       header('Content-Type: application/json');
       echo json_encode($this->results);
+   }
+   
+   private function get_precios_articulo()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/nueva_compra_precios';
+      
+      $articulo = new articulo();
+      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
    
    private function nuevo_albaran_proveedor()
@@ -533,14 +561,5 @@ class nueva_compra extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar la factura!");
       }
-   }
-   
-   private function get_precios_articulo()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_compra_precios';
-      
-      $articulo = new articulo();
-      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
 }

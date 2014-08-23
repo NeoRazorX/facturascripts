@@ -67,7 +67,11 @@ class nueva_venta extends fs_controller
          }
       }
       
-      if( isset($_GET['new_articulo']) )
+      if( isset($_REQUEST['buscar_cliente']) )
+      {
+         $this->buscar_cliente();
+      }
+      else if( isset($_GET['new_articulo']) )
       {
          $this->new_articulo();
       }
@@ -128,6 +132,21 @@ class nueva_venta extends fs_controller
    public function url()
    {
       return 'index.php?page='.__CLASS__.'&tipo='.$this->tipo;
+   }
+   
+   private function buscar_cliente()
+   {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
+      $json = array();
+      foreach($this->cliente->search($_REQUEST['buscar_cliente']) as $cli)
+      {
+         $json[] = array('value' => $cli->nombre, 'data' => $cli->codcliente);
+      }
+      
+      header('Content-Type: application/json');
+      echo json_encode( array('query' => $_REQUEST['buscar_cliente'], 'suggestions' => $json) );
    }
    
    private function new_articulo()

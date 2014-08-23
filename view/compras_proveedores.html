@@ -3,6 +3,10 @@
 <script type="text/javascript">
    $(document).ready(function() {
       document.f_custom_search.query.focus();
+      if(window.location.hash.substring(1) == 'nuevo')
+      {
+         $("#modal_nuevo_proveedor").modal('show');
+      }
       $("#b_nuevo_proveedor").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_proveedor").modal('show');

@@ -1,8 +1,9 @@
 {include="header"}
 
 <script type="text/javascript">
-   function comprobar_url()
-   {
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+      
       if(window.location.hash.substring(1) == 'nuevo')
       {
          $("#modal_nuevo_cliente").modal('show');
@@ -17,13 +18,7 @@
          $("#div_grupos").show();
          document.f_new_grupo.nombre.focus();
       }
-   }
-   $(document).ready(function() {
-      comprobar_url();
-      document.f_custom_search.query.focus();
-      window.onpopstate = function(){ 
-         comprobar_url();
-      }
+      
       $("#b_grupos_clientes").click(function(event) {
          event.preventDefault();
          $("#ul_tabs li").each(function() {
@@ -33,6 +28,10 @@
          $("#b_grupos_clientes").addClass('active');
          $("#div_grupos").show();
          document.f_new_grupo.nombre.focus();
+      });
+      $("#b_nuevo_cliente").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_cliente").modal('show');
       });
    });
 </script>
