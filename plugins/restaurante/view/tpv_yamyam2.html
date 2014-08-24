@@ -223,115 +223,125 @@
    <div class="table-responsive">
       <table class="table table-hover">
          <tr>
-            <td valign="top" width="180">
+            <td valign="top" width="180px">
                <ul class="tpv_familias">
                {if condition="$fsc->paquetes"}<li id="paquetes">PAQUETES</li>{/if}
                {loop="$fsc->familias"}<li id="fam_{$value->codfamilia}">{$value->descripcion}</li>{/loop}
                </ul>
             </td>
             <td valign="top">
-               <div class="popup" id="modal_opciones_tpv">
-                  <h1>Opciones</h1>
-                  <table class="table table-hover">
-                     <tr>
-                        <td class="text-right">Fecha:</td>
-                        <td>
-                           <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="text-right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
-                        <td>
-                           <select name="cliente" class="form-control">
-                              {loop="$fsc->cliente->all_full()"}
-                                 {if condition="$value->is_default()"}
-                                 <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+               
+               <div class="modal fade" id="modal_opciones_tpv">
+                  <div class="modal-dialog">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                           <h4 class="modal-title">Opciones</h4>
+                        </div>
+                        <div class="modal-body">
+                           <div class="form-group">
+                              Fecha:
+                              <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+                           </div>
+                           <div class="form-group">
+                              <a class="link" href="{$fsc->cliente->url()}">Cliente:</a>
+                              <select name="cliente" class="form-control">
+                                 {loop="$fsc->cliente->all_full()"}
+                                    {if condition="$value->is_default()"}
+                                    <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                                    {else}
+                                    <option value="{$value->codcliente}">{$value->nombre}</option>
+                                    {/if}
                                  {else}
-                                 <option value="{$value->codcliente}">{$value->nombre}</option>
-                                 {/if}
-                              {else}
-                              <option value="">¡¡¡No tienes clientes!!!</option>
-                              {/loop}
-                           </select>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="text-right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
-                        <td>
-                           <select name="almacen" class="form-control">
-                              {loop="$fsc->almacen->all()"}
-                                 {if condition="$value->is_default()"}
-                                 <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
-                                 {else}
-                                 <option value="{$value->codalmacen}">{$value->nombre}</option>
-                                 {/if}
-                              {/loop}
-                           </select>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="text-right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
-                        <td>
-                           <select name="serie" class="form-control">
-                              {loop="$fsc->serie->all()"}
-                                 {if condition="$value->is_default()"}
-                                 <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
-                                 {else}
-                                 <option value="{$value->codserie}">{$value->descripcion}</option>
-                                 {/if}
-                              {/loop}
-                           </select>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="text-right">Forma de pago:</td>
-                        <td>
-                           <select name="forma_pago" class="form-control">
-                              {loop="$fsc->forma_pago->all()"}
-                                 {if condition="$value->is_default()"}
-                                 <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
-                                 {else}
-                                 <option value="{$value->codpago}">{$value->descripcion}</option>
-                                 {/if}
-                              {/loop}
-                           </select>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td class="text-right">Divisa:</td>
-                        <td>
-                           <select name="divisa" class="form-control">
-                              {loop="$fsc->divisa->all()"}
-                                 {if condition="$value->is_default()"}
-                                 <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
-                                 {else}
-                                 <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                                 {/if}
-                              {/loop}
-                           </select>
-                        </td>
-                     </tr>
-                  </table>
-                  <div class="advice">Haz un ticket para que se guarden los cambios.</div>
-               </div>
-               <div class="well well-sm">
-                  <div>
-                     <div class="tpv_total text-right" id="tpv_total">{$fsc->show_precio(0)}</div>
-                     <div class="row">
-                        Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                                    <option value="">¡¡¡No tienes clientes!!!</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <a class="link" href="{$fsc->almacen->url()}">Almacén</a>:
+                              <select name="almacen" class="form-control">
+                                 {loop="$fsc->almacen->all()"}
+                                    {if condition="$value->is_default()"}
+                                       <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                                    {else}
+                                       <option value="{$value->codalmacen}">{$value->nombre}</option>
+                                    {/if}
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <a class="link" href="{$fsc->serie->url()}">Serie</a>:
+                                 <select name="serie" class="form-control">
+                                    {loop="$fsc->serie->all()"}
+                                       {if condition="$value->is_default()"}
+                                          <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                                       {else}
+                                          <option value="{$value->codserie}">{$value->descripcion}</option>
+                                       {/if}
+                                    {/loop}
+                                 </select>
+                           </div>
+                           <div class="form-group">
+                              Forma de pago:
+                              <select name="forma_pago" class="form-control">
+                                 {loop="$fsc->forma_pago->all()"}
+                                    {if condition="$value->is_default()"}
+                                       <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                                    {else}
+                                       <option value="{$value->codpago}">{$value->descripcion}</option>
+                                    {/if}
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              Divisa:
+                              <select name="divisa" class="form-control">
+                                 {loop="$fsc->divisa->all()"}
+                                    {if condition="$value->is_default()"}
+                                       <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                                    {else}
+                                       <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                                    {/if}
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <div class="bg-advice">Haz un ticket para que se guarden los cambios.</div>
+                           </div>
+                        </div>
+                        <div class="modal-footer">
+                           <button class="btn btn-sm btn-primary" type="button" type="submit" onclick="this.disabled=true;this.form.submit();">
+                              <span class="glyphicon glyphicon-floppy-disk"></span>
+                              &nbsp; Guardar
+                           </button>
+                        </div>
                      </div>
                   </div>
-                  <table class="table table-hover" id="tpv_albaran">
-                     <tr>
-                        <th>Articulo</th>
-                        <th>Ud.</th>
-                        <th class="text-right">Total+IVA</th>
-                     </tr>
-                  </table>
+               </div>
+               
+               <div class="well well-sm">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6 text-left">
+                        Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 text-right" id="tpv_total">
+                        {$fsc->show_precio(0)}
+                     </div>
+                  </div>
+                  <br />
+                  <div class="table-responsive">
+                     <table class="table table-hover" id="tpv_albaran">
+                        <tr>
+                           <th>Artículo</th>
+                           <th>Ud.</th>
+                           <th class="text-right">Total+IVA</th>
+                        </tr>
+                     </table>
+                  </div>
                   <br/><br/>
-                  <div>
-                     <input class="btn btn-sm btn-primary text-right" type="button" value="Guardar ticket" id="b_guardar_ticket"/>
-                     <br/><br/>
+                  <div class="text-right">
+                     <input class="btn btn-sm btn-primary" type="button" value="Guardar ticket" id="b_guardar_ticket"/>
+                     <br/>
                   </div>
                </div>
             </td>

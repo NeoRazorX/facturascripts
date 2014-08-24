@@ -4,7 +4,7 @@
 <form action="{$fsc->url()}" method="post">
    <input type="hidden" name="referenciapaq" value="{$fsc->paquete->referencia}"/>
    <div class="well well-sm">
-   <h1>
+   <h4>
       Paquete: {$fsc->paquete->referencia}
       <span>
          <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" value="Guardar">
@@ -12,7 +12,7 @@
             &nbsp; Guardar
          </button>
       </span>
-   </h1>
+   </h4>
       ¿Cuantos grupos de artículos quieres que tenga esta paquete?
       <input class="form-control" type="text" name="grupos" value="{$fsc->paquete->grupos}" size="2" maxlength="2"/>
       Si intentas crear un menú de un restaurante lo normal sería tener 4 grupos,
@@ -21,7 +21,7 @@
    </div>
    {loop="$fsc->paquete->get_grupos()"}
    <div class="well well-sm">
-      <h1>Grupo {$value}:</h1>
+      <h4>Grupo {$value}:</h4>
       <div>
          Marca solamente los artículos que quieras poner en este grupo.
          Nota: un artículo no puede aparecer en dos grupos del mismo paquete.

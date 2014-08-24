@@ -57,18 +57,15 @@
             <form id="f_buscar_cliente" name="f_buscar_cliente" action="{$fsc->url()}" method="post" class="form">
                <div class="container-fluid">
                   <div class="row">
-                     <div class="col-lg-6 col-md-6 col-sm-6">
+                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="input-group">
-                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <input class="form-control" type="text" name="buscar_cliente" size="40" autocomplete="off" autofocus />
                            <span class="input-group-btn">
                               <button class="btn btn-primary" type="submit">
                                  <span class="glyphicon glyphicon-search"></span>
                               </button>
                            </span>
                         </div>
-                     </div>
-                     <div class="col-lg-6 col-md-6 col-sm-6">
-                        <input class="form-control" type="text" name="buscar_cliente" size="40" autocomplete="off" autofocus />
                      </div>
                   </div>
                </div>
@@ -142,7 +139,7 @@
 </form>
 
 <div class="table-responsive" style="margin: 5px;">
-   <h1>Últimos {#FS_ALBARANES#}</h1>
+   <h4>Últimos {#FS_ALBARANES#}</h4>
    <table class="table table-hover">
       <thead>
          <tr>
