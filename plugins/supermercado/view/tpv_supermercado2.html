@@ -6,7 +6,6 @@
       if(document.f_buscar_cliente.buscar_cliente.value == '')
       {
          $("#search_results_clientes").html('');
-         fs_resize_popup("popup_buscar_cliente", 40);
       }
       else
       {
@@ -21,7 +20,6 @@
                if( m[1] == document.f_buscar_cliente.buscar_cliente.value )
                {
                   $("#search_results_clientes").html(datos);
-                  fs_resize_popup("popup_buscar_cliente", 40);
                }
             }
          });
@@ -32,7 +30,6 @@
       if(document.f_buscar_articulo.buscar_articulo.value == '')
       {
          $("#search_results_articulos").html('');
-         fs_resize_popup("popup_buscar_articulo", 40);
       }
       else
       {
@@ -43,7 +40,6 @@
             data: $("form[name=f_buscar_articulo]").serialize(),
             success: function(datos) {
                $("#search_results_articulos").html(datos);
-               fs_resize_popup("popup_buscar_articulo", 40);
             }
          });
       }
@@ -51,7 +47,7 @@
    $(document).ready(function() {
       $("#b_buscar_cliente").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_buscar_cliente', 40);
+         $("#modal_buscar_cliente").modal('show');
       });
       $("#f_buscar_cliente").keyup(function() {
          buscar_cliente();
@@ -62,7 +58,7 @@
       });
       $("#b_buscar_articulo").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_buscar_articulo', 40);
+         $("#modal_buscar_articulo").modal('show');
       });
       $("#f_buscar_articulo").submit(function(event) {
          event.preventDefault();
@@ -75,45 +71,87 @@
    });
 </script>
 
-<div class="rounded" style="text-align: center;">
+<div class="well well-sm text-center">
    <ul class="bloque">
       <li class="verde">
-         <a id="b_buscar_cliente" style="padding: 40px;" href="#">Buscar un cliente</a>
+         <a class="btn btn-sm btn-default" id="b_buscar_cliente" style="padding: 40px;" href="#">Buscar un cliente</a>
       </li>
       <li class="verde">
-         <a id="b_buscar_articulo" style="padding: 40px;" href="#">Buscar un artículo</a>
+         <a class="btn btn-sm btn-default" id="b_buscar_articulo" style="padding: 40px;" href="#">Buscar un artículo</a>
       </li>
       <li>
-         <a id="b_borrar_ticket" style="padding: 40px;" href="#">Borrar un ticket</a>
+         <a class="btn btn-sm btn-default" id="b_borrar_ticket" style="padding: 40px;" href="#">Borrar un ticket</a>
       </li>
       <li>
-         <a href="index.php?page=tpv_supermercado&cerrando=TRUE" id="b_cerrar_caja" style="padding: 40px;">Cerrar la caja</a>
+         <a class="btn btn-sm btn-default" href="index.php?page=tpv_supermercado&cerrando=TRUE" id="b_cerrar_caja" style="padding: 40px;">Cerrar la caja</a>
       </li>
    </ul>
 </div>
 
-<div class="popup" id="popup_buscar_cliente" style="min-width: 600px;">
-   <h1>Escribe el DNI del cliente</h1>
-   <form id="f_buscar_cliente" name="f_buscar_cliente" action="{$fsc->url()}" method="post">
-      <div style="text-align: center;">
-         <input type="text" name="buscar_cliente" size="40" autocomplete="off" autofocus />
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+<div class="modal fade" id="modal_buscar_cliente">
+   <div class="modal-dialog" style="width: 99%;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Escribe el DNI del cliente</h4>
+         </div>
+         <div class="modal-body">
+            <form id="f_buscar_cliente" name="f_buscar_cliente" action="{$fsc->url()}" method="post" class="form">
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <input class="form-control" type="text" name="buscar_cliente" size="40" autocomplete="off" autofocus />
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div id="search_results_clientes"></div>
       </div>
-   </form>
-   <br/>
-   <div id="search_results_clientes"></div>
+   </div>
 </div>
 
-<div class="popup" id="popup_buscar_articulo" style="min-width: 600px;">
-   <h1>Introduce el código de barras</h1>
-   <form id="f_buscar_articulo" name="f_buscar_articulo" action="{$fsc->url()}" method="post">
-      <div style="text-align: center;">
-         <input type="text" name="buscar_articulo" size="40" autocomplete="off" autofocus />
-         <input class="search" type="image" src="view/img/zoom2.png" alt="buscar"/>
+<div class="modal fade" id="modal_buscar_articulo">
+   <div class="modal-dialog" style="width: 99%;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Introduce el código de barras</h4>
+         </div>
+         <div class="modal-body">
+            <form id="f_buscar_articulo" name="f_buscar_articulo" action="{$fsc->url()}" method="post" class="form">
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <input class="form-control" type="text" name="buscar_articulo" size="40" autocomplete="off" autofocus />
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div id="search_results_articulos"></div>
       </div>
-   </form>
-   <br/>
-   <div id="search_results_articulos"></div>
+   </div>
 </div>
 
 <div class="hidden">

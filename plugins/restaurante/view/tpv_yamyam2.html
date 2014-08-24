@@ -3,7 +3,7 @@
    var lcd_txt = '-1';
    function mostrar_paquete(paq)
    {
-      fs_show_popup('paquete_'+paq);
+      $("#paquete_"+paq).modal('show');
       
       var iname = '';
       $('#paquete_'+paq+" input[type='radio']").each(function() {
@@ -138,12 +138,12 @@
             <input type=\"hidden\" name=\"referencia_"+numlineas+"\" value=\""+ref+"\"/>\n\
             <input type=\"hidden\" id=\"pvp_"+numlineas+"\" name=\"pvp_"+numlineas+"\" value=\""+pvp+"\"/>\n\
             <input type=\"hidden\" id=\"iva_"+numlineas+"\" name=\"iva_"+numlineas+"\" value=\""+iva+"\"/>\n\
-            <input class=\"button\" type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/> &nbsp;\n\
+            <input class=\"btn btn-sm btn-warning\" type=\"button\" value=\"-\" onclick=\"linea_sum_ud("+numlineas+",-1)\"/> &nbsp;\n\
             <input type=\"text\" id=\"cantidad_"+numlineas+"\" name=\"cantidad_"+numlineas+
                "\" onkeyup=\"recalcular()\" autocomplete=\"off\" value=\"1\" size=\"1\"/> &nbsp;\n\
-            <input class=\"button\" type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
+            <input class=\"btn btn-sm btn-primary\" type=\"button\" value=\"+\" onclick=\"linea_sum_ud("+numlineas+",1)\"/></td>\n\
          <td align=\"right\">\n\
-            <input type=\""+pvpt_itype+"\" id=\"pvpt_"+numlineas+"\" name=\"pvpt_"+numlineas+"\" value=\""+(pvp*(100+iva)/100)+
+            <input class=\""form-control\"" type=\""+pvpt_itype+"\" id=\"pvpt_"+numlineas+"\" name=\"pvpt_"+numlineas+"\" value=\""+(pvp*(100+iva)/100)+
                "\" autocomplete=\"off\" size=\"6\" onclick=\"this.select()\" onkeyup=\"ajustar_pvpt('"+numlineas+"')\"/>\n\
          </td>\n\
          </tr>");
@@ -186,15 +186,15 @@
          $('#' + $(this).attr('for')).attr('checked', 'checked');
       });
       $("#paquetes").click(function() {
-         fs_show_popup('all_paquetes');
+         $("#all_paquetes").modal('show');
       });
       {loop="$fsc->familias"}
       $("#fam_{$value->codfamilia}").click(function(event) {
-         fs_show_popup('articulos_{$value->codfamilia}');
+         $("#articulos_{$value->codfamilia}").modal('show');
       });
       {/loop}
       $("#b_guardar_ticket").click(function() {
-         fs_show_popup('fin_ticket');
+         $("#fin_ticket").modal('show');
          document.form_tpv_albaran.efectivo.value = '0.00';
          document.form_tpv_albaran.cambio.value = '0.00';
          document.form_tpv_albaran.efectivo.select();
@@ -211,236 +211,274 @@
       });
       $("#b_opciones_tpv").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_opciones_tpv');
+         $("#modal_opciones_tpv").modal('show');
       });
       update_lcd(0);
    });
 </script>
 
 <form name="form_tpv_albaran" action="{$fsc->url()}" method="post">
-<input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
-<input type="hidden" id="numlineas" name="numlineas" value="0"/>
-<table width="100%">
-   <tr>
-      <td valign="top" width="180">
-         <ul class="tpv_familias">
-         {if condition="$fsc->paquetes"}<li id="paquetes">PAQUETES</li>{/if}
-         {loop="$fsc->familias"}<li id="fam_{$value->codfamilia}">{$value->descripcion}</li>{/loop}
-         </ul>
-      </td>
-      <td valign="top">
-         <div class="popup" id="popup_opciones_tpv">
-            <h1>Opciones</h1>
-            <table>
-               <tr>
-                  <td class="text-right">Fecha:</td>
-                  <td>
-                     <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
-                  </td>
-               </tr>
-               <tr>
-                  <td class="text-right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
-                  <td>
-                     <select name="cliente">
-                        {loop="$fsc->cliente->all_full()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
-                           {else}
-                           <option value="{$value->codcliente}">{$value->nombre}</option>
-                           {/if}
-                        {else}
-                        <option value="">¡¡¡No tienes clientes!!!</option>
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-               <tr>
-                  <td class="text-right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
-                  <td>
-                     <select name="almacen">
-                        {loop="$fsc->almacen->all()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
-                           {else}
-                           <option value="{$value->codalmacen}">{$value->nombre}</option>
-                           {/if}
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-               <tr>
-                  <td class="text-right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
-                  <td>
-                     <select name="serie">
-                        {loop="$fsc->serie->all()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
-                           {else}
-                           <option value="{$value->codserie}">{$value->descripcion}</option>
-                           {/if}
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-               <tr>
-                  <td class="text-right">Forma de pago:</td>
-                  <td>
-                     <select name="forma_pago">
-                        {loop="$fsc->forma_pago->all()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
-                           {else}
-                           <option value="{$value->codpago}">{$value->descripcion}</option>
-                           {/if}
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-               <tr>
-                  <td class="text-right">Divisa:</td>
-                  <td>
-                     <select name="divisa">
-                        {loop="$fsc->divisa->all()"}
-                           {if condition="$value->is_default()"}
-                           <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
-                           {else}
-                           <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                           {/if}
-                        {/loop}
-                     </select>
-                  </td>
-               </tr>
-            </table>
-            <div class="advice">Haz un ticket para que se guarden los cambios.</div>
-         </div>
-         <div class="rounded">
-            <div>
-               <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
-               <div class="bloque">
-                  Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-            <table class="list" id="tpv_albaran">
-               <tr>
-                  <th>Articulo</th>
-                  <th>Ud.</th>
-                  <th class="text-right">Total+IVA</th>
-               </tr>
-            </table>
-            <br/><br/>
-            <div>
-               <input class="button pull_right" type="button" value="guardar ticket" id="b_guardar_ticket"/>
-               <br/><br/>
-            </div>
-         </div>
-      </td>
-   </tr>
-</table>
-<div class="popup" id="fin_ticket">
-   <table>
-      <tr>
-         <td class="text-right">Total:</td>
-         <td><input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/> {$fsc->simbolo_divisa()}</td>
-      </tr>
-      <tr>
-         <td class="text-right">Efectivo:</td>
-         <td><input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
-      </tr>
-      <tr>
-         <td class="text-right">Cambio:</td>
-         <td><input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
-      </tr>
-      <tr>
-         <td class="text-right">Observaciones:</td>
-         <td><textarea name="observaciones"></textarea></td>
-      </tr>
-      <tr>
-         <td class="text-right">Nº de tickets:</td>
-         <td>
-            <input class="button" type="button" value=" - " onclick="more_tickets('-1')"/>
-            <input type="text" id="num_tickets" name="num_tickets" value="2" size="2"/>
-            <input class="button" type="button" value=" + " onclick="more_tickets('1')"/>
-         </td>
-      </tr>
-      <tr>
-         <td colspan="2">&nbsp;</td>
-      </tr>
-      <tr>
-         <td><input type="button" class="delete" value="cancelar" onclick="fs_hide_popups()"/></td>
-         <td class="text-right">
-            <input type="submit" class="submit" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
-         </td>
-      </tr>
-   </table>
-</div>
-</form>
-
-<div class="popup" id="all_paquetes">
-   <h1>Paquetes</h1>
-   <ul class="items">
-   {loop="$fsc->paquetes"}
-      <li class="touch" onclick="mostrar_paquete('{$value->referencia}')">
-         {$value->articulo->referencia}
-         {if condition="$value->articulo->imagen_url()"}
-            <br/><img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
-         {else}
-            <br/><img src="view/img/unknown.png" alt="{$value->referencia}"/><br/>
-         {/if}
-         {$fsc->show_precio($value->articulo->pvp_iva())}
-      </li>
-   {/loop}
-   </ul>
-</div>
-
-{loop="$fsc->paquetes"}
-<div class="popup" id="paquete_{$value1->referencia}">
-   <h1>PAQUETE: {$value1->referencia} &nbsp; &nbsp; {$fsc->show_precio($value1->articulo->pvp_iva())}</h1>
-   <form id="f_p_{$value1->referencia}">
-      <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
-      <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
-      <input type="hidden" name="descripcion" value="{$value->articulo->descripcion}"/>
-      <input type="hidden" name="grupos" value="{$value->grupos}"/>
-      {loop="$value1->get_grupos()"}
-      <div class="grupo grupo_paquete">
-         <h2>Grupo {$value2}:</h2>
-         {loop="$value1->subpaquetes"}
-            {if condition="$value3->grupo==$value2"}
-            <input type="radio" name="grupo_{$value2}" value="{$value3->referencia}" id="g_{$value1->referencia}_{$value3->referencia}" style="display:none;"/>
-            <label for="g_{$value1->referencia}_{$value3->referencia}">{$value3->referencia}</label>
-            {/if}
-         {/loop}
-         <input type="radio" name="grupo_{$value2}" value="" style="display:none;"/>
-      </div>
-      {/loop}
-      <table width="100%">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+   <div class="table-responsive">
+      <table class="table table-hover">
          <tr>
-            <td><input type="button" class="delete" value="cancelar" onclick="fs_hide_popups()"/></td>
-            <td class="text-right"><input type="button" class="submit" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/></td>
+            <td valign="top" width="180">
+               <ul class="tpv_familias">
+               {if condition="$fsc->paquetes"}<li id="paquetes">PAQUETES</li>{/if}
+               {loop="$fsc->familias"}<li id="fam_{$value->codfamilia}">{$value->descripcion}</li>{/loop}
+               </ul>
+            </td>
+            <td valign="top">
+               <div class="popup" id="modal_opciones_tpv">
+                  <h1>Opciones</h1>
+                  <table class="table table-hover">
+                     <tr>
+                        <td class="text-right">Fecha:</td>
+                        <td>
+                           <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
+                        <td>
+                           <select name="cliente">
+                              {loop="$fsc->cliente->all_full()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
+                                 {else}
+                                 <option value="{$value->codcliente}">{$value->nombre}</option>
+                                 {/if}
+                              {else}
+                              <option value="">¡¡¡No tienes clientes!!!</option>
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
+                        <td>
+                           <select name="almacen">
+                              {loop="$fsc->almacen->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                                 {else}
+                                 <option value="{$value->codalmacen}">{$value->nombre}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
+                        <td>
+                           <select name="serie">
+                              {loop="$fsc->serie->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->codserie}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Forma de pago:</td>
+                        <td>
+                           <select name="forma_pago">
+                              {loop="$fsc->forma_pago->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->codpago}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Divisa:</td>
+                        <td>
+                           <select name="divisa">
+                              {loop="$fsc->divisa->all()"}
+                                 {if condition="$value->is_default()"}
+                                 <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                                 {else}
+                                 <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </td>
+                     </tr>
+                  </table>
+                  <div class="advice">Haz un ticket para que se guarden los cambios.</div>
+               </div>
+               <div class="well well-sm">
+                  <div>
+                     <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
+                     <div class="bloque">
+                        Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                     </div>
+                  </div>
+                  <table class="table table-hover" id="tpv_albaran">
+                     <tr>
+                        <th>Articulo</th>
+                        <th>Ud.</th>
+                        <th class="text-right">Total+IVA</th>
+                     </tr>
+                  </table>
+                  <br/><br/>
+                  <div>
+                     <input class="button pull_right" type="button" value="guardar ticket" id="b_guardar_ticket"/>
+                     <br/><br/>
+                  </div>
+               </div>
+            </td>
          </tr>
       </table>
-   </form>
+   </div>
+   
+   <div class="modal fade" id="fin_ticket">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-body">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <tr>
+                        <td class="text-right">Total:</td>
+                        <td><input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/> {$fsc->simbolo_divisa()}</td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Efectivo:</td>
+                        <td><input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Cambio:</td>
+                        <td><input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/> {$fsc->simbolo_divisa()}</td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Observaciones:</td>
+                        <td><textarea name="observaciones"></textarea></td>
+                     </tr>
+                     <tr>
+                        <td class="text-right">Nº de tickets:</td>
+                        <td>
+                           <input class="button" type="button" value=" - " onclick="more_tickets('-1')"/>
+                           <input class="form-control" type="text" id="num_tickets" name="num_tickets" value="2" size="2"/>
+                           <input class="button" type="button" value=" + " onclick="more_tickets('1')"/>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td colspan="2">&nbsp;</td>
+                     </tr>
+                     <tr>
+                        <td><input type="button" class="delete" value="cancelar" onclick="fs_hide_popups()"/></td>
+                        <td class="text-right">
+                           <input type="submit" class="submit" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div class="modal fade" id="all_paquetes">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Paquetes</h4>
+         </div>
+         <div class="modal-body">
+            <ul class="items">
+            {loop="$fsc->paquetes"}
+               <li class="touch" onclick="mostrar_paquete('{$value->referencia}')">
+                  {$value->articulo->referencia}
+                  {if condition="$value->articulo->imagen_url()"}
+                     <br/><img src="{$value->articulo->imagen_url()}" alt="{$value->referencia}"/><br/>
+                  {else}
+                     <br/><img src="view/img/unknown.png" alt="{$value->referencia}"/><br/>
+                  {/if}
+                  {$fsc->show_precio($value->articulo->pvp_iva())}
+               </li>
+            {/loop}
+            </ul>
+         </div>
+      </div>
+   </div>
 </div>
+
+
+{loop="$fsc->paquetes"}
+<form name="f_p_{$value1->referencia}" id="f_p_{$value1->referencia}" class="form" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="proveedor"/>
+   <div class="modal fade" id="paquete_{$value1->referencia}">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">PAQUETE: {$value1->referencia} &nbsp; &nbsp; {$fsc->show_precio($value1->articulo->pvp_iva())}</h4>
+            </div>
+            <div class="modal-body">
+               <input type="hidden" name="pvp" value="{$value->articulo->pvp}"/>
+               <input type="hidden" name="iva" value="{$value->articulo->get_iva()}"/>
+               <input type="hidden" name="descripcion" value="{$value->articulo->descripcion}"/>
+               <input type="hidden" name="grupos" value="{$value->grupos}"/>
+               {loop="$value1->get_grupos()"}
+               <div class="grupo grupo_paquete">
+                  <h2>Grupo {$value2}:</h2>
+                  {loop="$value1->subpaquetes"}
+                     {if condition="$value3->grupo==$value2"}
+                     <input type="radio" name="grupo_{$value2}" value="{$value3->referencia}" id="g_{$value1->referencia}_{$value3->referencia}" style="display:none;"/>
+                     <label for="g_{$value1->referencia}_{$value3->referencia}">{$value3->referencia}</label>
+                     {/if}
+                  {/loop}
+                  <input type="radio" name="grupo_{$value2}" value="" style="display:none;"/>
+               </div>
+               {/loop}
+            </div>
+            <div class="modal-footer">
+               <input type="btn btn-sm btn-warning" class="delete" value="cancelar" onclick="fs_hide_popups()"/>
+               <input type="btn btn-sm btn-primary" class="submit" value="confirmar" onclick="add_paquete('{$value1->referencia}')"/>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
 {/loop}
 
 {loop="$fsc->familias"}
-<div class="popup" id="articulos_{$value1->codfamilia}">
-   <h1>{$value1->descripcion}</h1>
-   <ul class="items">
-   {loop="$fsc->articulos"}
-      {if condition="$value2->codfamilia==$value1->codfamilia"}
-      <li class="touch" onclick="add_articulo('{$value2->referencia}','{$value2->pvp}','{$value2->get_iva()}','','{$value2->descripcion}')">
-         {$value2->referencia}
-         {if condition="$value2->imagen_url()"}
-            <br/><img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
-         {else}
-            <br/><img src="view/img/unknown.png" alt="{$value2->referencia}"/><br/>
-         {/if}
-         {$fsc->show_precio($value2->pvp_iva())}
-      </li>
-      {/if}
-   {/loop}
-   </ul>
-</div>
+   <div class="modal fade" id="articulos_{$value1->codfamilia}">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">{$value1->descripcion}</h4>
+            </div>
+            <div class="modal-body">
+               <ul class="items">
+               {loop="$fsc->articulos"}
+                  {if condition="$value2->codfamilia==$value1->codfamilia"}
+                  <li class="touch" onclick="add_articulo('{$value2->referencia}','{$value2->pvp}','{$value2->get_iva()}','','{$value2->descripcion}')">
+                     {$value2->referencia}
+                     {if condition="$value2->imagen_url()"}
+                        <br/><img src="{$value2->imagen_url()}" alt="{$value2->referencia}"/><br/>
+                     {else}
+                        <br/><img src="view/img/unknown.png" alt="{$value2->referencia}"/><br/>
+                     {/if}
+                     {$fsc->show_precio($value2->pvp_iva())}
+                  </li>
+                  {/if}
+               {/loop}
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
 {/loop}
 
 <div class="hidden">

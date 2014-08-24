@@ -4,21 +4,46 @@
    $(document).ready(function() {
       $("#b_nuevo_clan").click(function(event) {
          event.preventDefault();
-         fs_show_popup('popup_nuevo_clan', 60);
+         $("#modal_nuevo_clan").modal('show');
       });
    });
 </script>
 
-<div class="popup" id="popup_nuevo_clan">
-   <h1>Nuevo clan familiar</h1>
-   <form name="f_nuevo_clan" action="{$fsc->url()}" method="post">
-      Nombre:
-      <input type="text" name="nombre" autofocus />
-      <input class="submit" type="submit" value="Guardar"/>
-   </form>
+<div class="modal fade" id="modal_nuevo_clan">
+   <div class="modal-dialog" style="width: 99%;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Nuevo clan familiar</h4>
+         </div>
+         <div class="modal-body">
+            <form id="f_nuevo_clan" name="f_nuevo_clan" action="{$fsc->url()}" method="post" class="form">
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-floppy-disk"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        Nombre:
+                        <input class="form-control" type="text" name="nombre" size="40" autocomplete="off" autofocus />
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
 </div>
 
-<div class="rounded">
+<div class="well well-sm">
+   <h3 style="margin: 0px;">Clientes</h3>
    <ul class="horizontal">
       {loop="$fsc->clan->all()"}
       <li>

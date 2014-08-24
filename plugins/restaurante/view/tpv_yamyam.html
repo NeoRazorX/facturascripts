@@ -5,7 +5,7 @@
       {if condition="$fsc->caja->codagente==$fsc->user->codagente"}
          {include="tpv_yamyam2"}
       {else}
-      <div class='rounded'>
+      <div class="well well-sm">
          <center>
             <img src='view/img/big_lock.png' alt="acceso denegado"/>
          </center>
@@ -17,22 +17,25 @@
          document.f_caja.d_inicial.select();
       });
    </script>
-   <div class="rounded">
+   <div class="well well-sm">
       <form name="f_caja" action="{$fsc->url()}" method="post">
          <h1>
             Caja:
-            <span><input class="submit" type="submit" value="Guardar"/></span>
+            <button class="btn btn-sm btn-primary" type="button" type="submit" value="Guardar">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
          </h1>
          ¿Cuanto hay en la caja?
-         <input type="text" name="d_inicial" value="0.00" size="7" autocomplete="off"/>
+         <input class="form-control" type="text" name="d_inicial" value="0.00" size="7" autocomplete="off"/>
          {$fsc->simbolo_divisa()}
       </form>
    </div>
    {/if}
 {else}
-<div class='rounded'>
+<div class="well well-sm">
    <center>
-      <img src='view/img/big_lock.png' alt="acceso denegado"/>
+      <img src='view/img/big_lock.png' alt="Acceso denegado"/>
    </center>
 </div>
 {/if}

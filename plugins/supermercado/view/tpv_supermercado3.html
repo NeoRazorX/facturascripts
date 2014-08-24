@@ -79,7 +79,7 @@
       if(document.f_albaran.codbar.value == '')
       {
          if(numlineas > 1)
-            save_popup();
+            save_modal();
       }
       else
       {
@@ -105,9 +105,9 @@
          });
       }
    }
-   function save_popup()
+   function save_modal()
    {
-      fs_show_popup('popup_guardar')
+      $("#modal_guardar").modal('show');
       document.f_albaran.efectivo.select();
    }
    function save_albaran()
@@ -140,78 +140,100 @@
    });
 </script>
 
-<form id="f_albaran" name="f_albaran" action="{$fsc->url()}" method="post">
-<input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
-<input type="hidden" name="numlineas" value="0"/>
-<div class="rounded">
-   <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
-   <div class="bloque">
-      Cliente: <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a> |
-      Gastados: {$fsc->show_precio($fsc->clan->gastado())} de {$fsc->show_precio($fsc->clan->limite)}
+<form action="{$fsc->url()}" name="f_albaran" method="post" class="form">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <input type="hidden" name="numlineas" value="0"/>
+   <div class="container-fluid">
+      <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
+         Cliente: <a class="link" href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a> |
+         Gastados: {$fsc->show_precio($fsc->clan->gastado())} de {$fsc->show_precio($fsc->clan->limite)}
+      </div>
    </div>
-   <br/><br/>
-   <table class="list" id="tpv_albaran">
-      <tr>
-         <th class="text-left">Referencia</th>
-         <th>Descripción</th>
-         <th>Disponible</th>
-         <th>Unidades o Kilos</th>
-         <th class="text-right">TOTAL+IVA</th>
-      </tr>
-   </table>
-   <div class="new_line" style="padding: 3px;">
-      <input class="full" type="text" id="b_codbar" name="codbar" size="60" autocomplete="off" placeholder="Introduce el código de barras" autofocus />
+   
+   <div class="table-responsive" style="margin: 5px;">
+      <h1>Últimos {#FS_ALBARANES#}</h1>
+      <table class="table table-hover" id="tpv_albaran">
+         <thead>
+            <tr>
+               <th class="text-left">Referencia</th>
+               <th>Descripción</th>
+               <th>Disponible</th>
+               <th>Unidades o Kilos</th>
+               <th class="text-right">TOTAL+IVA</th>
+            </tr>
+         </thead>
+      </table>
+      <div class="new_line" style="padding: 3px;">
+         <input class="form-control full" type="text" id="b_codbar" name="codbar" size="60" autocomplete="off" placeholder="Introduce el código de barras" autofocus />
+      </div>
+      <br/><br/>
+      <div>
+         <a class="delete" href="index.php?page=tpv_supermercado">Cancelar</a>
+         <button class="btn btn-sm btn-primary text-right" type="submit" onclick="save_modal();">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            &nbsp; Guardar
+         </button>
+      </div>
    </div>
-   <br/><br/>
-   <div>
-      <a class="delete" href="index.php?page=tpv_supermercado">Cancelar</a>
-      <button type="button" class="pull_right submit" onclick="save_popup()">Guardar</button>
+   
+   <div class="modal fade" id="modal_guardar">
+      <div class="modal-dialog" style="width: 99%;">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Guardar</h4>
+            </div>
+            <div class="modal-body">
+               <table class="table table-hover">
+                  <tr>
+                     <td class="text-right">Total:</td>
+                     <td>
+                        <input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/>
+                        {$fsc->simbolo_divisa()}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="text-right">Efectivo:</td>
+                     <td>
+                        <input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/>
+                        {$fsc->simbolo_divisa()}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="text-right">Cambio:</td>
+                     <td>
+                        <input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/>
+                        {$fsc->simbolo_divisa()}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>Observaciones:</td>
+                  </tr>
+                  <tr>
+                     <td colspan="2">
+                        <textarea name="observaciones"></textarea>
+                        <br/>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <button class="btn btn-sm btn-warning text-right" type="submit" onclick="fs_hide_popups();">
+                           <span class="glyphicon glyphicon-dismiss"></span>
+                           &nbsp; Cancelar
+                        </button>
+                     </td>
+                     <td class="text-right">
+                        <button class="btn btn-sm btn-primary text-right" type="submit" onclick="save_albaran();">
+                           <span class="glyphicon glyphicon-floppy-disk"></span>
+                           &nbsp; Guardar
+                        </button>
+                     </td>
+                  </tr>
+               </table>
+            </div>
+         </div>
+      </div>
    </div>
-</div>
-
-<div class="popup" id="popup_guardar">
-   <h1>Guardar:</h1>
-   <table>
-      <tr>
-         <td class="text-right">Total:</td>
-         <td>
-            <input class="tpv_total" type="text" name="total2" value="0.00" size="5" id="tpv_total2" disabled="disabled"/>
-            {$fsc->simbolo_divisa()}
-         </td>
-      </tr>
-      <tr>
-         <td class="text-right">Efectivo:</td>
-         <td>
-            <input class="tpv_total" type="text" name="efectivo" value="0.00" size="5" id="tpv_efectivo" autocomplete="off"/>
-            {$fsc->simbolo_divisa()}
-         </td>
-      </tr>
-      <tr>
-         <td class="text-right">Cambio:</td>
-         <td>
-            <input class="tpv_total" type="text" name="cambio" value="0.00" size="5" id="tpv_cambio" autocomplete="off"/>
-            {$fsc->simbolo_divisa()}
-         </td>
-      </tr>
-      <tr>
-         <td>Observaciones:</td>
-      </tr>
-      <tr>
-         <td colspan="2">
-            <textarea name="observaciones"></textarea>
-            <br/>
-         </td>
-      </tr>
-      <tr>
-         <td>
-            <button type="button" class="delete" onclick="fs_hide_popups()">Cancelar</button>
-         </td>
-         <td class="text-right">
-            <button type="button" class="submit" onclick="save_albaran()">Guardar</button>
-         </td>
-      </tr>
-   </table>
-</div>
 </form>
 
 <div class="hidden">

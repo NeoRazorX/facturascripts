@@ -1,7 +1,7 @@
 {if condition="$fsc->articulo"}
-<div class="grupo">
+<div class="form-group">
    <h2>
-      <div class="pull_right">{$fsc->show_precio($fsc->articulo->pvp_iva())}</div>
+      <div class="text-right">{$fsc->show_precio($fsc->articulo->pvp_iva())}</div>
       {$fsc->articulo->referencia}
    </h2>
    <p>{$fsc->articulo->descripcion}</p>
