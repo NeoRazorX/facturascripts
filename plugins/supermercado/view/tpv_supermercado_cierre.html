@@ -88,9 +88,10 @@
 </script>
 
 <div class="well well-sm">
-   <h1>Saca el cambio y cuenta las monedas y billetes que tienes en la caja</h1>
+   <h4 class="text-center">Saca el cambio y cuenta las monedas y billetes que tienes en la caja</h4>
    <form id="f_cerrar_caja" name="f_cerrar_caja" action="{$fsc->url()}" method="post">
       <input type="hidden" name="cerrar_caja" value="TRUE"/>
+      <h4>Monedas</h4>
       <div class="row">
          <div class="col-lg-3 col-md-3 col-sm-3">
             1 céntimo<br/>
@@ -128,6 +129,7 @@
          </div>
       </div>
       
+      <h4>Billetes</h4>
       <div class="row">
          <div class="col-lg-3 col-md-3 col-sm-3">
             5 euros<br/>
@@ -161,18 +163,17 @@
          </div>
       </div>
       
-      <div class="table-responsive" style="margin: 5px;">
-         <table class="table table-hover">
-            <tr>
-               <td>
-                  <a href="index.php?page=tpv_supermercado" class="btn btn-sm btn-warning">Cancelar</a>
-               </td>
-               <td class="text-right">
-                  <input class="btn btn-sm btn-default" type="submit" value="Finalizar"/>
-               </td>
-            </tr>
-         </table>
+      <br />
+      
+      <div class="row">
+         <div class="col-lg-6 col-md-6 col-sm-6 text-left">
+            <a href="index.php?page=tpv_supermercado" class="btn btn-sm btn-warning">Cancelar</a>
+         </div>
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
+            <input class="btn btn-sm btn-primary" type="submit" value="Finalizar"/>
+         </div>
       </div>
+      
    </form>
 </div>
 
