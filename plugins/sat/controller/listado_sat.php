@@ -177,17 +177,20 @@ class listado_sat extends fs_controller
    public function edita_sat()
    {
       $this->resultado = $this->registro_sat->get($_GET['id']);
-      if($this->resultado AND isset($_POST['modelo']))
+      if($_POST['detalle'])
       {
-          if($_POST['detalle'])
-          {
-             $this->agrega_detalle(); 
-          }
-          else 
-          {
+              $this->agrega_detalle(); 
+      }
+      else {
+        if($this->resultado AND isset($_POST['modelo']))
+        {
+
+
+
               $cliente = $this->cliente->get($this->resultado->codcliente);
          if($cliente AND isset($_POST['nombre']))
          {
+             $this->new_message('3');
             $cliente->nombre = $_POST['nombre'];
             $cliente->nombrecomercial = $_POST['nombre'];
             $cliente->telefono1 = $_POST['telefono1'];
@@ -218,14 +221,16 @@ class listado_sat extends fs_controller
          else
          {
             $this->new_error_msg('Imposible guardar los datos del SAT.');
-         }
-          }
+         }  
+         
+        }
+        else if(!$this->resultado)
+        {
+         $this->new_error_msg('Datos no encontrados.');
+        }
          
       }
-      else if(!$this->resultado)
-      {
-         $this->new_error_msg('Datos no encontrados.');
-      }
+      
    }
    
    public function listar_sat()
@@ -284,6 +289,7 @@ class listado_sat extends fs_controller
 
          $detalle= new detalles_sat();
          $detalle->descripcion = $_POST['detalle'];
+         $detalle->nsat = $_GET['id'];
          if( $detalle->save() )
          {
             $this->new_message('Detalle guardados correctamente.');
