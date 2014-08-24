@@ -72,20 +72,23 @@
 </script>
 
 <div class="well well-sm text-center">
-   <ul class="bloque">
-      <li class="verde">
-         <a class="btn btn-sm btn-default" id="b_buscar_cliente" style="padding: 40px;" href="#">Buscar un cliente</a>
-      </li>
-      <li class="verde">
-         <a class="btn btn-sm btn-default" id="b_buscar_articulo" style="padding: 40px;" href="#">Buscar un artículo</a>
-      </li>
-      <li>
-         <a class="btn btn-sm btn-default" id="b_borrar_ticket" style="padding: 40px;" href="#">Borrar un ticket</a>
-      </li>
-      <li>
-         <a class="btn btn-sm btn-default" href="index.php?page=tpv_supermercado&cerrando=TRUE" id="b_cerrar_caja" style="padding: 40px;">Cerrar la caja</a>
-      </li>
-   </ul>
+   <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6">
+         <a class="btn btn-lg btn-default" id="b_buscar_cliente" href="#">Buscar un cliente</a>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6">
+         <a class="btn btn-lg btn-default" id="b_buscar_articulo" href="#">Buscar un artículo</a>
+      </div>
+   </div>
+   <br />
+   <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6">
+         <a class="btn btn-lg btn-default" id="b_borrar_ticket" href="#">Borrar un ticket</a>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6">
+         <a class="btn btn-lg btn-default" id="b_cerrar_caja" href="index.php?page=tpv_supermercado&cerrando=TRUE">Cerrar la caja</a>
+      </div>
+   </div>
 </div>
 
 <div class="modal fade" id="modal_buscar_cliente">

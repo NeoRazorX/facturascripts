@@ -242,7 +242,7 @@
                      <tr>
                         <td class="text-right"><a class="link" href="{$fsc->cliente->url()}">Cliente</a>:</td>
                         <td>
-                           <select name="cliente">
+                           <select name="cliente" class="form-control">
                               {loop="$fsc->cliente->all_full()"}
                                  {if condition="$value->is_default()"}
                                  <option value="{$value->codcliente}" selected="selected">{$value->nombre}</option>
@@ -258,7 +258,7 @@
                      <tr>
                         <td class="text-right"><a class="link" href="{$fsc->almacen->url()}">Almacén</a>:</td>
                         <td>
-                           <select name="almacen">
+                           <select name="almacen" class="form-control">
                               {loop="$fsc->almacen->all()"}
                                  {if condition="$value->is_default()"}
                                  <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
@@ -272,7 +272,7 @@
                      <tr>
                         <td class="text-right"><a class="link" href="{$fsc->serie->url()}">Serie</a>:</td>
                         <td>
-                           <select name="serie">
+                           <select name="serie" class="form-control">
                               {loop="$fsc->serie->all()"}
                                  {if condition="$value->is_default()"}
                                  <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
@@ -286,7 +286,7 @@
                      <tr>
                         <td class="text-right">Forma de pago:</td>
                         <td>
-                           <select name="forma_pago">
+                           <select name="forma_pago" class="form-control">
                               {loop="$fsc->forma_pago->all()"}
                                  {if condition="$value->is_default()"}
                                  <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
@@ -300,7 +300,7 @@
                      <tr>
                         <td class="text-right">Divisa:</td>
                         <td>
-                           <select name="divisa">
+                           <select name="divisa" class="form-control">
                               {loop="$fsc->divisa->all()"}
                                  {if condition="$value->is_default()"}
                                  <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
@@ -316,8 +316,8 @@
                </div>
                <div class="well well-sm">
                   <div>
-                     <div class="tpv_total pull_right" id="tpv_total">{$fsc->show_precio(0)}</div>
-                     <div class="bloque">
+                     <div class="tpv_total text-right" id="tpv_total">{$fsc->show_precio(0)}</div>
+                     <div class="row">
                         Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
                      </div>
                   </div>
@@ -330,7 +330,7 @@
                   </table>
                   <br/><br/>
                   <div>
-                     <input class="button pull_right" type="button" value="guardar ticket" id="b_guardar_ticket"/>
+                     <input class="btn btn-sm btn-primary text-right" type="button" value="Guardar ticket" id="b_guardar_ticket"/>
                      <br/><br/>
                   </div>
                </div>
@@ -364,18 +364,18 @@
                      <tr>
                         <td class="text-right">Nº de tickets:</td>
                         <td>
-                           <input class="button" type="button" value=" - " onclick="more_tickets('-1')"/>
+                           <input class="btn btn-sm btn-warning" type="button" value=" - " onclick="more_tickets('-1')"/>
                            <input class="form-control" type="text" id="num_tickets" name="num_tickets" value="2" size="2"/>
-                           <input class="button" type="button" value=" + " onclick="more_tickets('1')"/>
+                           <input class="btn btn-sm btn-primary" type="button" value=" + " onclick="more_tickets('1')"/>
                         </td>
                      </tr>
                      <tr>
                         <td colspan="2">&nbsp;</td>
                      </tr>
                      <tr>
-                        <td><input type="button" class="delete" value="cancelar" onclick="fs_hide_popups()"/></td>
+                        <td><input class="btn btn-sm btn-primary" type="button" value="cancelar" onclick="fs_hide_popups()"/></td>
                         <td class="text-right">
-                           <input type="submit" class="submit" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
+                           <input class="btn btn-sm btn-primary" type="submit" value="finalizar" onclick="this.disabled=true;this.form.submit();"/>
                         </td>
                      </tr>
                   </table>
