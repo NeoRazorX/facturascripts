@@ -1,6 +1,6 @@
 <form name="f_feedback" action="{#FS_COMMUNITY_URL#}/feedback.php" method="post" target="_blank" class="form" role="form">
    <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
-   <div class="modal fade" id="modal_feedback">
+   <div class="modal" id="modal_feedback">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -22,7 +22,7 @@
                </div>
                <div class="form-group">
                   <label for="feedback_textarea">Observaciones</label>
-                  <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6" autofocus >{if condition="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
+                  <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6">{if condition="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
                </div>
                <div class="form-group">
                   <label for="exampleInputEmail1">Tu email</label>

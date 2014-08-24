@@ -6,9 +6,8 @@
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link href="view/css/bootstrap-yeti.min.css" rel="stylesheet" />
-   <link href="view/css/datepicker.css" rel="stylesheet" />
-   <link href="view/css/custom.css" rel="stylesheet" />
+   <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
+   <link rel="stylesheet" href="view/css/custom.css" />
    <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
@@ -31,6 +30,17 @@
          {else}
          document.f_login.password.focus();
          {/if}
+         
+         $("#b_feedback").click(function(event) {
+            event.preventDefault();
+            $("#modal_feedback").modal('show');
+            document.f_feedback.feedback_text.focus();
+         });
+         $("#b_new_password").click(function(event) {
+            event.preventDefault();
+            $("#modal_new_password").modal('show');
+            document.f_new_password.new_password.focus();
+         });
       });
    </script>
 </head>
@@ -55,12 +65,12 @@
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="{#FS_COMMUNITY_URL#}/questions.php">Preguntas</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/errors.php">Errores</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/ideas.php">Sugerencias</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/all.php">Todo</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/questions.php" target="_blank">Preguntas</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/errors.php" target="_blank">Errores</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/ideas.php" target="_blank">Sugerencias</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/all.php" target="_blank">Todo</a></li>
                      <li class="divider"></li>
-                     <li><a href="#" data-toggle="modal" data-target="#modal_feedback">Escribir...</a></li>
+                     <li><a href="#" id="b_feedback">Escribir...</a></li>
                   </ul>
                </li>
             </ul>
@@ -113,7 +123,7 @@
                      <label>Contraseña</label>
                      <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
                      <p class="help-block">
-                        <a href="#" data-toggle="modal" data-target="#modal_new_password">¿Has olvidado la contraseña?</a>
+                        <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                      </p>
                   </div>
                   {/if}
@@ -133,7 +143,7 @@
       </div>
    </div>
    
-   <div class="modal fade" id="modal_new_password">
+   <div class="modal" id="modal_new_password">
       <div class="modal-dialog">
          <div class="modal-content">
             <form name="f_new_password" action="index.php" method="post" class="form" role="form">
@@ -158,7 +168,7 @@
                   </div>
                   <div class="form-group">
                      <label>Nueva contraseña</label>
-                     <input type="password" class="form-control" name="new_password" maxlength="20" placeholder="Nueva contraseña" autofocus/>
+                     <input type="password" class="form-control" name="new_password" maxlength="20" placeholder="Nueva contraseña"/>
                      <input type="password" class="form-control" name="new_password2" maxlength="20" placeholder="Repite la nueva contraseña"/>
                   </div>
                   <div class="form-group">

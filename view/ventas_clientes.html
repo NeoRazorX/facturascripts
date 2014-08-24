@@ -1,43 +1,46 @@
 {include="header"}
 
 <script type="text/javascript">
+   function show_nuevo_cliente()
+   {
+      $("#modal_nuevo_cliente").modal('show');
+      document.f_nuevo_cliente.nombre.focus();
+   }
+   function show_grupos()
+   {
+      $("#ul_tabs li").each(function() {
+         $( this ).removeClass("active");
+      });
+      $("#div_clientes").hide();
+      $("#b_grupos_clientes").addClass('active');
+      $("#div_grupos").show();
+      document.f_new_grupo.nombre.focus();
+   }
    $(document).ready(function() {
       document.f_custom_search.query.focus();
       
       if(window.location.hash.substring(1) == 'nuevo')
       {
-         $("#modal_nuevo_cliente").modal('show');
+         show_nuevo_cliente();
       }
       else if(window.location.hash.substring(1) == 'grupos')
       {
-         $("#ul_tabs li").each(function() {
-            $( this ).removeClass("active");
-         });
-         $("#div_clientes").hide();
-         $("#b_grupos_clientes").addClass('active');
-         $("#div_grupos").show();
-         document.f_new_grupo.nombre.focus();
+         show_grupos();
       }
       
       $("#b_grupos_clientes").click(function(event) {
          event.preventDefault();
-         $("#ul_tabs li").each(function() {
-            $( this ).removeClass("active");
-         });
-         $("#div_clientes").hide();
-         $("#b_grupos_clientes").addClass('active');
-         $("#div_grupos").show();
-         document.f_new_grupo.nombre.focus();
+         show_grupos();
       });
       $("#b_nuevo_cliente").click(function(event) {
          event.preventDefault();
-         $("#modal_nuevo_cliente").modal('show');
+         show_nuevo_cliente();
       });
    });
 </script>
 
-<form class="form-horizontal" role="form" name="f_nuevo_cliente" action ="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_nuevo_cliente">
+<form class="form-horizontal" role="form" name="f_nuevo_cliente" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_nuevo_cliente">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -64,7 +67,7 @@
                <div class="form-group">
                   <label for="nombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus/>
+                     <input class="form-control" type="text" name="nombre" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">

@@ -59,9 +59,9 @@ class nueva_venta extends fs_controller
       $this->impuesto = new impuesto();
       $this->results = array();
       
-      if( isset($_GET['tipo']) )
+      if( isset($_REQUEST['tipo']) )
       {
-         $this->tipo = $_GET['tipo'];
+         $this->tipo = $_REQUEST['tipo'];
       }
       else
       {
@@ -72,7 +72,11 @@ class nueva_venta extends fs_controller
          }
       }
       
-      if( isset($_GET['new_articulo']) )
+      if( isset($_REQUEST['buscar_cliente']) )
+      {
+         $this->buscar_cliente();
+      }
+      else if( isset($_GET['new_articulo']) )
       {
          $this->new_articulo();
       }
@@ -103,8 +107,6 @@ class nueva_venta extends fs_controller
          
          if( isset($_POST['tipo']) )
          {
-            $this->tipo = $_POST['tipo'];
-
             if($_POST['tipo'] == 'presupuesto')
             {
                $this->nuevo_presupuesto_cliente();
@@ -145,6 +147,21 @@ class nueva_venta extends fs_controller
       return 'index.php?page='.__CLASS__.'&tipo='.$this->tipo;
    }
    
+   private function buscar_cliente()
+   {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
+      $json = array();
+      foreach($this->cliente->search($_REQUEST['buscar_cliente']) as $cli)
+      {
+         $json[] = array('value' => $cli->nombre, 'data' => $cli->codcliente);
+      }
+      
+      header('Content-Type: application/json');
+      echo json_encode( array('query' => $_REQUEST['buscar_cliente'], 'suggestions' => $json) );
+   }
+   
    private function new_articulo()
    {
       $art0 = new articulo();
@@ -182,6 +199,15 @@ class nueva_venta extends fs_controller
                $this->results[$i]->iva = 0;
          }
       }
+   }
+   
+   private function get_precios_articulo()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/nueva_venta_precios';
+      
+      $articulo = new articulo();
+      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
    
    private function nuevo_presupuesto_cliente()
@@ -978,14 +1004,5 @@ class nueva_venta extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar la Factura!");
       }
-   }
-   
-   private function get_precios_articulo()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_venta_precios';
-      
-      $articulo = new articulo();
-      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
 }

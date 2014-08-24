@@ -236,6 +236,7 @@
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          $("#modal_enviar").modal('show');
+         document.enviar_email.email.select();
       });
       $("#b_remove_albaran").click(function(event) {
          event.preventDefault();
@@ -284,7 +285,7 @@
 </div>
 
 <form class="form" role="form" name="enviar_email" action="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_enviar">
+   <div class="modal" id="modal_enviar">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -294,7 +295,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Email del cliente:
-                  <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
                </div>
                <div class="form-group">
                   Mensaje:
@@ -358,7 +359,7 @@
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
-                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <input class="form-control" type="text" name="query" autocomplete="off"/>
                            <span class="input-group-btn">
                               <button class="btn btn-primary" type="submit">
                                  <span class="glyphicon glyphicon-search"></span>

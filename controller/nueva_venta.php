@@ -54,9 +54,9 @@ class nueva_venta extends fs_controller
       $this->impuesto = new impuesto();
       $this->results = array();
       
-      if( isset($_GET['tipo']) )
+      if( isset($_REQUEST['tipo']) )
       {
-         $this->tipo = $_GET['tipo'];
+         $this->tipo = $_REQUEST['tipo'];
       }
       else
       {
@@ -102,8 +102,6 @@ class nueva_venta extends fs_controller
          
          if( isset($_POST['tipo']) )
          {
-            $this->tipo = $_POST['tipo'];
-            
             if($_POST['tipo'] == 'albaran')
             {
                $this->nuevo_albaran_cliente();
@@ -186,6 +184,15 @@ class nueva_venta extends fs_controller
                $this->results[$i]->iva = 0;
          }
       }
+   }
+   
+   private function get_precios_articulo()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/nueva_venta_precios';
+      
+      $articulo = new articulo();
+      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
    
    private function nuevo_albaran_cliente()
@@ -586,14 +593,5 @@ class nueva_venta extends fs_controller
          else
             $this->new_error_msg("¡Imposible guardar la Factura!");
       }
-   }
-   
-   private function get_precios_articulo()
-   {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_venta_precios';
-      
-      $articulo = new articulo();
-      $this->articulo = $articulo->get($_POST['referencia4precios']);
    }
 }

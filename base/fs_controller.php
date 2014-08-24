@@ -1016,7 +1016,7 @@ class fs_controller
     */
    public function get_community_html()
    {
-      if( file_exists('tmp/community_index.html') AND mt_rand(0, 99) != 0 )
+      if( file_exists('tmp/community_index.html') AND mt_rand(0, 9) > 0 )
       {
          return file_get_contents('tmp/community_index.html');
       }

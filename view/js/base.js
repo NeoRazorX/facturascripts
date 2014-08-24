@@ -167,4 +167,9 @@ var Base64 = {
 
 $(document).ready(function() {
    $('.datepicker').datepicker();
+   $("#b_feedback").click(function(event) {
+      event.preventDefault();
+      $("#modal_feedback").modal('show');
+      document.f_feedback.feedback_text.focus();
+   });
 });

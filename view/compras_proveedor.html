@@ -21,6 +21,7 @@
          $("#panel_facturacion").show();
          $("#panel_cuentas").show();
          $("#b_facturacion").addClass('active');
+         document.f_proveedor.codserie.focus();
       }
       else if(window.location.hash.substring(1) == 'direcciones')
       {
@@ -41,6 +42,7 @@
       {
          $("#panel_generales").show();
          $("#b_generales").addClass('active');
+         document.f_proveedor.nombre.focus();
       }
    }
    $(document).ready(function() {
@@ -53,13 +55,15 @@
          if( confirm("¿Realmente desea eliminar este proveedor?") )
             window.location.href = '{$fsc->ppage->url()}&delete={$fsc->proveedor->codproveedor}';
       });
-      $("#b_nueva_cuenta").click(function() {
+      $("#b_nueva_cuenta").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_cuenta").modal('show');
+         document.f_nueva_cuenta.descripcion.focus();
       });
       $("#b_nueva_direccion").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_direccion").modal('show');
+         document.f_nueva_direccion.provincia.focus();
       });
    });
 </script>
@@ -131,7 +135,7 @@
       </div>
       
       <div class="col-lg-10 col-md-10 col-sm-10">
-         <form action="{$fsc->url()}" method="post" class="form">
+         <form name="f_proveedor" action="{$fsc->url()}" method="post" class="form">
             <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
             <div class="panel panel-primary" id="panel_generales">
                <div class="panel-heading">
@@ -260,17 +264,17 @@
                         Descripción:
                         <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-lg-6">
                         <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                         <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-lg-6">
                         Calcular IBAN:
                         <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
                      </div>
                   </div>
-                  <div class="panel-footer">
-                     <a class="btn btn-sm btn-danger" type="button" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">
+                  <div class="panel-footer text-right">
+                     <a class="btn btn-sm btn-danger pull-left" type="button" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">
                          <span class="glyphicon glyphicon-trash"></span>
                          &nbsp; Eliminar
                      </a>
@@ -344,8 +348,8 @@
                         <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
                      </div>
                   </div>
-                  <div class="panel-footer">
-                     <a class="btn btn-sm btn-danger" type="button" href="{$fsc->url()}&delete_dir={$value->id}#direcciones">
+                  <div class="panel-footer text-right">
+                     <a class="btn btn-sm btn-danger pull-left" type="button" href="{$fsc->url()}&delete_dir={$value->id}#direcciones">
                          <span class="glyphicon glyphicon-trash"></span>
                          &nbsp; Eliminar
                      </a>
@@ -419,7 +423,7 @@
 
 <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post" class="form">
    <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
-   <div class="modal fade" id="modal_nueva_cuenta">
+   <div class="modal" id="modal_nueva_cuenta">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -429,7 +433,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Descripción:
-                  <input class="form-control" type="text" name="descripcion" placeholder="Cuenta principal" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="descripcion" placeholder="Cuenta principal" autocomplete="off"/>
                </div>
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
@@ -454,7 +458,7 @@
 <form name="f_nueva_direccion" action="{$fsc->url()}#direcciones" method="post">
    <input type="hidden" name="codproveedor" value="{$fsc->proveedor->codproveedor}"/>
    <input type="hidden" name="coddir" value=""/>
-   <div class="modal fade" id="modal_nueva_direccion">
+   <div class="modal" id="modal_nueva_direccion">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -472,7 +476,7 @@
                </div>
                <div class="form-group">
                   Provincia:
-                  <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autofocus/>
+                  <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}"/>
                </div>
                <div class="form-group">
                   Ciudad:

@@ -239,6 +239,7 @@
          document.f_buscar_articulos.query.value = "";
          $("#search_results").html("");
          $("#modal_articulos").modal('show');
+         document.f_buscar_articulos.query.focus();
       });
       $("#i_new_line").keyup(function() {
          document.f_buscar_articulos.query.value = $("#i_new_line").val();
@@ -269,8 +270,8 @@
 </script>
 
 
-<div class="modal fade" id="modal_articulos">
-   <div class="modal-dialog" style="width: 99%;">
+<div class="modal" id="modal_articulos">
+   <div class="modal-dialog" style="width: 99%; max-width: 950px;">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -283,7 +284,7 @@
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
-                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <input class="form-control" type="text" name="query" autocomplete="off"/>
                            <span class="input-group-btn">
                               <button class="btn btn-primary" type="submit">
                                  <span class="glyphicon glyphicon-search"></span>
@@ -508,10 +509,20 @@
       </div>
    </div>
 </form>
+{elseif condition="!$fsc->user->get_agente()"}
+<div class="well well-lg">
+   <h1>No puedes entrar aquí</h1>
+   <p>
+      No tienes un agente asociado a tu <a href="{$fsc->user->url()}">usuario</a>.
+      Habla con el administrador para que te asigne un agente.
+   </p>
+   <p>Si crees que es un error de FacturaScripts, haz clic en el botón de ayuda, arriba a la derecha, e infórmanos del error.</p>
+</div>
 {else}
 <script type="text/javascript">
    $(document).ready(function() {
       $("#modal_cliente").modal('show');
+      document.f_nueva_venta.ac_cliente.focus();
       $("#ac_cliente").autocomplete({
          serviceUrl: '{$fsc->url()}',
          paramName: 'buscar_cliente',
@@ -524,7 +535,7 @@
 
 <form name="f_nueva_venta" class="form" action="{$fsc->url()}" method="post">
    <input type="hidden" name="cliente"/>
-   <div class="modal fade" id="modal_cliente">
+   <div class="modal" id="modal_cliente">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -533,7 +544,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="buscar..." autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="buscar..." autocomplete="off"/>
                   <p class="help-block"><a href="{$fsc->cliente->url()}#nuevo" target="_blank">Nuevo cliente</a>.</p>
                </div>
             </div>

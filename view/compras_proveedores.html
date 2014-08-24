@@ -6,15 +6,17 @@
       if(window.location.hash.substring(1) == 'nuevo')
       {
          $("#modal_nuevo_proveedor").modal('show');
+         document.f_nuevo_proveedor.nombre.focus();
       }
       $("#b_nuevo_proveedor").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_proveedor").modal('show');
+         document.f_nuevo_proveedor.nombre.focus();
       });
    });
 </script>
 
-<div class="modal fade" id="modal_nuevo_proveedor">
+<div class="modal" id="modal_nuevo_proveedor">
    <div class="modal-dialog">
       <div class="modal-content">
 		 <form name="f_nuevo_proveedor" action="{$fsc->url()}" method="post">
@@ -29,7 +31,7 @@
                </div>
                <div class="form-group">
                   Nombre:
-                  <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus/>
+                  <input class="form-control" type="text" name="nombre" autocomplete="off"/>
                </div>
                <div class="form-group">
                   {#FS_CIFNIF#}:

@@ -22,11 +22,17 @@ require_model('forma_pago.php');
 
 class nueva_compra extends fs_controller
 {
+   public $agente;
+   public $almacen;
+   public $articulo;
+   public $divisa;
    public $familia;
+   public $forma_pago;
    public $impuesto;
    public $proveedor;
    public $proveedor_s;
    public $results;
+   public $serie;
    public $tipo;
    
    public function __construct()
@@ -42,9 +48,9 @@ class nueva_compra extends fs_controller
       $this->impuesto = new impuesto();
       $this->results = array();
       
-      if( isset($_GET['tipo']) )
+      if( isset($_REQUEST['tipo']) )
       {
-         $this->tipo = $_GET['tipo'];
+         $this->tipo = $_REQUEST['tipo'];
       }
       else
       {
@@ -90,8 +96,6 @@ class nueva_compra extends fs_controller
          
          if( isset($_POST['tipo']) )
          {
-            $this->tipo = $_POST['tipo'];
-            
             if($_POST['tipo'] == 'albaran')
             {
                $this->nuevo_albaran_proveedor();
@@ -290,7 +294,7 @@ class nueva_compra extends fs_controller
          {
             $art0 = new articulo();
             $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            for($i = 0; $i < $n; $i++)
             {
                if( isset($_POST['referencia_'.$i]) )
                {
@@ -472,7 +476,7 @@ class nueva_compra extends fs_controller
          {
             $art0 = new articulo();
             $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            for($i = 0; $i < $n; $i++)
             {
                if( isset($_POST['referencia_'.$i]) )
                {
