@@ -91,72 +91,76 @@
    <h1>Saca el cambio y cuenta las monedas y billetes que tienes en la caja</h1>
    <form id="f_cerrar_caja" name="f_cerrar_caja" action="{$fsc->url()}" method="post">
       <input type="hidden" name="cerrar_caja" value="TRUE"/>
-      <ul class="items">
-         <li>
+      <div class="row">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             1 céntimo<br/>
-            <input class="form-control" type="text" name="m1c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m1c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             2 céntimos<br/>
-            <input class="form-control" type="text" name="m2c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m2c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             5 céntimos<br/>
-            <input class="form-control" type="text" name="m5c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m5c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             10 céntimos<br/>
-            <input class="form-control" type="text" name="m10c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m10c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             20 céntimos<br/>
-            <input class="form-control" type="text" name="m20c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m20c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             50 céntimos<br/>
-            <input class="form-control" type="text" name="m50c" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m50c" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             1 euro<br/>
-            <input class="form-control" type="text" name="m1e" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="m1e" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             2 euros<br/>
-            <input class="form-control" type="text" name="m2e" size="6" autocomplete="off" placeholder="¿cuantas?"/>
-         </li>
-      </ul>
-      <br/>
-      <ul class="items">
-         <li>
+            <input class="form-control" type="text" name="m2e" size="6" autocomplete="off" placeholder="¿Cuantas?"/>
+         </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-3 col-md-3 col-sm-3">
             5 euros<br/>
-            <input class="form-control" type="text" name="b5e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b5e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             10 euros<br/>
-            <input class="form-control" type="text" name="b10e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b10e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             20 euros<br/>
-            <input class="form-control" type="text" name="b20e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b20e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
             50 euros<br/>
-            <input class="form-control" type="text" name="b50e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b50e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             100 euros<br/>
-            <input class="form-control" type="text" name="b100e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b100e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+         <div class="col-lg-4 col-md-4 col-sm-4">
             200 euros<br/>
-            <input class="form-control" type="text" name="b200e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-         <li>
+            <input class="form-control" type="text" name="b200e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+         <div class="col-lg-4 col-md-4 col-sm-4">
             500 euros<br/>
-            <input class="form-control" type="text" name="b500e" size="6" autocomplete="off" placeholder="¿cuantos?"/>
-         </li>
-      </ul>
-      <br/>
+         <input class="form-control" type="text" name="b500e" size="6" autocomplete="off" placeholder="¿Cuantos?"/>
+         </div>
+      </div>
+      
       <div class="table-responsive" style="margin: 5px;">
          <table class="table table-hover">
             <tr>
