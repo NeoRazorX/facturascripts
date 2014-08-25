@@ -94,22 +94,22 @@
    </div>
    {/if}
    
-   <div class="container-fluid">
+   <div class="container">
       <div class="row">
-         <div class="col-lg-4 col-md-4 col-sm-4">
-            <div class="well well-lg" id="box_login">
+         <div class="col-md-6 col-md-offset-3">
+            <div class="well well-lg" id="box_login" style="background-color: #F3F6FB;">
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
                   {if condition="FS_DEMO"}
                   <h1>Demo</h1>
                   <input type="hidden" name="password" value="demo"/>
                   <div class="form-group">
                      Escribe tu nombre:
-                     <input type="text" class="form-control input-lg" name="user" maxlength="12" placeholder="Escribe tu nombre"/>
+                     <input type="text" class="form-control" name="user" maxlength="12" placeholder="Escribe tu nombre"/>
                   </div>
                   {else}
                   <div class="form-group">
-                     <label>Usuario</label>
-                     <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
+                     <label>Usuario:</label>
+                     <select name="user" class="form-control" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
                         {if condition="$value->nick == $nlogin"}
                         <option value="{$value->nick}" selected>{$value->nick}</option>
@@ -120,8 +120,8 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <label>Contraseña</label>
-                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <label>Contraseña:</label>
+                     <input type="password" class="form-control" name="password" maxlength="20" placeholder="Contraseña"/>
                      <p class="help-block">
                         <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                      </p>
@@ -136,8 +136,9 @@
                </form>
             </div>
          </div>
-         
-         <div class="col-lg-8 col-md-8 col-sm-8">
+      </div>
+      <div class="row">
+         <div class="col-md-8 col-md-offset-3">
             {$fsc->get_community_html()}
          </div>
       </div>

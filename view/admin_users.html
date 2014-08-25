@@ -5,11 +5,12 @@
       $("#b_nuevo_usuario, #b_nuevo_usuario2").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_usuario").modal('show');
+         document.f_nuevo_usuario.nnick.focus();
       });
    });
 </script>
 
-<div class="modal fade" id="modal_nuevo_usuario">
+<div class="modal" id="modal_nuevo_usuario">
    <div class="modal-dialog">
       <div class="modal-content">
          <form name="f_nuevo_usuario" class="form" role="form" action="{$fsc->page->url()}" method="post">
@@ -20,7 +21,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Nick:
-                  <input class="form-control" type="text" name="nnick" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="nnick" autocomplete="off"/>
                </div>
                <div class="form-group">
                   Contraseña:
@@ -28,7 +29,7 @@
                </div>
                <div class="form-group">
                   <label>
-                     <input type="checkbox" name="nadmin" value="TRUE" id="usuario_admin"/>
+                     <input type="checkbox" name="nadmin" value="TRUE"/>
                      Administrador
                   </label>
                </div>

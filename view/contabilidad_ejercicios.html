@@ -5,12 +5,13 @@
       $("#b_nuevo_ejercicio").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_ejercicio").modal('show');
+         document.f_nuevo_ejercicio.nombre.focus();
       });
    });
 </script>
 
 <form class="form-horizontal" role="form" name="f_nuevo_ejercicio" action="{$fsc->url()}" method="POST">
-   <div class="modal fade" id="modal_nuevo_ejercicio">
+   <div class="modal" id="modal_nuevo_ejercicio">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -21,13 +22,13 @@
                <div class="form-group">
                   <label for="codejercicio" class="col-lg-2 col-md-2 col-sm-2 control-label">Código</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="codejercicio" value="{$fsc->ejercicio->get_new_codigo()}" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
                   <label for="nombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="nombre" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="nombre" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">

@@ -5,14 +5,15 @@
       $("#b_nuevo_banco, #b_nuevo_banco2").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_banco").modal('show');
+         document.f_nuevo_banco.entidad.focus();
       });
    });
 </script>
 
-<div class="modal fade" id="modal_nuevo_banco">
+<div class="modal" id="modal_nuevo_banco">
    <div class="modal-dialog">
       <div class="modal-content">
-		 <form class="form-horizontal" role="form" name="f_nuevo_banco" action="{$fsc->url()}" method="POST">   
+		 <form class="form-horizontal" role="form" name="f_nuevo_banco" action="{$fsc->url()}" method="post">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo banco</h4>
@@ -21,7 +22,7 @@
                <div class="form-group">
                   <label for="entidad" class="col-lg-2 col-md-2 col-sm-2 control-label">Entidad</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="entidad" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="entidad" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">

@@ -5,12 +5,13 @@
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
+         document.f_nuevo_agente.snombre.focus();
       });
    });
 </script>
 
 <form class="form-horizontal" role="form" name="f_nuevo_agente" action ="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_nuevo_agente">
+   <div class="modal" id="modal_nuevo_agente">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -27,7 +28,7 @@
                <div class="form-group">
                   <label for="snombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="snombre" autocomplete="off" autofocus/>
+                     <input class="form-control" type="text" name="snombre" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
