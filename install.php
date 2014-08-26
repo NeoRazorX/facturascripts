@@ -24,7 +24,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
    $cache_port = $_GET["cache_port"];
    $cache_prefix = $_GET["cache_prefix"];
    
-   $nombre_archivo = "config2.php";
+   $nombre_archivo = "config.php";
    $archivo = fopen($nombre_archivo,"w");
    fwrite($archivo,"<?php\n");
    fwrite($archivo,"/*\n");
@@ -333,7 +333,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                   <div class="panel-body">
                      <div class="form-group col-lg-12 col-md-12 col-sm-12">
                         <?php
-                           $nombre_archivo = "config2.php";
+                           $nombre_archivo = "config.php";
                            if (!file_exists($nombre_archivo))
                            {
                               $archivo = fopen($nombre_archivo,"w");
