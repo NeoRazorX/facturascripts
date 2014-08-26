@@ -148,14 +148,21 @@ class nueva_compra extends fs_controller
       
       $art0 = new articulo();
       $art0->referencia = $_POST['referencia'];
-      $art0->descripcion = $_POST['descripcion'];
-      $art0->codfamilia = $_POST['codfamilia'];
-      $art0->set_impuesto($_POST['codimpuesto']);
-      
-      if( $art0->save() )
+      if( $art0->exists() )
       {
-         $art0->get_iva();
-         $this->results[] = $art0;
+         $this->results[] = $art0->get($_POST['referencia']);
+      }
+      else
+      {
+         $art0->descripcion = $_POST['descripcion'];
+         $art0->codfamilia = $_POST['codfamilia'];
+         $art0->set_impuesto($_POST['codimpuesto']);
+         
+         if( $art0->save() )
+         {
+            $art0->get_iva();
+            $this->results[] = $art0;
+         }
       }
       
       header('Content-Type: application/json');

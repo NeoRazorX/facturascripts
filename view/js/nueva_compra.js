@@ -196,6 +196,7 @@ function get_precios(ref)
          dataType: 'html',
          data: "referencia4precios="+ref+"&codproveedor="+codproveedor,
          success: function(datos) {
+            $("#nav_articulos").hide();
             $("#search_results").html(datos);
          }
       });
@@ -232,6 +233,8 @@ function add_articulo(ref,desc,pvp,dto,iva)
    $("#kiwimaru_results").html('');
    $("#nuevo_articulo").hide();
    $("#modal_articulos").modal('hide');
+   
+   $("#pvp_"+(numlineas-1)).focus();
 }
 
 function new_articulo()
@@ -318,24 +321,45 @@ function buscar_articulos()
          $.getJSON(fs_community_url+'/kiwimaru.php', $("form[name=f_buscar_articulos]").serialize(), function(json) {
             var items = [];
             $.each(json, function(key, val) {
-               items.push( "<tr><td>"+val.sector+" / <a href=\""+val.link+"\" target=\"_blank\">"+val.tienda+"</a></td>\n\
-                  <td><b>"+val.referencia+'</b> '+val.descripcion+"</td>\n\
-                  <td class=\"text-right\">"+show_numero(val.precio)+" €</td>\n\
-                  <td class=\"text-right\">"+val.fcomprobado+"</td></tr>" );
+               items.push( "<tr><td>"+val.sector+" / <a href=\""+val.link+"\" target=\"_blank\">"+val.tienda+"</a> / "+val.familia+"</td>\n\
+                  <td><a href=\"#\" onclick=\"kiwi_import('"+val.referencia+"','"+val.descripcion+"')\">"+val.referencia+'</a> '+val.descripcion+"</td>\n\
+                  <td class=\"text-right\"><span title=\"última comprobación "+val.fcomprobado+"\">"+show_numero(val.precio)+" €</span></td></tr>" );
             });
             
             if( items.length == 0 )
             {
-               items.push("<tr><td colspan=\"4\" class=\"bg-warning\">Sin resultados.</td></tr>");
+               items.push("<tr><td colspan=\"3\" class=\"bg-warning\">Sin resultados.</td></tr>");
             }
             
             $("#kiwimaru_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
-               <th class=\"text-left\">Sector / Tienda</th><th class=\"text-left\">Referencia + descripción</th>\n\
-               <th class=\"text-right\">PVP+IVA</th><th class=\"text-right\">Comprobado</th></tr></thead>"+items.join('')+"</table></div>");
+               <th class=\"text-left\">Sector / Tienda / Familia</th><th class=\"text-left\">Referencia + descripción</th>\n\
+               <th class=\"text-right\">PVP+IVA</th></tr></thead>"+items.join('')+"</table></div>");
          });
       }
    }
 }
+
+function kiwi_import(ref, desc)
+{
+   $("#nav_articulos li").each(function() {
+      $(this).removeClass("active");
+   });
+   $("#li_nuevo_articulo").addClass('active');
+   $("#search_results").hide();
+   $("#kiwimaru_results").hide();
+   $("#nuevo_articulo").show();
+   document.f_nuevo_articulo.referencia.value = ref;
+   document.f_nuevo_articulo.descripcion.value = desc;
+   document.f_nuevo_articulo.referencia.select();
+}
+
+var delay = (function(){
+  var timer = 0;
+  return function(callback, ms){
+    clearTimeout (timer);
+    timer = setTimeout(callback, ms);
+  };
+})();
 
 $(document).ready(function() {
    
@@ -362,7 +386,9 @@ $(document).ready(function() {
    });
    
    $("#f_buscar_articulos").keyup(function() {
-      buscar_articulos();
+      delay(function() {
+         buscar_articulos();
+      }, 200);
    });
    
    $("#f_buscar_articulos").submit(function(event) {
