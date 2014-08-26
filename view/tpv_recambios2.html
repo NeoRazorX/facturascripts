@@ -177,6 +177,7 @@
          document.f_buscar_articulos.query.value = "";
          $("#search_results").html("");
          $("#modal_articulos").modal('show');
+         document.f_buscar_articulos.query.focus();
       });
       $("#i_new_line").keyup(function() {
          document.f_buscar_articulos.query.value = $("#i_new_line").val();
@@ -193,8 +194,8 @@
    });
 </script>
 
-<div class="modal fade" id="modal_articulos">
-   <div class="modal-dialog" style="width: 99%;">
+<div class="modal" id="modal_articulos">
+   <div class="modal-dialog" style="width: 99%; max-width: 950px;">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -207,7 +208,7 @@
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="input-group">
-                           <input class="form-control" type="text" name="query" autocomplete="off" autofocus />
+                           <input class="form-control" type="text" name="query" autocomplete="off"/>
                            <span class="input-group-btn">
                               <button class="btn btn-primary" type="submit">
                                  <span class="glyphicon glyphicon-search"></span>

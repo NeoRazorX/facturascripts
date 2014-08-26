@@ -131,8 +131,7 @@ class tpv_recambios extends fs_controller
                else
                {
                   $this->new_error_msg("Esta caja está bloqueada por el agente ".
-                     $this->caja->agente->get_fullname().". Puedes cerrarla
-                     desde Contabilidad &gt; Caja."
+                     $this->caja->agente->get_fullname().". Puedes cerrarla desde TPV &gt; Caja."
                   );
                }
             }

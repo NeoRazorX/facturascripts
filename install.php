@@ -1,6 +1,10 @@
 <?php
 
-if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) && 
+if( file_exists('config.php') )
+{
+   header('Location: index.php');
+}
+else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) && 
      isset($_GET["db_host"]) && !empty($_GET["db_host"]) && 
      isset($_GET["db_port"]) && !empty($_GET["db_port"]) && 
      isset($_GET["db_name"]) && !empty($_GET["db_name"]) && 
@@ -435,15 +439,14 @@ if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
             </form>
          </div>
       </div>
-   </div>
-   
-   <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
-         <small>
-            Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>
-         </small>
+      
+      <div class="row">
+         <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+            <small>
+               Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>
+            </small>
+         </div>
       </div>
    </div>
-
 </body>
 </html>
