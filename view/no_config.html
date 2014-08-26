@@ -12,18 +12,49 @@
       <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    </head>
    <body>
-      <div class="alert alert-danger" role="alert">
-         <ul>
-            <li>No se encuentra el archivo config.php</li>
-            <li>
-               Debes instalar FacturaScripts siguiendo el
-               <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203bda5b38d440a60000001">tutorial oficial</a>.
-            </li>
-            <li>
-               Si tienes cualquier problema o sugerencia no dudes en
-               <a target="_blank" href="http://www.facturascripts.com/community/errors.php">reportar un error</a>.
-            </li>
-         </ul>
+      
+      <div class="container-fluid">
+         <div class="row">
+            &nbsp;
+         </div>
+      </div>
+      
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+               <div class="panel panel-primary" id="panel_bienvenido">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">FacturaScripts no está configurado</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                        <div class="alert alert-danger" role="alert">
+                           <ul>
+                              <li>No se ha encuentrado el archivo config.php.</li>
+                              <li>
+                                 Recuerda que debes instalar FacturaScripts siguiendo el
+                                 <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203bda5b38d440a60000001">tutorial oficial</a>.
+                              </li>
+                              <li>
+                                 Si tienes cualquier problema o sugerencia no dudes en
+                                 <a target="_blank" href="http://www.facturascripts.com/community/errors.php">reportar un error</a>.
+                              </li>
+                           </ul>
+                        </div>
+                        
+                        <br />
+                        Si acabas de realizar una instalación nueva, pulsa el botón "Iniciar instalación" para que el asistente inicial genere el archivo de configuración por ti, necesario para que funcione FacturaScripts.
+                     </div>
+                  </div>
+                  <div class="panel-footer text-right">
+                     <a class="btn btn-sm btn-primary" href="install.php" title="Iniciar instalación" value="Iniciar instalación">
+                        Iniciar instalación &nbsp;
+                        <span class="glyphicon glyphicon-arrow-right"></span>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
    </body>
 </html>

@@ -70,7 +70,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
    fwrite($archivo," */\n");
    fwrite($archivo,"\n");
    fwrite($archivo,"define('FS_CACHE_HOST', '$cache_host');\n");
-   fwrite($archivo,"define('FS_CACHE_PORT', $cache_port');\n");
+   fwrite($archivo,"define('FS_CACHE_PORT', '$cache_port');\n");
    fwrite($archivo,"define('FS_CACHE_PREFIX', '$cache_prefix');\n");
    fwrite($archivo,"\n");
    fwrite($archivo,"/// caducidad (en segundos) de todas las cookies\n");
@@ -116,7 +116,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
    fclose($archivo);
    
    
-   header("Location: index.php?page=install2");
+   header("Location: index.php");
    exit;
 }
 ?>
