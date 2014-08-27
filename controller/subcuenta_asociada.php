@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('cliente.php');
 require_model('cuenta.php');
 require_model('ejercicio.php');
 require_model('subcuenta_cliente.php');
@@ -53,15 +54,11 @@ class subcuenta_asociada extends fs_controller
       {
          $this->new_search();
       }
-      else if( isset($_GET['cli']) OR isset($_POST['cli']) )
+      else if( isset($_REQUEST['cli']) )
       {
          $this->tipo = 'cli';
          $cliente = new cliente();
-         
-         if( isset($_GET['cli']) )
-            $this->cliente = $cliente->get($_GET['cli']);
-         else
-            $this->cliente = $cliente->get($_POST['cli']);
+         $this->cliente = $cliente->get($_REQUEST['cli']);
          
          if($this->cliente)
          {
@@ -110,7 +107,33 @@ class subcuenta_asociada extends fs_controller
                   }
                }
             }
-            else if( isset($_POST['cuenta']) )
+            else if( isset($_POST['idsc2']) )
+            {
+               $subc = new subcuenta();
+               $subc0 = $subc->get($_POST['idsc2']);
+               if($subc0)
+               {
+                  $subcuenta_cliente->codcliente = $this->cliente->codcliente;
+                  $subcuenta_cliente->idsubcuenta = $subc0->idsubcuenta;
+                  $subcuenta_cliente->codsubcuenta = $subc0->codsubcuenta;
+                  $subcuenta_cliente->codejercicio = $subc0->codejercicio;
+                  if( $subcuenta_cliente->save() )
+                  {
+                     $this->new_message('Datos guardados correctamente.');
+                  }
+                  else
+                  {
+                     $this->new_error_msg('Imposible asignar la subcuenta al cliente.');
+                  }
+                  
+                  $this->subcuenta = $subc0;
+               }
+               else
+               {
+                  $this->new_error_msg('Subcuenta no encontrada.');
+               }
+            }
+            else if( isset($_POST['cuenta']) ) /// crear y asignar subcuenta
             {
                $cuenta0 = $this->cuenta->get($_POST['cuenta']);
                if($cuenta0)
@@ -147,17 +170,25 @@ class subcuenta_asociada extends fs_controller
                else
                   $this->new_error_msg('Cuenta no encontrada.');
             }
+            else
+            {
+               foreach($subcuenta_cliente->all_from_cliente($_REQUEST['cli']) as $sca)
+               {
+                  if($sca->codejercicio == $this->codejercicio)
+                  {
+                     $this->subcuenta_a = $sca;
+                     $this->subcuenta = $sca->get_subcuenta();
+                     break;
+                  }
+               }
+            }
          }
       }
-      else if( isset($_GET['pro']) OR isset($_POST['pro']) )
+      else if( isset($_REQUEST['pro']) )
       {
          $this->tipo = 'pro';
          $proveedor = new proveedor();
-         
-         if( isset($_GET['pro']) )
-            $this->proveedor = $proveedor->get($_GET['pro']);
-         else
-            $this->proveedor = $proveedor->get($_POST['pro']);
+         $this->proveedor = $proveedor->get($_REQUEST['pro']);
          
          if($this->proveedor)
          {
@@ -206,7 +237,33 @@ class subcuenta_asociada extends fs_controller
                   }
                }
             }
-            else if( isset($_POST['cuenta']) )
+            else if( isset($_POST['idsc2']) )
+            {
+               $subc = new subcuenta();
+               $subc0 = $subc->get($_POST['idsc2']);
+               if($subc0)
+               {
+                  $subcuenta_proveedor->codproveedor = $this->proveedor->codproveedor;
+                  $subcuenta_proveedor->idsubcuenta = $subc0->idsubcuenta;
+                  $subcuenta_proveedor->codsubcuenta = $subc0->codsubcuenta;
+                  $subcuenta_proveedor->codejercicio = $subc0->codejercicio;
+                  if( $subcuenta_proveedor->save() )
+                  {
+                     $this->new_message('Datos guardados correctamente.');
+                  }
+                  else
+                  {
+                     $this->new_error_msg('Imposible asignar la subcuenta al cliente.');
+                  }
+                  
+                  $this->subcuenta = $subc0;
+               }
+               else
+               {
+                  $this->new_error_msg('Subcuenta no encontrada.');
+               }
+            }
+            else if( isset($_POST['cuenta']) ) /// crear y asignar subcuenta
             {
                $cuenta0 = $this->cuenta->get($_POST['cuenta']);
                if($cuenta0)
@@ -243,6 +300,18 @@ class subcuenta_asociada extends fs_controller
                else
                   $this->new_error_msg('Cuenta no encontrada.');
             }
+            else
+            {
+               foreach($subcuenta_proveedor->all_from_proveedor($_REQUEST['pro']) as $sca)
+               {
+                  if($sca->codejercicio == $this->codejercicio)
+                  {
+                     $this->subcuenta_a = $sca;
+                     $this->subcuenta = $sca->get_subcuenta();
+                     break;
+                  }
+               }
+            }
          }
       }
    }
@@ -254,5 +323,19 @@ class subcuenta_asociada extends fs_controller
       
       $subcuenta = new subcuenta();
       $this->resultados = $subcuenta->search_by_ejercicio($_POST['ejercicio'], $_POST['query']);
+   }
+   
+   public function url()
+   {
+      if( isset($_REQUEST['cli']) )
+      {
+         return 'index.php?page='.__CLASS__.'&cli='.$_REQUEST['cli'];
+      }
+      else if( isset($_REQUEST['pro']) )
+      {
+         return 'index.php?page='.__CLASS__.'&pro='.$_REQUEST['pro'];
+      }
+      else
+         return 'index.php?page='.__CLASS__;
    }
 }

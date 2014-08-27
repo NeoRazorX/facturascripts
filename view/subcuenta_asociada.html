@@ -41,11 +41,13 @@
    $(document).ready(function() {
       $("#b_nueva_subcuenta").click(function() {
          $("#modal_nueva_subcuenta").modal('show');
+         document.f_nueva_subcuenta.cuenta.focus();
       });
       $("#codsubcuenta").click(function() {
          $("#subcuentas").html('');
          document.f_buscar_subcuentas.query.value = '';
          $("#modal_subcuentas").modal('show');
+         document.f_buscar_subcuentas.query.focus();
       });
       $("#f_buscar_subcuentas").submit(function(event) {
          event.preventDefault();
@@ -56,8 +58,8 @@
 
 <form id="f_buscar_subcuentas" name="f_buscar_subcuentas" class="form">
    <input type="hidden" name="codejercicio" value="{$fsc->codejercicio}"/>
-   <div class="modal fade" id="modal_subcuentas">
-      <div class="modal-dialog" style="width: 99%;">
+   <div class="modal" id="modal_subcuentas">
+      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -65,7 +67,7 @@
             </div>
             <div class="modal-body">
                <div class="input-group">
-                  <input class="form-control" type="text" name="query" onkeyup="buscar_subcuentas();" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="query" onkeyup="buscar_subcuentas();" autocomplete="off"/>
                   <span class="input-group-btn">
                      <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
@@ -86,7 +88,7 @@
    {elseif condition="$fsc->tipo == 'pro'"}
    <input type="hidden" name="pro" value="{$fsc->proveedor->codproveedor}"/>
    {/if}
-   <div class="modal fade" id="modal_nueva_subcuenta">
+   <div class="modal" id="modal_nueva_subcuenta">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -132,8 +134,6 @@
 
 <form name="f_change_subcuenta" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="cli" value="{$fsc->cliente->codcliente}"/>
-   <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
-   <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
    <div class="table-responsive">
       <table class="table table-hover">
          <thead>
@@ -158,6 +158,8 @@
                </a>
             </td>
             <td>
+               <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
+               <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
                <input id="codsubcuenta" class="form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
             </td>
             <td>
@@ -189,6 +191,7 @@
                </a>
             </td>
             <td>
+               <input type="hidden" name="idsc2"/>
                <input id="codsubcuenta" class="form-control" type="text" name="subcuenta"/>
             </td>
             <td>
@@ -227,8 +230,6 @@
 
 <form name="f_change_subcuenta" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="pro" value="{$fsc->proveedor->codproveedor}"/>
-   <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
-   <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
    <div class="table-responsive">
       <table class="table table-hover">
          <thead>
@@ -253,6 +254,8 @@
                </a>
             </td>
             <td>
+               <input type="hidden" name="idsc" value="{$fsc->subcuenta->idsubcuenta}"/>
+               <input type="hidden" name="idsc2" value="{$fsc->subcuenta->idsubcuenta}"/>
                <input id="codsubcuenta" class="form-control" type="text" name="subcuenta" value="{$fsc->subcuenta->codsubcuenta}"/>
             </td>
             <td>
@@ -284,6 +287,7 @@
                </a>
             </td>
             <td>
+               <input type="hidden" name="idsc2"/>
                <input id="codsubcuenta" class="form-control" type="text" name="subcuenta"/>
             </td>
             <td>

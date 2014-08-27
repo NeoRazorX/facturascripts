@@ -197,7 +197,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                   </div>
                   <div class="form-group">
                      <label for="feedback_textarea">Observaciones</label>
-                     <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6">{if condition="$fsc->empresa"}email_firma}{/if}</textarea>
+                     <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6"></textarea>
                   </div>
                   <div class="form-group">
                      <label for="exampleInputEmail1">Tu email</label>
@@ -225,7 +225,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
          $("#panel_bienvenido").hide();
          $("#panel_configuracion_inicial_bd").hide();
          $("#panel_configuracion_inicial_cache").hide();
-         $("#panel_configuracion_inicial_config").hide();
+         $("#warning_config").hide();
          $("#submit_button").hide();
          
          $("#b_bienvenido").removeClass('active');
@@ -242,8 +242,9 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
             $("#b_configuracion_inicial").addClass('active');
             $("#panel_configuracion_inicial_bd").show();
             $("#panel_configuracion_inicial_cache").show();
-            $("#panel_configuracion_inicial_config").show();
+            $("#warning_config").show();
             $("#submit_button").show();
+            document.f_configuracion_inicial.db_type.focus();
          }
          else
          {
@@ -325,55 +326,32 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
          
          <div class="col-lg-10 col-md-10 col-sm-10">
             <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php#configuracion_inicial" class="form" role="form" method="get" >
-               
-               <div class="panel panel-primary" id="panel_configuracion_inicial_config">
-                  <div class="panel-heading">
-                     <h3 class="panel-title">Comprobando archivo de configuración</h3>
+               <div  id="warning_config">
+               <?php
+               $nombre_archivo = "config.php";
+               if (!file_exists($nombre_archivo))
+               {
+                  $archivo = fopen($nombre_archivo,"w");
+                  if(!$archivo)
+                  {
+                     ?>
+                  <div class="alert alert-danger">
+                     No se puede escribir en <?php echo $nombre_archivo; ?>, asegurate que tiene los permisos de escritura suficientes.
                   </div>
-                  <div class="panel-body">
-                     <div class="form-group col-lg-12 col-md-12 col-sm-12">
-                        <?php
-                           $nombre_archivo = "config.php";
-                           if (!file_exists($nombre_archivo))
-                           {
-                              $archivo = fopen($nombre_archivo,"w");
-                              if (!$archivo)
-                              {
-                        ?>
-                                 No se puede escribir en <?php echo $nombre_archivo; ?>, asegurate que tiene los permisos de escritura suficientes.
-                        <?php
-                              }
-                              else
-                              {
-                                 fclose($archivo);
-                                 unlink(basename($nombre_archivo));
-                        ?>
-                                 El archivo <?php echo $nombre_archivo; ?> no existe, rellena los siguientes campos y se generará uno con tu configuración.
-                        <?php
-                              }
-                           }
-                           else
-                           {
-                        ?>
-                              El archivo <?php echo $nombre_archivo; ?> ya existe.
-                              <br /><br />
-                              <a class="btn btn-sm btn-success text-center" href="index.php">
-                                 Iniciar FacturaScripts
-                              </a>
-                              
-                              <script type="text/javascript">
-                                 function ocultar_configuracion {
-                                    $("#panel_configuracion_inicial_bd").hide();
-                                    $("#panel_configuracion_inicial_cache").hide();
-                                 }
-                                 ocultar_configuracion();
-                              </script>
-                        <?php
-                           }
-
-                        ?>
-                     </div>
+                     <?php
+                  }
+                  else
+                  {
+                     fclose($archivo);
+                     unlink(basename($nombre_archivo));
+                     ?>
+                  <div class="alert alert-info">
+                     El archivo <?php echo $nombre_archivo; ?> no existe, rellena los siguientes campos y se generará uno con tu configuración.
                   </div>
+                     <?php
+                  }
+               }
+               ?>
                </div>
                
                <div class="panel panel-primary" id="panel_configuracion_inicial_bd">
@@ -406,14 +384,14 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                      </div>
                      <div class="form-group col-lg-6 col-md-6 col-sm-6">
                         Contraseña base de datos:
-                        <input class="form-control" type="text" name="db_pass" value="" autocomplete="off"/>
+                        <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
                      </div>
                   </div>
                </div>
                
-               <div class="panel panel-primary" id="panel_configuracion_inicial_cache">
+               <div class="panel panel-info" id="panel_configuracion_inicial_cache">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Configuración Memcache</h3>
+                     <h3 class="panel-title">Configuración Memcache (opcional)</h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group col-lg-6 col-md-6 col-sm-6">
@@ -431,17 +409,19 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                   </div>
                </div>
                
-              <button id="submit_button" class="btn btn-sm btn-primary text-right" type="submit">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar y empezar
-              </button>
-               
+               <div class="text-right">
+                  <button id="submit_button" class="btn btn-sm btn-primary" type="submit">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                     &nbsp; Guardar y empezar
+                  </button>
+               </div>
             </form>
          </div>
       </div>
       
       <div class="row">
          <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+            <hr/>
             <small>
                Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>
             </small>
