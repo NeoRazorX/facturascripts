@@ -177,13 +177,14 @@ class listado_sat extends fs_controller
    public function edita_sat()
    {
       $this->resultado = $this->registro_sat->get($_GET['id']);
-      if($_POST['detalle'])
+      if( isset($_POST['detalle']) )
       {
-              $this->agrega_detalle(); 
+         $this->agrega_detalle(); 
       }
-      else {
-        if($this->resultado AND isset($_POST['modelo']))
-        {
+      else
+      {
+         if($this->resultado AND isset($_POST['modelo']))
+         {
 
 
 

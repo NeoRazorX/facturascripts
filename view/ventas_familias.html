@@ -6,12 +6,13 @@
       $("#b_nueva_familia").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_familia").modal('show');
+         document.f_nueva_familia.ncodfamilia.focus();
       });
    });
 </script>
 
 <form class="form" name="f_nueva_familia" action="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_nueva_familia">
+   <div class="modal" id="modal_nueva_familia">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -21,7 +22,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Código:
-                  <input class="form-control" type="text" name="ncodfamilia" maxlength="4" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="ncodfamilia" maxlength="4" autocomplete="off"/>
                </div>
                <div class="form-group">
                   Descripción:

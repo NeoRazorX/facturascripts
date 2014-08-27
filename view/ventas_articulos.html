@@ -104,10 +104,11 @@
    </div>
 </form>
 
-<div class="modal fade" id="modal_modificar_iva">
-   <div class="modal-dialog">
-      <div class="modal-content">
-		 <form action="{$fsc->url()}" method="post">
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="mod_iva" value="TRUE"/>
+   <div class="modal fade" id="modal_modificar_iva">
+      <div class="modal-dialog">
+         <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Modificar IVA</h4>
@@ -131,14 +132,14 @@
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                   &nbsp; Mover
-                </button>
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Mover
+               </button>
             </div>
-         </form>
+         </div>
       </div>
    </div>
-</div>
+</form>
 
 {if condition="$fsc->query!=''"}
 <form name="custom_search2" action="{$fsc->url()}" method="post" class="form">
