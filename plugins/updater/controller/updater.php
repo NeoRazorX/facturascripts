@@ -52,12 +52,11 @@ class updater extends fs_controller
 				if (strcmp($this->getVersion(), $releaseVersion) == 0)
 				{
 					$this->new_message("Est&aacute;s actualizado a la &uacute;ltima versi&oacute;n de facturascripts: ".$releaseVersion);
-					
 				}
 				elseif (strcmp($this->getVersion(), $releaseVersion) > 0)
 				{
-					$this->new_message("Est&aacute;s usando la versi&oacute;n ".$this->getVersion().", que es superior a la &uacute;ltima versi&oacute;n estable de FacturaScripts: ".$releaseVersion);
-					
+					$this->new_message("Est&aacute;s usando la versi&oacute;n ".$this->getVersion().", que es superior a la &uacute;ltima "
+                       . "versi&oacute;n estable de FacturaScripts: ".$releaseVersion);
 				}
 				else
 				{
@@ -81,6 +80,8 @@ class updater extends fs_controller
 			{
 				try
 				{
+               $path = getcwd();
+               
 					// comprobamos que tenemos permisos de escritura en el directorio
 					$this->__checkForRights();
 					
@@ -88,6 +89,20 @@ class updater extends fs_controller
 					$backupDest = getcwd().'/backup-'.date("dmy-Hi");
 					$this->__systemBackup(getcwd(), $backupDest);
 					
+               /// eliminamos controladores para evitar conflictos
+               foreach( scandir($path.'/controller') as $f )
+               {
+                  if( substr($f, -4) == '.php' )
+                     unlink($path.'/controller/'.$f);
+               }
+               
+               /// también eliminamos los modelos para evitar conflictos
+               foreach( scandir($path.'/model') as $f )
+               {
+                  if( substr($f, -4) == '.php' )
+                     unlink($path.'/model/'.$f);
+               }
+               
                // descomprimimos
 					$this->__descomprime($tmpfile);
                
@@ -99,10 +114,10 @@ class updater extends fs_controller
 					unlink($tmpfile);
                
                /// borramos los archivos temporales del motor de plantillas
-               foreach( scandir(getcwd().'/tmp') as $f )
+               foreach( scandir($path.'/tmp') as $f )
                {
                   if( substr($f, -4) == '.php' )
-                     unlink('tmp/'.$f);
+                     unlink($path.'/tmp/'.$f);
                }
                
                /// borramos la caché
@@ -118,7 +133,8 @@ class updater extends fs_controller
 			}
 			else
 			{
-				$this->new_error_msg("No se ha podido descargado el fichero de actualización. Vuelve a intentarlo en unos minutos.");
+				$this->new_error_msg("No se ha podido descargado el fichero de actualización. "
+                    . "Vuelve a intentarlo en unos minutos.");
 			}
 		}
 	}
@@ -129,7 +145,7 @@ class updater extends fs_controller
       if( file_exists($this->config['versionFile']) )
          return file_get_contents($this->config['versionFile']);
       else
-         return 'desconocida';
+         return '0';
 	}
 	
 	/* Método que devuelve la versión de la última release de facturascripts a partir de un fichero .ZIP */

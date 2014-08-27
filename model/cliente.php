@@ -345,7 +345,9 @@ class cliente extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
+      {
          $consulta .= "codcliente LIKE '%".$query."%' OR cifnif LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'";
+      }
       else
       {
          $buscar = str_replace(' ', '%', $query);
@@ -360,6 +362,7 @@ class cliente extends fs_model
          foreach($clientes as $c)
             $clilist[] = new cliente($c);
       }
+      
       return $clilist;
    }
    

@@ -1,23 +1,26 @@
 {include="header"}
 
 {if condition="$fsc->hay_update"}
-<div class="container-fluid">
-   <div class="row" style="text-align: center; padding-top: 20px;">
-      <img src="plugins/updater/view/download.png" alt="actualizar"/>
-      <div style="font-size: 22px;">
+<div class="container">
+   <div class="row">
+      <div class="col-lg-12 text-center">
+         <div class="thumbnail">
+            <img src="plugins/updater/view/download.png" alt="actualizar"/>
+         </div>
          <p>¿Quieres instalar la nueva versión de FacturaScripts?</p>
-         <a class='submit' style='margin-bottom: 20px; padding: 10px;' href='{$fsc->url()}&actualizar=TRUE'>Actualizar</a>
+         <a class="btn btn-sm btn-success" href="{$fsc->url()}&actualizar=TRUE">Actualizar</a>
       </div>
    </div>
 </div>
 {else}
-<div class="container-fluid">
-   <div class="row" style="text-align: center; padding-top: 20px;">
-      <img src="plugins/updater/view/download.png" alt="actualizar"/>
-      <div style="font-size: 22px;">
-         <p>Estás usando la versión <b>{$fsc->getVersion()}</b></p>
+<div class="container">
+   <div class="row">
+      <div class="col-lg-12 text-center">
+         <div class="thumbnail">
+            <img src="plugins/updater/view/download.png" alt="actualizar"/>
+         </div>
          <p>¿Buscar una nueva versión?</p>
-         <a class="submit" style="margin-bottom: 20px; padding: 10px;" href="{$fsc->url()}&buscar=TRUE" onclick="$(this).hide();">Buscar</a>
+         <a class="btn btn-sm btn-primary" href="{$fsc->url()}&buscar=TRUE" onclick="$(this).hide();">Buscar</a>
       </div>
    </div>
 </div>
