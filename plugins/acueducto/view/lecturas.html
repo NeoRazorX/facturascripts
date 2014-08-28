@@ -81,10 +81,10 @@
                 <td>
                     <select class="form-control" name="tecnico">
                     {loop="$fsc->tecnico->all()"}
-                       {if condition="$tecnico->idtecnico == $value->tecnico"}
-                       <option value="{$value->idtecnico}" selected="selected">{$value->nombre}</option>
+                       {if condition="$value2->idtecnico == $value1->tecnico"}
+                       <option value="{$value2->idtecnico}" selected="selected">{$value2->nombre}</option>
                        {else}
-                       <option value="{$value->idtecnico}">{$value->nombre}</option>
+                       <option value="{$value2->idtecnico}">{$value2->nombre}</option>
                        {/if}
                     {/loop}
                     </select>
