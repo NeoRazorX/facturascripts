@@ -30,6 +30,7 @@
       $("#b_buscar_lineas").click(function(event) {
          event.preventDefault();
          $("#modal_buscar_lineas").modal('show');
+         document.f_buscar_lineas.buscar_lineas.focus();
       });
       $("#f_buscar_lineas").keyup(function() {
          buscar_lineas();
@@ -41,9 +42,9 @@
    });
 </script>
 
-<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action ="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_buscar_lineas">
-      <div class="modal-dialog" style="width: 99%;">
+<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_buscar_lineas">
+      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -51,7 +52,7 @@
             </div>
             <div class="modal-body">
                <div class="input-group">
-                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
                   <span class="input-group-btn">
                      <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
