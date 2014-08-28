@@ -3,7 +3,7 @@
 <form class="form" action="{$fsc->url()}" method="post">
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-3 col-md-3 col-sm-4">
             <div class="form-group">
                Zona horaria:
                <select class="form-control" name="zona_horaria">
@@ -19,16 +19,16 @@
                </select>
             </div>
          </div>
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-3 col-md-3 col-sm-4">
             <div class="form-group">
-                Factura cliente inicial:
+                Nº factura cliente inicial:
                <input class="form-control" type="number" name="nfactura_cli" value="{$GLOBALS['config2']['nfactura_cli']}"/>
             </div>
          </div>
          
          {loop="$fsc->claves()"}
             {if condition="$value['nombre']!='zona_horaria'"}
-            <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="col-lg-2 col-md-2 col-sm-3">
                <div class="form-group">
                   <span class="text-capitalize">{$value['nombre']}:</span>
                   <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>

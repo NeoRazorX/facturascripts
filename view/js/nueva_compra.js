@@ -256,7 +256,8 @@ function new_articulo()
             $("#search_results").show('');
             $("#kiwimaru_results").hide();
             $("#nuevo_articulo").hide();
-            buscar_articulos();
+            
+            add_articulo(datos[0].referencia, datos[0].descripcion, datos[0].pvp, 0, datos[0].iva);
          }
       });
    }

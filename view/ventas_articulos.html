@@ -114,21 +114,28 @@
                <h4 class="modal-title">Modificar IVA</h4>
             </div>
             <div class="modal-body">
-               Mover los artículos con
-               <select class="form-control" name="codimpuesto">
-                  {loop="$fsc->impuesto->all()"}
+               <div class="form-group">
+                  Mover los artículos con
+                  <select class="form-control" name="codimpuesto">
+                     {loop="$fsc->impuesto->all()"}
                      <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                  {/loop}
-               </select>
-               a
-               <select class="form-control" name="codimpuesto2">
-                  {loop="$fsc->impuesto->all()"}
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  al impuesto
+                  <select class="form-control" name="codimpuesto2">
+                     {loop="$fsc->impuesto->all()"}
                      <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                  {/loop}
-               </select>
-               <br/>
-               <input type="checkbox" id="cb_mantener" name="mantener" value="TRUE"/>
-               <label for="cb_mantener">Mantener precios (baja el PVP para mentener el mismo PVP+IVA)</label>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="checkbox">
+                  <label>
+                     <input type="checkbox" name="mantener" value="TRUE"/>
+                     Mantener precios (baja el PVP para mentener el mismo PVP+IVA)
+                  </label>
+               </div>
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">

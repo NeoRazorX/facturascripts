@@ -110,23 +110,15 @@ class ventas_pedido extends fs_controller
             $this->agente = $agente->get($this->pedido->codagente);
          }
          
-         /**
-          * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: ventas_pedido_cli_edit.html para los
-          * pedidos editables y ventas_pedido_cli.html para los demás.
-          */
-         if( is_null($this->pedido->idalbaran) )
-            $this->template = 'ventas_pedido_edit';
-         else
-            $this->template = 'ventas_pedido';
-         
          /// comprobamos el pedido
          if( $this->pedido->full_test() )
          {
             if( isset($_GET['albaranar']) AND isset($_GET['petid']) AND is_null($this->pedido->idalbaran) )
             {
                if( $this->duplicated_petition($_GET['petid']) )
+               {
                   $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               }
                else
                   $this->generar_albaran();
             }
@@ -161,6 +153,17 @@ class ventas_pedido extends fs_controller
          }
          
          $this->buttons[] = new fs_button_img('b_remove_pedido', 'Eliminar', 'trash.png', '#', TRUE);
+         
+         /**
+          * Como es una plantilla compleja, he separado el código HTML
+          * en dos archivos: ventas_pedido_cli_edit.html para los
+          * pedidos editables y ventas_pedido_cli.html para los demás.
+          */
+         $this->template = 'ventas_pedido';
+         if( is_null($this->pedido->idalbaran) )
+         {
+            $this->template = 'ventas_pedido_edit';
+         }
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PEDIDO)." de cliente no encontrado!");

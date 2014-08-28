@@ -110,23 +110,15 @@ class ventas_presupuesto extends fs_controller
             $this->agente = $agente->get($this->presupuesto->codagente);
          }
          
-         /**
-          * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: ventas_presupuesto_cli_edit.html para los
-          * presupuestos editables y ventas_presupuesto_cli.html para los demás.
-          */
-         if( is_null($this->presupuesto->idpedido) )
-            $this->template = 'ventas_presupuesto_edit';
-         else
-            $this->template = 'ventas_presupuesto';
-         
          /// comprobamos el presupuesto
          if( $this->presupuesto->full_test() )
          {
             if( isset($_GET['pedir']) AND isset($_GET['petid']) AND is_null($this->presupuesto->idpedido) )
             {
                if( $this->duplicated_petition($_GET['petid']) )
+               {
                   $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               }
                else
                   $this->generar_pedido();
             }
@@ -161,6 +153,17 @@ class ventas_presupuesto extends fs_controller
          }
          
          $this->buttons[] = new fs_button_img('b_remove_presupuesto', 'Eliminar', 'trash.png', '#', TRUE);
+         
+         /**
+          * Como es una plantilla compleja, he separado el código HTML
+          * en dos archivos: ventas_presupuesto_cli_edit.html para los
+          * presupuestos editables y ventas_presupuesto_cli.html para los demás.
+          */
+         $this->template = 'ventas_presupuesto';
+         if( is_null($this->presupuesto->idpedido) )
+         {
+            $this->template = 'ventas_presupuesto_edit';
+         }
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PRESUPUESTO)." de cliente no encontrado!");

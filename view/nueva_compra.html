@@ -89,7 +89,7 @@
                <div class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="new_articulo();return false;">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar
+                     &nbsp; Guardar y seleccionar
                   </button>
                </div>
             </form>
@@ -242,12 +242,6 @@
                <input class="form-control" type="text" name="numproveedor" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="form-group">
-               Observaciones:
-               <textarea class="form-control" name="observaciones"></textarea>
-            </div>
-         </div>
       </div>
       <div class="row">
          <div class="col-lg-6 col-md-6 col-sm-6">
@@ -259,8 +253,16 @@
          <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">
                <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
+               &nbsp; Guardar...
             </button>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12" style="margin-top: 20px;">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones"></textarea>
+            </div>
          </div>
       </div>
    </div>

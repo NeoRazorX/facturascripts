@@ -53,11 +53,6 @@ class updater extends fs_controller
 				{
 					$this->new_message("Est&aacute;s actualizado a la &uacute;ltima versi&oacute;n de facturascripts: ".$releaseVersion);
 				}
-				elseif (strcmp($this->getVersion(), $releaseVersion) > 0)
-				{
-					$this->new_message("Est&aacute;s usando la versi&oacute;n ".$this->getVersion().", que es superior a la &uacute;ltima "
-                       . "versi&oacute;n estable de FacturaScripts: ".$releaseVersion);
-				}
 				else
 				{
                $this->hay_update = TRUE;

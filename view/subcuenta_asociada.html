@@ -99,7 +99,7 @@
                <div class="form-group">
                   Cuenta a la que pertenece:
                   <select class="form-control" name="cuenta">
-                     {loop="$fsc->cuenta->all_from_ejercicio($fsc->codejercicio)"}
+                     {loop="$fsc->cuenta->full_from_ejercicio($fsc->codejercicio)"}
                      <option value="{$value->idcuenta}">{$value->codcuenta} {$value->descripcion}</option>
                      {/loop}
                   </select>

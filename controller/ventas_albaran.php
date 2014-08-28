@@ -108,23 +108,15 @@ class ventas_albaran extends fs_controller
             $this->agente = $agente->get($this->albaran->codagente);
          }
          
-         /**
-          * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: ventas_albaran_edit.html para los
-          * albaranes editables y ventas_albaran.html para los demás.
-          */
-         if($this->albaran->ptefactura)
-            $this->template = 'ventas_albaran_edit';
-         else
-            $this->template = 'ventas_albaran';
-         
          /// comprobamos el albarán
          if( $this->albaran->full_test() )
          {
             if( isset($_GET['facturar']) AND isset($_GET['petid']) AND $this->albaran->ptefactura )
             {
                if( $this->duplicated_petition($_GET['petid']) )
+               {
                   $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               }
                else
                   $this->generar_factura();
             }
@@ -160,6 +152,17 @@ class ventas_albaran extends fs_controller
          }
          
          $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
+         
+         /**
+          * Como es una plantilla compleja, he separado el código HTML
+          * en dos archivos: ventas_albaran_edit.html para los
+          * albaranes editables y ventas_albaran.html para los demás.
+          */
+         $this->template = 'ventas_albaran';
+         if($this->albaran->ptefactura)
+         {
+            $this->template = 'ventas_albaran_edit';
+         }
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");
