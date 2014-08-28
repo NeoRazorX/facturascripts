@@ -22,7 +22,7 @@
                     <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" size="100" autocomplete="off"/>
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="precio" value="{$value->precio}" size="60"/>
+                    <input class="form-control text-right" type="number" name="precio" value="{$fsc->show_precio($value->precio)}" size="5"/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">

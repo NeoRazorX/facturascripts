@@ -69,7 +69,15 @@
                     <div class="form-control">{$value->idlectura}</div>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="codcliente" value="{$value->codcliente}"  autocomplete="off"/>
+                    <select class="form-control" name="codcliente">
+                    {loop="$fsc->cliente->all_full()"}
+                       {if condition="$value2->codcliente == $value1->codcliente"}
+                       <option value="{$value2->codcliente}" selected="selected">{$value2->nombre}</option>
+                       {else}
+                       <option value="{$value2->codcliente}">{$value2->nombre}</option>
+                       {/if}
+                    {/loop}
+                    </select>
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
