@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cargos.xml
+    Description:
+        Estructura de la tabla cargos.
+-->
+<tabla>
+<columna>
+    <nombre>idcargo</nombre>
+    <tipo>int(11)</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('cargos_idcargo_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>codcliente</nombre>
+    <tipo>varchar(6)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>idconcepto</nombre>
+    <tipo>int(11)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>cantidad</nombre>
+    <tipo>double</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>total</nombre>
+    <tipo>double</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>fecha</nombre>
+    <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>facturado</nombre>
+    <tipo>tinyint(4)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>numero</nombre>
+    <tipo>int(11)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>imputacion</nombre>
+    <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>usuario</nombre>
+    <tipo>varchar(12)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>cargos_pkey</nombre>
+    <consulta>PRIMARY KEY (idcargo)</consulta>
+</restriccion>
+</tabla>

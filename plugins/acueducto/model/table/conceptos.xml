@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : conceptos.xml
+    Description:
+        Estructura de la tabla conceptos.
+-->
+<tabla>
+<columna>
+    <nombre>idconcepto</nombre>
+    <tipo>serial</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('conceptos_idconcepto_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>descripcion</nombre>
+    <tipo>varchar(100)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>precio</nombre>
+    <tipo>double precision</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>conceptos_pkey</nombre>
+    <consulta>PRIMARY KEY (idconcepto)</consulta>
+</restriccion>
+</tabla>

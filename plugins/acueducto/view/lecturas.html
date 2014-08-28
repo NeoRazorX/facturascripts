@@ -1,0 +1,125 @@
+{include="header"}
+
+<div class="table-responsive">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="text-left">Identificador</th>
+                <th class="text-left">Cliente</th>
+                <th class="text-left">Fecha</th>
+                <th class="text-right">Lectura</th>
+                <th class="text-left">Técnico</th>
+                <th class="text-left">Verificada</th>
+                <th class="text-left">Imputación</th>
+                <th class="text-left">Usuario</th>
+                <th width="120"></th>
+            </tr>
+        </thead>
+        <tbody>
+            
+         {if condition="$fsc->query==''"}
+         <form action="{$fsc->url()}" method="post" class="form">
+            <tr class="bg-info">
+               <td>
+                  <div class="form-control">Nuevo</div>
+               </td>
+               <td>
+                  <select name="codcliente" class="form-control">
+                     {loop="$fsc->cliente->all_full()"}
+                     <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
+                  <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/>
+               </td>
+               <td>
+                  <input class="form-control text-right" type="number" name="lectura" value="0"/>
+               </td>
+               <td>
+                  <select class="form-control" name="tecnico">
+                     {loop="$fsc->tecnico->all()"}
+                     <option value="{$value->idtecnico}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
+                  <input class="checkbox-inline" type="checkbox" name="verificada" value="0"/>
+               </td>
+               <td>
+                  <input class="form-control datepicker" type="text" name="imputacion" autocomplete="off" value="{$fsc->today()}" readonly/>
+               </td>
+               <td>
+                  <input class="form-control" type="text" name="usuario" autocomplete="off" value="{$fsc->user->nick}" readonly/>
+               </td>
+               <td class="text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </tr>
+         </form>
+        {/if}   
+         
+         {loop="$fsc->listar_lecturas()"}
+         <form action="{$fsc->url()}" method="post" class="form">
+            <input type="hidden" name="idlectura" value="{$value->idlectura}"/> 
+            <tr>
+                <td> 
+                    <div class="form-control">{$value->idlectura}</div>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="codcliente" value="{$value->codcliente}"  autocomplete="off"/>
+                </td>
+                <td>
+                    <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
+                </td>
+                <td>
+                    <input class="form-control text-right" type="number" name="lectura" value="{$value->lectura}"/>
+                </td>
+               
+                <td>
+                    <select class="form-control" name="tecnico">
+                    {loop="$fsc->tecnico->all()"}
+                       {if condition="$tecnico->idtecnico == $value->tecnico"}
+                       <option value="{$value->idtecnico}" selected="selected">{$value->nombre}</option>
+                       {else}
+                       <option value="{$value->idtecnico}">{$value->nombre}</option>
+                       {/if}
+                    {/loop}
+                    </select>
+                </td>
+            
+                <td>
+                    <input class="checkbox-inline" type="checkbox" name="verificada" value="{$value->verificada}"{if condition="$value->verificada"} checked="checked"{/if}/>
+                </td>
+                <td>
+                    <input class="form-control datepicker" type="text" name="imputacion" value="{$value->imputacion}" autocomplete="off"readonly/>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="usuario" value="{$value->usuario}"  autocomplete="off" readonly/>
+                </td>
+                <td class="text-right">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->idlectura}" title="Eliminar">
+                        <span class="glyphicon glyphicon-trash"></span>
+                     </a>
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                     </button>
+                  </div>
+               </td>
+            </tr>
+         </form>  
+         {else}
+          <tr class="bg-warning">
+            <td colspan="7">Sin resultados</td>
+         </tr>
+         {/loop}
+         
+         
+        </tbody>
+    </table>
+</div>
+
+{include="footer"}

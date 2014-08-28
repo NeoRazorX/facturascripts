@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : tecnicos.xml
+    Description:
+        Estructura de la tabla tecnicos.
+-->
+<tabla>
+<columna>
+    <nombre>idtecnico</nombre>
+    <tipo>serial</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('tecnicos_idtecnico_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>nombre</nombre>
+    <tipo>varchar(100)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>telefono</nombre>
+    <tipo>varchar(20)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>tecnicos_pkey</nombre>
+    <consulta>PRIMARY KEY (idtecnico)</consulta>
+</restriccion>
+</tabla>
