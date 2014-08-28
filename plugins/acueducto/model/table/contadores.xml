@@ -7,7 +7,7 @@
 <tabla>
 <columna>
     <nombre>idcontador</nombre>
-    <tipo>int(11)</tipo>
+    <tipo>serial</tipo>
     <nulo>NO</nulo>
     <defecto>nextval('contadores_idcontador_seq'::regclass)</defecto>
 </columna>

@@ -7,7 +7,7 @@
 <tabla>
 <columna>
     <nombre>idcargo</nombre>
-    <tipo>int(11)</tipo>
+    <tipo>serial</tipo>
     <nulo>NO</nulo>
     <defecto>nextval('cargos_idcargo_seq'::regclass)</defecto>
 </columna>
@@ -18,17 +18,17 @@
 </columna>
 <columna>
     <nombre>idconcepto</nombre>
-    <tipo>int(11)</tipo>
+    <tipo>bigint</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>
     <nombre>cantidad</nombre>
-    <tipo>double</tipo>
+    <tipo>double precision</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>
     <nombre>total</nombre>
-    <tipo>double</tipo>
+    <tipo>double precision</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>
@@ -38,12 +38,12 @@
 </columna>
 <columna>
     <nombre>facturado</nombre>
-    <tipo>tinyint(4)</tipo>
+    <tipo>boolean</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>
     <nombre>numero</nombre>
-    <tipo>int(11)</tipo>
+    <tipo>integer</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>

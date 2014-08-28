@@ -7,7 +7,7 @@
                 <th class="text-left">Identificador</th>
                 <th class="text-left">Descripción</th>
                 <th class="text-right">Precio</th>
-                <th></th>
+                <th width="120"></th>
             </tr>
         </thead>
         <tbody>
@@ -19,10 +19,10 @@
                     <div class="form-control">{$value->idconcepto}</div>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" size="100" autocomplete="off"/>
+                    <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="precio" value="{$fsc->show_precio($value->precio)}" size="5"/>
+                    <input class="form-control text-right" type="number" step="any" name="precio" value="{$fsc->show_numero($value->precio, FS_NF0, TRUE)}"/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">
