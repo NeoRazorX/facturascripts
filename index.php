@@ -21,7 +21,7 @@
 
 if( !file_exists('config.php') )
 {
-   include('view/no_config.html');
+   header('Location: install.php');
 }
 else
 {
