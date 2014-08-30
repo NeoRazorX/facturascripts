@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2014  Francesc Pineda Segarra  shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,15 @@ require_model('agente.php');
 require_model('proveedor.php');
 // Saber que documento se paga
 require_model('factura_proveedor.php');
+require_model('recibo_proveedor.php');
 require_model('fs_extension.php');
 
 class recibos_proveedores extends fs_controller
 {
-   
+   public $factura;
+   public $proveedor;
+   public $resultados;
+   public $total;
    
    public function __construct()
    {
@@ -36,7 +40,28 @@ class recibos_proveedores extends fs_controller
    
    protected function process()
    {
-	   
+      $this->ppage = $this->page->get('ventas_facturas');
+      $this->factura = new factura_proveedor();
+      $this->proveedor = new proveedor();
+      $this->serie = new serie();
+      $this->total = 0;
+      
+      if( isset($_POST['proveedor']) )
+      {
+         $this->save_codproveedor($_POST['proveedor']);
+         
+         $this->resultados = $this->factura->all_from_proveedor($_POST['proveedor']);
+         
+         if($this->resultados)
+         {
+            foreach($this->resultados as $fac)
+            {
+               $this->total += $fac->total;
+            }
+         }
+         else
+            $this->new_message("Sin resultados.");
+      }
    }
    
    public function anterior_url()

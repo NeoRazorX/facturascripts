@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2014  Francesc Pineda Segarra  shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,15 @@ require_model('agente.php');
 require_model('cliente.php');
 // Saber que documento se cobra
 require_model('factura_cliente.php');
+require_model('recibo_cliente.php');
 require_model('fs_extension.php');
 
 class recibos_clientes extends fs_controller
 {
-   
+   public $factura;
+   public $cliente;
+   public $resultados;
+   public $total;
    
    public function __construct()
    {
@@ -36,21 +40,42 @@ class recibos_clientes extends fs_controller
    
    protected function process()
    {
-	   
+      $this->ppage = $this->page->get('compras_facturas');
+      $this->factura = new factura_cliente();
+      $this->cliente = new cliente();
+      $this->serie = new serie();
+      $this->total = 0;
+      
+      if( isset($_POST['cliente']) )
+      {
+         $this->save_codcliente($_POST['cliente']);
+         
+         $this->resultados = $this->factura->all_from_cliente($_POST['cliente']);
+         
+         if($this->resultados)
+         {
+            foreach($this->resultados as $fac)
+            {
+               $this->total += $fac->total;
+            }
+         }
+         else
+            $this->new_message("Sin resultados.");
+      }
    }
    
    public function anterior_url()
    {
-	   
+      
    }
    
    public function siguiente_url()
    {
-	   
+      
    }
    
    private function share_extension()
    {
-	   
+      
    }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2014  Francesc Pineda Segarra  shawe.ewahs@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,10 +38,10 @@ class remesa_cliente extends fs_model
    
    public function url()
    {
-      if( is_null($this->idfactura) )
+      if( is_null($this->idrecibo) )
          return 'index.php?page=recibos_clientes';
       else
-         return 'index.php?page=recibo_cliente&id='.$this->idfactura;
+         return 'index.php?page=recibo_cliente&id='.$this->idrecibo;
    }
    
    public function cliente_url()
@@ -54,35 +54,35 @@ class remesa_cliente extends fs_model
    
    public function get($id)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($id).";");
-      if($fact)
-         return new factura_proveedor($fact[0]);
+      $recibo = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idrecibo = ".$this->var2str($id).";");
+      if($recibo)
+         return new recibo_cliente($recibo[0]);
       else
          return FALSE;
    }
    
    public function get_by_codigo($cod)
    {
-      $fact = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
-      if($fact)
-         return new factura_proveedor($fact[0]);
+      $recibo = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codigo = ".$this->var2str($cod).";");
+      if($recibo)
+         return new recibo_cliente($recibo[0]);
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->idfactura) )
+      if( is_null($this->idrecibo) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idrecibo = ".$this->var2str($this->idrecibo).";");
    }
    
    public function new_idrecibo()
    {
-      $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
+      $newid = $this->db->nextval($this->table_name.'_idrecibo_seq');
       if($newid)
-         $this->idfactura = intval($newid);
+         $this->idrecibo = intval($newid);
    }
    
    public function test()
