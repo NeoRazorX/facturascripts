@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_cuentasesp.xml
+    Description:
+        Estructura de la tabla co_cuentasesp.
+-->
+<tabla>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuenta</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idcuentaesp</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>co_cuentasesp_pkey</nombre>
+      <consulta>PRIMARY KEY (idcuentaesp)</consulta>
+   </restriccion>
+</tabla>
