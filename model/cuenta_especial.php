@@ -27,8 +27,6 @@ class cuenta_especial extends fs_model
 {
    public $idcuentaesp; /// pkey
    public $descripcion;
-   public $codcuenta;
-   public $codsubcuenta;
    
    public function __construct($c = FALSE)
    {
@@ -37,15 +35,11 @@ class cuenta_especial extends fs_model
       {
          $this->idcuentaesp = $c['idcuentaesp'];
          $this->descripcion = $c['descripcion'];
-         $this->codcuenta = $c['codcuenta'];
-         $this->codsubcuenta = $c['codsubcuenta'];
       }
       else
       {
          $this->idcuentaesp = NULL;
          $this->descripcion = NULL;
-         $this->codcuenta = NULL;
-         $this->codsubcuenta = NULL;
       }
    }
    
@@ -56,8 +50,7 @@ class cuenta_especial extends fs_model
    
    public function get($id)
    {
-      $cuentae = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE idcuentaesp = ".$this->var2str($id).";");
+      $cuentae = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idcuentaesp = ".$this->var2str($id).";");
       if($cuentae)
          return new cuenta_especial($cuentae[0]);
       else
@@ -67,7 +60,9 @@ class cuenta_especial extends fs_model
    public function exists()
    {
       if( is_null($this->idcuentaesp) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name.
             " WHERE idcuentaesp = ".$this->var2str($this->idcuentaesp).";");
@@ -80,18 +75,17 @@ class cuenta_especial extends fs_model
    
    public function save()
    {
+      $this->descripcion = $this->no_html($this->descripcion);
+      
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            codcuenta = ".$this->var2str($this->codcuenta).",
-            codsubcuenta = ".$this->var2str($this->codsubcuenta)."
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion)."
             WHERE idcuentaesp = ".$this->var2str($this->idcuentaesp).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (idcuentaesp,descripcion,codcuenta,codsubcuenta)
-            VALUES (".$this->var2str($this->idcuentaesp).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->codcuenta).",".$this->var2str($this->codsubcuenta).");";
+         $sql = "INSERT INTO ".$this->table_name." (idcuentaesp,descripcion)
+            VALUES (".$this->var2str($this->idcuentaesp).",".$this->var2str($this->descripcion).");";
       }
       return $this->db->exec($sql);
    }

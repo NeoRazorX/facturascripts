@@ -909,31 +909,4 @@ class articulo extends fs_model
          return $this->db->exec("UPDATE ".$this->table_name." SET codimpuesto = ".$this->var2str($cod1).
                  " WHERE codimpuesto = ".$this->var2str($cod0).";");
    }
-   
-   public function stats()
-   {
-      $stats = array(
-          'total' => 0,
-          'con_stock' => 0,
-          'bloqueados' => 0,
-          'publicos' => 0,
-          'factualizado' => Date('d-m-Y', strtotime(0) )
-      );
-      
-      $aux = $this->db->select("SELECT GREATEST( COUNT(referencia), 0) as art,
-         GREATEST( SUM(case when stockfis > 0 then 1 else 0 end), 0) as stock,
-         GREATEST( SUM(".$this->db->sql_to_int('bloqueado')."), 0) as bloq,
-         GREATEST( SUM(".$this->db->sql_to_int('publico')."), 0) as publi,
-         MAX(factualizado) as factualizado FROM articulos;");
-      if($aux)
-      {
-         $stats['total'] = intval($aux[0]['art']);
-         $stats['con_stock'] = intval($aux[0]['stock']);
-         $stats['bloqueados'] = intval($aux[0]['bloq']);
-         $stats['publicos'] = intval($aux[0]['publi']);
-         $stats['factualizado'] = Date('d-m-Y', strtotime($aux[0]['factualizado']) );
-      }
-      
-      return $stats;
-   }
 }

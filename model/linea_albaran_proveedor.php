@@ -360,26 +360,4 @@ class linea_albaran_proveedor extends fs_model
          $num = intval($lineas[0]['total']);
       return $num;
    }
-   
-   public function top_by_articulo()
-   {
-      $toplist = $this->cache->get('albpro_top_articulos');
-      if( !$toplist )
-      {
-         $articulo = new articulo();
-         $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as compras
-            FROM ".$this->table_name." GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
-         if($lineas)
-         {
-            foreach($lineas as $l)
-            {
-               $art0 = $articulo->get($l['referencia']);
-               if($art0)
-                  $toplist[] = array($art0, intval($l['compras']));
-            }
-         }
-         $this->cache->set('albpro_top_articulos', $toplist);
-      }
-      return $toplist;
-   }
 }

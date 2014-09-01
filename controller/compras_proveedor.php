@@ -186,12 +186,6 @@ class compras_proveedor extends fs_controller
          return $this->ppage->url();
    }
    
-   public function stats_last_months()
-   {
-      $albaran = new albaran_proveedor();
-      return $albaran->stats_from_prov($this->proveedor->codproveedor);
-   }
-   
    public function this_year($previous = 0)
    {
       return intval(Date('Y')) - $previous;
@@ -223,5 +217,45 @@ class compras_proveedor extends fs_controller
          $digitoControl = '0'.$digitoControl;
       
       return $codpais.$digitoControl.$ccc;
+   }
+   
+   /*
+    * Devuelve un array con los datos estadísticos de las compras al proveedor
+    * en los cinco últimos años.
+    */
+   public function stats_from_prov()
+   {
+      $stats = array();
+      $years = array();
+      for($i=4; $i>=0; $i--)
+         $years[] = intval(Date('Y')) - $i;
+      
+      $meses = array('Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic');
+      
+      foreach($years as $year)
+      {
+         for($i = 1; $i <= 12; $i++)
+         {
+            $stats[$year.'-'.$i]['mes'] = $meses[$i-1].' '.$year;
+            $stats[$year.'-'.$i]['compras'] = 0;
+         }
+         
+         if( strtolower(FS_DB_TYPE) == 'postgresql')
+            $sql_aux = "to_char(fecha,'FMMM')";
+         else
+            $sql_aux = "DATE_FORMAT(fecha, '%m')";
+         
+         $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+            FROM albaranesprov WHERE fecha >= ".$this->empresa->var2str(Date('1-1-'.$year))."
+            AND fecha <= ".$this->empresa->var2str(Date('31-12-'.$year))." AND codproveedor = ".$this->empresa->var2str($this->proveedor->codproveedor)."
+            GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+         if($data)
+         {
+            foreach($data as $d)
+               $stats[$year.'-'.intval($d['mes'])]['compras'] = number_format($d['total'], FS_NF0, '.', '');
+         }
+      }
+      
+      return $stats;
    }
 }

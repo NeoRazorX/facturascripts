@@ -23,7 +23,6 @@ require_model('ejercicio.php');
 class contabilidad_cuentas extends fs_controller
 {
    public $cuenta;
-   public $cuentas_especiales;
    public $ejercicio;
    public $resultados;
    public $resultados2;
@@ -40,11 +39,8 @@ class contabilidad_cuentas extends fs_controller
       $this->ejercicio = new ejercicio();
       $this->custom_search = TRUE;
       
-      $ce = new cuenta_especial();
-      $this->cuentas_especiales = $ce->all();
-      
       $this->buttons[] = new fs_button('b_nueva_cuenta', 'Nueva');
-      $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales');
+      $this->buttons[] = new fs_button('b_cuentas_especiales', 'Cuentas especiales', 'index.php?page=cuentas_especiales');
       $this->buttons[] = new fs_button('b_balances', 'Balances', 'index.php?page=contabilidad_balances');
       
       $this->offset = 0;

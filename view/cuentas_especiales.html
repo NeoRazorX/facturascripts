@@ -1,32 +1,23 @@
 {include="header"}
 
 <div class="table-responsive">
-    <table class="table table-condensed">
-        <thead>
-            <tr>
-                <th class="text-left">Identificador</th>
-                <th class="text-left">Descripción</th>
-                <th class="text-left">Cuenta</th>
-                <th class="text-left">Subcuenta</th>
-                <th width="120"></th>
-            </tr>
-        </thead>
-        <tbody>
-         {loop="$fsc->listar_cuenta_especiales()"}
+   <table class="table table-condensed">
+      <thead>
+         <tr>
+            <th class="text-left">Identificador</th>
+            <th class="text-left">Descripción</th>
+            <th width="120"></th>
+         </tr>
+      </thead>
+      <tbody>
+         {loop="$fsc->cuenta_especial->all()"}
          <form action="{$fsc->url()}" method="post" class="form">
-            
             <tr>
                 <td>
                   <input class="form-control" type="text" name="idcuentaesp" value="{$value->idcuentaesp}" autocomplete="off"/>
                 </td>
                 <td>
                     <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
-                </td>
-                <td>
-                    <input class="form-control" type="text" name="codcuenta" value="{$value->codcuenta}" autocomplete="off"/>
-                </td>
-                <td>
-                    <input class="form-control" type="text" name="codsubcuenta" value="{$value->codsubcuenta}" autocomplete="off"/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">
@@ -41,8 +32,8 @@
             </tr>
          </form>  
          {else}
-          <tr class="bg-warning">
-            <td colspan="7">Sin resultados</td>
+         <tr class="bg-warning">
+            <td colspan="3">Sin resultados</td>
          </tr>
          {/loop}
          
@@ -55,12 +46,6 @@
                <td>
                   <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
                </td>
-               <td>
-                  <input class="form-control" type="text" name="codcuenta" autocomplete="off"/>
-               </td>
-               <td>
-                  <input class="form-control" type="text" name="codsubcuenta" autocomplete="off"/>
-               </td>
                <td class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
@@ -72,4 +57,5 @@
         </tbody>
     </table>
 </div>
+
 {include="footer"}

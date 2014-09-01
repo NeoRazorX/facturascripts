@@ -87,7 +87,7 @@
       data.addColumn('string', 'mes');
       data.addColumn('number', 'compras');
       data.addRows([
-      {loop="$fsc->stats_last_months()"}
+      {loop="$fsc->stats_from_cli()"}
          ['{$value['mes']}', {$value['compras']}],
       {/loop}
       ]);
