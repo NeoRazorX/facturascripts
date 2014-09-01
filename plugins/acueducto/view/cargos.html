@@ -14,16 +14,29 @@
          if( value[0] == $("#select_concepto").val() )
          {
             $("#precio").val( value[1] );
+            precio = value[1];
+
          }
       });
       
       $("#total").val( precio * cantidad );
    }
    
-   function cambio_concepto()
+   function recalculo_linea(num)
    {
-       /// no se como hacer que tome precio del concepto y modifique el precio en pantalla
-       recalculo();
+      var cantidad_linea = parseFloat( $("#cantidad_{num}").val() );
+      
+      conceptos.forEach(function(value) {
+         if( value[0] == $("#select_concepto").val() )
+         {
+            $("#precio_{num}").val( value[1] );
+            precio_linea = value[1];
+
+         }
+      });
+      
+      $("#total_{num}").val( precio_linea * cantidad_linea );
+   }
    }
 </script>
 
@@ -61,7 +74,7 @@
                   </select>
                </td>
                <td>
-                  <select class="form-control" name="idconcepto" id="select_concepto" onchange="cambio_concepto()">
+                  <select class="form-control" name="idconcepto" id="select_concepto">
                      {loop="$fsc->concepto->all()"}
                      <option value="{$value->idconcepto}">{$value->descripcion}</option>
                      {/loop}
@@ -119,7 +132,7 @@
                     </select>
                 </td>
                <td>
-                    <select class="form-control" name="idconcepto">
+                    <select class="form-control" name="idconcepto" id="conceptos_{$counter}">
                     {loop="$fsc->concepto->all()"}
                        {if condition="$value2->idconcepto == $value1->idconcepto"}
                        <option value="{$value2->idconcepto}" selected="selected">{$value2->descripcion}</option>
@@ -130,13 +143,13 @@
                     </select>
                 </td>
                 <td>
-                    <input class="form-control text-right" type="text" step="any" name="precio" id="precio_{$counter}" value="{$fsc->show_precio($value->precio)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="text" step="any" name="precio" id="precio_{$counter}" value="{$fsc->show_precio($value->precio)}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="cantidad" id="cantidad_{$counter}" value="{$value->cantidad}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="cantidad" id="cantidad_{$counter}" value="{$value->cantidad}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
