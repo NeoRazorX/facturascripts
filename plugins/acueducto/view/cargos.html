@@ -7,6 +7,12 @@
       var cantidad = parseFloat( $("#cantidad").val() );
       $("#total").val( precio * cantidad );
    }
+   
+   function cambio_concepto()
+   {
+       /// no se como hacer que tome precio del concepto y modifique el precio en pantalla
+       recalculo();
+   }
 </script>
 
 <div class="table-responsive">
@@ -43,7 +49,7 @@
                   </select>
                </td>
                <td>
-                  <select class="form-control" name="idconcepto">
+                  <select class="form-control" name="idconcepto" onchange="cambio_concepto()">
                      {loop="$fsc->concepto->all()"}
                      <option value="{$value->idconcepto}">{$value->descripcion}</option>
                      {/loop}
