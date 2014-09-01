@@ -15,7 +15,7 @@ class concepto extends fs_model
       {
          $this->idconcepto = $g['idconcepto'];
          $this->descripcion = $g['descripcion'];
-         $this->precio = $g['precio'];
+         $this->precio = floatval($g['precio']);
       }
       else
       {

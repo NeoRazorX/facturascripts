@@ -1,10 +1,22 @@
 {include="header"}
 
 <script type="text/javascript">
+   var conceptos = [
+      {loop="$fsc->concepto->all()"}
+      ['{$value->idconcepto}', '{$value->precio}'],
+      {/loop}
+   ];
    function recalculo()
    {
-      var precio =  parseFloat( $("#precio").val() );
       var cantidad = parseFloat( $("#cantidad").val() );
+      
+      conceptos.forEach(function(value) {
+         if( value[0] == $("#select_concepto").val() )
+         {
+            $("#precio").val( value[1] );
+         }
+      });
+      
       $("#total").val( precio * cantidad );
    }
    
@@ -20,14 +32,14 @@
         <thead>
             <tr>
                 <th class="text-left">Identificador</th>
-                <th class="text-left">Cliente</th>
-                <th class="text-left">Concepto</th>
+                <th class="text-left" width="200">Cliente</th>
+                <th class="text-left" width="200">Concepto</th>
                 <th class="text-right">Precio</th>
                 <th class="text-right">Cantidad</th>
                 <th class="text-right">Total</th>
                 <th class="text-left">Fecha</th>
                 <th class="text-left">Facturado</th>
-                <th class="text-left">Numero</th>
+                <th class="text-right">Numero</th>
                 <th class="text-left">Imputación</th>
                 <th class="text-left">Usuario</th>
                 <th width="120"></th>
@@ -49,14 +61,14 @@
                   </select>
                </td>
                <td>
-                  <select class="form-control" name="idconcepto" onchange="cambio_concepto()">
+                  <select class="form-control" name="idconcepto" id="select_concepto" onchange="cambio_concepto()">
                      {loop="$fsc->concepto->all()"}
                      <option value="{$value->idconcepto}">{$value->descripcion}</option>
                      {/loop}
                   </select>
                </td>
                <td>
-                  <input class="form-control text-right" type="text" name="precio" id="precio" value="{$fsc->show_precio(0)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                  <input class="form-control text-right" type="text" name="precio" id="precio" value="{$fsc->show_numero(0)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
                   <input class="form-control text-right" type="number" name="cantidad" id="cantidad" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
@@ -74,7 +86,7 @@
                   <input class="form-control text-right" type="number" name="numero" value="0" readonly/>
                </td>
                <td>
-                  <input class="form-control datepicker" type="text" name="imputacion" autocomplete="off" value="{$fsc->today()}" readonly/>
+                  <input class="form-control" type="text" name="imputacion" autocomplete="off" value="{$fsc->today()}" readonly/>
                </td>
                <td>
                   <input class="form-control" type="text" name="usuario" autocomplete="off" value="" readonly/>
@@ -155,7 +167,7 @@
          </form>  
          {else}
           <tr class="bg-warning">
-            <td colspan="7">Sin resultados</td>
+            <td colspan="12">Sin resultados</td>
          </tr>
          {/loop}
          
