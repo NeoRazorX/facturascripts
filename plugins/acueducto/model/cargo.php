@@ -5,6 +5,7 @@ class cargo extends fs_model
    public $idcargo;
    public $codcliente;
    public $idconcepto;
+   public $precio;
    public $cantidad;
    public $total;
    public $fecha;
@@ -23,6 +24,7 @@ class cargo extends fs_model
          $this->idcargo = $g['idcargo'];
          $this->codcliente = $g['codcliente'];
          $this->idconcepto = $g['idconcepto'];
+         $this->precio = $g['precio'];
          $this->cantidad = $g['cantidad'];
          $this->total = $g['total'];
          $this->fecha = date('d-m-Y', strtotime($g['fecha']));
@@ -36,6 +38,7 @@ class cargo extends fs_model
          $this->idcargo = NULL;
          $this->codcliente = "";
          $this->idconcepto = "";
+         $this->precio = 0;
          $this->cantidad = 0;
          $this->total = 0;
          $this->fecha = date('d-m-Y');
@@ -92,7 +95,8 @@ class cargo extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE cargos set codcliente = ".$this->var2str($this->codcliente).
-                 ", idconcepto = ".$this->var2str($this->idconceptocon).
+                 ", idconcepto = ".$this->var2str($this->idconcepto).
+                 ", precio = ".$this->var2str($this->precio).
                  ", cantidad = ".$this->var2str($this->cantidad). 
                  ", total = ".$this->var2str($this->total).
                  ", fecha = ".$this->var2str($this->fecha).
@@ -105,10 +109,11 @@ class cargo extends fs_model
       }
       else
       {
-         $sql = "INSERT into cargos (idcargo,codcliente,idconcepto,cantidad,total,fecha,facturado,numero,imputacion,usuario) VALUES ("
+         $sql = "INSERT into cargos (idcargo,codcliente,idconcepto,precio,cantidad,total,fecha,facturado,numero,imputacion,usuario) VALUES ("
                  .$this->var2str($this->idcargo).","
                  .$this->var2str($this->codcliente).","
                  .$this->var2str($this->idconcepto).","
+                 .$this->var2str($this->precio).","
                  .$this->var2str($this->cantidad).","
                  .$this->var2str($this->total).","
                  .$this->var2str($this->fecha).","

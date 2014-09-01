@@ -22,6 +22,11 @@
     <nulo>NO</nulo>
 </columna>
 <columna>
+    <nombre>precio</nombre>
+    <tipo>double precision</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
     <nombre>cantidad</nombre>
     <tipo>double precision</tipo>
     <nulo>NO</nulo>

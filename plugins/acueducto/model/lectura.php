@@ -4,6 +4,7 @@ class lectura extends fs_model
 {
    public $idlectura;
    public $codcliente;
+   public $idcontador;
    public $fecha;
    public $lectura;
    public $tecnico;
@@ -20,6 +21,7 @@ class lectura extends fs_model
       {
          $this->idlectura = $g['idlectura'];
          $this->codcliente = $g['codcliente'];
+         $this->idcontador = $g['idcontador'];
          $this->fecha = date('d-m-Y', strtotime($g['fecha']));
          $this->lectura = intval($g['lectura']);
          $this->tecnico = $g['tecnico'];
@@ -34,6 +36,7 @@ class lectura extends fs_model
       {
          $this->idlectura = NULL;
          $this->codcliente = "";
+         $this->idcontador = "";
          $this->fecha = date('d-m-Y');
          $this->lectura = 0;
          $this->tecnico = "";
@@ -89,6 +92,7 @@ class lectura extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE lecturas set codcliente = ".$this->var2str($this->codcliente).
+                 ", idcontador = ".$this->var2str($this->idcontador).
                  ", fecha = ".$this->var2str($this->fecha).
                  ", lectura = ".$this->var2str($this->lectura). 
                  ", tecnico = ".$this->var2str($this->tecnico).
@@ -100,9 +104,10 @@ class lectura extends fs_model
       }
       else
       {
-         $sql = "INSERT into lecturas (idlectura,codcliente,fecha,lectura,tecnico,verificada,imputacion,usuario) VALUES ("
+         $sql = "INSERT into lecturas (idlectura,codcliente,idcontador,fecha,lectura,tecnico,verificada,imputacion,usuario) VALUES ("
                  .$this->var2str($this->idlectura).","
                  .$this->var2str($this->codcliente).","
+                 .$this->var2str($this->idcontador).","
                  .$this->var2str($this->fecha).","
                  .$this->var2str($this->lectura).","
                  .$this->var2str($this->tecnico).","

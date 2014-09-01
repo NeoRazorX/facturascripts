@@ -17,6 +17,11 @@
     <nulo>NO</nulo>
 </columna>
 <columna>
+    <nombre>idcontador</nombre>
+    <tipo>int</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
     <nombre>fecha</nombre>
     <tipo>date</tipo>
     <nulo>NO</nulo>

@@ -1,12 +1,14 @@
 <?php
 
 require_model('cargo.php');
+require_model('cliente.php');
+require_model('concepto.php');
 
 class cargos extends fs_controller
 {
    public $cargo;
-   ///public $cliente;
-   ///public $tecnico;
+   public $cliente;
+   public $concepto;
 
    public function __construct()
    {
@@ -17,8 +19,8 @@ class cargos extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->cargo = new cargo();
-      ///$this->cliente = new cliente();
-      ///$this->tecnico = new tecnico();
+      $this->cliente = new cliente();
+      $this->concepto = new concepto();
       
       
       if( isset($_POST['codcliente']) )
@@ -36,10 +38,11 @@ class cargos extends fs_controller
          
          $carg0->codcliente = $_POST['codcliente'];
          $carg0->idconcepto = $_POST['idconcepto'];
+         $carg0->precio = intval($_POST['precio']);
          $carg0->cantidad = intval($_POST['cantidad']);
          $carg0->total = intval($_POST['total']);
          $carg0->fecha = $_POST['fecha'];
-         $carg0->facturado = intval($_POST['facturado']);
+         $carg0->facturado = isset($_POST['facturado']);
          $carg0->numero = intval($_POST['numero']);
          $carg0->imputacion = $_POST['imputacion'];
          $carg0->usuario = $_POST['usuario'];

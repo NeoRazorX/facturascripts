@@ -44,7 +44,7 @@ class contador extends fs_model
       $data = $this->db->select("select * from contadores where idcontador = ".$this->var2str($id).";");
       if($data)
       {
-         return new lectura($data[0]);
+         return new contador($data[0]);
       }
       else
          return FALSE;
@@ -90,7 +90,7 @@ class contador extends fs_model
       else
       {
          $sql = "INSERT into contadores (idcontador,codcliente,numero,ubicacion,alta,lectura) VALUES ("
-                 .$this->var2str($this->idlectura).","
+                 .$this->var2str($this->idcontador).","
                  .$this->var2str($this->codcliente).","
                  .$this->var2str($this->numero).","
                  .$this->var2str($this->ubicacion).","
@@ -138,4 +138,17 @@ class contador extends fs_model
       return $listag;
    }
 
+   public function all()
+   {
+      $todos = array();
+
+      $data = $this->db->select("SELECT * FROM contadores");
+      if($data)
+      {
+         foreach($data as $d)
+             $todos[] = new contador($d);
+      }
+
+      return $todos;
+   }
  }

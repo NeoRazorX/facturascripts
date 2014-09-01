@@ -1,5 +1,14 @@
 {include="header"}
 
+<script type="text/javascript">
+   function recalculo()
+   {
+      var precio =  parseFloat( $("#precio").val() );
+      var cantidad = parseFloat( $("#cantidad").val() );
+      $("#total").val( precio * cantidad );
+   }
+</script>
+
 <div class="table-responsive">
     <table class="table table-condensed">
         <thead>
@@ -7,6 +16,7 @@
                 <th class="text-left">Identificador</th>
                 <th class="text-left">Cliente</th>
                 <th class="text-left">Concepto</th>
+                <th class="text-right">Precio</th>
                 <th class="text-right">Cantidad</th>
                 <th class="text-right">Total</th>
                 <th class="text-left">Fecha</th>
@@ -25,17 +35,28 @@
                <td>
                   <div class="form-control">Nuevo</div>
                </td>
-               <td>
-                  <input class="form-control" type="text" name="codcliente" autocomplete="off"/>
-               </td>
-                <td>
-                  <input class="form-control" type="text" name="idconcepto" autocomplete="off"/>
-               </td>
-               <td>
-                  <input class="form-control text-right" type="number" name="cantidad" value="0"/>
+              <td>
+                  <select name="codcliente" class="form-control">
+                     {loop="$fsc->cliente->all_full()"}
+                     <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
                </td>
                <td>
-                  <input class="form-control text-right" type="number" name="total" value="0"/>
+                  <select class="form-control" name="idconcepto">
+                     {loop="$fsc->concepto->all()"}
+                     <option value="{$value->idconcepto}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
+                  <input class="form-control text-right" type="text" name="precio" value="{$fsc->show_precio(0)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+               </td>
+               <td>
+                  <input class="form-control text-right" type="number" name="cantidad" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+               </td>
+               <td>
+                  <input class="form-control text-right" type="number" name="total" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
                   <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/>
@@ -69,16 +90,35 @@
                     <div class="form-control">{$value->idcargo}</div>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="codcliente" value="{$value->codcliente}"  autocomplete="off"/>
+                    <select class="form-control" name="codcliente">
+                    {loop="$fsc->cliente->all_full()"}
+                       {if condition="$value2->codcliente == $value1->codcliente"}
+                       <option value="{$value2->codcliente}" selected="selected">{$value2->nombre}</option>
+                       {else}
+                       <option value="{$value2->codcliente}">{$value2->nombre}</option>
+                       {/if}
+                    {/loop}
+                    </select>
+                </td>
+               <td>
+                    <select class="form-control" name="idconcepto">
+                    {loop="$fsc->concepto->all()"}
+                       {if condition="$value2->idconcepto == $value1->idconcepto"}
+                       <option value="{$value2->idconcepto}" selected="selected">{$value2->descripcion}</option>
+                       {else}
+                       <option value="{$value2->idconcepto}">{$value2->descripcion}</option>
+                       {/if}
+                    {/loop}
+                    </select>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="idconcepto" value="{$value->idconcepto}"  autocomplete="off"/>
+                    <input class="form-control text-right" type="text" step="any" name="precio" value="{$fsc->show_precio($value->precio)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="cantidad" value="{$value->cantidad}"/>
+                    <input class="form-control text-right" type="number" name="cantidad" value="{$value->cantidad}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="total" value="{$value->total}"/>
+                    <input class="form-control text-right" type="number" name="total" value="{$value->total}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>

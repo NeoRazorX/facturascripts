@@ -121,5 +121,19 @@ class concepto extends fs_model
       
       return $listag;
    }
+   
+   public function all()
+   {
+      $todos = array();
+
+      $data = $this->db->select("SELECT * FROM conceptos");
+      if($data)
+      {
+         foreach($data as $d)
+             $todos[] = new concepto($d);
+      }
+
+      return $todos;
+   }
 
  }

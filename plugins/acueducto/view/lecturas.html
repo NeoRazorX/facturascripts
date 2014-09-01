@@ -6,6 +6,7 @@
             <tr>
                 <th class="text-left">Identificador</th>
                 <th class="text-left">Cliente</th>
+                <th class="text-left">Contador</th>
                 <th class="text-left">Fecha</th>
                 <th class="text-right">Lectura</th>
                 <th class="text-left">Técnico</th>
@@ -27,6 +28,13 @@
                   <select name="codcliente" class="form-control">
                      {loop="$fsc->cliente->all_full()"}
                      <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
+                  <select class="form-control" name="idcontador">
+                     {loop="$fsc->contador->all()"}
+                     <option value="{$value->idcontador}">{$value->numero}</option>
                      {/loop}
                   </select>
                </td>
@@ -75,6 +83,17 @@
                        <option value="{$value2->codcliente}" selected="selected">{$value2->nombre}</option>
                        {else}
                        <option value="{$value2->codcliente}">{$value2->nombre}</option>
+                       {/if}
+                    {/loop}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="idcontador">
+                    {loop="$fsc->contador->all()"}
+                       {if condition="$value2->idcontador == $value1->idcontador"}
+                       <option value="{$value2->idcontador}" selected="selected">{$value2->numero}</option>
+                       {else}
+                       <option value="{$value2->idcontador}">{$value2->numero}</option>
                        {/if}
                     {/loop}
                     </select>

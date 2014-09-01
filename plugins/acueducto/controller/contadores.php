@@ -1,11 +1,12 @@
 <?php
 
 require_model('contador.php');
+require_model('cliente.php'); /// hay que cargar los modelos que uses ;-)
 
 class contadores extends fs_controller
 {
    public $contador;
-   ///public $cliente;
+   public $cliente;
 
    public function __construct()
    {
@@ -16,7 +17,7 @@ class contadores extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->contador = new contador();
-      ///$this->cliente = new cliente();
+      $this->cliente = new cliente();
       
       if( isset($_POST['codcliente']) )
       {

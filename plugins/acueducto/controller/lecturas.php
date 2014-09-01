@@ -2,12 +2,14 @@
 
 require_model('lectura.php');
 require_model('cliente.php'); /// hay que cargar los modelos que uses ;-)
+require_model('contador.php');
 require_model('tecnico.php');
 
 class lecturas extends fs_controller
 {
    public $lectura;
    public $cliente;
+   public $contador;
    public $tecnico;
 
    public function __construct()
@@ -20,6 +22,7 @@ class lecturas extends fs_controller
       $this->custom_search = TRUE;
       $this->lectura = new lectura();
       $this->cliente = new cliente();
+      $this->contador = new contador();
       $this->tecnico = new tecnico();
       
       if( isset($_POST['codcliente']) )
@@ -36,6 +39,7 @@ class lecturas extends fs_controller
          }
          
          $lect0->codcliente = $_POST['codcliente'];
+         $lect0->idcontador = $_POST['idcontador'];
          $lect0->fecha = $_POST['fecha'];
          $lect0->lectura = intval($_POST['lectura']);
          $lect0->tecnico = $_POST['tecnico'];

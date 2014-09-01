@@ -22,7 +22,11 @@
                   <div class="form-control">Nuevo</div>
                </td>
                <td>
-                  <input class="form-control" type="text" name="codcliente" autocomplete="off"/>
+                  <select name="codcliente" class="form-control">
+                     {loop="$fsc->cliente->all_full()"}
+                     <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
                </td>
                <td>
                   <input class="form-control" type="text" name="numero" autocomplete="off"/>
@@ -47,13 +51,21 @@
          
          {loop="$fsc->listar_contadores()"}
          <form action="{$fsc->url()}" method="post" class="form">
-            <input type="hidden" name="idlectura" value="{$value->idlectura}"/> 
+            <input type="hidden" name="idcontador" value="{$value->idcontador}"/> 
             <tr>
                 <td> 
                     <div class="form-control">{$value->idcontador}</div>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="codcliente" value="{$value->codcliente}"  autocomplete="off"/>
+                    <select class="form-control" name="codcliente">
+                    {loop="$fsc->cliente->all_full()"}
+                       {if condition="$value2->codcliente == $value1->codcliente"}
+                       <option value="{$value2->codcliente}" selected="selected">{$value2->nombre}</option>
+                       {else}
+                       <option value="{$value2->codcliente}">{$value2->nombre}</option>
+                       {/if}
+                    {/loop}
+                    </select>
                 </td>
                 <td>
                     <input class="form-control" type="text" name="numero" value="{$value->numero}"  autocomplete="off"/>
