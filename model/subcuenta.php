@@ -84,25 +84,25 @@ class subcuenta extends fs_model
       $this->clean_cache();
       
       /// eliminamos todos los PDFs relacionados
-      if( file_exists('tmp/libro_mayor') )
+      if( file_exists('tmp/'.FS_TMP_NAME.'libro_mayor') )
       {
-         foreach(glob('tmp/libro_mayor/*') as $file)
+         foreach(glob('tmp/'.FS_TMP_NAME.'libro_mayor/*') as $file)
          {
             if( is_file($file) )
                unlink($file);
          }
       }
-      if( file_exists('tmp/libro_diario') )
+      if( file_exists('tmp/'.FS_TMP_NAME.'libro_diario') )
       {
-         foreach(glob('tmp/libro_diario/*') as $file)
+         foreach(glob('tmp/'.FS_TMP_NAME.'libro_diario/*') as $file)
          {
             if( is_file($file) )
                unlink($file);
          }
       }
-      if( file_exists('tmp/inventarios_balances') )
+      if( file_exists('tmp/'.FS_TMP_NAME.'inventarios_balances') )
       {
-         foreach(glob('tmp/inventarios_balances/*') as $file)
+         foreach(glob('tmp/'.FS_TMP_NAME.'inventarios_balances/*') as $file)
          {
             if( is_file($file) )
                unlink($file);
@@ -362,14 +362,14 @@ class subcuenta extends fs_model
    
    public function clean_cache()
    {
-      if( file_exists('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf') )
-         unlink('tmp/libro_mayor/'.$this->idsubcuenta.'.pdf');
+      if( file_exists('tmp/'.FS_TMP_NAME.'libro_mayor/'.$this->idsubcuenta.'.pdf') )
+         unlink('tmp/'.FS_TMP_NAME.'libro_mayor/'.$this->idsubcuenta.'.pdf');
       
-      if( file_exists('tmp/libro_diario/'.$this->codejercicio.'.pdf') )
-         unlink('tmp/libro_diario/'.$this->codejercicio.'.pdf');
+      if( file_exists('tmp/'.FS_TMP_NAME.'libro_diario/'.$this->codejercicio.'.pdf') )
+         unlink('tmp/'.FS_TMP_NAME.'libro_diario/'.$this->codejercicio.'.pdf');
       
-      if( file_exists('tmp/inventarios_balances/'.$this->codejercicio.'.pdf') )
-         unlink('tmp/inventarios_balances/'.$this->codejercicio.'.pdf');
+      if( file_exists('tmp/'.FS_TMP_NAME.'inventarios_balances/'.$this->codejercicio.'.pdf') )
+         unlink('tmp/'.FS_TMP_NAME.'inventarios_balances/'.$this->codejercicio.'.pdf');
    }
    
    public function all()

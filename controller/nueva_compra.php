@@ -115,10 +115,15 @@ class nueva_compra extends fs_controller
     */
    public function tipos_a_guardar()
    {
-      return array(
-          array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de proveedor'),
-          array('tipo' => 'factura', 'nombre' => 'Factura de proveedor')
-      );
+      $tipos = array();
+      
+      if( $this->user->have_access_to('compras_albaran') )
+         $tipos[] = array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de proveedor');
+      
+      if( $this->user->have_access_to('compras_factura') )
+         $tipos[] = array('tipo' => 'factura', 'nombre' => 'Factura de proveedor');
+      
+      return $tipos;
    }
    
    public function url()

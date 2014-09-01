@@ -134,12 +134,21 @@ class nueva_venta extends fs_controller
     */
    public function tipos_a_guardar()
    {
-      return array(
-          array('tipo' => 'presupuesto', 'nombre' => ucfirst(FS_PRESUPUESTO).' para cliente'),
-          array('tipo' => 'pedido', 'nombre' => ucfirst(FS_PEDIDO).' de cliente'),
-          array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de cliente'),
-          array('tipo' => 'factura', 'nombre' => 'Factura de cliente')
-      );
+      $tipos = array();
+      
+      if( $this->user->have_access_to('ventas_presupuesto') )
+         $tipos[] = array('tipo' => 'presupuesto', 'nombre' => ucfirst(FS_PRESUPUESTO).' para cliente');
+      
+      if( $this->user->have_access_to('ventas_pedido') )
+         $tipos[] = array('tipo' => 'pedido', 'nombre' => ucfirst(FS_PEDIDO).' de cliente');
+      
+      if( $this->user->have_access_to('ventas_albaran') )
+         $tipos[] = array('tipo' => 'albaran', 'nombre' => ucfirst(FS_ALBARAN).' de cliente');
+      
+      if( $this->user->have_access_to('ventas_factura') )
+         $tipos[] = array('tipo' => 'factura', 'nombre' => 'Factura de cliente');
+      
+      return $tipos;
    }
    
    public function url()

@@ -1,126 +1,142 @@
 <?php
 
+$nombre_archivo = "config.php";
+error_reporting(E_ALL);
+$errors = array();
+
+function random_string($length = 10)
+{
+   return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+}
+
 if( file_exists('config.php') )
 {
    header('Location: index.php');
 }
-else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) && 
-     isset($_GET["db_host"]) && !empty($_GET["db_host"]) && 
-     isset($_GET["db_port"]) && !empty($_GET["db_port"]) && 
-     isset($_GET["db_name"]) && !empty($_GET["db_name"]) && 
-     isset($_GET["db_user"]) && !empty($_GET["db_user"]) && 
-     isset($_GET["db_pass"]) && !empty($_GET["db_pass"]) && 
-     isset($_GET["cache_host"]) && !empty($_GET["cache_host"]) && 
-     isset($_GET["cache_port"]) && !empty($_GET["cache_port"]) && 
-     isset($_GET["cache_prefix"]) )
+else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 {
-   $db_type = $_GET["db_type"];
-   $db_host = $_GET["db_host"];
-   $db_port = $_GET["db_port"];
-   $db_name = $_GET["db_name"];
-   $db_user = $_GET["db_user"];
-   $db_pass = $_GET["db_pass"];
-   $cache_host = $_GET["cache_host"];
-   $cache_port = $_GET["cache_port"];
-   $cache_prefix = $_GET["cache_prefix"];
-   
-   $nombre_archivo = "config.php";
-   $archivo = fopen($nombre_archivo,"w");
-   fwrite($archivo,"<?php\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Copia o renombra este archivo a config.php, y rellena los campos\n");
-   fwrite($archivo," * para el correcto funcionamiendo de facturascripts.\n");
-   fwrite($archivo," * Si tienes alguna duda consulta -> http://code.google.com/p/facturascripts/issues/list\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Configuración de la base de datos.\n");
-   fwrite($archivo," * type: postgresql o mysql (mysql está en fase experimental).\n");
-   fwrite($archivo," * host: la ip del ordenador donde está la base de datos.\n");
-   fwrite($archivo," * port: el puerto de la base de datos.\n");
-   fwrite($archivo," * name: el nombre de la base de datos.\n");
-   fwrite($archivo," * user: el usuario para conectar a la base de datos\n");
-   fwrite($archivo," * pass: la contraseña del usuario.\n");
-   fwrite($archivo," * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_DB_TYPE', '$db_type'); /// MYSQL o POSTGRESQL\n");
-   fwrite($archivo,"define('FS_DB_HOST', '$db_host');\n");
-   fwrite($archivo,"define('FS_DB_PORT', '$db_port'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
-   fwrite($archivo,"define('FS_DB_NAME', '$db_name');\n");
-   fwrite($archivo,"define('FS_DB_USER', '$db_user'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
-   fwrite($archivo,"define('FS_DB_PASS', '$db_pass');\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_DB_HISTORY', FALSE);\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Habilita el modo demo, para pruebas.\n");
-   fwrite($archivo," * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
-   fwrite($archivo," * además deshabilita el límite de una conexión por usuario.\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_DEMO', FALSE);\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Configuración de memcache.\n");
-   fwrite($archivo," * Host: la ip del servidor donde está memcached.\n");
-   fwrite($archivo," * port: el puerto en el que se ejecuta memcached.\n");
-   fwrite($archivo," * prefix: prefijo para las claves, por si tienes varias instancias de\n");
-   fwrite($archivo," * FacturaScripts conectadas al mismo servidor memcache.\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"define('FS_CACHE_HOST', '$cache_host');\n");
-   fwrite($archivo,"define('FS_CACHE_PORT', '$cache_port');\n");
-   fwrite($archivo,"define('FS_CACHE_PREFIX', '$cache_prefix');\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/// caducidad (en segundos) de todas las cookies\n");
-   fwrite($archivo,"define('FS_COOKIES_EXPIRE', 315360000);\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/// el número de elementos a mostrar en pantalla\n");
-   fwrite($archivo,"define('FS_ITEM_LIMIT', 50);\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Un número identificador para esta instancia de FacturaScripts.\n");
-   fwrite($archivo," * Necesario para identificar cada caja en el TPV.\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_ID', 1);\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Nombre o dirección de la impresora de tickets.\n");
-   fwrite($archivo," * '' -> impresora predefinida.\n");
-   fwrite($archivo," * 'epson234' -> impresora con nombre epson234.\n");
-   fwrite($archivo," * '/dev/usb/lp0' -> escribir diectamente sobre ese archivo.\n");
-   fwrite($archivo," * 'remote-printer' -> permite imprimir mediante el programa fs_remote_printer.py\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_PRINTER', 'remote-printer');\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * Nombre o dirección de la impresora que representa el dispositivo\n");
-   fwrite($archivo," * LCD del terminal POS.\n");
-   fwrite($archivo," * El LCD tiene que ser de dos líneas de 20 caracteres cada una (GLANCETRON 8035).\n");
-   fwrite($archivo," * Si tienes alguna duda, escríbela\n");
-   fwrite($archivo," * aquí -> http://www.facturascripts.com\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_LCD', '');\n");
-   fwrite($archivo,"\n");
-   fwrite($archivo,"/*\n");
-   fwrite($archivo," * ¿Cuantos decimales quieres usar?\n");
-   fwrite($archivo," * ¿Qué separador usar para los decimales?\n");
-   fwrite($archivo," * ¿Qué separador usar para miles?\n");
-   fwrite($archivo," * ¿A qué lado quieres el símbolo de la divisa?\n");
-   fwrite($archivo," */\n");
-   fwrite($archivo,"define('FS_NF0', 2);\n");
-   fwrite($archivo,"define('FS_NF1', '.');\n");
-   fwrite($archivo,"define('FS_NF2', ' ');\n");
-   fwrite($archivo,"define('FS_POS_DIVISA', 'right');\n");
+   $errors[] = 'FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP '.phpversion().'.';
+}
+else if( !function_exists('mb_substr') )
+{
+   $errors[] = "No se encuentra la función mb_substr(). Instala el paquete php-mbstring.";
+}
+else if( !function_exists('bccomp') )
+{
+   $errors[] = "No se encuentra la función bccomp(). Instala el paquete php-bcmath.";
+}
+else if( !is_writable( getcwd() ) )
+{
+   $errors[] = "La carpeta no tiene permisos de escritura.";
+}
+else if ( isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
+{
+   $archivo = fopen($nombre_archivo, "w");
+   fwrite($archivo, "<?php\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Configuración de la base de datos.\n");
+   fwrite($archivo, " * type: postgresql o mysql (mysql está en fase experimental).\n");
+   fwrite($archivo, " * host: la ip del ordenador donde está la base de datos.\n");
+   fwrite($archivo, " * port: el puerto de la base de datos.\n");
+   fwrite($archivo, " * name: el nombre de la base de datos.\n");
+   fwrite($archivo, " * user: el usuario para conectar a la base de datos\n");
+   fwrite($archivo, " * pass: la contraseña del usuario.\n");
+   fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_DB_TYPE', '".$_REQUEST['db_type']."'); /// MYSQL o POSTGRESQL\n");
+   fwrite($archivo, "define('FS_DB_HOST', '".$_REQUEST['db_host']."');\n");
+   fwrite($archivo, "define('FS_DB_PORT', '".$_REQUEST['db_port']."'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
+   fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
+   fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
+   fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
+   fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
+   fwrite($archivo, " * además deshabilita el límite de una conexión por usuario.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_DEMO', FALSE);\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Configuración de memcache.\n");
+   fwrite($archivo, " * Host: la ip del servidor donde está memcached.\n");
+   fwrite($archivo, " * port: el puerto en el que se ejecuta memcached.\n");
+   fwrite($archivo, " * prefix: prefijo para las claves, por si tienes varias instancias de\n");
+   fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "define('FS_CACHE_HOST', '".$_REQUEST['cache_host']."');\n");
+   fwrite($archivo, "define('FS_CACHE_PORT', '".$_REQUEST['cache_port']."');\n");
+   fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
+   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 315360000);\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
+   fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Un número identificador para esta instancia de FacturaScripts.\n");
+   fwrite($archivo, " * Necesario para identificar cada caja en el TPV.\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_ID', 1);\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Nombre o dirección de la impresora de tickets.\n");
+   fwrite($archivo, " * '' -> impresora predefinida.\n");
+   fwrite($archivo, " * 'epson234' -> impresora con nombre epson234.\n");
+   fwrite($archivo, " * '/dev/usb/lp0' -> escribir diectamente sobre ese archivo.\n");
+   fwrite($archivo, " * 'remote-printer' -> permite imprimir mediante el programa fs_remote_printer.py\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_PRINTER', 'remote-printer');\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * Nombre o dirección de la impresora que representa el dispositivo\n");
+   fwrite($archivo, " * LCD del terminal POS.\n");
+   fwrite($archivo, " * El LCD tiene que ser de dos líneas de 20 caracteres cada una (GLANCETRON 8035).\n");
+   fwrite($archivo, " * Si tienes alguna duda, escríbela\n");
+   fwrite($archivo, " * aquí -> http://www.facturascripts.com\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_LCD', '');\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/*\n");
+   fwrite($archivo, " * ¿Cuantos decimales quieres usar?\n");
+   fwrite($archivo, " * ¿Qué separador usar para los decimales?\n");
+   fwrite($archivo, " * ¿Qué separador usar para miles?\n");
+   fwrite($archivo, " * ¿A qué lado quieres el símbolo de la divisa?\n");
+   fwrite($archivo, " */\n");
+   fwrite($archivo, "define('FS_NF0', 2);\n");
+   fwrite($archivo, "define('FS_NF1', '.');\n");
+   fwrite($archivo, "define('FS_NF2', ' ');\n");
+   fwrite($archivo, "define('FS_POS_DIVISA', 'right');\n");
    fclose($archivo);
    
-   
    header("Location: index.php");
-   exit;
+   exit();
 }
-?>
 
+$system_info = 'facturascripts: '.file_get_contents('VERSION')."\n";
+$system_info .= 'os: '.php_uname()."\n";
+$system_info .= 'php: '.phpversion()."\n";
+
+if( isset($_SERVER['REQUEST_URI']) )
+   $system_info .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+
+foreach($errors as $e)
+   $system_info .= "\n" . $e;
+
+$system_info = str_replace('"', "'", $system_info);
+
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
 <head>
@@ -160,10 +176,10 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="{#FS_COMMUNITY_URL#}/questions.php" target="_blank">Preguntas</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/errors.php" target="_blank">Errores</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/ideas.php" target="_blank">Sugerencias</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/all.php" target="_blank">Todo</a></li>
+                     <li><a href="http://www.facturascripts.com/community/questions.php" target="_blank">Preguntas</a></li>
+                     <li><a href="http://www.facturascripts.com/community/errors.php" target="_blank">Errores</a></li>
+                     <li><a href="http://www.facturascripts.com/community/ideas.php" target="_blank">Sugerencias</a></li>
+                     <li><a href="http://www.facturascripts.com/community/all.php" target="_blank">Todo</a></li>
                      <li class="divider"></li>
                      <li><a href="#" id="b_feedback">Escribir...</a></li>
                   </ul>
@@ -173,8 +189,8 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
       </div>
    </nav>
    
-   <form name="f_feedback" action="{#FS_COMMUNITY_URL#}/feedback.php" method="post" target="_blank" class="form" role="form">
-      <input type="hidden" name="feedback_info" value="{$fsc->system_info()}"/>
+   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
+      <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <div class="modal" id="modal_feedback">
          <div class="modal-dialog">
             <div class="modal-content">
@@ -184,7 +200,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                </div>
                <div class="modal-body">
                   <p>
-                     La <a href="{#FS_COMMUNITY_URL#}" target="_blank">comunidad FacturaScripts</a>
+                     La <a href="http://www.facturascripts.com/community" target="_blank">comunidad FacturaScripts</a>
                      está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
                      lo antes posible.
                   </p>
@@ -214,10 +230,6 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
          </div>
       </div>
    </form>
-
-   <div style="display: none;">
-      <iframe src="{#FS_COMMUNITY_URL#}/stats.php?add=TRUE&version={$fsc->version()}&corp={function="urlencode($fsc->empresa->nombre)"}" height="0"></iframe>
-   </div>
 
    <script type="text/javascript">
       function comprobar_url()
@@ -325,33 +337,14 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
          </div>
          
          <div class="col-lg-10 col-md-10 col-sm-10">
-            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php#configuracion_inicial" class="form" role="form" method="get" >
-               <div  id="warning_config">
-               <?php
-               $nombre_archivo = "config.php";
-               if (!file_exists($nombre_archivo))
-               {
-                  $archivo = fopen($nombre_archivo,"w");
-                  if(!$archivo)
+            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php#configuracion_inicial" class="form" role="form" method="post">
+               <div id="warning_config">
+                  <?php
+                  foreach($errors as $err)
                   {
-                     ?>
-                  <div class="alert alert-danger">
-                     No se puede escribir en <?php echo $nombre_archivo; ?>, asegurate que tiene los permisos de escritura suficientes.
-                  </div>
-                     <?php
+                     echo "<div class='alert alert-danger'>".$err."</div>";
                   }
-                  else
-                  {
-                     fclose($archivo);
-                     unlink(basename($nombre_archivo));
-                     ?>
-                  <div class="alert alert-info">
-                     El archivo <?php echo $nombre_archivo; ?> no existe, rellena los siguientes campos y se generará uno con tu configuración.
-                  </div>
-                     <?php
-                  }
-               }
-               ?>
+                  ?>
                </div>
                
                <div class="panel panel-primary" id="panel_configuracion_inicial_bd">
@@ -372,7 +365,7 @@ else if ( isset($_GET["db_type"]) && !empty($_GET["db_type"]) &&
                      </div>
                      <div class="form-group col-lg-6 col-md-6 col-sm-6">
                         Puerto servidor SQL:
-                        <input class="form-control" type="text" name="db_port" value="3306" autocomplete="off"/>
+                        <input class="form-control" type="number" name="db_port" value="3306" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-6 col-md-6 col-sm-6">
                         Nombre base de datos:

@@ -30,8 +30,8 @@ class fs_pdf
    
    public function __construct($paper = 'a4', $orientation = 'portrait', $font = 'Helvetica')
    {
-      if( !file_exists('tmp/pdf') )
-         mkdir('tmp/pdf');
+      if( !file_exists('tmp/'.FS_TMP_NAME.'pdf') )
+         mkdir('tmp/'.FS_TMP_NAME.'pdf');
       
       $this->pdf = new Cezpdf($paper, $orientation);
       $this->pdf->selectFont("extras/ezpdf/fonts/".$font.".afm");

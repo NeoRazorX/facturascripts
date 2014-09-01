@@ -21,7 +21,9 @@ require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
 
 if(strtolower(FS_DB_TYPE) == 'mysql')
+{
    require_once 'base/fs_mysql.php';
+}
 else
    require_once 'base/fs_postgresql.php';
 
@@ -124,7 +126,9 @@ abstract class fs_model
    public function __construct($name = '', $basedir = '')
    {
       if(strtolower(FS_DB_TYPE) == 'mysql')
+      {
          $this->db = new fs_mysql();
+      }
       else
          $this->db = new fs_postgresql();
       
@@ -186,8 +190,10 @@ abstract class fs_model
     */
    protected function new_error_msg($msg = FALSE)
    {
-      if( $msg )
+      if($msg)
+      {
          self::$errors[] = $msg;
+      }
    }
    
    /**
@@ -232,7 +238,7 @@ abstract class fs_model
     * @param type $s cadena de texto a escapar
     * @return type cadena de texto resultante
     */
-   public function escape_string($s='')
+   protected function escape_string($s='')
    {
       return $this->db->escape_string($s);
    }
@@ -246,50 +252,64 @@ abstract class fs_model
    public function var2str($v)
    {
       if( is_null($v) )
+      {
          return 'NULL';
+      }
       else if( is_bool($v) )
       {
          if($v)
+         {
             return 'TRUE';
+         }
          else
             return 'FALSE';
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $v) ) /// es una fecha
+      {
          return "'".Date($this->db->date_style(), strtotime($v))."'";
+      }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $v) ) /// es una fecha+hora
+      {
          return "'".Date($this->db->date_style().' H:i:s', strtotime($v))."'";
+      }
       else
          return "'" . $this->db->escape_string($v) . "'";
    }
    
-   public function bin2str($v)
+   protected function bin2str($v)
    {
       if( is_null($v) )
+      {
          return 'NULL';
+      }
       else
          return "'".bin2hex($v)."'";
    }
    
-   public function hex2bin($data)
+   protected function hex2bin($data)
    {
       $bin = '';
+      
       $i = 0;
       do {
          $bin .= chr(hexdec($data{$i}.$data{($i + 1)}));
          $i += 2;
       } while($i < strlen($data));
+      
       return $bin;
    }
    
-   public function str2bin($v)
+   protected function str2bin($v)
    {
       if( is_null($v) )
+      {
          return NULL;
+      }
       else
          return $this->hex2bin($v);
    }
    
-   public function str2bool($v)
+   protected function str2bool($v)
    {
       return ($v == 't' OR $v == '1');
    }
@@ -297,7 +317,9 @@ abstract class fs_model
    public function intval($s)
    {
       if( is_null($s) )
+      {
          return NULL;
+      }
       else
          return intval($s);
    }
@@ -306,10 +328,12 @@ abstract class fs_model
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
     */
-   public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
+   protected function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
    {
       if($round)
+      {
          return( abs($f1-$f2) < 6/pow(10,$precision+1) );
+      }
       else
          return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
    }
@@ -320,12 +344,16 @@ abstract class fs_model
     * primero con los otros dos.
     * Devuelve TRUE si el primer número es igual a alguno de los otros dos.
     */
-   public function floatcmp3($f1, $f2, $f3, $precision = 10, $round = FALSE)
+   protected function floatcmp3($f1, $f2, $f3, $precision = 10, $round = FALSE)
    {
       if( $this->floatcmp($f1, $f2, $precision, $round) )
+      {
          return TRUE;
+      }
       else if( $this->floatcmp($f1, $f3, $precision, $round) )
+      {
          return TRUE;
+      }
       else
          return FALSE;
    }
@@ -335,7 +363,7 @@ abstract class fs_model
     * @param type $v
     * @return string
     */
-   public function var2timesince($v)
+   protected function var2timesince($v)
    {
       if( isset($v) )
       {
@@ -343,25 +371,39 @@ abstract class fs_model
          $time = time() - $v;
          
          if($time <= 60)
+         {
             return 'hace '.round($time/60,0).' segundos';
+         }
          else if(60 < $time && $time <= 3600)
+         {
             return 'hace '.round($time/60,0).' minutos';
+         }
          else if(3600 < $time && $time <= 86400)
+         {
             return 'hace '.round($time/3600,0).' horas';
+         }
          else if(86400 < $time && $time <= 604800)
+         {
             return 'hace '.round($time/86400,0).' dias';
+         }
          else if(604800 < $time && $time <= 2592000)
+         {
             return 'hace '.round($time/604800,0).' semanas';
+         }
          else if(2592000 < $time && $time <= 29030400)
+         {
             return 'hace '.round($time/2592000,0).' meses';
+         }
          else if($time > 29030400)
+         {
             return 'hace más de un año';
+         }
       }
       else
          return 'fecha desconocida';
    }
    
-   public function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y' )
+   protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y' )
    {
       $dates = array();
       $current = strtotime($first);
@@ -386,7 +428,7 @@ abstract class fs_model
     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
     * porque te encontrarás con muchas sorpresas desagradables.
     */
-   public function no_html($t)
+   protected function no_html($t)
    {
       $newt = str_replace('<', '&lt;', $t);
       $newt = str_replace('>', '&gt;', $newt);
@@ -395,10 +437,9 @@ abstract class fs_model
       return trim($newt);
    }
    
-   public function random_string($length = 10)
+   protected function random_string($length = 10)
    {
-      return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-              0, $length);
+      return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
    }
    
    /**
@@ -406,7 +447,7 @@ abstract class fs_model
     * @param type $table_name
     * @return boolean
     */
-   public function check_table($table_name)
+   protected function check_table($table_name)
    {
       $done = TRUE;
       $consulta = '';
@@ -478,12 +519,16 @@ abstract class fs_model
                   $columnas[$i]['tipo'] = $col->tipo;
                   
                   if($col->nulo)
+                  {
                      $columnas[$i]['nulo'] = $col->nulo;
+                  }
                   else
                      $columnas[$i]['nulo'] = 'YES';
                   
                   if($col->defecto == '')
+                  {
                      $columnas[$i]['defecto'] = NULL;
+                  }
                   else
                      $columnas[$i]['defecto'] = $col->defecto;
                   

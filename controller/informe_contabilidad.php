@@ -47,11 +47,11 @@ class informe_contabilidad extends fs_controller
    
    public function existe_libro_diario($codeje)
    {
-      return file_exists('tmp/libro_diario/'.$codeje.'.pdf');
+      return file_exists('tmp/'.FS_TMP_NAME.'libro_diario/'.$codeje.'.pdf');
    }
    
    public function existe_libro_inventarios($codeje)
    {
-      return file_exists('tmp/inventarios_balances/'.$codeje.'.pdf');
+      return file_exists('tmp/'.FS_TMP_NAME.'inventarios_balances/'.$codeje.'.pdf');
    }
 }

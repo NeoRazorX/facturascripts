@@ -125,19 +125,19 @@ class admin_empresa extends fs_controller
       {
          if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
          {
-            copy($_FILES['fimagen']['tmp_name'], "tmp/logo.png");
+            copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
             $this->new_message('Logotipo guardado correctamente.');
          }
       }
       else if( isset($_GET['delete_logo']) )
       {
-         if( file_exists('tmp/logo.png') )
+         if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
          {
-            unlink('tmp/logo.png');
+            unlink('tmp/'.FS_TMP_NAME.'logo.png');
             $this->new_message('Logotipo borrado correctamente.');
          }
       }
       
-      $this->logo = file_exists('tmp/logo.png');
+      $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
    }
 }

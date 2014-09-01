@@ -17,6 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if( !defined('FS_TMP_NAME') )
+{
+   define('FS_TMP_NAME', '');
+}
+
+if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
+{
+   mkdir('tmp/'.FS_TMP_NAME);
+}
+
 if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
 {
    define('FS_NF0', 2);
@@ -26,11 +36,13 @@ if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('
 }
 
 if( !defined('FS_COMMUNITY_URL') )
-   define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
-
-if( file_exists('tmp/config2.ini') )
 {
-   $GLOBALS['config2'] = parse_ini_file('tmp/config2.ini');
+   define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
+}
+
+if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
+{
+   $GLOBALS['config2'] = parse_ini_file('tmp/'.FS_TMP_NAME.'config2.ini');
 }
 else
 {

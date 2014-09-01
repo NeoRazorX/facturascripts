@@ -235,7 +235,13 @@ class fs_controller
     */
    public function version()
    {
-      return file_get_contents('VERSION');
+      if( file_exists('VERSION') )
+      {
+         $v = file_get_contents('VERSION');
+         return trim($v);
+      }
+      else
+         return '0';
    }
    
    /**
@@ -326,9 +332,9 @@ class fs_controller
    {
       $baneada = FALSE;
       
-      if( file_exists('tmp/ip.log') )
+      if( file_exists('tmp/'.FS_TMP_NAME.'ip.log') )
       {
-         $file = fopen('tmp/ip.log', 'r');
+         $file = fopen('tmp/'.FS_TMP_NAME.'ip.log', 'r');
          if($file)
          {
             /// leemos las líneas
@@ -358,7 +364,7 @@ class fs_controller
     */
    private function banear_ip(&$ips)
    {
-      $file = fopen('tmp/ip.log', 'w');
+      $file = fopen('tmp/'.FS_TMP_NAME.'ip.log', 'w');
       if($file)
       {
          $encontrada = FALSE;
@@ -1022,7 +1028,7 @@ class fs_controller
       }
       else
       {
-         $html = file_get_contents('http://www.facturascripts.com/community/iframe.php');
+         $html = file_get_contents(FS_COMMUNITY_URL.'/iframe.php?version='.$this->version());
          file_put_contents('tmp/community_index.html', $html);
          return $html;
       }

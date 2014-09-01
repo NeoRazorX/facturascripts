@@ -69,7 +69,7 @@ class backup extends fs_controller
                for($j=0; $j<$num_fields; $j++) 
                {
                   $row[$j] = addslashes($row[$j]);
-                  $row[$j] = ereg_replace("\n","\\n",$row[$j]);
+                  $row[$j] = str_replace("\n", "\\n", $row[$j]);
                   
                   if(isset($row[$j]))
                   {

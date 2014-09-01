@@ -5,27 +5,29 @@
         Estructura de la tabla detalles_sat.
 -->
 <tabla>
-<columna><nombre>id</nombre>
-<tipo>int(11)</tipo>
-<nulo>NO</nulo>
-</columna>
-<columna>
-    <nombre>descripcion</nombre>
-    <tipo>text</tipo>
-    <nulo>NO</nulo>
-</columna>
-<columna>
-    <nombre>nsat</nombre>
-    <tipo>int(11)</tipo>
-    <nulo>NO</nulo>
-</columna>
-<columna>
-    <nombre>fecha</nombre>
-    <tipo>date</tipo>
-    <nulo>NO</nulo>
-</columna>
-<restriccion>
-    <nombre>detalles_sat_pkey</nombre>
-    <consulta>PRIMARY KEY (id)</consulta>
-</restriccion>
+   <columna>
+      <nombre>id</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('detalles_sat_id_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>text</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>nsat</nombre>
+      <tipo>int(11)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>detalles_sat_pkey</nombre>
+      <consulta>PRIMARY KEY (id)</consulta>
+   </restriccion>
 </tabla>

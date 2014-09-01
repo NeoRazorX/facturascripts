@@ -296,16 +296,16 @@ class contabilidad_ejercicio extends fs_controller
       
       if( isset($_POST['fuente']) )
       {
-         if( file_exists('tmp/ejercicio.xml') )
-            unlink('tmp/ejercicio.xml');
+         if( file_exists('tmp/'.FS_TMP_NAME.'ejercicio.xml') )
+            unlink('tmp/'.FS_TMP_NAME.'ejercicio.xml');
          
          if( in_array($_POST['fuente'], array('espanya', 'colombia', 'panama', 'peru', 'venezuela') ) )
          {
-            copy('extras/'.$_POST['fuente'].'.xml', 'tmp/ejercicio.xml');
+            copy('extras/'.$_POST['fuente'].'.xml', 'tmp/'.FS_TMP_NAME.'ejercicio.xml');
          }
          else if( $_POST['fuente'] == 'archivo' AND isset($_POST['archivo']) )
          {
-            copy($_FILES['farchivo']['tmp_name'], 'tmp/ejercicio.xml');
+            copy($_FILES['farchivo']['tmp_name'], 'tmp/'.FS_TMP_NAME.'ejercicio.xml');
          }
          else
          {
@@ -332,11 +332,11 @@ class contabilidad_ejercicio extends fs_controller
          }
       }
       
-      if( file_exists('tmp/ejercicio.xml') AND $import_step > 0 )
+      if( file_exists('tmp/'.FS_TMP_NAME.'ejercicio.xml') AND $import_step > 0 )
       {
          $this->new_message('Importando ejercicio: paso '.$import_step.' de 6 ...');
          
-         $xml = simplexml_load_file('tmp/ejercicio.xml');
+         $xml = simplexml_load_file('tmp/'.FS_TMP_NAME.'ejercicio.xml');
          if( $xml )
          {
             if( $xml->balance AND $import_step == 1 )

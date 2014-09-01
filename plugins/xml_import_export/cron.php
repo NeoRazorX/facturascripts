@@ -27,7 +27,7 @@ function export_xml(&$db, $tabla)
       echo '.';
       
       $data = $db->select_limit("SELECT * FROM ".$tabla, 500, $offset);
-      if( $data AND !file_exists('tmp/export/tabla_'.$tabla.'_'.$offset.'.xml') )
+      if( $data AND !file_exists('tmp/'.FS_TMP_NAME.'export/tabla_'.$tabla.'_'.$offset.'.xml') )
       {
          /// creamos el xml
          $cadena_xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -71,7 +71,7 @@ function export_xml(&$db, $tabla)
          }
          
          /// guardamos el XML
-         $archivo_xml->saveXML('tmp/export/tabla_'.$tabla.'_'.$offset.'.xml');
+         $archivo_xml->saveXML('tmp/'.FS_TMP_NAME.'export/tabla_'.$tabla.'_'.$offset.'.xml');
       }
       else
          $continuar = FALSE;
@@ -83,8 +83,8 @@ function export_xml(&$db, $tabla)
 /*
 echo "\nExportando los datos de las tablas...";
 
-if( !file_exists('tmp/export') )
-   mkdir('tmp/export');
+if( !file_exists('tmp/'.FS_TMP_NAME.'export') )
+   mkdir('tmp/'.FS_TMP_NAME.'export');
 
 foreach($db->list_tables() as $table)
    export_xml($db, $table['name']);

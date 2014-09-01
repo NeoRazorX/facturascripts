@@ -55,10 +55,10 @@ class libro_mayor
    {
       if($subc)
       {
-         if( !file_exists('tmp/libro_mayor') )
-            mkdir('tmp/libro_mayor');
+         if( !file_exists('tmp/'.FS_TMP_NAME.'libro_mayor') )
+            mkdir('tmp/'.FS_TMP_NAME.'libro_mayor');
          
-         if( !file_exists('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf') )
+         if( !file_exists('tmp/'.FS_TMP_NAME.'libro_mayor/'.$subc->idsubcuenta.'.pdf') )
          {
             if($echos)
                echo '.';
@@ -157,7 +157,7 @@ class libro_mayor
                }
             }
             
-            $pdf_doc->save('tmp/libro_mayor/'.$subc->idsubcuenta.'.pdf');
+            $pdf_doc->save('tmp/'.FS_TMP_NAME.'libro_mayor/'.$subc->idsubcuenta.'.pdf');
          }
       }
    }
@@ -166,10 +166,10 @@ class libro_mayor
    {
       if($eje)
       {
-         if( !file_exists('tmp/libro_diario') )
-            mkdir('tmp/libro_diario');
+         if( !file_exists('tmp/'.FS_TMP_NAME.'libro_diario') )
+            mkdir('tmp/'.FS_TMP_NAME.'libro_diario');
          
-         if( !file_exists('tmp/libro_diario/'.$eje->codejercicio.'.pdf') )
+         if( !file_exists('tmp/'.FS_TMP_NAME.'libro_diario/'.$eje->codejercicio.'.pdf') )
          {
             echo ' '.$eje->codejercicio;
             
@@ -254,7 +254,7 @@ class libro_mayor
                $lineas = $partida->full_from_ejercicio($eje->codejercicio, $lactual, $lppag);
             }
             
-            $pdf_doc->save('tmp/libro_diario/'.$eje->codejercicio.'.pdf');
+            $pdf_doc->save('tmp/'.FS_TMP_NAME.'libro_diario/'.$eje->codejercicio.'.pdf');
          }
       }
    }
@@ -264,5 +264,3 @@ class libro_mayor
       return number_format($num, FS_NF0, FS_NF1, FS_NF2);
    }
 }
-
-?>

@@ -38,10 +38,10 @@ if( $db->connect() )
    {
       if(FS_PRINTER == 'remote-printer')
       {
-         if( file_exists('tmp/remote-printer.txt') )
+         if( file_exists('tmp/'.FS_TMP_NAME.'remote-printer.txt') )
          {
-            echo file_get_contents('tmp/remote-printer.txt');
-            unlink('tmp/remote-printer.txt');
+            echo file_get_contents('tmp/'.FS_TMP_NAME.'remote-printer.txt');
+            unlink('tmp/'.FS_TMP_NAME.'remote-printer.txt');
          }
       }
       else
@@ -52,5 +52,3 @@ if( $db->connect() )
 }
 else
    echo 'ERROR';
-
-?>

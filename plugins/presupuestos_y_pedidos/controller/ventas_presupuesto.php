@@ -529,9 +529,9 @@ class ventas_presupuesto extends fs_controller
                $pdf_doc->pdf->ezNewPage();
             
             /// ¿Añadimos el logo?
-            if( file_exists('tmp/logo.png') )
+            if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
             {
-               $pdf_doc->pdf->ezImage('tmp/logo.png', 0, 200, 'none');
+               $pdf_doc->pdf->ezImage('tmp/'.FS_TMP_NAME.'logo.png', 0, 200, 'none');
                $lppag -= 2; /// si metemos el logo, caben menos líneas
             }
             else
@@ -718,10 +718,10 @@ class ventas_presupuesto extends fs_controller
       
       if($archivo)
       {
-         if( !file_exists('tmp/enviar') )
-            mkdir('tmp/enviar');
+         if( !file_exists('tmp/'.FS_TMP_NAME.'enviar') )
+            mkdir('tmp/'.FS_TMP_NAME.'enviar');
          
-         $pdf_doc->save('tmp/enviar/'.$archivo);
+         $pdf_doc->save('tmp/'.FS_TMP_NAME.'enviar/'.$archivo);
       }
       else
          $pdf_doc->show();
@@ -862,7 +862,7 @@ class ventas_presupuesto extends fs_controller
          
          $filename = 'presupuesto_'.$this->presupuesto->codigo.'.pdf';
          $this->generar_pdf_simple($filename);
-         if( file_exists('tmp/enviar/'.$filename) )
+         if( file_exists('tmp/'.FS_TMP_NAME.'enviar/'.$filename) )
          {
             $mail = new PHPMailer();
             $mail->IsSMTP();
@@ -883,7 +883,7 @@ class ventas_presupuesto extends fs_controller
             $mail->AltBody = 'Buenos días, le adjunto su '.FS_PRESUPUESTO.' '.$this->presupuesto->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;
             $mail->MsgHTML( nl2br($_POST['mensaje']) );
-            $mail->AddAttachment('tmp/enviar/'.$filename);
+            $mail->AddAttachment('tmp/'.FS_TMP_NAME.'enviar/'.$filename);
             $mail->AddAddress($_POST['email'], $cliente->nombrecomercial);
             $mail->IsHTML(TRUE);
             

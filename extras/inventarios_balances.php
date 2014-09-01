@@ -48,10 +48,10 @@ class inventarios_balances
    {
       if($eje)
       {
-         if( !file_exists('tmp/inventarios_balances') )
-            mkdir('tmp/inventarios_balances');
+         if( !file_exists('tmp/'.FS_TMP_NAME.'inventarios_balances') )
+            mkdir('tmp/'.FS_TMP_NAME.'inventarios_balances');
          
-         if( !file_exists('tmp/inventarios_balances/'.$eje->codejercicio.'.pdf') )
+         if( !file_exists('tmp/'.FS_TMP_NAME.'inventarios_balances/'.$eje->codejercicio.'.pdf') )
          {
             echo '.';
             
@@ -75,7 +75,7 @@ class inventarios_balances
             $this->perdidas_y_ganancias($pdf_doc, $eje);
             $this->situacion($pdf_doc, $eje);
             
-            $pdf_doc->save('tmp/inventarios_balances/'.$eje->codejercicio.'.pdf');
+            $pdf_doc->save('tmp/'.FS_TMP_NAME.'inventarios_balances/'.$eje->codejercicio.'.pdf');
          }
       }
    }

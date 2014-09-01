@@ -185,10 +185,12 @@ class fs_user extends fs_model
       return $this->menu;
    }
    
-   public function have_access_to($page_name, $admin_page)
+   public function have_access_to($page_name, $admin_page=FALSE)
    {
       if( $this->admin )
+      {
          $status = TRUE;
+      }
       else
       {
          $status = FALSE;
@@ -202,6 +204,7 @@ class fs_user extends fs_model
             }
          }
       }
+      
       return $status;
    }
    

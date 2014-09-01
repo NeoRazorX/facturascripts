@@ -39,9 +39,9 @@ class admin_config2 extends fs_controller
       
       if( isset($_GET['reset']) )
       {
-         if( file_exists('tmp/config2.ini') )
+         if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
-            unlink('tmp/config2.ini');
+            unlink('tmp/'.FS_TMP_NAME.'config2.ini');
             $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'">aquí</a> para continuar.');
          }
       }
@@ -51,7 +51,7 @@ class admin_config2 extends fs_controller
       }
       else if($guardar)
       {
-         $file = fopen('tmp/config2.ini', 'w');
+         $file = fopen('tmp/'.FS_TMP_NAME.'config2.ini', 'w');
          if($file)
          {
             foreach($GLOBALS['config2'] as $i => $value)

@@ -25,7 +25,7 @@ class admin_paises extends fs_controller
 
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Paises', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Paises', 'admin', FALSE, TRUE);
    }
    
    protected function process()

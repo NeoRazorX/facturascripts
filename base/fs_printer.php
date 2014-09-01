@@ -30,13 +30,13 @@ class fs_printer
    {
       if($printer == 'remote-printer')
       {
-         $this->filename = 'tmp/remote-printer.txt';
+         $this->filename = 'tmp/'.FS_TMP_NAME.'remote-printer.txt';
          $this->file = fopen($this->filename, 'a');
          $this->print_command = 'remote-printer';
       }
       else
       {
-         $this->filename = 'tmp/ticket_'.$this->random_string().'.txt';
+         $this->filename = 'tmp/'.FS_TMP_NAME.'ticket_'.$this->random_string().'.txt';
          $this->file = fopen($this->filename, 'w');
          
          if($printer == '')

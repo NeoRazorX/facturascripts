@@ -54,11 +54,11 @@ class informe_errores extends fs_controller
       
       if( isset($_GET['cancelar']) )
       {
-         unlink('tmp/informe_errores.txt');
+         unlink('tmp/'.FS_TMP_NAME.'informe_errores.txt');
       }
-      else if( file_exists('tmp/informe_errores.txt') ) /// continua examinando
+      else if( file_exists('tmp/'.FS_TMP_NAME.'informe_errores.txt') ) /// continua examinando
       {
-         $file = fopen('tmp/informe_errores.txt', 'r+');
+         $file = fopen('tmp/'.FS_TMP_NAME.'informe_errores.txt', 'r+');
          if($file)
          {
             /*
@@ -136,7 +136,7 @@ class informe_errores extends fs_controller
       }
       else if( isset($_POST['modelo']) ) /// empieza a examinar
       {
-         $file = fopen('tmp/informe_errores.txt', 'w');
+         $file = fopen('tmp/'.FS_TMP_NAME.'informe_errores.txt', 'w');
          if($file)
          {
             $this->buttons[] = new fs_button_img('b_cancelar', 'Cancelar', 'remove.png', $this->url().'&cancelar=TRUE', TRUE);
