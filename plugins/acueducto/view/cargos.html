@@ -8,36 +8,29 @@
    ];
    function recalculo()
    {
-      var cantidad = parseFloat( $("#cantidad").val() );
-      
       conceptos.forEach(function(value) {
-         if( value[0] == $("#select_concepto").val() )
+         if( value[0] == $("#conceptos").val() )
          {
             $("#precio").val( value[1] );
-            precio = value[1];
-
+            $("#total").val( value[1] * parseFloat( $("#cantidad").val() ) );
          }
       });
-      
-      $("#total").val( precio * cantidad );
    }
    
    function recalculo_linea(num)
    {
-      var cantidad_linea = parseFloat( $("#cantidad_{num}").val() );
-      
       conceptos.forEach(function(value) {
-         if( value[0] == $("#select_concepto").val() )
+         if( value[0] == $("#conceptos_"+num).val() )
          {
-            $("#precio_{num}").val( value[1] );
-            precio_linea = value[1];
-
+            $("#precio_"+num).val( value[1] );
+            $("#total_"+num).val( value[1] * parseFloat( $("#cantidad_"+num).val() ) );
          }
       });
-      
-      $("#total_{num}").val( precio_linea * cantidad_linea );
    }
-   }
+   
+   $(document).ready(function() {
+      recalculo();
+   });
 </script>
 
 <div class="table-responsive">
@@ -74,7 +67,7 @@
                   </select>
                </td>
                <td>
-                  <select class="form-control" name="idconcepto" id="select_concepto">
+                  <select class="form-control" name="idconcepto" id="conceptos" onchange="recalculo()">
                      {loop="$fsc->concepto->all()"}
                      <option value="{$value->idconcepto}">{$value->descripcion}</option>
                      {/loop}
@@ -132,7 +125,7 @@
                     </select>
                 </td>
                <td>
-                    <select class="form-control" name="idconcepto" id="conceptos_{$counter}">
+                    <select class="form-control" name="idconcepto" id="conceptos_{$counter}" onchange="recalculo_linea('{$counter}')">
                     {loop="$fsc->concepto->all()"}
                        {if condition="$value2->idconcepto == $value1->idconcepto"}
                        <option value="{$value2->idconcepto}" selected="selected">{$value2->descripcion}</option>
@@ -143,13 +136,13 @@
                     </select>
                 </td>
                 <td>
-                    <input class="form-control text-right" type="text" step="any" name="precio" id="precio_{$counter}" value="{$fsc->show_precio($value->precio)}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
+                    <input class="form-control text-right" type="text" step="any" name="precio" id="precio_{$counter}" value="{$fsc->show_numero($value->precio)}" onchange="recalculo_linea('{$counter}')" onkeyup="recalculo_linea('{$counter}')" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="cantidad" id="cantidad_{$counter}" value="{$value->cantidad}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="cantidad" id="cantidad_{$counter}" value="{$value->cantidad}" onchange="recalculo_linea('{$counter}')" onkeyup="recalculo_linea('{$counter}')" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo_linea()" onkeyup="recalculo_linea()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo_linea('{$counter}')" onkeyup="recalculo_linea('{$counter}')" onclick="this.select()" />
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
