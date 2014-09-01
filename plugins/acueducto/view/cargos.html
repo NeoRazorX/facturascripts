@@ -50,13 +50,13 @@
                   </select>
                </td>
                <td>
-                  <input class="form-control text-right" type="text" name="precio" value="{$fsc->show_precio(0)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                  <input class="form-control text-right" type="text" name="precio" id="precio" value="{$fsc->show_precio(0)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
-                  <input class="form-control text-right" type="number" name="cantidad" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                  <input class="form-control text-right" type="number" name="cantidad" id="cantidad" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
-                  <input class="form-control text-right" type="number" name="total" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                  <input class="form-control text-right" type="number" name="total" id="total" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
                   <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/>
@@ -112,13 +112,13 @@
                     </select>
                 </td>
                 <td>
-                    <input class="form-control text-right" type="text" step="any" name="precio" value="{$fsc->show_precio($value->precio)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="text" step="any" name="precio" id="precio_{$counter}" value="{$fsc->show_precio($value->precio)}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="cantidad" value="{$value->cantidad}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="cantidad" id="cantidad_{$counter}" value="{$value->cantidad}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control text-right" type="number" name="total" value="{$value->total}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
+                    <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
