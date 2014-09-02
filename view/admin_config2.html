@@ -25,7 +25,15 @@
                <input class="form-control" type="number" name="nfactura_cli" value="{$GLOBALS['config2']['nfactura_cli']}"/>
             </div>
          </div>
-         
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-12">
+            <h2>Traducciones:</h2>
+         </div>
+      </div>
+      
+      <div class="row">
          {loop="$fsc->claves()"}
             {if condition="$value['nombre']!='zona_horaria'"}
             <div class="col-lg-2 col-md-2 col-sm-3">

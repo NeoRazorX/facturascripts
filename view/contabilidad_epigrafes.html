@@ -127,6 +127,13 @@
             <th class="text-right">Cuenta especial</th>
          </tr>
       </thead>
+      {loop="$fsc->epigrafe->hijos()"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codepigrafe}</a></td>
+         <td>{$value->descripcion}</td>
+         <td class="text-right">-</td>
+      </tr>
+      {/loop}
       {loop="$fsc->resultados"}
       <tr>
          <td><a href="{$value->url()}">{$value->codcuenta}</a></td>
@@ -174,6 +181,12 @@
             <th class="text-left">Descripción</th>
          </tr>
       </thead>
+      {loop="$fsc->super_epigrafes"}
+      <tr>
+         <td><a href="{$value->url()}">{$value->codepigrafe}</a></td>
+         <td>{$value->descripcion}</td>
+      </tr>
+      {/loop}
       {loop="$fsc->resultados"}
       <tr>
          <td><a href="{$value->url()}">{$value->codgrupo}</a></td>

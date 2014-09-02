@@ -28,6 +28,7 @@ class contabilidad_epigrafes extends fs_controller
    public $epigrafe;
    public $grupo;
    public $resultados;
+   public $super_epigrafes;
 
    public function __construct()
    {
@@ -40,6 +41,7 @@ class contabilidad_epigrafes extends fs_controller
       $this->ejercicio = new ejercicio();
       $grupo0 = new grupo_epigrafes();
       $epi0 = new epigrafe();
+      $this->super_epigrafes = array();;
 
       if( isset($_POST['ngrupo']) ) /// nuevo grupo
       {
@@ -196,8 +198,17 @@ class contabilidad_epigrafes extends fs_controller
       {
          /// configuramos la página previa
          $this->ppage = $this->page->get($this->page->name);
-         $this->ppage->title = 'Grupo: '.$this->epigrafe->codgrupo;
-         $this->ppage->extra_url = '&grupo='.$this->epigrafe->idgrupo;
+         
+         if( !is_null($this->epigrafe->idgrupo) )
+         {
+            $this->ppage->title = 'Grupo: '.$this->epigrafe->codgrupo;
+            $this->ppage->extra_url = '&grupo='.$this->epigrafe->idgrupo;
+         }
+         else if( !is_null($this->epigrafe->idpadre) )
+         {
+            $this->ppage->title = 'Padre';
+            $this->ppage->extra_url = '&epi='.$this->epigrafe->idpadre;
+         }
          
          $this->page->title = 'Epigrafe: '.$this->epigrafe->codepigrafe;
          $this->resultados = $this->epigrafe->get_cuentas();
@@ -209,12 +220,14 @@ class contabilidad_epigrafes extends fs_controller
          $this->grupo = FALSE;
          $this->epigrafe = FALSE;
          $this->resultados = $grupo0->all_from_ejercicio($this->codejercicio);
+         $this->super_epigrafes = $epi0->super_from_ejercicio($this->codejercicio);
       }
       else
       {
          $this->grupo = FALSE;
          $this->epigrafe = FALSE;
          $this->resultados = $grupo0->all_from_ejercicio($this->empresa->codejercicio);
+         $this->super_epigrafes = $epi0->super_from_ejercicio($this->empresa->codejercicio);
       }
    }
 }

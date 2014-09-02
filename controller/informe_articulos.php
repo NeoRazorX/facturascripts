@@ -76,8 +76,8 @@ class informe_articulos extends fs_controller
       if( !$toplist )
       {
          $articulo = new articulo();
-         $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas FROM ".
-                 $this->table_name." GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
+         $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as ventas
+            FROM lineasalbaranescli GROUP BY referencia ORDER BY ventas DESC", FS_ITEM_LIMIT, 0);
          if($lineas)
          {
             foreach($lineas as $l)
@@ -99,7 +99,7 @@ class informe_articulos extends fs_controller
       {
          $articulo = new articulo();
          $lineas = $this->db->select_limit("SELECT referencia, SUM(cantidad) as compras
-            FROM ".$this->table_name." GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
+            FROM lineasalbaranesprov GROUP BY referencia ORDER BY compras DESC", FS_ITEM_LIMIT, 0);
          if($lineas)
          {
             foreach($lineas as $l)
