@@ -16,6 +16,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>codagente</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>codalmacen</nombre>
       <tipo>character varying(4)</tipo>
       <nulo>YES</nulo>
@@ -132,6 +137,11 @@
       <nombre>observaciones</nombre>
       <tipo>text</tipo>
       <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>pagada</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>recfinanciero</nombre>

@@ -168,6 +168,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>pagada</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
       <nombre>porcomision</nombre>
       <tipo>double precision</tipo>
       <nulo>YES</nulo>

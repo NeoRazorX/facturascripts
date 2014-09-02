@@ -32,6 +32,7 @@ class factura_proveedor extends fs_model
 {
    public $automatica;
    public $cifnif;
+   public $codagente;
    public $codalmacen;
    public $coddivisa;
    public $codejercicio;
@@ -55,6 +56,7 @@ class factura_proveedor extends fs_model
    public $numero;
    public $numproveedor;
    public $observaciones;
+   public $pagada;
    public $recfinanciero;
    public $tasaconv;
    public $total;
@@ -71,6 +73,7 @@ class factura_proveedor extends fs_model
          $this->editable = $this->str2bool($f['editable']);
          $this->automatica = $this->str2bool($f['automatica']);
          $this->cifnif = $f['cifnif'];
+         $this->codagente = $f['codagente'];
          $this->codalmacen = $f['codalmacen'];
          $this->coddivisa = $f['coddivisa'];
          $this->codejercicio = $f['codejercicio'];
@@ -97,6 +100,7 @@ class factura_proveedor extends fs_model
          $this->numero = $f['numero'];
          $this->numproveedor = $f['numproveedor'];
          $this->observaciones = $this->no_html($f['observaciones']);
+         $this->pagada = $this->str2bool($f['pagada']);
          $this->recfinanciero = floatval($f['recfinanciero']);
          $this->tasaconv = floatval($f['tasaconv']);
          $this->total = floatval($f['total']);
@@ -110,6 +114,7 @@ class factura_proveedor extends fs_model
          $this->editable = TRUE;
          $this->automatica = FALSE;
          $this->cifnif = NULL;
+         $this->codagente = NULL;
          $this->codalmacen = NULL;
          $this->coddivisa = NULL;
          $this->codejercicio = NULL;
@@ -132,6 +137,7 @@ class factura_proveedor extends fs_model
          $this->numero = NULL;
          $this->numproveedor = NULL;
          $this->observaciones = NULL;
+         $this->pagada = FALSE;
          $this->recfinanciero = 0;
          $this->tasaconv = 1;
          $this->total = 0;
@@ -597,8 +603,10 @@ class factura_proveedor extends fs_model
             $sql = "UPDATE ".$this->table_name." SET deabono = ".$this->var2str($this->deabono).",
                codigo = ".$this->var2str($this->codigo).", automatica = ".$this->var2str($this->automatica).",
                total = ".$this->var2str($this->total).", neto = ".$this->var2str($this->neto).",
-               cifnif = ".$this->var2str($this->cifnif).", observaciones = ".$this->var2str($this->observaciones).",
-               idpagodevol = ".$this->var2str($this->idpagodevol).", codalmacen = ".$this->var2str($this->codalmacen).",
+               cifnif = ".$this->var2str($this->cifnif).", pagada = ".$this->var2str($this->pagada).",
+               observaciones = ".$this->var2str($this->observaciones).",
+               idpagodevol = ".$this->var2str($this->idpagodevol).", codagente = ".$this->var2str($this->codagente).",
+               codalmacen = ".$this->var2str($this->codalmacen).",
                irpf = ".$this->var2str($this->irpf).", totaleuros = ".$this->var2str($this->totaleuros).",
                nombre = ".$this->var2str($this->nombre).", codpago = ".$this->var2str($this->codpago).",
                codproveedor = ".$this->var2str($this->codproveedor).", idfacturarect = ".$this->var2str($this->idfacturarect).",
@@ -616,13 +624,13 @@ class factura_proveedor extends fs_model
          {
             $this->new_idfactura();
             $this->new_codigo();
-            $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,observaciones,
-               idpagodevol,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
+            $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,pagada,observaciones,
+               idpagodevol,codagente,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
                idfactura,codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
                recfinanciero,nogenerarasiento,totalrecargo,fecha,hora,editable) VALUES (".$this->var2str($this->deabono).",
                ".$this->var2str($this->codigo).",".$this->var2str($this->automatica).",".$this->var2str($this->total).",
-               ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",
-               ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",
+               ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",".$this->var2str($this->pagada).",
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",".$this->var2str($this->codagente).",
                ".$this->var2str($this->codalmacen).",".$this->var2str($this->irpf).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->nombre).",".$this->var2str($this->codpago).",".$this->var2str($this->codproveedor).",
                ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",
