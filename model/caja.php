@@ -33,6 +33,8 @@ class caja extends fs_model
    public $fecha_fin;
    public $dinero_fin;
    public $tickets;
+   public $ip;
+   
    public $agente;
    
    private static $agentes;
@@ -59,6 +61,10 @@ class caja extends fs_model
          $this->dinero_fin = floatval($c['d_fin']);
          $this->codagente = $c['codagente'];
          $this->tickets = intval($c['tickets']);
+         
+         $this->ip = NULL;
+         if( isset($c['ip']) )
+            $this->ip = $c['ip'];
          
          foreach(self::$agentes as $ag)
          {
@@ -87,6 +93,10 @@ class caja extends fs_model
          $this->dinero_fin = 0;
          $this->tickets = 0;
          
+         $this->ip = NULL;
+         if( isset($_SERVER['REMOTE_ADDR']) )
+            $this->ip = $_SERVER['REMOTE_ADDR'];
+         
          $this->agente = NULL;
       }
    }
@@ -99,7 +109,9 @@ class caja extends fs_model
    public function show_fecha_fin()
    {
       if( is_null($this->fecha_fin) )
+      {
          return '-';
+      }
       else
          return $this->fecha_fin;
    }
@@ -112,20 +124,22 @@ class caja extends fs_model
    public function exists()
    {
       if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function get($id)
    {
       if( isset($id) )
       {
-         $caja = $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($id).";");
+         $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
          if($caja)
+         {
             return new caja($caja[0]);
+         }
          else
             return FALSE;
       }
@@ -135,19 +149,13 @@ class caja extends fs_model
    
    public function get_last_from_this_server()
    {
-      $caja = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
+      $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
       if($caja)
+      {
          return new caja($caja[0]);
+      }
       else
          return FALSE;
-   }
-   
-   public function new_id()
-   {
-      $newid = $this->db->nextval($this->table_name.'_id_seq');
-      if($newid)
-         $this->id = intval($newid);
    }
    
    public function test()
@@ -160,21 +168,29 @@ class caja extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET fs_id = ".$this->var2str($this->fs_id).",
-            codagente = ".$this->var2str($this->codagente).",
+            codagente = ".$this->var2str($this->codagente).", ip = ".$this->var2str($this->ip).",
             f_inicio = ".$this->var2str($this->fecha_inicial).", d_inicio = ".$this->var2str($this->dinero_inicial).",
             f_fin = ".$this->var2str($this->fecha_fin).", d_fin = ".$this->var2str($this->dinero_fin).",
             tickets = ".$this->var2str($this->tickets)." WHERE id = ".$this->var2str($this->id).";";
+         
+         return $this->db->exec($sql);
       }
       else
       {
-         $this->new_id();
-         $sql = "INSERT INTO ".$this->table_name." (id,fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets) VALUES
-            (".$this->var2str($this->id).",".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".
+         $sql = "INSERT INTO ".$this->table_name." (fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets,ip) VALUES
+            (".$this->var2str($this->fs_id).",".$this->var2str($this->codagente).",".
             $this->var2str($this->fecha_inicial).",".$this->var2str($this->dinero_inicial).",
             ".$this->var2str($this->fecha_fin).",".$this->var2str($this->dinero_fin).",
-            ".$this->var2str($this->tickets).");";
+            ".$this->var2str($this->tickets).",".$this->var2str($this->ip).");";
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->id = $this->db->lastval();
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()

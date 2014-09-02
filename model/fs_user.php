@@ -113,7 +113,9 @@ class fs_user extends fs_model
    public function url()
    {
       if( is_null($this->nick) )
+      {
          return 'index.php?page=admin_users';
+      }
       else
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
@@ -121,9 +123,13 @@ class fs_user extends fs_model
    public function get_agente()
    {
       if( isset($this->agente) )
+      {
          return $this->agente;
+      }
       else if( is_null($this->codagente) )
+      {
          return FALSE;
+      }
       else
       {
          $agente = new agente();
@@ -134,7 +140,11 @@ class fs_user extends fs_model
             return $this->agente;
          }
          else
+         {
+            $this->codagente = NULL;
+            $this->save();
             return FALSE;
+         }
       }
    }
    
@@ -142,7 +152,9 @@ class fs_user extends fs_model
    {
       $agente = $this->get_agente();
       if($agente)
+      {
          return $agente->get_fullname();
+      }
       else
          return '-';
    }
@@ -151,7 +163,9 @@ class fs_user extends fs_model
    {
       $agente = $this->get_agente();
       if($agente)
+      {
          return $agente->url();
+      }
       else
          return '#';
    }
@@ -164,7 +178,9 @@ class fs_user extends fs_model
          $page = new fs_page();
          
          if( $this->admin )
+         {
             $this->menu = $page->all();
+         }
          else
          {
             $access = new fs_access();

@@ -48,6 +48,11 @@
       <default>0</default>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>ip</nombre>
+      <tipo>character varying(40)</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>cajas_pkey</nombre>
       <consulta>PRIMARY KEY (id)</consulta>
