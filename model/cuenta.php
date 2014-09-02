@@ -70,6 +70,30 @@ class cuenta extends fs_model
       return '';
    }
    
+   /**
+    * Sobreescribimos esta función para poder buscar y solucionar bugs de eneboo.
+    */
+   protected function check_table($table_name)
+   {
+      if( $this->db->table_exists($table_name) AND $this->db->table_exists('co_epigrafes') )
+      {
+         $problematicos = $this->db->select("select * from ".$table_name." where idepigrafe not in
+            (select idepigrafe from co_epigrafes);");
+         foreach($problematicos as $pro)
+         {
+            $solucion = $this->db->select("select * from co_epigrafes where codejercicio = '".$pro['codejercicio']."'
+               and codepigrafe = '".$pro['codepigrafe']."';");
+            if($solucion)
+            {
+               $this->db->exec("update ".$table_name." set idepigrafe = '".$solucion[0]['idepigrafe']."'
+                  where idcuenta = '".$pro['idcuenta']."';");
+            }
+         }
+      }
+      
+      return parent::check_table($table_name);
+   }
+   
    public function url()
    {
       if( is_null($this->idcuenta) )

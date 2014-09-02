@@ -56,10 +56,12 @@ class grupo_epigrafes extends fs_model
    
    public function url()
    {
-      if( isset($this->idgrupo) )
-         return 'index.php?page=contabilidad_epigrafes&grupo='.$this->idgrupo;
-      else
+      if( is_null($this->idgrupo) )
+      {
          return 'index.php?page=contabilidad_epigrafes';
+      }
+      else
+         return 'index.php?page=contabilidad_epigrafes&grupo='.$this->idgrupo;
    }
    
    public function get_epigrafes()
@@ -221,7 +223,7 @@ class epigrafe extends fs_model
       return '';
    }
    
-   /*
+   /**
     * Sobreescribimos check_table para poder ejecutar el código necesario
     * para enlazar los epigrafes con su grupo correspondiente, y así solucionar
     * este bug de los tiempos de facturalux
@@ -246,10 +248,12 @@ class epigrafe extends fs_model
    
    public function url()
    {
-      if( isset($this->idepigrafe) )
-         return 'index.php?page=contabilidad_epigrafes&epi='.$this->idepigrafe;
-      else
+      if( is_null($this->idepigrafe) )
+      {
          return 'index.php?page=contabilidad_epigrafes';
+      }
+      else
+         return 'index.php?page=contabilidad_epigrafes&epi='.$this->idepigrafe;
    }
    
    public function get_cuentas()

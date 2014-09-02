@@ -71,8 +71,6 @@ class admin_info extends fs_controller
          {
             $this->new_message("Cache limpiada correctamente.");
          }
-         else
-            $this->new_error_msg("¡Imposible limpiar la cache!");
       }
       
       if(FS_LCD != '')
