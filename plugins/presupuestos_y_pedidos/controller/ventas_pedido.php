@@ -183,6 +183,7 @@ class ventas_pedido extends fs_controller
    {
       $this->pedido->hora = $_POST['hora'];
       $this->pedido->observaciones = $_POST['observaciones'];
+      $this->pedido->numero2 = $_POST['numero2'];
       
       if( is_null($this->pedido->idalbaran) )
       {
@@ -425,6 +426,7 @@ class ventas_pedido extends fs_controller
       $albaran->provincia = $this->pedido->provincia;
       $albaran->total = $this->pedido->total;
       $albaran->totaliva = $this->pedido->totaliva;
+      $albaran->numero2 = $this->pedido->numero2;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($albaran->codejercicio);
@@ -474,7 +476,7 @@ class ventas_pedido extends fs_controller
             $this->pedido->idalbaran = $albaran->idalbaran;
             if( $this->pedido->save() )
             {
-               $this->new_message(ucfirst(FS_ALBARAN).' generado correctamente.');
+               $this->new_message("<a href='".$albaran->url()."'>".ucfirst(FS_ALBARAN).'</a> generado correctamente.');
             }
             else
             {

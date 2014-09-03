@@ -425,6 +425,7 @@ class ventas_albaran extends fs_controller
       $factura->provincia = $this->albaran->provincia;
       $factura->total = $this->albaran->total;
       $factura->totaliva = $this->albaran->totaliva;
+      $factura->numero2 = $this->albaran->numero2;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($factura->codejercicio);

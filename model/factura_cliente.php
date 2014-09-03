@@ -36,6 +36,12 @@ class factura_cliente extends fs_model
    public $idfacturarect;
    public $codigo;
    public $numero;
+   
+   /**
+    * Número opcional a disposición del usuario.
+    * @var type 
+    */
+   public $numero2;
    public $codigorect;
    public $codejercicio;
    public $codserie;
@@ -83,6 +89,7 @@ class factura_cliente extends fs_model
          $this->idfacturarect = $this->intval($f['idfacturarect']);
          $this->codigo = $f['codigo'];
          $this->numero = $f['numero'];
+         $this->numero2 = $f['numero2'];
          $this->codigorect = $f['codigorect'];
          $this->codejercicio = $f['codejercicio'];
          $this->codserie = $f['codserie'];
@@ -131,6 +138,7 @@ class factura_cliente extends fs_model
          $this->idfacturarect = NULL;
          $this->codigo = NULL;
          $this->numero = NULL;
+         $this->numero2 = NULL;
          $this->codigorect = NULL;
          $this->codejercicio = NULL;
          $this->codserie = NULL;
@@ -651,6 +659,7 @@ class factura_cliente extends fs_model
             $sql = "UPDATE ".$this->table_name." SET idasiento = ".$this->var2str($this->idasiento).",
                idpagodevol = ".$this->var2str($this->idpagodevol).", idfacturarect = ".$this->var2str($this->idfacturarect).",
                codigo = ".$this->var2str($this->codigo).", numero = ".$this->var2str($this->numero).",
+               numero2 = ".$this->var2str($this->numero2).",
                codigorect = ".$this->var2str($this->codigorect).", codejercicio = ".$this->var2str($this->codejercicio).",
                codserie = ".$this->var2str($this->codserie).", codalmacen = ".$this->var2str($this->codalmacen).",
                codpago = ".$this->var2str($this->codpago).", coddivisa = ".$this->var2str($this->coddivisa).",
@@ -680,7 +689,7 @@ class factura_cliente extends fs_model
                codigorect,codejercicio,codserie,codalmacen,codpago,coddivisa,fecha,codcliente,nombrecliente,
                cifnif,direccion,ciudad,provincia,apartado,coddir,codpostal,codpais,codagente,neto,totaliva,total,totaleuros,
                irpf,totalirpf,porcomision,tasaconv,recfinanciero,totalrecargo,pagada,observaciones,deabono,automatica,editable,
-               nogenerarasiento,hora) VALUES (".$this->var2str($this->idasiento).",
+               nogenerarasiento,hora,numero2) VALUES (".$this->var2str($this->idasiento).",
                ".$this->var2str($this->idpagodevol).",".$this->var2str($this->idfacturarect).",".$this->var2str($this->codigo).",
                ".$this->var2str($this->numero).",".$this->var2str($this->codigorect).",".$this->var2str($this->codejercicio).",
                ".$this->var2str($this->codserie).",".$this->var2str($this->codalmacen).",".$this->var2str($this->codpago).",
@@ -695,7 +704,7 @@ class factura_cliente extends fs_model
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->totalrecargo).",".$this->var2str($this->pagada).",
                ".$this->var2str($this->observaciones).",
                ".$this->var2str($this->deabono).",".$this->var2str($this->automatica).",".$this->var2str($this->editable).",
-               ".$this->var2str($this->nogenerarasiento).",".$this->var2str($this->hora).");";
+               ".$this->var2str($this->nogenerarasiento).",".$this->var2str($this->hora).",".$this->var2str($this->numero2).");";
             
             if( $this->db->exec($sql) )
             {
@@ -773,20 +782,6 @@ class factura_cliente extends fs_model
       return $faclist;
    }
    
-   public function all_from_mes($mes)
-   {
-      $faclist = array();
-      $facturas = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE to_char(fecha,'yyyy-mm') = ".$this->var2str($mes).
-         " ORDER BY codigo ASC;");
-      if($facturas)
-      {
-         foreach($facturas as $f)
-            $faclist[] = new factura_cliente($f);
-      }
-      return $faclist;
-   }
-   
    public function all_desde($desde, $hasta)
    {
       $faclist = array();
@@ -808,8 +803,10 @@ class factura_cliente extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
-         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
+      {
+         $consulta .= "codigo LIKE '%".$query."%' OR numero2 LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN ".($query-.01)." AND ".($query+.01);
+      }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
          $consulta .= "fecha = ".$this->var2str($query)." OR observaciones LIKE '%".$query."%'";
       else

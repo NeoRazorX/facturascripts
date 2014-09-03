@@ -240,7 +240,7 @@ class ventas_presupuestos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de clientes';
+         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de cliente';
          $fsext->save();
       }
       
@@ -250,7 +250,7 @@ class ventas_presupuestos extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de clientes';
+         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de cliente';
          $fsext->save();
       }
    }

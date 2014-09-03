@@ -193,7 +193,7 @@ class ventas_facturas extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = 'Facturas de clientes';
+         $fsext->text = 'Facturas de cliente';
          $fsext->save();
       }
       
@@ -203,7 +203,7 @@ class ventas_facturas extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = 'Facturas de clientes';
+         $fsext->text = 'Facturas de cliente';
          $fsext->save();
       }
    }

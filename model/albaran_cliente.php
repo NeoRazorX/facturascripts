@@ -44,7 +44,7 @@ class albaran_cliente extends fs_model
    public $numero;
    
    /**
-    * Número del albarán en papel (opcional).
+    * Número opcional a disposición del usuario.
     * @var type 
     */
    public $numero2;

@@ -80,7 +80,7 @@
       <thead>
          <tr>
             <th></th>
-            <th class="text-left">Código</th>
+            <th class="text-left">Código + Número 2</th>
             <th class="text-left">Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
@@ -89,13 +89,13 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
          <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>
             {/if}
          </td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>

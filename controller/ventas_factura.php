@@ -51,6 +51,7 @@ class ventas_factura extends fs_controller
          $factura = new factura_cliente();
          $this->factura = $factura->get($_POST['idfactura']);
          $this->factura->observaciones = $_POST['observaciones'];
+         $this->factura->numero2 = $_POST['numero2'];
          
          $this->cambiar_numero_factura();
          

@@ -106,7 +106,10 @@
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
          <div class="col-lg-10 col-md-10 col-sm-10">
-            <h3 style="margin: 0px;"><a href="{$fsc->pedido->cliente_url()}">{$fsc->pedido->nombrecliente}</a></h3>
+            <h3 style="margin: 0px;">
+               <span class="text-capitalize">{#FS_PEDIDO#}</span> de
+               <a href="{$fsc->pedido->cliente_url()}">{$fsc->pedido->nombrecliente}</a>
+            </h3>
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
@@ -120,6 +123,12 @@
             <div class="form-group">
                Número:
                <div class="form-control">{$fsc->pedido->numero}</div>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
+               Número 2:
+               <input class="form-control" type="text" name="numero2" value="{$fsc->pedido->numero2}"/>
             </div>
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2">

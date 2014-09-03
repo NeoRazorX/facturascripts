@@ -153,6 +153,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>numero2</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>observaciones</nombre>
       <tipo>text</tipo>
       <nulo>YES</nulo>
@@ -205,5 +210,21 @@
    <restriccion>
       <nombre>presupuestoscli_pkey</nombre>
       <consulta>PRIMARY KEY (idpresupuesto)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_presupuestoscli_series</nombre>
+      <consulta>FOREIGN KEY (codserie)
+      REFERENCES series (codserie)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_presupuestoscli_ejercicios</nombre>
+      <consulta>FOREIGN KEY (codejercicio)
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>uniq_codigo_presupuestoscli</nombre>
+      <consulta>UNIQUE (codigo)</consulta>
    </restriccion>
 </tabla>

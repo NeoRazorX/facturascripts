@@ -693,11 +693,11 @@ class factura_proveedor extends fs_model
       return $faclist;
    }
    
-   public function all_from_proveedor($codproveedor, $offset=0)
+   public function all_from_agente($codagente, $offset=0)
    {
       $faclist = array();
       $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-         " WHERE codproveedor = ".$this->var2str($codproveedor).
+         " WHERE codagente = ".$this->var2str($codagente).
          " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
@@ -707,12 +707,12 @@ class factura_proveedor extends fs_model
       return $faclist;
    }
    
-   public function all_from_mes($mes)
+   public function all_from_proveedor($codproveedor, $offset=0)
    {
       $faclist = array();
-      $facturas = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE to_char(fecha,'yyyy-mm') = ".$this->var2str($mes).
-         " ORDER BY codigo ASC;");
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+         " WHERE codproveedor = ".$this->var2str($codproveedor).
+         " ORDER BY fecha DESC, codigo DESC", FS_ITEM_LIMIT, $offset);
       if($facturas)
       {
          foreach($facturas as $f)

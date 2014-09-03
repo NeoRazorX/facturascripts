@@ -46,6 +46,12 @@ class pedido_cliente extends fs_model
    public $coddir;
    public $codpostal;
    public $numero;
+   
+   /**
+    * Número opcional a disposición del usuario.
+    * @var type 
+    */
+   public $numero2;
    public $nombrecliente;
    public $cifnif;
    public $direccion;
@@ -89,6 +95,7 @@ class pedido_cliente extends fs_model
          $this->coddir = $p['coddir'];
          $this->codpostal = $p['codpostal'];
          $this->numero = $p['numero'];
+         $this->numero2 = $p['numero2'];
          $this->nombrecliente = $p['nombrecliente'];
          $this->cifnif = $p['cifnif'];
          $this->direccion = $p['direccion'];
@@ -136,6 +143,7 @@ class pedido_cliente extends fs_model
          $this->coddir = NULL;
          $this->codpostal = '';
          $this->numero = NULL;
+         $this->numero2 = NULL;
          $this->nombrecliente = NULL;
          $this->cifnif = NULL;
          $this->direccion = NULL;
@@ -196,16 +204,9 @@ class pedido_cliente extends fs_model
    public function albaran_url()
    {
       if( is_null($this->idalbaran) )
-      {
-         return '#';
-      }
+         return 'index.php?page=ventas_albaran';
       else
-      {
-         if( is_null($this->idalbaran) )
-            return 'index.php?page=ventas_albaran';
-         else
-            return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
-      }
+         return 'index.php?page=ventas_albaran&id='.$this->idalbaran;
    }
    
    public function agente_url()
@@ -306,6 +307,7 @@ class pedido_cliente extends fs_model
                fechasalida = ".$this->var2str($this->fechasalida).", idalbaran = ".$this->var2str($this->idalbaran).",
                irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
                nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
+               numero2 = ".$this->var2str($this->numero2).",
                observaciones = ".$this->var2str($this->observaciones).", porcomision = ".$this->var2str($this->porcomision).",
                provincia = ".$this->var2str($this->provincia).", recfinanciero = ".$this->var2str($this->recfinanciero).",
                servido = ".$this->var2str($this->servido).", tasaconv = ".$this->var2str($this->tasaconv).",
@@ -321,7 +323,7 @@ class pedido_cliente extends fs_model
                codcliente,coddir,coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,
                direccion,editable,fecha,hora,fechasalida,idalbaran,irpf,neto,nombrecliente,
                numero,observaciones,porcomision,provincia,recfinanciero,servido,tasaconv,total,totaleuros,
-               totalirpf,totaliva,totalrecargo) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
+               totalirpf,totaliva,totalrecargo,numero2) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->ciudad).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
                ".$this->var2str($this->codcliente).",".$this->var2str($this->coddir).",".$this->var2str($this->coddivisa).",
                ".$this->var2str($this->codejercicio).",".$this->var2str($this->codigo).",".$this->var2str($this->codpago).",
@@ -332,7 +334,8 @@ class pedido_cliente extends fs_model
                ".$this->var2str($this->numero).",".$this->var2str($this->observaciones).",".$this->var2str($this->porcomision).",
                ".$this->var2str($this->provincia).",".$this->var2str($this->recfinanciero).",".$this->var2str($this->servido).",
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",".$this->var2str($this->totaleuros).",
-               ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).");";
+               ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->totalrecargo).",
+               ".$this->var2str($this->numero2).");";
             
             if( $this->db->exec($sql) )
             {
@@ -435,7 +438,7 @@ class pedido_cliente extends fs_model
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
       {
-         $consulta .= "codigo LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
+         $consulta .= "codigo LIKE '%".$query."%' OR numero2 LIKE '%".$query."%' OR observaciones LIKE '%".$query."%'
             OR total BETWEEN '".($query-.01)."' AND '".($query+.01)."'";
       }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) ) /// es una fecha

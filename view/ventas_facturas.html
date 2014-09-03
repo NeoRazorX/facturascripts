@@ -47,7 +47,8 @@
       <thead>
          <tr>
             <th></th>
-            <th class="text-left">Código + Cliente</th>
+            <th class="text-left">Código + Número 2</th>
+            <th class="text-left">Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
             <th class="text-right">Fecha</th>
@@ -60,8 +61,12 @@
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
             {/if}
+            {if condition="$value->pagada"}
+            <span class="glyphicon glyphicon-usd" title="La factura está pagada"></span>
+            {/if}
          </td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+         <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha}</td>

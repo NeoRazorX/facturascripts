@@ -120,6 +120,7 @@
       <div class="row">
          <div class="col-lg-10 col-md-10 col-sm-10">
             <h3 style="margin: 10px 0px 10px 0px;">
+               Factura de
                <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a>
             </h3>
          </div>
@@ -139,6 +140,12 @@
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
+               Número 2:
+               <input class="form-control" type="text" name="numero2" value="{$fsc->factura->numero2}"/>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
                Serie:
                <div class="form-control">{$fsc->factura->codserie}</div>
             </div>
@@ -149,14 +156,14 @@
                <div class="form-control">{$fsc->factura->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->factura->fecha}"/>
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Agente:
                <div class="form-control">
@@ -253,7 +260,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

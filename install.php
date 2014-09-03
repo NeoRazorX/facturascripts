@@ -396,6 +396,7 @@ $system_info = str_replace('"', "'", $system_info);
                      <div class="form-group col-lg-3 col-md-3 col-sm-3">
                         Cantidad de Decimales:
                         <select name="num_nf0" class="form-control">
+                           <option value="0">0</option>
                            <option value="1">1</option>
                            <option value="2" selected="selected">2</option>
                            <option value="3">3</option>

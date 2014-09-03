@@ -183,6 +183,7 @@ class ventas_presupuesto extends fs_controller
    {
       $this->presupuesto->hora = $_POST['hora'];
       $this->presupuesto->observaciones = $_POST['observaciones'];
+      $this->presupuesto->numero2 = $_POST['numero2'];
       
       if( is_null($this->presupuesto->idpedido) )
       {
@@ -425,6 +426,7 @@ class ventas_presupuesto extends fs_controller
       $pedido->provincia = $this->presupuesto->provincia;
       $pedido->total = $this->presupuesto->total;
       $pedido->totaliva = $this->presupuesto->totaliva;
+      $pedido->numero2 = $this->presupuesto->numero2;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($pedido->codejercicio);
@@ -474,7 +476,7 @@ class ventas_presupuesto extends fs_controller
             $this->presupuesto->idpedido = $pedido->idpedido;
             if( $this->presupuesto->save() )
             {
-               $this->new_message(ucfirst(FS_PEDIDO).' generado correctamente.');
+               $this->new_message("<a href='".$pedido->url()."'>".ucfirst(FS_PEDIDO).'</a> generado correctamente.');
             }
             else
             {

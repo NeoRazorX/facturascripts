@@ -280,8 +280,7 @@ class nueva_venta extends fs_controller
          $albaran->coddivisa = $divisa->coddivisa;
          $albaran->tasaconv = $divisa->tasaconv;
          $albaran->codagente = $this->agente->codagente;
-         if( isset($_POST['numero2']) )
-            $albaran->numero2 = $_POST['numero2'];
+         $albaran->numero2 = $_POST['numero2'];
          $albaran->observaciones = $_POST['observaciones'];
          
          foreach($cliente->get_direcciones() as $d)
@@ -482,6 +481,7 @@ class nueva_venta extends fs_controller
          $factura->tasaconv = $divisa->tasaconv;
          $factura->codagente = $this->agente->codagente;
          $factura->observaciones = $_POST['observaciones'];
+         $factura->numero2 = $_POST['numero2'];
          
          foreach($cliente->get_direcciones() as $d)
          {

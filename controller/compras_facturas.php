@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('agente.php');
 require_model('articulo.php');
 require_model('factura_proveedor.php');
 require_model('fs_extension.php');
@@ -24,6 +25,7 @@ require_model('proveedor.php');
 
 class compras_facturas extends fs_controller
 {
+   public $agente;
    public $articulo;
    public $factura;
    public $offset;
@@ -43,7 +45,18 @@ class compras_facturas extends fs_controller
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       
-      if( isset($_GET['codproveedor']) )
+      if( isset($_GET['codagente']) )
+      {
+         $this->template = 'extension/compras_facturas_agente';
+         $this->ppage = clone $this->page;
+         $this->page->show_on_menu = FALSE;
+         $this->page->title = 'Filtro: agente';
+         
+         $agente = new agente();
+         $this->agente = $agente->get($_GET['codagente']);
+         $this->resultados = $this->factura->all_from_agente($_GET['codagente'], $this->offset);
+      }
+      else if( isset($_GET['codproveedor']) )
       {
          $this->template = 'extension/compras_facturas_proveedor';
          $this->ppage = clone $this->page;
@@ -165,13 +178,23 @@ class compras_facturas extends fs_controller
          $fsext->save();
       }
       
+      if( !$fsext0->get_by(__CLASS__, 'admin_agente') )
+      {
+         $fsext = new fs_extension();
+         $fsext->from = __CLASS__;
+         $fsext->to = 'admin_agente';
+         $fsext->type = 'button';
+         $fsext->text = 'Facturas de proveedor';
+         $fsext->save();
+      }
+      
       if( !$fsext0->get_by(__CLASS__, 'ventas_articulo') )
       {
          $fsext = new fs_extension();
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = 'Facturas de proveedores';
+         $fsext->text = 'Facturas de proveedor';
          $fsext->save();
       }
    }

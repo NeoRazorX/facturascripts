@@ -251,7 +251,7 @@ class ventas_albaranes extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'admin_agente';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_ALBARANES).' de clientes';
+         $fsext->text = ucfirst(FS_ALBARANES).' de cliente';
          $fsext->save();
       }
       
@@ -261,7 +261,7 @@ class ventas_albaranes extends fs_controller
          $fsext->from = __CLASS__;
          $fsext->to = 'ventas_articulo';
          $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_ALBARANES).' de clientes';
+         $fsext->text = ucfirst(FS_ALBARANES).' de cliente';
          $fsext->save();
       }
    }

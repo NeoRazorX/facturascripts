@@ -163,6 +163,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>numero2</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>observaciones</nombre>
       <tipo>text</tipo>
       <nulo>YES</nulo>

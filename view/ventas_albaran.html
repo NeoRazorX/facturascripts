@@ -107,7 +107,10 @@
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
          <div class="col-lg-10 col-md-10 col-sm-10">
-            <h3 style="margin: 0px;"><a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a></h3>
+            <h3 style="margin: 0px;">
+               <span class="text-capitalize">{#FS_ALBARAN#}</span> de
+               <a href="{$fsc->albaran->cliente_url()}">{$fsc->albaran->nombrecliente}</a>
+            </h3>
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
