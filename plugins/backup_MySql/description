@@ -1,5 +1,4 @@
-Este Plugin habilita el respaldo de nuestra Base de Datos <b>MySQL</b> con diferentes opciones configurables y guarda una copia del archivo del Backup comprimido en formato <b>GZIP</b> en la carpeta 'tmp/bkms___{Nombre de nuestra BD}/' de nuestro Servidor, con el siguiente formato:
-}
+Este Plugin habilita el respaldo de nuestra Base de Datos <b>MySQL</b> con diferentes opciones configurables y guarda una copia del archivo del Backup comprimido en formato <b>GZIP</b> en la carpeta 'tmp/{Nombre Aleatorio 10 Caracteres Letras-Numeros}/bkms___{Nombre de nuestra BD}/' de nuestro Servidor, con el siguiente formato:
 <br/><br/>
 <i>(fecha)_(hora)_(Opciones del Backup)_FacturaSctipts_V(version).sql.gz</i>
 <br/><br/>
@@ -10,5 +9,5 @@ Este Plugin habilita el respaldo de nuestra Base de Datos <b>MySQL</b> con difer
 - (SE) Estructura de Tablas seleccionadas de forma individual.<br/>
 - (SED) Estructura+Datos de Tablas seleccionadas de forma individual.<br/>
 <br/>
-<b>Advertencia:</b> Periodicamente deberemos de prestar atención al tamaño de la carpeta 'tmp/bkms___{Nombre de nuestra BD}/' e ir eliminando las copias que no necesitemos de forma manual para liberar espacio en el servidor.<br/><br/>
+<b>Advertencia:</b> Periodicamente deberemos de prestar atención al tamaño de la carpeta 'tmp/{Nombre Aleatorio 10 Caracteres Letras-Numeros}/bkms___{Nombre de nuestra BD}/' e ir eliminando las copias que no necesitemos de forma manual para liberar espacio en el servidor.<br/><br/>
 <b>NOTA:</b> Trabaja exclusivamente con Bases de Datos del tipo <u><b>MYSQL</b></u> 

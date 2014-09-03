@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2014  Valentín González        valengon@gmail.com
+ * Copyright (C) 2014  Valentín González   	valengon@gmail.com
  * Copyright (C) 2014  Carlos Garcia Gomez      neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('CAR_BK_MS', 'tmp/bkms___' . FS_DB_NAME . '/'); /// Ruta para las Copias de Respaldo
+ 
+/// Ruta para las Copias de Respaldo
+if( !defined('FS_TMP_NAME') ) { define('FS_TMP_NAME', ''); }
+define('CAR_BK_MS', 'tmp'. DIRECTORY_SEPARATOR . FS_TMP_NAME . 'bkms___' . FS_DB_NAME . DIRECTORY_SEPARATOR );
 
 class backupms extends fs_controller
 {
@@ -34,8 +37,9 @@ class backupms extends fs_controller
 		
 		if( strtolower(FS_DB_TYPE) == 'mysql' )
 		{
-			if( isset($_GET['take_bk']) ) // Descargar Archivo del Backup
+			if( isset($_GET['take_bk']) )
 			{
+				// Descargar Archivo del Backup
 				$this->baja_backup($_GET['take_bk']);
 			}
 			$this->cerrado = false;		
@@ -48,87 +52,82 @@ class backupms extends fs_controller
 	
 	public function backup_mysql_ms()
 	{
-      if( isset($_POST['tipo_backup']) ) // Gestion de la/s Tabla/s Seleccionada/s
-      {
-		$this->cerrado = true;		
-		if( isset($_POST['enabled']) )
-		{
-			if ($_POST['tipo_backup'] == 'selestructura')
-			{
-				if ($salida = $this->accion_copiaseg($_POST['enabled'], true, 'SE')) // SE =  Tablas Seleccionadas+Estructura
-				{
-					$salida = str_replace( CAR_BK_MS ,'',$salida);
-					$this->new_message('(Backup Selectivo de Tablas): Respaldo de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
-					$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
-				} else {
-					$this->new_error_msg('ERROR con Backup Selectivo de Tablas: No se ha podido realizar el Respaldo de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .').');
-				}
-			}
-			if ($_POST['tipo_backup'] == 'seltodo')
-			{
-				if ($salida = $this->accion_copiaseg($_POST['enabled'], false, 'SED')) // SED =  Tablas Seleccionadas+Estructura+Datos
-				{
-					$salida = str_replace( CAR_BK_MS ,'',$salida);				
-					$this->new_message('(Backup Selectivo de Tablas): Respaldo de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
-					$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
-				} else {
-					$this->new_error_msg('ERROR con Backup Selectivo de Tablas: No se ha podido realizar el Respaldo de la Bases de Datos MySQL ('. FS_DB_NAME .').');
-				}
-			}
-		} else {
-			$this->new_error_msg('ERROR: No se ha seleccionado ninguna tabla para realizar el Respaldo Selectivo de la Bases de Datos MySQL ('. FS_DB_NAME .').');
-		}
-	  }
-      elseif( isset($_GET['tipo_backup']) ) // Gestion de la Base de Datos Completa
+      if( isset($_GET['tipo_backup']) )
       {
 		$this->cerrado = true;
-		if ($_GET['tipo_backup'] == 'estructura')
-		{
-			if ($salida = $this->accion_copiaseg(array(), true, 'CE')) // CE =  BD Completa+Estructura
+		if ($_GET['tipo_backup'] == 'selestructura' || $_GET['tipo_backup'] == 'seltodo')
+		{		
+			// Gestion de la/s Tabla/s Seleccionada/s
+			if( isset($_POST['enabled']) )
 			{
-				$salida = str_replace( CAR_BK_MS ,'',$salida);				
-				$this->new_message('(Base de Datos Estructura): Respaldo COMPLETO de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
-				$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
+				if ($_GET['tipo_backup'] == 'selestructura')
+				{
+					if ($salida = $this->accion_copiaseg($_POST['enabled'], true, 'SE')) // SE =  Tablas Seleccionadas+Estructura
+					{
+						$salida = str_replace( CAR_BK_MS ,'',$salida);
+						$this->new_message('(Backup Selectivo de Tablas): Respaldo de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
+						$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
+					} else {
+						$this->new_error_msg('ERROR con Backup Selectivo de Tablas: No se ha podido realizar el Respaldo de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+					}
+				}
+				if ($_GET['tipo_backup'] == 'seltodo')
+				{
+					if ($salida = $this->accion_copiaseg($_POST['enabled'], false, 'SED')) // SED =  Tablas Seleccionadas+Estructura+Datos
+					{
+						$salida = str_replace( CAR_BK_MS ,'',$salida);				
+						$this->new_message('(Backup Selectivo de Tablas): Respaldo de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
+						$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
+					} else {
+						$this->new_error_msg('ERROR con Backup Selectivo de Tablas: No se ha podido realizar el Respaldo de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+					}
+				}
 			} else {
-				$this->new_error_msg('ERROR con Backup de Estructura de la Base de Datos: No se ha podido realizar el Respaldo COMPLETO DE LA ESTRUCTURA de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+				$this->new_error_msg('ERROR: No se ha seleccionado ninguna tabla para realizar el Respaldo Selectivo de la Bases de Datos MySQL ('. FS_DB_NAME .').');
 			}
-		}		
-		if ($_GET['tipo_backup'] == 'todo')
-		{
-			if ($salida = $this->accion_copiaseg(array(), false, 'CED')) // CED =  BD Completa+Estructura+Datos
+
+		} else {		
+
+			// Gestion de la Base de Datos Completa
+			if ($_GET['tipo_backup'] == 'estructura')
 			{
-				$salida = str_replace( CAR_BK_MS ,'',$salida);				
-				$this->new_message('(Base de Datos Completa): Respaldo COMPLETO de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
-				$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
-			} else {
-				$this->new_error_msg('ERROR con Backup Completo de la Base de Datos: No se ha podido realizar el Respaldo COMPLETO de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+				if ($salida = $this->accion_copiaseg(array(), true, 'CE')) // CE =  BD Completa+Estructura
+				{
+					$salida = str_replace( CAR_BK_MS ,'',$salida);				
+					$this->new_message('(Base de Datos Estructura): Respaldo COMPLETO de la Estructura de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
+					$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
+				} else {
+					$this->new_error_msg('ERROR con Backup de Estructura de la Base de Datos: No se ha podido realizar el Respaldo COMPLETO DE LA ESTRUCTURA de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+				}
+			}		
+			if ($_GET['tipo_backup'] == 'todo')
+			{
+				if ($salida = $this->accion_copiaseg(array(), false, 'CED')) // CED =  BD Completa+Estructura+Datos
+				{
+					$salida = str_replace( CAR_BK_MS ,'',$salida);				
+					$this->new_message('(Base de Datos Completa): Respaldo COMPLETO de la Bases de Datos MySQL ('. FS_DB_NAME .') realizado correctamente.');
+					$this->new_advice('<a href="'.$this->url().'&take_bk='.$salida.'">CLICK para Descargar COPIA DE RESPALDO del Archivo --> '.$salida.'</a>.');
+				} else {
+					$this->new_error_msg('ERROR con Backup Completo de la Base de Datos: No se ha podido realizar el Respaldo COMPLETO de la Bases de Datos MySQL ('. FS_DB_NAME .').');
+				}
 			}
 		}
 		
 	  } else {
 	  
-		$this->new_message('Se han cargado correctamente las Tablas de la Base de Datos MySQL ('. FS_DB_NAME .')');
-		
-		$enlace = mysql_connect(FS_DB_HOST, FS_DB_USER, FS_DB_PASS);
-		mysql_select_db(FS_DB_NAME,$enlace);
-
-		$tablas = $tabla = array();
-		$resultado = mysql_query('SHOW TABLES;');
-		while($row = mysql_fetch_row($resultado))
+		$tabla = $this->db->list_tables();
+		for($ii=0; $ii<count($tabla); $ii++)
 		{
-			$tabla[] = $row[0];
-		}
-		foreach($tabla as $key => $value)
-		{
+			$row = $this->db->get_columns($tabla[$ii]['name']);
 			$cadena = null;
-			$res = mysql_query('DESCRIBE '.$value);
-			while($row = mysql_fetch_array($res))
+			for($i=0; $i<count($row); $i++)
 			{
-				$cadena .= $row['Field'].', ';
+				$cadena .= $row[$i]['column_name'].', ';
 			}
-			$tablas[$value] = substr($cadena, 0,-2);
-		}		
-		$this->tabla = $tablas;
+			$tablas[$tabla[$ii]['name']] = substr($cadena, 0,-2);
+		}	
+		$this->tabla = $tablas;	
+		$this->new_message('Se han cargado correctamente las Tablas de la Base de Datos MySQL ('. FS_DB_NAME .')');
 	  }
 	}
 	
@@ -141,7 +140,7 @@ class backupms extends fs_controller
 		//----------------------- EDIT - REQUIRED SETUP VARIABLES -----------------------
 				
 				$backup_obj->server 	= FS_DB_HOST;
-				$backup_obj->port 		= FS_DB_PORT;
+				$backup_obj->port 	= FS_DB_PORT;
 				$backup_obj->username 	= FS_DB_USER;
 				$backup_obj->password 	= FS_DB_PASS;
 				$backup_obj->database 	= FS_DB_NAME;
