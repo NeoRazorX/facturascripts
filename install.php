@@ -114,10 +114,10 @@ else if ( isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset(
    fwrite($archivo, " * ¿Qué separador usar para miles?\n");
    fwrite($archivo, " * ¿A qué lado quieres el símbolo de la divisa?\n");
    fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_NF0', 2);\n");
-   fwrite($archivo, "define('FS_NF1', '.');\n");
-   fwrite($archivo, "define('FS_NF2', ' ');\n");
-   fwrite($archivo, "define('FS_POS_DIVISA', 'right');\n");
+   fwrite($archivo, "define('FS_NF0', ".$_REQUEST['num_nf0'].");\n");
+   fwrite($archivo, "define('FS_NF1', '".$_REQUEST['num_nf1']."');\n");
+   fwrite($archivo, "define('FS_NF2', '".$_REQUEST['num_nf2']."');\n");
+   fwrite($archivo, "define('FS_POS_DIVISA', '".$_REQUEST['num_nf3']."');\n");
    fclose($archivo);
    
    header("Location: index.php");
@@ -236,6 +236,7 @@ $system_info = str_replace('"', "'", $system_info);
       {
          $("#panel_bienvenido").hide();
          $("#panel_configuracion_inicial_bd").hide();
+         $("#panel_configuracion_inicial_num").hide();
          $("#panel_configuracion_inicial_cache").hide();
          $("#warning_config").hide();
          $("#submit_button").hide();
@@ -253,6 +254,7 @@ $system_info = str_replace('"', "'", $system_info);
          {
             $("#b_configuracion_inicial").addClass('active');
             $("#panel_configuracion_inicial_bd").show();
+            $("#panel_configuracion_inicial_num").show();            
             $("#panel_configuracion_inicial_cache").show();
             $("#warning_config").show();
             $("#submit_button").show();
@@ -278,6 +280,10 @@ $system_info = str_replace('"', "'", $system_info);
                db_name: { required: true, minlength: 2},
                db_user: { required: true, minlength: 2},
                db_pass: { required: true, minlength: 2},
+               num_nf0: { required: false},
+               num_nf1: { required: false},
+               num_nf2: { required: false},
+               num_nf3: { required: false},
                cache_host: { required: true, minlength: 2},
                cache_port: { required: true, minlength: 2},
                cache_prefix: { required: false, minlength: 2}
@@ -352,50 +358,91 @@ $system_info = str_replace('"', "'", $system_info);
                      <h3 class="panel-title">Configuración base de datos</h3>
                   </div>
                   <div class="panel-body">
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Tipo de servidor SQL:
                         <select name="db_type" class="form-control">
                            <option value="MYSQL" selected="selected">MySQL</option>
                            <option value="POSTGRESQL">PostgreSQL</option>
                         </select>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Equipo servidor SQL:
                         <input class="form-control" type="text" name="db_host" value="localhost" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Puerto servidor SQL:
                         <input class="form-control" type="number" name="db_port" value="3306" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Nombre base de datos:
                         <input class="form-control" type="text" name="db_name" value="facturascripts" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Usuario base de datos:
                         <input class="form-control" type="text" name="db_user" value="" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Contraseña base de datos:
                         <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
                      </div>
                   </div>
                </div>
-               
+
+               <div class="panel panel-primary" id="panel_configuracion_inicial_num">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Formato Numérico</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                        Cantidad de Decimales:
+                        <select name="num_nf0" class="form-control">
+                           <option value="1">1</option>
+                           <option value="2" selected="selected">2</option>
+                           <option value="3">3</option>
+                           <option value="4">4</option>
+                        </select>
+                     </div>
+                     <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                        Separador para los Decimales:
+                        <select name="num_nf1" class="form-control">
+                           <option value=",">Coma</option>
+                           <option value="." selected="selected">Punto</option>
+                           <option value=" ">(Espacio en Blanco)</option>
+                        </select>
+                     </div>
+                     <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                        Separador para los Millares:
+                        <select name="num_nf2" class="form-control">
+                           <option value=",">Coma</option>
+                           <option value=".">Punto</option>
+                           <option value="">(Ninguno)</option>
+                           <option value=" " selected="selected">(Espacio en Blanco)</option>
+                        </select>
+                     </div>
+                     <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                        Colocación Símbolo Divisa:
+                        <select name="num_nf3" class="form-control">
+                           <option value="right" selected="selected">A la Derecha del Número</option>
+                           <option value="left">A la Izquierda del Número</option>
+                        </select>
+                     </div>
+                  </div>
+               </div>
+                
                <div class="panel panel-info" id="panel_configuracion_inicial_cache">
                   <div class="panel-heading">
                      <h3 class="panel-title">Configuración Memcache (opcional)</h3>
                   </div>
                   <div class="panel-body">
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Servidor Memcache:
                         <input class="form-control" type="text" name="cache_host" value="localhost" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Puerto Memcache:
                         <input class="form-control" type="text" name="cache_port" value="11211" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Prefijo Memcache:
                         <input class="form-control" type="text" name="cache_prefix" value="" autocomplete="off"/>
                      </div>
