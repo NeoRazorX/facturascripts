@@ -113,6 +113,7 @@ class ventas_factura extends fs_controller
             $this->factura->full_test();
             
             $this->page->title = $this->factura->codigo;
+            
             /// cargamos el agente
             if( !is_null($this->factura->codagente) )
             {

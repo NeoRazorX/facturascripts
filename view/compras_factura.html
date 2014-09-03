@@ -69,7 +69,7 @@
                <div class="form-control">{$fsc->factura->numero}</div>
             </div>
          </div>
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Num. Proveedor:
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->factura->numproveedor}"/>
@@ -87,12 +87,22 @@
                <div class="form-control">{$fsc->factura->codejercicio}</div>
             </div>
          </div>
-         <div class="col-lg-3 col-md-3 col-sm-3">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->factura->fecha}"/>
             </div>
          </div>
+         {if condition="$fsc->agente"}
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
+               Agente:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+         </div>
+         {/if}
       </div>
    </div>
    
@@ -181,7 +191,7 @@
    </div>
 </form>
 {else}
-<div class="well well-sm" style="text-align: center;">
+<div class="text-center">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

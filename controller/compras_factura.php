@@ -95,6 +95,13 @@ class compras_factura extends fs_controller
             
             $this->page->title = $this->factura->codigo;
             
+            /// cargamos el agente
+            if( !is_null($this->factura->codagente) )
+            {
+               $agente = new agente();
+               $this->agente = $agente->get($this->factura->codagente);
+            }
+            
             if($this->factura->idasiento)
                $this->buttons[] = new fs_button('b_ver_asiento', 'Asiento', $this->factura->asiento_url());
             else

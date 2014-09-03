@@ -182,6 +182,14 @@ class factura_proveedor extends fs_model
          return 'index.php?page=contabilidad_asiento&id='.$this->idasiento;
    }
    
+   public function agente_url()
+   {
+      if( is_null($this->codagente) )
+         return "index.php?page=admin_agentes";
+      else
+         return "index.php?page=admin_agente&cod=".$this->codagente;
+   }
+   
    public function proveedor_url()
    {
       if( is_null($this->codproveedor) )
@@ -361,13 +369,6 @@ class factura_proveedor extends fs_model
          return FALSE;
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
-   }
-   
-   private function new_idfactura()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idfactura_seq');
-      if($newid)
-         $this->idfactura = intval($newid);
    }
    
    private function new_codigo()
@@ -619,30 +620,39 @@ class factura_proveedor extends fs_model
                totalrecargo = ".$this->var2str($this->totalrecargo).", fecha = ".$this->var2str($this->fecha).",
                hora = ".$this->var2str($this->hora).", editable = ".$this->var2str($this->editable)."
                WHERE idfactura = ".$this->var2str($this->idfactura).";";
+            
+            return $this->db->exec($sql);
          }
          else
          {
-            $this->new_idfactura();
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (deabono,codigo,automatica,total,neto,cifnif,pagada,observaciones,
                idpagodevol,codagente,codalmacen,irpf,totaleuros,nombre,codpago,codproveedor,idfacturarect,numproveedor,
-               idfactura,codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
+               codigorect,codserie,idasiento,totalirpf,totaliva,coddivisa,numero,codejercicio,tasaconv,
                recfinanciero,nogenerarasiento,totalrecargo,fecha,hora,editable) VALUES (".$this->var2str($this->deabono).",
                ".$this->var2str($this->codigo).",".$this->var2str($this->automatica).",".$this->var2str($this->total).",
                ".$this->var2str($this->neto).",".$this->var2str($this->cifnif).",".$this->var2str($this->pagada).",
-               ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",".$this->var2str($this->codagente).",
+               ".$this->var2str($this->observaciones).",".$this->var2str($this->idpagodevol).",
+               ".$this->var2str($this->codagente).",
                ".$this->var2str($this->codalmacen).",".$this->var2str($this->irpf).",".$this->var2str($this->totaleuros).",
                ".$this->var2str($this->nombre).",".$this->var2str($this->codpago).",".$this->var2str($this->codproveedor).",
                ".$this->var2str($this->idfacturarect).",".$this->var2str($this->numproveedor).",
-               ".$this->var2str($this->idfactura).",".$this->var2str($this->codigorect).",
+               ".$this->var2str($this->codigorect).",
                ".$this->var2str($this->codserie).",".$this->var2str($this->idasiento).",
                ".$this->var2str($this->totalirpf).",".$this->var2str($this->totaliva).",".$this->var2str($this->coddivisa).",
                ".$this->var2str($this->numero).",".$this->var2str($this->codejercicio).",".$this->var2str($this->tasaconv).",
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->nogenerarasiento).",
                ".$this->var2str($this->totalrecargo).",".$this->var2str($this->fecha).",
                ".$this->var2str($this->hora).",".$this->var2str($this->editable).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idfactura = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;

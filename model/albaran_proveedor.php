@@ -210,13 +210,6 @@ class albaran_proveedor extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
    }
    
-   private function new_idalbaran()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idalbaran_seq');
-      if($newid)
-         $this->idalbaran = intval($newid);
-   }
-   
    private function new_codigo()
    {
       $sec = new secuencia();
@@ -387,16 +380,17 @@ class albaran_proveedor extends fs_model
                observaciones = ".$this->var2str($this->observaciones).", hora = ".$this->var2str($this->hora).",
                ptefactura = ".$this->var2str($this->ptefactura).
                " WHERE idalbaran = ".$this->var2str($this->idalbaran).";";
+            
+            return $this->db->exec($sql);
          }
          else
          {
-            $this->new_idalbaran();
             $this->new_codigo();
-            $sql = "INSERT INTO ".$this->table_name." (idalbaran,codigo,numero,numproveedor,
+            $sql = "INSERT INTO ".$this->table_name." (codigo,numero,numproveedor,
                codejercicio,codserie,coddivisa,codpago,codagente,codalmacen,fecha,codproveedor,
                nombre,cifnif,neto,total,totaliva,totaleuros,irpf,totalirpf,tasaconv,
                recfinanciero,totalrecargo,observaciones,ptefactura,hora) VALUES
-               (".$this->var2str($this->idalbaran).",".$this->var2str($this->codigo).",
+               (".$this->var2str($this->codigo).",
                ".$this->var2str($this->numero).",".$this->var2str($this->numproveedor).",
                ".$this->var2str($this->codejercicio).",".$this->var2str($this->codserie).",
                ".$this->var2str($this->coddivisa).",".$this->var2str($this->codpago).",
@@ -409,8 +403,15 @@ class albaran_proveedor extends fs_model
                ".$this->var2str($this->tasaconv).",".$this->var2str($this->recfinanciero).",
                ".$this->var2str($this->totalrecargo).",".$this->var2str($this->observaciones).",
                ".$this->var2str($this->ptefactura).",".$this->var2str($this->hora).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idalbaran = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;

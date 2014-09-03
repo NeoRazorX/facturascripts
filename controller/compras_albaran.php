@@ -373,6 +373,7 @@ class compras_albaran extends fs_controller
       $factura->totalirpf = $this->albaran->totalirpf;
       $factura->totaliva = $this->albaran->totaliva;
       $factura->totalrecargo = $this->albaran->totalrecargo;
+      $factura->codagente = $this->albaran->codagente;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($factura->codejercicio);

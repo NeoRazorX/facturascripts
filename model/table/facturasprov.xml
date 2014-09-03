@@ -142,6 +142,7 @@
       <nombre>pagada</nombre>
       <tipo>boolean</tipo>
       <nulo>NO</nulo>
+      <defecto>false</defecto>
    </columna>
    <columna>
       <nombre>recfinanciero</nombre>
