@@ -30,6 +30,7 @@ class fs_extension extends fs_model
     * @var type 
     */
    public $id;
+   public $name;
    public $plugin;
    public $text;
    public $to;
@@ -43,6 +44,7 @@ class fs_extension extends fs_model
       {
          $this->from = $e['page_from'];
          $this->id = intval($e['id']);
+         $this->name = $e['name'];
          $this->plugin = $e['plugin'];
          $this->text = $e['text'];
          $this->to = $e['page_to'];
@@ -52,6 +54,7 @@ class fs_extension extends fs_model
       {
          $this->from = NULL;
          $this->id = NULL;
+         $this->name = NULL;
          $this->plugin = NULL;
          $this->text = NULL;
          $this->to = NULL;
@@ -62,6 +65,17 @@ class fs_extension extends fs_model
    protected function install()
    {
       return '';
+   }
+   
+   public function get($id)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      if($data)
+      {
+         return new fs_extension($data[0]);
+      }
+      else
+         return FALSE;
    }
    
    public function get_by($from, $to)
@@ -96,15 +110,15 @@ class fs_extension extends fs_model
       {
          $sql = "UPDATE ".$this->table_name." SET plugin = ".$this->var2str($this->plugin).",
                  page_from = ".$this->var2str($this->from).", page_to = ".$this->var2str($this->to).",
-                 type = ".$this->var2str($this->type).", text = ".$this->var2str($this->text)."
-                 WHERE id = ".$this->var2str($this->id).";";
+                 type = ".$this->var2str($this->type).", text = ".$this->var2str($this->text).",
+                 name = ".$this->var2str($this->name)." WHERE id = ".$this->var2str($this->id).";";
          return $this->db->exec($sql);
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (plugin,page_from,page_to,type,text) VALUES
+         $sql = "INSERT INTO ".$this->table_name." (plugin,page_from,page_to,type,text,name) VALUES
                  (".$this->var2str($this->plugin).",".$this->var2str($this->from).",".$this->var2str($this->to).",
-                 ".$this->var2str($this->type).",".$this->var2str($this->text).");";
+                 ".$this->var2str($this->type).",".$this->var2str($this->text).",".$this->var2str($this->name).");";
          
          if( $this->db->exec($sql) )
          {
@@ -126,6 +140,20 @@ class fs_extension extends fs_model
       $elist = array();
       
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_to = ".$this->var2str($to)." ORDER BY page_from ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $elist[] = new fs_extension($d);
+      }
+      
+      return $elist;
+   }
+   
+   public function all_4_type($tipo)
+   {
+      $elist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE type = ".$this->var2str($tipo)." ORDER BY page_from ASC;");
       if($data)
       {
          foreach($data as $d)

@@ -36,6 +36,11 @@
       <tipo>character varying(50)</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>name</nombre>
+      <tipo>character varying(50)</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>ca_fs_extensions_fs_pages</nombre>
       <consulta>FOREIGN KEY (page_from) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>

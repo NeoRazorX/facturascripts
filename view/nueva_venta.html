@@ -428,20 +428,6 @@
          </div>
          <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
-               <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
-               <select name="forma_pago" class="form-control">
-                  {loop="$fsc->forma_pago->all()"}
-                     {if condition="$value->is_default()"}
-                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
-                     {else}
-                     <option value="{$value->codpago}">{$value->descripcion}</option>
-                     {/if}
-                  {/loop}
-               </select>
-            </div>
-         </div>
-         <div class="col-lg-3 col-md-3 col-sm-3">
-            <div class="form-group">
                <a href="{$fsc->divisa->url()}">Divisa</a>:
                <select name="divisa" class="form-control">
                   {loop="$fsc->divisa->all()"}
@@ -501,6 +487,18 @@
                   </label>
                </div>
                {/loop}
+               <div class="form-group">
+                  <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+                  <select name="forma_pago" class="form-control">
+                  {loop="$fsc->forma_pago->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->codpago}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+                  </select>
+               </div>
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
