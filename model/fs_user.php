@@ -238,14 +238,14 @@ class fs_user extends fs_model
    public function set_password($p='')
    {
       $p = strtolower( trim($p) );
-      if( preg_match("/^[a-z0-9]{1,12}$/", $p) )
+      if( strlen($p) > 1 AND strlen($p) <= 12 )
       {
          $this->password = sha1($p);
          return TRUE;
       }
       else
       {
-         $this->new_error_msg('La contraseña debe contener entre 1 y 12 caracteres alfanuméricos');
+         $this->new_error_msg('La contraseña debe contener entre 1 y 12 caracteres.');
          return FALSE;
       }
    }
@@ -285,10 +285,11 @@ class fs_user extends fs_model
    
    public function get($n = '')
    {
-      $u = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE nick = ".$this->var2str($n).";");
+      $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
       if($u)
+      {
          return new fs_user($u[0]);
+      }
       else
          return FALSE;
    }
@@ -296,10 +297,11 @@ class fs_user extends fs_model
    public function exists()
    {
       if( is_null($this->nick) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE nick = ".$this->var2str($this->nick).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    public function test()
@@ -351,8 +353,7 @@ class fs_user extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE nick = ".$this->var2str($this->nick).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
    
    public function clean_cache($full=FALSE)
@@ -366,7 +367,8 @@ class fs_user extends fs_model
    public function all()
    {
       $userlist = $this->cache->get_array('m_fs_user_all');
-      if( !$userlist )
+      
+      if(!$userlist)
       {
          $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nick ASC;");
          if($users)
@@ -376,6 +378,7 @@ class fs_user extends fs_model
          }
          $this->cache->set('m_fs_user_all', $userlist);
       }
+      
       return $userlist;
    }
 }
