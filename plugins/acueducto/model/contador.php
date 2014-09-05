@@ -151,4 +151,18 @@ class contador extends fs_model
 
       return $todos;
    }
+   
+   public function all_cli($cliente)
+   {
+      $todos = array();
+
+      $data = $this->db->select("SELECT * FROM contadores where codcliente=" . $cliente);
+      if($data)
+      {
+         foreach($data as $d)
+             $todos[] = new contador($d);
+      }
+
+      return $todos;
+   }
  }

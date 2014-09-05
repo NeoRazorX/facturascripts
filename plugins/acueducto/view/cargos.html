@@ -95,7 +95,7 @@
                   <input class="form-control" type="text" name="imputacion" autocomplete="off" value="{$fsc->today()}" readonly/>
                </td>
                <td>
-                  <input class="form-control" type="text" name="usuario" autocomplete="off" value="" readonly/>
+                   <input class="form-control" type="text" name="usuario" autocomplete="off" value="{$fsc->user->nick}" readonly/>
                </td>
                <td class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">

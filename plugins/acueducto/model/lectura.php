@@ -156,4 +156,17 @@ class lectura extends fs_model
       return $listag;
    }
 
+   public function all_cli_cont($cliente,$contador)
+   {
+      $todos = array();
+
+      $data = $this->db->select("SELECT * FROM lecturas where codcliente=" .$cliente.' and idcontador='.$contador.' order by fecha DESC LIMIT 1');
+      if($data)
+      {
+         foreach($data as $d)
+             $todos[] = new lectura($d);
+      }
+
+      return $todos;
+   }
  }
