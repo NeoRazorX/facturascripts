@@ -1,6 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
+ * Copyright (C) 2014  Valentín González    valengon@hotmail.com 
  * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__FILE__).'/fpdf.php';
+require_once 'plugins/factura_detallada/fpdf17/fpdf.php';
 
 class PDF_MC_Table extends FPDF
 {	
@@ -704,6 +705,7 @@ class PDF_MC_Table extends FPDF
         {
             if (count($datos) > 3) 
             {
+                // Comentar o eliminar las siguientes 5 lineas para NO mostrar el error.
                 $this->SetFont( "Arial", "B", 10);
                 $this->SetXY( $r1, $y1 + 8 );
                 $this->Cell(8,4, "ERROR: Localizadas ".count($datos)." lineas de IVA... ", 0, '', "L");

@@ -1,6 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
+ * Copyright (C) 2014  Valentín González    valengon@hotmail.com 
  * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__FILE__).'/../fpdf17/fs_fpdf.php';
-define('FPDF_FONTPATH', dirname(__FILE__).'/../fpdf17/font/');
+require_once 'plugins/factura_detallada/fpdf17/fs_fpdf.php';
+define('FPDF_FONTPATH', 'plugins/factura_detallada/fpdf17/font/');
 
 require_once 'base/fs_pdf.php';
 require_model('asiento.php');
@@ -44,7 +45,7 @@ class ventas_factura extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Factura de cliente', 'ventas', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Factura de Cliente', 'ventas', FALSE, FALSE);
    }
    
    protected function process()
