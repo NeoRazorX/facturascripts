@@ -151,6 +151,9 @@ if( $db->connect() )
 else
 {
    echo "¡Imposible conectar a la base de datos!\n";
+   
+   foreach($db->get_errors() as $err)
+      echo $err."\n";
 }
 
 $tiempo = explode(' ', microtime());
