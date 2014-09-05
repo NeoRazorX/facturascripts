@@ -53,7 +53,9 @@ class contabilidad_asiento extends fs_controller
       }
       
       if( isset($_POST['fecha']) AND isset($_POST['query']) )
+      {
          $this->new_search();
+      }
       else if( $this->asiento )
       {
          $this->page->title = 'Asiento: '.$this->asiento->numero;
@@ -104,7 +106,11 @@ class contabilidad_asiento extends fs_controller
       if($div0)
          $this->save_coddivisa($div0->coddivisa);
       
-      if( $this->asiento->save() AND $eje0 AND $div0 )
+      if( !$eje0 OR !$div0 )
+      {
+         $this->new_error_msg('Imposible modificar el asiento.');
+      }
+      else if( $this->asiento->save() )
       {
          $continuar = TRUE;
          $numlineas = intval($_POST['numlineas']);

@@ -243,13 +243,21 @@ class RainTPL
          $tpl_basedir                    = strpos($tpl_name,"/") ? dirname($tpl_name) . '/' : null;         // template basedirectory
          
          $tpl_dir = self::$tpl_dir.$tpl_basedir;
-         /// buscamos la plantilla en los plugins activos
-         if( isset($GLOBALS['plugins']) )
+         
+         /// buscamos la plantilla en el directorio de plantillas de PDF
+         if( file_exists('tmp/'.FS_TMP_NAME.'pdf_templates/'.$tpl_name.'.'.self::$tpl_ext) )
+         {
+            $tpl_dir = 'tmp/'.FS_TMP_NAME.'pdf_templates/'.$tpl_basedir;
+         }
+         else if( isset($GLOBALS['plugins']) ) /// buscamos la plantilla en los plugins activos
          {
             foreach($GLOBALS['plugins'] as $plugin_dir)
             {
                if( file_exists('plugins/'.$plugin_dir.'/view/'.$tpl_name.'.'.self::$tpl_ext) )
+               {
                   $tpl_dir = 'plugins/'.$plugin_dir.'/view/'.$tpl_basedir;
+                  break;
+               }
             }
          }
          

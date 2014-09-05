@@ -27,7 +27,7 @@ else if( !function_exists('bccomp') )
 }
 else if( !is_writable( getcwd() ) )
 {
-   $errors[] = "La carpeta no tiene permisos de escritura.";
+   $errors[] = "La carpeta no tiene permisos de escritura. ¿<a href='http://www.facturascripts.com' target='_blank'>Necesitas ayuda</a>?";
 }
 else if ( isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
 {
@@ -181,7 +181,7 @@ $system_info = str_replace('"', "'", $system_info);
                      <li><a href="http://www.facturascripts.com/community/ideas.php" target="_blank">Sugerencias</a></li>
                      <li><a href="http://www.facturascripts.com/community/all.php" target="_blank">Todo</a></li>
                      <li class="divider"></li>
-                     <li><a href="#" id="b_feedback">Escribir...</a></li>
+                     <li><a href="#" id="b_feedback">Informar...</a></li>
                   </ul>
                </li>
             </ul>

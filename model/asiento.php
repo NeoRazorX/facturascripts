@@ -41,6 +41,8 @@ class asiento extends fs_model
    public $tipodocumento;
    public $importe;
    
+   private $coddivisa;
+   
    public function __construct($a = FALSE)
    {
       parent::__construct('co_asientos');
@@ -126,14 +128,37 @@ class asiento extends fs_model
          return '#';
    }
    
+   /**
+    * Devuelve el código de la divisa.
+    * Lo que pasa es que ese dato se almacena en las partidas, por eso
+    * hay que usar esta función.
+    * @return type
+    */
+   public function coddivisa()
+   {
+      if( !isset($this->coddivisa) )
+      {
+         $this->coddivisa = $this->default_items->coddivisa();
+         
+         foreach($this->get_partidas() as $par)
+         {
+            $this->coddivisa = $par->coddivisa;
+            break;
+         }
+      }
+      
+      return $this->coddivisa;
+   }
+   
    public function get($id)
    {
       if( isset($id) )
       {
-         $asiento = $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idasiento = ".$this->var2str($id).";");
+         $asiento = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($id).";");
          if($asiento)
+         {
             return new asiento($asiento[0]);
+         }
          else
             return FALSE;
       }
@@ -154,13 +179,6 @@ class asiento extends fs_model
       else
          return $this->db->select("SELECT * FROM ".$this->table_name.
                  " WHERE idasiento = ".$this->var2str($this->idasiento).";");
-   }
-   
-   public function new_idasiento()
-   {
-      $newid = $this->db->nextval($this->table_name.'_idasiento_seq');
-      if($newid)
-         $this->idasiento = intval($newid);
    }
    
    public function new_numero()
@@ -414,21 +432,27 @@ class asiento extends fs_model
                tipodocumento = ".$this->var2str($this->tipodocumento).",
                importe = ".$this->var2str($this->importe)."
                WHERE idasiento = ".$this->var2str($this->idasiento).";";
+            return $this->db->exec($sql);
          }
          else
          {
-            $this->new_idasiento();
             $this->new_numero();
-            $sql = "INSERT INTO ".$this->table_name." (idasiento,numero,idconcepto,concepto,
+            $sql = "INSERT INTO ".$this->table_name." (numero,idconcepto,concepto,
                fecha,codejercicio,codplanasiento,editable,documento,tipodocumento,importe)
-               VALUES (".$this->var2str($this->idasiento).",".$this->var2str($this->numero).",
-               ".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
+               VALUES (".$this->var2str($this->numero).",".$this->var2str($this->idconcepto).",".$this->var2str($this->concepto).",
                ".$this->var2str($this->fecha).",".$this->var2str($this->codejercicio).",
                ".$this->var2str($this->codplanasiento).",".$this->var2str($this->editable).",
                ".$this->var2str($this->documento).",".$this->var2str($this->tipodocumento).",
                ".$this->var2str($this->importe).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->idasiento = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
          }
-         return $this->db->exec($sql);
       }
       else
          return FALSE;
