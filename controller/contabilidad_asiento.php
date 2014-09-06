@@ -119,7 +119,7 @@ class contabilidad_asiento extends fs_controller
          foreach($this->asiento->get_partidas() as $pa)
          {
             $encontrada = FALSE;
-            for($i = 0; $i <= $numlineas; $i++)
+            for($i = 1; $i <= $numlineas; $i++)
             {
                if( isset($_POST['idpartida_'.$i]) )
                {
@@ -143,7 +143,7 @@ class contabilidad_asiento extends fs_controller
          
          /// añadimos y modificamos
          $npartida = new partida();
-         for($i = 0; $i <= $numlineas; $i++)
+         for($i = 1; $i <= $numlineas; $i++)
          {
             if( isset($_POST['idpartida_'.$i]) )
             {

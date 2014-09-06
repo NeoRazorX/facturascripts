@@ -8,6 +8,7 @@
       numlineas++;
       $("#partidas").append("<tr id='partida_"+numlineas+"'>\n\
          <td>\n\
+            <input type='hidden' name='idpartida_"+numlineas+"' value='-1'/>\n\
             <input class='form-control' id='codsubcuenta_"+numlineas+"' name='codsubcuenta_"+numlineas+"' type='text'\n\
                onclick=\"show_buscar_subcuentas('"+numlineas+"','subcuenta')\" onkeyup='document.f_buscar_subcuentas.query.value=$(this).val();buscar_subcuentas()'\n\
                autocomplete='off' placeholder='Seleccionar'/>\n\
