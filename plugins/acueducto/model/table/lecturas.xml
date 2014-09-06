@@ -42,6 +42,16 @@
     <nulo>NO</nulo>
 </columna>
 <columna>
+    <nombre>facturado</nombre>
+    <tipo>boolean</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>numero</nombre>
+    <tipo>integer</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
     <nombre>imputacion</nombre>
     <tipo>date</tipo>
     <nulo>NO</nulo>

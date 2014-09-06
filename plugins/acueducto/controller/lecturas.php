@@ -46,7 +46,8 @@ class lecturas extends fs_controller
          
          /// ISSET() para los checkbox ;-)
          $lect0->verificada = isset($_POST['verificada']);
-         
+         $lect0->facturado = isset($_POST['facturado']);
+         $lect0->numero = intval($_POST['numero']);
          $lect0->imputacion = $_POST['imputacion'];
          $lect0->usuario = $_POST['usuario'];
          

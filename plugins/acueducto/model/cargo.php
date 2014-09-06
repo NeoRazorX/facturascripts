@@ -28,7 +28,7 @@ class cargo extends fs_model
          $this->cantidad = $g['cantidad'];
          $this->total = $g['total'];
          $this->fecha = date('d-m-Y', strtotime($g['fecha']));
-         $this->facturado = $g['facturado'];
+         $this->facturado = $this->str2bool($g['facturado']);
          $this->numero = $g['numero'];
          $this->imputacion = date('d-m-Y', strtotime($g['imputacion']));
          $this->usuario = $g['usuario'];

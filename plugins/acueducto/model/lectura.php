@@ -9,6 +9,8 @@ class lectura extends fs_model
    public $lectura;
    public $tecnico;
    public $verificada;
+   public $facturado;
+   public $numero;
    public $imputacion;
    public $usuario;
 
@@ -29,6 +31,8 @@ class lectura extends fs_model
          /// str2bool() para leer un valor lógico de la tabla
          $this->verificada = $this->str2bool($g['verificada']);
          
+         $this->facturado = $this->str2bool($g['facturado']);
+         $this->numero = $g['numero'];
          $this->imputacion = date('d-m-Y', strtotime($g['imputacion']));
          $this->usuario = $g['usuario'];
       }
@@ -41,6 +45,8 @@ class lectura extends fs_model
          $this->lectura = 0;
          $this->tecnico = "";
          $this->verificada = 0;
+         $this->facturado = 0;
+         $this->numero = 0;
          $this->imputacion = date('d-m-Y');
          $this->usuario = "";
          
@@ -97,6 +103,8 @@ class lectura extends fs_model
                  ", lectura = ".$this->var2str($this->lectura). 
                  ", tecnico = ".$this->var2str($this->tecnico).
                  ", verificada = ".$this->var2str($this->verificada).
+                 ", facturado = ".$this->var2str($this->facturado).
+                 ", numero = ".$this->var2str($this->numero).
                  ", imputacion = ".$this->var2str($this->imputacion).
                  ", usuario = ".$this->var2str($this->usuario).
                  " where idlectura = ".$this->var2str($this->idlectura).";";
@@ -104,7 +112,7 @@ class lectura extends fs_model
       }
       else
       {
-         $sql = "INSERT into lecturas (idlectura,codcliente,idcontador,fecha,lectura,tecnico,verificada,imputacion,usuario) VALUES ("
+         $sql = "INSERT into lecturas (idlectura,codcliente,idcontador,fecha,lectura,tecnico,verificada,facturado,numero,imputacion,usuario) VALUES ("
                  .$this->var2str($this->idlectura).","
                  .$this->var2str($this->codcliente).","
                  .$this->var2str($this->idcontador).","
@@ -112,6 +120,8 @@ class lectura extends fs_model
                  .$this->var2str($this->lectura).","
                  .$this->var2str($this->tecnico).","
                  .$this->var2str($this->verificada).","
+                 .$this->var2str($this->facturado).","
+                 .$this->var2str($this->numero).","
                  .$this->var2str($this->imputacion).","
                  .$this->var2str($this->usuario).");";
       }

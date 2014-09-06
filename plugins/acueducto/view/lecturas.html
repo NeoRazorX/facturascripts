@@ -11,9 +11,11 @@
                 <th class="text-right">Lectura</th>
                 <th class="text-left">Técnico</th>
                 <th class="text-left">Verificada</th>
+                <th class="text-left">Facturado</th>
+                <th class="text-right">Numero</th>
                 <th class="text-left">Imputación</th>
                 <th class="text-left">Usuario</th>
-                <th width="120"></th>
+                <th class="text-right" width="120">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +55,12 @@
                </td>
                <td>
                   <input class="checkbox-inline" type="checkbox" name="verificada" value="0"/>
+               </td>
+               <td>
+                  <input class="checkbox-inline" type="checkbox" name="facturado" value="0" readonly/>
+               </td>
+               <td>
+                  <input class="form-control text-right" type="number" name="numero" value="0" readonly/>
                </td>
                <td>
                   <input class="form-control datepicker" type="text" name="imputacion" autocomplete="off" value="{$fsc->today()}" readonly/>
@@ -119,6 +127,12 @@
             
                 <td>
                     <input class="checkbox-inline" type="checkbox" name="verificada" value="{$value->verificada}"{if condition="$value->verificada"} checked="checked"{/if}/>
+                </td>
+                <td>
+                    <input class="checkbox-inline" type="checkbox" name="facturado" value="{$value->facturado}" readonly/>
+                </td>
+                <td>
+                    <input class="form-control text-right" type="number" name="numero" value="{$value->numero}" readonly/>
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="imputacion" value="{$value->imputacion}" autocomplete="off"readonly/>
