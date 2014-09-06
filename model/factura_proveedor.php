@@ -742,12 +742,19 @@ class factura_proveedor extends fs_model
       
       $consulta = "SELECT * FROM ".$this->table_name." WHERE ";
       if( is_numeric($query) )
+      {
          $consulta .= "codigo LIKE '%".$query."%' OR numproveedor LIKE '%".$query."%' OR observaciones LIKE '%".
             $query."%' OR total BETWEEN ".($query-.01)." AND ".($query+.01);
+      }
       else if( preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query) )
+      {
          $consulta .= "fecha = ".$this->var2str($query)." OR observaciones LIKE '%".$query."%'";
+      }
       else
-         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
+      {
+         $consulta .= "lower(codigo) LIKE '%".$query."%' OR lower(numproveedor) LIKE '%".$query."%' "
+                 . "OR lower(observaciones) LIKE '%".str_replace(' ', '%', $query)."%'";
+      }
       $consulta .= " ORDER BY fecha DESC, codigo DESC";
       
       $facturas = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);

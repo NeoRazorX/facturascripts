@@ -25,6 +25,12 @@ if( !defined('FS_TMP_NAME') )
 if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
 {
    mkdir('tmp/'.FS_TMP_NAME);
+   
+   /// metemos un index.html
+   file_put_contents('tmp/'.FS_TMP_NAME.'index.html', 'No me toques los cojones.');
+   
+   /// también en tmp
+   file_put_contents('tmp/index.html', 'No me toques los cojones.');
 }
 
 if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
