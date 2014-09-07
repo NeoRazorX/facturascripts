@@ -59,7 +59,7 @@ class admin_empresa extends fs_controller
           'mail_user' => ''
       );
       $fsvar = new fs_var();
-      $this->mail = $fsvar->array_get($this->mail);
+      $this->mail = $fsvar->array_get($this->mail, FALSE);
       
       if( isset($_POST['nombre']) )
       {
@@ -114,8 +114,16 @@ class admin_empresa extends fs_controller
          /// guardamos los datos del email
          if( isset($_POST['mail_host']) )
          {
-            $this->mail['mail_host'] = $_POST['mail_host'];
-            $this->mail['mail_port'] = $_POST['mail_port'];
+            if($_POST['mail_host'] == '')
+               $this->mail['mail_host'] = 'smtp.gmail.com';
+            else
+               $this->mail['mail_host'] = $_POST['mail_host'];
+            
+            if($_POST['mail_port'] == '')
+               $this->mail['mail_port'] = '465';
+            else
+               $this->mail['mail_port'] = $_POST['mail_port'];
+            
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
             $fsvar->array_save($this->mail);

@@ -140,7 +140,7 @@ class fs_var extends fs_model
     * 
     * @param type $array
     */
-   public function array_get($array)
+   public function array_get($array, $replace=TRUE)
    {
       foreach($array as $i => $value)
       {
@@ -149,8 +149,10 @@ class fs_var extends fs_model
          {
             $array[$i] = $data[0]['varchar'];
          }
-         else
+         else if($replace)
+         {
             $array[$i] = FALSE;
+         }
       }
       
       return $array;

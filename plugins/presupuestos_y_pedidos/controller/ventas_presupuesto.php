@@ -860,7 +860,7 @@ class ventas_presupuesto extends fs_controller
              'mail_enc' => 'ssl'
          );
          $fsvar = new fs_var();
-         $mailop = $fsvar->array_get($mailop);
+         $mailop = $fsvar->array_get($mailop, FALSE);
          
          $filename = 'presupuesto_'.$this->presupuesto->codigo.'.pdf';
          $this->generar_pdf_simple($filename);
