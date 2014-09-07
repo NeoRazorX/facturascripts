@@ -54,6 +54,19 @@ class lecturas extends fs_controller
          if( $lect0->save() )
          {
             $this->new_message('Datos guardados correctamente.');
+            
+            /// se actualiza la fecha de la ultima lectura en el contador
+            $cont0 = $this->contador->get($_POST['idcontador']);
+            $cont0->lectura = $_POST['fecha'];
+            
+            if( $cont0->save() )
+            {
+                $this->new_message('Datos actualizados en Contador correctamente.');
+            }
+             else
+            {
+                $this->new_error_msg('Imposible guardar los datos en Contador.');
+            }
          }
          else
          {

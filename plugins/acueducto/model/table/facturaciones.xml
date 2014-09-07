@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : facturaciones.xml
+    Description:
+        Estructura de la tabla facturaciones.
+-->
+<tabla>
+<columna>
+    <nombre>idfacturacion</nombre>
+    <tipo>serial</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('facturaciones_idfacturacion_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>fecha</nombre>
+    <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>imputacion</nombre>
+    <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>usuario</nombre>
+    <tipo>varchar(12)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>facturaciones_pkey</nombre>
+    <consulta>PRIMARY KEY (idcargo)</consulta>
+</restriccion>
+</tabla>

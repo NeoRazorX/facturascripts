@@ -21,6 +21,7 @@ require_model('cliente.php');
 require_model('contador.php');
 require_model('lectura.php');
 require_model('factura_cliente.php');
+require_model('facturacion.php');
 
 class facturador extends fs_controller
 {
@@ -29,19 +30,35 @@ class facturador extends fs_controller
    private $total_facturas;
    private $total_lecturas;
    
+   public $fecha_ultima;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Facturador', 'acueducto', FALSE, TRUE);
    }
    
    protected function process()
-   {
+   {  
        
+      $fact0 = new facturacion();
+         
+      if($fact0->get_ultima())
+        {
+            $this->fecha_ultima = $fact0->fecha;
+            $this->new_message('fecha leida '. $this->fecha_ultima);
+        }
+       else
+        {
+            $this->fecha_ultima = date('d-m-Y');
+            $this->new_error_msg('No lee la última fecha de facturación. '. $this->fecha_ultima);
+        }
+        
       if( isset($_GET['start']) )
       {
          $this->total_clientes = 0;
          $this->total_facturas = 0;
          $this->total_lecturas = 0;
+         
          /// leo clientes
          $cliente = new cliente();
          foreach($cliente->all_full() as $cli)
@@ -53,6 +70,7 @@ class facturador extends fs_controller
         
       }
    }
+   
    private function generar_factura_cliente($clientefact)
    {
        /// leo contadores del cliente
