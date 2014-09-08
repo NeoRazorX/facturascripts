@@ -56,6 +56,15 @@ class facturacion extends fs_model
       }
    }
    
+   public function nuevo_numero()
+   {
+      $data = $this->db->select("select max(idfacturacion) as num from facturaciones;");
+      if($data)
+         return intval($data[0]['num']) + 1;
+      else
+         return 1;
+   }
+   
    public function test() {
       ;
    }
@@ -72,7 +81,7 @@ class facturacion extends fs_model
       }
       else
       {
-         $sql = "INSERT into facturaciones (fecha,imputacion,usuario) VALUES ("
+         $sql = "INSERT into facturaciones (idfacturacion,fecha,imputacion,usuario) VALUES ("
                  .$this->var2str($this->idfacturacion).","
                  .$this->var2str($this->fecha).","
                  .$this->var2str($this->imputacion).","

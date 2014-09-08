@@ -26,6 +26,7 @@ class facturaciones extends fs_controller
          else /// si no está el id, seguimos como si fuese nuevo
          {
             $fact0 = new facturacion();
+            $fact0->idfacturacion = $this->facturacion->nuevo_numero();
          }
          
          $fact0->fecha = $_POST['fecha'];

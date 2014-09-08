@@ -68,6 +68,23 @@ class facturador extends fs_controller
          }
          $this->new_message($this->total_clientes.' clientes facturados. Facturas emitidas '.$this->total_facturas.' y Total lecturas procesadas '.$this->total_lecturas);
         
+         /// grabo nueva facturacion;
+         $fact0 = new facturacion();
+         
+         $fact0->idfacturacion = $fact0->nuevo_numero();
+         $fact0->fecha = $_GET['fecha'];
+         $fact0->imputacion = date('d-m-Y');
+         $fact0->usuario = $fsc->user->nick;
+         
+         if( $fact0->save() )
+         {
+            $this->new_message('Datos Facturacion guardados correctamente.');
+         }
+         else
+         {
+            $this->new_error_msg('Imposible guardar los datos de Facturacion.');
+         }
+         
       }
    }
    
