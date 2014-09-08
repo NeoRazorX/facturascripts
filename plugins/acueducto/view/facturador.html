@@ -4,17 +4,24 @@
    <div class="row">
       <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-ofset-6">
          <div class="well">
-            <input type="hidden" name="fecha_ultima" value="{$fsc->fecha_ultima}"/>
-            <p>
-               Haz clic en comenzar para facturar a todos los clientes. ({$fsc->fecha_ultima})
-            </p>
-            
-            <div class="text-center">
-               <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/> 
-            </div>
-            <div class="text-center">
-               <a class="btn btn-sm btn-primary" href="{$fsc->url()}&start=TRUE&fecha={$value->fecha}">Comenzar</a>
-            </div>
+            <form action="{$fsc->url()}" method="post" class="form">
+               <p>
+                  Haz clic en comenzar para facturar a todos los clientes. ({$fsc->fecha_ultima})
+               </p>
+               
+               <div class="col-sm-6">
+                  <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->fecha_ultima}"/> 
+               </div>
+               
+               <div class="col-sm-6">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();">
+                     <span class="glyphicon glyphicon-play"></span>
+                     &nbsp; Comenzar
+                  </button>
+               </div>
+               
+               <br/><br/>
+            </form>
          </div>
       </div>
    </div>

@@ -29,8 +29,9 @@ class facturacion extends fs_model
       }
    }
    
-   protected function install() {
-      ;
+   protected function install()
+   {
+      return '';
    }
    
    public function get($id)
@@ -56,17 +57,9 @@ class facturacion extends fs_model
       }
    }
    
-   public function nuevo_numero()
+   public function test()
    {
-      $data = $this->db->select("select max(idfacturacion) as num from facturaciones;");
-      if($data)
-         return intval($data[0]['num']) + 1;
-      else
-         return 1;
-   }
-   
-   public function test() {
-      ;
+      return TRUE;
    }
    
    public function save()

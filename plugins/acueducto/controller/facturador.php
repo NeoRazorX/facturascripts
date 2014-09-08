@@ -53,7 +53,7 @@ class facturador extends fs_controller
          $this->new_error_msg('No lee la última fecha de facturación. '. $this->fecha_ultima);
       }
         
-      if( isset($_GET['start']) )
+      if( isset($_POST['fecha']) )
       {
          $this->total_clientes = 0;
          $this->total_facturas = 0;
@@ -71,10 +71,9 @@ class facturador extends fs_controller
          /// grabo nueva facturacion;
          $fact0 = new facturacion();
          
-         $fact0->idfacturacion = $fact0->nuevo_numero();
-         $fact0->fecha = $_GET['fecha'];
+         $fact0->fecha = $_POST['fecha'];
          $fact0->imputacion = date('d-m-Y');
-         $fact0->usuario = $fsc->user->nick;
+         $fact0->usuario = $this->user->nick;
          
          if( $fact0->save() )
          {
