@@ -1,0 +1,15 @@
+Gestión de <b>PLUGINS</b>.<br/>
+<br/>
+Este Plugin nos permite <u>auto-instalar en nuestra web de FacturaScripts</u> los plugins que podamos necesitar.<br/>
+<br/>
+Los Plugins deben de presentarse en formato ZIP respetando la estructura de un Plugin.<br/>
+<i>carpeta_del_plugin/controller  --> (solo puede contener archivos con extensión PHP)<br/>
+carpeta_del_plugin/model  --> (solo puede contener archivos con extensión PHP)<br/>
+carpeta_del_plugin/view  --> (solo puede contener archivos con extensión HTML)<br/>
+carpeta_del_plugin/description<br/>
+Nota:: (carpeta_del_plugin = al nombre del archivo ZIP)</i><br/>
+<br/>
+La instalacion se puede realizar desde:<br/>
+- El Repositorio Oficial de FacturaScripts.<br/>
+- Una URL Externa con enlace al archivo ZIP.<br/>
+- Desde nuestro propio Ordenador.<br/>
