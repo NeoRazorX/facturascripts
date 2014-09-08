@@ -4,10 +4,11 @@
    <div class="row">
       <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-ofset-6">
          <div class="well">
-            <input type="hidden" name="fecha_ultima" value="{$value->fecha_ultima}"/>
+            <input type="hidden" name="fecha_ultima" value="{$fsc->fecha_ultima}"/>
             <p>
-               Haz clic en comenzar para facturar a todos los clientes. ({$value->fecha_ultima})
+               Haz clic en comenzar para facturar a todos los clientes. ({$fsc->fecha_ultima})
             </p>
+            
             <div class="text-center">
                <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/> 
             </div>

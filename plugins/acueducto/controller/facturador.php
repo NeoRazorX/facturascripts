@@ -38,20 +38,19 @@ class facturador extends fs_controller
    }
    
    protected function process()
-   {  
-       
+   {
       $fact0 = new facturacion();
          
-      if($fact0->get_ultima())
-        {
-            $this->fecha_ultima = $fact0->fecha;
-            $this->new_message('fecha leida '. $this->fecha_ultima);
-        }
-       else
-        {
-            $this->fecha_ultima = date('d-m-Y');
-            $this->new_error_msg('No lee la última fecha de facturación. '. $this->fecha_ultima);
-        }
+      if( $fact0->get_ultima() )
+      {
+         $this->fecha_ultima = $fact0->fecha;
+         $this->new_message('fecha leida '. $this->fecha_ultima);
+      }
+      else
+      {
+         $this->fecha_ultima = date('d-m-Y');
+         $this->new_error_msg('No lee la última fecha de facturación. '. $this->fecha_ultima);
+      }
         
       if( isset($_GET['start']) )
       {
