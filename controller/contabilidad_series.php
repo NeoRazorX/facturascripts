@@ -67,6 +67,7 @@ class contabilidad_series extends fs_controller
          }
          $serie->descripcion = $_POST['descripcion'];
          $serie->siniva = isset($_POST['siniva']);
+         $serie->irpf = floatval($_POST['irpf']);
          if( $serie->save() )
             $this->new_message("Serie ".$serie->codserie." guardada correctamente");
          else

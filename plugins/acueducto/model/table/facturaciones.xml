@@ -28,6 +28,6 @@
 </columna>
 <restriccion>
     <nombre>facturaciones_pkey</nombre>
-    <consulta>PRIMARY KEY (idcargo)</consulta>
+    <consulta>PRIMARY KEY (idfacturacion)</consulta>
 </restriccion>
 </tabla>
