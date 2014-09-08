@@ -40,10 +40,11 @@ class facturador extends fs_controller
    protected function process()
    {
       $fact0 = new facturacion();
-         
-      if( $fact0->get_ultima() )
+      $fact1 = $fact0->get_ultima();
+      
+      if($fact1)
       {
-         $this->fecha_ultima = $fact0->fecha;
+         $this->fecha_ultima = $fact1->fecha;
          $this->new_message('fecha leida '. $this->fecha_ultima);
       }
       else
