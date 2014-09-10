@@ -27,7 +27,7 @@ class recibo_proveedor extends fs_model
    
    public function __construct($f=FALSE)
    {
-	   parent::__construct('recibospro');
+      parent::__construct('recibospro', 'plugins/recibos_para_pagos_y_cobros/');
    }
 
    protected function install()

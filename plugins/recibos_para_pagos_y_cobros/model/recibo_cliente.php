@@ -28,7 +28,7 @@ class recibo_cliente extends fs_model
    
    public function __construct($f=FALSE)
    {
-	   parent::__construct('reciboscli');
+      parent::__construct('reciboscli', 'plugins/recibos_para_pagos_y_cobros/');
    }
 
    protected function install()

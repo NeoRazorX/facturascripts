@@ -28,7 +28,7 @@ class remesa_cliente extends fs_model
    
    public function __construct($f=FALSE)
    {
-	   parent::__construct('remesas');
+      parent::__construct('remesas', 'plugins/recibos_para_pagos_y_cobros/');
    }
 
    protected function install()

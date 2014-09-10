@@ -35,7 +35,7 @@ class recibos_proveedores extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('recibos_proveedores', 'Recibos de proveedores', 'informes');
+      parent::__construct(__CLASS__, 'Recibos de proveedores', 'informes', TRUE, TRUE);
    }
    
    protected function process()

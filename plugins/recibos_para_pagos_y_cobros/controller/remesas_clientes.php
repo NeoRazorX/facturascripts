@@ -31,7 +31,7 @@ class remesas_clientes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('remesascli', 'Remesas de clientes', 'informes');
+      parent::__construct(__CLASS__, 'Remesas de clientes', 'informes', TRUE, TRUE);
    }
    
    protected function process()
