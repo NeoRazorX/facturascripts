@@ -5,4 +5,54 @@
         Estructura de la tabla remesas.
 -->
 <tabla>
-<columna><nombre>codsubcuenta</nombre><tipo>char(15)</tipo><nulo>YES</nulo></columna><columna><nombre>estado</nombre><tipo>char(15)</tipo><nulo>YES</nulo></columna><columna><nombre>total</nombre><tipo>decimal(15,7)</tipo><nulo>NO</nulo></columna><columna><nombre>idremesa</nombre><tipo>int(10) unsigned</tipo><nulo>NO</nulo></columna><columna><nombre>nogenerarasiento</nombre><tipo>tinyint(1)</tipo><nulo>NO</nulo></columna><columna><nombre>fechacargo</nombre><tipo>date</tipo><nulo>NO</nulo></columna><columna><nombre>codcuenta</nombre><tipo>char(6)</tipo><nulo>NO</nulo></columna><columna><nombre>conceptofichero</nombre><tipo>char(20)</tipo><nulo>YES</nulo></columna><columna><nombre>fecha</nombre><tipo>date</tipo><nulo>NO</nulo></columna><columna><nombre>idsubcuenta</nombre><tipo>int(10) unsigned</tipo><nulo>YES</nulo></columna><columna><nombre>coddivisa</nombre><tipo>char(3)</tipo><nulo>NO</nulo></columna><restriccion><nombre>remesas_pkey</nombre><consulta>PRIMARY KEY (...)</consulta></restriccion></tabla>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>coddivisa</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codsubcuenta</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>estado</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idremesa</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('remesas_idremesa_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idsubcuenta</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>nogenerarasiento</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>total</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>remesas_pkey</nombre>
+      <consulta>PRIMARY KEY (idremesa)</consulta>
+   </restriccion>
+</tabla>

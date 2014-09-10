@@ -30,6 +30,7 @@ class recibos_clientes extends fs_controller
 {
    public $factura;
    public $cliente;
+   public $recibo;
    public $resultados;
    public $total;
    
@@ -43,6 +44,7 @@ class recibos_clientes extends fs_controller
       $this->ppage = $this->page->get('compras_facturas');
       $this->factura = new factura_cliente();
       $this->cliente = new cliente();
+      $this->recibo = new recibo_cliente();
       $this->serie = new serie();
       $this->total = 0;
       
