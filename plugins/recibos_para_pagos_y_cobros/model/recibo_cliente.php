@@ -24,7 +24,83 @@ require_once 'base/fs_model.php';
  */
 class recibo_cliente extends fs_model
 {
-   public $recibo;
+   public $apartado;
+   public $cifnif;
+   public $ciudad;
+   public $codcliente;
+   public $codcuenta;
+   
+   /**
+    * Código de la dirección del cliente, también está guardado en
+    * albaranes y facturas.
+    * @var type 
+    */
+   public $coddir;
+   public $coddivisa;
+   
+   /**
+    * Código de la factura - número de recibo (dos dígitos)
+    * @var type 
+    */
+   public $codigo;
+   public $codpais;
+   public $codpostal;
+   
+   /**
+    * Datos de la cuenta bancaria.
+    * OBSOLETO, YO LO SUSTITUIRÍA POR EL IBAN.
+    * @var type 
+    */
+   public $ctaagencia;
+   public $ctaentidad;
+   public $cuenta;
+   public $dc;
+   
+   public $descripcion;
+   public $direccion;
+   
+   /**
+    * Emitido / Pagado
+    * @var type 
+    */
+   public $estado;
+   public $fecha;
+   
+   /**
+    * fecha de vencimiento
+    * @var type 
+    */
+   public $fechav;
+   public $idfactura;
+   public $idrecibo;
+   public $idremesa;
+   
+   /**
+    * Total de la factura
+    * @var type 
+    */
+   public $importe;
+   
+   /**
+    * Totaleuros de la factura
+    * @var type 
+    */
+   public $importeeuros;
+   public $nombrecliente;
+   
+   /**
+    * Número de recibo.
+    * @var type 
+    */
+   public $numero;
+   public $provincia;
+   
+   /**
+    * Importe en palabras:
+    * "CUATROCIENTOS DIEZ EUROS CON DIECINUEVE CÉNTIMOS"
+    * @var type 
+    */
+   public $texto;
    
    public function __construct($f=FALSE)
    {

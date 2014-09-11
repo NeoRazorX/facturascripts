@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : pagosdevolrem.xml
+    Description:
+        Estructura de la tabla pagosdevolrem.
+-->
+<tabla>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idasiento</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idpagorem</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('pagosdevolrem_idpagorem_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idremesa</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>nogenerarasiento</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>tipo</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>pagosdevolrem_pkey</nombre>
+      <consulta>PRIMARY KEY (idpagorem)</consulta>
+   </restriccion>
+</tabla>
