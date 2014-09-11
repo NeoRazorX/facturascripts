@@ -20,10 +20,11 @@
 require_once 'base/fs_model.php';
 
 /**
- * Recibo de un proveedor.
+ * Recibos de proveedores.
  */
 class recibo_proveedor extends fs_model
 {
+   public $recibo;
    
    public function __construct($f=FALSE)
    {
@@ -32,7 +33,7 @@ class recibo_proveedor extends fs_model
 
    protected function install()
    {
-      
+      return '';
    }
    
    public function url()
@@ -86,41 +87,63 @@ class recibo_proveedor extends fs_model
    
    public function test()
    {
-		
+      /* Todavía no implementado */
    }
    
    public function full_test($duplicados = TRUE)
    {
-      
+      /* Todavía no implementado */
    }
    
    public function save()
    {
-      
+      /* Todavía no implementado, no se conocen los campos */
    }
    
    public function delete()
    {
-      
+      /* Todavía no implementado */
    }
    
    private function clean_cache()
    {
-      
+      /* Todavía no implementado */
    }
    
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
+      /* Falta utilizar offset y limit */
+      $reciboslist = array();
       
+      $sql = "SELECT * FROM ".$this->table_name." ORDER BY codigo DESC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $d)
+            $reciboslist[] = new recibo_proveedor($d);
+      }
+      
+      return $reciboslist;
    }
    
    public function all_from_proveedor($codproveedor, $offset=0)
    {
+      /* Falta utilizar offset */
+      $reciboslist = array();
       
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($codproveedor)." ORDER BY codigo DESC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $d)
+            $reciboslist[] = new recibo_proveedor($d);
+      }
+      
+      return $reciboslist;
    }
    
    public function search($query, $offset=0)
    {
-      
+      /* Todavía no implementado */
    }
 }
