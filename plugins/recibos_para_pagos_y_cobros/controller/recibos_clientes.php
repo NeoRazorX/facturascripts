@@ -41,7 +41,7 @@ class recibos_clientes extends fs_controller
    
    protected function process()
    {
-      $this->ppage = $this->page->get('compras_facturas');
+      $this->ppage = $this->page->get('ventas_facturas');
       $this->factura = new factura_cliente();
       $this->cliente = new cliente();
       $this->recibo = new recibo_cliente();

@@ -23,10 +23,18 @@ require_model('agente.php');
 require_model('cliente.php');
 // Saber que documento se cobra
 require_model('factura_cliente.php');
+require_model('recibo_cliente.php');
+require_model('remesas_cliente.php');
 require_model('fs_extension.php');
 
 class remesas_clientes extends fs_controller
 {
+   public $facturas;
+   public $clientes;
+   public $recibos;
+   public $remesas;
+   public $resultados;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Remesas de clientes', 'informes', TRUE, TRUE);
@@ -34,7 +42,29 @@ class remesas_clientes extends fs_controller
    
    protected function process()
    {
-	   
+      $this->ppage = $this->page->get('compras_facturas');
+      $this->facturas = new factura_cliente();
+      $this->clientes = new cliente();
+      $this->recibos = new recibo_cliente();
+      $this->remesas = new remesas_cliente();
+      $this->serie = new serie();
+      
+      if( isset($_POST['cliente']) )
+      {
+         $this->save_codcliente($_POST['cliente']);
+         
+         $this->resultados = $this->factura->all_from_cliente($_POST['cliente']);
+         
+         if($this->resultados)
+         {
+            foreach($this->resultados as $fac)
+            {
+               $this->total += $fac->total;
+            }
+         }
+         else
+            $this->new_message("Sin resultados.");
+      }
    }
    
    public function anterior_url()

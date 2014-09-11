@@ -30,6 +30,7 @@ class recibos_proveedores extends fs_controller
 {
    public $factura;
    public $proveedor;
+   public $recibo;
    public $resultados;
    public $total;
    
@@ -40,9 +41,10 @@ class recibos_proveedores extends fs_controller
    
    protected function process()
    {
-      $this->ppage = $this->page->get('ventas_facturas');
+      $this->ppage = $this->page->get('compras_facturas');
       $this->factura = new factura_proveedor();
       $this->proveedor = new proveedor();
+      $this->recibo = new recibo_proveedor();
       $this->serie = new serie();
       $this->total = 0;
       
@@ -66,16 +68,16 @@ class recibos_proveedores extends fs_controller
    
    public function anterior_url()
    {
-	   
+      
    }
    
    public function siguiente_url()
    {
-	   
+      
    }
    
    private function share_extension()
    {
-	   
+      
    }
 }
