@@ -40,7 +40,7 @@ class pagos_devoluciones_clientes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Pagos de recibos de clientes', 'tesoreria', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Pagos de recibos de clientes', 'tesoreria', FALSE, FALSE);
    }
    
    protected function process()
