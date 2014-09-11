@@ -23,6 +23,7 @@ require_model('agente.php');
 require_model('cliente.php');
 // Saber que documento se cobra
 require_model('factura_cliente.php');
+// Saber que recibo se cobra
 require_model('recibo_cliente.php');
 require_model('fs_extension.php');
 
@@ -36,7 +37,7 @@ class recibos_clientes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Recibos de clientes', 'informes', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Recibos de clientes', 'tesoreria', TRUE, TRUE);
    }
    
    protected function process()

@@ -25,21 +25,22 @@ require_model('cliente.php');
 require_model('factura_cliente.php');
 // Saber que recibo se cobra
 require_model('recibo_cliente.php');
-// Saber si el recibo esta en una remesa
-require_model('remesas_cliente.php');
+// Saber si ha habido pagos y devoluciones del recibo
+require_model('pagos_devoluciones_cliente.php');
+// Saber si ha habido pagos y devoluciones del recibo en remesa
+require_model('pagos_devoluciones_remesas_cliente.php');
 require_model('fs_extension.php');
 
-class remesas_clientes extends fs_controller
+class pagos_devoluciones_clientes extends fs_controller
 {
    public $facturas;
    public $clientes;
    public $recibos;
-   public $remesas;
    public $resultados;
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Remesas de clientes', 'tesoreria', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Pagos de recibos de clientes', 'tesoreria', TRUE, TRUE);
    }
    
    protected function process()
@@ -48,7 +49,7 @@ class remesas_clientes extends fs_controller
       $this->facturas = new factura_cliente();
       $this->clientes = new cliente();
       $this->recibos = new recibo_cliente();
-      $this->remesas = new remesas_cliente();
+      $this->pagos_devoluciones = new pagos_devoluciones_cliente();
       $this->serie = new serie();
       
       if( isset($_POST['cliente']) )

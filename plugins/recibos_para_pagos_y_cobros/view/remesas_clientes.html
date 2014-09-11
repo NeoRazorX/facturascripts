@@ -16,24 +16,20 @@
    <table class="table table-hover">
       <thead>
          <tr>
-            <th class="text-left">Estado</th>
-            <th class="text-left">Código + Cliente</th>
+            <th class="text-left">Código + Estado</th>
             <th class="text-right">Total</th>
             <th class="text-right">Fecha</th>
-            <th class="text-right">Fecha Vencimiento</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
-         <td><a href="{$value->url()}">{$value->idrecibo}</a> {$value->estado}</td>
-         <td><a href="{$value->url()}">{$value->codcliente}</a> {$value->nombrecliente}</td>
-         <td class="text-right">{$fsc->show_precio($value->importe, $value->coddivisa)}</td>
+         <td><a href="{$value->url()}">{$value->idremesa}</a> {$value->estado}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha}</td>
-         <td class="text-right">{$value->fechav}</td>
       </tr>
       {else}
       <tr class="bg-warning">
-         <td colspan="4" class="text-center">Ningun recibo encontrado.</td>
+         <td colspan="4" class="text-center">Ninguna remesa encontrada.</td>
       </tr>
       {/loop}
    </table>

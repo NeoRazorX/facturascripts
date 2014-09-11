@@ -20,24 +20,22 @@
 require_once 'base/fs_model.php';
 
 /**
- * Remesas de clientes.
+ * Control de pagos y devoluciones de clientes.
  */
-class remesas_cliente extends fs_model
+class pagos_devoluciones_remesas_cliente extends fs_model
 {
-   public $codcuenta;
-   public $coddivisa;
-   public $codsubcuenta;
-   public $estado;
+   public $fecha;
+   public $idasiento;
+   public $idpagorem;
    public $idremesa;
-   public $idsubcuenta;
    public $nogenerarasiento;
-   public $total;
-   
-   public $remesa;
+   public $tipo;
+     
+   public $recibo;
    
    public function __construct($f=FALSE)
    {
-      parent::__construct('remesas', 'plugins/recibos_para_pagos_y_cobros/');
+      parent::__construct('pagosdevolrem', 'plugins/recibos_para_pagos_y_cobros/');
    }
 
    protected function install()
@@ -47,42 +45,42 @@ class remesas_cliente extends fs_model
    
    public function url()
    {
-      if( is_null($this->idremesa) )
-         return 'index.php?page=remesas_clientes';
+      if( is_null($this->idpagorem) )
+         return 'index.php?page=pagos_devoluciones_remesas_clientes';
       else
-         return 'index.php?page=remesas_cliente&id='.$this->idremesa;
+         return 'index.php?page=pagos_devoluciones_remesas_cliente&id='.$this->idpagorem;
    }
    
    public function cliente_url()
    {
       if( is_null($this->codcliente) )
-         return "index.php?page=remesas_clientes";
+         return "index.php?page=pagos_devoluciones_remesas_clientes";
       else
-         return "index.php?page=remesas_cliente&cliente=".$this->codcliente;
+         return "index.php?page=pagos_devoluciones_remesas_cliente&cliente=".$this->codcliente;
    }
    
    public function get($id)
    {
-      $remesa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idremesa = ".$this->var2str($id).";");
-      if($remesa)
-         return new remesa_cliente($remesa[0]);
+      $pago_devolucion = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpagorem = ".$this->var2str($id).";");
+      if($pago_devolucion)
+         return new pagos_devoluciones_cliente($pago_devolucion[0]);
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->idremesa) )
+      if( is_null($this->idpagorem) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idremesa = ".$this->var2str($this->idremesa).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpagorem = ".$this->var2str($this->idpagorem).";");
    }
    
-   public function new_idremesa()
+   public function new_idpagorem()
    {
-      $newid = $this->db->nextval($this->table_name.'_idremesa_seq');
+      $newid = $this->db->nextval($this->table_name.'_idpagorem_seq');
       if($newid)
-         $this->idremesa = intval($newid);
+         $this->idpagorem = intval($newid);
    }
    
    public function test()
@@ -100,31 +98,26 @@ class remesas_cliente extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET 
-            codcuenta = ".$this->var2str($this->codcuenta).", 
-            coddivisa = ".$this->var2str($this->coddivisa).", 
-            codsubcuenta = ".$this->var2str($this->codsubcuenta).", 
-            estado = ".$this->var2str($this->estado).", 
             fecha = ".$this->var2str($this->fecha).", 
-            idsubcuenta = ".$this->var2str($this->idsubcuenta).", 
-            nogenerarasiento = ".$this->var2str($this->nogenerarasiento).",
-            total = ".$this->var2str($this->total)."
-            WHERE idremesa = ".$this->var2str($this->idremesa).";";
+            idasiento = ".$this->var2str($this->idasiento).", 
+            idremesa = ".$this->var2str($this->idremesa).", 
+            nogenerarasiento = ".$this->var2str($this->nogenerarasiento).", 
+            tipo = ".$this->var2str($this->tipo)."
+            WHERE idpagorem = ".$this->var2str($this->idpagorem).";";
          
          return $this->db->exec($sql);
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (codcuenta, coddivisa, codsubcuenta, 
-         estado, fecha, idremesa, idsubcuenta, nogenerarasiento, total) VALUES (
-            ".$this->var2str($this->codcuenta).",".$this->var2str($this->coddivisa).",
-            ".$this->var2str($this->codsubcuenta).",".$this->var2str($this->estado).",
-            ".$this->var2str($this->fecha).",".$this->var2str($this->idremesa).",
-            ".$this->var2str($this->idsubcuenta).",".$this->var2str($this->nogenerarasiento).",
-            ".$this->var2str($this->total).");";
+         $sql = "INSERT INTO ".$this->table_name." (fecha, idasiento, idpagorem, 
+         idremesa, nogenerarasiento, tipo) VALUES (
+            ".$this->var2str($this->fecha).",".$this->var2str($this->idasiento).",
+            ".$this->var2str($this->idpagorem).",".$this->var2str($this->idremesa).",
+            ".$this->var2str($this->nogenerarasiento).",".$this->var2str($this->tipo).");";
          
          if( $this->db->exec($sql) )
          {
-            $this->remesa = $this->db->lastval();
+            $this->recibo = $this->db->lastval();
             return TRUE;
          }
          else
@@ -145,17 +138,17 @@ class remesas_cliente extends fs_model
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       /* Falta utilizar offset y limit */
-      $remesaslist = array();
+      $reciboslist = array();
       
       $sql = "SELECT * FROM ".$this->table_name." ORDER BY codigo DESC;";
       $data = $this->db->select($sql);
       if($data)
       {
          foreach($data as $d)
-            $remesaslist[] = new remesas_cliente($d);
+            $reciboslist[] = new pagos_devoluciones_cliente($d);
       }
       
-      return $remesaslist;
+      return $reciboslist;
    }
    
    public function all_from_cliente($codcliente, $offset=0)

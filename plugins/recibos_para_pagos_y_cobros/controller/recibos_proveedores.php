@@ -23,6 +23,7 @@ require_model('agente.php');
 require_model('proveedor.php');
 // Saber que documento se paga
 require_model('factura_proveedor.php');
+// Saber que recibo se paga
 require_model('recibo_proveedor.php');
 require_model('fs_extension.php');
 
@@ -36,7 +37,7 @@ class recibos_proveedores extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Recibos de proveedores', 'informes', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Recibos de proveedores', 'tesoreria', TRUE, TRUE);
    }
    
    protected function process()
