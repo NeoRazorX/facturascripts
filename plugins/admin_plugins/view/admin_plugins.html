@@ -1,0 +1,209 @@
+{include="header"}
+
+{if condition="FS_DEMO"}
+    <div class="text-center">
+        <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+    </div>
+{else}
+
+    {if condition="isset($fsc->cargando)"}
+        {if condition="$fsc->cargando"}
+            <meta http-equiv="Refresh" content="0; URL={$fsc->url()}&cargando=activada&seccion=3">
+            <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
+                <div class="row">
+                    <div class="col-lg-10 col-md-10 col-sm-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1">
+                        <div class="alert alert-warning hidden-print">
+                            <ul>
+                                <li>...Cargando Archivos desde Repositorio Remoto...</li>
+                                <li>¡¡¡ ...Será cosa de unos segundos... !!!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+    {/if}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="list-group">
+                    <a href="{$fsc->url()}&seccion=1" class="list-group-item{if condition="isset($fsc->seccion)"}{if condition="$fsc->seccion==1"} active{/if}{/if}">Instalados Estables</a>
+                    <a href="{$fsc->url()}&seccion=2" class="list-group-item{if condition="isset($fsc->seccion)"}{if condition="$fsc->seccion==2"} active{/if}{/if}">Instalados Inestables</a>
+                    <a href="{$fsc->url()}&seccion=3" class="list-group-item{if condition="isset($fsc->seccion)"}{if condition="$fsc->seccion==3"} active{/if}{/if}">Instalar desde Repositorio</a>
+                    <a href="{$fsc->url()}&seccion=4" class="list-group-item{if condition="isset($fsc->seccion)"}{if condition="$fsc->seccion==4"} active{/if}{/if}">Instalar desde URL</a>
+                    <a href="{$fsc->url()}&seccion=5" class="list-group-item{if condition="isset($fsc->seccion)"}{if condition="$fsc->seccion==5"} active{/if}{/if}">Instalar desde nuestro PC</a>
+                </div>
+            </div>
+
+    {if condition="isset($fsc->seccion)"}
+        {if condition="$fsc->seccion==6"}
+            <div class="col-lg-10 col-md-10 col-sm-10">
+                <div class="panel panel-info">
+                    <div class="panel-heading">{$fsc->titulo}</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-warning text-left">&nbsp;&nbsp;Elemento</th>
+                                <th class="text-warning text-left">&nbsp;&nbsp;Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loop="$fsc->table"}
+                            <tr>
+                                <td><p class="text-left"><strong>{$value->texto}</strong></p></td>
+                                <td class="{$value->color}"><p class="text-info text-left"><strong>{$value->estado}</strong></p></td>
+                            </tr>
+                            {/loop}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {/if}
+    {/if}
+
+    {if condition="isset($fsc->seccion)"}
+        {if condition="$fsc->seccion==5"}
+            <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+            <input type='hidden' name='subirlocal' value='TRUE'/>
+            <div class="col-lg-10 col-md-10 col-sm-10">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        INSTALAR PLUGIN DESDE NUESTRO ORDENADOR (Válidos exclusivamente archivos ZIP)
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group col-lg-10 col-md-10 col-sm-10">
+                            <input class="form-control" name="pluginlocal" type="file">
+                        </div>
+                        <div class="form-group col-lg-2 col-md-2 col-sm-2">
+                            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                &nbsp; INSTALAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        {/if}
+    {/if}
+
+    {if condition="isset($fsc->seccion)"}
+        {if condition="$fsc->seccion==4"}
+            <form enctype='multipart/form-data' action="{$fsc->url()}" method="post">
+            <div class="col-lg-10 col-md-10 col-sm-10">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        INSTALAR PLUGIN DESDE ENLACE EXTERNO (Válidos exclusivamente archivos ZIP)
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group col-lg-10 col-md-10 col-sm-10">
+                            URL completa con enlace al Plugin:
+                            <input class="form-control" type="text" name="pluginexterno" autocomplete="off"/>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-2 col-sm-2">
+                        <br>
+                            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                &nbsp; INSTALAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        {/if}
+    {/if}
+
+            <div class="col-lg-10 col-md-10 col-sm-10">
+                <div class="panel-group" id="accordion">
+                    {if condition="isset($fsc->seccion)"}
+                        {if condition="$fsc->seccion<3"}
+                            {loop="$fsc->plugins()"}
+                                <div class="panel{if condition="$value['enabled']"} panel-success{else} panel-default{/if}">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$counter}">{$value['name']}</a>
+                                        </h3>
+                                    </div>
+                                    <div id="collapse_{$counter}" class="panel-collapse collapse{if condition="$counter==0"} in{/if}">
+                                        <div class="panel-body">
+                                            {$value['description']}
+                                        </div>
+                                        <div class="panel-footer">
+                                            {if condition="$fsc->unstables"}
+                                                {if condition="$value['enabled']"}
+                                                    <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&seccion=2&disable={$value['name']}">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                    &nbsp; Desactivar
+                                                    </a>
+                                                {else}
+                                                    <a class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&seccion=2&enable={$value['name']}">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                    &nbsp; Activar
+                                                    </a>
+                                                {/if}
+                                            {else}
+                                                {if condition="$value['enabled']"}
+                                                    <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&disable={$value['name']}">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                    &nbsp; Desactivar
+                                                    </a>
+                                                {else}
+                                                    <a class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&enable={$value['name']}">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                    &nbsp; Activar
+                                                    </a>
+                                                {/if}
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            {/loop}
+                        {/if}
+                    {/if}
+
+                    {if condition="isset($fsc->seccion)"}
+                        {if condition="$fsc->seccion==3"}
+                            {loop="$fsc->plugins_rep()"}
+                                <div class="panel{if condition="$value['enabled']"} panel-success{else}{if condition="$value['instalado']"} panel-default{else} panel-info{/if}{/if}">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$counter}">{$value['name']}</a>
+                                        &nbsp; &nbsp;{if condition="$value['inestable']"}<i>(Inestable)</i>{else}<i>(Estable)</i>{/if}
+                                        </h3>
+                                    </div>
+                                    <div id="collapse_{$counter}" class="panel-collapse collapse{if condition="$counter==0"} in{/if}">
+                                        <div class="panel-body">
+                                            {$value['description']}
+                                        </div>
+                                        <div class="panel-footer">
+                                            {if condition="$value['instalado']"}
+                                                {if condition="!$value['enabled']"}
+                                                    <a class="btn btn-sm btn-danger" type="button" value="Eliminar" title="Eliminar del Servidor el Plugin :: {$value['name']}" href="{$fsc->url()}&destruir={$value['name']}">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                    &nbsp; ELIMINAR
+                                                    </a>
+                                                {else}
+                                                    <h6>(No es posible Instalar/Eliminar un Plugin Activado)</h6>
+                                                {/if}
+                                            {else}
+                                                <a class="btn btn-sm btn-success" type="button" value="Instalar" title="Instalar en el Servidor el Plugin :: {$value['name']}" href="{$fsc->url()}&instalar={$value['name']}">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                                &nbsp; INSTALAR
+                                                </a>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            {/loop}
+                        {/if}
+                    {/if}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{/if}
+
+{include="footer"}
