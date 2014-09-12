@@ -126,12 +126,16 @@
            	      <tr>
                		<th class="text-left">Detalle</th>
               		<th class="text-left">Fecha</th>
+                        <th class="text-left"></span></th>
           	      </tr>
                    </thead>
                   {loop="fsc->listar_sat_detalle()"}
                      <tr>
             		<td>{$value->descripcion}</td>
             		<td>{$value->fecha}</td>
+                        <td>
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </td>
            	    </tr>
                  
               {/loop}

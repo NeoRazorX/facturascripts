@@ -191,7 +191,6 @@ class listado_sat extends fs_controller
               $cliente = $this->cliente->get($this->resultado->codcliente);
          if($cliente AND isset($_POST['nombre']))
          {
-             $this->new_message('3');
             $cliente->nombre = $_POST['nombre'];
             $cliente->nombrecomercial = $_POST['nombre'];
             $cliente->telefono1 = $_POST['telefono1'];

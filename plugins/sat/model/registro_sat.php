@@ -238,7 +238,7 @@ class registro_sat extends fs_model
          registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2,
          registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
          FROM registros_sat, clientes
-         WHERE registros_sat.codcliente = clientes.codcliente ORDER BY fcomienzo ASC, prioridad ASC,ffin ASC, fentrada ASC;";
+         WHERE registros_sat.codcliente = clientes.codcliente AND AND registros_sat.estado != 6 ORDER BY fcomienzo ASC, prioridad ASC,ffin ASC, fentrada ASC;";
       $data = $this->db->select($sql);
       if($data)
       {
