@@ -212,7 +212,11 @@ class listado_sat extends fs_controller
          $this->resultado->accesorios = $_POST['accesorios'];
          $this->resultado->observaciones = $_POST['observaciones'];
          $this->resultado->posicion = $_POST['posicion'];
-         $this->resultado->estado = $_POST['estado'];
+         if($this->resultado->estado != $_POST['estado'])//si tiene el mismo estado no tiene que hacer nada sino tiene que añadir un detalle
+         {
+            $this->resultado->estado = $_POST['estado'];
+            $this->agrega_detalle_estado($_POST['estado']);
+         }
          $this->resultado->prioridad = $_POST['prioridad'];
          if( $this->resultado->save() )
          {
@@ -289,6 +293,25 @@ class listado_sat extends fs_controller
 
          $detalle= new detalles_sat();
          $detalle->descripcion = $_POST['detalle'];
+         $detalle->nsat = $_GET['id'];
+         if( $detalle->save() )
+         {
+            $this->new_message('Detalle guardados correctamente.');
+         }
+         else
+         {
+            $this->new_error_msg('Imposible guardar el detalle.');
+            return FALSE;
+         }
+ 
+   }
+   
+   public function agrega_detalle_estado($estado)
+   {
+
+
+         $detalle= new detalles_sat();
+         $detalle->descripcion = "Se a cambiado el estado a : ".$this->registro_sat->nombre_estado_param($estado);
          $detalle->nsat = $_GET['id'];
          if( $detalle->save() )
          {
