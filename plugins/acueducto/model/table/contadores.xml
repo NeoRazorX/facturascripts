@@ -27,6 +27,11 @@
     <nulo>NO</nulo>
 </columna>
 <columna>
+    <nombre>idsertor</nombre>
+    <tipo>bigint</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
     <nombre>alta</nombre>
     <tipo>date</tipo>
     <nulo>NO</nulo>

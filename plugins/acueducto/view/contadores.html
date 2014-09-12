@@ -8,8 +8,10 @@
                 <th class="text-left">Cliente</th>
                 <th class="text-left">Nùmero</th>
                 <th class="text-left">Ubicación</th>
+                <th class="text-left">Sector</th>
                 <th class="text-left">Fecha de Alta</th>
                 <th class="text-left">Fecha Última Lectura</th>
+                <th class="text-left">Usuario</th>
                 <th class="text-right" width="120">Acciones</th>
             </tr>
         </thead>
@@ -35,10 +37,20 @@
                   <input class="form-control" type="text" name="ubicacion" autocomplete="off"/>
                </td>
                <td>
+                  <select name="idsector" class="form-control">
+                     {loop="$fsc->sector->all()"}
+                     <option value="{$value->idsector}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
                   <input class="form-control datepicker" type="text" name="alta" autocomplete="off" value="{$fsc->today()}"/>
                </td>
                <td>
                   <input class="form-control datepicker" type="text" name="lectura" autocomplete="off" value="{$fsc->today()}" readonly/>
+               </td>
+               <td>
+                  <input class="form-control" type="text" name="usuario" autocomplete="off" value="{$fsc->user->nick}" readonly/>
                </td>
                <td class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
@@ -74,10 +86,24 @@
                     <input class="form-control" type="text" name="ubicacion" value="{$value->ubicacion}"  autocomplete="off"/>
                 </td>
                 <td>
+                    <select class="form-control" name="idsector">
+                    {loop="$fsc->sector->all()"}
+                       {if condition="$value2->idsector == $value1->idsector"}
+                       <option value="{$value2->idsector}" selected="selected">{$value2->descripcion}</option>
+                       {else}
+                       <option value="{$value2->idsector}">{$value2->descripcion}</option>
+                       {/if}
+                    {/loop}
+                    </select>
+                </td>
+                <td>
                     <input class="form-control datepicker" type="text" name="alta" value="{$value->alta}" size="10" autocomplete="off"/>
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="lectura" value="{$value->lectura}" autocomplete="off"readonly/>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="usuario" value="{$value->usuario}"  autocomplete="off" readonly/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">

@@ -6,10 +6,12 @@
          <div class="well">
             <form action="{$fsc->url()}" method="post" class="form">
                <p>
-                  Haz clic en comenzar para facturar a todos los clientes. ({$fsc->fecha_ultima})
+                   Haz clic en comenzar para facturar a todos los clientes.</br>
+                   Última Facturación ({$fsc->fecha_ultima}).
                </p>
                
                <div class="col-sm-6">
+                   Nueva Fecha de Facturación
                   <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->fecha_ultima}"/> 
                </div>
                

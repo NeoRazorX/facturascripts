@@ -2,11 +2,13 @@
 
 require_model('contador.php');
 require_model('cliente.php'); /// hay que cargar los modelos que uses ;-)
+require_model('sector.php');
 
 class contadores extends fs_controller
 {
    public $contador;
    public $cliente;
+   public $sector;
 
    public function __construct()
    {
@@ -18,6 +20,7 @@ class contadores extends fs_controller
       $this->custom_search = TRUE;
       $this->contador = new contador();
       $this->cliente = new cliente();
+      $this->sector = new sector();
       
       if( isset($_POST['codcliente']) )
       {
@@ -35,8 +38,10 @@ class contadores extends fs_controller
          $cont0->codcliente = $_POST['codcliente'];
          $cont0->numero = $_POST['numero'];
          $cont0->ubicacion = $_POST['ubicacion'];
+         $cont0->idsector = $_POST['idsector'];
          $cont0->alta = $_POST['alta'];
          $cont0->lectura = $_POST['lectura'];
+         $cont0->usuario = $_POST['usuario'];
          
          if( $cont0->save() )
          {

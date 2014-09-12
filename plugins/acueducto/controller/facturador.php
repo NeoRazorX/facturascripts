@@ -45,12 +45,12 @@ class facturador extends fs_controller
       if($fact1)
       {
          $this->fecha_ultima = $fact1->fecha;
-         $this->new_message('fecha leida '. $this->fecha_ultima);
+         //// $this->new_message('fecha leida '. $this->fecha_ultima);
       }
       else
       {
          $this->fecha_ultima = date('d-m-Y');
-         $this->new_error_msg('No lee la última fecha de facturación. '. $this->fecha_ultima);
+         $this->new_error_msg('No Existen fecha de facturación. '. $this->fecha_ultima);
       }
         
       if( isset($_POST['fecha']) )
@@ -63,8 +63,21 @@ class facturador extends fs_controller
          $cliente = new cliente();
          foreach($cliente->all_full() as $cli)
          {
-            $this->generar_factura_cliente( array($cli) );
-            
+             /// leo contadores del cliente
+             $contador = new contador();
+             foreach($contador->all_cli($cli->codcliente) as $cont) 
+                 {
+                  /// leo lecturas de cada contador
+                  $lectura = new lectura();
+                  foreach($lectura->all_cli_cont($cli->codcliente,$cont->idcontador) as $lect)
+                  {
+                      $this->generar_factura_cliente( array($cli),array($cont),array($lect) );
+                      $this->total_lecturas++;
+                  }
+                  $this->total_facturas++;           
+                }
+              $this->total_clientes++;
+
          }
          $this->new_message($this->total_clientes.' clientes facturados. Facturas emitidas '.$this->total_facturas.' y Total lecturas procesadas '.$this->total_lecturas);
         
@@ -87,21 +100,9 @@ class facturador extends fs_controller
       }
    }
    
-   private function generar_factura_cliente($clientefact)
+   private function generar_factura_cliente($cliefact,$contfact,$lectfact)
    {
-       /// leo contadores del cliente
-       $contador = new contador();
-       foreach($contador->all_cli($clientefact[0]->codcliente) as $cont)
-         {
-           /// leo lecturas de cada contador
-           $lectura = new lectura();
-           foreach($lectura->all_cli_cont($clientefact[0]->codcliente,$cont->idcontador) as $lect)
-           {
-              $this->total_lecturas++;
-           }
-           $this->total_facturas++;           
-         }
-       $this->total_clientes++;
+       $this->new_message('Cliente facturado '. $cliefact[0]->codcliente. ' contador ' . $contfact[0]->numero . ' lectura ' . $lectfact[0]->idlectura);
    }
    
 }

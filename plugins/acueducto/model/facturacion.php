@@ -99,7 +99,7 @@ class facturacion extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("select * from facturaciones order by idfacturacion desc;");
+      $data = $this->db->select("select * from facturaciones order by fecha desc;");
       if($data)
       {
          foreach($data as $d)
@@ -115,7 +115,7 @@ class facturacion extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("select * from facturaciones where fecha like '%".$texto."%' order by idfacturacion desc;");
+      $data = $this->db->select("select * from facturaciones where fecha between ".$this->var2str($texto)." and ".$this->var2str($texto)." order by idfacturacion desc;");
       if($data)
       {
          foreach($data as $d)

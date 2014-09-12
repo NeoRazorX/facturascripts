@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : sectores.xml
+    Description:
+        Estructura de la tabla sectores.
+-->
+<tabla>
+<columna>
+    <nombre>idsector</nombre>
+    <tipo>serial</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('sectores_idsector_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>descripcion</nombre>
+    <tipo>varchar(100)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>observacion</nombre>
+    <tipo>varchar(100)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>sectores_pkey</nombre>
+    <consulta>PRIMARY KEY (idsector)</consulta>
+</restriccion>
+</tabla>
