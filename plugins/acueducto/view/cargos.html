@@ -38,15 +38,15 @@
         <thead>
             <tr>
                 <th class="text-left">Identificador</th>
-                <th class="text-left" width="200">Cliente</th>
-                <th class="text-left" width="200">Concepto</th>
+                <th class="text-left" width="120">Cliente</th>
+                <th class="text-left" width="250">Concepto</th>
                 <th class="text-right">Precio</th>
                 <th class="text-right">Cantidad</th>
                 <th class="text-right">Total</th>
-                <th class="text-left">Fecha</th>
+                <th class="text-left" width="120">Fecha</th>
                 <th class="text-left">Facturado</th>
                 <th class="text-right">Numero</th>
-                <th class="text-left">Imputación</th>
+                <th class="text-left" width="120">Imputación</th>
                 <th class="text-left">Usuario</th>
                 <th class="text-right" width="120">Acciones</th>
             </tr>
@@ -83,7 +83,7 @@
                   <input class="form-control text-right" type="number" name="total" id="total" value="1" onchange="recalculo()" onkeyup="recalculo()" onclick="this.select()" />
                </td>
                <td>
-                  <input class="form-control datepicker" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/>
+                  <input class="form-control datepicker text-center" type="text" name="fecha" autocomplete="off" value="{$fsc->today()}"/>
                </td>
                <td>
                   <input class="checkbox-inline" type="checkbox" name="facturado" value="0" readonly/>
@@ -145,7 +145,7 @@
                     <input class="form-control text-right" type="number" name="total" id="total_{$counter}" value="{$value->total}" onchange="recalculo_linea('{$counter}')" onkeyup="recalculo_linea('{$counter}')" onclick="this.select()" />
                 </td>
                 <td>
-                    <input class="form-control datepicker" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
+                    <input class="form-control datepicker text-center" type="text" name="fecha" value="{$value->fecha}" size="10" autocomplete="off"/>
                 </td>
                 <td>
                     <input class="checkbox-inline" type="checkbox" name="facturado" value="{$value->facturado}" readonly/>
@@ -154,7 +154,7 @@
                     <input class="form-control text-right" type="number" name="numero" value="{$value->numero}" readonly/>
                 </td>
                 <td>
-                    <input class="form-control datepicker" type="text" name="imputacion" value="{$value->imputacion}" autocomplete="off"readonly/>
+                    <input class="form-control datepicker text-center" type="text" name="imputacion" value="{$value->imputacion}" autocomplete="off"readonly/>
                 </td>
                 <td>
                     <input class="form-control" type="text" name="usuario" value="{$value->usuario}"  autocomplete="off" readonly/>

@@ -253,7 +253,7 @@ class ventas_factura extends fs_controller
         $pdf_doc = new PDF_MC_Table('P','mm','A4');
         define('EEURO',chr(128));
 
-        $pdf_doc->SetTitle('Factura: ' . $this->factura->codigo);
+        $pdf_doc->SetTitle('Factura: ' . $this->factura->codigo . " ". $this->factura->numero2);
         $pdf_doc->SetSubject('Factura del cliente: ' . $this->factura->nombrecliente);
         $pdf_doc->SetAuthor($this->empresa->nombre);
         $pdf_doc->SetCreator('FacturaSctipts V_' . $this->version());
@@ -301,7 +301,7 @@ class ventas_factura extends fs_controller
 
             // Tipo de Documento			
             $pdf_doc->fdf_tipodocumento     = 'FACTURA'; // (FACTURA, FACTURA PROFORMA, ¿ALBARAN, PRESUPUESTO?...)
-            $pdf_doc->fdf_codigo            = $this->factura->codigo;
+            $pdf_doc->fdf_codigo            = $this->factura->codigo . " ". $this->factura->numero2;
 
             // Fecha, Codigo Cliente y observaciones de la factura
             $pdf_doc->fdf_fecha             = $this->factura->fecha;
