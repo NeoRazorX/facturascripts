@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_users.xml
+    Description:
+        Estructura de la tabla fs_users.
+-->
+<tabla>
+   <columna>
+      <nombre>nick</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>password</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>log_key</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>admin</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>
+   <columna>
+      <nombre>codagente</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_login</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_login_time</nombre>
+      <tipo>time</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_ip</nombre>
+      <tipo>character varying(40)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>last_browser</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fs_page</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codejercicio</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+    <columna>
+      <nombre>template</nombre>
+      <tipo>character varying(40)</tipo>
+      <nulo>NO</nulo>
+      <defecto>'bootstrap-yeti.css'::character varying</defecto>
+   </columna>
+   <restriccion>
+      <nombre>fs_users_pkey</nombre>
+      <consulta>PRIMARY KEY (nick)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_agentes2</nombre>
+      <consulta>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_pages2</nombre>
+      <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_fs_users_ejercicios2</nombre>
+      <consulta>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+   </restriccion>
+</tabla>
