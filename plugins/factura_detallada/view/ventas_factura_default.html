@@ -48,17 +48,17 @@
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Factura simple
             </a>
-            
+
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Modelo carta
             </a>
-            
+
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=firma">
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Factura con firma
             </a>
-             
+
             <a class="btn btn-block btn-default" target="_blank" href="index.php?page=factura_detallada&id={$fsc->factura->idfactura}">
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Factura Detallada
@@ -183,7 +183,7 @@
          {/if}
       </div>
    </div>
-   
+
    <ul class="nav nav-tabs" role="tablist">
       <li id="li_lineas" class="active">
          <a href="#" id="b_lineas">Líneas</a>
@@ -192,7 +192,7 @@
          <a href="#" id="b_lineas_iva">Líneas de IVA</a>
       </li>
    </ul>
-   
+
    <div class="table-responsive" id="div_lineas">
       <table class="table table-hover">
          <thead>
@@ -233,7 +233,7 @@
          </tr>
       </table>
    </div>
-   
+
    <div class="table-responsive" id="div_lineas_iva" style="display: none;">
       <table class="table table-hover">
          <thead>
@@ -256,7 +256,7 @@
          {/loop}
       </table>
    </div>
-   
+
    <div class="container-fluid">
       <div class="row">
          <div class="col-lg-12 col-md-12 col-sm-12">
