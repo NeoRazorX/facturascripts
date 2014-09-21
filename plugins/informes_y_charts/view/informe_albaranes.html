@@ -55,7 +55,6 @@
 </div>
 
 <script>
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_days = {
       labels: [{loop="$fsc->stats_last_days()"}{if="$counter<25"}"{$value["day"]}",{else}"{$value["day"]}"{/if}{/loop}],
       datasets : [
@@ -82,7 +81,6 @@
       ]
    }
    
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_months = {
       labels: [{loop="$fsc->stats_last_months()"}{if="$counter<12"}"{$value["month"]}",{else}"{$value["month"]}"{/if}{/loop}],
       datasets : [
@@ -109,7 +107,6 @@
       ]
    }
    
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_years = {
       labels: [{loop="$fsc->stats_last_years()"}{if="$counter<5"}"{$value["year"]}",{else}"{$value["year"]}"{/if}{/loop}],
       datasets : [
@@ -153,18 +150,18 @@
    }
    
    window.onload = function(){
-      var ctx = document.getElementById("canvas_chart_albaranes_day").getContext("2d");
-      var Chart_lines_last_days = new Chart(ctx).Line(lineChartData_last_days, options);
+      var ctx_canvas_chart_albaranes_day = document.getElementById("canvas_chart_albaranes_day").getContext("2d");
+      var Chart_lines_last_days = new Chart(ctx_canvas_chart_albaranes_day).Line(lineChartData_last_days, options);
       var Chart_legend_last_days = document.getElementById('legend_chart_albaranes_day');
       Chart_legend_last_days.innerHTML = Chart_lines_last_days.generateLegend();
       
-      var ctx2 = document.getElementById("canvas_chart_albaranes_month").getContext("2d");
-      var Chart_lines_last_months = new Chart(ctx2).Line(lineChartData_last_months, options);
+      var ctx_canvas_chart_albaranes_month = document.getElementById("canvas_chart_albaranes_month").getContext("2d");
+      var Chart_lines_last_months = new Chart(ctx_canvas_chart_albaranes_month).Line(lineChartData_last_months, options);
       var Chart_legend_last_month = document.getElementById('legend_chart_albaranes_month');
       Chart_legend_last_month.innerHTML = Chart_lines_last_months.generateLegend();
       
-      var ctx3 = document.getElementById("canvas_chart_albaranes_year").getContext("2d");
-      var Chart_lines_last_years = new Chart(ctx3).Line(lineChartData_last_years, options);
+      var ctx_canvas_chart_albaranes_year = document.getElementById("canvas_chart_albaranes_year").getContext("2d");
+      var Chart_lines_last_years = new Chart(ctx_canvas_chart_albaranes_year).Line(lineChartData_last_years, options);
       var Chart_legend_last_years = document.getElementById('legend_chart_albaranes_year');
       Chart_legend_last_years.innerHTML = Chart_lines_last_years.generateLegend();
    }

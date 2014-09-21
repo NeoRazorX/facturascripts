@@ -394,6 +394,61 @@ class informe_facturas extends fs_controller
       $pdf_doc->show();
    }
    
+   public function stats_best_clients()
+   {
+      $stats = array();
+      $stats_cli = $this->stats_last_days_aux('facturascli');
+      $stats_pro = $this->stats_last_days_aux('facturasprov');
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'day' => $value['day'],
+             'total_cli' => $value['total'],
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = $value['total'];
+      
+      return $stats;
+   }
+   
+   public function stats_best_clients_aux($table_name='facturascli', $numdays = 25)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMDD')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
    public function stats_last_days()
    {
       $stats = array();

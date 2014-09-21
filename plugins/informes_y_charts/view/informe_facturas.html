@@ -59,6 +59,27 @@
       <div class="col-lg-12 col-md-12 col-sm-12">
          <div class="panel panel-default">
             <div class="panel-heading">
+               <h3 class="panel-title">Mejores clientes del mes</h3>
+            </div>
+            <div class="panel-body">
+               <div id="chart_clientes_del_mes">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <canvas id="canvas_chart_clientes_del_mes" width="250" height="125"></canvas>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div id="legend_chart_clientes_del_mes"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+         <div class="panel panel-default">
+            <div class="panel-heading">
                <h3 class="panel-title">Facturación de los últimos días</h3>
             </div>
             <div class="panel-body">
@@ -122,6 +143,20 @@
 
 <script>
    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+   var barChartData_clientes_del_mes = {
+      labels : ["Cliente 1","Cliente 2","Cliente 3","Cliente 4","Cliente 5","Cliente 6","Cliente 7","Cliente 8","Cliente 9","Cliente 10"],
+      datasets : [
+         {
+            label: "Mejores clientes del mes",
+            fillColor : "rgba(220,220,220,0.5)",
+            strokeColor : "rgba(220,220,220,0.8)",
+            highlightFill: "rgba(220,220,220,0.75)",
+            highlightStroke: "rgba(220,220,220,1)",
+            data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+         }
+      ]
+   }
+   
    var lineChartData_last_days = {
       labels: [{loop="$fsc->stats_last_days()"}{if="$counter<25"}"{$value["day"]}",{else}"{$value["day"]}"{/if}{/loop}],
       datasets : [
@@ -148,7 +183,6 @@
       ]
    }
    
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_months = {
       labels: [{loop="$fsc->stats_last_months()"}{if="$counter<12"}"{$value["month"]}",{else}"{$value["month"]}"{/if}{/loop}],
       datasets : [
@@ -175,7 +209,6 @@
       ]
    }
    
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_years = {
       labels: [{loop="$fsc->stats_last_years()"}{if="$counter<5"}"{$value["year"]}",{else}"{$value["year"]}"{/if}{/loop}],
       datasets : [
@@ -219,18 +252,23 @@
    }
    
    window.onload = function(){
-      var ctx = document.getElementById("canvas_chart_facturas_day").getContext("2d");
-      var Chart_lines_last_days = new Chart(ctx).Line(lineChartData_last_days, options);
+      var ctx_canvas_chart_clientes_del_mes = document.getElementById("canvas_chart_clientes_del_mes").getContext("2d");
+      var Chart_bar_clientes_del_mes = new Chart(ctx_canvas_chart_clientes_del_mes).Bar(barChartData_clientes_del_mes, options);
+      var Chart_legend_clientes_del_mes = document.getElementById('legend_chart_clientes_del_mes');
+      Chart_legend_clientes_del_mes.innerHTML = Chart_bar_clientes_del_mes.generateLegend();
+      
+      var ctx_canvas_chart_facturas_day = document.getElementById("canvas_chart_facturas_day").getContext("2d");
+      var Chart_lines_last_days = new Chart(ctx_canvas_chart_facturas_day).Line(lineChartData_last_days, options);
       var Chart_legend_last_days = document.getElementById('legend_chart_facturas_day');
       Chart_legend_last_days.innerHTML = Chart_lines_last_days.generateLegend();
       
-      var ctx2 = document.getElementById("canvas_chart_facturas_month").getContext("2d");
-      var Chart_lines_last_months = new Chart(ctx2).Line(lineChartData_last_months, options);
+      var ctx_canvas_chart_facturas_month = document.getElementById("canvas_chart_facturas_month").getContext("2d");
+      var Chart_lines_last_months = new Chart(ctx_canvas_chart_facturas_month).Line(lineChartData_last_months, options);
       var Chart_legend_last_month = document.getElementById('legend_chart_facturas_month');
       Chart_legend_last_month.innerHTML = Chart_lines_last_months.generateLegend();
       
-      var ctx3 = document.getElementById("canvas_chart_facturas_year").getContext("2d");
-      var Chart_lines_last_years = new Chart(ctx3).Line(lineChartData_last_years, options);
+      var ctx_canvas_chart_facturas_year = document.getElementById("canvas_chart_facturas_year").getContext("2d");
+      var Chart_lines_last_years = new Chart(ctx_canvas_chart_facturas_year).Line(lineChartData_last_years, options);
       var Chart_legend_last_years = document.getElementById('legend_chart_facturas_year');
       Chart_legend_last_years.innerHTML = Chart_lines_last_years.generateLegend();
    }

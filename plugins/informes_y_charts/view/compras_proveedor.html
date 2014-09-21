@@ -70,7 +70,6 @@
 
 {if condition="isset($_GET['stats'])"}
 <script>
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var lineChartData_last_months = {
       labels: [{loop="$fsc->stats_from_prov()"}{if="$counter<60"}"{$value["mes"]}",{else}"{$value["mes"]}"{/if}{/loop}],
       datasets : [
@@ -104,8 +103,8 @@
    }
    
    window.onload = function(){
-      var ctx = document.getElementById("canvas_chart_albaranes_month").getContext("2d");
-      var Chart_lines_last_months = new Chart(ctx).Line(lineChartData_last_months, options);
+      var ctx_canvas_chart_albaranes_month = document.getElementById("canvas_chart_albaranes_month").getContext("2d");
+      var Chart_lines_last_months = new Chart(ctx_canvas_chart_albaranes_month).Line(lineChartData_last_months, options);
       var Chart_legend_last_month = document.getElementById('legend_chart_albaranes_month');
       Chart_legend_last_month.innerHTML = Chart_lines_last_months.generateLegend();
    }
