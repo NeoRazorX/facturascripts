@@ -397,53 +397,66 @@ class informe_facturas extends fs_controller
    public function stats_best_clients()
    {
       $stats = array();
-      $stats_cli = $this->stats_last_days_aux('facturascli');
-      $stats_pro = $this->stats_last_days_aux('facturasprov');
+      $stats_cli = $this->stats_best_clients_aux('facturascli');
       
       foreach($stats_cli as $i => $value)
       {
          $stats[$i] = array(
-             'day' => $value['day'],
-             'total_cli' => $value['total'],
-             'total_pro' => 0
+             'nombrecliente' => $value['nombrecliente'],
+             'total_cli' => round($value['total'], 2)
          );
       }
-      
-      foreach($stats_pro as $i => $value)
-         $stats[$i]['total_pro'] = $value['total'];
       
       return $stats;
    }
    
-   public function stats_best_clients_aux($table_name='facturascli', $numdays = 25)
+   public function stats_best_clients_aux($table_name='facturascli', $num = 1)
    {
+      $nombre_cliente="";
+      $total=0;
       $stats = array();
-      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
       
-      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      foreach(array(0, 1, 2, 3, 4) as $item)
       {
-         $i = intval($date);
-         $stats[$i] = array('day' => $i, 'total' => 0);
+         $stats[intval($item)] = array(
+             'nombrecliente' => "", 
+             'total' => 0
+         );
       }
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
-         $sql_aux = "to_char(fecha,'FMDD')";
+         $sql_aux = "to_char(fecha,'FMMM')";
       else
-         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
       
-      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
+      $data = $this->db->select("SELECT DISTINCT(nombrecliente) as nombrecliente, ".$sql_aux." as mes, sum(total) as total
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
-         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
-         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND DATE_FORMAT(fecha, '%m') = ".$this->empresa->var2str(Date('m'))."
+         GROUP BY nombrecliente
+         ORDER BY total DESC
+         LIMIT 0,5;");
+         
       if($data)
       {
+         $i=0;
          foreach($data as $d)
          {
-            $i = intval($d['dia']);
-            $stats[$i] = array(
-                'day' => $i,
-                'total' => floatval($d['total'])
+            if ($d['nombrecliente']!="")
+               $nombre_cliente=$d['nombrecliente'];
+            else
+               $nombre_cliente="";
+               
+            if ($d['total']!=0)
+               $total=floatval($d['total']);
+            else
+               $total=floatval(0);
+               
+            $stats[intval($i)] = array(
+                'nombrecliente' => $nombre_cliente,
+                'total' => $total
             );
+         $i++;
          }
       }
       return $stats;

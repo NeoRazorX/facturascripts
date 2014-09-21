@@ -1,5 +1,23 @@
 {include="header"}
 
+<div class="panel panel-default">
+   <div class="panel-heading">
+      <h3 class="panel-title">Mejores clientes del mes</h3>
+   </div>
+   <div class="panel-body">
+      <div id="chart_clientes_del_mes">
+         <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+               <canvas id="canvas_chart_clientes_del_mes" width="250" height="125"></canvas>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+               <div id="legend_chart_clientes_del_mes"></div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
 <div class="panel panel-default" style="margin: 5px;">
    <div class="panel-heading">
       <h3 class="panel-title"><span class="text-capitalize">{#FS_ALBARANES#}</span> de los últimos días</h3>
@@ -55,6 +73,20 @@
 </div>
 
 <script>
+   var barChartData_clientes_del_mes = {
+      labels: [{loop="$fsc->stats_best_clients()"}{if="$counter<4"}"{$value["nombrecliente"]}",{else}"{$value["nombrecliente"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Mejores clientes del mes",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,0.8)",
+            highlightFill: "rgba(125,234,125,0.75)",
+            highlightStroke: "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_best_clients()"}{if="$counter<4"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
+         }
+      ]
+   }
+   
    var lineChartData_last_days = {
       labels: [{loop="$fsc->stats_last_days()"}{if="$counter<25"}"{$value["day"]}",{else}"{$value["day"]}"{/if}{/loop}],
       datasets : [
@@ -150,6 +182,11 @@
    }
    
    window.onload = function(){
+      var ctx_canvas_chart_clientes_del_mes = document.getElementById("canvas_chart_clientes_del_mes").getContext("2d");
+      var Chart_bar_clientes_del_mes = new Chart(ctx_canvas_chart_clientes_del_mes).Bar(barChartData_clientes_del_mes, options);
+      var Chart_legend_clientes_del_mes = document.getElementById('legend_chart_clientes_del_mes');
+      Chart_legend_clientes_del_mes.innerHTML = Chart_bar_clientes_del_mes.generateLegend();
+
       var ctx_canvas_chart_albaranes_day = document.getElementById("canvas_chart_albaranes_day").getContext("2d");
       var Chart_lines_last_days = new Chart(ctx_canvas_chart_albaranes_day).Line(lineChartData_last_days, options);
       var Chart_legend_last_days = document.getElementById('legend_chart_albaranes_day');

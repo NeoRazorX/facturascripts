@@ -142,17 +142,16 @@
 </div>
 
 <script>
-   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
    var barChartData_clientes_del_mes = {
-      labels : ["Cliente 1","Cliente 2","Cliente 3","Cliente 4","Cliente 5","Cliente 6","Cliente 7","Cliente 8","Cliente 9","Cliente 10"],
+      labels: [{loop="$fsc->stats_best_clients()"}{if="$counter<4"}"{$value["nombrecliente"]}",{else}"{$value["nombrecliente"]}"{/if}{/loop}],
       datasets : [
          {
             label: "Mejores clientes del mes",
-            fillColor : "rgba(220,220,220,0.5)",
-            strokeColor : "rgba(220,220,220,0.8)",
-            highlightFill: "rgba(220,220,220,0.75)",
-            highlightStroke: "rgba(220,220,220,1)",
-            data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,0.8)",
+            highlightFill: "rgba(125,234,125,0.75)",
+            highlightStroke: "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_best_clients()"}{if="$counter<4"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
          }
       ]
    }

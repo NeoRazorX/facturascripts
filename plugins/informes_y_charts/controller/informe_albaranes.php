@@ -34,6 +34,74 @@ class informe_albaranes extends fs_controller
       $albaran_pro = new albaran_proveedor();
    }
    
+   public function stats_best_clients()
+   {
+      $stats = array();
+      $stats_cli = $this->stats_best_clients_aux('albaranescli');
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'nombrecliente' => $value['nombrecliente'],
+             'total_cli' => round($value['total'], 2)
+         );
+      }
+      
+      return $stats;
+   }
+   
+   public function stats_best_clients_aux($table_name='albaranescli', $num = 1)
+   {
+      $nombre_cliente="";
+      $total=0;
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
+      
+      foreach(array(0, 1, 2, 3, 4) as $item)
+      {
+         $stats[intval($item)] = array(
+             'nombrecliente' => "", 
+             'total' => 0
+         );
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT DISTINCT(nombrecliente) as nombrecliente, ".$sql_aux." as mes, sum(total) as total
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND DATE_FORMAT(fecha, '%m') = ".$this->empresa->var2str(Date('m'))."
+         GROUP BY nombrecliente
+         ORDER BY total DESC
+         LIMIT 0,5;");
+         
+      if($data)
+      {
+         $i=0;
+         foreach($data as $d)
+         {
+            if ($d['nombrecliente']!="")
+               $nombre_cliente=$d['nombrecliente'];
+            else
+               $nombre_cliente="";
+               
+            if ($d['total']!=0)
+               $total=floatval($d['total']);
+            else
+               $total=floatval(0);
+               
+            $stats[intval($i)] = array(
+                'nombrecliente' => $nombre_cliente,
+                'total' => $total
+            );
+         $i++;
+         }
+      }
+      return $stats;
+   }
+   
    public function stats_last_days()
    {
       $stats = array();
