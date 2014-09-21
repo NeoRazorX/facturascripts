@@ -523,18 +523,18 @@ class informe_facturas extends fs_controller
       $stats_cli = $this->stats_last_months_aux('facturascli');
       $stats_pro = $this->stats_last_months_aux('facturasprov');
       $meses = array(
-          1 => 'ene',
-          2 => 'feb',
-          3 => 'mar',
-          4 => 'abr',
-          5 => 'may',
-          6 => 'jun',
-          7 => 'jul',
-          8 => 'ago',
-          9 => 'sep',
-          10 => 'oct',
-          11 => 'nov',
-          12 => 'dic'
+          1 => 'Enero',
+          2 => 'Febrero',
+          3 => 'Marzo',
+          4 => 'Abril',
+          5 => 'Mayo',
+          6 => 'Junio',
+          7 => 'Julio',
+          8 => 'Agosto',
+          9 => 'Septiembre',
+          10 => 'Octubre',
+          11 => 'Noviembre',
+          12 => 'Diciembre'
       );
       
       foreach($stats_cli as $i => $value)
