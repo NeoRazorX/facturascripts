@@ -1,5 +1,9 @@
 {include="header"}
 
+<div class="text-center text-warning">
+   (Advertencia: Es aconsejable actualizar el Plugin Factura Detallada. La plantilla HTML difiere de la plantilla general.)
+</div>
+
 {if condition="$fsc->factura"}
 <script type="text/javascript">
    $(document).ready(function() {
@@ -55,7 +59,7 @@
                &nbsp; Factura con firma
             </a>
              
-            <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=detalle">
+            <a class="btn btn-block btn-default" target="_blank" href="index.php?page=factura_detallada&id={$fsc->factura->idfactura}">
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Factura Detallada
             </a>
@@ -67,13 +71,13 @@
    </div>
 </div>
 
-<form class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="post">
+<form class="form" role="form" name="enviar_email" action ="index.php?page=factura_detallada&id={$fsc->factura->idfactura}" method="post">
    <div class="modal fade" id="modal_enviar">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar factura</h4>
+               <h4 class="modal-title">Enviar factura Detallada</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">

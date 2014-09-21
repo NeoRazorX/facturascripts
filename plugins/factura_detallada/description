@@ -1,5 +1,6 @@
-Plugin para gestionar las facturas de clientes incluyendo las Observaciones de los Artículos en el cuerpo de la factura.
-Se incluyen porcentajes y totales de IRPF y Recargo de Equivalencia por cada grupo de IVA en la impresión de la factura.
-Solo es posible incluir un máximo de 3 lineas de IVA en la impresión de la factura.
-El Logo de la empresa debe de ser de un tamaño mínimo aconsejado de 800 X 800 pixeles y se utilizará también como Marcadeagua en el fondo del documento.
-El Logo NO debe de incluir los datos de la empresa. Solo la imagen corporativa.
+Plugin para gestionar las facturas de clientes incluyendo las Observaciones de los Articulos en el cuerpo de la factura.<br/>
+Se incluyen porcentajes y totales de IRPF y Recargo de Equivalencia por cada grupo de IVA en la impresion de la factura.<br/>
+Solo es posible incluir un máximo de 3 lineas de IVA en la impresion de la factura.<br/>
+El Logo de la empresa debe de ser de un tamaño minimo aconsejado de 800 X 800 pixeles y se utilizará tambien como Marcadeagua en el fondo del documento.<br/>
+El Logo NO debe de incluir los datos de la empresa. Solo la imagen corporativa.<br/><br/>
+<b>NOTA:</b> Solo se incluye un modelo de factura.
