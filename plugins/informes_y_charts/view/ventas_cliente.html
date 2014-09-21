@@ -69,32 +69,45 @@
 </script>
 
 {if condition="isset($_GET['stats'])"}
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-   // Load the Visualization API and the piechart package.
-   google.load('visualization', '1.0', {'packages':['corechart']});
+<script>
+   var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+   var lineChartData_last_months = {
+      labels: [{loop="$fsc->stats_from_cli()"}{if="$counter<60"}"{$value["mes"]}",{else}"{$value["mes"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Total ventas mensual",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,1)",
+            pointColor : "rgba(125,234,125,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_from_cli()"}{if="$counter<60"}"{$value["compras"]}",{else}"{$value["compras"]}"{/if}{/loop}]
+         }
+      ]
+   }
    
-   // Set a callback to run when the Google Visualization API is loaded.
-   google.setOnLoadCallback(drawChart);
+   var options = {
+      responsive: true,
+      animation: false,
+      tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
+      segmentStrokeColor : "#f9f9f9",
+      legendTemplate :   "<ul>"
+                        +"<% for (var i=0; i<datasets.length; i++){%>"
+                        +"<li>"
+                           +"<span style=\"background-color:<%=datasets[i].fillColor%>\">"
+                              +"<%if(datasets[i].label){%><%=datasets[i].label%><%}%>"
+                           +"</span>"
+                        +"</li>"
+                        +"<%}%>"
+                     +"</ul>"
+   }
    
-   // Callback that creates and populates a data table,
-   // instantiates the pie chart, passes in the data and
-   // draws it.
-   function drawChart()
-   {
-      // Create the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'mes');
-      data.addColumn('number', 'compras');
-      data.addRows([
-      {loop="$fsc->stats_from_cli()"}
-         ['{$value['mes']}', {$value['compras']}],
-      {/loop}
-      ]);
-      
-      // Instantiate and draw our chart, passing in some options.
-      var chart = new google.visualization.AreaChart(document.getElementById('chart_albaranes_month'));
-      chart.draw(data);
+   window.onload = function(){
+      var ctx = document.getElementById("canvas_chart_albaranes_month").getContext("2d");
+      var Chart_lines_last_months = new Chart(ctx).Line(lineChartData_last_months, options);
+      var Chart_legend_last_month = document.getElementById('legend_chart_albaranes_month');
+      Chart_legend_last_month.innerHTML = Chart_lines_last_months.generateLegend();
    }
 </script>
 {/if}
@@ -426,7 +439,17 @@
             </table>
          </div>
          
-         <div id="chart_albaranes_month" style="height: 400px;"></div>
+         <div id="chart_albaranes_month" style="height: 400px;">
+            <div class="row">
+               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                  <canvas id="canvas_chart_albaranes_month" width="250" height="125"></canvas>
+               </div>
+               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                  <div id="legend_chart_albaranes_month"></div>
+               </div>
+            </div>
+         </div>
+         
       </div>
    </div>
 </div>
