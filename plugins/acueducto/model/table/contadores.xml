@@ -27,7 +27,7 @@
     <nulo>NO</nulo>
 </columna>
 <columna>
-    <nombre>idsertor</nombre>
+    <nombre>idsector</nombre>
     <tipo>bigint</tipo>
     <nulo>NO</nulo>
 </columna>
@@ -39,6 +39,11 @@
 <columna>
     <nombre>lectura</nombre>
     <tipo>date</tipo>
+    <nulo>NO</nulo>
+</columna>
+<columna>
+    <nombre>exonerado</nombre>
+    <tipo>boolean</tipo>
     <nulo>NO</nulo>
 </columna>
 <columna>

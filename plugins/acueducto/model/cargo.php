@@ -4,6 +4,7 @@ class cargo extends fs_model
 {
    public $idcargo;
    public $codcliente;
+   public $idcontador;
    public $idconcepto;
    public $precio;
    public $cantidad;
@@ -23,6 +24,7 @@ class cargo extends fs_model
       {
          $this->idcargo = $g['idcargo'];
          $this->codcliente = $g['codcliente'];
+         $this->idcontador = $g['idcontador'];
          $this->idconcepto = $g['idconcepto'];
          $this->precio = $g['precio'];
          $this->cantidad = $g['cantidad'];
@@ -37,6 +39,7 @@ class cargo extends fs_model
       {
          $this->idcargo = NULL;
          $this->codcliente = "";
+         $this->idcontador = "";
          $this->idconcepto = "";
          $this->precio = 0;
          $this->cantidad = 0;
@@ -95,6 +98,7 @@ class cargo extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE cargos set codcliente = ".$this->var2str($this->codcliente).
+                 ", idcontador = ".$this->var2str($this->idcontador).
                  ", idconcepto = ".$this->var2str($this->idconcepto).
                  ", precio = ".$this->var2str($this->precio).
                  ", cantidad = ".$this->var2str($this->cantidad). 
@@ -109,9 +113,10 @@ class cargo extends fs_model
       }
       else
       {
-         $sql = "INSERT into cargos (idcargo,codcliente,idconcepto,precio,cantidad,total,fecha,facturado,numero,imputacion,usuario) VALUES ("
+         $sql = "INSERT into cargos (idcargo,codcliente,idcontador,idconcepto,precio,cantidad,total,fecha,facturado,numero,imputacion,usuario) VALUES ("
                  .$this->var2str($this->idcargo).","
                  .$this->var2str($this->codcliente).","
+                 .$this->var2str($this->idcontador).","
                  .$this->var2str($this->idconcepto).","
                  .$this->var2str($this->precio).","
                  .$this->var2str($this->cantidad).","

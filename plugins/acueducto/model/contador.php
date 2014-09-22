@@ -9,6 +9,7 @@ class contador extends fs_model
    public $idsector;
    public $alta;
    public $lectura;
+   public $exonerado;
    public $usuario;
  
    public function __construct($g = FALSE)
@@ -24,6 +25,7 @@ class contador extends fs_model
          $this->idsector = $g['idsector'];
          $this->alta = date('d-m-Y', strtotime($g['alta']));
          $this->lectura = date('d-m-Y', strtotime($g['lectura']));
+         $this->exonerado = $this->str2bool($g['exonerado']);
          $this->usuario = $g['usuario'];
       }
       else
@@ -34,6 +36,7 @@ class contador extends fs_model
          $this->ubicacion = "";
          $this->fecha = date('d-m-Y');
          $this->imputacion = date('d-m-Y');
+         $this->exonerado = 0;
          $this->usuario = $this->user->nick;
          
       }
@@ -89,13 +92,14 @@ class contador extends fs_model
                  ", idsector = ".$this->var2str($this->idsector).
                  ", alta = ".$this->var2str($this->alta).
                  ", lectura = ".$this->var2str($this->lectura).
+                 ", exonerado = ".$this->var2str($this->exonerado).
                  ", usuario = ".$this->var2str($this->usuario).
                  " where idcontador = ".$this->var2str($this->idcontador).";";
                  
       }
       else
       {
-         $sql = "INSERT into contadores (idcontador,codcliente,numero,ubicacion,idsector,alta,lectura,usuario) VALUES ("
+         $sql = "INSERT into contadores (idcontador,codcliente,numero,ubicacion,idsector,alta,lectura,exonerado,usuario) VALUES ("
                  .$this->var2str($this->idcontador).","
                  .$this->var2str($this->codcliente).","
                  .$this->var2str($this->numero).","
@@ -103,6 +107,7 @@ class contador extends fs_model
                  .$this->var2str($this->idsector).","
                  .$this->var2str($this->fecha).","
                  .$this->var2str($this->lectura).","
+                 .$this->var2str($this->exonerado).","
                  .$this->var2str($this->usuario).");";
       }
       

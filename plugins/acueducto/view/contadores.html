@@ -11,6 +11,7 @@
                 <th class="text-left">Sector</th>
                 <th class="text-left">Fecha de Alta</th>
                 <th class="text-left">Fecha Última Lectura</th>
+                <th class="text-left">Exonerado</th>
                 <th class="text-left">Usuario</th>
                 <th class="text-right" width="120">Acciones</th>
             </tr>
@@ -48,6 +49,9 @@
                </td>
                <td>
                   <input class="form-control datepicker" type="text" name="lectura" autocomplete="off" value="{$fsc->today()}" readonly/>
+               </td>
+               <td>
+                  <input class="checkbox-inline" type="checkbox" name="exonerado" value="0" />
                </td>
                <td>
                   <input class="form-control" type="text" name="usuario" autocomplete="off" value="{$fsc->user->nick}" readonly/>
@@ -101,6 +105,9 @@
                 </td>
                 <td>
                     <input class="form-control datepicker" type="text" name="lectura" value="{$value->lectura}" autocomplete="off"readonly/>
+                </td>
+                <td>
+                    <input class="checkbox-inline" type="checkbox" name="exonerado" value="{$value->exonerado}"{if condition="$value->exonerado"} checked="checked"{/if}/>
                 </td>
                 <td>
                     <input class="form-control" type="text" name="usuario" value="{$value->usuario}"  autocomplete="off" readonly/>

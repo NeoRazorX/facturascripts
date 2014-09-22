@@ -39,6 +39,7 @@
             <tr>
                 <th class="text-left">Identificador</th>
                 <th class="text-left" width="120">Cliente</th>
+                <th class="text-left" width="120">Contador</th>
                 <th class="text-left" width="250">Concepto</th>
                 <th class="text-right">Precio</th>
                 <th class="text-right">Cantidad</th>
@@ -63,6 +64,13 @@
                   <select name="codcliente" class="form-control">
                      {loop="$fsc->cliente->all_full()"}
                      <option value="{$value->codcliente}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </td>
+               <td>
+                  <select class="form-control" name="idcontador">
+                     {loop="$fsc->contador->all()"}
+                     <option value="{$value->idcontador}">{$value->numero}</option>
                      {/loop}
                   </select>
                </td>
@@ -124,7 +132,18 @@
                     {/loop}
                     </select>
                 </td>
-               <td>
+                <td>
+                    <select class="form-control" name="idcontador">
+                    {loop="$fsc->contador->all()"}
+                       {if condition="$value2->idcontador == $value1->idcontador"}
+                       <option value="{$value2->idcontador}" selected="selected">{$value2->numero}</option>
+                       {else}
+                       <option value="{$value2->idcontador}">{$value2->numero}</option>
+                       {/if}
+                    {/loop}
+                    </select>
+                </td>
+                <td>
                     <select class="form-control" name="idconcepto" id="conceptos_{$counter}" onchange="recalculo_linea('{$counter}')">
                     {loop="$fsc->concepto->all()"}
                        {if condition="$value2->idconcepto == $value1->idconcepto"}

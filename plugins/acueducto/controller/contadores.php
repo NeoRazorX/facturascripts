@@ -41,6 +41,7 @@ class contadores extends fs_controller
          $cont0->idsector = $_POST['idsector'];
          $cont0->alta = $_POST['alta'];
          $cont0->lectura = $_POST['lectura'];
+         $cont0->exonerado = isset($_POST['exonerado']);
          $cont0->usuario = $_POST['usuario'];
          
          if( $cont0->save() )
