@@ -39,11 +39,14 @@ class compras_factura extends fs_controller
    {
       $this->ppage = $this->page->get('compras_facturas');
       $this->ejercicio = new ejercicio();
+      $factura = new factura_proveedor();
+      
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
       
       $this->factura = FALSE;
       if( isset($_POST['idfactura']) )
       {
-         $factura = new factura_proveedor();
          $this->factura = $factura->get($_POST['idfactura']);
          $this->factura->numproveedor = $_POST['numproveedor'];
          $this->factura->observaciones = $_POST['observaciones'];
@@ -51,7 +54,9 @@ class compras_factura extends fs_controller
          /// obtenemos el ejercicio para poder acotar la fecha
          $eje0 = $this->ejercicio->get( $this->factura->codejercicio );
          if( $eje0 )
+         {
             $this->factura->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+         }
          else
             $this->new_error_msg('No se encuentra el ejercicio asociado a la factura.');
          
@@ -72,42 +77,41 @@ class compras_factura extends fs_controller
       }
       else if( isset($_GET['id']) )
       {
-         $this->factura = new factura_proveedor();
-         $this->factura = $this->factura->get($_GET['id']);
+         $this->factura = $factura->get($_GET['id']);
       }
       
       if($this->factura)
       {
-         if( isset($_GET['imprimir']) )
-            $this->generar_pdf();
-         else
+         $this->page->title = $this->factura->codigo;
+         
+         if( isset($_GET['gen_asiento']) AND isset($_GET['petid']) )
          {
-            if( isset($_GET['gen_asiento']) AND isset($_GET['petid']) )
+            if( $this->duplicated_petition($_GET['petid']) )
             {
-               if( $this->duplicated_petition($_GET['petid']) )
-                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
-               else
-                  $this->generar_asiento();
+               $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
             }
-            
-            /// comprobamos la factura
-            $this->factura->full_test();
-            
-            $this->page->title = $this->factura->codigo;
-            
-            /// cargamos el agente
-            if( !is_null($this->factura->codagente) )
-            {
-               $agente = new agente();
-               $this->agente = $agente->get($this->factura->codagente);
-            }
-            
-            if($this->factura->idasiento)
-               $this->buttons[] = new fs_button('b_ver_asiento', 'Asiento', $this->factura->asiento_url());
             else
-               $this->buttons[] = new fs_button('b_gen_asiento', 'Generar asiento', $this->url().'&gen_asiento=TRUE&petid='.$this->random_string());
-            
-            $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
+               $this->generar_asiento();
+         }
+         else if( isset($_REQUEST['pagada']) )
+         {
+            $this->factura->pagada = ($_REQUEST['pagada'] == 'TRUE');
+            if( $this->factura->save() )
+            {
+               $this->new_message("Factura modificada correctamente.");
+            }
+            else
+               $this->new_error_msg("¡Imposible modificar la factura!");
+         }
+         
+         /// comprobamos la factura
+         $this->factura->full_test();
+         
+         /// cargamos el agente
+         if( !is_null($this->factura->codagente) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($this->factura->codagente);
          }
       }
       else
@@ -117,9 +121,13 @@ class compras_factura extends fs_controller
    public function url()
    {
       if( !isset($this->factura) )
+      {
          return parent::url();
+      }
       else if($this->factura)
+      {
          return $this->factura->url();
+      }
       else
          return $this->page->url();
    }

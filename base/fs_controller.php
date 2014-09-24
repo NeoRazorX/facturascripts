@@ -97,6 +97,13 @@ class fs_controller
    public $buttons;
    
    /**
+    * Permite activar/desactivar la barra de herramientas:
+    * botón de recarga, fs_buttons y buscador.
+    * @var boolean
+    */
+   public $show_fs_toolbar;
+   
+   /**
     * La empresa
     * @var type 
     */
@@ -127,6 +134,11 @@ class fs_controller
       $this->advices = array();
       $this->simbolo_divisas = array();
       
+      $this->buttons = array();
+      $this->custom_search = FALSE;
+      $this->show_fs_toolbar = TRUE;
+      $this->ppage = FALSE;
+      
       if(strtolower(FS_DB_TYPE) == 'mysql')
          $this->db = new fs_mysql();
       else
@@ -146,7 +158,6 @@ class fs_controller
          if($name != '')
             $this->page->save();
          
-         $this->ppage = FALSE;
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
          
@@ -160,11 +171,17 @@ class fs_controller
             $ips = array();
             
             if($_POST['new_password'] != $_POST['new_password2'])
+            {
                $this->new_error_msg('Las contraseñas no coinciden.');
+            }
             else if($_POST['new_password'] == '')
+            {
                $this->new_error_msg('Tienes que escribir una contraseña nueva.');
+            }
             else if($_POST['db_password'] != FS_DB_PASS)
+            {
                $this->new_error_msg('La contraseña de la base de datos es incorrecta.');
+            }
             else if( $this->ip_baneada($ips) )
             {
                $this->banear_ip($ips);
@@ -201,9 +218,7 @@ class fs_controller
                $this->set_default_items();
                
                $this->template = $name;
-               $this->buttons = array();
                
-               $this->custom_search = FALSE;
                $this->query = '';
                if( isset($_REQUEST['query']) )
                   $this->query = $_REQUEST['query'];
@@ -258,8 +273,10 @@ class fs_controller
     */
    public function new_error_msg($msg=FALSE)
    {
-      if( $msg )
+      if($msg)
+      {
          $this->errors[] = str_replace("\n", ' ', $msg);
+      }
    }
    
    /**
@@ -282,8 +299,10 @@ class fs_controller
     */
    public function new_message($msg=FALSE)
    {
-      if( $msg )
+      if($msg)
+      {
          $this->messages[] = str_replace("\n", ' ', $msg);
+      }
    }
    
    /**
@@ -301,8 +320,10 @@ class fs_controller
     */
    public function new_advice($msg=FALSE)
    {
-      if( $msg )
+      if($msg)
+      {
          $this->advices[] = str_replace("\n", ' ', $msg);
+      }
    }
    
    /**

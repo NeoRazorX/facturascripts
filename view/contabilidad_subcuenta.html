@@ -26,6 +26,7 @@
             <tr>
                <th class="text-left">Descripción</th>
                <th>Ejercicio</th>
+               <th>Divisa</th>
                <th class="text-right">Debe</th>
                <th class="text-right">Haber</th>
                <th class="text-right">Saldo</th>
@@ -39,6 +40,13 @@
                <div class="form-control">
                   <a href="{$fsc->ejercicio->url()}">{$fsc->ejercicio->nombre} ({$fsc->ejercicio->codejercicio})</a>
                </div>
+            </td>
+            <td>
+               <select name="coddivisa" class="form-control">
+               {loop="$fsc->divisa->all()"}
+               <option value="{$value->coddivisa}"{if condition="$fsc->subcuenta->coddivisa==$value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
+               {/loop}
+               </select>
             </td>
             <td><div class="form-control text-right">{$fsc->show_precio($fsc->subcuenta->debe, $fsc->subcuenta->coddivisa)}</div></td>
             <td><div class="form-control text-right">{$fsc->show_precio($fsc->subcuenta->haber, $fsc->subcuenta->coddivisa)}</div></td>

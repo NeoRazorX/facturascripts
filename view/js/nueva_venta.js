@@ -290,7 +290,7 @@ function aux_all_impuestos(num,codimpuesto)
    html += "</select></td>";
    
    html += "<td><input type=\"text\" class=\"form-control text-right recargo\" id=\"recargo_"+num+"\" name=\"recargo_"+num+
-           "\" value=\""+recargo+"\" onclick=\"this.select()\" autocomplete=\"off\"/></td>";
+           "\" value=\""+recargo+"\" onclick=\"this.select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/></td>";
    
    html += "<td><div class=\"form-control text-right irpf\" id=\"irpf_"+num+"\">"+show_numero(irpf)+"</div></td>";
    

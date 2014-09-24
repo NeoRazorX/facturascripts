@@ -30,7 +30,7 @@
    </script>
 </head>
 <body>
-   <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
+   <nav class="navbar navbar-default" role="navigation" style="margin: 0px 0px 5px 0px;">
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -147,6 +147,7 @@
    </div>
    {/if}
    
+   {if condition="$fsc->show_fs_toolbar"}
    <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
       <div class="row">
          {if condition="$fsc->custom_search"}
@@ -219,5 +220,6 @@
          {/if}
       </div>
    </div>
+   {/if}
    
    {include="feedback"}

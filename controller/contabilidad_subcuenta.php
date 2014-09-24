@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('divisa.php');
 require_model('partida.php');
 require_model('subcuenta.php');
 require_once 'extras/libromayor.php';
@@ -24,6 +25,7 @@ require_once 'extras/libromayor.php';
 class contabilidad_subcuenta extends fs_controller
 {
    public $cuenta;
+   public $divisa;
    public $ejercicio;
    public $resultados;
    public $subcuenta;
@@ -36,10 +38,14 @@ class contabilidad_subcuenta extends fs_controller
    
    protected function process()
    {
+      $this->divisa = new divisa();
+      
+      $subcuenta = new subcuenta();
+      $this->subcuenta = FALSE;
+      
       if( isset($_GET['id']) )
       {
-         $this->subcuenta = new subcuenta();
-         $this->subcuenta = $this->subcuenta->get($_GET['id']);
+         $this->subcuenta = $subcuenta->get($_GET['id']);
       }
       
       if($this->subcuenta)
@@ -94,9 +100,13 @@ class contabilidad_subcuenta extends fs_controller
    public function url()
    {
       if( !isset($this->subcuenta) )
+      {
          return parent::url();
+      }
       else if($this->subcuenta)
+      {
          return $this->subcuenta->url();
+      }
       else
          return $this->ppage->url();
    }
@@ -135,6 +145,7 @@ class contabilidad_subcuenta extends fs_controller
       if($_POST['descripcion'] != $this->subcuenta->descripcion)
       {
          $this->subcuenta->descripcion = $_POST['descripcion'];
+         $this->subcuenta->coddivisa = $_POST['coddivisa'];
          $this->subcuenta->save();
       }
       
