@@ -281,12 +281,79 @@ class pedido_cliente extends fs_model
    
    public function test()
    {
-      return TRUE;
+      $this->observaciones = $this->no_html($this->observaciones);
+      $this->totaleuros = $this->total * $this->tasaconv;
+      
+      if( $this->floatcmp($this->total, $this->neto+$this->totaliva-$this->totalirpf+$this->totalrecargo, FS_NF0, TRUE) )
+      {
+         return TRUE;
+      }
+      else
+      {
+         $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
+         return FALSE;
+      }
    }
    
    public function full_test($duplicados = TRUE)
    {
-      return TRUE;
+      $status = TRUE;
+      
+      /// comprobamos las líneas
+      $neto = 0;
+      $iva = 0;
+      $irpf = 0;
+      $recargo = 0;
+      foreach($this->get_lineas() as $l)
+      {
+         if( !$l->test() )
+            $status = FALSE;
+         
+         $neto += $l->pvptotal;
+         $iva += $l->pvptotal * $l->iva / 100;
+         $irpf += $l->pvptotal * $l->irpf / 100;
+         $recargo += $l->pvptotal * $l->recargo / 100;
+      }
+      
+      $neto = round($neto, FS_NF0);
+      $iva = round($iva, FS_NF0);
+      $irpf = round($irpf, FS_NF0);
+      $recargo = round($recargo, FS_NF0);
+      $total = $neto + $iva - $irpf + $recargo;
+      
+      if( !$this->floatcmp($this->neto, $neto, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor neto de ".FS_PEDIDO." incorrecto. Valor correcto: ".$neto);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totaliva de ".FS_PEDIDO." incorrecto. Valor correcto: ".$iva);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totalirpf de ".FS_PEDIDO." incorrecto. Valor correcto: ".$irpf);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totalrecargo de ".FS_PEDIDO." incorrecto. Valor correcto: ".$recargo);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->total, $total, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor total de ".FS_PEDIDO." incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totaleuros de ".FS_PEDIDO." incorrecto.
+            Valor correcto: ".round($this->total * $this->tasaconv, FS_NF0));
+         $status = FALSE;
+      }
+      
+      return $status;
    }
    
    public function save()
@@ -352,13 +419,14 @@ class pedido_cliente extends fs_model
    
    public function delete()
    {
-      if( $this->idalbaran )
+      if($this->idalbaran)
       {
-         $albaran = new albaran_cliente();
-         $albaran = $albaran->get($this->idalbaran);
-         if($albaran)
-            $albaran->delete();
+         /// eliminamos el albarán relacionado
+         $this->db->exec("DELETE FROM albaranescli WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
       }
+      
+      /// modificamos el presupuesto relacionado
+      $this->db->exec("UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE WHERE idpedido = ".$this->var2str($this->idpedido).";");
       
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
    }

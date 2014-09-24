@@ -127,7 +127,7 @@ class linea_albaran_cliente extends fs_model
    
    public function total_iva()
    {
-      return $this->pvptotal*(100+$this->iva)/100;
+      return $this->pvptotal*(100+$this->iva-$this->irpf+$this->recargo)/100;
    }
    
    /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
@@ -206,13 +206,13 @@ class linea_albaran_cliente extends fs_model
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
-      if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
+      if( !$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".
                  $this->referencia." del ".FS_ALBARAN.". Valor correcto: ".$total);
          return FALSE;
       }
-      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".
                  $this->referencia." del ".FS_ALBARAN.". Valor correcto: ".$totalsindto);

@@ -71,6 +71,10 @@ class nueva_venta extends fs_controller
       {
          $this->buscar_cliente();
       }
+      else if( isset($_REQUEST['datoscliente']) )
+      {
+         $this->datos_cliente();
+      }
       else if( isset($_GET['new_articulo']) )
       {
          $this->new_articulo();
@@ -152,43 +156,67 @@ class nueva_venta extends fs_controller
       echo json_encode( array('query' => $_REQUEST['buscar_cliente'], 'suggestions' => $json) );
    }
    
+   private function datos_cliente()
+   {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
+      $json = array();
+      foreach($this->cliente->get($_REQUEST['datoscliente']) as $cli)
+      {
+         $json[] = $cli;
+      }
+      
+      header('Content-Type: application/json');
+      echo json_encode($json);
+   }
+   
    private function new_articulo()
    {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      
       $art0 = new articulo();
       $art0->referencia = $_POST['referencia'];
-      $art0->descripcion = $_POST['descripcion'];
-      $art0->codfamilia = $_POST['codfamilia'];
-      $art0->set_impuesto($_POST['codimpuesto']);
+      if( $art0->exists() )
+      {
+         $this->results[] = $art0->get($_POST['referencia']);
+      }
+      else
+      {
+         $art0->descripcion = $_POST['descripcion'];
+         $art0->codfamilia = $_POST['codfamilia'];
+         $art0->set_impuesto($_POST['codimpuesto']);
+         
+         if( $art0->save() )
+         {
+            $this->results[] = $art0;
+         }
+      }
       
-      if( $art0->save() )
-         $this->results[] = $art0;
-      
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_venta';
+      header('Content-Type: application/json');
+      echo json_encode($this->results);
    }
    
    private function new_search()
    {
-      /// cambiamos la plantilla HTML
-      $this->template = 'ajax/nueva_venta';
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
       
       $articulo = new articulo();
       $codfamilia = '';
-      if( isset($_POST['codfamilia']) )
-         $codfamilia = $_POST['codfamilia'];
+      if( isset($_REQUEST['codfamilia']) )
+         $codfamilia = $_REQUEST['codfamilia'];
       
-      $con_stock = isset($_POST['con_stock']);
+      $con_stock = isset($_REQUEST['con_stock']);
       $this->results = $articulo->search($this->query, 0, $codfamilia, $con_stock);
       
-      $cliente = $this->cliente->get($_POST['codcliente']);
-      if($cliente)
-      {
-         if($cliente->regimeniva == 'Exento')
-         {
-            foreach($this->results as $i => $value)
-               $this->results[$i]->iva = 0;
-         }
-      }
+      /// añadimos la busqueda
+      foreach($this->results as $i => $value)
+         $this->results[$i]->query = $this->query;
+      
+      header('Content-Type: application/json');
+      echo json_encode($this->results);
    }
    
    private function get_precios_articulo()
@@ -233,9 +261,7 @@ class nueva_venta extends fs_controller
       }
       
       $serie = $this->serie->get($_POST['serie']);
-      if( $serie )
-         $this->save_codserie( $serie->codserie );
-      else
+      if( !$serie )
       {
          $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
@@ -282,6 +308,8 @@ class nueva_venta extends fs_controller
          $albaran->codagente = $this->agente->codagente;
          $albaran->numero2 = $_POST['numero2'];
          $albaran->observaciones = $_POST['observaciones'];
+         $albaran->irpf = $serie->irpf;
+         $albaran->porcomision = $this->agente->porcomision;
          
          foreach($cliente->get_direcciones() as $d)
          {
@@ -309,7 +337,7 @@ class nueva_venta extends fs_controller
          {
             $art0 = new articulo();
             $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            for($i = 0; $i <= $n; $i++)
             {
                if( isset($_POST['referencia_'.$i]) )
                {
@@ -319,37 +347,32 @@ class nueva_venta extends fs_controller
                      $linea = new linea_albaran_cliente();
                      $linea->idalbaran = $albaran->idalbaran;
                      $linea->referencia = $articulo->referencia;
+                     $linea->descripcion = $_POST['desc_'.$i];
                      
-                     if( isset($_POST['desc_'.$i]) )
-                        $linea->descripcion = $_POST['desc_'.$i];
-                     else
-                        $linea->descripcion = $articulo->descripcion;
-                     
-                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
+                     if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
                         $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
                         if($imp0)
                         {
                            $linea->codimpuesto = $imp0->codimpuesto;
-                           $linea->iva = $imp0->iva;
+                           $linea->iva = floatval($_POST['iva_'.$i]);
+                           $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                         else
                         {
-                           $linea->codimpuesto = NULL;
                            $linea->iva = floatval($_POST['iva_'.$i]);
+                           $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
+                     
+                     if($linea->iva > 0)
+                        $linea->irpf = $albaran->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
                      $linea->dtopor = floatval($_POST['dto_'.$i]);
                      $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
-                     $linea->pvptotal = floatval($_POST['total_'.$i]);
+                     $linea->pvptotal = floatval($_POST['neto_'.$i]);
                      
                      if( $linea->save() )
                      {
@@ -358,6 +381,8 @@ class nueva_venta extends fs_controller
                         
                         $albaran->neto += $linea->pvptotal;
                         $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
+                        $albaran->totalirpf += ($linea->pvptotal * $linea->irpf/100);
+                        $albaran->totalrecargo += ($linea->pvptotal * $linea->recargo/100);
                      }
                      else
                      {
@@ -376,11 +401,17 @@ class nueva_venta extends fs_controller
             if($continuar)
             {
                /// redondeamos
-               $albaran->neto = round($albaran->neto, 2);
-               $albaran->totaliva = round($albaran->totaliva, 2);
-               $albaran->total = $albaran->neto + $albaran->totaliva;
+               $albaran->neto = round($albaran->neto, FS_NF0);
+               $albaran->totaliva = round($albaran->totaliva, FS_NF0);
+               $albaran->totalirpf = round($albaran->totalirpf, FS_NF0);
+               $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
+               $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
-               if( $albaran->save() )
+               if( $albaran->total != floatval($_POST['atotal']) )
+               {
+                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+               }
+               else if( $albaran->save() )
                {
                   $this->new_message("<a href='".$albaran->url()."'>".ucfirst(FS_ALBARAN)."</a> guardado correctamente.");
                   $this->new_change(ucfirst(FS_ALBARAN).' Cliente '.$albaran->codigo, $albaran->url(), TRUE);
@@ -433,9 +464,7 @@ class nueva_venta extends fs_controller
       }
       
       $serie = $this->serie->get($_POST['serie']);
-      if( $serie )
-         $this->save_codserie( $serie->codserie );
-      else
+      if( !$serie )
       {
          $this->new_error_msg('Serie no encontrada.');
          $continuar = FALSE;
@@ -482,6 +511,8 @@ class nueva_venta extends fs_controller
          $factura->codagente = $this->agente->codagente;
          $factura->observaciones = $_POST['observaciones'];
          $factura->numero2 = $_POST['numero2'];
+         $factura->irpf = $serie->irpf;
+         $factura->porcomision = $this->agente->porcomision;
          
          foreach($cliente->get_direcciones() as $d)
          {
@@ -509,7 +540,7 @@ class nueva_venta extends fs_controller
          {
             $art0 = new articulo();
             $n = floatval($_POST['numlineas']);
-            for($i = 1; $i <= $n; $i++)
+            for($i = 0; $i <= $n; $i++)
             {
                if( isset($_POST['referencia_'.$i]) )
                {
@@ -519,37 +550,32 @@ class nueva_venta extends fs_controller
                      $linea = new linea_factura_cliente();
                      $linea->idfactura = $factura->idfactura;
                      $linea->referencia = $articulo->referencia;
+                     $linea->descripcion = $_POST['desc_'.$i];
                      
-                     if( isset($_POST['desc_'.$i]) )
-                        $linea->descripcion = $_POST['desc_'.$i];
-                     else
-                        $linea->descripcion = $articulo->descripcion;
-                     
-                     if( $serie->siniva )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
+                     if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
                         $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$i]);
                         if($imp0)
                         {
                            $linea->codimpuesto = $imp0->codimpuesto;
-                           $linea->iva = $imp0->iva;
+                           $linea->iva = floatval($_POST['iva_'.$i]);
+                           $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                         else
                         {
-                           $linea->codimpuesto = NULL;
                            $linea->iva = floatval($_POST['iva_'.$i]);
+                           $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
+                     
+                     if($linea->iva > 0)
+                        $linea->irpf = $factura->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
                      $linea->dtopor = floatval($_POST['dto_'.$i]);
                      $linea->pvpsindto = ($linea->pvpunitario * $linea->cantidad);
-                     $linea->pvptotal = floatval($_POST['total_'.$i]);
+                     $linea->pvptotal = floatval($_POST['neto_'.$i]);
                      
                      if( $linea->save() )
                      {
@@ -558,6 +584,8 @@ class nueva_venta extends fs_controller
                         
                         $factura->neto += $linea->pvptotal;
                         $factura->totaliva += ($linea->pvptotal * $linea->iva/100);
+                        $factura->totalirpf += ($linea->pvptotal * $linea->irpf/100);
+                        $factura->totalrecargo += ($linea->pvptotal * $linea->recargo/100);
                      }
                      else
                      {
@@ -576,11 +604,17 @@ class nueva_venta extends fs_controller
             if($continuar)
             {
                /// redondeamos
-               $factura->neto = round($factura->neto, 2);
-               $factura->totaliva = round($factura->totaliva, 2);
-               $factura->total = $factura->neto + $factura->totaliva;
+               $factura->neto = round($factura->neto, FS_NF0);
+               $factura->totaliva = round($factura->totaliva, FS_NF0);
+               $factura->totalirpf = round($factura->totalirpf, FS_NF0);
+               $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
+               $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
                
-               if( $factura->save() )
+               if( $factura->total != floatval($_POST['atotal']) )
+               {
+                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+               }
+               else if( $factura->save() )
                {
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> guardada correctamente.");
                   $this->new_change('Factura Cliente '.$factura->codigo, $factura->url(), TRUE);

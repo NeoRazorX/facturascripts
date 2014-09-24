@@ -4,14 +4,35 @@
 <script type="text/javascript" src="view/js/nueva_compra.js"></script>
 <script type="text/javascript">
    fs_nf0 = {#FS_NF0#};
-   
-   {loop="$fsc->impuesto->all()"}
-   all_impuestos[{$counter}] = '{$value->iva}';
-   {/loop}
-   
+   all_impuestos = {function="json_encode($fsc->impuesto->all())"};
+   all_series = {function="json_encode($fsc->serie->all())"};
+   proveedor = {function="json_encode($fsc->proveedor_s)"};
    nueva_compra_url = '{$fsc->url()}';
-   codproveedor = '{$fsc->proveedor_s->codproveedor}';
    fs_community_url = '{#FS_COMMUNITY_URL#}';
+   
+   {if condition="$fsc->empresa->recequivalencia"}
+   tiene_recargo = true;
+   {/if}
+   
+   $(document).ready(function() {
+      usar_serie();
+      
+      $("#b_lineas").click(function(event) {
+         event.preventDefault();
+         $("#li_opciones").removeClass('active');
+         $("#li_lineas").addClass('active');
+         $("#div_opciones").hide();
+         $("#div_lineas").show();
+      });
+      
+      $("#b_opciones").click(function(event) {
+         event.preventDefault();
+         $("#li_lineas").removeClass('active');
+         $("#li_opciones").addClass('active');
+         $("#div_lineas").hide();
+         $("#div_opciones").show();
+      });
+   });
 </script>
 
 <div class="modal" id="modal_articulos">
@@ -135,21 +156,22 @@
             <tr>
                <th class="text-left">Referencia</th>
                <th class="text-left">Descripción</th>
-               <th class="text-right">Cantidad</th>
+               <th class="text-right" width="90">Cantidad</th>
                <th></th>
                <th class="text-right">PVP</th>
-               <th class="text-right">Dto. %</th>
-               <th></th>
+               <th class="text-right" width="90">Dto. %</th>
+               <th class="text-right">Neto</th>
+               <th class="text-right" width="115">IVA</th>
+               <th class="text-right">RE %</th>
+               <th class="text-right">IRPF %</th>
                <th class="text-right">Total</th>
-               <th>IVA</th>
-               <th class="text-right">Total + IVA</th>
             </tr>
          </thead>
          <tbody id="lineas_albaran"></tbody>
          <tbody>
             <tr class="bg-info">
                <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar..." autocomplete="off"/></td>
-               <td colspan="6"></td>
+               <td colspan="5"></td>
                <td>
                   <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
@@ -157,7 +179,14 @@
                   <div id="aiva" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
                <td>
-                  <div id="atotal" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+                  <div id="are" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+               </td>
+               <td>
+                  <div id="airpf" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+               </td>
+               <td>
+                  <input type="text" name="atotal" id="atotal" class="form-control text-right" style="font-weight: bold;"
+                         value="0" onchange="recalcular()" autocomplete="off"/>
                </td>
             </tr>
          </tbody>
@@ -197,9 +226,9 @@
          <div class="col-lg-3 col-md-3 col-sm-3">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
-               <select name="serie" class="form-control">
+               <select name="serie" class="form-control" id="codserie" onchange="usar_serie();recalcular();">
                   {loop="$fsc->serie->all()"}
-                     {if condition="$value->is_default()"}
+                     {if condition="$value->codserie==$fsc->proveedor_s->codserie"}
                      <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
                      {else}
                      <option value="{$value->codserie}">{$value->descripcion}</option>
@@ -310,7 +339,13 @@
          serviceUrl: '{$fsc->url()}',
          paramName: 'buscar_proveedor',
          onSelect: function (suggestion) {
-            document.f_nueva_compra.proveedor.value = suggestion.data;
+            if(suggestion)
+            {
+               if(document.f_nueva_compra.proveedor.value != suggestion.data)
+               {
+                  document.f_nueva_compra.proveedor.value = suggestion.data;
+               }
+            }
          }
       });
    });

@@ -15,19 +15,19 @@ if( file_exists('config.php') )
 }
 else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 {
-   $errors[] = 'FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP '.phpversion().'.';
+   $errors[] = 'php';
 }
 else if( !function_exists('mb_substr') )
 {
-   $errors[] = "No se encuentra la función mb_substr(). Instala el paquete php-mbstring.";
+   $errors[] = "mb_substr";
 }
 else if( !function_exists('bccomp') )
 {
-   $errors[] = "No se encuentra la función bccomp(). Instala el paquete php-bcmath.";
+   $errors[] = "bccomp";
 }
 else if( !is_writable( getcwd() ) )
 {
-   $errors[] = "La carpeta no tiene permisos de escritura. ¿<a href='http://www.facturascripts.com' target='_blank'>Necesitas ayuda</a>?";
+   $errors[] = "permisos";
 }
 else if ( isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
 {
@@ -232,46 +232,7 @@ $system_info = str_replace('"', "'", $system_info);
    </form>
 
    <script type="text/javascript">
-      function comprobar_url()
-      {
-         $("#panel_bienvenido").hide();
-         $("#panel_configuracion_inicial_bd").hide();
-         $("#panel_configuracion_inicial_num").hide();
-         $("#panel_configuracion_inicial_cache").hide();
-         $("#warning_config").hide();
-         $("#submit_button").hide();
-         
-         $("#b_bienvenido").removeClass('active');
-         $("#b_configuracion_inicial").removeClass('active');
-
-         
-         if(window.location.hash.substring(1) == 'bienvenido')
-         {
-            $("#b_bienvenido").addClass('active');
-            $("#panel_bienvenido").show();
-         }
-         else if(window.location.hash.substring(1) == 'configuracion_inicial')
-         {
-            $("#b_configuracion_inicial").addClass('active');
-            $("#panel_configuracion_inicial_bd").show();
-            $("#panel_configuracion_inicial_num").show();            
-            $("#panel_configuracion_inicial_cache").show();
-            $("#warning_config").show();
-            $("#submit_button").show();
-            document.f_configuracion_inicial.db_type.focus();
-         }
-         else
-         {
-            $("#b_bienvenido").addClass('active');
-            $("#panel_bienvenido").show();
-         }
-      }
-      
       $(document).ready(function() {
-         comprobar_url();
-         window.onpopstate = function(){ 
-            comprobar_url();
-         }
          $("#f_configuracion_inicial").validate({
             rules: {
                db_type: { required: false},
@@ -301,61 +262,139 @@ $system_info = str_replace('"', "'", $system_info);
       });
    </script>
    
-   <div class="container-fluid">
-      &nbsp;
-   </div>
-   
-   <div class="container-fluid">
+   <div class="container">
       <div class="row">
-         <div class="col-lg-2 col-md-2 col-sm-2">
-            <div class="list-group">
-               <a id="b_bienvenido" href="#bienvenido" class="list-group-item active">
-                  <span class="glyphicon glyphicon-inbox"></span>
-                  &nbsp; Bienvenido
-               </a>
-               <a id="b_configuracion_inicial" href="#configuracion_inicial" class="list-group-item">
-                  <span class="glyphicon glyphicon-inbox"></span>
-                  &nbsp; Configuración inicial
-               </a>
-            </div>
+         <div class="col-lg-12 text-center" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1>Bienvenido al instalador de FacturaScripts</h1>
          </div>
-         
-         <div class="col-lg-10 col-md-10 col-sm-10">
-            <div class="panel panel-primary" id="panel_bienvenido">
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-12">
+            <?php
+            foreach($errors as $err)
+            {
+               if($err == 'permisos')
+               {
+                  ?>
+            <div class="panel panel-danger">
                <div class="panel-heading">
-                  <h3 class="panel-title">Bienvenido a FacturaScripts</h3>
+                  Permisos de escritura:
                </div>
                <div class="panel-body">
-                  <div class="form-group col-lg-12 col-md-12 col-sm-12">
-                     Bienvenido al asistente de configuración inicial de FacturaScripts!
-                     <br /><br />
-                     Este pequeño asistente te va a guiar en la configuración básica que debes completar para empezar a utilizar FacturaScripts.
-                     
-                  </div>
-               </div>
-               <div class="panel-footer text-right">
-                  <a class="btn btn-sm btn-primary" href="#configuracion_inicial" title="Empezar" value="Empezar">
-                     Empezar &nbsp;
-                     <span class="glyphicon glyphicon-arrow-right"></span>
-                  </a>
+                  <p>
+                     La carpeta de FacturaScripts no tiene permisos de escritura. Sin esos
+                     permisos, no funcionará FacturaScripts.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (si usas Linux):</h4>
+                  <pre>sudo chmod -R o+w /var/www/carpeta_de_facturascripts</pre>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (instalación en hosting):</h4>
+                  <p>Intenta dar permisos de escritura desde el cliente FTP o desde el cPanel.</p>
                </div>
             </div>
-         </div>
-         
-         <div class="col-lg-10 col-md-10 col-sm-10">
-            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php#configuracion_inicial" class="form" role="form" method="post">
-               <div id="warning_config">
                   <?php
-                  foreach($errors as $err)
-                  {
-                     echo "<div class='alert alert-danger'>".$err."</div>";
-                  }
+               }
+               else if($err == 'php')
+               {
                   ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  Versión de PHP obsoleta:
                </div>
-               
-               <div class="panel panel-primary" id="panel_configuracion_inicial_bd">
+               <div class="panel-body">
+                  <p>
+                     FacturaScripts necesita PHP 5.3 o superior, y tú estás usando <?php echo phpversion() ?>.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
+                  <p>
+                     Muchos hostings ofrecen PHP 5.1, 5.2 y 5.3. Pero hay que seleccionar PHP 5.3
+                     desde el panel de control.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+               else if($err == 'mb_substr')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  No se encuentra la función mb_substr():
+               </div>
+               <div class="panel-body">
+                  <p>
+                     FacturaScripts necesita la extensión mbstring para poder trabajar con caracteres
+                     no europeos (chinos, coreanos, japonenes y rusos).
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
+                  <p>Instala el paquete php-mbstring.</p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
+                  <p>
+                     Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
+                     Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
+                     Si lo deseas, <a href="http://www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
+                     te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+               else if($err == 'bccomp')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  No se encuentra la función bccomp():
+               </div>
+               <div class="panel-body">
+                  <p>
+                     FacturaScripts necesita la extensión BC Math para poder comparar grandes números decimales.
+                     Aunque es posible que pronto se sustituya por una función más compatible.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
+                  <p>Instala el paquete php-bcmath.</p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
+                  <p>
+                     Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
+                     Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
+                     Si lo deseas, <a href="http://www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
+                     te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+            }
+            ?>
+         </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-10">
+            <h3>Antes de empezar...</h3>
+            <p>
+               Recuerda que tienes el menú de ayuda arriba a la derecha. Si encuentras cualquier problema,
+               haz clic en <b>informar...</b> y describe tu duda, sugerencia o el error que has encontrado.
+            </p>
+            <p>
+               No sabemos hacer software perfecto, pero con tu ayuda nos podemos acercar cada vez más ;-)
+            </p>
+         </div>
+         <div class="col-lg-2">
+            <div class="thumbnail">
+               <img src="view/img/help-menu.png" alt="ayuda"/>
+            </div>
+         </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-12">
+            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
+               <div class="panel panel-primary">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Configuración base de datos</h3>
+                     <h3 class="panel-title">
+                        <span class="badge">1</span> Configuración de la base de datos
+                     </h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
@@ -366,11 +405,11 @@ $system_info = str_replace('"', "'", $system_info);
                         </select>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Equipo servidor SQL:
+                        Servidor:
                         <input class="form-control" type="text" name="db_host" value="localhost" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Puerto servidor SQL:
+                        Puerto:
                         <input class="form-control" type="number" name="db_port" value="3306" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
@@ -378,23 +417,25 @@ $system_info = str_replace('"', "'", $system_info);
                         <input class="form-control" type="text" name="db_name" value="facturascripts" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Usuario base de datos:
+                        Usuario:
                         <input class="form-control" type="text" name="db_user" value="" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Contraseña base de datos:
+                        Contraseña:
                         <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
                      </div>
                   </div>
                </div>
-
+                  
                <div class="panel panel-primary" id="panel_configuracion_inicial_num">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Formato Numérico</h3>
+                     <h3 class="panel-title">
+                        <span class="badge">2</span> Formato Numérico
+                     </h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group col-lg-3 col-md-3 col-sm-3">
-                        Cantidad de Decimales:
+                        Decimales:
                         <select name="num_nf0" class="form-control">
                            <option value="0">0</option>
                            <option value="1">1</option>
@@ -421,7 +462,7 @@ $system_info = str_replace('"', "'", $system_info);
                         </select>
                      </div>
                      <div class="form-group col-lg-3 col-md-3 col-sm-3">
-                        Colocación Símbolo Divisa:
+                        Símbolo Divisa:
                         <select name="num_nf3" class="form-control">
                            <option value="right" selected="selected">A la Derecha del Número</option>
                            <option value="left">A la Izquierda del Número</option>
@@ -432,20 +473,22 @@ $system_info = str_replace('"', "'", $system_info);
                 
                <div class="panel panel-info" id="panel_configuracion_inicial_cache">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Configuración Memcache (opcional)</h3>
+                     <h3 class="panel-title">
+                        <span class="badge">3</span> Configuración Memcache (opcional)
+                     </h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Servidor Memcache:
+                        Servidor:
                         <input class="form-control" type="text" name="cache_host" value="localhost" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Puerto Memcache:
-                        <input class="form-control" type="text" name="cache_port" value="11211" autocomplete="off"/>
+                        Puerto:
+                        <input class="form-control" type="number" name="cache_port" value="11211" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Prefijo Memcache:
-                        <input class="form-control" type="text" name="cache_prefix" value="" autocomplete="off"/>
+                        Prefijo:
+                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(4) ?>_" autocomplete="off"/>
                      </div>
                   </div>
                </div>

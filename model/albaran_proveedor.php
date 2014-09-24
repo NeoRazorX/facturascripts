@@ -246,11 +246,13 @@ class albaran_proveedor extends fs_model
       $this->observaciones = $this->no_html($this->observaciones);
       $this->totaleuros = $this->total * $this->tasaconv;
       
-      if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      if( $this->floatcmp($this->total, $this->neto+$this->totaliva-$this->totalirpf+$this->totalrecargo, FS_NF0, TRUE) )
+      {
          return TRUE;
+      }
       else
       {
-         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva. ¡Avisa al informático!");
+         $this->new_error_msg("Error grave: El total está mal calculado. ¡Avisa al informático!");
          return FALSE;
       }
    }
@@ -262,7 +264,8 @@ class albaran_proveedor extends fs_model
       /// comprobamos las líneas
       $neto = 0;
       $iva = 0;
-      $hay_lineas = FALSE;
+      $irpf = 0;
+      $recargo = 0;
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -270,34 +273,45 @@ class albaran_proveedor extends fs_model
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
-         $hay_lineas = TRUE;
+         $irpf += $l->pvptotal * $l->irpf/ 100;
+         $recargo += $l->pvptotal * $l->recargo/ 100;
       }
       
-      if(!$hay_lineas)
-      {
-         $this->new_error_msg("Este ".FS_ALBARAN." no tiene líneas.");
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
+      $neto = round($neto, FS_NF0);
+      $iva = round($iva, FS_NF0);
+      $irpf = round($irpf, FS_NF0);
+      $recargo = round($recargo, FS_NF0);
+      $total = $neto + $iva - $irpf + $recargo;
+      
+      if( !$this->floatcmp($this->neto, $neto, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor neto de ".FS_ALBARAN." incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva, 2, TRUE) )
+      else if( !$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor totaliva de ".FS_ALBARAN." incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      else if( !$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE) )
       {
-         $this->new_error_msg("Valor total de ".FS_ALBARAN." incorrecto. Valor correcto: ".
-                 round($this->neto + $this->totaliva, 2));
+         $this->new_error_msg("Valor totalirpf de ".FS_ALBARAN." incorrecto. Valor correcto: ".$irpf);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, 2, TRUE) )
+      else if( !$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totalrecargo de ".FS_ALBARAN." incorrecto. Valor correcto: ".$recargo);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->total, $total, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor total de ".FS_ALBARAN." incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor totaleuros de ".FS_ALBARAN." incorrecto.
-            Valor correcto: ".round($this->total * $this->tasaconv, 2));
+            Valor correcto: ".round($this->total * $this->tasaconv, FS_NF0));
          $status = FALSE;
       }
       
@@ -421,10 +435,8 @@ class albaran_proveedor extends fs_model
    {
       if($this->idfactura)
       {
-         $factura = new factura_proveedor();
-         $factura = $factura->get($this->idfactura);
-         if($factura)
-            $factura->delete();
+         /// eliminamos la factura relacionada
+         return $this->db->exec("DELETE FROM facturascli WHERE idfactura = ".$this->var2str($this->idfactura).";");
       }
       
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");

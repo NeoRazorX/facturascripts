@@ -18,7 +18,7 @@
    </columna>
    <columna>
       <nombre>nsat</nombre>
-      <tipo>int(11)</tipo>
+      <tipo>integer</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>

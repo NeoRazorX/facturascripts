@@ -39,7 +39,7 @@ class ventas_albaran extends fs_controller
    public $agente;
    public $albaran;
    public $cliente;
-   public $cliente_email;
+   public $cliente_s;
    public $ejercicio;
    public $familia;
    public $impuesto;
@@ -55,10 +55,11 @@ class ventas_albaran extends fs_controller
    {
       $this->ppage = $this->page->get('ventas_albaranes');
       $this->agente = FALSE;
+      
       $albaran = new albaran_cliente();
       $this->albaran = FALSE;
       $this->cliente = new cliente();
-      $this->cliente_email = '';
+      $this->cliente_s = FALSE;
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
@@ -108,6 +109,9 @@ class ventas_albaran extends fs_controller
             $this->agente = $agente->get($this->albaran->codagente);
          }
          
+         /// cargamos el cliente
+         $this->cliente_s = $this->cliente->get($this->albaran->codcliente);
+         
          /// comprobamos el albarán
          if( $this->albaran->full_test() )
          {
@@ -121,18 +125,11 @@ class ventas_albaran extends fs_controller
                   $this->generar_factura();
             }
             
-            $this->buttons[] = new fs_button('b_copiar', 'Copiar', 'index.php?page=copy_albaran&idalbcli='.$this->albaran->idalbaran, TRUE);
             $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
             
             /// comprobamos si se pueden enviar emails
             if( $this->empresa->can_send_mail() )
             {
-               $cliente = $this->cliente->get($this->albaran->codcliente);
-               if($cliente)
-               {
-                  $this->cliente_email = $cliente->email;
-               }
-               
                $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
                
                if( isset($_POST['email']) )
@@ -152,17 +149,6 @@ class ventas_albaran extends fs_controller
          }
          
          $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
-         
-         /**
-          * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: ventas_albaran_edit.html para los
-          * albaranes editables y ventas_albaran.html para los demás.
-          */
-         $this->template = 'ventas_albaran';
-         if($this->albaran->ptefactura)
-         {
-            $this->template = 'ventas_albaran_edit';
-         }
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");
@@ -171,9 +157,13 @@ class ventas_albaran extends fs_controller
    public function url()
    {
       if( !isset($this->albaran) )
+      {
          return parent::url();
+      }
       else if($this->albaran)
+      {
          return $this->albaran->url();
+      }
       else
          return $this->page->url();
    }
@@ -181,7 +171,6 @@ class ventas_albaran extends fs_controller
    private function modificar()
    {
       $this->albaran->numero2 = $_POST['numero2'];
-      $this->albaran->hora = $_POST['hora'];
       $this->albaran->observaciones = $_POST['observaciones'];
       
       if($this->albaran->ptefactura)
@@ -189,7 +178,10 @@ class ventas_albaran extends fs_controller
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->albaran->codejercicio );
          if($eje0)
+         {
             $this->albaran->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+            $this->albaran->hora = $_POST['hora'];
+         }
          else
             $this->new_error_msg('No se encuentra el ejercicio asociado al '.FS_ALBARAN);
          
@@ -217,6 +209,8 @@ class ventas_albaran extends fs_controller
                   }
                }
             }
+            else
+               die('No se ha encontrado el cliente.');
          }
          else
             $cliente = $this->cliente->get($this->albaran->codcliente);
@@ -226,14 +220,25 @@ class ventas_albaran extends fs_controller
          /// ¿cambiamos la serie?
          if($_POST['serie'] != $this->albaran->codserie)
          {
-            $this->albaran->codserie = $_POST['serie'];
-            $this->albaran->new_codigo();
+            $serie2 = $this->serie->get($_POST['serie']);
+            if($serie2)
+            {
+               $this->albaran->codserie = $serie2->codserie;
+               $this->albaran->irpf = $serie2->irpf;
+               $this->albaran->new_codigo();
+               
+               $serie = $serie2;
+            }
          }
          
-         if( isset($_POST['lineas']) )
+         if( isset($_POST['numlineas']) )
          {
+            $numlineas = intval($_POST['numlineas']);
+            
             $this->albaran->neto = 0;
             $this->albaran->totaliva = 0;
+            $this->albaran->totalirpf = 0;
+            $this->albaran->totalrecargo = 0;
             $lineas = $this->albaran->get_lineas();
             $articulo = new articulo();
             
@@ -241,7 +246,7 @@ class ventas_albaran extends fs_controller
             foreach($lineas as $l)
             {
                $encontrada = FALSE;
-               for($num = 0; $num <= 200; $num++)
+               for($num = 0; $num <= $numlineas; $num++)
                {
                   if( isset($_POST['idlinea_'.$num]) )
                   {
@@ -267,7 +272,7 @@ class ventas_albaran extends fs_controller
             }
             
             /// modificamos y/o añadimos las demás líneas
-            for($num = 0; $num <= 200; $num++)
+            for($num = 0; $num <= $numlineas; $num++)
             {
                $encontrada = FALSE;
                if( isset($_POST['idlinea_'.$num]) )
@@ -285,39 +290,39 @@ class ventas_albaran extends fs_controller
                         $lineas[$k]->dtolineal = 0;
                         $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
                         $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                        $lineas[$k]->descripcion = $_POST['desc_'.$num];
                         
-                        if( isset($_POST['desc_'.$num]) )
-                           $lineas[$k]->descripcion = $_POST['desc_'.$num];
-                        
-                        if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                        {
-                           $lineas[$k]->codimpuesto = NULL;
-                           $lineas[$k]->iva = 0;
-                        }
-                        else
+                        $lineas[$k]->codimpuesto = NULL;
+                        $lineas[$k]->iva = 0;
+                        $lineas[$k]->recargo = 0;
+                        $lineas[$k]->irpf = 0;
+                        if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if($imp0)
-                           {
                               $lineas[$k]->codimpuesto = $imp0->codimpuesto;
-                              $lineas[$k]->iva = $imp0->iva;
-                           }
-                           else
-                           {
-                              $lineas[$k]->codimpuesto = NULL;
-                              $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
-                           }
+                           
+                           $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
+                           $lineas[$k]->recargo = floatval($_POST['recargo_'.$num]);
+                           
+                           if($lineas[$k]->iva > 0)
+                              $lineas[$k]->irpf = $this->albaran->irpf;
                         }
                         
                         if( $lineas[$k]->save() )
                         {
-                           $this->albaran->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
-                           $this->albaran->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
+                           $this->albaran->neto += $value->pvptotal;
+                           $this->albaran->totaliva += $value->pvptotal * $value->iva/100;
+                           $this->albaran->totalirpf += $value->pvptotal * $value->irpf/100;
+                           $this->albaran->totalrecargo += $value->pvptotal * $value->recargo/100;
                            
-                           /// actualizamos el stock
-                           $art0 = $articulo->get($value->referencia);
-                           if($art0)
-                              $art0->sum_stock($this->albaran->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
+                           if($lineas[$k]->cantidad != $cantidad_old)
+                           {
+                              /// actualizamos el stock
+                              $art0 = $articulo->get($value->referencia);
+                              if($art0)
+                                 $art0->sum_stock($this->albaran->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
+                           }
                         }
                         else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
@@ -333,30 +338,19 @@ class ventas_albaran extends fs_controller
                      {
                         $linea = new linea_albaran_cliente();
                         $linea->referencia = $art0->referencia;
+                        $linea->descripcion = $_POST['desc_'.$num];
                         
-                        if( isset($_POST['desc_'.$num]) )
-                           $linea->descripcion = $_POST['desc_'.$num];
-                        else
-                           $linea->descripcion = $art0->descripcion;
-                        
-                        if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                        {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = 0;
-                        }
-                        else
+                        if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if($imp0)
-                           {
-                              $linea->codimpuesto = $imp0->codimpuesto;
-                              $linea->iva = $imp0->iva;
-                           }
-                           else
-                           {
-                              $linea->codimpuesto = NULL;
-                              $linea->iva = floatval($_POST['iva_'.$num]);
-                           }
+                              $lineas[$k]->codimpuesto = $imp0->codimpuesto;
+                           
+                           $linea->iva = floatval($_POST['iva_'.$num]);
+                           $linea->recargo = floatval($_POST['recargo_'.$num]);
+                           
+                           if($linea->iva > 0)
+                              $linea->irpf = $this->albaran->irpf;
                         }
                         
                         $linea->idalbaran = $this->albaran->idalbaran;
@@ -368,8 +362,10 @@ class ventas_albaran extends fs_controller
                         
                         if( $linea->save() )
                         {
-                           $this->albaran->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
-                           $this->albaran->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
+                           $this->albaran->neto += $linea->pvptotal;
+                           $this->albaran->totaliva += $linea->pvptotal * $linea->iva/100;
+                           $this->albaran->totalirpf += $linea->pvptotal * $linea->irpf/100;
+                           $this->albaran->totalrecargo += $linea->pvptotal * $linea->recargo/100;
                            
                            /// actualizamos el stock
                            $art0->sum_stock($this->albaran->codalmacen, 0 - $linea->cantidad);
@@ -384,9 +380,11 @@ class ventas_albaran extends fs_controller
             }
             
             /// redondeamos
-            $this->albaran->neto = round($this->albaran->neto, 2);
-            $this->albaran->totaliva = round($this->albaran->totaliva, 2);
-            $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva;
+            $this->albaran->neto = round($this->albaran->neto, FS_NF0);
+            $this->albaran->totaliva = round($this->albaran->totaliva, FS_NF0);
+            $this->albaran->totalirpf = round($this->albaran->totalirpf, FS_NF0);
+            $this->albaran->totalrecargo = round($this->albaran->totalrecargo, FS_NF0);
+            $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva - $this->albaran->totalirpf + $this->albaran->totalrecargo;
          }
       }
       
@@ -426,6 +424,11 @@ class ventas_albaran extends fs_controller
       $factura->total = $this->albaran->total;
       $factura->totaliva = $this->albaran->totaliva;
       $factura->numero2 = $this->albaran->numero2;
+      $factura->irpf = $this->albaran->irpf;
+      $factura->totalirpf = $this->albaran->totalirpf;
+      $factura->totalrecargo = $this->albaran->totalrecargo;
+      $factura->porcomision = $this->albaran->porcomision;
+      $factura->recfinanciero = $this->albaran->recfinanciero;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($factura->codejercicio);
@@ -508,6 +511,10 @@ class ventas_albaran extends fs_controller
       {
          $this->new_message("<a href='".$factura->url()."'>Factura</a> generada correctamente.");
          $this->new_change('Factura Cliente '.$factura->codigo, $factura->url(), TRUE);
+      }
+      else if($factura->totalirpf != 0 OR $factura->totalrecargo != 0)
+      {
+         $this->new_error_msg('Todavía no se pueden generar asientos de facturas con IRPF o recargo.');
       }
       else if( !$subcuenta_cli )
       {
@@ -1004,6 +1011,7 @@ class ventas_albaran extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
             $mail->Subject = $this->empresa->nombre . ': Su '.FS_ALBARAN.' '.$this->albaran->codigo;
             $mail->AltBody = 'Buenos días, le adjunto su '.FS_ALBARAN.' '.$this->albaran->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;

@@ -79,14 +79,52 @@ class linea_iva_factura_cliente extends fs_model
    
    public function test()
    {
-      if( $this->floatcmp($this->totallinea, $this->neto + $this->totaliva, 2, TRUE) )
+      if( $this->floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, TRUE) )
+      {
          return TRUE;
+      }
       else
       {
          $this->new_error_msg("Error en el valor de totallinea de la línea de IVA del impuesto ".
                  $this->codimpuesto." de la factura. Valor correcto: ".
-                 round($this->neto + $this->totaliva, 2));
+                 round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0));
          return FALSE;
+      }
+   }
+   
+   public function factura_test($idfactura, $neto, $totaliva, $totalrecargo)
+   {
+      $li_neto = 0;
+      $li_iva = 0;
+      $li_recargo = 0;
+      foreach($this->all_from_factura($idfactura) as $li)
+      {
+         if( !$li->test() )
+            $status = FALSE;
+         
+         $li_neto += $li->neto;
+         $li_iva += $li->totaliva;
+         $li_recargo += $li->totalrecargo;
+      }
+      
+      $li_neto = round($li_neto, FS_NF0);
+      $li_iva = round($li_iva, FS_NF0);
+      $li_recargo = round($li_recargo, FS_NF0);
+      
+      if( !$this->floatcmp($neto, $li_neto, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("La suma de los netos de las líneas de IVA debería ser: ".$neto);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($totaliva, $li_iva, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("La suma de los totales de iva de las líneas de IVA debería ser: ".$totaliva);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($totalrecargo, $li_recargo, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("La suma de los totalrecargo de las líneas de IVA debería ser: ".$totalrecargo);
+         $status = FALSE;
       }
    }
    

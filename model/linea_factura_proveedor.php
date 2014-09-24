@@ -128,39 +128,42 @@ class linea_factura_proveedor extends fs_model
          }
       }
       
-      $encontrado = FALSE;
-      foreach(self::$albaranes as $a)
+      if( !is_null($this->idalbaran) )
       {
-         if($a->idalbaran == $this->idalbaran)
+         $encontrado = FALSE;
+         foreach(self::$albaranes as $a)
          {
-            $this->albaran_codigo = $a->codigo;
-            if( is_null($a->numproveedor) OR $a->numproveedor == '')
-               $this->albaran_numero = $a->numero;
-            else
-               $this->albaran_numero = $a->numproveedor;
-            $encontrado = TRUE;
-            break;
+            if($a->idalbaran == $this->idalbaran)
+            {
+               $this->albaran_codigo = $a->codigo;
+               if( is_null($a->numproveedor) OR $a->numproveedor == '')
+                  $this->albaran_numero = $a->numero;
+               else
+                  $this->albaran_numero = $a->numproveedor;
+               $encontrado = TRUE;
+               break;
+            }
          }
-      }
-      if( !$encontrado )
-      {
-         $alb = new albaran_proveedor();
-         $alb = $alb->get($this->idalbaran);
-         if($alb)
+         if( !$encontrado )
          {
-            $this->albaran_codigo = $alb->codigo;
-            if( is_null($alb->numproveedor) OR $alb->numproveedor == '')
-               $this->albaran_numero = $alb->numero;
-            else
-               $this->albaran_numero = $alb->numproveedor;
-            self::$albaranes[] = $alb;
+            $alb = new albaran_proveedor();
+            $alb = $alb->get($this->idalbaran);
+            if($alb)
+            {
+               $this->albaran_codigo = $alb->codigo;
+               if( is_null($alb->numproveedor) OR $alb->numproveedor == '')
+                  $this->albaran_numero = $alb->numero;
+               else
+                  $this->albaran_numero = $alb->numproveedor;
+               self::$albaranes[] = $alb;
+            }
          }
       }
    }
    
    public function total_iva()
    {
-      return $this->pvptotal*(100+$this->iva)/100;
+      return $this->pvptotal*(100+$this->iva-$this->irpf+$this->recargo)/100;
    }
    
    public function show_codigo()
@@ -252,13 +255,13 @@ class linea_factura_proveedor extends fs_model
       $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
       $totalsindto = $this->pvpunitario * $this->cantidad;
       
-      if( !$this->floatcmp($this->pvptotal, $total, 2, TRUE) )
+      if( !$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvptotal de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$total);
          return FALSE;
       }
-      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, 2, TRUE) )
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Error en el valor de pvpsindto de la línea ".$this->referencia.
             " de la factura. Valor correcto: ".$totalsindto);

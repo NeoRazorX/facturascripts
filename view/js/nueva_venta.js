@@ -20,23 +20,22 @@ var numlineas = 0;
 var fs_nf0 = 2;
 var all_impuestos = [];
 var all_series = [];
-var proveedor = false;
-var nueva_compra_url = '';
+var cliente = false;
+var nueva_venta_url = '';
 var fs_community_url = '';
 var fin_busqueda1 = true;
 var fin_busqueda2 = true;
 var siniva = false;
 var irpf = 0;
-var tiene_recargo = false;
 
-function usar_proveedor(codproveedor)
+function usar_cliente(codcliente)
 {
-   if(nueva_compra_url !== '')
+   if(nueva_venta_url !== '')
    {
-      $.getJSON(nueva_compra_url, 'datosproveedor='+codproveedor, function(json) {
-         proveedor = json;
-         document.f_buscar_articulos.codproveedor.value = proveedor.codproveedor;
-         if(proveedor.regimeniva == 'Exento')
+      $.getJSON(nueva_venta_url, 'datoscliente='+codcliente, function(json) {
+         cliente = json;
+         document.f_buscar_articulos.codcliente.value = cliente.codcliente;
+         if(cliente.regimeniva == 'Exento')
          {
             irpf = 0;
             for(var j=0; j<numlineas; j++)
@@ -106,7 +105,7 @@ function recalcular()
          l_neto = l_uds*l_pvp*(100-l_dto)/100;
          l_iva = parseFloat( $("#iva_"+i).val() );
          
-         if(tiene_recargo)
+         if(cliente.recargo)
          {
             l_recargo = parseFloat( $("#recargo_"+i).val() );
          }
@@ -243,7 +242,7 @@ function ajustar_iva(num)
          
          alert('La serie selecciona es sin IVA.');
       }
-      else if(tiene_recargo)
+      else if(cliente.recargo)
       {
          for(var i=0; i<all_impuestos.length; i++)
          {
@@ -262,16 +261,16 @@ function aux_all_impuestos(num,codimpuesto)
 {
    var iva = 0;
    var recargo = 0;
-   if(proveedor.regimeniva != 'Exento' && !siniva)
+   if(cliente.regimeniva != 'Exento' && !siniva)
    {
       for(var i=0; i<all_impuestos.length; i++)
       {
          if(all_impuestos[i].codimpuesto == codimpuesto)
          {
             iva = all_impuestos[i].iva;
-            if(tiene_recargo)
+            if(cliente.recargo)
             {
-               recargo = all_impuestos[i].recargo;
+              recargo = all_impuestos[i].recargo;
             }
             break;
          }
@@ -291,7 +290,7 @@ function aux_all_impuestos(num,codimpuesto)
    html += "</select></td>";
    
    html += "<td><input type=\"text\" class=\"form-control text-right recargo\" id=\"recargo_"+num+"\" name=\"recargo_"+num+
-         "\" value=\""+recargo+"\" onclick=\"this.select()\" autocomplete=\"off\"/></td>";
+           "\" value=\""+recargo+"\" onclick=\"this.select()\" autocomplete=\"off\"/></td>";
    
    html += "<td><div class=\"form-control text-right irpf\" id=\"irpf_"+num+"\">"+show_numero(irpf)+"</div></td>";
    
@@ -333,13 +332,13 @@ function add_articulo(ref,desc,pvp,dto,codimpuesto)
 
 function get_precios(ref)
 {
-   if(nueva_compra_url !== '')
+   if(nueva_venta_url !== '')
    {
       $.ajax({
          type: 'POST',
-         url: nueva_compra_url,
+         url: nueva_venta_url,
          dataType: 'html',
-         data: "referencia4precios="+ref+"&codproveedor="+proveedor.codproveedor,
+         data: "referencia4precios="+ref+"&codcliente="+cliente.codcliente,
          success: function(datos) {
             $("#nav_articulos").hide();
             $("#search_results").html(datos);
@@ -350,11 +349,11 @@ function get_precios(ref)
 
 function new_articulo()
 {
-   if(nueva_compra_url !== '')
+   if( nueva_venta_url != '' )
    {
       $.ajax({
          type: 'POST',
-         url: nueva_compra_url+'&new_articulo=TRUE',
+         url: nueva_venta_url+'&new_articulo=TRUE',
          dataType: 'json',
          data: $("form[name=f_nuevo_articulo]").serialize(),
          success: function(datos) {
@@ -376,7 +375,7 @@ function new_articulo()
 
 function buscar_articulos()
 {
-   if(document.f_buscar_articulos.query.value == '')
+   if(document.f_buscar_articulos.query.value === '')
    {
       $("#nav_articulos").hide();
       $("#search_results").html('');
@@ -390,10 +389,10 @@ function buscar_articulos()
    {
       $("#nav_articulos").show();
       
-      if(nueva_compra_url !== '')
+      if(nueva_venta_url !== '')
       {
          fin_busqueda1 = false;
-         $.getJSON(nueva_compra_url, $("form[name=f_buscar_articulos]").serialize(), function(json) {
+         $.getJSON(nueva_venta_url, $("form[name=f_buscar_articulos]").serialize(), function(json) {
             var items = [];
             var insertar = false;
             $.each(json, function(key, val) {

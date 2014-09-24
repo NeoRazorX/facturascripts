@@ -382,6 +382,7 @@ class ventas_factura extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
             $mail->Subject = $this->empresa->nombre . ': Su factura '.$this->factura->codigo;
             $mail->AltBody = 'Buenos días, le adjunto su factura '.$this->factura->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;

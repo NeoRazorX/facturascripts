@@ -43,7 +43,7 @@ class proveedor extends fs_model
    public $observaciones;
    public $tipoidfiscal;
    public $regimeniva;
-
+   
    public function __construct($p=FALSE)
    {
       parent::__construct('proveedores');

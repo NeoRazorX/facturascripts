@@ -127,7 +127,9 @@ class compras_factura extends fs_controller
    private function generar_asiento()
    {
       if( $this->factura->get_asiento() )
+      {
          $this->new_error_msg('Ya hay un asiento asociado a esta factura.');
+      }
       else
       {
          $proveedor = new proveedor();
@@ -138,6 +140,10 @@ class compras_factura extends fs_controller
          {
             $this->new_message("El proveedor no tiene asociada una subcuenta
                y por tanto no se generará un asiento.");
+         }
+         else if($this->factura->totalirpf != 0 OR $this->factura->totalrecargo != 0)
+         {
+            $this->new_error_msg('Todavía no se pueden generar asientos de facturas con IRPF o recargo.');
          }
          else
          {

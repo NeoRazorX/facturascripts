@@ -33,6 +33,11 @@ if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
    file_put_contents('tmp/index.html', 'No me toques los cojones.');
 }
 
+if(FS_DB_HISTORY)
+{
+   error_reporting(E_ALL);
+}
+
 if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('FS_POS_DIVISA') )
 {
    define('FS_NF0', 2);

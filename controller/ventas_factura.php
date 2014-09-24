@@ -520,7 +520,9 @@ class ventas_factura extends fs_controller
    private function generar_asiento()
    {
       if( $this->factura->get_asiento() )
+      {
          $this->new_error_msg('Ya hay un asiento asociado a esta factura.');
+      }
       else
       {
          $subcuenta_cli = $this->cliente->get_subcuenta($this->factura->codejercicio);
@@ -528,6 +530,10 @@ class ventas_factura extends fs_controller
          {
             $this->new_message("El cliente no tiene asociada una subcuenta y por
                tanto no se generará un asiento.");
+         }
+         else if($factura->totalirpf != 0 OR $factura->totalrecargo != 0)
+         {
+            $this->new_error_msg('Todavía no se pueden generar asientos de facturas con IRPF o recargo.');
          }
          else
          {
@@ -664,6 +670,7 @@ class ventas_factura extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
             $mail->Subject = $this->empresa->nombre . ': Su factura '.$this->factura->codigo;
             $mail->AltBody = 'Buenos días, le adjunto su factura '.$this->factura->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;

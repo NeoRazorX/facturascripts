@@ -94,7 +94,7 @@ class linea_presupuesto_cliente extends fs_model
    
    public function total_iva()
    {
-      return $this->pvptotal*(100+$this->iva)/100;
+      return $this->pvptotal*(100+$this->iva-$this->irpf+$this->recargo)/100;
    }
    
    public function show_codigo()
@@ -198,7 +198,24 @@ class linea_presupuesto_cliente extends fs_model
    
    public function test()
    {
-      return TRUE;
+      $this->descripcion = $this->no_html($this->descripcion);
+      $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+      $totalsindto = $this->pvpunitario * $this->cantidad;
+      
+      if( !$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Error en el valor de pvptotal de la línea ".
+                 $this->referencia." del ".FS_PRESUPUESTO.". Valor correcto: ".$total);
+         return FALSE;
+      }
+      else if( !$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Error en el valor de pvpsindto de la línea ".
+                 $this->referencia." del ".FS_PRESUPUESTO.". Valor correcto: ".$totalsindto);
+         return FALSE;
+      }
+      else
+         return TRUE;
    }
    
    public function save()

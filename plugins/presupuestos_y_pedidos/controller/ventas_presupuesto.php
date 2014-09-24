@@ -40,7 +40,7 @@ class ventas_presupuesto extends fs_controller
 {
    public $agente;
    public $cliente;
-   public $cliente_email;
+   public $cliente_s;
    public $ejercicio;
    public $familia;
    public $impuesto;
@@ -57,10 +57,11 @@ class ventas_presupuesto extends fs_controller
    {
       $this->ppage = $this->page->get('ventas_presupuestos');
       $this->agente = FALSE;
+      
       $presupuesto = new presupuesto_cliente();
       $this->presupuesto = FALSE;
       $this->cliente = new cliente();
-      $this->cliente_email = '';
+      $this->cliente_s = FALSE;
       $this->ejercicio = new ejercicio();
       $this->familia = new familia();
       $this->impuesto = new impuesto();
@@ -110,6 +111,9 @@ class ventas_presupuesto extends fs_controller
             $this->agente = $agente->get($this->presupuesto->codagente);
          }
          
+         /// cargamos el cliente
+         $this->cliente_s = $this->cliente->get($this->presupuesto->codcliente);
+         
          /// comprobamos el presupuesto
          if( $this->presupuesto->full_test() )
          {
@@ -128,12 +132,6 @@ class ventas_presupuesto extends fs_controller
             /// comprobamos si se pueden enviar emails
             if( $this->empresa->can_send_mail() )
             {
-               $cliente = $this->cliente->get($this->presupuesto->codcliente);
-               if($cliente)
-               {
-                  $this->cliente_email = $cliente->email;
-               }
-               
                $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
                
                if( isset($_POST['email']) )
@@ -153,17 +151,6 @@ class ventas_presupuesto extends fs_controller
          }
          
          $this->buttons[] = new fs_button_img('b_remove_presupuesto', 'Eliminar', 'trash.png', '#', TRUE);
-         
-         /**
-          * Como es una plantilla compleja, he separado el código HTML
-          * en dos archivos: ventas_presupuesto_cli_edit.html para los
-          * presupuestos editables y ventas_presupuesto_cli.html para los demás.
-          */
-         $this->template = 'ventas_presupuesto';
-         if( is_null($this->presupuesto->idpedido) )
-         {
-            $this->template = 'ventas_presupuesto_edit';
-         }
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PRESUPUESTO)." de cliente no encontrado!");
@@ -172,16 +159,19 @@ class ventas_presupuesto extends fs_controller
    public function url()
    {
       if( !isset($this->presupuesto) )
+      {
          return parent::url();
+      }
       else if($this->presupuesto)
+      {
          return $this->presupuesto->url();
+      }
       else
          return $this->page->url();
    }
    
    private function modificar()
    {
-      $this->presupuesto->hora = $_POST['hora'];
       $this->presupuesto->observaciones = $_POST['observaciones'];
       $this->presupuesto->numero2 = $_POST['numero2'];
       
@@ -190,7 +180,10 @@ class ventas_presupuesto extends fs_controller
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get( $this->presupuesto->codejercicio );
          if($eje0)
+         {
             $this->presupuesto->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+            $this->presupuesto->hora = $_POST['hora'];
+         }
          else
             $this->new_error_msg('No se encuentra el ejercicio asociado al ".FS_PRESUPUESTO."');
          
@@ -218,6 +211,8 @@ class ventas_presupuesto extends fs_controller
                   }
                }
             }
+            else
+               die('No se ha encontrado el cliente.');
          }
          else
             $cliente = $this->cliente->get($this->presupuesto->codcliente);
@@ -227,14 +222,25 @@ class ventas_presupuesto extends fs_controller
          /// ¿cambiamos la serie?
          if($_POST['serie'] != $this->presupuesto->codserie)
          {
-            $this->presupuesto->codserie = $_POST['serie'];
-            $this->presupuesto->new_codigo();
+            $serie2 = $this->serie->get($_POST['serie']);
+            if($serie2)
+            {
+               $this->presupuesto->codserie = $serie2->codserie;
+               $this->presupuesto->irpf = $serie2->irpf;
+               $this->presupuesto->new_codigo();
+               
+               $serie = $serie2;
+            }
          }
          
-         if( isset($_POST['lineas']) )
+         if( isset($_POST['numlineas']) )
          {
+            $numlineas = intval($_POST['numlineas']);
+            
             $this->presupuesto->neto = 0;
             $this->presupuesto->totaliva = 0;
+            $this->presupuesto->totalirpf = 0;
+            $this->presupuesto->totalrecargo = 0;
             $lineas = $this->presupuesto->get_lineas();
             $articulo = new articulo();
             
@@ -242,7 +248,7 @@ class ventas_presupuesto extends fs_controller
             foreach($lineas as $l)
             {
                $encontrada = FALSE;
-               for($num = 0; $num <= 200; $num++)
+               for($num = 0; $num <= $numlineas; $num++)
                {
                   if( isset($_POST['idlinea_'.$num]) )
                   {
@@ -255,20 +261,13 @@ class ventas_presupuesto extends fs_controller
                }
                if( !$encontrada )
                {
-                  if( $l->delete() )
-                  {
-                     /// actualizamos el stock
-                     $art0 = $articulo->get($l->referencia);
-                     if($art0)
-                        $art0->sum_stock($this->presupuesto->codalmacen, $l->cantidad);
-                  }
-                  else
+                  if( !$l->delete() )
                      $this->new_error_msg("¡Imposible eliminar la línea del artículo ".$l->referencia."!");
                }
             }
             
             /// modificamos y/o añadimos las demás líneas
-            for($num = 0; $num <= 200; $num++)
+            for($num = 0; $num <= $numlineas; $num++)
             {
                $encontrada = FALSE;
                if( isset($_POST['idlinea_'.$num]) )
@@ -279,46 +278,37 @@ class ventas_presupuesto extends fs_controller
                      if($value->idlinea == intval($_POST['idlinea_'.$num]))
                      {
                         $encontrada = TRUE;
-                        $cantidad_old = $value->cantidad;
                         $lineas[$k]->cantidad = floatval($_POST['cantidad_'.$num]);
                         $lineas[$k]->pvpunitario = floatval($_POST['pvp_'.$num]);
                         $lineas[$k]->dtopor = floatval($_POST['dto_'.$num]);
                         $lineas[$k]->dtolineal = 0;
                         $lineas[$k]->pvpsindto = ($value->cantidad * $value->pvpunitario);
                         $lineas[$k]->pvptotal = ($value->cantidad * $value->pvpunitario * (100 - $value->dtopor)/100);
+                        $lineas[$k]->descripcion = $_POST['desc_'.$num];
                         
-                        if( isset($_POST['desc_'.$num]) )
-                           $lineas[$k]->descripcion = $_POST['desc_'.$num];
-                        
-                        if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                        {
-                           $lineas[$k]->codimpuesto = NULL;
-                           $lineas[$k]->iva = 0;
-                        }
-                        else
+                        $lineas[$k]->codimpuesto = NULL;
+                        $lineas[$k]->iva = 0;
+                        $lineas[$k]->recargo = 0;
+                        $lineas[$k]->irpf = 0;
+                        if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if($imp0)
-                           {
                               $lineas[$k]->codimpuesto = $imp0->codimpuesto;
-                              $lineas[$k]->iva = $imp0->iva;
-                           }
-                           else
-                           {
-                              $lineas[$k]->codimpuesto = NULL;
-                              $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
-                           }
+                           
+                           $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
+                           $lineas[$k]->recargo = floatval($_POST['recargo_'.$num]);
+                           
+                           if($lineas[$k]->iva > 0)
+                              $lineas[$k]->irpf = $this->presupuesto->irpf;
                         }
                         
                         if( $lineas[$k]->save() )
                         {
-                           $this->presupuesto->neto += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100);
-                           $this->presupuesto->totaliva += ($value->cantidad*$value->pvpunitario*(100-$value->dtopor)/100*$value->iva/100);
-                           
-                           /// actualizamos el stock
-                           $art0 = $articulo->get($value->referencia);
-                           if($art0)
-                              $art0->sum_stock($this->presupuesto->codalmacen, $cantidad_old - $lineas[$k]->cantidad);
+                           $this->presupuesto->neto += $value->pvptotal;
+                           $this->presupuesto->totaliva += $value->pvptotal * $value->iva/100;
+                           $this->presupuesto->totalirpf += $value->pvptotal * $value->irpf/100;
+                           $this->presupuesto->totalrecargo += $value->pvptotal * $value->recargo/100;
                         }
                         else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo ".$value->referencia."!");
@@ -334,30 +324,19 @@ class ventas_presupuesto extends fs_controller
                      {
                         $linea = new linea_presupuesto_cliente();
                         $linea->referencia = $art0->referencia;
+                        $linea->descripcion = $_POST['desc_'.$num];
                         
-                        if( isset($_POST['desc_'.$num]) )
-                           $linea->descripcion = $_POST['desc_'.$num];
-                        else
-                           $linea->descripcion = $art0->descripcion;
-                        
-                        if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                        {
-                           $linea->codimpuesto = NULL;
-                           $linea->iva = 0;
-                        }
-                        else
+                        if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if($imp0)
-                           {
-                              $linea->codimpuesto = $imp0->codimpuesto;
-                              $linea->iva = $imp0->iva;
-                           }
-                           else
-                           {
-                              $linea->codimpuesto = NULL;
-                              $linea->iva = floatval($_POST['iva_'.$num]);
-                           }
+                              $lineas[$k]->codimpuesto = $imp0->codimpuesto;
+                           
+                           $linea->iva = floatval($_POST['iva_'.$num]);
+                           $linea->recargo = floatval($_POST['recargo_'.$num]);
+                           
+                           if($linea->iva > 0)
+                              $linea->irpf = $this->presupuesto->irpf;
                         }
                         
                         $linea->idpresupuesto = $this->presupuesto->idpresupuesto;
@@ -369,11 +348,10 @@ class ventas_presupuesto extends fs_controller
                         
                         if( $linea->save() )
                         {
-                           $this->presupuesto->neto += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100);
-                           $this->presupuesto->totaliva += ($linea->cantidad*$linea->pvpunitario*(100-$linea->dtopor)/100*$linea->iva/100);
-                           
-                           /// actualizamos el stock
-                           $art0->sum_stock($this->presupuesto->codalmacen, 0 - $linea->cantidad);
+                           $this->presupuesto->neto += $linea->pvptotal;
+                           $this->presupuesto->totaliva += $linea->pvptotal * $linea->iva/100;
+                           $this->presupuesto->totalirpf += $linea->pvptotal * $linea->irpf/100;
+                           $this->presupuesto->totalrecargo += $linea->pvptotal * $linea->recargo/100;
                         }
                         else
                            $this->new_error_msg("¡Imposible guardar la línea del artículo ".$linea->referencia."!");
@@ -385,9 +363,11 @@ class ventas_presupuesto extends fs_controller
             }
             
             /// redondeamos
-            $this->presupuesto->neto = round($this->presupuesto->neto, 2);
-            $this->presupuesto->totaliva = round($this->presupuesto->totaliva, 2);
-            $this->presupuesto->total = $this->presupuesto->neto + $this->presupuesto->totaliva;
+            $this->presupuesto->neto = round($this->presupuesto->neto, FS_NF0);
+            $this->presupuesto->totaliva = round($this->presupuesto->totaliva, FS_NF0);
+            $this->presupuesto->totalirpf = round($this->presupuesto->totalirpf, FS_NF0);
+            $this->presupuesto->totalrecargo = round($this->presupuesto->totalrecargo, FS_NF0);
+            $this->presupuesto->total = $this->presupuesto->neto + $this->presupuesto->totaliva - $this->presupuesto->totalirpf + $this->presupuesto->totalrecargo;
          }
       }
       
@@ -419,7 +399,7 @@ class ventas_presupuesto extends fs_controller
       $pedido->codpostal = $this->presupuesto->codpostal;
       $pedido->codserie = $this->presupuesto->codserie;
       $pedido->direccion = $this->presupuesto->direccion;
-      $pedido->editable = FALSE;
+      $pedido->editable = TRUE;
       $pedido->neto = $this->presupuesto->neto;
       $pedido->nombrecliente = $this->presupuesto->nombrecliente;
       $pedido->observaciones = $this->presupuesto->observaciones;
@@ -427,6 +407,11 @@ class ventas_presupuesto extends fs_controller
       $pedido->total = $this->presupuesto->total;
       $pedido->totaliva = $this->presupuesto->totaliva;
       $pedido->numero2 = $this->presupuesto->numero2;
+      $pedido->irpf = $this->presupuesto->irpf;
+      $pedido->porcomision = $this->presupuesto->porcomision;
+      $pedido->recfinanciero = $this->presupuesto->recfinanciero;
+      $pedido->totalirpf = $this->presupuesto->totalirpf;
+      $pedido->totalrecargo = $this->presupuesto->totalrecargo;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($pedido->codejercicio);
@@ -881,6 +866,7 @@ class ventas_presupuesto extends fs_controller
             $mail->Password = $this->empresa->email_password;
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
             $mail->Subject = $this->empresa->nombre . ': Su '.FS_PRESUPUESTO.' '.$this->presupuesto->codigo;
             $mail->AltBody = 'Buenos días, le adjunto su '.FS_PRESUPUESTO.' '.$this->presupuesto->codigo.".\n".$this->empresa->email_firma;
             $mail->WordWrap = 50;

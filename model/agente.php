@@ -75,7 +75,7 @@ class agente extends fs_model
          $this->ciudad = NULL;
          $this->direccion = NULL;
          $this->porcomision = 0;
-         $this->irpf = NULL;
+         $this->irpf = 0;
          $this->dnicif = '';
          $this->nombre = '';
          $this->apellidos = '';

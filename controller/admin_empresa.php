@@ -97,6 +97,8 @@ class admin_empresa extends fs_controller
          $this->empresa->codpago = $_POST['codpago'];
          $this->empresa->codalmacen = $_POST['codalmacen'];
          $this->empresa->pie_factura = $_POST['pie_factura'];
+         $this->empresa->recequivalencia = isset($_POST['recequivalencia']);
+         
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');

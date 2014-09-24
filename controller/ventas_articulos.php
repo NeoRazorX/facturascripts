@@ -110,16 +110,24 @@ class ventas_articulos extends fs_controller
          $this->save_codfamilia( $_POST['codfamilia'] );
          $this->save_codimpuesto( $_POST['codimpuesto'] );
          
-         $articulo->referencia = $_POST['referencia'];
-         $articulo->descripcion = $_POST['referencia'];
-         $articulo->codfamilia = $_POST['codfamilia'];
-         $articulo->set_impuesto($_POST['codimpuesto']);
-         if( $articulo->save() )
+         $art0 = $articulo->get($_POST['referencia']);
+         if($art0)
          {
-            header('location: '.$articulo->url());
+            $this->new_error_msg('Ya existe el artículo <a href="'.$art0->url().'">'.$art0->referencia.'</a>');
          }
          else
-            $this->new_error_msg("¡Error al crear el articulo!");
+         {
+            $articulo->referencia = $_POST['referencia'];
+            $articulo->descripcion = $_POST['referencia'];
+            $articulo->codfamilia = $_POST['codfamilia'];
+            $articulo->set_impuesto($_POST['codimpuesto']);
+            if( $articulo->save() )
+            {
+               header('location: '.$articulo->url());
+            }
+            else
+               $this->new_error_msg("¡Error al crear el articulo!");
+         }
       }
       else if( isset($_GET['delete']) )
       {

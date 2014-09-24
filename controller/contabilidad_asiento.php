@@ -40,6 +40,7 @@ class contabilidad_asiento extends fs_controller
    
    protected function process()
    {
+      $this->asiento = FALSE;
       $this->ppage = $this->page->get('contabilidad_asientos');
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();
@@ -48,17 +49,46 @@ class contabilidad_asiento extends fs_controller
       
       if( isset($_GET['id']) )
       {
-         $this->asiento = new asiento();
-         $this->asiento = $this->asiento->get($_GET['id']);
+         $asiento = new asiento();
+         $this->asiento = $asiento->get($_GET['id']);
       }
       
       if( isset($_POST['fecha']) AND isset($_POST['query']) )
       {
          $this->new_search();
       }
-      else if( $this->asiento )
+      else if($this->asiento)
       {
          $this->page->title = 'Asiento: '.$this->asiento->numero;
+         
+         if( isset($_GET['bloquear']) )
+         {
+            $this->asiento->editable = FALSE;
+            if( $this->asiento->save() )
+            {
+               $this->new_message('Asiento bloqueado correctamente.');
+            }
+            else
+               $this->new_error_msg('Imposible bloquear el asiento.');
+         }
+         else if( isset($_GET['desbloquear']) )
+         {
+            $this->asiento->editable = TRUE;
+            if( $this->asiento->save() )
+            {
+               $this->new_message('Asiento desbloqueado correctamente.');
+            }
+            else
+               $this->new_error_msg('Imposible desbloquear el asiento.');
+         }
+         
+         if($this->asiento->editable)
+         {
+            $this->buttons[] = new fs_button('b_bloquear', 'Bloquear', $this->url().'&bloquear=TRUE');
+         }
+         else
+            $this->buttons[] = new fs_button('b_desbloquear', 'Desbloquear', $this->url().'&desbloquear=TRUE');
+         
          $this->buttons[] = new fs_button_img('b_eliminar_asiento', 'Eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_POST['fecha']) AND $this->asiento->editable )

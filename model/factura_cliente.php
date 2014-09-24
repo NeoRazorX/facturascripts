@@ -260,6 +260,7 @@ class factura_cliente extends fs_model
                      $encontrada = TRUE;
                      $lineasi[$i]->neto += $l->pvptotal;
                      $lineasi[$i]->totaliva += ($l->pvptotal*$l->iva)/100;
+                     $lineasi[$i]->totalrecargo += ($l->pvptotal*$l->recargo)/100;
                   }
                   $i++;
                }
@@ -269,17 +270,20 @@ class factura_cliente extends fs_model
                   $lineasi[$i]->idfactura = $this->idfactura;
                   $lineasi[$i]->codimpuesto = $l->codimpuesto;
                   $lineasi[$i]->iva = $l->iva;
+                  $lineasi[$i]->recargo = $l->recargo;
                   $lineasi[$i]->neto = $l->pvptotal;
                   $lineasi[$i]->totaliva = ($l->pvptotal*$l->iva)/100;
+                  $lineasi[$i]->totalrecargo = ($l->pvptotal*$l->recargo)/100;
                }
             }
             
             /// redondeamos y guardamos
             if( count($lineasi) == 1 )
             {
-               $lineasi[0]->neto = round($lineasi[0]->neto, 2);
-               $lineasi[0]->totaliva = round($lineasi[0]->totaliva, 2);
-               $lineasi[0]->totallinea = $lineasi[0]->neto + $lineasi[0]->totaliva;
+               $lineasi[0]->neto = round($lineasi[0]->neto, FS_NF0);
+               $lineasi[0]->totaliva = round($lineasi[0]->totaliva, FS_NF0);
+               $lineasi[0]->totaliva = round($lineasi[0]->totaliva, FS_NF0);
+               $lineasi[0]->totallinea = $lineasi[0]->neto + $lineasi[0]->totaliva + $lineasi[0]->totalrecargo;
                $lineasi[0]->save();
             }
             else
@@ -293,8 +297,8 @@ class factura_cliente extends fs_model
                $t_iva = 0;
                foreach($lineasi as $li)
                {
-                  $li->neto = bround($li->neto, 2);
-                  $li->totaliva = bround($li->totaliva, 2);
+                  $li->neto = bround($li->neto, FS_NF0);
+                  $li->totaliva = bround($li->totaliva, FS_NF0);
                   $li->totallinea = $li->neto + $li->totaliva;
                   
                   $t_neto += $li->neto;
@@ -365,7 +369,7 @@ class factura_cliente extends fs_model
                
                foreach($lineasi as $i => $value)
                {
-                  $lineasi[$i]->totallinea = $value->neto + $value->totaliva;
+                  $lineasi[$i]->totallinea = $value->neto + $value->totaliva + $value->totalrecargo;
                   $lineasi[$i]->save();
                }
             }
@@ -454,13 +458,13 @@ class factura_cliente extends fs_model
       $this->observaciones = $this->no_html($this->observaciones);
       $this->totaleuros = $this->total * $this->tasaconv;
       
-      if( $this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      if( $this->floatcmp($this->total, $this->neto+$this->totaliva-$this->totalirpf+$this->totalrecargo, FS_NF0, TRUE) )
       {
          return TRUE;
       }
       else
       {
-         $this->new_error_msg("Error grave: El total no es la suma del neto y el iva. ¡Avisa al informático!");
+         $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
          return FALSE;
       }
    }
@@ -511,6 +515,8 @@ class factura_cliente extends fs_model
       /// comprobamos las líneas
       $neto = 0;
       $iva = 0;
+      $irpf = 0;
+      $recargo = 0;
       foreach($this->get_lineas() as $l)
       {
          if( !$l->test() )
@@ -518,61 +524,52 @@ class factura_cliente extends fs_model
          
          $neto += $l->pvptotal;
          $iva += $l->pvptotal * $l->iva / 100;
+         $irpf += $l->pvptotal * $l->irpf / 100;
+         $recargo += $l->pvptotal * $l->recargo / 100;
       }
       
-      if( !$this->floatcmp($this->neto, $neto, 2, TRUE) )
+      $neto = round($neto, FS_NF0);
+      $iva = round($iva, FS_NF0);
+      $irpf = round($irpf, FS_NF0);
+      $recargo = round($recargo, FS_NF0);
+      $total = $neto + $iva - $irpf + $recargo;
+      
+      if( !$this->floatcmp($this->neto, $neto, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor neto de la factura incorrecto. Valor correcto: ".$neto);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaliva, $iva, 2, TRUE) )
+      else if( !$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor totaliva de la factura incorrecto. Valor correcto: ".$iva);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->total, $this->neto + $this->totaliva, 2, TRUE) )
+      else if( !$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE) )
       {
-         $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".
-                 round($this->neto + $this->totaliva, 2));
+         $this->new_error_msg("Valor totalirpf de la factura incorrecto. Valor correcto: ".$irpf);
          $status = FALSE;
       }
-      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, 2, TRUE) )
+      else if( !$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor totalrecargo de la factura incorrecto. Valor correcto: ".$recargo);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->total, $total, FS_NF0, TRUE) )
+      {
+         $this->new_error_msg("Valor total de la factura incorrecto. Valor correcto: ".$total);
+         $status = FALSE;
+      }
+      else if( !$this->floatcmp($this->totaleuros, $this->total * $this->tasaconv, FS_NF0, TRUE) )
       {
          $this->new_error_msg("Valor totaleuros de la factura incorrecto.
-            Valor correcto: ".round($this->total * $this->tasaconv, 2));
+            Valor correcto: ".round($this->total * $this->tasaconv, FS_NF0));
          $status = FALSE;
       }
       
       /// comprobamos las líneas de IVA
-      $li_neto = 0;
-      $li_iva = 0;
-      $li_total = 0;
-      foreach($this->get_lineas_iva() as $li)
-      {
-         if( !$li->test() )
-            $status = FALSE;
-         
-         $li_neto += $li->neto;
-         $li_iva += $li->totaliva;
-         $li_total += $li->totallinea;
-      }
-      
-      if( !$this->floatcmp($this->neto, $li_neto, 2, TRUE) )
-      {
-         $this->new_error_msg("La suma de los netos de las líneas de IVA debería ser: ".$this->neto);
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($this->totaliva, $li_iva, 2, TRUE) )
-      {
-         $this->new_error_msg("La suma de los totales de iva de las líneas de IVA debería ser: ".
-                 $this->totaliva);
-         $status = FALSE;
-      }
-      else if( !$this->floatcmp($li_total, $li_neto + $li_iva, 2, TRUE) )
-      {
-         $this->new_error_msg("La suma de los totales de las líneas de IVA debería ser: ".$li_total);
-         $status = FALSE;
-      }
+      $this->get_lineas_iva();
+      $linea_iva = new linea_iva_factura_cliente();
+      $status = $linea_iva->factura_test($this->idfactura, $neto, $iva, $recargo);
       
       /// comprobamos el asiento
       if( isset($this->idasiento) )
@@ -589,26 +586,15 @@ class factura_cliente extends fs_model
             {
                /// comprobamos las partidas del asiento
                $neto_encontrado = FALSE;
-               $a_debe = 0;
-               $a_haber = 0;
                foreach($asiento->get_partidas() as $p)
                {
-                  if( $this->floatcmp3($this->neto, $p->debe, $p->haber, 2, TRUE) )
+                  if( $this->floatcmp3($this->neto, $p->debe, $p->haber, FS_NF0, TRUE) )
                      $neto_encontrado = TRUE;
-                  
-                  $a_debe += $p->debe;
-                  $a_haber += $p->haber;
                }
-               $importe = max( array($a_debe, $a_haber) );
                
                if( !$neto_encontrado )
                {
                   $this->new_error_msg("No se ha encontrado la partida de neto en el asiento.");
-                  $status = FALSE;
-               }
-               else if( !$this->floatcmp($this->total, $importe, 2, TRUE) )
-               {
-                  $this->new_error_msg("El importe del asiento debería ser: ".$this->total);
                   $status = FALSE;
                }
             }
@@ -723,10 +709,11 @@ class factura_cliente extends fs_model
    {
       $this->clean_cache();
       
-      /// eliminamos el asiento asociado
-      $asiento = $this->get_asiento();
-      if($asiento)
-         $asiento->delete();
+      if($this->idasiento)
+      {
+         /// eliminamos el asiento asociado
+         return $this->db->exec("DELETE FROM co_asientos WHERE idasiento = ".$this->var2str($this->idasiento).";");
+      }
       
       /// desvinculamos el/los albaranes asociados
       $this->db->exec("UPDATE albaranescli SET idfactura = NULL, ptefactura = TRUE

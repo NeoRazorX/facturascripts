@@ -296,6 +296,9 @@ class tpv_recambios extends fs_controller
          $albaran->tasaconv = $divisa->tasaconv;
          $albaran->codagente = $this->agente->codagente;
          $albaran->observaciones = $_POST['observaciones'];
+         $albaran->numero2 = $_POST['numero2'];
+         $albaran->irpf = $serie->irpf;
+         $albaran->porcomision = $this->agente->porcomision;
          
          foreach($cliente->get_direcciones() as $d)
          {
@@ -316,7 +319,9 @@ class tpv_recambios extends fs_controller
          }
          
          if( is_null($albaran->codcliente) )
+         {
             $this->new_error_msg("No hay ninguna dirección asociada al cliente.");
+         }
          else if( $albaran->save() )
          {
             $n = floatval($_POST['numlineas']);
@@ -330,22 +335,17 @@ class tpv_recambios extends fs_controller
                      $linea = new linea_albaran_cliente();
                      $linea->idalbaran = $albaran->idalbaran;
                      $linea->referencia = $articulo->referencia;
+                     $linea->descripcion = $_POST['desc_'.$i];
                      
-                     if( isset($_POST['desc_'.$i]) )
-                        $linea->descripcion = $_POST['desc_'.$i];
-                     else
-                        $linea->descripcion = $articulo->descripcion;
-                     
-                     if( $serie->siniva OR $cliente->regimeniva == 'Exento' )
-                     {
-                        $linea->codimpuesto = NULL;
-                        $linea->iva = 0;
-                     }
-                     else
+                     if( !$serie->siniva OR $cliente->regimeniva != 'Exento' )
                      {
                         $linea->codimpuesto = $articulo->codimpuesto;
                         $linea->iva = floatval($_POST['iva_'.$i]);
+                        $linea->recargo = floatval($_POST['recargo_'.$i]);
                      }
+                     
+                     if($linea->iva > 0)
+                        $linea->irpf = $albaran->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
@@ -360,6 +360,8 @@ class tpv_recambios extends fs_controller
                         
                         $albaran->neto += $linea->pvptotal;
                         $albaran->totaliva += ($linea->pvptotal * $linea->iva/100);
+                        $albaran->totalirpf += ($linea->pvptotal * $linea->irpf/100);
+                        $albaran->totalrecargo += ($linea->pvptotal * $linea->recargo/100);
                      }
                      else
                      {
@@ -378,16 +380,17 @@ class tpv_recambios extends fs_controller
             if($continuar)
             {
                /// redondeamos
-               $albaran->neto = round($albaran->neto, 2);
-               $albaran->totaliva = round($albaran->totaliva, 2);
-               $albaran->total = $albaran->neto + $albaran->totaliva;
+               $albaran->neto = round($albaran->neto, FS_NF0);
+               $albaran->totaliva = round($albaran->totaliva, FS_NF0);
+               $albaran->totalirpf = round($albaran->totalirpf, FS_NF0);
+               $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
+               $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
                if( $albaran->save() )
                {
                   $this->new_message("<a href='".$albaran->url()."'>".FS_ALBARAN."</a> guardado correctamente.");
                   
-                  if( isset($_POST['num_tickets']) )
-                     $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
+                  $this->imprimir_ticket( $albaran, floatval($_POST['num_tickets']) );
                   
                   /// actualizamos la caja
                   $this->caja->dinero_fin += $albaran->total;
@@ -399,7 +402,9 @@ class tpv_recambios extends fs_controller
                   $this->new_error_msg("¡Imposible actualizar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
             }
             else if( $albaran->delete() )
+            {
                $this->new_message(FS_ALBARAN." eliminado correctamente.");
+            }
             else
                $this->new_error_msg("¡Imposible eliminar el <a href='".$albaran->url()."'>".FS_ALBARAN."</a>!");
          }

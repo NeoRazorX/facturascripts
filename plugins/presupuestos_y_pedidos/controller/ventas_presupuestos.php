@@ -193,22 +193,6 @@ class ventas_presupuestos extends fs_controller
       $pre1 = $pre1->get($_POST['delete']);
       if($pre1)
       {
-         /// ¿Actualizamos el stock de los artículos?
-         if( isset($_POST['stock']) )
-         {
-            $articulo = new articulo();
-            
-            foreach($pre1->get_lineas() as $linea)
-            {
-               $art0 = $articulo->get($linea->referencia);
-               if($art0)
-               {
-                  $art0->sum_stock($pre1->codalmacen, $linea->cantidad);
-                  $art0->save();
-               }
-            }
-         }
-         
          if( $pre1->delete() )
          {
             $this->new_message(ucfirst(FS_PRESUPUESTO)." ".$pre1->codigo." borrado correctamente.");
