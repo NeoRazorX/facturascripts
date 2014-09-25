@@ -15,6 +15,7 @@
       <thead>
          <tr>
             <th></th>
+            <th></th>
             <th class="text-left">Código + Num. Proveedor</th>
             <th class="text-left">Proveedor</th>
             <th class="text-left">Observaciones</th>
@@ -25,11 +26,13 @@
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
          <td class="text-center">
+            {if condition="$value->pagada"}
+            <span class="glyphicon glyphicon-ok" title="La factura está pagada"></span>
+            {/if}
+         </td>
+         <td class="text-center">
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
-            {/if}
-            {if condition="$value->pagada"}
-            <span class="glyphicon glyphicon-usd" title="La factura está pagada"></span>
             {/if}
          </td>
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}</td>
@@ -40,6 +43,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
+         <td></td>
          <td></td>
          <td colspan="5">Ninguna factura encontrada. Pulsa el botón <b>Nueva</b> para crear una.</td>
       </tr>

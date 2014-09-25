@@ -44,21 +44,27 @@ class ventas_factura extends fs_controller
    {
       $this->ppage = $this->page->get('ventas_facturas');
       $this->ejercicio = new ejercicio();
-      
+      $this->agente = FALSE;
+      $this->cliente = FALSE;
+      $factura = new factura_cliente();
       $this->factura = FALSE;
+      
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['idfactura']) )
       {
-         $factura = new factura_cliente();
          $this->factura = $factura->get($_POST['idfactura']);
          $this->factura->observaciones = $_POST['observaciones'];
          $this->factura->numero2 = $_POST['numero2'];
-         
          $this->cambiar_numero_factura();
          
          /// obtenemos el ejercicio para poder acotar la fecha
          $eje0 = $this->ejercicio->get( $this->factura->codejercicio );
          if( $eje0 )
+         {
             $this->factura->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+         }
          else
             $this->new_error_msg('No se encuentra el ejercicio asociado a la factura.');
          
@@ -79,12 +85,21 @@ class ventas_factura extends fs_controller
       }
       else if( isset($_GET['id']) )
       {
-         $this->factura = new factura_cliente();
-         $this->factura = $this->factura->get($_GET['id']);
+         $this->factura = $factura->get($_GET['id']);
       }
       
       if($this->factura)
       {
+         $this->page->title = $this->factura->codigo;
+         
+         /// cargamos el agente
+         if( !is_null($this->factura->codagente) )
+         {
+            $agente = new agente();
+            $this->agente = $agente->get($this->factura->codagente);
+         }
+            
+         /// cargamos el cliente
          $cliente = new cliente();
          $this->cliente = $cliente->get($this->factura->codcliente);
          
@@ -109,36 +124,19 @@ class ventas_factura extends fs_controller
             {
                $this->actualizar_direccion();
             }
+            else if( isset($_REQUEST['pagada']) )
+            {
+               $this->factura->pagada = ($_REQUEST['pagada'] == 'TRUE');
+               if( $this->factura->save() )
+               {
+                  $this->new_message("Factura modificada correctamente.");
+               }
+               else
+                  $this->new_error_msg("¡Imposible modificar la factura!");
+            }
             
             /// comprobamos la factura
             $this->factura->full_test();
-            
-            $this->page->title = $this->factura->codigo;
-            
-            /// cargamos el agente
-            if( !is_null($this->factura->codagente) )
-            {
-               $agente = new agente();
-               $this->agente = $agente->get($this->factura->codagente);
-            }
-            
-            $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
-            
-            if( $this->empresa->can_send_mail() )
-            {
-               $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
-            }
-            
-            if($this->factura->idasiento)
-            {
-               $this->buttons[] = new fs_button('b_ver_asiento', 'Asiento', $this->factura->asiento_url());
-            }
-            else
-            {
-               $this->buttons[] = new fs_button('b_gen_asiento', 'Generar asiento', $this->url().'&gen_asiento=TRUE&petid='.$this->random_string());
-            }
-            
-            $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          }
       }
       else
@@ -148,9 +146,13 @@ class ventas_factura extends fs_controller
    public function url()
    {
       if( !isset($this->factura) )
+      {
          return parent::url ();
+      }
       else if($this->factura)
+      {
          return $this->factura->url();
+      }
       else
          return $this->ppage->url();
    }

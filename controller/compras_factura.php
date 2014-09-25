@@ -27,6 +27,7 @@ require_model('subcuenta.php');
 
 class compras_factura extends fs_controller
 {
+   public $agente;
    public $ejercicio;
    public $factura;
    
@@ -38,13 +39,14 @@ class compras_factura extends fs_controller
    protected function process()
    {
       $this->ppage = $this->page->get('compras_facturas');
+      $this->agente = FALSE;
       $this->ejercicio = new ejercicio();
       $factura = new factura_proveedor();
+      $this->factura = FALSE;
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
-      $this->factura = FALSE;
       if( isset($_POST['idfactura']) )
       {
          $this->factura = $factura->get($_POST['idfactura']);
