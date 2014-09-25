@@ -533,7 +533,7 @@ class ventas_factura extends fs_controller
             $this->new_message("El cliente no tiene asociada una subcuenta y por
                tanto no se generará un asiento.");
          }
-         else if($factura->totalirpf != 0 OR $factura->totalrecargo != 0)
+         else if($this->factura->totalirpf != 0 OR $this->factura->totalrecargo != 0)
          {
             $this->new_error_msg('Todavía no se pueden generar asientos de facturas con IRPF o recargo.');
          }
