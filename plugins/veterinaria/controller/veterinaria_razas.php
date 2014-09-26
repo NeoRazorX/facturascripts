@@ -17,12 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('especie.php');
 require_model('raza.php');
 
 class veterinaria_razas extends fs_controller
 {
-   public $especie;
    public $raza;
 
    public function __construct()
@@ -32,30 +30,26 @@ class veterinaria_razas extends fs_controller
    
    protected function process()
    {
-      $this->especie = new especie();
       $this->raza = new raza();
       
-      if( isset($_POST['idraza']) ) /// modificar una raza
+      if( isset($_POST['nombre']) )
       {
-         $raza0 = $this->raza->get($_POST['idraza']);
-         if($raza0)
+         if( isset($_POST['id']) )
          {
-            $raza0->especie = $_POST['sespecie'];
-            $raza0->nombre = $_POST['snombre'];
-            if( $raza0->save() )
-               $this->new_message('Raza guardada correctamente.');
-            else
-               $this->new_error_msg('Imposible guardar la raza.');
+            $raza0 = $this->raza->get($_POST['id']);
+            
+            if(!$raza0)
+               $raza0 = new raza();
          }
          else
-            $this->new_error_msg('Raza no encontrada.');
-      }
-      else if( isset($_POST['snombre']) ) /// añadir una raza
-      {
-         $this->raza->especie = $_POST['sespecie'];
-         $this->raza->nombre = $_POST['snombre'];
-         if( $this->raza->save() )
+            $raza0 = new raza();
+         
+         $raza0->especie = $_POST['especie'];
+         $raza0->nombre = $_POST['nombre'];
+         if( $raza0->save() )
+         {
             $this->new_message('Raza guardada correctamente.');
+         }
          else
             $this->new_error_msg('Imposible guardar la raza.');
       }
@@ -74,5 +68,3 @@ class veterinaria_razas extends fs_controller
       }
    }
 }
-
-?>

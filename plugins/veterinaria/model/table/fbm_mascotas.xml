@@ -6,7 +6,7 @@
 -->
 <tabla>
    <columna>
-      <nombre>cod_mascota</nombre>
+      <nombre>idmascota</nombre>
       <tipo>serial</tipo>
    </columna>
    <columna>
@@ -37,13 +37,8 @@
       <tipo>varchar(1)</tipo>
    </columna>
    <columna>
-      <nombre>raza</nombre>
-      <tipo>varchar(25)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>especie</nombre>
-      <tipo>varchar(25)</tipo>
+      <nombre>idraza</nombre>
+      <tipo>integer</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
@@ -52,7 +47,7 @@
    </columna>
    <columna>
       <nombre>esterilizado</nombre>
-      <tipo>varchar(1)</tipo>
+      <tipo>boolean</tipo>
    </columna>
    <columna>
       <nombre>fecha_esterilizado</nombre>
@@ -63,12 +58,12 @@
       <tipo>varchar(50)</tipo>
    </columna>
    <columna>
-      <nombre>cod_cliente</nombre>
+      <nombre>codcliente</nombre>
       <tipo>varchar(6)</tipo>
       <nulo>NO</nulo>
    </columna>
    <restriccion>
 		<nombre>fbm_mascotas_pkey</nombre>
-		<consulta>PRIMARY KEY (cod_mascota)</consulta>
+		<consulta>PRIMARY KEY (idmascota)</consulta>
 	</restriccion>
 </tabla>

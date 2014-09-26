@@ -24,28 +24,23 @@ class veterinaria_mascotas extends fs_controller
       
       $this->buttons[] = new fs_button('b_nueva', 'Nueva');
       
-      if( isset($_POST['nombre']) )
+      if( isset($_POST['codcliente']) )
       {
-         $cli0 = $this->cliente->get($_POST['cliente']);
+         $cli0 = $this->cliente->get($_POST['codcliente']);
          if($cli0)
          {
-            $raza0 = $this->raza->get($_POST['raza']);
-            if($raza0)
+            $this->mascota->codcliente = $cli0->codcliente;
+            $this->mascota->nombre = $_POST['nombre'];
+            $this->mascota->chip = $_POST['chip'];
+            $this->mascota->pasaporte = $_POST['pasaporte'];
+            $this->mascota->idraza = $_POST['raza'];
+            
+            if( $this->mascota->save() )
             {
-               $this->mascota->cod_cliente = $cli0->codcliente;
-               $this->mascota->nombre = $_POST['nombre'];
-               $this->mascota->chip = $_POST['chip'];
-               $this->mascota->pasaporte = $_POST['pasaporte'];
-               $this->mascota->raza = $raza0->nombre;
-               $this->mascota->especie = $raza0->especie;
-               
-               if( $this->mascota->save() )
-                  $this->new_message('Datos de mascota guardados correctamente.');
-               else
-                  $this->new_error_msg('Imposible guardar la mascota.');
+               $this->new_message('Datos de mascota guardados correctamente.');
             }
             else
-               $this->new_error_msg('Raza no encontrada.');
+               $this->new_error_msg('Imposible guardar la mascota.');
          }
          else
             $this->new_error_msg('Cliente no encontrado.');

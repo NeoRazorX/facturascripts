@@ -21,7 +21,7 @@ require_once 'base/fs_model.php';
 
 class raza extends fs_model
 {
-   public $id_raza; /// pkey
+   public $id; /// pkey
    public $especie;
    public $nombre;
    
@@ -30,13 +30,13 @@ class raza extends fs_model
       parent::__construct('fbm_razas','plugins/veterinaria/');
       if($p)
       {
-         $this->id_raza = $p['id_raza'];
+         $this->id = $p['id_raza'];
          $this->especie = $p['especie'];
          $this->nombre = $p['nombre'];
       }
       else
       {
-         $this->id_raza = NULL;
+         $this->id = NULL;
          $this->especie = NULL;
          $this->nombre = NULL;
       }
@@ -52,9 +52,9 @@ class raza extends fs_model
       return 'index.php?page=veterinaria_razas';
    }
    
-   public function get($cod)
+   public function get($id)
    {
-      $raza = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($cod).";");
+      $raza = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($id).";");
       if($raza)
          return new raza($raza[0]);
       else
@@ -63,11 +63,13 @@ class raza extends fs_model
    
    public function exists()
    {
-      if( is_null($this->id_raza) )
+      if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE id_raza = ".$this->var2str($this->id_raza).";");
+            WHERE id_raza = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -80,7 +82,7 @@ class raza extends fs_model
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET especie = ".$this->var2str($this->especie).", "
-            . "nombre = ".$this->var2str($this->nombre)." WHERE id_raza = ".$this->var2str($this->id_raza).";";
+            . "nombre = ".$this->var2str($this->nombre)." WHERE id_raza = ".$this->var2str($this->id).";";
       }
       else
       {
@@ -93,20 +95,20 @@ class raza extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($this->id_raza).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($this->id).";");
    }
    
    public function all()
    {
-      $listar=array();
-      $razas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY id_raza ASC;");
-      if($razas)
+      $listar = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+      if($data)
       {
-         foreach($razas as $p)
-            $listar[] = new raza($p);
+         foreach($data as $d)
+            $listar[] = new raza($d);
       }
+      
       return $listar;
    }
 }
-
-?>

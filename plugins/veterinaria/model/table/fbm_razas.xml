@@ -18,11 +18,15 @@
 	</columna>
    <columna>
 		<nombre>nombre</nombre>
-		<tipo>varchar(25)</tipo>
+		<tipo>varchar(50)</tipo>
 		<nulo>NO</nulo>
 	</columna>
 	<restriccion>
 		<nombre>fbm_razas_pkey</nombre>
 		<consulta>PRIMARY KEY (id_raza)</consulta>
 	</restriccion>
+   <restriccion>
+      <nombre>uniq_especie</nombre>
+      <consulta>UNIQUE (especie,nombre)</consulta>
+   </restriccion>
 </tabla>

@@ -1,0 +1,8 @@
+Fabricantes (o Marcas).<br/>
+Se trata de un plugin sencillo a modo de ejemplo para aprender a desarrollar plugins para FacturaScripts, basado en el famoso plugin de los Gatos ;) .<br /><br />
+
+Known issues: 
+<br /><br />
+- Cuando una ventana modal produce un error, aparece por duplicado en la ventana principal. Una posible solución es asignar un id a los contenedores de error de la ventana principal, y cuando hay error en ventana modal pasarlos a "display: none".
+<br /><br />
+- Cuando se sale de una ventana modal pulsando el aspa, debería limpiar los errores que haya en la ventana principal.

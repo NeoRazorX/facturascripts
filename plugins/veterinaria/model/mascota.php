@@ -19,60 +19,60 @@
 
 require_once 'base/fs_model.php';
 require_model('cliente.php');
+require_model('raza.php');
 
 class mascota extends fs_model
 {
    public $nombre;
-   public $cod_mascota;
+   public $idmascota; /// pkey
    public $chip;
    public $pasaporte;
    public $fecha_nac;
    public $fecha_alta;
    public $sexo;
-   public $raza;
-   public $especie;
+   public $idraza;
    public $color;
    public $esterilizado;
    public $fecha_esterilizado;
    public $altura;
-   public $cod_cliente;
+   public $codcliente;
+   
+   private static $cliente;
    
    public function __construct($m=FALSE)
    {
       parent::__construct('fbm_mascotas', 'plugins/veterinaria/');
       if($m)
       {
-         $this->cod_mascota = $m['cod_mascota'];
+         $this->idmascota = $m['idmascota'];
          $this->nombre = $m['nombre'];
          $this->chip = $m['chip'];
          $this->pasaporte = $m['pasaporte'];
          $this->fecha_nac = $m['fecha_nac'];
          $this->fecha_alta = Date('d-m-Y');
          $this->sexo = $m['sexo'];
-         $this->raza = $m['raza'];
-         $this->especie = $m['especie'];
+         $this->idraza = $m['idraza'];
          $this->color = $m['color'];
          $this->esterilizado = $m['esterilizado'];
          $this->fecha_esterilizado = $m['fecha_esterilizado'];
          $this->altura = $m['altura'];
-         $this->cod_cliente = $m['cod_cliente'];
+         $this->codcliente = $m['codcliente'];
       }
       else
       {
-         $this->cod_mascota = NULL;
+         $this->idmascota = NULL;
          $this->nombre = NULL;
          $this->chip = NULL;
          $this->pasaporte = NULL;
          $this->fecha_nac = Date('d-m-Y');
          $this->fecha_alta = Date('d-m-Y');
          $this->sexo = NULL;
-         $this->raza = NULL;
-         $this->especie = NULL;
+         $this->idraza = NULL;
          $this->color = NULL;
          $this->esterilizado = NULL;
          $this->fecha_esterilizado = NULL;
          $this->altura = NULL;
-         $this->cod_cliente = NULL;
+         $this->codcliente = NULL;
       }
    }
 
@@ -83,34 +83,54 @@ class mascota extends fs_model
    
    public function url()
    {
-      return 'index.php?page=veterinaria_mascotas';
+      return 'index.php?page=veterinaria_mascota&id='.$this->idmascota;
    }
    
    public function nombre_cliente()
    {
-      $cliente = new cliente();
-      $cli0 = $cliente->get($this->cod_cliente);
+      if( !isset(self::$cliente) )
+      {
+         self::$cliente = new cliente();
+      }
+      
+      $cli0 = self::$cliente->get($this->codcliente);
       if($cli0)
-         return $cli0->nombrecomercial;
+      {
+         return $cli0->nombre;
+      }
       else
          return '-';
    }
    
-   public function get($cod_mascota)
+   public function especie()
    {
-      $mascotas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE cod_mascota = ".$this->var2str($cod_mascota).";");
+      return '-';
+   }
+   
+   public function raza()
+   {
+      return '-';
+   }
+   
+   public function get($id)
+   {
+      $mascotas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($id).";");
       if($mascotas)
+      {
          return new mascota($mascotas[0]);
+      }
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if( is_null($this->cod_mascota) )
+      if( is_null($this->idmascota) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE cod_mascota = ".$this->var2str($this->cod_mascota).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($this->idmascota).";");
    }
    
    public function test()
@@ -125,31 +145,37 @@ class mascota extends fs_model
          $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
             chip = ".$this->var2str($this->chip).", pasaporte = ".$this->var2str($this->pasaporte).",
             fecha_nac = ".$this->var2str($this->fecha_nac).", sexo = ".$this->var2str($this->sexo).",
-            raza = ".$this->var2str($this->raza).",
-            especie = ".$this->var2str($this->especie).", color = ".$this->var2str($this->color).",
+            idraza = ".$this->var2str($this->idraza).", color = ".$this->var2str($this->color).",
             esterilizado = ".$this->var2str($this->esterilizado).",
             fecha_esterilizado = ".$this->var2str($this->fecha_esterilizado).",
             altura = ".$this->var2str($this->altura)."
-            WHERE cod_mascota = ".$this->var2str($this->cod_mascota).";";
+            WHERE idmascota = ".$this->var2str($this->idmascota).";";
+         return $this->db->exec($sql);
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (nombre,chip,pasaporte,fecha_nac,
-            fecha_alta,sexo,raza,especie,color,esterilizado,fecha_esterilizado,altura,cod_cliente)
+            fecha_alta,sexo,idraza,color,esterilizado,fecha_esterilizado,altura,codcliente)
             VALUES (".$this->var2str($this->nombre).",".$this->var2str($this->chip).",
             ".$this->var2str($this->pasaporte).",".$this->var2str($this->fecha_nac).",
             ".$this->var2str($this->fecha_alta).",".$this->var2str($this->sexo).",
-            ".$this->var2str($this->raza).",".$this->var2str($this->especie).",".$this->var2str($this->color).",
+            ".$this->var2str($this->idraza).",".$this->var2str($this->color).",
             ".$this->var2str($this->esterilizado).",".$this->var2str($this->fecha_esterilizado).",
-            ".$this->var2str($this->altura).",".$this->var2str($this->cod_cliente).");";
+            ".$this->var2str($this->altura).",".$this->var2str($this->codcliente).");";
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->idmascota = $this->db->lastval();
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
-      
-      return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE cod_mascota = ".$this->var2str($this->cod_mascota).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($this->idmascota).";");
    }
    
    public function all()
@@ -167,5 +193,3 @@ class mascota extends fs_model
    }
    
 }
-
-?>
