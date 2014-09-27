@@ -21,6 +21,7 @@
 require_model('cliente.php');
 require_model('registro_sat.php');
 require_model('detalles_sat.php');
+require_model('fs_extension.php');
 
 class listado_sat extends fs_controller
 {
@@ -44,10 +45,30 @@ class listado_sat extends fs_controller
     */
    protected function process()
    {
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
+      $this->meter_extensiones();
+      
       $this->cliente = new cliente();
       $this->registro_sat = new registro_sat();
       $this->detalles_sat = new detalles_sat();
-      if( isset($_GET['id']) )
+      
+      if( isset($_REQUEST['buscar_cliente']) )
+      {
+         /// desactivamos la plantilla HTML
+         $this->template = FALSE;
+         
+         $json = array();
+         foreach($this->cliente->search($_REQUEST['buscar_cliente']) as $cli)
+         {
+            $json[] = array('value' => $cli->nombre, 'data' => $cli->codcliente);
+         }
+         
+         header('Content-Type: application/json');
+         echo json_encode( array('query' => $_REQUEST['buscar_cliente'], 'suggestions' => $json) );
+      }
+      else if( isset($_GET['id']) )
       {
          if(isset($_GET['opcion']))
          {
@@ -66,23 +87,20 @@ class listado_sat extends fs_controller
       }
       else if( isset($_GET['opcion']) )
       {
-         
          if($_GET['opcion'] == "nuevosat")
          {
             $this->page->title = "Nuevo SAT";
             
             if( isset($_GET['codcliente']) )
             {
-               if( isset($_POST['modelo']) )
+               if( isset($_POST['modelo']) ) /// editar
                {
                   $this->template = "edita";
-                  
-                  
                   $nsat = $this->agrega_sat();
                   $this->page->title = "Edita SAT: ".$nsat;
                   $this->resultado = $this->registro_sat->get($nsat);
                }
-               else
+               else /// nuevo
                {
                   $this->template = "agregasat";
                   $this->resultado = $this->cliente->get($_GET['codcliente']);
@@ -96,8 +114,6 @@ class listado_sat extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
-         $this->buttons[] = new fs_button('b_nuevo_sat', 'Nuevo', $this->url().'&opcion=nuevosat');
          $this->template = "sat";
       }
    }
@@ -247,6 +263,10 @@ class listado_sat extends fs_controller
       {
          return $this->registro_sat->search('', $_POST['desde'], $_POST['hasta'], $_POST['estado']);
       }
+      else if( isset($_GET['codcliente']) )
+      {
+         return $this->registro_sat->all_from_cliente($_GET['codcliente']);
+      }
       else
       {
          return $this->registro_sat->all();
@@ -323,5 +343,20 @@ class listado_sat extends fs_controller
             return FALSE;
          }
  
+   }
+   
+   private function meter_extensiones()
+   {
+      /// cargamos la extensión para clientes
+      $fsext0 = new fs_extension();
+      if( !$fsext0->get_by(__CLASS__, 'ventas_cliente') )
+      {
+         $fsext = new fs_extension();
+         $fsext->from = __CLASS__;
+         $fsext->to = 'ventas_cliente';
+         $fsext->type = 'button';
+         $fsext->text = 'SAT';
+         $fsext->save();
+      }
    }
 }

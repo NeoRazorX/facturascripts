@@ -256,6 +256,27 @@ class registro_sat extends fs_model
       return $satlist;
    }
    
+   
+   public function all_from_cliente($cod)
+   {
+      $satlist = array();
+      
+      $sql = "SELECT registros_sat.nsat, registros_sat.prioridad,registros_sat.fentrada, registros_sat.fcomienzo, registros_sat.ffin,
+         registros_sat.modelo, registros_sat.codcliente, clientes.nombre, clientes.telefono1, clientes.telefono2,
+         registros_sat.estado, registros_sat.averia, registros_sat.accesorios, registros_sat.observaciones, registros_sat.posicion
+         FROM registros_sat, clientes
+         WHERE registros_sat.codcliente = clientes.codcliente AND registros_sat.estado != 6 AND registros_sat.codcliente = ".$this->var2str($cod)."
+         ORDER BY fcomienzo ASC, prioridad ASC,ffin ASC, fentrada ASC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $d)
+            $satlist[] = new registro_sat($d);
+      }
+      
+      return $satlist;
+   }
+   
    public function search($buscar='', $desde='', $hasta='', $estado='todos')
    {
       $satlist = array();

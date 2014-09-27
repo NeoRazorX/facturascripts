@@ -181,15 +181,17 @@
             </div>
          </div>
       </div>
-   </div>
-   <div class="page-header" style="margin-top: 0px;">
-      <h1>
-         &nbsp; <a href="{$fsc->ppage->url()}">Facturas de cliente</a> /
-         <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a> /
-         {$fsc->factura->codigo}
-      </h1>
-   </div>
-   <div class="container-fluid">
+      
+      <div class="row">
+         <div class="col-lg-12">
+            <h1>
+               <a href="{$fsc->ppage->url()}">Facturas de cliente</a> /
+               <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a> /
+               {$fsc->factura->codigo}
+            </h1>
+         </div>
+      </div>
+      
       <div class="row">
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">

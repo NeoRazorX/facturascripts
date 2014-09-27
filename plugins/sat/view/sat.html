@@ -1,39 +1,51 @@
 {include="header"}
 
-<div class="panel panel-info" style="margin: 5px;">
-   <div class="panel-heading">
-      <h3 class="panel-title">Listado de SAT</h3>
-   </div>
-   <div class="panel-body">
-      <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-lg-2">
+         <a href="{$fsc->url()}" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+         
+         <a href="#" id="b_nuevo_sat" class="btn btn-sm btn-success">
+            <span class="glyphicon glyphicon-pencil"></span>
+            &nbsp; Nuevo SAT
+         </a>
+      </div>
+      
+      <div class="col-lg-10 text-right">
+         <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
          <div class="form-group">
-            Buscar:
-            <input type="text" class="form-control" name="buscar" size="10"/>
+            <input type="text" class="form-control" name="buscar" size="10" placeholder="buscar..."/>
          </div>
           <div class="form-group">
-            Desde:
-            <input class="form-control datepicker" type="text" name="desde" size="10"/>
+             <input class="form-control datepicker" type="text" name="desde" size="10" placeholder="desde..."/>
          </div>
          <div class="form-group">
-            Hasta:
-            <input class="form-control datepicker" type="text" name="hasta" size="10"/>
+            <input class="form-control datepicker" type="text" name="hasta" size="10" placeholder="hasta..."/>
          </div>
          <div class="form-group">
-            Estado
             <select name="estado" class="form-control">
-               <option value="">Todos</option>
+               <option value="">Todos los estados</option>
                {loop="fsc->listar_estados()"}
                <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
                {/loop}
             </select>
          </div>
-         <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+         <button class="btn btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
             <span class="glyphicon glyphicon-search"></span>
          </button>
-      </form>
+         </form>
+      </div>
    </div>
-   <div class="table-responsive">
-      <table class="table table-hover">
+</div>
+
+{if condition="isset($_GET['codcliente'])"}
+<h3 class="text-center">Registros del cliente {$_GET['codcliente']}</h3>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
          <thead>
             <tr>
                <th class="text-left">N sat</th>
@@ -48,7 +60,7 @@
             </tr>
          </thead>
          {loop="fsc->listar_sat()"}
-         <tr>
+         <tr{if condition="$value->estado==5"} class="bg-success"{/if}>
             <td><a href="{$value->url()}">{$value->nsat}</a></td>
             <td>{$value->nombre_prioridad()}</td>
             <td>{$value->fcomienzo}</td>
@@ -64,8 +76,58 @@
             <td colspan="9" class="text-center">Sin resultados.</td>
          </tr>
          {/loop}
-      </table>
-   </div>
+   </table>
 </div>
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_sat").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_sat").modal('show');
+         document.f_nuevo_sat.ac_cliente.focus();
+      });
+      $("#ac_cliente").autocomplete({
+         serviceUrl: '{$fsc->url()}',
+         paramName: 'buscar_cliente',
+         onSelect: function (suggestion) {
+            if(suggestion)
+            {
+               if(document.f_nuevo_sat.codcliente.value != suggestion.data)
+               {
+                  document.f_nuevo_sat.codcliente.value = suggestion.data;
+               }
+            }
+         }
+      });
+   });
+</script>
+
+<form name="f_nuevo_sat" class="form" action="index.php" method="get">
+   <input type="hidden" name="codcliente"/>
+   <input type="hidden" name="opcion" value="nuevosat"/>
+   <input type="hidden" name="page" value="{$fsc->page->name}"/>
+   <div class="modal" id="modal_nuevo_sat">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Selecciona el cliente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="Buscar..." autocomplete="off"/>
+                  <p class="help-block"><a href="{$fsc->cliente->url()}#nuevo" target="_blank">Nuevo cliente</a>.</p>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-play"></span>
+                  &nbsp; Seleccionar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
 
 {include="footer"}

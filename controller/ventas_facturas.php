@@ -47,6 +47,7 @@ class ventas_facturas extends fs_controller
       
       if( isset($_GET['codagente']) )
       {
+         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_facturas_agente';
          $this->ppage = clone $this->page;
          $this->page->show_on_menu = FALSE;
@@ -58,6 +59,7 @@ class ventas_facturas extends fs_controller
       }
       else if( isset($_GET['codcliente']) )
       {
+         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_facturas_cliente';
          $this->ppage = clone $this->page;
          $this->page->show_on_menu = FALSE;

@@ -8,24 +8,20 @@
    });
 </script>
 
-<div class="modal fade" id="modal_nuevo_detalle">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <form name="f_nuevo_cliente" action="{$fsc->resultado->url()}#detalles" method="post" class="form">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nuevo detalle</h4>
-            </div>
-            <div class="modal-body">
-               <div class="form-group">
-                  Descripcion del detalle:
-                  <textarea class="form-control" name="detalle" autofocus></textarea>
-               </div>
-            </div>
-            <div class="modal-footer">
-               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
-            </div>
-         </form>
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-lg-8">
+         <h1>
+            <a href="{$fsc->url()}">SAT</a> /
+            <a href="{$fsc->resultado->cliente_url()}">{$fsc->resultado->nombre_cliente}</a> /
+            {$fsc->resultado->nsat}
+         </h1>
+      </div>
+      
+      <div class="col-lg-4 text-right">
+         <h2>
+            Fecha entrada: {$fsc->resultado->fentrada}
+         </h2>
       </div>
    </div>
 </div>
@@ -34,7 +30,7 @@
    <div class="panel panel-info hidden-print" style="margin: 5px;">
       <div class="panel-heading">
          <h3 class="panel-title">
-            <a href="{$fsc->resultado->cliente_url()}">Cliente actual: {$fsc->resultado->nombre_cliente}</a>, Fecha entrada: {$fsc->resultado->fentrada}
+            Editar
          </h3>
       </div>
       <div class="panel-body ">
@@ -297,6 +293,30 @@
     });
     
 </script>    
+
+
+
+<div class="modal fade" id="modal_nuevo_detalle">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_cliente" action="{$fsc->resultado->url()}#detalles" method="post" class="form">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo detalle</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Descripcion del detalle:
+                  <textarea class="form-control" name="detalle" autofocus></textarea>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
 
 <!-- container -->
 {include="footer"}

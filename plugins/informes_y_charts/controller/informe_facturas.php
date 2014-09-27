@@ -430,12 +430,11 @@ class informe_facturas extends fs_controller
       else
          $sql_aux = "DATE_FORMAT(fecha, '%m')";
       
-      $data = $this->db->select("SELECT DISTINCT(nombrecliente) as nombrecliente, ".$sql_aux." as mes, sum(total) as total
+      $data = $this->db->select_limit("SELECT DISTINCT(nombrecliente) as nombrecliente, ".$sql_aux." as mes, sum(total) as total
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
-         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND DATE_FORMAT(fecha, '%m') = ".$this->empresa->var2str(Date('m'))."
-         GROUP BY nombrecliente
-         ORDER BY total DESC
-         LIMIT 0,5;");
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND ".$sql_aux." = ".$this->empresa->var2str(Date('m'))."
+         GROUP BY nombrecliente, ".$table_name.".fecha
+         ORDER BY total DESC", 5, 0);
          
       if($data)
       {

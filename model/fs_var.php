@@ -134,9 +134,12 @@ class fs_var extends fs_model
    
    /**
     * Rellena un array con los resultados de la base de datos para cada clave,
-    * es decir, apara el array('clave1' => false, 'clave2' => false) busca
+    * es decir, para el array('clave1' => false, 'clave2' => false) busca
     * en la tabla las claves clave1 y clave2 y asigna los valores almacenados
     * en la base de datos.
+    * 
+    * Sustituye los valores por FALSE si no los encentra en la base de datos,
+    * a menos que pongas FALSE en el segundo parámetro.
     * 
     * @param type $array
     */

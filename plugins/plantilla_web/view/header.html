@@ -147,6 +147,7 @@
    </div>
    {/if}
 
+   {if condition="$fsc->show_fs_toolbar"}
    <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
       <div class="row">
          {if condition="$fsc->custom_search"}
@@ -213,5 +214,6 @@
          {/if}
       </div>
    </div>
+   {/if}
 
    {include="feedback"}

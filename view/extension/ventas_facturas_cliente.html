@@ -1,13 +1,14 @@
 {include="header"}
 
-<h3 class="text-center">Facturas de <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a></h3>
+<h2 class="text-center">Facturas de <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a></h2>
 
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
          <tr>
             <th></th>
-            <th class="text-left">Código</th>
+            <th></th>
+            <th class="text-left">Código + Número2</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
             <th class="text-right">Fecha</th>
@@ -17,11 +18,16 @@
       {loop="$fsc->resultados"}
       <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
          <td class="text-center">
+            {if condition="$value->pagada"}
+            <span class="glyphicon glyphicon-ok" title="La factura está pagada"></span>
+            {/if}
+         </td>
+         <td class="text-center">
             {if condition="$value->idasiento"}
             <span class="glyphicon glyphicon-paperclip" title="La factura tiene vinculado un asiento contable"></span>
             {/if}
          </td>
-         <td><a href="{$value->url()}">{$value->codigo}</a></td>
+         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha}</td>
@@ -29,6 +35,7 @@
       </tr>
       {else}
       <tr class="bg-warning">
+         <td></td>
          <td></td>
          <td colspan="5">Ninguna factura encontrada.</td>
       </tr>
