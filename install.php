@@ -3,6 +3,7 @@
 $nombre_archivo = "config.php";
 error_reporting(E_ALL);
 $errors = array();
+$connection = array();
 
 function random_string($length = 10)
 {
@@ -29,7 +30,37 @@ else if( !is_writable( getcwd() ) )
 {
    $errors[] = "permisos";
 }
-else if ( isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
+else if ( isset($_REQUEST['db_type']) )
+{
+   if ( $_REQUEST['db_type']=="MYSQL" AND isset($_REQUEST['db_host']) AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_port']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
+   {
+       $connection = new mysqli( $_REQUEST['db_host'],
+                                 $_REQUEST['db_user'],
+                                 $_REQUEST['db_pass'],
+                                 $_REQUEST['db_name'],
+                                 intval($_REQUEST['db_port']) );
+       
+       if ( strcmp( $connection->connect_errno, "0" ) != 0 )
+       {
+           $errors[] = "db_mysql";
+       }
+   }
+   else if ( $_REQUEST['db_type']=="POSTGRESQL" AND isset($_REQUEST['db_host']) AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_port']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
+   {
+       $connection = pg_connect( 'host='.$_REQUEST['db_host'].
+                                 ' dbname='.$_REQUEST['db_name'].
+                                 ' port='.$_REQUEST['db_port'].
+                                 ' user='.$_REQUEST['db_user'].
+                                 ' password='.$_REQUEST['db_pass'] );
+       
+       if ( strcmp( $connection->connect_errno, "0" ) != 0 )
+       {
+           $errors[] = "db_postgresql";
+       }
+   }
+}
+
+if ( isset($_REQUEST['db_type']) AND isset($_REQUEST['db_host'])AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
 {
    $archivo = fopen($nombre_archivo, "w");
    fwrite($archivo, "<?php\n");
@@ -129,10 +160,13 @@ $system_info .= 'os: '.php_uname()."\n";
 $system_info .= 'php: '.phpversion()."\n";
 
 if( isset($_SERVER['REQUEST_URI']) )
+{
    $system_info .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
-
+}
 foreach($errors as $e)
+{
    $system_info .= "\n" . $e;
+}
 
 $system_info = str_replace('"', "'", $system_info);
 
@@ -189,7 +223,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
+   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form-control" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <div class="modal" id="modal_feedback">
          <div class="modal-dialog">
@@ -256,7 +290,7 @@ $system_info = str_replace('"', "'", $system_info);
                db_user: "El campo es obligatorio.",
                db_pass: "El campo es obligatorio.",
                cache_host: "El campo es obligatorio.",
-               cache_port: "El campo es obligatorio.",
+               cache_port: "El campo es obligatorio."
             }
          });
       });
@@ -287,7 +321,7 @@ $system_info = str_replace('"', "'", $system_info);
                      permisos, no funcionará FacturaScripts.
                   </p>
                   <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (si usas Linux):</h4>
-                  <pre>sudo chmod -R o+w /var/www/carpeta_de_facturascripts</pre>
+                  <pre>sudo chmod -R o+w <?php echo dirname(__FILE__); ?></pre>
                   <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (instalación en hosting):</h4>
                   <p>Intenta dar permisos de escritura desde el cliente FTP o desde el cPanel.</p>
                </div>
@@ -364,6 +398,52 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
                   <?php
                }
+               else if($err == 'db_mysql')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  Acceso a base de datos MySQL:
+               </div>
+               <div class="panel-body">
+                  <p>
+                     Los datos de conexión para la base de datos MySQL no son correctos.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Mensaje de error:</h4>
+                  <p>
+                     <?php print_r($connection); ?>
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
+                  <p>
+                     Revisa los campos de configuración de la base de datos.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+               else if($err == 'db_postgresql')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  Acceso a base de datos PostgreSQL:
+               </div>
+               <div class="panel-body">
+                  <p>
+                     Los datos de conexión para la base de datos PostgreSQL no son correctos.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Mensaje de error:</h4>
+                  <p>
+                     <?php print_r($connection); ?>
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
+                  <p>
+                     Revisa los campos de configuración de la base de datos.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
             }
             ?>
          </div>
@@ -389,7 +469,7 @@ $system_info = str_replace('"', "'", $system_info);
       
       <div class="row">
          <div class="col-lg-12">
-            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
+            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form-control" role="form" method="post">
                <div class="panel panel-primary">
                   <div class="panel-heading">
                      <h3 class="panel-title">
@@ -488,7 +568,7 @@ $system_info = str_replace('"', "'", $system_info);
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Prefijo:
-                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(4) ?>_" autocomplete="off"/>
+                        <input class="form-control" type="text" name="cache_prefix" value="fs_<?php echo random_string(4) ?>_" autocomplete="off"/>
                      </div>
                   </div>
                </div>
