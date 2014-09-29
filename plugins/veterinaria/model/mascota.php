@@ -31,32 +31,58 @@ class mascota extends fs_model
    public $fecha_alta;
    public $sexo;
    public $idraza;
+   public $especie;
+   public $raza;
    public $color;
    public $esterilizado;
    public $fecha_esterilizado;
    public $altura;
    public $codcliente;
    
-   private static $cliente;
+   private static $cliente0;
+   private static $raza0;
    
    public function __construct($m=FALSE)
    {
       parent::__construct('fbm_mascotas', 'plugins/veterinaria/');
+      
+      if( !isset(self::$cliente0) )
+      {
+         self::$cliente0 = new cliente();
+      }
+      
+      if( !isset(self::$raza0) )
+      {
+         self::$raza0 = new raza();
+      }
+      
       if($m)
       {
          $this->idmascota = $m['idmascota'];
          $this->nombre = $m['nombre'];
          $this->chip = $m['chip'];
          $this->pasaporte = $m['pasaporte'];
-         $this->fecha_nac = $m['fecha_nac'];
-         $this->fecha_alta = Date('d-m-Y');
+         $this->fecha_nac = Date('d-m-Y', strtotime($m['fecha_nac']));
+         $this->fecha_alta = Date('d-m-Y', strtotime($m['fecha_alta']));
          $this->sexo = $m['sexo'];
          $this->idraza = $m['idraza'];
          $this->color = $m['color'];
          $this->esterilizado = $m['esterilizado'];
-         $this->fecha_esterilizado = $m['fecha_esterilizado'];
+         $this->fecha_esterilizado = Date('d-m-Y', strtotime($m['fecha_esterilizado']));
          $this->altura = $m['altura'];
          $this->codcliente = $m['codcliente'];
+         
+         $raza1 = self::$raza0->get($this->idraza);
+         if($raza1)
+         {
+            $this->especie = $raza1->especie;
+            $this->raza = $raza1->nombre;
+         }
+         else
+         {
+            $this->especie = '-';
+            $this->raza = '-';
+         }
       }
       else
       {
@@ -66,13 +92,16 @@ class mascota extends fs_model
          $this->pasaporte = NULL;
          $this->fecha_nac = Date('d-m-Y');
          $this->fecha_alta = Date('d-m-Y');
-         $this->sexo = NULL;
+         $this->sexo = 'm';
          $this->idraza = NULL;
          $this->color = NULL;
          $this->esterilizado = NULL;
          $this->fecha_esterilizado = NULL;
-         $this->altura = NULL;
+         $this->altura = 100;
          $this->codcliente = NULL;
+         
+         $this->especie = '-';
+         $this->raza = '-';
       }
    }
 
@@ -86,30 +115,20 @@ class mascota extends fs_model
       return 'index.php?page=veterinaria_mascota&id='.$this->idmascota;
    }
    
+   public function cliente_url()
+   {
+      return 'index.php?page=ventas_cliente&cod='.$this->codcliente;
+   }
+   
    public function nombre_cliente()
    {
-      if( !isset(self::$cliente) )
-      {
-         self::$cliente = new cliente();
-      }
-      
-      $cli0 = self::$cliente->get($this->codcliente);
+      $cli0 = self::$cliente0->get($this->codcliente);
       if($cli0)
       {
          return $cli0->nombre;
       }
       else
          return '-';
-   }
-   
-   public function especie()
-   {
-      return '-';
-   }
-   
-   public function raza()
-   {
-      return '-';
    }
    
    public function get($id)
@@ -192,4 +211,33 @@ class mascota extends fs_model
       return $listam;
    }
    
+   public function all_from_cliente($cod)
+   {
+      $listam = array();
+      
+      $mascotas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($cod)." ORDER BY nombre ASC;");
+      if($mascotas)
+      {
+         foreach($mascotas as $m)
+            $listam[] = new mascota($m);
+      }
+      
+      return $listam;
+   }
+   
+   public function search($query)
+   {
+      $listam = array();
+      $query = strtolower( trim($query) );
+      
+      $mascotas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE lower(nombre) LIKE '%".$query."%'
+              OR lower(chip) LIKE '%".$query."%' OR lower(pasaporte) LIKE '%".$query."%' ORDER BY nombre ASC;");
+      if($mascotas)
+      {
+         foreach($mascotas as $m)
+            $listam[] = new mascota($m);
+      }
+      
+      return $listam;
+   }
 }

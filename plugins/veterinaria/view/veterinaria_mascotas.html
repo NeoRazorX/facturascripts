@@ -86,13 +86,13 @@
          </tr>
       </thead>
       <tbody>
-         {loop="$fsc->mascota->all()"}
+         {loop="$fsc->resultados"}
          <tr>
             <td>{$value->idmascota} <a href="{$value->url()}">{$value->nombre}</a></td>
             <td>{$value->nombre_cliente()}</td>
             <td>{$value->chip}</td>
-            <td>{$value->especie()}</td>
-            <td>{$value->raza()}</td>
+            <td>{$value->especie}</td>
+            <td>{$value->raza}</td>
             <td>{$value->sexo}</td>
             <td class="text-right">{$value->fecha_alta}</td>
          </tr>
