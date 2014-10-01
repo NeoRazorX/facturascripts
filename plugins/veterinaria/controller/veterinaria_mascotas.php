@@ -1,8 +1,8 @@
 <?php
 
 require_model('cliente.php');
-require_model('mascota.php');
-require_model('raza.php');
+require_model('fbm_mascota.php');
+require_model('fbm_raza.php');
 require_model('fs_extension.php');
 
 class veterinaria_mascotas extends fs_controller
@@ -14,18 +14,18 @@ class veterinaria_mascotas extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('veterinaria_mascotas', 'Mascotas', 'Veterinaria', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Mascotas', 'Veterinaria', FALSE, TRUE);
    }
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->cliente = new cliente();
-      $this->mascota = new mascota();
-      $this->raza = new raza();
+      $this->mascota = new fbm_mascota();
+      $this->raza = new fbm_raza();
       $this->custom_search = TRUE;
       $this->resultados = array();
-      
-      $this->buttons[] = new fs_button('b_nueva', 'Nueva');
       
       if($this->query != '')
       {

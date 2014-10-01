@@ -48,18 +48,27 @@
          </div>
          
          <div id="content">
-            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-               <li class="active"><a href="#datos" data-toggle="tab"><span class="glyphicon glyphicon-wrench"></span> Datos del SAT</a></li>
-               <li><a href="#detalles" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge">{$fsc->resultado->num_detalles()}</span> Detalles</a></li>
-               {if="'' == $fsc->resultado->observaciones"}
-               <li><a href="#observacioes" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
-               {else}
-               <li><a href="#observacioes" data-toggle="tab" STYLE="color:blue"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
-               {/if}
+            <ul id="tabs" class="nav nav-tabs">
+               <li id='tab_datos' class="active">
+                  <a href="#datos">
+                     <span class="glyphicon glyphicon-wrench"></span> Datos del SAT
+                  </a>
+               </li>
+               <li id='tab_detalles'>
+                  <a href="#detalles">
+                     <span class="glyphicon glyphicon-comment"></span>
+                     <span class="badge">{$fsc->resultado->num_detalles()}</span> Detalles
+                  </a>
+               </li>
+               <li id='tab_observaciones'>
+                  <a href="#observaciones">
+                     <span class="glyphicon glyphicon-eye-open"></span> Observaciones
+                  </a>
+               </li>
             </ul>
             
             <div id="my-tab-content" class="tab-content">
-               <div class="tab-pane active" id="datos">
+               <div class="tab-pane active" id="tabc_datos">
                   <div class="form-group col-lg-9 col-md-9 col-sm-9">
                      <label><strong>Modelo:</strong></label>
                      <input class="form-control" type="text" name="modelo" value="{$fsc->resultado->modelo}" size="50"/>
@@ -113,31 +122,32 @@
                      <textarea class="form-control" name="accesorios" cols="60">{$fsc->resultado->accesorios}</textarea>
                   </div>
                </div>
-               <div class="tab-pane" id="detalles">
-                   <button type="button" id="b_nuevo_detalle" class="btn btn-sm btn-primary" >
-                      <span class="glyphicon glyphicon-plus"></span> Nuevo detalle
-                    </button>
+               <div class="tab-pane" id="tabc_detalles">
                   <table class="table table-hover">
-                   <thead>
-           	      <tr>
-               		<th class="text-left">Detalle</th>
-              		<th class="text-left">Fecha</th>
-                        <th class="text-left"></span></th>
-          	      </tr>
-                   </thead>
-                  {loop="fsc->listar_sat_detalle()"}
+                     <thead>
+                        <tr>
+                           <th class="text-left">Detalle</th>
+                           <th class="text-left">Fecha</th>
+                           <th class="text-left"></span></th>
+                        </tr>
+                     </thead>
+                     {loop="fsc->listar_sat_detalle()"}
                      <tr>
-            		<td>{$value->descripcion}</td>
-            		<td>{$value->fecha}</td>
-                        <td>
-                            <span class="glyphicon glyphicon-edit"></span>
+                        <td>{$value->descripcion}</td>
+                        <td>{$value->fecha}</td>
+                        <td><span class="glyphicon glyphicon-edit"></span></td>
+                     </tr>
+                     {/loop}
+                     <tr>
+                        <td colspan="3">
+                           <a href='#' class="btn btn-info btn-block btn-sm" data-toggle="modal" data-target="#modal_nuevo_detalle">
+                              Nuevo detalle
+                           </a>
                         </td>
-           	    </tr>
-                 
-              {/loop}
-             </table>
+                     </tr>
+                  </table>
                </div>
-               <div class="tab-pane" id="observacioes">
+               <div class="tab-pane" id="tabc_observacioes">
                   <div class="form-group col-lg-12">
                      <label>Observaciones:</label>
                      <textarea class="form-control" name="observaciones" cols="60">{$fsc->resultado->observaciones}</textarea>
@@ -280,16 +290,62 @@
 </form>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-       
+   function show_tab_datos()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_datos").addClass('active');
+      $("#tabc_datos").show();
+   }
+   function show_tab_detalles()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_detalles").addClass('active');
+      $("#tabc_detalles").show();
+   }
+   function show_tab_observaciones()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_observaciones").addClass('active');
+      $("#tabc_observaciones").show();
+   }
+   function pestanyas()
+   {
       if(window.location.hash.substring(1) == 'detalles')
       {
-         $("#tabs").tabs("active", "#detalles");
+            show_tab_detalles();
+      }
+      else if(window.location.hash.substring(1) == 'observaciones')
+      {
+            show_tab_observaciones();
       }
       else
       {
-          $('#tabs').tab();
+            show_tab_datos();
       }
+   }
+    $(document).ready(function() {
+       pestanyas();
+       window.onpopstate = function() {
+         pestanyas();
+      };
     });
     
 </script>    

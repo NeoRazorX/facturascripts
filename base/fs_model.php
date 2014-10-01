@@ -218,11 +218,6 @@ abstract class fs_model
    abstract public function exists();
    
    /**
-    * Esta función devuelve TRUE si los datos del objeto son válidos
-    */
-   abstract public function test();
-   
-   /**
     * Esta función sirve tanto para insertar como para actualizar
     * los datos del objeto en la base de datos.
     */

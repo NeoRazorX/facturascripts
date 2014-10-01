@@ -55,7 +55,11 @@
    </columna>
    <columna>
       <nombre>altura</nombre>
-      <tipo>varchar(50)</tipo>
+      <tipo>double precision</tipo>
+   </columna>
+   <columna>
+      <nombre>peso</nombre>
+      <tipo>double precision</tipo>
    </columna>
    <columna>
       <nombre>codcliente</nombre>

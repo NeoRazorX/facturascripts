@@ -23,6 +23,54 @@
    });
 </script>
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-lg-10">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if condition="$fsc->page->is_default()"}
+            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {else}
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {/if}
+         </div>
+         
+         <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+               <span class="glyphicon glyphicon-wrench"></span>
+               &nbsp; Ajustes <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+               <li><a href="index.php?page=veterinaria_ajustes#analiticas">Analíticas</a></li>
+               <li><a href="index.php?page=veterinaria_ajustes#desparas">Desparasitaciones</a></li>
+               <li><a href="index.php?page=veterinaria_ajustes#razas">Especies / Razas</a></li>
+               <li><a href="index.php?page=veterinaria_ajustes#vacunas">Vacunas</a></li>
+            </ul>
+         </div>
+         
+         <a id="b_nueva" class="btn btn-sm btn-success" href="#">Nueva</a>
+      </div>
+      <div class="col-lg-2">
+         <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
+            <div class="input-group">
+               <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+               <span class="input-group-btn hidden-xs hidden-sm">
+                  <button class="btn btn-primary" type="submit">
+                     <span class="glyphicon glyphicon-search"></span>
+                  </button>
+               </span>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
 <form name="f_nueva_mascota" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="codcliente"/>
    <div class="modal" id="modal_nueva_mascota">

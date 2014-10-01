@@ -6,8 +6,8 @@
  * and open the template in the editor.
  */
 
-require_model('raza.php');
-require_model('mascota.php');
+require_model('fbm_raza.php');
+require_model('fbm_mascota.php');
 
 /**
  * Description of veterinaria_mascota
@@ -28,9 +28,9 @@ class veterinaria_mascota extends fs_controller
    {
       $this->show_fs_toolbar = FALSE;
       
-      $mascota = new mascota();
+      $mascota = new fbm_mascota();
       $this->mascota = FALSE;
-      $this->raza = new raza();
+      $this->raza = new fbm_raza();
       
       if( isset($_GET['id']) )
       {
@@ -49,6 +49,17 @@ class veterinaria_mascota extends fs_controller
             $this->mascota->idraza = $_POST['raza'];
             $this->mascota->pasaporte = $_POST['pasaporte'];
             $this->mascota->sexo = $_POST['sexo'];
+            
+            if( isset($_POST['esterilizado']) )
+            {
+               $this->mascota->esterilizado = TRUE;
+               $this->mascota->fecha_esterilizado = $_POST['fecha_esterilizado'];
+            }
+            else
+            {
+               $this->mascota->esterilizado = FALSE;
+               $this->mascota->fecha_esterilizado = NULL;
+            }
             
             if( $this->mascota->save() )
             {

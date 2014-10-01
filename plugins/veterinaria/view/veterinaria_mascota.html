@@ -10,7 +10,7 @@
 </script>
 
 <form action="{$fsc->url()}" method="post" class="form">
-   <div class="container-fluid" style="margin-top: 10px;">
+   <div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
       <div class="row">
          <div class="col-lg-8">
             <h1 style="margin-top: 0px;">
@@ -93,13 +93,35 @@
          </div>
          <div class="col-lg-2">
             <div class="form-group">
-               Altura (cm):
+               Altura (mm):
                <input class="form-control" type="number" name="altura" value="{$fsc->mascota->altura}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <div class="form-group">
+               Peso (gramos):
+               <input class="form-control" type="number" name="peso" value="{$fsc->mascota->peso}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2">
+            <label>
+               <input type="checkbox" name="esterilizado" value="TRUE"{if condition="$fsc->mascota->esterilizado"} checked="checked"{/if}/>
+               Esterilizado el:
+            </label>
+            <div class="form-group">
+               <input class="form-control datepicker" type="text" name="fecha_esterilizado" value="{$fsc->mascota->fecha_esterilizado}" autocomplete="off"/>
             </div>
          </div>
       </div>
    </div>
 </form>
+
+<ul class="nav nav-tabs" role="tablist">
+   <li class="active"><a href="#analiticas" role="tab" data-toggle="tab">Analíticas</a></li>
+   <li><a href="#desparas" role="tab" data-toggle="tab">Desparasitaciones</a></li>
+   <li><a href="#pesos" role="tab" data-toggle="tab">Pesos</a></li>
+   <li><a href="#vacunas" role="tab" data-toggle="tab">Vacunas</a></li>
+</ul>
 {/if}
 
 {include="footer"}

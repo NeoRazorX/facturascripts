@@ -19,9 +19,9 @@
 
 require_once 'base/fs_model.php';
 require_model('cliente.php');
-require_model('raza.php');
+require_model('fbm_raza.php');
 
-class mascota extends fs_model
+class fbm_mascota extends fs_model
 {
    public $nombre;
    public $idmascota; /// pkey
@@ -37,6 +37,7 @@ class mascota extends fs_model
    public $esterilizado;
    public $fecha_esterilizado;
    public $altura;
+   public $peso;
    public $codcliente;
    
    private static $cliente0;
@@ -53,7 +54,7 @@ class mascota extends fs_model
       
       if( !isset(self::$raza0) )
       {
-         self::$raza0 = new raza();
+         self::$raza0 = new fbm_raza();
       }
       
       if($m)
@@ -67,9 +68,15 @@ class mascota extends fs_model
          $this->sexo = $m['sexo'];
          $this->idraza = $m['idraza'];
          $this->color = $m['color'];
-         $this->esterilizado = $m['esterilizado'];
-         $this->fecha_esterilizado = Date('d-m-Y', strtotime($m['fecha_esterilizado']));
-         $this->altura = $m['altura'];
+         
+         $this->esterilizado = $this->str2bool($m['esterilizado']);
+         if($this->esterilizado)
+         {
+            $this->fecha_esterilizado = Date('d-m-Y', strtotime($m['fecha_esterilizado']));
+         }
+         
+         $this->altura = floatval($m['altura']);
+         $this->peso = floatval($m['peso']);
          $this->codcliente = $m['codcliente'];
          
          $raza1 = self::$raza0->get($this->idraza);
@@ -95,9 +102,10 @@ class mascota extends fs_model
          $this->sexo = 'm';
          $this->idraza = NULL;
          $this->color = NULL;
-         $this->esterilizado = NULL;
+         $this->esterilizado = FALSE;
          $this->fecha_esterilizado = NULL;
-         $this->altura = 100;
+         $this->altura = 1000;
+         $this->peso = 1000;
          $this->codcliente = NULL;
          
          $this->especie = '-';
@@ -136,7 +144,7 @@ class mascota extends fs_model
       $mascotas = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($id).";");
       if($mascotas)
       {
-         return new mascota($mascotas[0]);
+         return new fbm_mascota($mascotas[0]);
       }
       else
          return FALSE;
@@ -152,11 +160,6 @@ class mascota extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($this->idmascota).";");
    }
    
-   public function test()
-   {
-      return TRUE;
-   }
-   
    public function save()
    {
       if( $this->exists() )
@@ -167,20 +170,20 @@ class mascota extends fs_model
             idraza = ".$this->var2str($this->idraza).", color = ".$this->var2str($this->color).",
             esterilizado = ".$this->var2str($this->esterilizado).",
             fecha_esterilizado = ".$this->var2str($this->fecha_esterilizado).",
-            altura = ".$this->var2str($this->altura)."
+            altura = ".$this->var2str($this->altura).", peso = ".$this->var2str($this->peso)."
             WHERE idmascota = ".$this->var2str($this->idmascota).";";
          return $this->db->exec($sql);
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (nombre,chip,pasaporte,fecha_nac,
-            fecha_alta,sexo,idraza,color,esterilizado,fecha_esterilizado,altura,codcliente)
+            fecha_alta,sexo,idraza,color,esterilizado,fecha_esterilizado,altura,peso,codcliente)
             VALUES (".$this->var2str($this->nombre).",".$this->var2str($this->chip).",
             ".$this->var2str($this->pasaporte).",".$this->var2str($this->fecha_nac).",
             ".$this->var2str($this->fecha_alta).",".$this->var2str($this->sexo).",
             ".$this->var2str($this->idraza).",".$this->var2str($this->color).",
             ".$this->var2str($this->esterilizado).",".$this->var2str($this->fecha_esterilizado).",
-            ".$this->var2str($this->altura).",".$this->var2str($this->codcliente).");";
+            ".$this->var2str($this->altura).",".$this->var2str($this->peso).",".$this->var2str($this->codcliente).");";
          
          if( $this->db->exec($sql) )
          {
@@ -205,7 +208,7 @@ class mascota extends fs_model
       if($mascotas)
       {
          foreach($mascotas as $m)
-            $listam[] = new mascota($m);
+            $listam[] = new fbm_mascota($m);
       }
       
       return $listam;
@@ -219,7 +222,7 @@ class mascota extends fs_model
       if($mascotas)
       {
          foreach($mascotas as $m)
-            $listam[] = new mascota($m);
+            $listam[] = new fbm_mascota($m);
       }
       
       return $listam;
@@ -235,7 +238,7 @@ class mascota extends fs_model
       if($mascotas)
       {
          foreach($mascotas as $m)
-            $listam[] = new mascota($m);
+            $listam[] = new fbm_mascota($m);
       }
       
       return $listam;

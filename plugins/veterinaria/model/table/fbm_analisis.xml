@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_analisis.xml
+    Description:
+        Estructura de la tabla fbm_analisis.
+-->
+<tabla>
+	<columna>
+		<nombre>id</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+      <defecto>nextval('fbm_analisis_id_seq'::regclass)</defecto>
+	</columna>
+	<columna>
+		<nombre>idtipo</nombre>
+		<tipo>integer</tipo>
+	</columna>
+   <columna>
+		<nombre>tipo</nombre>
+		<tipo>varchar(25)</tipo>
+		<nulo>NO</nulo>
+	</columna>
+   <columna>
+		<nombre>fecha</nombre>
+		<tipo>date</tipo>
+	</columna>
+   <columna>
+		<nombre>resultado</nombre>
+		<tipo>varchar(50)</tipo>
+	</columna>
+   <columna>
+		<nombre>notas</nombre>
+		<tipo>text</tipo>
+	</columna>
+   <columna>
+		<nombre>nueva_fecha</nombre>
+		<tipo>date</tipo>
+	</columna>
+	<restriccion>
+		<nombre>fbm_analisis_pkey</nombre>
+		<consulta>PRIMARY KEY (id)</consulta>
+	</restriccion>
+</tabla>

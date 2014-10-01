@@ -19,7 +19,7 @@
 
 require_once 'base/fs_model.php';
 
-class raza extends fs_model
+class fbm_raza extends fs_model
 {
    public $id; /// pkey
    public $especie;
@@ -56,7 +56,9 @@ class raza extends fs_model
    {
       $raza = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id_raza = ".$this->var2str($id).";");
       if($raza)
-         return new raza($raza[0]);
+      {
+         return new fbm_raza($raza[0]);
+      }
       else
          return FALSE;
    }
@@ -72,25 +74,26 @@ class raza extends fs_model
             WHERE id_raza = ".$this->var2str($this->id).";");
    }
    
-   public function test()
-   {
-      return TRUE;
-   }
-   
    public function save()
    {
       if( $this->exists() )
       {
          $sql = "UPDATE ".$this->table_name." SET especie = ".$this->var2str($this->especie).", "
             . "nombre = ".$this->var2str($this->nombre)." WHERE id_raza = ".$this->var2str($this->id).";";
+         return $this->db->exec($sql);
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (especie,nombre) VALUES "
-            . "(".$this->var2str($this->especie).",".$this->var2str($this->nombre).");";
+         $sql = "INSERT INTO ".$this->table_name." (especie,nombre) VALUES (".$this->var2str($this->especie).",".$this->var2str($this->nombre).");";
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->id = $this->db->lastval();
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
-      
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -106,7 +109,7 @@ class raza extends fs_model
       if($data)
       {
          foreach($data as $d)
-            $listar[] = new raza($d);
+            $listar[] = new fbm_raza($d);
       }
       
       return $listar;

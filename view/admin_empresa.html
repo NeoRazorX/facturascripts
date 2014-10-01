@@ -41,9 +41,9 @@
    }
    $(document).ready(function() {
       comprobar_url();
-      window.onpopstate = function(){ 
+      window.onpopstate = function() {
          comprobar_url();
-      }
+      };
       $("#b_add_logo").click(function(event) {
          event.preventDefault();
          $("#modal_logo").modal('show');
