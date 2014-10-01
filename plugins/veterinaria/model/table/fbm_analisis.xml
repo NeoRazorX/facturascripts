@@ -11,6 +11,11 @@
 		<nulo>NO</nulo>
       <defecto>nextval('fbm_analisis_id_seq'::regclass)</defecto>
 	</columna>
+   <columna>
+      <nombre>idmascota</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
 	<columna>
 		<nombre>idtipo</nombre>
 		<tipo>integer</tipo>
@@ -18,7 +23,10 @@
    <columna>
 		<nombre>tipo</nombre>
 		<tipo>varchar(25)</tipo>
-		<nulo>NO</nulo>
+	</columna>
+   <columna>
+		<nombre>nombre</nombre>
+		<tipo>varchar(50)</tipo>
 	</columna>
    <columna>
 		<nombre>fecha</nombre>

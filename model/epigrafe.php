@@ -310,7 +310,7 @@ class epigrafe extends fs_model
    {
       $this->descripcion = $this->no_html($this->descripcion);
       
-      if( strlen($this->codepigrafe)>0 AND strlen($this->descripcion)>0 AND strlen($this->codgrupo)>0 )
+      if( strlen($this->codepigrafe) > 0 AND strlen($this->descripcion) > 0 )
       {
          return TRUE;
       }

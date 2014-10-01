@@ -22,8 +22,10 @@ require_once 'base/fs_model.php';
 class fbm_analisis extends fs_model
 {
    public $id;
+   public $idmascota;
    public $idtipo;
    public $tipo;
+   public $nombre;
    public $fecha;
    public $resultado;
    public $notas;
@@ -32,6 +34,30 @@ class fbm_analisis extends fs_model
    public function __construct($a = FALSE)
    {
       parent::__construct('fbm_analisis', 'plugins/veterinaria/');
+      if($a)
+      {
+         $this->id = $this->intval($a['id']);
+         $this->idmascota = $this->intval($a['idmascota']);
+         $this->idtipo = $this->intval($a['idtipo']);
+         $this->tipo = $a['tipo'];
+         $this->nombre = $a['nombre'];
+         $this->fecha = date('d-m-Y', $a['fecha']);
+         $this->resultado = $a['resultado'];
+         $this->notas = $a['notas'];
+         $this->nueva_fecha = date('d-m-Y', $a['nueva_fecha']);
+      }
+      else
+      {
+         $this->id = NULL;
+         $this->idmascota = NULL;
+         $this->idtipo = NULL;
+         $this->tipo = NULL;
+         $this->nombre = NULL;
+         $this->fecha = date('d-m-Y');
+         $this->resultado = '';
+         $this->notas = '';
+         $this->nueva_fecha = date('d-m-Y');
+      }
    }
    
    protected function install()
@@ -41,16 +67,60 @@ class fbm_analisis extends fs_model
    
    public function exists()
    {
-      ;
+      if( is_null($this->id) )
+      {
+         return FALSE;
+      }
+      else
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function save()
    {
-      ;
+      if( $this->exists() )
+      {
+         $sql = "UPDATE ".$this->table_name." SET idmascota = ".$this->var2str($this->idmascota).",
+            idtipo = ".$this->var2str($this->idtipo).", tipo = ".$this->var2str($this->tipo).",
+            nombre = ".$this->var2str($this->nombre).",
+            fecha = ".$this->var2str($this->fecha).", resultado = ".$this->var2str($this->resultado).",
+            notas = ".$this->var2str($this->notas).", nueva_fecha = ".$this->var2str($this->nueva_fecha)."
+            WHERE id = ".$this->var2str($this->id).";";
+         
+         return $this->db->exec($sql);
+      }
+      else
+      {
+         $sql = "INSERT INTO ".$this->table_name." (idmascota,idtipo,tipo,nombre,fecha,resultado,notas,nueva_fecha) VALUES
+            (".$this->var2str($this->idmascota).",".$this->var2str($this->idtipo).",".$this->var2str($this->tipo).",
+            ".$this->var2str($this->nombre).",".$this->var2str($this->fecha).",".$this->var2str($this->resultado).",
+            ".$this->var2str($this->notas).",".$this->var2str($this->nueva_fecha).");";
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->id = $this->db->lastval();
+            return TRUE;
+         }
+         else
+            return FALSE;
+      }
    }
    
    public function delete()
    {
-      ;
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
+   }
+   
+   public function all_from($idmascota, $tipo)
+   {
+      $lista = array();
+      
+      $data = $this->db->select("SELECT * FROM  WHERE idmascota = ".$this->var2str($idmascota)." AND tipo = ".$this->var2str($tipo).";");
+      if($data)
+      {
+         foreach($data as $d)
+            $lista[] = new fbm_analisis($d);
+      }
+      
+      return $lista;
    }
 }

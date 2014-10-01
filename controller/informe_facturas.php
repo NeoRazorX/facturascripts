@@ -474,12 +474,16 @@ class informe_facturas extends fs_controller
          $stats[$i] = array(
              'month' => $meses[ $value['month'] ],
              'total_cli' => round($value['total'], 2),
-             'total_pro' => 0
+             'total_pro' => 0,
+             'beneficios' => 0
          );
       }
       
       foreach($stats_pro as $i => $value)
+      {
          $stats[$i]['total_pro'] = round($value['total'], 2);
+         $stats[$i]['beneficios'] = $stats[$i]['total_cli'] - $stats[$i]['total_pro'];
+      }
       
       return $stats;
    }
@@ -529,12 +533,16 @@ class informe_facturas extends fs_controller
          $stats[$i] = array(
              'year' => $value['year'],
              'total_cli' => round($value['total'], 2),
-             'total_pro' => 0
+             'total_pro' => 0,
+             'beneficios' => 0
          );
       }
       
       foreach($stats_pro as $i => $value)
+      {
          $stats[$i]['total_pro'] = round($value['total'], 2);
+         $stats[$i]['beneficios'] = $stats[$i]['total_cli'] - $stats[$i]['total_pro'];
+      }
       
       return $stats;
    }

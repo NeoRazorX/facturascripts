@@ -33,9 +33,10 @@
       data2.addColumn('string', 'mes');
       data2.addColumn('number', 'ventas {$fsc->simbolo_divisa()}');
       data2.addColumn('number', 'compras {$fsc->simbolo_divisa()}');
+      data2.addColumn('number', 'beneficios {$fsc->simbolo_divisa()}');
       data2.addRows([
       {loop="$fsc->stats_last_months()"}
-         ['{$value['month']}', {$value['total_cli']}, {$value['total_pro']}],
+         ['{$value['month']}', {$value['total_cli']}, {$value['total_pro']}, {$value['beneficios']}],
       {/loop}
       ]);
       
@@ -48,9 +49,10 @@
       data3.addColumn('string', 'año');
       data3.addColumn('number', 'ventas {$fsc->simbolo_divisa()}');
       data3.addColumn('number', 'compras {$fsc->simbolo_divisa()}');
+      data3.addColumn('number', 'beneficios {$fsc->simbolo_divisa()}');
       data3.addRows([
       {loop="$fsc->stats_last_years()"}
-         ['{$value['year']}', {$value['total_cli']}, {$value['total_pro']}],
+         ['{$value['year']}', {$value['total_cli']}, {$value['total_pro']}, {$value['beneficios']}],
       {/loop}
       ]);
       

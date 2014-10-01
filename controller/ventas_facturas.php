@@ -110,6 +110,10 @@ class ventas_facturas extends fs_controller
          {
             $this->resultados = $this->factura->search($this->query, $this->offset);
          }
+         else if( isset($_GET['sinpagar']) )
+         {
+            $this->resultados = $this->factura->all_sin_pagar($this->offset);
+         }
          else
             $this->resultados = $this->factura->all($this->offset);
       }
@@ -120,7 +124,11 @@ class ventas_facturas extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['codagente']) )
+      if( isset($_GET['sinpagar']) )
+      {
+         $extra = '&sinpagar=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
       {
          $extra = '&codagente='.$_GET['codagente'];
       }
@@ -150,7 +158,11 @@ class ventas_facturas extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['codagente']) )
+      if( isset($_GET['sinpagar']) )
+      {
+         $extra = '&sinpagar=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
       {
          $extra = '&codagente='.$_GET['codagente'];
       }

@@ -10,6 +10,11 @@
 <h3 class="text-center">Resultados de "{$fsc->query}":</h1>
 {/if}
 
+<ul class="nav nav-tabs" role="tablist">
+   <li{if condition="!isset($_GET['sinpagar'])"} class="active"{/if}><a href="{$fsc->url()}">Todas</a></li>
+   <li{if condition="isset($_GET['sinpagar'])"} class="active"{/if}><a href="{$fsc->url()}&sinpagar=TRUE">Sin pagar</a></li>
+</ul>
+
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>

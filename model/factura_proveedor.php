@@ -679,6 +679,19 @@ class factura_proveedor extends fs_model
       return $faclist;
    }
    
+   public function all_sin_pagar($offset=0, $limit=FS_ITEM_LIMIT)
+   {
+      $faclist = array();
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
+         " WHERE pagada = false ORDER BY fecha DESC, codigo DESC", $limit, $offset);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_proveedor($f);
+      }
+      return $faclist;
+   }
+   
    public function all_from_agente($codagente, $offset=0)
    {
       $faclist = array();

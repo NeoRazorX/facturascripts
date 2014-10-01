@@ -109,6 +109,10 @@ class compras_facturas extends fs_controller
          {
             $this->resultados = $this->factura->search($this->query, $this->offset);
          }
+         else if( isset($_GET['sinpagar']) )
+         {
+            $this->resultados = $this->factura->all_sin_pagar($this->offset);
+         }
          else
             $this->resultados = $this->factura->all($this->offset);
       }
@@ -119,7 +123,15 @@ class compras_facturas extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['codproveedor']) )
+      if( isset($_GET['sinpagar']) )
+      {
+         $extra = '&sinpagar=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
+      {
+         $extra = '&codagente='.$_GET['codagente'];
+      }
+      else if( isset($_GET['codproveedor']) )
       {
          $extra = '&codproveedor='.$_GET['codproveedor'];
       }
@@ -145,7 +157,15 @@ class compras_facturas extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['codproveedor']) )
+      if( isset($_GET['sinpagar']) )
+      {
+         $extra = '&sinpagar=TRUE';
+      }
+      else if( isset($_GET['codagente']) )
+      {
+         $extra = '&codagente='.$_GET['codagente'];
+      }
+      else if( isset($_GET['codproveedor']) )
       {
          $extra = '&codproveedor='.$_GET['codproveedor'];
       }

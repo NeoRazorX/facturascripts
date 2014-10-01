@@ -7,6 +7,24 @@
       if( confirm("¿Realmente desea eliminar esta mascota?") )
          window.location.href = url;
    }
+   $(document).ready(function() {
+      $("#b_nueva_analitica").click(function(event) {
+         event.preventDefault();
+         $("#modal_nueva_analitica").modal('show');
+      });
+      $("#b_nueva_desparas").click(function(event) {
+         event.preventDefault();
+         $("#modal_nueva_desparas").modal('show');
+      });
+      $("#b_pesar").click(function(event) {
+         event.preventDefault();
+         $("#modal_pesar").modal('show');
+      });
+      $("#b_nueva_vacuna").click(function(event) {
+         event.preventDefault();
+         $("#modal_nueva_vacuna").modal('show');
+      });
+   });
 </script>
 
 <form action="{$fsc->url()}" method="post" class="form">
@@ -19,8 +37,7 @@
                {$fsc->mascota->nombre}
             </h1>
             <p>
-               {$fsc->mascota->especie} {$fsc->mascota->raza} |
-               Fecha de alta: {$fsc->mascota->fecha_alta}
+               {$fsc->mascota->especie} {$fsc->mascota->raza} | Fecha de alta: {$fsc->mascota->fecha_alta}
             </p>
          </div>
          <div class="col-lg-4 text-right">
@@ -116,12 +133,206 @@
    </div>
 </form>
 
+<div>
+   <div class="btn-group">
+      
+   </div>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
    <li class="active"><a href="#analiticas" role="tab" data-toggle="tab">Analíticas</a></li>
    <li><a href="#desparas" role="tab" data-toggle="tab">Desparasitaciones</a></li>
    <li><a href="#pesos" role="tab" data-toggle="tab">Pesos</a></li>
    <li><a href="#vacunas" role="tab" data-toggle="tab">Vacunas</a></li>
+   <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown">
+         Nueva... <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+         <li><a href="#" id="b_nueva_analitica">Analítica</a></li>
+         <li><a href="#" id="b_nueva_desparas">Desparasitación</a></li>
+         <li><a href="#" id="b_pesar">Pesar</a></li>
+         <li><a href="#" id="b_nueva_vacuna">Vacunación</a></li>
+      </ul>
+   </li>
 </ul>
+<div class="tab-content">
+   <div class="table-responsive tab-pane active" id="analiticas">
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th class="text-left">Fecha</th>
+               <th class="text-left">Análisis</th>
+               <th class="text-left">Resultado</th>
+               <th class="text-right">Nueva cita</th>
+            </tr>
+         </thead>
+         {loop="$fsc->analisis"}
+         <tr>
+            <td>{$value->fecha}</td>
+            <td>{$value->nombre}</td>
+            <td>{$value->resultado}</td>
+            <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <div class="table-responsive tab-pane" id="desparas">
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th class="text-left">Fecha</th>
+               <th class="text-left">Tipo</th>
+               <th class="text-right">Nueva cita</th>
+            </tr>
+         </thead>
+         {loop="$fsc->desparasitaciones"}
+         <tr>
+            <td>{$value->fecha}</td>
+            <td>{$value->nombre}</td>
+            <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <div class="table-responsive tab-pane" id="pesos">
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th class="text-left">Fecha</th>
+               <th class="text-right">Peso</th>
+            </tr>
+         </thead>
+         {loop="$fsc->pesos"}
+         <tr>
+            <td>{$value->fecha}</td>
+            <td class="text-right">{$value->resultado}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <div class="table-responsive tab-pane" id="vacunas">
+      <table class="table table-striped">
+         <thead>
+            <tr>
+               <th class="text-left">Fecha</th>
+               <th class="text-left">Tipo</th>
+               <th class="text-right">Nueva cita</th>
+            </tr>
+         </thead>
+         {loop="$fsc->vacunas"}
+         <tr>
+            <td>{$value->fecha}</td>
+            <td>{$value->nombre}</td>
+            <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+</div>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
+   <input type="hidden" name="tipo" value="analitica"/>
+   <div class="modal" id="modal_nueva_analitica" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+                  <span class="sr-only">Cerrar</span>
+               </button>
+               <h4 class="modal-title" id="myModalLabel">Nueva analítica</h4>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
+   <input type="hidden" name="tipo" value="desparas"/>
+   <div class="modal" id="modal_nueva_desparas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+                  <span class="sr-only">Cerrar</span>
+               </button>
+               <h4 class="modal-title" id="myModalLabel">Nueva desparasitación</h4>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
+   <input type="hidden" name="tipo" value="peso"/>
+   <div class="modal" id="modal_pesar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+                  <span class="sr-only">Cerrar</span>
+               </button>
+               <h4 class="modal-title" id="myModalLabel">Pesar</h4>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
+   <input type="hidden" name="tipo" value="vacuna"/>
+   <div class="modal" id="modal_nueva_vacuna" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&times;</span>
+                  <span class="sr-only">Cerrar</span>
+               </button>
+               <h4 class="modal-title" id="myModalLabel">Nueva vacunación</h4>
+            </div>
+            <div class="modal-body">
+               ...
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
 {/if}
 
 {include="footer"}

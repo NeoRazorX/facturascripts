@@ -100,17 +100,28 @@ class contabilidad_epigrafes extends fs_controller
             $this->epigrafe = new epigrafe();
             $this->epigrafe->codejercicio = $_POST['ejercicio'];
             $this->epigrafe->codepigrafe = $_POST['nepigrafe'];
-            $this->epigrafe->codgrupo = $_POST['codgrupo'];
+            
+            if( isset($_POST['idpadre']) )
+            {
+               $this->epigrafe->idpadre = $_POST['idpadre'];
+            }
+            else
+            {
+               $this->epigrafe->codgrupo = $_POST['codgrupo'];
+               $this->epigrafe->idgrupo = $_POST['idgrupo'];
+               
+               $this->grupo = $grupo0->get($_POST['idgrupo']);
+            }
+            
             $this->epigrafe->descripcion = $_POST['descripcion'];
-            $this->epigrafe->idgrupo = $_POST['idgrupo'];
             
             if( $this->epigrafe->save() )
+            {
                header( 'Location: '.$this->epigrafe->url() );
+            }
             else
                $this->new_error_msg('Error al guardar el epígrafe.');
          }
-         
-         $this->grupo = $grupo0->get($_POST['idgrupo']);
       }
       else if( isset($_GET['epi']) ) /// ver epígrafe
       {

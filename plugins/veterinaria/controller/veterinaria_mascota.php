@@ -6,8 +6,10 @@
  * and open the template in the editor.
  */
 
-require_model('fbm_raza.php');
+require_model('fbm_ajustes.php');
+require_model('fbm_analisis.php');
 require_model('fbm_mascota.php');
+require_model('fbm_raza.php');
 
 /**
  * Description of veterinaria_mascota
@@ -16,6 +18,11 @@ require_model('fbm_mascota.php');
  */
 class veterinaria_mascota extends fs_controller
 {
+   public $ajustes;
+   public $analisis;
+   public $desparasitaciones;
+   public $pesos;
+   public $vacunas;
    public $mascota;
    public $raza;
    
@@ -31,6 +38,12 @@ class veterinaria_mascota extends fs_controller
       $mascota = new fbm_mascota();
       $this->mascota = FALSE;
       $this->raza = new fbm_raza();
+      
+      $analisis = new fbm_analisis();
+      $this->analisis = array();
+      $this->desparasitaciones = array();
+      $this->pesos = array();
+      $this->vacunas = array();
       
       if( isset($_GET['id']) )
       {

@@ -3,64 +3,14 @@
 $nombre_archivo = "config.php";
 error_reporting(E_ALL);
 $errors = array();
-$connection = array();
+$errors2 = array();
 
 function random_string($length = 10)
 {
    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
 
-if( file_exists('config.php') )
-{
-   header('Location: index.php');
-}
-else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
-{
-   $errors[] = 'php';
-}
-else if( !function_exists('mb_substr') )
-{
-   $errors[] = "mb_substr";
-}
-else if( !function_exists('bccomp') )
-{
-   $errors[] = "bccomp";
-}
-else if( !is_writable( getcwd() ) )
-{
-   $errors[] = "permisos";
-}
-else if ( isset($_REQUEST['db_type']) )
-{
-   if ( $_REQUEST['db_type']=="MYSQL" AND isset($_REQUEST['db_host']) AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_port']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
-   {
-       $connection = new mysqli( $_REQUEST['db_host'],
-                                 $_REQUEST['db_user'],
-                                 $_REQUEST['db_pass'],
-                                 $_REQUEST['db_name'],
-                                 intval($_REQUEST['db_port']) );
-       
-       if ( strcmp( $connection->connect_errno, "0" ) != 0 )
-       {
-           $errors[] = "db_mysql";
-       }
-   }
-   else if ( $_REQUEST['db_type']=="POSTGRESQL" AND isset($_REQUEST['db_host']) AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_port']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
-   {
-       $connection = pg_connect( 'host='.$_REQUEST['db_host'].
-                                 ' dbname='.$_REQUEST['db_name'].
-                                 ' port='.$_REQUEST['db_port'].
-                                 ' user='.$_REQUEST['db_user'].
-                                 ' password='.$_REQUEST['db_pass'] );
-       
-       if ( strcmp( $connection->connect_errno, "0" ) != 0 )
-       {
-           $errors[] = "db_postgresql";
-       }
-   }
-}
-
-if ( isset($_REQUEST['db_type']) AND isset($_REQUEST['db_host'])AND isset($_REQUEST['db_name']) AND isset($_REQUEST['db_user']) AND isset($_REQUEST['db_pass']) )
+function guarda_config($nombre_archivo)
 {
    $archivo = fopen($nombre_archivo, "w");
    fwrite($archivo, "<?php\n");
@@ -155,6 +105,71 @@ if ( isset($_REQUEST['db_type']) AND isset($_REQUEST['db_host'])AND isset($_REQU
    exit();
 }
 
+if( file_exists('config.php') )
+{
+   header('Location: index.php');
+}
+else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
+{
+   $errors[] = 'php';
+}
+else if( !function_exists('mb_substr') )
+{
+   $errors[] = "mb_substr";
+}
+else if( !function_exists('bccomp') )
+{
+   $errors[] = "bccomp";
+}
+else if( !is_writable( getcwd() ) )
+{
+   $errors[] = "permisos";
+}
+else if( isset($_REQUEST['db_type']) )
+{
+   if($_REQUEST['db_type'] == 'MYSQL')
+   {
+      if( class_exists('mysqli') )
+      {
+         $connection = new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], $_REQUEST['db_name'], intval($_REQUEST['db_port']));
+         if($connection->connect_error)
+         {
+            $errors[] = "db_mysql";
+            $errors2[] = $connection->connect_error;
+         }
+         else
+            guarda_config($nombre_archivo);
+      }
+      else
+      {
+         $errors[] = "db_mysql";
+         $errors2[] = 'No tienes instalada la extensión de PHP para MySQL.';
+      }
+   }
+   else if($_REQUEST['db_type'] == 'POSTGRESQL')
+   {
+      if( function_exists('pg_connect') )
+      {
+         $connection = pg_connect('host='.$_REQUEST['db_host'].' dbname='.$_REQUEST['db_name'].' port='.$_REQUEST['db_port'].
+                 ' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
+         if($connection)
+         {
+            guarda_config($nombre_archivo);
+         }
+         else
+         {
+            $errors[] = "db_postgresql";
+            $errors2[] = 'No se puede conectar a la base de datos. Revisa los datos de usuario y contraseña.';
+         }
+      }
+      else
+      {
+         $errors[] = "db_postgresql";
+         $errors2[] = 'No tienes instalada la extensión de PHP para PostgreSQL.';
+      }
+   }
+}
+
 $system_info = 'facturascripts: '.file_get_contents('VERSION')."\n";
 $system_info .= 'os: '.php_uname()."\n";
 $system_info .= 'php: '.phpversion()."\n";
@@ -223,7 +238,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form-control" role="form">
+   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <div class="modal" id="modal_feedback">
          <div class="modal-dialog">
@@ -406,17 +421,12 @@ $system_info = str_replace('"', "'", $system_info);
                   Acceso a base de datos MySQL:
                </div>
                <div class="panel-body">
-                  <p>
-                     Los datos de conexión para la base de datos MySQL no son correctos.
-                  </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Mensaje de error:</h4>
-                  <p>
-                     <?php print_r($connection); ?>
-                  </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
-                  <p>
-                     Revisa los campos de configuración de la base de datos.
-                  </p>
+                  <ul>
+                   <?php
+                   foreach($errors2 as $err2)
+                      echo "<li>".$err2."</li>";
+                   ?>
+                  </ul>
                </div>
             </div>
                   <?php
@@ -429,17 +439,12 @@ $system_info = str_replace('"', "'", $system_info);
                   Acceso a base de datos PostgreSQL:
                </div>
                <div class="panel-body">
-                  <p>
-                     Los datos de conexión para la base de datos PostgreSQL no son correctos.
-                  </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Mensaje de error:</h4>
-                  <p>
-                     <?php print_r($connection); ?>
-                  </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
-                  <p>
-                     Revisa los campos de configuración de la base de datos.
-                  </p>
+                  <ul>
+                   <?php
+                   foreach($errors2 as $err2)
+                      echo "<li>".$err2."</li>";
+                   ?>
+                  </ul>
                </div>
             </div>
                   <?php
@@ -469,7 +474,7 @@ $system_info = str_replace('"', "'", $system_info);
       
       <div class="row">
          <div class="col-lg-12">
-            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form-control" role="form" method="post">
+            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
                <div class="panel panel-primary">
                   <div class="panel-heading">
                      <h3 class="panel-title">
@@ -583,7 +588,7 @@ $system_info = str_replace('"', "'", $system_info);
          </div>
       </div>
       
-      <div class="row">
+      <div class="row" style="margin-bottom: 20px;">
          <div class="col-lg-12 col-md-12 col-sm-12 text-center">
             <hr/>
             <small>

@@ -5,14 +5,17 @@
       $("#b_nuevo_grupo").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_grupo").modal('show');
+         document.f_nuevo_grupo.ngrupo.focus();
       });
       $("#b_nuevo_epigrafe").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_epigrafe").modal('show');
+         document.f_nuevo_epigrafe.nepigrafe.focus();
       });
       $("#b_nueva_cuenta").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_cuenta").modal('show');
+         document.f_nueva_cuenta.ncuenta.focus();
       });
       {if condition="$fsc->grupo"}
       $("#b_eliminar").click(function(event) {
@@ -141,12 +144,18 @@
          <td class="text-right">{$value->idcuentaesp}</td>
       </tr>
       {/loop}
-      <tr>
-         <td colspan="3" class="text-center">
-            <a id="b_nueva_cuenta" class="btn btn-sm btn-block btn-success" href="#">Nueva Cuenta...</a>
-         </td>
-      </tr>
    </table>
+</div>
+
+<div class="container">
+   <div class="row">
+      <div class="col-lg-6">
+         <a id="b_nuevo_epigrafe" class="btn btn-sm btn-block btn-success" href="#">Nuevo Epígrafe...</a>
+      </div>
+      <div class="col-lg-6">
+         <a id="b_nueva_cuenta" class="btn btn-sm btn-block btn-success" href="#">Nueva Cuenta...</a>
+      </div>
+   </div>
 </div>
 {else}
 <div class="container-fluid" style="margin-bottom: 10px;">
@@ -202,10 +211,10 @@
 </div>
 {/if}
 
-<div class="modal fade" id="modal_nuevo_grupo">
+<div class="modal" id="modal_nuevo_grupo">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form class="form" role="form" name="f_nuevo_grupo" action ="{$fsc->url()}" method="post">
+         <form class="form" role="form" name="f_nuevo_grupo" action="{$fsc->url()}" method="post">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo grupo</h4>
@@ -225,7 +234,7 @@
                </div>
                <div class="form-group">
                   Código:
-                  <input class="form-control" type="text" name="ngrupo" autocomplete="off" maxlength="6" autofocus />
+                  <input class="form-control" type="text" name="ngrupo" autocomplete="off" maxlength="6"/>
                </div>
                <div class="form-group">
                   Descripción:
@@ -243,13 +252,19 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal_nuevo_epigrafe">
+<div class="modal" id="modal_nuevo_epigrafe">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form class="form" role="form" name="f_nuevo_epigrafe" action ="{$fsc->url()}" method="post">
+         <form class="form" role="form" name="f_nuevo_epigrafe" action="{$fsc->url()}" method="post">
+            <input type="hidden" name="ejercicio" value="{$fsc->grupo->codejercicio}"/>
+            {if condition="$fsc->epigrafe"}
+            <input type="hidden" name="ejercicio" value="{$fsc->epigrafe->codejercicio}"/>
+            <input type="hidden" name="idpadre" value="{$fsc->epigrafe->idepigrafe}"/>
+            {else}
             <input type="hidden" name="ejercicio" value="{$fsc->grupo->codejercicio}"/>
             <input type="hidden" name="idgrupo" value="{$fsc->grupo->idgrupo}"/>
             <input type="hidden" name="codgrupo" value="{$fsc->grupo->codgrupo}"/>
+            {/if}
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo epigrafe</h4>
@@ -257,7 +272,11 @@
             <div class="modal-body">
                <div class="form-group">
                   Código:
-                  <input class="form-control" type="text" name="nepigrafe" value="{$fsc->grupo->codgrupo}0" autocomplete="off" maxlength="6" autofocus />
+                  {if condition="$fsc->epigrafe"}
+                  <input class="form-control" type="text" name="nepigrafe" autocomplete="off" maxlength="6"/>
+                  {else}
+                  <input class="form-control" type="text" name="nepigrafe" value="{$fsc->grupo->codgrupo}0" autocomplete="off" maxlength="6"/>
+                  {/if}
                </div>
                <div class="form-group">
                   Descripción:
@@ -275,10 +294,10 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal_nueva_cuenta">
+<div class="modal" id="modal_nueva_cuenta">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form class="form" role="form" name="f_nueva_cuenta" action ="{$fsc->url()}" method="post">
+         <form class="form" role="form" name="f_nueva_cuenta" action="{$fsc->url()}" method="post">
             <input type="hidden" name="ejercicio" value="{$fsc->epigrafe->codejercicio}"/>
             <input type="hidden" name="idepigrafe" value="{$fsc->epigrafe->idepigrafe}"/>
             <input type="hidden" name="codepigrafe" value="{$fsc->epigrafe->codepigrafe}"/>
@@ -288,7 +307,7 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  Código:<input class="form-control" type="text" name="ncuenta" value="{$fsc->epigrafe->codepigrafe}0" autocomplete="off" autofocus />
+                  Código:<input class="form-control" type="text" name="ncuenta" value="{$fsc->epigrafe->codepigrafe}0" autocomplete="off"/>
                </div>
                <div class="form-group">
                   Descripción:
