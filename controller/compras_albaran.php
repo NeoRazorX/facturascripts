@@ -348,9 +348,11 @@ class compras_albaran extends fs_controller
          }
       }
       
-      if( $this->albaran->total != floatval($_POST['atotal']) )
+      if( !$this->albaran->floatcmp($this->albaran->total, $_POST['atotal'], FS_NF0) )
       {
-         $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+         $this->new_error_msg("El total difiere entre la vista y el controlador (".$this->albaran->total.
+                 " frente a ".$_POST['atotal']."). Debes informar del error.");
+         $this->albaran->delete();
       }
       else if( $this->albaran->save() )
       {

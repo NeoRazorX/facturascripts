@@ -29,6 +29,20 @@ class informe_albaranes extends fs_controller
    
    protected function process()
    {
+      /// Guardamos la extensión
+      $extension = array(
+          'from' => __CLASS__,
+          'to' => NULL,
+          'type' => 'head',
+          'name' => 'chart.js',
+          'text' => '<script src="plugins/informes_y_charts/view/js/chartjs/Chart.min.js"></script>'
+      );
+      $fsext = new fs_extension();
+      if( !$fsext->array_save($extension) )
+      {
+         $this->new_error_msg('Error al guardar la extensión.');
+      }
+      
       /// declaramos los objetos sólo para asegurarnos de que existen las tablas
       $albaran_cli = new albaran_cliente();
       $albaran_pro = new albaran_proveedor();

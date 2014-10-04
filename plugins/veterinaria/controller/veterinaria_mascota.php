@@ -45,7 +45,58 @@ class veterinaria_mascota extends fs_controller
       $this->pesos = array();
       $this->vacunas = array();
       
-      if( isset($_GET['id']) )
+      $this->ajustes = new fbm_ajustes();
+      
+      if( isset($_POST['tipo']) AND $_POST['idmascota'] )
+      {
+         $this->mascota = $mascota->get($_POST['idmascota']);
+         if($this->mascota)
+         {
+            $analisis2 = new fbm_analisis();
+            $analisis2->idmascota = $_POST['idmascota'];
+            $analisis2->tipo = $_POST['tipo'];
+            
+            if( isset($_POST['idtipo']) )
+            {
+               $ajuste = $this->ajustes->get($_POST['idtipo']);
+               if($ajuste)
+               {
+                  $analisis2->idtipo = $ajuste->id;
+                  $analisis2->nombre = $ajuste->nombre;
+                  $analisis2->nueva_fecha = date('d-m-Y', time()+($ajuste->dias*3600));
+               }
+            }
+            
+            if( isset($_POST['resultado']) )
+            {
+               $analisis2->resultado = $_POST['resultado'];
+               
+               if($_POST['tipo'] == 'peso')
+               {
+                  $this->mascota->peso = $_POST['resultado'];
+                  $this->mascota->save();
+               }
+            }
+            
+            if( isset($_POST['notas']) )
+            {
+               $analisis2->notas = $_POST['notas'];
+            }
+            
+            if( $analisis2->save() )
+            {
+               $this->new_message('Datos guardados correctamente.');
+               
+               if($_POST['tipo'] != 'peso')
+               {
+                  header('Location: '.$analisis2->url());
+               }
+            }
+            else
+               $this->new_error_msg('Imposible guardar los datos.');
+         }
+      }
+      else if( isset($_GET['id']) )
       {
          $this->mascota = $mascota->get($_GET['id']);
       }
@@ -81,8 +132,28 @@ class veterinaria_mascota extends fs_controller
             else
                $this->new_error_msg('Imposible guardar los datos.');
          }
+         else if( isset($_GET['delete']) )
+         {
+            $analisis2 = $analisis->get($_GET['delete']);
+            if($analisis2)
+            {
+               if( $analisis2->delete() )
+               {
+                  $this->new_message('Análisis eliminado correctamente.');
+               }
+               else
+                  $this->new_error_msg('Imposible eliminar el análisis.');
+            }
+            else
+               $this->new_error_msg('Análisis no encontrado.');
+         }
          
          $this->page->title = $this->mascota->nombre;
+         
+         $this->analisis = $analisis->all_from($this->mascota->idmascota, 'analitica');
+         $this->desparasitaciones = $analisis->all_from($this->mascota->idmascota, 'desparas');
+         $this->pesos = $analisis->all_from($this->mascota->idmascota, 'peso');
+         $this->vacunas = $analisis->all_from($this->mascota->idmascota, 'vacuna');
       }
       else
          $this->new_error_msg('Mascota no encontrada.');

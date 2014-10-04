@@ -314,6 +314,8 @@ class articulo extends fs_model
    {
       foreach($this->get_lineas_albaran_prov(0, 1) as $linea)
          $this->costemedio = $linea->pvptotal/$linea->cantidad;
+      
+      return $this->costemedio;
    }
    
    public function imagen_url()

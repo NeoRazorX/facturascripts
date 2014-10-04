@@ -426,9 +426,11 @@ class nueva_venta extends fs_controller
                $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
                $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
-               if( $albaran->total != floatval($_POST['atotal']) )
+               if( !$albaran->floatcmp($albaran->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $_POST['atotal']." frente a ".$albaran->total."). Debes informar del error.");
+                  $albaran->delete();
                }
                else if( $albaran->save() )
                {
@@ -629,9 +631,11 @@ class nueva_venta extends fs_controller
                $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
                $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
                
-               if( $factura->total != floatval($_POST['atotal']) )
+               if( !$factura->floatcmp($factura->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $factura->total." frente a ".$_POST['atotal']."). Debes informar del error.");
+                  $factura->delete();
                }
                else if( $factura->save() )
                {
@@ -828,9 +832,11 @@ class nueva_venta extends fs_controller
                $presupuesto->totalrecargo = round($presupuesto->totalrecargo, FS_NF0);
                $presupuesto->total = $presupuesto->neto + $presupuesto->totaliva - $presupuesto->totalirpf + $presupuesto->totalrecargo;
                
-               if( $presupuesto->total != floatval($_POST['atotal']) )
+               if( !$presupuesto->floatcmp($presupuesto->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $presupuesto->total." frente a ".$_POST['atotal']."). Debes informar del error.");
+                  $presupuesto->delete();
                }
                else if( $presupuesto->save() )
                {
@@ -1027,9 +1033,11 @@ class nueva_venta extends fs_controller
                $pedido->totalrecargo = round($pedido->totalrecargo, FS_NF0);
                $pedido->total = $pedido->neto + $pedido->totaliva - $pedido->totalirpf + $pedido->totalrecargo;
                
-               if( $pedido->total != floatval($_POST['atotal']) )
+               if( !$pedido->floatcmp($pedido->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $pedido->total." frente a ".$_POST['atotal']."). Debes informar del error.");
+                  $pedido->delete();
                }
                else if( $pedido->save() )
                {

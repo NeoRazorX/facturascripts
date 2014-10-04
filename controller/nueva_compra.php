@@ -375,9 +375,11 @@ class nueva_compra extends fs_controller
                $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
                $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
-               if( $albaran->total != floatval($_POST['atotal']) )
+               if( !$albaran->floatcmp($albaran->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $_POST['atotal']." frente a ".$albaran->total."). Debes informar del error.");
+                  $albaran->delete();
                }
                else if( $albaran->save() )
                {
@@ -530,6 +532,12 @@ class nueva_compra extends fs_controller
                         /// sumamos al stock
                         $articulo->sum_stock($factura->codalmacen, $linea->cantidad);
                         
+                        if($articulo->costemedio == 0)
+                        {
+                           $articulo->costemedio = $linea->pvpunitario;
+                           $articulo->save();
+                        }
+                        
                         $factura->neto += $linea->pvptotal;
                         $factura->totaliva += ($linea->pvptotal * $linea->iva/100);
                         $factura->totalirpf += ($linea->pvptotal * $linea->irpf/100);
@@ -558,9 +566,11 @@ class nueva_compra extends fs_controller
                $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
                $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
                
-               if( $factura->total != floatval($_POST['atotal']) )
+               if( !$factura->floatcmp($factura->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador. Debes informar del error.");
+                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                          $factura->total." frente a ".$_POST['atotal']."). Debes informar del error.");
+                  $factura->delete();
                }
                else if( $factura->save() )
                {

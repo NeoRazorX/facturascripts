@@ -135,6 +135,35 @@ class fs_extension extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
+   /**
+    * Guarda o actualiza los datos de una estensión comparándolos con los datos
+    * del array que le pasas como parametro.
+    * @param type $array
+    * @return boolean
+    */
+   public function array_save($array)
+   {
+      $fsext0 = new fs_extension();
+      $fsext0->from = $array['from'];
+      $fsext0->to = $array['to'];
+      $fsext0->type = $array['type'];
+      $fsext0->name = $array['name'];
+      
+      if( isset($array['plugin']) )
+         $fsext0->plugin = $array['plugin'];
+      
+      $fsext0->text = $array['text'];
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_from = ".$this->var2str($array['from']).
+              " AND page_to = ".$this->var2str($array['to'])." AND name = ".$this->var2str($array['name']).";");
+      if($data)
+      {
+         $fsext0->id = $this->intval($data[0]['id']);
+      }
+      
+      return $fsext0->save();
+   }
+   
    public function all_to($to)
    {
       $elist = array();

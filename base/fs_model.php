@@ -323,7 +323,7 @@ abstract class fs_model
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
     */
-   protected function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
+   public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
    {
       if($round)
       {

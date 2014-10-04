@@ -57,6 +57,8 @@ class tpv_recambios extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->articulo = new articulo();
       $this->cliente = new cliente();
       $this->familia = new familia();
@@ -112,11 +114,6 @@ class tpv_recambios extends fs_controller
             {
                if($this->caja->codagente == $this->user->codagente)
                {
-                  $this->buttons[] = new fs_button('b_reticket', 'Reimprimir ticket');
-                  $this->buttons[] = new fs_button_img('b_borrar_ticket', 'Borrar ticket', 'trash.png', '#', TRUE);
-                  $this->buttons[] = new fs_button('b_abrir_caja', 'Abrir caja', $this->url().'&abrir_caja=TRUE');
-                  $this->buttons[] = new fs_button_img('b_cerrar_caja', 'Cerrar caja', 'remove.png', '#', TRUE);
-                  
                   if( isset($_GET['abrir_caja']) )
                      $this->abrir_caja();
                   else if( isset($_GET['cerrar_caja']) )
@@ -143,9 +140,6 @@ class tpv_recambios extends fs_controller
                $this->caja->dinero_fin = floatval($_POST['d_inicial']);
                if( $this->caja->save() )
                {
-                  $this->buttons[] = new fs_button_img('b_borrar_ticket', 'Borrar ticket', 'trash.png', '#', TRUE);
-                  $this->buttons[] = new fs_button_img('b_cerrar_caja', 'Cerrar caja', 'remove.png', '#', TRUE);
-                  
                   $this->new_message("Caja iniciada con ".$this->show_precio($this->caja->dinero_inicial) );
                }
                else

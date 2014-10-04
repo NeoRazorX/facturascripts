@@ -8,6 +8,8 @@
    <columna>
       <nombre>idmascota</nombre>
       <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('fbm_mascota_idmascota_seq'::regclass)</defecto>
    </columna>
    <columna>
       <nombre>nombre</nombre>

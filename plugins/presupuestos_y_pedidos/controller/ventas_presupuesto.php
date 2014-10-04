@@ -371,7 +371,13 @@ class ventas_presupuesto extends fs_controller
          }
       }
       
-      if( $this->presupuesto->save() )
+      if( !$this->presupuesto->floatcmp($this->presupuesto->total, $_POST['atotal'], FS_NF0) )
+      {
+         $this->new_error_msg("El total difiere entre la vista y el controlador (".$this->presupuesto->total.
+                 " frente a ".$_POST['atotal']."). Debes informar del error.");
+         $this->presupuesto->delete();
+      }
+      else if( $this->presupuesto->save() )
       {
          $this->new_message(ucfirst(FS_PRESUPUESTO)." modificado correctamente.");
          $this->new_change(ucfirst(FS_PRESUPUESTO).' Cliente '.$this->presupuesto->codigo, $this->presupuesto->url());

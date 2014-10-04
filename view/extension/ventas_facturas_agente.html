@@ -11,6 +11,8 @@
             <th class="text-left">Código + Cliente</th>
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
+            <th class="text-right">Comisión</th>
+            <th class="text-left">%</th>
             <th class="text-right">Fecha</th>
             <th class="text-right">Hora</th>
          </tr>
@@ -30,6 +32,10 @@
          <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right bg-info">
+            {$fsc->show_precio($value->total*$value->porcomision/100, $value->coddivisa)}
+         </td>
+         <td class="text-left">{$fsc->show_numero($value->porcomision)}</td>
          <td class="text-right">{$value->fecha}</td>
          <td class="text-right">{$value->hora}</td>
       </tr>
@@ -37,7 +43,7 @@
       <tr class="bg-warning">
          <td></td>
          <td></td>
-         <td colspan="5">Ninguna factura encontrada.</td>
+         <td colspan="7">Ninguna factura encontrada.</td>
       </tr>
       {/loop}
    </table>

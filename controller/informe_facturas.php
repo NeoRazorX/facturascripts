@@ -35,6 +35,8 @@ class informe_facturas extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->desde = Date('1-m-Y');
       $this->factura_cli = new factura_cliente();
       $this->factura_pro = new factura_proveedor();

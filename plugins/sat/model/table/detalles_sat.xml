@@ -30,4 +30,10 @@
       <nombre>detalles_sat_pkey</nombre>
       <consulta>PRIMARY KEY (id)</consulta>
    </restriccion>
+   <restriccion>
+      <nombre>ca_detalle_sat</nombre>
+      <consulta>FOREIGN KEY (nsat)
+      REFERENCES registros_sat (nsat)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>

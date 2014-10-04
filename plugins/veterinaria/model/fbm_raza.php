@@ -105,7 +105,7 @@ class fbm_raza extends fs_model
    {
       $listar = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY especie ASC, nombre ASC;");
       if($data)
       {
          foreach($data as $d)

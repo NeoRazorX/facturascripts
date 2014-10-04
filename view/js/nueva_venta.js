@@ -411,8 +411,8 @@ function buscar_articulos()
                }
                items.push(tr_aux+"<td><a href=\"#\" onclick=\"get_precios('"+val.referencia+"')\" title=\"más detalles\"><span class=\"glyphicon glyphicon-eye-open\"></span></a>\n\
                   &nbsp; <a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+val.referencia+'</a> '+val.descripcion+"</td>\n\
-                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.costemedio+"','0','"+val.codimpuesto+"')\">"+show_precio(val.costemedio)+"</a></td>\n\
                   <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+show_precio(val.pvp)+"</a></td>\n\
+                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+show_pvp_iva(val.pvp,val.codimpuesto)+"</a></td>\n\
                   <td class=\"text-right\">"+val.stockfis+"</td></tr>");
                
                if(val.query == document.f_buscar_articulos.query.value)
@@ -432,7 +432,7 @@ function buscar_articulos()
             if(insertar)
             {
                $("#search_results").html("<div class=\"table-responsive\"><table class=\"table table-hover\"><thead><tr>\n\
-                  <th class=\"text-left\">Referencia + descripción</th><th class=\"text-right\">Coste</th><th class=\"text-right\">PVP</th>\n\
+                  <th class=\"text-left\">Referencia + descripción</th><th class=\"text-right\">PVP</th><th class=\"text-right\">PVP+IVA</th>\n\
                   <th class=\"text-right\">Stock</th></tr></thead>"+items.join('')+"</table></div>");
             }
          });
@@ -471,6 +471,24 @@ function buscar_articulos()
          });
       }
    }
+}
+
+function show_pvp_iva(pvp,codimpuesto)
+{
+   var iva = 0;
+   if(cliente.regimeniva != 'Exento' && !siniva)
+   {
+      for(var i=0; i<all_impuestos.length; i++)
+      {
+         if(all_impuestos[i].codimpuesto == codimpuesto)
+         {
+            iva = all_impuestos[i].iva;
+            break;
+         }
+      }
+   }
+   
+   return show_precio(pvp + pvp*iva/100);
 }
 
 function kiwi_import(ref, desc)

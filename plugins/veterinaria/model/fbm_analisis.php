@@ -41,10 +41,10 @@ class fbm_analisis extends fs_model
          $this->idtipo = $this->intval($a['idtipo']);
          $this->tipo = $a['tipo'];
          $this->nombre = $a['nombre'];
-         $this->fecha = date('d-m-Y', $a['fecha']);
+         $this->fecha = date('d-m-Y', strtotime($a['fecha']) );
          $this->resultado = $a['resultado'];
          $this->notas = $a['notas'];
-         $this->nueva_fecha = date('d-m-Y', $a['nueva_fecha']);
+         $this->nueva_fecha = date('d-m-Y', strtotime($a['nueva_fecha']) );
       }
       else
       {
@@ -63,6 +63,36 @@ class fbm_analisis extends fs_model
    protected function install()
    {
       return '';
+   }
+   
+   public function url()
+   {
+      return 'index.php?page=veterinaria_analisis&id='.$this->id;
+   }
+   
+   public function tipo()
+   {
+      if($this->tipo == 'desparas')
+      {
+         return 'Desparasitaciones';
+      }
+      else if($this->tipo == 'analitica')
+      {
+         return 'Analítica';
+      }
+      else
+         return ucfirst($this->tipo);
+   }
+   
+   public function get($id)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      if($data)
+      {
+         return new fbm_analisis($data[0]);
+      }
+      else
+         return FALSE;
    }
    
    public function exists()
@@ -114,7 +144,7 @@ class fbm_analisis extends fs_model
    {
       $lista = array();
       
-      $data = $this->db->select("SELECT * FROM  WHERE idmascota = ".$this->var2str($idmascota)." AND tipo = ".$this->var2str($tipo).";");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idmascota = ".$this->var2str($idmascota)." AND tipo = ".$this->var2str($tipo).";");
       if($data)
       {
          foreach($data as $d)

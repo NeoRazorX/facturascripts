@@ -11,18 +11,22 @@
       $("#b_nueva_analitica").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_analitica").modal('show');
+         document.f_analitica.idtipo.focus();
       });
       $("#b_nueva_desparas").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_desparas").modal('show');
+         document.f_desparas.idtipo.focus();
       });
-      $("#b_pesar").click(function(event) {
+      $("#b_pesar, #b_pesar2").click(function(event) {
          event.preventDefault();
          $("#modal_pesar").modal('show');
+         document.f_pesar.resultado.focus();
       });
       $("#b_nueva_vacuna").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_vacuna").modal('show');
+         document.f_vacunar.idtipo.focus();
       });
    });
 </script>
@@ -31,7 +35,7 @@
    <div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
       <div class="row">
          <div class="col-lg-8">
-            <h1 style="margin-top: 0px;">
+            <h1 style="margin-top: 0px; margin-bottom: 0px;">
                <a href="index.php?page=veterinaria_mascotas">Mascotas</a> /
                <a href="{$fsc->mascota->cliente_url()}">{$fsc->mascota->nombre_cliente()}</a> /
                {$fsc->mascota->nombre}
@@ -117,7 +121,7 @@
          <div class="col-lg-2">
             <div class="form-group">
                Peso (gramos):
-               <input class="form-control" type="number" name="peso" value="{$fsc->mascota->peso}" autocomplete="off"/>
+               <input id="b_pesar2" class="form-control" type="number" name="peso" value="{$fsc->mascota->peso}" autocomplete="off" readonly="true"/>
             </div>
          </div>
          <div class="col-lg-2">
@@ -132,12 +136,6 @@
       </div>
    </div>
 </form>
-
-<div>
-   <div class="btn-group">
-      
-   </div>
-</div>
 
 <ul class="nav nav-tabs" role="tablist">
    <li class="active"><a href="#analiticas" role="tab" data-toggle="tab">Analíticas</a></li>
@@ -158,7 +156,7 @@
 </ul>
 <div class="tab-content">
    <div class="table-responsive tab-pane active" id="analiticas">
-      <table class="table table-striped">
+      <table class="table table-hover">
          <thead>
             <tr>
                <th class="text-left">Fecha</th>
@@ -170,16 +168,20 @@
          {loop="$fsc->analisis"}
          <tr>
             <td>{$value->fecha}</td>
-            <td>{$value->nombre}</td>
+            <td><a href="{$value->url()}">{$value->nombre}</a></td>
             <td>{$value->resultado}</td>
             <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="4">Sin resultados.</td>
          </tr>
          {/loop}
       </table>
    </div>
    
    <div class="table-responsive tab-pane" id="desparas">
-      <table class="table table-striped">
+      <table class="table table-hover">
          <thead>
             <tr>
                <th class="text-left">Fecha</th>
@@ -190,15 +192,19 @@
          {loop="$fsc->desparasitaciones"}
          <tr>
             <td>{$value->fecha}</td>
-            <td>{$value->nombre}</td>
+            <td><a href="{$value->url()}">{$value->nombre}</a></td>
             <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="3">Sin resultados.</td>
          </tr>
          {/loop}
       </table>
    </div>
    
    <div class="table-responsive tab-pane" id="pesos">
-      <table class="table table-striped">
+      <table class="table table-hover">
          <thead>
             <tr>
                <th class="text-left">Fecha</th>
@@ -207,15 +213,19 @@
          </thead>
          {loop="$fsc->pesos"}
          <tr>
-            <td>{$value->fecha}</td>
+            <td><a href="{$value->url()}">{$value->fecha}</a></td>
             <td class="text-right">{$value->resultado}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="2">Sin resultados.</td>
          </tr>
          {/loop}
       </table>
    </div>
    
    <div class="table-responsive tab-pane" id="vacunas">
-      <table class="table table-striped">
+      <table class="table table-hover">
          <thead>
             <tr>
                <th class="text-left">Fecha</th>
@@ -226,15 +236,19 @@
          {loop="$fsc->vacunas"}
          <tr>
             <td>{$value->fecha}</td>
-            <td>{$value->nombre}</td>
+            <td><a href="{$value->url()}">{$value->nombre}</a></td>
             <td class="text-right">{$value->nueva_fecha}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="3">Sin resultados.</td>
          </tr>
          {/loop}
       </table>
    </div>
 </div>
 
-<form action="{$fsc->url()}" method="post" class="form">
+<form name="f_analitica" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
    <input type="hidden" name="tipo" value="analitica"/>
    <div class="modal" id="modal_nueva_analitica" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -248,18 +262,35 @@
                <h4 class="modal-title" id="myModalLabel">Nueva analítica</h4>
             </div>
             <div class="modal-body">
-               ...
+               <div class="form-group">
+                  Tipo de análisis:
+                  <select name="idtipo" class="form-control">
+                     {loop="$fsc->ajustes->all_from_tipo('analitica')"}
+                     <option value="{$value->id}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Resultado:
+                  <input type="text" name="resultado" class="form-control" maxlength="50" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Notas:
+                  <textarea name="notas" class="form-control" rows="5"></textarea>
+               </div>
             </div>
             <div class="modal-footer">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary">Save changes</button>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
             </div>
          </div>
       </div>
    </div>
 </form>
 
-<form action="{$fsc->url()}" method="post" class="form">
+<form name="f_desparas" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
    <input type="hidden" name="tipo" value="desparas"/>
    <div class="modal" id="modal_nueva_desparas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -273,18 +304,31 @@
                <h4 class="modal-title" id="myModalLabel">Nueva desparasitación</h4>
             </div>
             <div class="modal-body">
-               ...
+               <div class="form-group">
+                  Tipo:
+                  <select name="idtipo" class="form-control">
+                     {loop="$fsc->ajustes->all_from_tipo('desparas')"}
+                     <option value="{$value->id}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Notas:
+                  <textarea name="notas" class="form-control" rows="5"></textarea>
+               </div>
             </div>
             <div class="modal-footer">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary">Save changes</button>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
             </div>
          </div>
       </div>
    </div>
 </form>
 
-<form action="{$fsc->url()}" method="post" class="form">
+<form name="f_pesar" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
    <input type="hidden" name="tipo" value="peso"/>
    <div class="modal" id="modal_pesar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -298,18 +342,23 @@
                <h4 class="modal-title" id="myModalLabel">Pesar</h4>
             </div>
             <div class="modal-body">
-               ...
+               <div class="form-group">
+                  Peso:
+                  <input type="number" name="resultado" class="form-control" value="{$fsc->mascota->peso}" autocomplete="off"/>
+               </div>
             </div>
             <div class="modal-footer">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary">Save changes</button>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
             </div>
          </div>
       </div>
    </div>
 </form>
 
-<form action="{$fsc->url()}" method="post" class="form">
+<form name="f_vacunar" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="idmascota" value="{$fsc->mascota->idmascota}"/>
    <input type="hidden" name="tipo" value="vacuna"/>
    <div class="modal" id="modal_nueva_vacuna" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -323,11 +372,24 @@
                <h4 class="modal-title" id="myModalLabel">Nueva vacunación</h4>
             </div>
             <div class="modal-body">
-               ...
+               <div class="form-group">
+                  Vacuna:
+                  <select name="idtipo" class="form-control">
+                     {loop="$fsc->ajustes->all_from_tipo('vacuna')"}
+                     <option value="{$value->id}">{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group">
+                  Notas:
+                  <textarea name="notas" class="form-control" rows="5"></textarea>
+               </div>
             </div>
             <div class="modal-footer">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary">Save changes</button>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
             </div>
          </div>
       </div>

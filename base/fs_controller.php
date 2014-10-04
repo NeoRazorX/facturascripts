@@ -33,6 +33,7 @@ require_model('empresa.php');
 require_model('fs_access.php');
 require_model('fs_page.php');
 require_model('fs_user.php');
+require_model('fs_extension.php');
 
 /**
  * La clase principal de la que deben heredar todos los controladores
@@ -117,6 +118,11 @@ class fs_controller
    protected $cache;
    
    /**
+    * Listado de extensiones de la página
+    */
+   public $head_extensions;
+   
+   /**
     * @param type $name sustituir por __CLASS__
     * @param type $title es el título de la página, y el texto que aparecerá en el menú
     * @param type $folder es el menú dónde quieres colocar el acceso directo
@@ -133,6 +139,7 @@ class fs_controller
       $this->messages = array();
       $this->advices = array();
       $this->simbolo_divisas = array();
+      $this->head_extensions = array();
       
       $this->buttons = array();
       $this->custom_search = FALSE;
@@ -160,6 +167,16 @@ class fs_controller
          
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
+         
+         /// cargamos las extensiones
+         $fsext = new fs_extension();
+         foreach($fsext->all_4_type('head') as $ext)
+         {
+            if( $ext->to == $name OR is_null($ext->to) )
+            {
+               $this->head_extensions[] = $ext;
+            }
+         }
          
          if( isset($_GET['logout']) )
          {

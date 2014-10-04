@@ -48,4 +48,10 @@
 		<nombre>fbm_analisis_pkey</nombre>
 		<consulta>PRIMARY KEY (id)</consulta>
 	</restriccion>
+   <restriccion>
+      <nombre>ca_analisis_mascota</nombre>
+      <consulta>FOREIGN KEY (idmascota)
+      REFERENCES fbm_mascotas (idmascota)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>

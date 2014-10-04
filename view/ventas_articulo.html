@@ -168,6 +168,23 @@
    {if condition="$fsc->equivalentes"}
    <li id="b_equivalentes"><a href="#equivalentes">Equivalentes</a></li>
    {/if}
+   <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown">
+         Buscar en... <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+      {loop="$fsc->extensiones"}
+         {if condition="$value->type=='button'"}
+         <li>
+            <a href="index.php?page={$value->from}&ref={function="urlencode($fsc->articulo->referencia)"}">
+               <span class="glyphicon glyphicon-list"></span>
+               &nbsp; {$value->text}
+            </a>
+         </li>
+         {/if}
+      {/loop}
+      </ul>
+   </li>
 </ul>
 
 <form action="{$fsc->url()}" method="post" class="post">
@@ -441,21 +458,6 @@
    {else}
    <div class="alert alert-warning">No hay artículos equivalentes.</div>
    {/if}
-</div>
-
-<div class="container-fluid" style="padding-top: 30px;">
-   <div class="row">
-   {loop="$fsc->extensiones"}
-      {if condition="$value->type=='button'"}
-      <div class="col-lg-3 col-md-3 col-sm-3">
-         <a class="btn btn-sm btn-block btn-info" href="index.php?page={$value->from}&ref={function="urlencode($fsc->articulo->referencia)"}">
-            <span class="glyphicon glyphicon-list"></span>
-            &nbsp; {$value->text}
-         </a>
-      </div>
-      {/if}
-   {/loop}
-   </div>
 </div>
 
 <form action="{$fsc->url()}" enctype="multipart/form-data" method="post" class="form">
