@@ -1,0 +1,153 @@
+{include="header"}
+
+   <div class="container-fluid">
+      <section class="content">
+         
+         <div class="row">
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-teal">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop}</h3>
+                     <p>Presupuestos</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-bag"></i>
+                  </div>
+                  <a href="index.php?page=ventas_presupuestos&pendientes=TRUE" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-aqua">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop}</h3>
+                     <p>Pedidos</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-bag"></i>
+                  </div>
+                  <a href="index.php?page=ventas_pedidos&pendientes=TRUE" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+               
+               <div class="small-box bg-light-blue">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop}</h3>
+                     <p>Albaranes</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-ios7-cart-outline"></i>
+                  </div>
+                  <a href="index.php?page=ventas_albaranes&ptefactura=TRUE" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-blue">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop}</h3>
+                     <p>Facturas</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-ios7-cart-outline"></i>
+                  </div>
+                  <a href="index.php?page=ventas_facturas&sinpagar=TRUE" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+         
+         </div>
+         
+         <div class="row">
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-maroon">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_articulos()"}{$value["total"]}{/loop}</h3>
+                     <p>Artículos</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-ios7-pricetag-outline"></i>
+                  </div>
+                  <a href="index.php?page=ventas_articulos" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+               
+               <div class="small-box bg-yellow">
+                  <div class="inner">
+                     <h3>{loop="$fsc->num_clientes()"}{$value["total"]}{/loop}</h3>
+                     <p>Clientes</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-person-add"></i>
+                  </div>
+                  <a href="index.php?page=ventas_clientes" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-green">
+                  <div class="inner">
+                     <h3>53</h3>
+                     <p>Contabilidad</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-stats-bars"></i>
+                  </div>
+                  <a href="index.php?page=informe_contabilidad" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+            
+            <div class="col-lg-3 col-xs-6">
+            
+               <div class="small-box bg-red">
+                  <div class="inner">
+                     <h3>65</h3>
+                     <p>Informes de venta</p>
+                  </div>
+                  <div class="icon">
+                     <i class="ion ion-pie-graph"></i>
+                  </div>
+                  <a href="index.php?page=informe_facturas" class="small-box-footer">
+                     Más detalles <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+               </div>
+            
+            </div>
+         
+         </div>
+      
+      </section>
+   </div>
+
+{include="footer"}
