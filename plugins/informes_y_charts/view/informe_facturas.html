@@ -64,11 +64,11 @@
             <div class="panel-body">
                <div id="chart_clientes_del_mes">
                   <div class="row">
-                     <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <canvas id="canvas_chart_clientes_del_mes" height="125"></canvas>
-                     </div>
-                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-                        <div id="legend_chart_clientes_del_mes"></div>
+                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_clientes_del_mes" height="100px"></canvas>
+                           <div id="legend_chart_clientes_del_mes"></div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -85,11 +85,17 @@
             <div class="panel-body">
                <div id="chart_facturas_day">
                   <div class="row">
-                     <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <canvas id="canvas_chart_facturas_day" height="125"></canvas>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_facturas_day" height="100px"></canvas>
+                           <div id="legend_chart_facturas_day"></div>
+                        </div>
                      </div>
-                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-                        <div id="legend_chart_facturas_day"></div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_facturas_day_payed" height="100px"></canvas>
+                           <div id="legend_chart_facturas_day_payed"></div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -106,11 +112,17 @@
             <div class="panel-body">
                <div id="chart_facturas_month">
                   <div class="row">
-                     <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <canvas id="canvas_chart_facturas_month" height="125"></canvas>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_facturas_month" height="100px"></canvas>
+                           <div id="legend_chart_facturas_month"></div>
+                        </div>
                      </div>
-                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-                        <div id="legend_chart_facturas_month"></div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_facturas_month_payed" height="100px"></canvas>
+                           <div id="legend_chart_facturas_month_payed"></div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -127,11 +139,11 @@
             <div class="panel-body">
                <div id="chart_facturas_year">
                   <div class="row">
-                     <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <canvas id="canvas_chart_facturas_year" height="125"></canvas>
-                     </div>
-                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-                        <div id="legend_chart_facturas_year"></div>
+                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                        <div class="text-center">
+                           <canvas id="canvas_chart_facturas_year" height="100px"></canvas>
+                           <div id="legend_chart_facturas_year"></div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -182,6 +194,32 @@
       ]
    }
    
+   var lineChartData_last_days_payed = {
+      labels: [{loop="$fsc->stats_last_days_payed()"}{if="$counter<25"}"{$value["day"]}",{else}"{$value["day"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Total ventas diario cobrado",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,1)",
+            pointColor : "rgba(125,234,125,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_last_days_payed()"}{if="$counter<25"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
+         },
+         {
+            label: "Total compras diario pagada",
+            fillColor : "rgba(241,129,129,0.2)",
+            strokeColor : "rgba(241,129,129,1)",
+            pointColor : "rgba(241,129,129,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(241,129,129,1)",
+            data : [{loop="$fsc->stats_last_days_payed()"}{if="$counter<25"}"{$value["total_pro"]}",{else}"{$value["total_pro"]}"{/if}{/loop}]
+         }
+      ]
+   }
+   
    var lineChartData_last_months = {
       labels: [{loop="$fsc->stats_last_months()"}{if="$counter<12"}"{$value["month"]}",{else}"{$value["month"]}"{/if}{/loop}],
       datasets : [
@@ -204,6 +242,32 @@
             pointHighlightFill : "#fff",
             pointHighlightStroke : "rgba(241,129,129,1)",
             data : [{loop="$fsc->stats_last_months()"}{if="$counter<12"}"{$value["total_pro"]}",{else}"{$value["total_pro"]}"{/if}{/loop}]
+         }
+      ]
+   }
+   
+   var lineChartData_last_months_payed = {
+      labels: [{loop="$fsc->stats_last_months_payed()"}{if="$counter<12"}"{$value["month"]}",{else}"{$value["month"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Total ventas mensual cobrado",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,1)",
+            pointColor : "rgba(125,234,125,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_last_months_payed()"}{if="$counter<12"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
+         },
+         {
+            label: "Total compras mensual pagada",
+            fillColor : "rgba(241,129,129,0.2)",
+            strokeColor : "rgba(241,129,129,1)",
+            pointColor : "rgba(241,129,129,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(241,129,129,1)",
+            data : [{loop="$fsc->stats_last_months_payed()"}{if="$counter<12"}"{$value["total_pro"]}",{else}"{$value["total_pro"]}"{/if}{/loop}]
          }
       ]
    }
@@ -261,10 +325,20 @@
       var Chart_legend_last_days = document.getElementById('legend_chart_facturas_day');
       Chart_legend_last_days.innerHTML = Chart_lines_last_days.generateLegend();
       
+      var ctx_canvas_chart_facturas_day_payed = document.getElementById("canvas_chart_facturas_day_payed").getContext("2d");
+      var Chart_lines_last_days_payed = new Chart(ctx_canvas_chart_facturas_day_payed).Line(lineChartData_last_days_payed, options);
+      var Chart_legend_last_days_payed = document.getElementById('legend_chart_facturas_day_payed');
+      Chart_legend_last_days_payed.innerHTML = Chart_lines_last_days_payed.generateLegend();
+      
       var ctx_canvas_chart_facturas_month = document.getElementById("canvas_chart_facturas_month").getContext("2d");
       var Chart_lines_last_months = new Chart(ctx_canvas_chart_facturas_month).Line(lineChartData_last_months, options);
       var Chart_legend_last_month = document.getElementById('legend_chart_facturas_month');
       Chart_legend_last_month.innerHTML = Chart_lines_last_months.generateLegend();
+      
+      var ctx_canvas_chart_facturas_month_payed = document.getElementById("canvas_chart_facturas_month_payed").getContext("2d");
+      var Chart_lines_last_months_payed = new Chart(ctx_canvas_chart_facturas_month_payed).Line(lineChartData_last_months_payed, options);
+      var Chart_legend_last_month_payed = document.getElementById('legend_chart_facturas_month_payed');
+      Chart_legend_last_month_payed.innerHTML = Chart_lines_last_months_payed.generateLegend();
       
       var ctx_canvas_chart_facturas_year = document.getElementById("canvas_chart_facturas_year").getContext("2d");
       var Chart_lines_last_years = new Chart(ctx_canvas_chart_facturas_year).Line(lineChartData_last_years, options);

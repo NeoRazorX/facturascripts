@@ -482,6 +482,27 @@ class informe_facturas extends fs_controller
       return $stats;
    }
    
+   public function stats_last_days_payed()
+   {
+      $stats = array();
+      $stats_cli = $this->stats_last_days_aux_payed('facturascli');
+      $stats_pro = $this->stats_last_days_aux_payed('facturasprov');
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'day' => $value['day'],
+             'total_cli' => $value['total'],
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = $value['total'];
+      
+      return $stats;
+   }
+   
    public function stats_last_days_aux($table_name='facturascli', $numdays = 25)
    {
       $stats = array();
@@ -501,6 +522,40 @@ class informe_facturas extends fs_controller
       $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
          AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY dia ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['dia']);
+            $stats[$i] = array(
+                'day' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_days_aux_payed($table_name='facturascli', $numdays = 25)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$numdays.' day'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 day', 'd') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('day' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMDD')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%d')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as dia, sum(total) as total
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND pagada=TRUE
          GROUP BY ".$sql_aux." ORDER BY dia ASC;");
       if($data)
       {
@@ -551,6 +606,41 @@ class informe_facturas extends fs_controller
       return $stats;
    }
    
+   public function stats_last_months_payed()
+   {
+      $stats = array();
+      $stats_cli = $this->stats_last_months_payed_aux('facturascli');
+      $stats_pro = $this->stats_last_months_payed_aux('facturasprov');
+      $meses = array(
+          1 => 'Enero',
+          2 => 'Febrero',
+          3 => 'Marzo',
+          4 => 'Abril',
+          5 => 'Mayo',
+          6 => 'Junio',
+          7 => 'Julio',
+          8 => 'Agosto',
+          9 => 'Septiembre',
+          10 => 'Octubre',
+          11 => 'Noviembre',
+          12 => 'Diciembre'
+      );
+      
+      foreach($stats_cli as $i => $value)
+      {
+         $stats[$i] = array(
+             'month' => $meses[ $value['month'] ],
+             'total_cli' => round($value['total'], 2),
+             'total_pro' => 0
+         );
+      }
+      
+      foreach($stats_pro as $i => $value)
+         $stats[$i]['total_pro'] = round($value['total'], 2);
+      
+      return $stats;
+   }
+   
    public function stats_last_months_aux($table_name='facturascli', $num = 11)
    {
       $stats = array();
@@ -570,6 +660,40 @@ class informe_facturas extends fs_controller
       $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
          AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
+         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months_payed_aux($table_name='facturascli', $num = 11)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND pagada=TRUE
          GROUP BY ".$sql_aux." ORDER BY mes ASC;");
       if($data)
       {
