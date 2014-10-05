@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : recibospro.xml
+    Description:
+        Estructura de la tabla recibospro.
+-->
+<tabla>
+   <columna>
+      <nombre>apartado</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>cifnif</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>ciudad</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codproveedor</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddir</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddivisa</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codigo</nombre>
+      <tipo>character varying(15)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codpais</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codpostal</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>ctaagencia</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>ctaentidad</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>cuenta</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>dc</nombre>
+      <tipo>character varying(2)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>direccion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>estado</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fechav</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idfactura</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idrecibo</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('recibospro_idrecibo_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idremesa</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>importe</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>importeeuros</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>nombreproveedor</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>numero</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>provincia</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>texto</nombre>
+      <tipo>text</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>recibospro_pkey</nombre>
+      <consulta>PRIMARY KEY (idrecibo)</consulta>
+   </restriccion>
+</tabla>

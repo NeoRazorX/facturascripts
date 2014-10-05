@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : formaspagorec.xml
+    Description:
+        Estructura de la tabla formaspagorec.
+-->
+<tabla>
+   <columna>
+      <nombre>codpago</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>genrecibos</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>numerorecibos</nombre>
+      <tipo>int</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codperiodo</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codcuenta</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>domiciliado</nombre>
+      <tipo>boolean</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>formaspagorec_pkey</nombre>
+      <consulta>PRIMARY KEY (codpago)</consulta>
+   </restriccion>
+</tabla>

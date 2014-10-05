@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : periodos.xml
+    Description:
+        Estructura de la tabla periodos.
+-->
+<tabla>
+   <columna>
+      <nombre>codperiodo</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>cadencia</nombre>
+      <tipo>int</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>periodos_pkey</nombre>
+      <consulta>PRIMARY KEY (codperiodo)</consulta>
+   </restriccion>
+</tabla>
