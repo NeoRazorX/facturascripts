@@ -46,7 +46,7 @@ class formaspagorec extends fs_controller
          $fp0->descripcion = $_POST['descripcion'];
          $fp0->genrecibos = $_POST['genrecibos'];
          $fp0->numerorecibos = $_POST['numerorecibos'];
-         $fp0->codperiodo = $_POST['numerorecibos'];
+         $fp0->codperiodo = $_POST['codperiodo'];
          $fp0->domiciliado = isset($_POST['domiciliado']);
          
          if( $fp0->save() )
