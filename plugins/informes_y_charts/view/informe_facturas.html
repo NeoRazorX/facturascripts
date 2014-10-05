@@ -56,18 +56,38 @@
       </div>
    </div>
    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
          <div class="panel panel-default">
             <div class="panel-heading">
                <h3 class="panel-title">Mejores clientes del mes</h3>
             </div>
             <div class="panel-body">
-               <div id="chart_clientes_del_mes">
+               <div id="chart_facturas_day">
                   <div class="row">
-                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_clientes_del_mes" height="100px"></canvas>
-                           <div id="legend_chart_clientes_del_mes"></div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Mejores clientes del mes</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_clientes_del_mes" height="100px"></canvas>
+                                 <div id="legend_chart_clientes_del_mes"></div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Mejores clientes del mes al corriente</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_clientes_del_mes_payed" height="100px"></canvas>
+                                 <div id="legend_chart_clientes_del_mes_payed"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -77,7 +97,7 @@
       </div>
    </div>
    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
          <div class="panel panel-default">
             <div class="panel-heading">
                <h3 class="panel-title">Facturación de los últimos días</h3>
@@ -86,15 +106,29 @@
                <div id="chart_facturas_day">
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_facturas_day" height="100px"></canvas>
-                           <div id="legend_chart_facturas_day"></div>
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación diaria</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_day" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_day"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
-                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_facturas_day_payed" height="100px"></canvas>
-                           <div id="legend_chart_facturas_day_payed"></div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación diaria al corriente</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_day_payed" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_day_payed"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -104,7 +138,7 @@
       </div>
    </div>
    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
          <div class="panel panel-default">
             <div class="panel-heading">
                <h3 class="panel-title">Facturación de los últimos meses</h3>
@@ -113,15 +147,29 @@
                <div id="chart_facturas_month">
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_facturas_month" height="100px"></canvas>
-                           <div id="legend_chart_facturas_month"></div>
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación mensual</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_month" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_month"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_facturas_month_payed" height="100px"></canvas>
-                           <div id="legend_chart_facturas_month_payed"></div>
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación mensual al corriente</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_month_payed" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_month_payed"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -131,7 +179,7 @@
       </div>
    </div>
    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
          <div class="panel panel-default">
             <div class="panel-heading">
                <h3 class="panel-title">Facturación de los últimos años</h3>
@@ -139,10 +187,30 @@
             <div class="panel-body">
                <div id="chart_facturas_year">
                   <div class="row">
-                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                        <div class="text-center">
-                           <canvas id="canvas_chart_facturas_year" height="100px"></canvas>
-                           <div id="legend_chart_facturas_year"></div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación anual</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_year" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_year"></div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center">
+                        <div class="panel panel-default">
+                           <div class="panel-heading">
+                              <h3 class="panel-title">Facturación anual al corriente</h3>
+                           </div>
+                           <div class="panel-body">
+                              <div class="text-center">
+                                 <canvas id="canvas_chart_facturas_year_payed" height="100px"></canvas>
+                                 <div id="legend_chart_facturas_year_payed"></div>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -151,6 +219,56 @@
          </div>
       </div>
    </div>
+   
+   <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+         <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Total compras mensual</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="text-center">
+                        <canvas id="canvas_chart_facturas_month_compras_pie" height="100px"></canvas>
+                        <div id="legend_chart_facturas_month_compras_pie"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Total ventas mensual</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="text-center">
+                        <canvas id="canvas_chart_facturas_month_ventas_pie" height="100px"></canvas>
+                        <div id="legend_chart_facturas_month_ventas_pie"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Total diferencia mensual</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="text-center">
+                        <canvas id="canvas_chart_facturas_month_pie" height="100px"></canvas>
+                        <div id="legend_chart_facturas_month_pie"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+         </div>
+      </div>
+   </div>
+   
 </div>
 
 <script>
@@ -164,6 +282,20 @@
             highlightFill: "rgba(125,234,125,0.75)",
             highlightStroke: "rgba(125,234,125,1)",
             data : [{loop="$fsc->stats_best_clients()"}{if="$counter<4"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
+         }
+      ]
+   }
+   
+   var barChartData_clientes_del_mes_payed = {
+      labels: [{loop="$fsc->stats_best_clients_payed()"}{if="$counter<4"}"{$value["nombrecliente"]}",{else}"{$value["nombrecliente"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Mejores clientes del mes",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,0.8)",
+            highlightFill: "rgba(125,234,125,0.75)",
+            highlightStroke: "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_best_clients_payed()"}{if="$counter<4"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
          }
       ]
    }
@@ -272,6 +404,57 @@
       ]
    }
    
+   {loop="$fsc->stats_this_month()"}
+   var pieData_last_month_compras = [
+         {
+            value: {$value["pro_neto"]},
+            color:"rgba(241,129,129,0.2)",
+            highlight: "rgba(241,129,129,1)",
+            label: "Total compras"
+         },
+         {
+            value: {$value["pro_totaliva"]},
+            color: "rgba(129,215,214,0.2)",
+            highlight: "rgba(129,215,214,1)",
+            label: "Total IVA compras"
+         }
+      ];
+   {/loop}
+   
+   {loop="$fsc->stats_this_month()"}
+   var pieData_last_month_ventas = [
+         {
+            value: {$value["cli_neto"]},
+            color:"rgba(125,234,125,0.2)",
+            highlight: "rgba(125,234,125,1)",
+            label: "Total ventas"
+         },
+         {
+            value: {$value["cli_totaliva"]},
+            color: "rgba(129,215,214,0.2)",
+            highlight: "rgba(129,215,214,1)",
+            label: "Total IVA ventas"
+         }
+      ];
+   {/loop}
+   
+   {loop="$fsc->stats_this_month()"}
+   var pieData_last_month = [
+         {
+            value: {$value["cli_neto"]-$value["pro_neto"]},
+            color:"rgba(241,161,65,0.2)",
+            highlight: "rgba(241,161,65,1)",
+            label: "Total diferencia (ventas-compras)"
+         },
+         {
+            value: {$value["cli_totaliva"]-$value["pro_totaliva"]},
+            color: "rgba(129,215,214,0.2)",
+            highlight: "rgba(129,215,214,1)",
+            label: "Total IVA diferencia (ventas-compras)"
+         }
+      ];
+   {/loop}
+   
    var lineChartData_last_years = {
       labels: [{loop="$fsc->stats_last_years()"}{if="$counter<5"}"{$value["year"]}",{else}"{$value["year"]}"{/if}{/loop}],
       datasets : [
@@ -298,20 +481,58 @@
       ]
    }
    
+   var lineChartData_last_years_payed = {
+      labels: [{loop="$fsc->stats_last_years_payed()"}{if="$counter<5"}"{$value["year"]}",{else}"{$value["year"]}"{/if}{/loop}],
+      datasets : [
+         {
+            label: "Total ventas anual",
+            fillColor : "rgba(125,234,125,0.2)",
+            strokeColor : "rgba(125,234,125,1)",
+            pointColor : "rgba(125,234,125,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(125,234,125,1)",
+            data : [{loop="$fsc->stats_last_years_payed()"}{if="$counter<5"}"{$value["total_cli"]}",{else}"{$value["total_cli"]}"{/if}{/loop}]
+         },
+         {
+            label: "Total compras anual",
+            fillColor : "rgba(241,129,129,0.2)",
+            strokeColor : "rgba(241,129,129,1)",
+            pointColor : "rgba(241,129,129,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(241,129,129,1)",
+            data : [{loop="$fsc->stats_last_years_payed()"}{if="$counter<5"}"{$value["total_pro"]}",{else}"{$value["total_pro"]}"{/if}{/loop}]
+         }
+      ]
+   }
+   
    var options = {
       responsive: true,
       animation: false,
-      tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
+      tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %> €",
+      multiTooltipTemplate: "<%if (datasetLabel){%><%=datasetLabel%>: <%}%><%= value %> €",
       segmentStrokeColor : "#f9f9f9",
-      legendTemplate :   "<ul>"
+      legendTemplate :   "<ul class=\"list-group\">"
                         +"<% for (var i=0; i<datasets.length; i++){%>"
-                        +"<li>"
-                           +"<span style=\"background-color:<%=datasets[i].fillColor%>\">"
-                              +"<%if(datasets[i].label){%><%=datasets[i].label%><%}%>"
-                           +"</span>"
+                        +"<li class=\"list-group-item\" style=\"background-color:<%=datasets[i].fillColor%>\">"
+                           +"<%if(datasets[i].label){%><%=datasets[i].label%><%}%> €"
                         +"</li>"
                         +"<%}%>"
                      +"</ul>"
+   }
+   
+   var options_pie = {
+      responsive: true,
+      animation: false,
+      tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %> €",
+      multiTooltipTemplate: "<%if (datasetLabel){%><%=datasetLabel%>: <%}%><%= value %> €",
+      legendTemplate : "<ul class=\"list-group\">"
+                      +"<% for (var i=0; i<segments.length; i++){%>"
+                      +"<li class=\"list-group-item\" style=\"background-color:<%=segments[i].fillColor%>\">"
+                         +"<%if(segments[i].label){%><%=segments[i].label%><%}%>"
+                      +"</li>"
+                      +"<%}%></ul>"
    }
    
    window.onload = function(){
@@ -319,6 +540,11 @@
       var Chart_bar_clientes_del_mes = new Chart(ctx_canvas_chart_clientes_del_mes).Bar(barChartData_clientes_del_mes, options);
       var Chart_legend_clientes_del_mes = document.getElementById('legend_chart_clientes_del_mes');
       Chart_legend_clientes_del_mes.innerHTML = Chart_bar_clientes_del_mes.generateLegend();
+      
+      var ctx_canvas_chart_clientes_del_mes_payed = document.getElementById("canvas_chart_clientes_del_mes_payed").getContext("2d");
+      var Chart_bar_clientes_del_mes_payed = new Chart(ctx_canvas_chart_clientes_del_mes_payed).Bar(barChartData_clientes_del_mes_payed, options);
+      var Chart_legend_clientes_del_mes_payed = document.getElementById('legend_chart_clientes_del_mes_payed');
+      Chart_legend_clientes_del_mes_payed.innerHTML = Chart_bar_clientes_del_mes_payed.generateLegend();
       
       var ctx_canvas_chart_facturas_day = document.getElementById("canvas_chart_facturas_day").getContext("2d");
       var Chart_lines_last_days = new Chart(ctx_canvas_chart_facturas_day).Line(lineChartData_last_days, options);
@@ -340,10 +566,30 @@
       var Chart_legend_last_month_payed = document.getElementById('legend_chart_facturas_month_payed');
       Chart_legend_last_month_payed.innerHTML = Chart_lines_last_months_payed.generateLegend();
       
+      var ctx_canvas_chart_facturas_month_compras_pie = document.getElementById("canvas_chart_facturas_month_compras_pie").getContext("2d");
+      var Chart_pie_last_months_compras = new Chart(ctx_canvas_chart_facturas_month_compras_pie).Pie(pieData_last_month_compras, options_pie);
+      var Chart_legend_last_month_compras_pie = document.getElementById('legend_chart_facturas_month_compras_pie');
+      Chart_legend_last_month_compras_pie.innerHTML = Chart_pie_last_months_compras.generateLegend();
+      
+      var ctx_canvas_chart_facturas_month_ventas_pie = document.getElementById("canvas_chart_facturas_month_ventas_pie").getContext("2d");
+      var Chart_lines_last_months_ventas_pie = new Chart(ctx_canvas_chart_facturas_month_ventas_pie).Pie(pieData_last_month_ventas, options_pie);
+      var Chart_legend_last_month_ventas_pie = document.getElementById('legend_chart_facturas_month_ventas_pie');
+      Chart_legend_last_month_ventas_pie.innerHTML = Chart_lines_last_months_ventas_pie.generateLegend();
+      
+      var ctx_canvas_chart_facturas_month_pie = document.getElementById("canvas_chart_facturas_month_pie").getContext("2d");
+      var Chart_lines_last_months_pie = new Chart(ctx_canvas_chart_facturas_month_pie).Pie(pieData_last_month, options_pie);
+      var Chart_legend_last_month_pie = document.getElementById('legend_chart_facturas_month_pie');
+      Chart_legend_last_month_pie.innerHTML = Chart_lines_last_months_pie.generateLegend();
+      
       var ctx_canvas_chart_facturas_year = document.getElementById("canvas_chart_facturas_year").getContext("2d");
       var Chart_lines_last_years = new Chart(ctx_canvas_chart_facturas_year).Line(lineChartData_last_years, options);
       var Chart_legend_last_years = document.getElementById('legend_chart_facturas_year');
       Chart_legend_last_years.innerHTML = Chart_lines_last_years.generateLegend();
+      
+      var ctx_canvas_chart_facturas_year_payed = document.getElementById("canvas_chart_facturas_year_payed").getContext("2d");
+      var Chart_lines_last_years_payed = new Chart(ctx_canvas_chart_facturas_year_payed).Line(lineChartData_last_years_payed, options);
+      var Chart_legend_last_years_payed = document.getElementById('legend_chart_facturas_year_payed');
+      Chart_legend_last_years_payed.innerHTML = Chart_lines_last_years_payed.generateLegend();
    }
 </script>
 
