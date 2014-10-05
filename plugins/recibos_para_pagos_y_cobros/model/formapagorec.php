@@ -28,6 +28,7 @@ class formapagorec extends fs_model
    public $descripcion;
    public $genrecibos;
    public $numerorecibos;
+   public $codperiodo;
    public $codcuenta;
    public $domiciliado;
 
@@ -40,6 +41,7 @@ class formapagorec extends fs_model
          $this->descripcion = $f['descripcion'];
          $this->genrecibos = $f['genrecibos'];
          $this->numerorecibos = $f['numerorecibos'];
+         $this->codperiodo = intval($g['codperiodo']);
          $this->codcuenta = $f['codcuenta'];
          $this->domiciliado = $this->str2bool($f['domiciliado']);
       }
@@ -49,6 +51,7 @@ class formapagorec extends fs_model
          $this->descripcion = '';
          $this->genrecibos = '';
          $this->numerorecibos = 0;
+         $this->codperiodo = 0;
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
       }
@@ -106,17 +109,19 @@ class formapagorec extends fs_model
             $sql = "UPDATE formaspagorec SET descripcion = ".$this->var2str($this->descripcion).
                ",genrecibos = ".$this->var2str($this->genrecibos).
                ",numerorecibos = ".$this->var2str($this->numerorecibos).
+               ",codperiodo = ".$this->var2str($this->codperiodo).
                ",codcuenta = ".$this->var2str($this->codcuenta).
                ",domiciliado = ".$this->var2str($this->domiciliado).
                " WHERE codpago = ".$this->var2str($this->codpago).";";
          }
          else
          {
-            $sql = "INSERT INTO formaspagorec (codpago,descripcion,genrecibos,numerorecibos,codcuenta,domiciliado) VALUES
+            $sql = "INSERT INTO formaspagorec (codpago,descripcion,genrecibos,numerorecibos,codperiodo,codcuenta,domiciliado) VALUES
                (".$this->var2str($this->codpago).",
                ".$this->var2str($this->descripcion).",
                ".$this->var2str($this->genrecibos).",
                ".$this->var2str($this->numerorecibos).",
+               ".$this->var2str($this->codperiodo).",
                ".$this->var2str($this->codcuenta).",
                ".$this->var2str($this->domiciliado).");";
          }
