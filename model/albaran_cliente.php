@@ -496,7 +496,7 @@ class albaran_cliente extends fs_model
       if($this->idfactura)
       {
          /// eliminamos la factura relacionada
-         return $this->db->exec("DELETE FROM facturascli WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         $this->db->exec("DELETE FROM facturascli WHERE idfactura = ".$this->var2str($this->idfactura).";");
       }
       
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($this->idalbaran).";");

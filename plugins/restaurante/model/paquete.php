@@ -289,14 +289,12 @@ class paquete extends fs_model
       if( $this->exists() )
          return TRUE;
       else
-         return $this->db->exec("INSERT INTO ".$this->table_name." (referencia)
-            VALUES (".$this->var2str($this->referencia).");");
+         return $this->db->exec("INSERT INTO ".$this->table_name." (referencia) VALUES (".$this->var2str($this->referencia).");");
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($this->referencia).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
    }
    
    public function all()

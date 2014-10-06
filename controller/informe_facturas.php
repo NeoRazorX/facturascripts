@@ -478,6 +478,7 @@ class informe_facturas extends fs_controller
    {
       $stats = array();
       $stats_cli = $this->stats_last_months_aux('facturascli');
+      $pagadas_cli = $this->stats_last_months_pagadas('facturascli');
       $stats_pro = $this->stats_last_months_aux('facturasprov');
       $meses = array(
           1 => 'ene',
@@ -499,7 +500,9 @@ class informe_facturas extends fs_controller
          $stats[$i] = array(
              'month' => $meses[ $value['month'] ],
              'total_cli' => round($value['total'], 2),
+             'impuestos_cli' => $value['totaliva'],
              'total_pro' => 0,
+             'impuestos_pro' => 0,
              'beneficios' => 0
          );
       }
@@ -507,7 +510,12 @@ class informe_facturas extends fs_controller
       foreach($stats_pro as $i => $value)
       {
          $stats[$i]['total_pro'] = round($value['total'], 2);
-         $stats[$i]['beneficios'] = $stats[$i]['total_cli'] - $stats[$i]['total_pro'];
+         $stats[$i]['impuestos_pro'] = $value['totaliva'];
+      }
+      
+      foreach($pagadas_cli as $i => $value)
+      {
+         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'] + $value['totaliva'], 2);
       }
       
       return $stats;
@@ -521,7 +529,7 @@ class informe_facturas extends fs_controller
       foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
       {
          $i = intval($date);
-         $stats[$i] = array('month' => $i, 'total' => 0);
+         $stats[$i] = array('month' => $i, 'total' => 0, 'totaliva' => 0);
       }
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
@@ -529,7 +537,7 @@ class informe_facturas extends fs_controller
       else
          $sql_aux = "DATE_FORMAT(fecha, '%m')";
       
-      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total, sum(totaliva) as totaliva
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
          AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
          GROUP BY ".$sql_aux." ORDER BY mes ASC;");
@@ -540,7 +548,43 @@ class informe_facturas extends fs_controller
             $i = intval($d['mes']);
             $stats[$i] = array(
                 'month' => $i,
-                'total' => floatval($d['total'])
+                'total' => floatval($d['total']),
+                'totaliva' => floatval($d['totaliva'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_months_pagadas($table_name='facturascli', $num = 11)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('01-m-Y').'-'.$num.' month'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('month' => $i, 'total' => 0, 'totaliva' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMMM')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%m')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total, sum(totaliva) as totaliva
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND pagada = true
+         GROUP BY ".$sql_aux." ORDER BY mes ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['mes']);
+            $stats[$i] = array(
+                'month' => $i,
+                'total' => floatval($d['total']),
+                'totaliva' => floatval($d['totaliva'])
             );
          }
       }
@@ -551,6 +595,7 @@ class informe_facturas extends fs_controller
    {
       $stats = array();
       $stats_cli = $this->stats_last_years_aux('facturascli');
+      $pagadas_cli = $this->stats_last_years_pagadas('facturascli');
       $stats_pro = $this->stats_last_years_aux('facturasprov');
       
       foreach($stats_cli as $i => $value)
@@ -558,7 +603,9 @@ class informe_facturas extends fs_controller
          $stats[$i] = array(
              'year' => $value['year'],
              'total_cli' => round($value['total'], 2),
+             'impuestos_cli' => $value['totaliva'],
              'total_pro' => 0,
+             'impuestos_pro' => 0,
              'beneficios' => 0
          );
       }
@@ -566,7 +613,12 @@ class informe_facturas extends fs_controller
       foreach($stats_pro as $i => $value)
       {
          $stats[$i]['total_pro'] = round($value['total'], 2);
-         $stats[$i]['beneficios'] = $stats[$i]['total_cli'] - $stats[$i]['total_pro'];
+         $stats[$i]['impuestos_pro'] = $value['totaliva'];
+      }
+      
+      foreach($pagadas_cli as $i => $value)
+      {
+         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'] + $value['totaliva'], 2);
       }
       
       return $stats;
@@ -580,7 +632,7 @@ class informe_facturas extends fs_controller
       foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
       {
          $i = intval($date);
-         $stats[$i] = array('year' => $i, 'total' => 0);
+         $stats[$i] = array('year' => $i, 'total' => 0, 'totaliva' => 0);
       }
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
@@ -588,7 +640,7 @@ class informe_facturas extends fs_controller
       else
          $sql_aux = "DATE_FORMAT(fecha, '%Y')";
       
-      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total
+      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total, sum(totaliva) as totaliva
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
          AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))."
          GROUP BY ".$sql_aux." ORDER BY ano ASC;");
@@ -599,7 +651,43 @@ class informe_facturas extends fs_controller
             $i = intval($d['ano']);
             $stats[$i] = array(
                 'year' => $i,
-                'total' => floatval($d['total'])
+                'total' => floatval($d['total']),
+                'totaliva' => floatval($d['totaliva'])
+            );
+         }
+      }
+      return $stats;
+   }
+   
+   public function stats_last_years_pagadas($table_name='facturascli', $num = 4)
+   {
+      $stats = array();
+      $desde = Date('d-m-Y', strtotime( Date('d-m-Y').'-'.$num.' year'));
+      
+      foreach($this->date_range($desde, Date('d-m-Y'), '+1 year', 'Y') as $date)
+      {
+         $i = intval($date);
+         $stats[$i] = array('year' => $i, 'total' => 0, 'totaliva' => 0);
+      }
+      
+      if( strtolower(FS_DB_TYPE) == 'postgresql')
+         $sql_aux = "to_char(fecha,'FMYYYY')";
+      else
+         $sql_aux = "DATE_FORMAT(fecha, '%Y')";
+      
+      $data = $this->db->select("SELECT ".$sql_aux." as ano, sum(total) as total, sum(totaliva) as totaliva
+         FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
+         AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND pagada = true
+         GROUP BY ".$sql_aux." ORDER BY ano ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $i = intval($d['ano']);
+            $stats[$i] = array(
+                'year' => $i,
+                'total' => floatval($d['total']),
+                'totaliva' => floatval($d['totaliva'])
             );
          }
       }

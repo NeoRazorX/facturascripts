@@ -356,8 +356,7 @@ class subcuenta extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";");
    }
    
    public function clean_cache()

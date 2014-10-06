@@ -281,8 +281,7 @@ class proveedor extends fs_model
       foreach($this->get_direcciones() as $dir)
          $dir->delete();
       
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codproveedor = ".$this->var2str($this->codproveedor).";");
    }
    
    private function clean_cache()

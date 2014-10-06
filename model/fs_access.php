@@ -65,24 +65,26 @@ class fs_access extends fs_model
    public function save()
    {
       if( $this->exists() )
+      {
          return TRUE;
+      }
       else
+      {
          return $this->db->exec("INSERT INTO ".$this->table_name." (fs_user,fs_page) VALUES
             (".$this->var2str($this->fs_user).",".$this->var2str($this->fs_page).");");
+      }
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE fs_user = ".$this->var2str($this->fs_user).
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($this->fs_user).
               " AND fs_page = ".$this->var2str($this->fs_page).";");
    }
    
    public function all_from_nick($n='')
    {
       $accesslist = array();
-      $access = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE fs_user = ".$this->var2str($n).";");
+      $access = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($n).";");
       if($access)
       {
          foreach($access as $a)

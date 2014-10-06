@@ -650,7 +650,7 @@ class factura_proveedor extends fs_model
       if($this->idasiento)
       {
          /// eliminamos el asiento asociado
-         return $this->db->exec("DELETE FROM co_asientos WHERE idasiento = ".$this->var2str($this->idasiento).";");
+         $this->db->exec("DELETE FROM co_asientos WHERE idasiento = ".$this->var2str($this->idasiento).";");
       }
       
       /// desvinculamos el/los albaranes asociados

@@ -167,8 +167,7 @@ class divisa extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    private function clean_cache()

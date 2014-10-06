@@ -132,8 +132,7 @@ class clan_familiar extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE codclan = ".$this->var2str($this->codclan).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codclan = ".$this->var2str($this->codclan).";");
    }
    
    public function all()
@@ -240,8 +239,7 @@ class cliente2clan extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE codclan = ".$this->var2str($this->codclan).
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codclan = ".$this->var2str($this->codclan).
               " AND codcliente = ".$this->var2str($this->codcliente).";");
    }
    

@@ -153,8 +153,7 @@ class secuencia extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idsec = ".$this->var2str($this->idsec).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsec = ".$this->var2str($this->idsec).";");
    }
 }
 
@@ -268,8 +267,7 @@ class secuencia_contabilidad extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsecuencia = ".$this->var2str($this->idsecuencia).";");
    }
 }
 
@@ -428,15 +426,13 @@ class secuencia_ejercicio extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE id = ".$this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all_from_ejercicio($eje)
    {
       $seclist = array();
-      $secs = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codejercicio = ".$this->var2str($eje).";");
+      $secs = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($eje).";");
       if($secs)
       {
          foreach($secs as $s)

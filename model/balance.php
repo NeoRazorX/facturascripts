@@ -144,8 +144,7 @@ class balance extends fs_model
    
    public function delete()
    {
-      return $this->db->select("DELETE FROM ".$this->table_name.
-         " WHERE codbalance = ".$this->var2str($this->codbalance).";");
+      return $this->db->select("DELETE FROM ".$this->table_name." WHERE codbalance = ".$this->var2str($this->codbalance).";");
    }
    
    public function all()
@@ -250,8 +249,7 @@ class balance_cuenta extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".
-              $this->var2str($this->id).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function all()

@@ -171,20 +171,20 @@ class regularizacion_iva extends fs_model
             $as0->delete();
       }
       
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-         " WHERE idregiva = ".$this->var2str($this->idregiva).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idregiva = ".$this->var2str($this->idregiva).";");
    }
    
    public function all()
    {
       $reglist = array();
-      $regivas = $this->db->select("SELECT * FROM ".$this->table_name.
-              " ORDER BY fechafin DESC;");
+      
+      $regivas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY fechafin DESC;");
       if($regivas)
       {
          foreach($regivas as $r)
             $reglist[] = new regularizacion_iva($r);
       }
+      
       return $reglist;
    }
 }

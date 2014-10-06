@@ -470,11 +470,12 @@ class asiento extends fs_model
             $fac->save();
          }
       }
+      
       /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
       foreach($this->get_partidas() as $p)
          $p->delete();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idasiento = ".$this->var2str($this->idasiento).";");
+      
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
    }
    
    public function search($query, $offset=0)

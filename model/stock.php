@@ -164,15 +164,13 @@ class stock extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE idstock = ".$this->var2str($this->idstock).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function all_from_articulo($ref)
    {
       $stocklist = array();
-      $stocks = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE referencia = ".$this->var2str($ref)." ORDER BY codalmacen ASC;");
+      $stocks = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref)." ORDER BY codalmacen ASC;");
       if($stocks)
       {
          foreach($stocks as $s)

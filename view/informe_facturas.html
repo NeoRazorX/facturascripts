@@ -62,93 +62,108 @@
    }
 </script>
 
-<div class="container-fluid" style="margin-top: 15px;">
-   <div class="row">
-      <div class="col-lg-6 col-md-6 col-sm-6">
-         <form action="{$fsc->url()}" method="post" target="_blank" class="form">
-            <input type="hidden" name="listado" value="facturascli"/>
-            <div class="panel panel-info">
-               <div class="panel-heading">
-                  <h3 class="panel-title">Facturas emitidas de cliente</h3>
-               </div>
-               <div class="panel-body">
-                  <div class="form-group col-md-6">
-                     Desde:
-                     <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+   <li class="active"><a href="#home" role="tab" data-toggle="tab">Gráficos</a></li>
+   <li><a href="#listados" role="tab" data-toggle="tab">Listados</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+   <div class="tab-pane active" id="home">
+      <div class="container-fluid" style="margin-top: 15px;">
+         <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Facturación de los últimos días</h3>
                   </div>
-                  <div class="form-group col-md-6">
-                     Hasta:
-                     <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                  <div class="panel-body">
+                     <div id="chart_facturas_day"></div>
                   </div>
-               </div>
-               <div class="panel-footer">
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
-                     <span class="glyphicon glyphicon-eye-open"></span>
-                     &nbsp; Mostrar
-                  </button>
                </div>
             </div>
-         </form>
-      </div>
-      <div class="col-lg-6 col-md-6 col-sm-6">
-         <form action="{$fsc->url()}" method="post" target="_blank" class="form">
-            <input type="hidden" name="listado" value="facturasprov"/>
-            <div class="panel panel-info">
-               <div class="panel-heading">
-                  <h3 class="panel-title">Facturas recibidas de proveedor</h3>
-               </div>
-               <div class="panel-body">
-                  <div class="form-group col-md-6">
-                     Desde:
-                     <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+         </div>
+         <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Facturación de los últimos meses</h3>
                   </div>
-                  <div class="form-group col-md-6">
-                     Hasta:
-                     <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                  <div class="panel-body">
+                     <div id="chart_facturas_month"></div>
                   </div>
                </div>
-               <div class="panel-footer">
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
-                     <span class="glyphicon glyphicon-eye-open"></span>
-                     &nbsp; Mostrar
-                  </button>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Facturación de los últimos años</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div id="chart_facturas_year"></div>
+                  </div>
                </div>
-            </div>
-         </form>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
-         <div class="panel panel-default">
-            <div class="panel-heading">
-               <h3 class="panel-title">Facturación de los últimos días</h3>
-            </div>
-            <div class="panel-body">
-               <div id="chart_facturas_day"></div>
             </div>
          </div>
       </div>
    </div>
-   <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
-         <div class="panel panel-default">
-            <div class="panel-heading">
-               <h3 class="panel-title">Facturación de los últimos meses</h3>
+   <div class="tab-pane" id="listados">
+      <div class="container-fluid" style="margin-top: 15px;">
+         <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+               <form action="{$fsc->url()}" method="post" target="_blank" class="form">
+                  <input type="hidden" name="listado" value="facturascli"/>
+                  <div class="panel panel-info">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">Facturas emitidas de cliente</h3>
+                     </div>
+                     <div class="panel-body">
+                        <div class="form-group col-md-6">
+                           Desde:
+                           <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                           Hasta:
+                           <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                        </div>
+                     </div>
+                     <div class="panel-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
+                           <span class="glyphicon glyphicon-eye-open"></span>
+                           &nbsp; Mostrar
+                        </button>
+                     </div>
+                  </div>
+               </form>
             </div>
-            <div class="panel-body">
-               <div id="chart_facturas_month"></div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
-         <div class="panel panel-default">
-            <div class="panel-heading">
-               <h3 class="panel-title">Facturación de los últimos años</h3>
-            </div>
-            <div class="panel-body">
-               <div id="chart_facturas_year"></div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+               <form action="{$fsc->url()}" method="post" target="_blank" class="form">
+                  <input type="hidden" name="listado" value="facturasprov"/>
+                  <div class="panel panel-info">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">Facturas recibidas de proveedor</h3>
+                     </div>
+                     <div class="panel-body">
+                        <div class="form-group col-md-6">
+                           Desde:
+                           <input class="form-control datepicker" type="text" name="dfecha" value="{$fsc->desde}" size="12"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                           Hasta:
+                           <input class="form-control datepicker" type="text" name="hfecha" value="{$fsc->hasta}" size="12"/>
+                        </div>
+                     </div>
+                     <div class="panel-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.form.submit();">
+                           <span class="glyphicon glyphicon-eye-open"></span>
+                           &nbsp; Mostrar
+                        </button>
+                     </div>
+                  </div>
+               </form>
             </div>
          </div>
       </div>

@@ -170,8 +170,7 @@ class almacen extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-              " WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
    private function clean_cache()

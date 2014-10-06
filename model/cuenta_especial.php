@@ -92,8 +92,7 @@ class cuenta_especial extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name.
-            " WHERE idcuentaesp = ".$this->var2str($this->idcuentaesp).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idcuentaesp = ".$this->var2str($this->idcuentaesp).";");
    }
    
    public function all()

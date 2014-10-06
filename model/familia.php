@@ -134,8 +134,7 @@ class familia extends fs_model
    public function delete()
    {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name."
-         WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codfamilia = ".$this->var2str($this->codfamilia).";");
    }
    
    private function clean_cache()
