@@ -90,9 +90,9 @@
                <th>Eliminar</th>
                <th class="text-left">Código</th>
                <th class="text-left">Descripción</th>
-               <th>Generar Recibos</th
+               <th>Generar Recibos</th>
                <th class="text-right" width="120">Número Recibos</th>
-               <th>Periodo</th>
+               <th width="160">Periodo</th>
                <th>Domiciliado</th>
             </tr>
          </thead>
@@ -114,7 +114,7 @@
             </td>
             <td><input class="form-control text-right" type="number" name="numerorecibos_{$counter}" value="{$value->numerorecibos}" autocomplete="off"/></td>
             <td>
-                <select class="form-control" name="codperiodo">
+                <select class="form-control" name="codperiodo_{$counter}">
                 {loop="$fsc->periodo->all()"}
                    {if condition="$value2->codperiodo == $value1->codperiodo"}
                    <option value="{$value2->codperiodo}" selected="selected">{$value2->descripcion}</option>

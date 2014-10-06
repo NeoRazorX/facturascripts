@@ -34,6 +34,7 @@ class formaspagorec extends fs_controller
    protected function process()
    {
       $this->formapagorec = new formapagorec();
+      $this->periodo = new periodo();
       
       if( isset($_POST['codpago']) )
       {

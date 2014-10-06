@@ -41,7 +41,7 @@ class formapagorec extends fs_model
          $this->descripcion = $f['descripcion'];
          $this->genrecibos = $f['genrecibos'];
          $this->numerorecibos = $f['numerorecibos'];
-         $this->codperiodo = intval($g['codperiodo']);
+         $this->codperiodo = $f['codperiodo'];
          $this->codcuenta = $f['codcuenta'];
          $this->domiciliado = $this->str2bool($f['domiciliado']);
       }
@@ -51,7 +51,7 @@ class formapagorec extends fs_model
          $this->descripcion = '';
          $this->genrecibos = '';
          $this->numerorecibos = 0;
-         $this->codperiodo = 0;
+         $this->codperiodo = 'N/A';
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
       }
@@ -145,7 +145,7 @@ class formapagorec extends fs_model
    
    public function all()
    {
-      $listaformas = $this->cache->get_array('m_forma_pago_rec_all');
+      $listaformas = array();
       if( !$listaformas )
       {
          $formas = $this->db->select("SELECT * FROM formaspagorec ORDER BY codpago ASC;");
@@ -154,7 +154,6 @@ class formapagorec extends fs_model
             foreach($formas as $f)
                $listaformas[] = new formapagorec($f);
          }
-         $this->cache->set('m_forma_pago_rec_all', $listaformas);
       }
       return $listaformas;
    }
