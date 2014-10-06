@@ -13,7 +13,7 @@
 
 <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
    <input type="hidden" name="modpages" value="TRUE"/>
-   <div class="container-fluid" style="margin-bottom: 20px;">
+   <div class="container-fluid" style="margin-top: 10px; margin-bottom: 20px;">
       <div class="row">
          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="btn-group">
@@ -24,6 +24,11 @@
                   <span class="glyphicon glyphicon-unchecked"></span>
                </button>
             </div>
+            
+            <a href="index.php?page=admin_plugins" class="btn btn-sm btn-default">
+               <span class="glyphicon glyphicon-list-alt"></span>
+               &nbsp; Plugins
+            </a>
          </div>
          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
@@ -59,8 +64,8 @@
                {/if}
             </td>
             <td>{$value->version}</td>
-            <td align="center">{if condition="$value->important"}Si{else}-{/if}</td>
-            <td align="center">{if condition="$value->exists"}Si{else}-{/if}</td>
+            <td class="text-center">{if condition="$value->important"}Si{else}-{/if}</td>
+            <td class="text-center">{if condition="$value->exists"}Si{else}-{/if}</td>
          </tr>
          {/loop}
       </table>

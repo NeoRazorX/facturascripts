@@ -69,16 +69,16 @@
       <thead>
          <tr>
             <th class="text-left">Código + Nombre</th>
-            <th>Fecha de inicio</th>
-            <th>Fecha fin</th>
+            <th class="text-center">Fecha de inicio</th>
+            <th class="text-center">Fecha fin</th>
             <th class="text-right">Estado</th>
          </tr>
       </thead>
       {loop="$fsc->ejercicio->all()"}
       <tr>
          <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
-         <td align="center">{$value->fechainicio}</td>
-         <td align="center">{$value->fechafin}</td>
+         <td class="text-center">{$value->fechainicio}</td>
+         <td class="text-center">{$value->fechafin}</td>
          <td class="text-right">{$value->estado}</td>
       </tr>
       {/loop}

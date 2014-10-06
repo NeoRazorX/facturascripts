@@ -35,6 +35,8 @@ class informe_articulos extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->articulo = new articulo();
       $this->stats = $this->stats();
       $linea_alb_cli = new linea_albaran_cliente();

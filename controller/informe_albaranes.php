@@ -29,6 +29,8 @@ class informe_albaranes extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       /// declaramos los objetos sólo para asegurarnos de que existen las tablas
       $albaran_cli = new albaran_cliente();
       $albaran_pro = new albaran_proveedor();

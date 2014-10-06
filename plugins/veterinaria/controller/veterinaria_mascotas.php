@@ -89,16 +89,18 @@ class veterinaria_mascotas extends fs_controller
    
    private function share_extensions()
    {
-      /// cargamos la extensión para clientes
+      /// añadimos la extensión para clientes
+      $extension = array(
+          'from' => __CLASS__,
+          'to' => 'ventas_cliente',
+          'type' => 'button',
+          'name' => 'mascotas_cliente',
+          'text' => 'Mascotas'
+      );
       $fsext0 = new fs_extension();
-      if( !$fsext0->get_by(__CLASS__, 'ventas_cliente') )
+      if( !$fsext0->array_save($extension) )
       {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'ventas_cliente';
-         $fsext->type = 'button';
-         $fsext->text = 'Mascotas';
-         $fsext->save();
+         $this->new_error_msg('Imposible guardar los datos de la extensión.');
       }
    }
 }

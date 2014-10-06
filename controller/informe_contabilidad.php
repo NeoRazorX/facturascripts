@@ -31,6 +31,7 @@ class informe_contabilidad extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->ejercicio = new ejercicio();
       
       if( isset($_GET['balance']) AND isset($_GET['eje']) )

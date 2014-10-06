@@ -799,13 +799,13 @@ class informe_facturas extends fs_controller
       foreach($stats_cli as $i => $value)
       {
          $stats[$i] = array(
-                'month' => $meses[ $value['month'] ],
-                'cli_neto' => round($value['neto'], 2),
-                'cli_totaliva' => round($value['totaliva'], 2),
-                'cli_total' => round($value['total'], 2),
-                'pro_neto' => 0,
-                'pro_totaliva' => 0,
-                'pro_total' => 0
+             'month' => $meses[ $value['month'] ],
+             'cli_neto' => round($value['neto'], 2),
+             'cli_totaliva' => round($value['totaliva'], 2),
+             'cli_total' => round($value['total'], 2),
+             'pro_neto' => 0,
+             'pro_totaliva' => 0,
+             'pro_total' => 0
          );
       }
       
@@ -827,7 +827,7 @@ class informe_facturas extends fs_controller
       foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
       {
          $i = intval($date);
-         $stats[$i] = array('month' => $i, 'total' => 0);
+         $stats[$i] = array('month' => $i, 'neto' => 0, 'totaliva' => 0, 'total' => 0);
       }
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')

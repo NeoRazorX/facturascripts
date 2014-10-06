@@ -29,9 +29,8 @@ class admin_pages extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->demo_warnign_showed = FALSE;
-      
-      $this->buttons[] = new fs_button('b_plugins', 'Plugins', 'index.php?page=admin_plugins');
       
       if( isset($_POST['modpages']) )
       {

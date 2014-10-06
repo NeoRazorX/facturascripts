@@ -206,36 +206,37 @@ class ventas_presupuestos extends fs_controller
    
    private function share_extension()
    {
-      /// cargamos la extensión para clientes
+      /// añadimos las extensiones para clientes, agentes y artículos
+      $extensiones = array(
+          array(
+              'from' => __CLASS__,
+              'to' => 'ventas_cliente',
+              'type' => 'button',
+              'name' => 'presupuestos_cliente',
+              'text' => ucfirst(FS_PRESUPUESTOS)
+          ),
+          array(
+              'from' => __CLASS__,
+              'to' => 'admin_agente',
+              'type' => 'button',
+              'name' => 'presupuestos_agente',
+              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente'
+          ),
+          array(
+              'from' => __CLASS__,
+              'to' => 'ventas_articulo',
+              'type' => 'button',
+              'name' => 'presupuestos_articulo',
+              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente'
+          ),
+      );
       $fsext0 = new fs_extension();
-      if( !$fsext0->get_by(__CLASS__, 'ventas_cliente') )
+      foreach($extensiones as $ext)
       {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'ventas_cliente';
-         $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_PRESUPUESTOS);
-         $fsext->save();
-      }
-      
-      if( !$fsext0->get_by(__CLASS__, 'admin_agente') )
-      {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'admin_agente';
-         $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de cliente';
-         $fsext->save();
-      }
-      
-      if( !$fsext0->get_by(__CLASS__, 'ventas_articulo') )
-      {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'ventas_articulo';
-         $fsext->type = 'button';
-         $fsext->text = ucfirst(FS_PRESUPUESTOS).' de cliente';
-         $fsext->save();
+         if( !$fsext0->array_save($ext) )
+         {
+            $this->new_error_msg('Imposible guardar los datos de la extensión '.$ext['name'].'.');
+         }
       }
    }
 }

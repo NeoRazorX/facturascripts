@@ -71,7 +71,13 @@ class fs_user extends fs_model
          $this->last_browser = $a['last_browser'];
          $this->fs_page = $a['fs_page'];
          $this->codejercicio = $a['codejercicio'];
-         $this->template = $a['template'];
+         
+         if( isset($a['template']) )
+         {
+            $this->template = $a['template'];
+         }
+         else
+            $this->template = 'bootstrap-yeti.css';
       }
       else
       {

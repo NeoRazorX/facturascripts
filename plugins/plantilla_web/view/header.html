@@ -28,6 +28,7 @@
          return number_format(numero, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
       }
    </script>
+   {loop="$fsc->head_extensions"}{$value->text}{/loop}
 </head>
 <body>
    <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">

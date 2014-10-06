@@ -71,10 +71,10 @@
       <tr>
          <td><a href="{$value->url()}">{$value->nick}</a></td>
          <td>{$value->get_agente_fullname()}</td>
-         <td align="center">{if condition="$value->admin"}Si{else}-{/if}</td>
-         <td align="center">{$value->last_ip}</td>
+         <td class="text-center">{if condition="$value->admin"}Si{else}-{/if}</td>
+         <td class="text-center">{$value->last_ip}</td>
          <td>{$value->fs_page}</td>
-         <td align="center">{$value->codejercicio}</td>
+         <td class="text-center">{$value->codejercicio}</td>
          <td class="text-right">{$value->show_last_login()}</td>
       </tr>
       {/loop}

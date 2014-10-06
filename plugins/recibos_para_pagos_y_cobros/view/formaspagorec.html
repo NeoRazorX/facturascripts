@@ -98,7 +98,7 @@
          </thead>
          {loop="$fsc->formapagorec->all()"}
          <tr>
-            <td align="center">
+            <td class="text-center">
                <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
             </td>
             <td>
@@ -124,7 +124,7 @@
                 {/loop}
                 </select>
             </td>
-            <td align="center">
+            <td class="text-center">
                <input type="checkbox" name="domiciliado_{$counter}" value="TRUE"{if condition="$value->domiciliado"} checked="TRUE"{/if}/>
             </td>
          </tr>

@@ -94,6 +94,8 @@ class linea_iva_factura_proveedor extends fs_model
    
    public function factura_test($idfactura, $neto, $totaliva, $totalrecargo)
    {
+      $status = TRUE;
+      
       $li_neto = 0;
       $li_iva = 0;
       $li_recargo = 0;
@@ -126,6 +128,8 @@ class linea_iva_factura_proveedor extends fs_model
          $this->new_error_msg("La suma de los totalrecargo de las líneas de IVA debería ser: ".$totalrecargo);
          $status = FALSE;
       }
+      
+      return $status;
    }
    
    public function save()

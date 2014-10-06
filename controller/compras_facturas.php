@@ -188,36 +188,37 @@ class compras_facturas extends fs_controller
    
    private function share_extension()
    {
-      /// cargamos la extensión para clientes
+      /// añadimos las extensiones para proveedores, agentes y artículos
+      $extensiones = array(
+          array(
+              'from' => __CLASS__,
+              'to' => 'compras_proveedor',
+              'type' => 'button',
+              'name' => 'facturas_proveedor',
+              'text' => 'Facturas'
+          ),
+          array(
+              'from' => __CLASS__,
+              'to' => 'admin_agente',
+              'type' => 'button',
+              'name' => 'facturas_agente',
+              'text' => 'Facturas de proveedor'
+          ),
+          array(
+              'from' => __CLASS__,
+              'to' => 'ventas_articulo',
+              'type' => 'button',
+              'name' => 'facturas_articulo',
+              'text' => 'Facturas de proveedor'
+          )
+      );
       $fsext0 = new fs_extension();
-      if( !$fsext0->get_by(__CLASS__, 'compras_proveedor') )
+      foreach($extensiones as $ext)
       {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'compras_proveedor';
-         $fsext->type = 'button';
-         $fsext->text = 'Facturas';
-         $fsext->save();
-      }
-      
-      if( !$fsext0->get_by(__CLASS__, 'admin_agente') )
-      {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'admin_agente';
-         $fsext->type = 'button';
-         $fsext->text = 'Facturas de proveedor';
-         $fsext->save();
-      }
-      
-      if( !$fsext0->get_by(__CLASS__, 'ventas_articulo') )
-      {
-         $fsext = new fs_extension();
-         $fsext->from = __CLASS__;
-         $fsext->to = 'ventas_articulo';
-         $fsext->type = 'button';
-         $fsext->text = 'Facturas de proveedor';
-         $fsext->save();
+         if( !$fsext0->array_save($ext) )
+         {
+            $this->new_error_msg('Imposible guardar los datos de la extensión '.$ext['name'].'.');
+         }
       }
    }
 }

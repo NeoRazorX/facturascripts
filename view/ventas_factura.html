@@ -284,12 +284,8 @@
             <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
             <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
             <td class="text-right">{$value->iva} %</td>
-            {if condition="$fsc->cliente->recargo"}
             <td class="text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
-            {/if}
-            {if condition="$fsc->factura->irpf>0"}
             <td class="text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
-            {/if}
             <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
          </tr>
          {/loop}
@@ -297,12 +293,8 @@
             <td colspan="5"></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
-            {if condition="$fsc->cliente->recargo"}
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totalrecargo, $fsc->factura->coddivisa)}</b></td>
-            {/if}
-            {if condition="$fsc->factura->irpf>0"}
             <td class="text-right"><b>-{$fsc->show_precio($fsc->factura->totalirpf, $fsc->factura->coddivisa)}</b></td>
-            {/if}
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
          </tr>
       </table>
