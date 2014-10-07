@@ -49,6 +49,7 @@ class empresa extends fs_model
    public $codedi;
    public $cifnif;
    public $nombre;
+   public $nombrecorto;
    public $lema;
    public $horario;
    public $pie_factura;
@@ -92,6 +93,7 @@ class empresa extends fs_model
          $this->codedi = $e[0]['codedi'];
          $this->cifnif = $e[0]['cifnif'];
          $this->nombre = $e[0]['nombre'];
+         $this->nombrecorto = $e[0]['nombrecorto'];
          $this->lema = $e[0]['lema'];
          $this->horario = $e[0]['horario'];
          $this->pie_factura = $e[0]['pie_factura'];
@@ -101,11 +103,13 @@ class empresa extends fs_model
    protected function install()
    {
       $this->clean_cache();
+      $e = mt_rand(1, 9999);
       return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
          codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,
-         ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,lema,horario) VALUES
+         ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario) VALUES
          (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','http://code.google.com/p/facturascripts/',NULL,NULL,
-         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa ".mt_rand(1, 9999)." S.L.','','');";
+         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z', 
+         'Empresa ".$e." S.L.', 'E-".$e."','','');";
    }
    
    public function url()
@@ -137,6 +141,7 @@ class empresa extends fs_model
       $status = FALSE;
       
       $this->nombre = $this->no_html($this->nombre);
+      $this->nombrecorto = $this->no_html($this->nombrecorto);
       $this->administrador = $this->no_html($this->administrador);
       $this->apartado = $this->no_html($this->apartado);
       $this->cifnif = $this->no_html($this->cifnif);
@@ -156,6 +161,8 @@ class empresa extends fs_model
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
          $this->new_error_msg("Nombre de empresa no válido.");
+      else if( strlen($this->nombre) < strlen($this->nombrecorto) )
+         $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");
       else
          $status = TRUE;
       
@@ -167,7 +174,9 @@ class empresa extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
-         $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+         $sql = "UPDATE ".$this->table_name." SET 
+            nombre = ".$this->var2str($this->nombre).",
+            nombrecorto = ".$this->var2str($this->nombrecorto).",
             cifnif = ".$this->var2str($this->cifnif).", codedi = ".$this->var2str($this->codedi).",
             administrador = ".$this->var2str($this->administrador).",
             direccion = ".$this->var2str($this->direccion).",

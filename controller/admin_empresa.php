@@ -75,6 +75,7 @@ class admin_empresa extends fs_controller
          
          /// guardamos los datos de la empresa
          $this->empresa->nombre = $_POST['nombre'];
+         $this->empresa->nombrecorto = $_POST['nombrecorto'];
          $this->empresa->cifnif = $_POST['cifnif'];
          $this->empresa->administrador = $_POST['administrador'];
          $this->empresa->codpais = $_POST['codpais'];

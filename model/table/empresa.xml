@@ -132,6 +132,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>nombrecorto</nombre>
+      <tipo>character varying(32)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>pie_factura</nombre>
       <tipo>character varying(250)</tipo>
       <nulo>YES</nulo>
