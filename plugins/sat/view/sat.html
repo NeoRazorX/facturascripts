@@ -101,30 +101,81 @@
       });
    });
 </script>
+<script type="text/javascript">
+    $(document).ready(function() {
+       
+      if(window.location.hash.substring(1) == 'detalles')
+      {
+         $("#tabs").tabs("active", "#detalles");
+      }
+      else
+      {
+          $('#tabs').tab();
+      }
+    });
+    
+</script>    
 
-<form name="f_nuevo_sat" class="form" action="index.php" method="get">
-   <input type="hidden" name="codcliente"/>
-   <input type="hidden" name="opcion" value="nuevosat"/>
-   <input type="hidden" name="page" value="{$fsc->page->name}"/>
+
+
    <div class="modal" id="modal_nuevo_sat">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Selecciona el cliente</h4>
             </div>
+            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+               <li class="active"><a href="#buscar" data-toggle="tab"><span class="glyphicon glyphicon-search"></span> Buscar</a></li>
+               <li><a href="#agregar" data-toggle="tab"><span class="glyphicon glyphicon-plus"></span><span class="badge"></span> Agregar Cliente</a></li>
+            </ul>
             <div class="modal-body">
-               <div class="form-group">
-                  <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="Buscar..." autocomplete="off"/>
-                  <p class="help-block"><a href="{$fsc->cliente->url()}#nuevo" target="_blank">Nuevo cliente</a>.</p>
-               </div>
+              <div id="my-tab-content" class="tab-content">
+                <div class="tab-pane active" id="buscar">
+                    <form name="f_nuevo_sat" class="form" action="index.php" method="get">
+                    <input type="hidden" name="codcliente"/>
+                    <input type="hidden" name="opcion" value="nuevosat"/>
+                    <input type="hidden" name="page" value="{$fsc->page->name}"/>
+                    <div class="form-group col-lg-12">
+                        <label>Buscar cliente:</label>
+                        <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="Buscar..." autocomplete="off"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                            <span class="glyphicon glyphicon-play"></span>
+                            &nbsp; Selecionar
+                        </button>
+                    </div>
+                    </form>
+                </div>
+                <div class="tab-pane" id="agregar">
+                    <form name="f_nuevo_cliente" action="{$fsc->url()}&opcion=nuevosat" method="post" class="form">
+                    <div class="form-group col-lg-12">
+                        
+                        <label>Nuevo cliente:</label>
+                        <div class="form-group">
+                            Nombre:
+                            <input class="form-control" type="text" name="nombre" size="30" autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                            Telefono:
+                            <input class="form-control" type="text" name="telefono1" size="9" autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                            Móvil:
+                            <input class="form-control" type="text" name="telefono2" size="9" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                            <span class="glyphicon glyphicon-play"></span>
+                            &nbsp; Guardar
+                        </button>
+                    </div>
+                </div>
+             </div>
+
             </div>
-            <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-play"></span>
-                  &nbsp; Seleccionar
-               </button>
-            </div>
+            
          </div>
       </div>
    </div>

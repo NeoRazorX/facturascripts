@@ -108,7 +108,8 @@ class listado_sat extends fs_controller
             }
             else
             {
-               $this->nuevo_cliente();
+               
+               $this->template = "agregasat";
             }
          }
       }
@@ -123,8 +124,6 @@ class listado_sat extends fs_controller
       //----------------------------------------------
       // muestra una vista para seleccion de clientes
       //----------------------------------------------
-      $this->template = "satlistaclientes";
-      $this->buttons[] = new fs_button('b_nuevo_cliente', 'Nuevo Cliente');
       
       if( isset($_POST['nombre']) )
       {
@@ -136,28 +135,40 @@ class listado_sat extends fs_controller
          $cliente->telefono2 = $_POST['telefono2'];
          
          if( $cliente->save() )
-            $this->new_message('Cliente modificado correctamente.');
+            $this->new_message('Cliente agregado correctamente.');
          else
-            $this->new_error_msg('Error al modificar los datos del cliente.');
+            $this->new_error_msg('Error al agregar los datos del cliente.');
       }
+      
+      return $cliente;
    }
    
    public function agrega_sat()
    {
-      $cliente = $this->cliente->get($_GET['codcliente']);
+      if(isset($_GET['codcliente']))
+      {
+            $cliente = $this->cliente->get($_GET['codcliente']);
+            $cliente->nombre = $_POST['nombre'];
+            $cliente->nombrecomercial = $_POST['nombre'];
+            $cliente->telefono1 = $_POST['telefono1'];
+            $cliente->telefono2 = $_POST['telefono2'];
+            if( $cliente->save() )
+                $this->new_message('Cliente modificado correctamente.');
+            else
+                $this->new_error_msg('Error al guardar los datos del cliente.');
+            $this->registro_sat->codcliente = $_GET['codcliente'];
+      }
+      else 
+      {
+            $cliente=$this->nuevo_cliente();
+            $this->registro_sat->codcliente = $cliente->codcliente;
+      }
+      
       if($cliente)
       {
-         $cliente->nombre = $_POST['nombre'];
-         $cliente->nombrecomercial = $_POST['nombre'];
-         $cliente->telefono1 = $_POST['telefono1'];
-         $cliente->telefono2 = $_POST['telefono2'];
+
          
-         if( $cliente->save() )
-            $this->new_message('Cliente modificado correctamente.');
-         else
-            $this->new_error_msg('Error al guardar los datos del cliente.');
-         
-         $this->registro_sat->codcliente = $_GET['codcliente'];
+
          $this->registro_sat->modelo = $_POST['modelo'];
          $this->registro_sat->fcomienzo = $_POST['fcomienzo'];
          
