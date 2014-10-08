@@ -96,14 +96,37 @@ class listado_sat extends fs_controller
                if( isset($_POST['modelo']) ) /// editar
                {
                   //si recibe el modelo se entra en editar
-                  $this->template = "edita";
+                  $cliente = $this->cliente->get($_GET['codcliente']);
+                  $cliente->nombre = $_POST['nombre'];
+                  $cliente->nombrecomercial = $_POST['nombre'];
+                  $cliente->telefono1 = $_POST['telefono1'];
+                  $cliente->telefono2 = $_POST['telefono2'];
+                    if( $cliente->save() )
+                        $this->new_message('Cliente modificado correctamente.');
+                    else
+                        $this->new_error_msg('Error al guardar los datos del cliente.');
+                    $this->cliente=$cliente;
+
                   $nsat = $this->agrega_sat();
                   $this->page->title = "Edita SAT: ".$nsat;
                   $this->resultado = $this->registro_sat->get($nsat);
+                  $this->template = "edita";
                }
                else /// nuevo
                {
                   //nuevo sat con un cliente existente
+                  $this->new_message("flag");
+                  $cliente = $this->cliente->get($_GET['codcliente']);
+                  $cliente->nombre = $_POST['nombre'];
+                  $cliente->nombrecomercial = $_POST['nombre'];
+                  $cliente->telefono1 = $_POST['telefono1'];
+                  $cliente->telefono2 = $_POST['telefono2'];
+                    if( $cliente->save() )
+                        $this->new_message('Cliente modificado correctamente.');
+                    else
+                        $this->new_error_msg('Error al guardar los datos del cliente.');
+                    $this->cliente=$cliente;
+                   $this->resultado = $this->cliente->get($_GET['codcliente']);
                   $this->template = "agregasat";
                   
                   
@@ -111,8 +134,13 @@ class listado_sat extends fs_controller
             }
             else
             {
-               //nuevo sat con un cliente nuevo
-               $this->template = "agregasat";
+                  $cliente_id=$this->nuevo_cliente();
+                  $this->new_message($cliente_id);
+                  $cliente = $this->cliente->get($cliente_id);
+                  $this->cliente=$cliente;
+                  $this->resultado = $cliente;
+                  $this->template = "agregasat";
+                  
             }
          }
       }
@@ -147,34 +175,12 @@ class listado_sat extends fs_controller
    }
    
    public function agrega_sat()
-   {
-      if(isset($_GET['codcliente']))//si selecciona un cliente existente el id del cliente biene por get
-      {
-            $cliente = $this->cliente->get($_GET['codcliente']);
-            $cliente->nombre = $_POST['nombre'];
-            $cliente->nombrecomercial = $_POST['nombre'];
-            $cliente->telefono1 = $_POST['telefono1'];
-            $cliente->telefono2 = $_POST['telefono2'];
-            if( $cliente->save() )
-                $this->new_message('Cliente modificado correctamente.');
-            else
-                $this->new_error_msg('Error al guardar los datos del cliente.');
-            $this->registro_sat->codcliente = $_GET['codcliente'];
-            $this->resultado = $this->cliente->get($_GET['codcliente']);
-      }
-      else //entra aqui si se crea un cliente nuevo en la pastaña del modal agregar cliente.
-      {
-            $cliente_id=$this->nuevo_cliente();
-            $cliente = $this->cliente->get($cliente_id);
-            $this->registro_sat->codcliente = $cliente_id;
-            $this->resultado=$this->cliente->get($cliente_id);
-      }
-      
-      if($cliente)
+   {      
+      if($this->cliente)
       {
 
          
-
+         $this->registro_sat->codcliente = $_GET['codcliente'];
          $this->registro_sat->modelo = $_POST['modelo'];
          $this->registro_sat->fcomienzo = $_POST['fcomienzo'];
          
