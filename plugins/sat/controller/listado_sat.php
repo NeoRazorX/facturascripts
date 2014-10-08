@@ -95,6 +95,7 @@ class listado_sat extends fs_controller
             {
                if( isset($_POST['modelo']) ) /// editar
                {
+                  //si recibe el modelo se entra en editar
                   $this->template = "edita";
                   $nsat = $this->agrega_sat();
                   $this->page->title = "Edita SAT: ".$nsat;
@@ -102,13 +103,15 @@ class listado_sat extends fs_controller
                }
                else /// nuevo
                {
+                  //nuevo sat con un cliente existente
                   $this->template = "agregasat";
-                  $this->resultado = $this->cliente->get($_GET['codcliente']);
+                  
+                  
                }
             }
             else
             {
-               
+               //nuevo sat con un cliente nuevo
                $this->template = "agregasat";
             }
          }
@@ -140,12 +143,12 @@ class listado_sat extends fs_controller
             $this->new_error_msg('Error al agregar los datos del cliente.');
       }
       
-      return $cliente;
+      return $cliente->codcliente;
    }
    
    public function agrega_sat()
    {
-      if(isset($_GET['codcliente']))
+      if(isset($_GET['codcliente']))//si selecciona un cliente existente el id del cliente biene por get
       {
             $cliente = $this->cliente->get($_GET['codcliente']);
             $cliente->nombre = $_POST['nombre'];
@@ -157,11 +160,14 @@ class listado_sat extends fs_controller
             else
                 $this->new_error_msg('Error al guardar los datos del cliente.');
             $this->registro_sat->codcliente = $_GET['codcliente'];
+            $this->resultado = $this->cliente->get($_GET['codcliente']);
       }
-      else 
+      else //entra aqui si se crea un cliente nuevo en la pastaña del modal agregar cliente.
       {
-            $cliente=$this->nuevo_cliente();
-            $this->registro_sat->codcliente = $cliente->codcliente;
+            $cliente_id=$this->nuevo_cliente();
+            $cliente = $this->cliente->get($cliente_id);
+            $this->registro_sat->codcliente = $cliente_id;
+            $this->resultado=$this->cliente->get($cliente_id);
       }
       
       if($cliente)
