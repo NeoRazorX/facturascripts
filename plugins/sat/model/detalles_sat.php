@@ -136,4 +136,21 @@ class detalles_sat extends fs_model
       return $detalleslist;
    }
    
+   public function all_from_sat($sat)
+   {
+      $detalleslist = array();
+      
+      $sql = "SELECT detalles_sat.id, detalles_sat.descripcion,detalles_sat.nsat, detalles_sat.fecha
+         FROM registros_sat, detalles_sat
+         WHERE detalles_sat.nsat = registros_sat.nsat AND detalles_sat.nsat = $sat ORDER BY fecha ASC, id ASC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $d)
+            $detalleslist[] = new detalles_sat($d);
+      }
+      
+      return $detalleslist;
+   }
+   
 }

@@ -153,7 +153,7 @@ class listado_sat extends fs_controller
    public function nuevo_cliente()
    {
       //----------------------------------------------
-      // muestra una vista para seleccion de clientes
+      // agrega un cliente nuevo y retorna el id
       //----------------------------------------------
       
       if( isset($_POST['nombre']) )
@@ -327,7 +327,7 @@ class listado_sat extends fs_controller
    /*listar el dealle de sat*/
    public function listar_sat_detalle()
    {
-      return $this->detalles_sat->all();
+      return $this->detalles_sat->all_from_sat($_GET['id']);
    }
 
     public function agrega_detalle()

@@ -8,7 +8,7 @@
    });
 </script>
 
-<div class="container-fluid">
+<div class="container-fluid hidden-print">
    <div class="row">
       <div class="col-lg-8">
          <h1>
@@ -147,7 +147,7 @@
                      </tr>
                   </table>
                </div>
-               <div class="tab-pane" id="tabc_observacioes">
+               <div class="tab-pane" id="tabc_observaciones">
                   <div class="form-group col-lg-12">
                      <label>Observaciones:</label>
                      <textarea class="form-control" name="observaciones" cols="60">{$fsc->resultado->observaciones}</textarea>
@@ -225,7 +225,12 @@
          </div>
          <div class="col-xs-6">
             <h4><strong>Prioridad</strong><br/>
-               {$fsc->resultado->prioridad}</h4>
+                    {loop="fsc->listar_prioridad()"}
+                        {if="$value['id_prioridad'] == $fsc->resultado->prioridad"}
+                        {$value['nombre_prioridad']}
+                        {/if}
+                     {/loop}
+            </h4>
          </div>
          <div class="col-xs-6">
             <h4><strong>Comienzo:</strong><br/>
