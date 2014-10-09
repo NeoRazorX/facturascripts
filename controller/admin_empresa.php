@@ -44,6 +44,8 @@ class admin_empresa extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->almacen = new almacen();
       $this->divisa = new divisa();
       $this->ejercicio = new ejercicio();

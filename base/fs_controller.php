@@ -704,7 +704,12 @@ class fs_controller
       if( is_null($this->default_items->showing_page()) )
          $this->default_items->set_showing_page( $this->page->name );
       
-      $this->default_items->set_codejercicio( $this->user->codejercicio );
+      if( is_null($this->user->codejercicio) )
+      {
+         $this->default_items->set_codejercicio( $this->empresa->codejercicio );
+      }
+      else
+         $this->default_items->set_codejercicio( $this->user->codejercicio );
       
       if( isset($_COOKIE['default_almacen']) )
          $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );

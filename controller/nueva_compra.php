@@ -42,6 +42,8 @@ class nueva_compra extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->proveedor = new proveedor();
       $this->proveedor_s = FALSE;
       $this->familia = new familia();

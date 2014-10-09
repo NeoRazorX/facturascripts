@@ -31,7 +31,7 @@
    {loop="$fsc->head_extensions"}{$value->text}{/loop}
 </head>
 <body>
-   <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
+   <nav class="navbar navbar-default" role="navigation" style="margin: 0px 0px 5px 0px;">
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -158,6 +158,9 @@
          {/if}
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group hidden-xs">
+                  <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </a>
                   {if condition="$fsc->page->show_on_menu"}
                      {if condition="$fsc->page->is_default()"}
                      <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
@@ -169,6 +172,9 @@
                      </a>
                      {/if}
                   {/if}
+               </div>
+               
+               <div class="btn-group hidden-xs">
                   {if condition="$fsc->ppage"}
                   <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
                      <span class="glyphicon glyphicon-arrow-left"></span>

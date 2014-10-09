@@ -409,13 +409,26 @@ class presupuesto_cliente extends fs_model
    
    public function delete()
    {
-      if($this->idpedido)
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";") )
       {
-         /// eliminamos el pedido relacionado
-         $this->db->exec("DELETE FROM pedidoscli WHERE idpedido = ".$this->var2str($this->idpedido).";");
+         if($this->idpedido)
+         {
+            /**
+             * Delegamos la eliminación en la clase correspondiente,
+             * que tendrá que hacer más cosas.
+             */
+            $pedido = new pedido_cliente();
+            $ped0 = $pedido->get($this->idpedido);
+            if($ped0)
+            {
+               $ped0->delete();
+            }
+         }
+         
+         return TRUE;
       }
-      
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
+      else
+         return FALSE;
    }
    
    public function all($offset=0)

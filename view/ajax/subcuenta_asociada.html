@@ -11,7 +11,6 @@
 </div>
 {/if}
 
-{if condition="$fsc->resultados"}
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
@@ -33,7 +32,10 @@
       <td class="text-right">{$fsc->show_precio($value->haber, $value->coddivisa)}</td>
       <td class="text-right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
    </tr>
+   {else}
+   <tr class="bg-warning">
+      <td colspan="4">Sin resultados para el ejercicio {$_POST['ejercicio']}.</td>
+   </tr>
    {/loop}
    </table>
 </div>
-{/if}

@@ -109,7 +109,7 @@ class ejercicio extends fs_model
       return ( $this->codejercicio == $this->default_items->codejercicio() );
    }
    
-   /*
+   /**
     * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
     */
    public function get_best_fecha($fecha, $show_error=FALSE)
@@ -145,7 +145,7 @@ class ejercicio extends fs_model
          return FALSE;
    }
    
-   /*
+   /**
     * Devuelve el ejercicio para la fecha indicada.
     * Si no existe, lo crea.
     */

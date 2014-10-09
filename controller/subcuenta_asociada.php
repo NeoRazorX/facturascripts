@@ -50,6 +50,18 @@ class subcuenta_asociada extends fs_controller
       if( isset($_POST['codejercicio']) )
          $this->codejercicio = $_POST['codejercicio'];
       
+      /// comprobamos el ejercicio
+      $ejercicio = new ejercicio();
+      $eje0 = $ejercicio->get($this->codejercicio);
+      if(!$eje0)
+      {
+         $eje0 = $ejercicio->get_by_fecha( date('d-m-Y') );
+         if($eje0)
+         {
+            $this->codejercicio = $eje0->codejercicio;
+         }
+      }
+      
       if( isset($_POST['ejercicio']) AND isset($_POST['query']) )
       {
          $this->new_search();

@@ -515,7 +515,7 @@ class informe_facturas extends fs_controller
       
       foreach($pagadas_cli as $i => $value)
       {
-         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'] + $value['totaliva'], 2);
+         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'], 2);
       }
       
       return $stats;
@@ -564,7 +564,7 @@ class informe_facturas extends fs_controller
       foreach($this->date_range($desde, Date('d-m-Y'), '+1 month', 'm') as $date)
       {
          $i = intval($date);
-         $stats[$i] = array('month' => $i, 'total' => 0, 'totaliva' => 0);
+         $stats[$i] = array('month' => $i, 'neto' => 0, 'total' => 0, 'totaliva' => 0);
       }
       
       if( strtolower(FS_DB_TYPE) == 'postgresql')
@@ -572,7 +572,7 @@ class informe_facturas extends fs_controller
       else
          $sql_aux = "DATE_FORMAT(fecha, '%m')";
       
-      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(total) as total, sum(totaliva) as totaliva
+      $data = $this->db->select("SELECT ".$sql_aux." as mes, sum(neto) as neto, sum(total) as total, sum(totaliva) as totaliva
          FROM ".$table_name." WHERE fecha >= ".$this->empresa->var2str($desde)."
          AND fecha <= ".$this->empresa->var2str(Date('d-m-Y'))." AND pagada = true
          GROUP BY ".$sql_aux." ORDER BY mes ASC;");
@@ -583,6 +583,7 @@ class informe_facturas extends fs_controller
             $i = intval($d['mes']);
             $stats[$i] = array(
                 'month' => $i,
+                'neto' => floatval($d['neto']),
                 'total' => floatval($d['total']),
                 'totaliva' => floatval($d['totaliva'])
             );
@@ -618,7 +619,7 @@ class informe_facturas extends fs_controller
       
       foreach($pagadas_cli as $i => $value)
       {
-         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'] + $value['totaliva'], 2);
+         $stats[$i]['beneficios'] = round($value['total'] - $stats[$i]['total_pro'] - $stats[$i]['impuestos_cli'], 2);
       }
       
       return $stats;

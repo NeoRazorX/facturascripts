@@ -24,10 +24,6 @@ ul.dropdown-menu li a:first-letter {
    text-transform: uppercase;
 }
 
-.dropdown-menu li a {
-   padding:7px 15px;
-}
-
 .well {
    margin: 5px;
 }

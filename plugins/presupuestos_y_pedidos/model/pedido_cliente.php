@@ -419,16 +419,29 @@ class pedido_cliente extends fs_model
    
    public function delete()
    {
-      if($this->idalbaran)
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";") )
       {
-         /// eliminamos el albarán relacionado
-         $this->db->exec("DELETE FROM albaranescli WHERE idalbaran = ".$this->var2str($this->idalbaran).";");
+         if($this->idalbaran)
+         {
+            /**
+             * Delegamos la eliminación en la clase correspondiente,
+             * que tendrá que hacer más cosas.
+             */
+            $albaran = new albaran_cliente();
+            $alb0 = $albaran->get($this->idalbaran);
+            if($alb0)
+            {
+               $alb0->delete();
+            }
+         }
+         
+         /// modificamos el presupuesto relacionado
+         $this->db->exec("UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE WHERE idpedido = ".$this->var2str($this->idpedido).";");
+         
+         return TRUE;
       }
-      
-      /// modificamos el presupuesto relacionado
-      $this->db->exec("UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE WHERE idpedido = ".$this->var2str($this->idpedido).";");
-      
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idpedido = ".$this->var2str($this->idpedido).";");
+      else
+         return FALSE;
    }
    
    public function all($offset=0)

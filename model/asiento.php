@@ -175,10 +175,13 @@ class asiento extends fs_model
    public function exists()
    {
       if( is_null($this->idasiento) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idasiento = ".$this->var2str($this->idasiento).";");
+      {
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idasiento = ".$this->var2str($this->idasiento).";");
+      }
    }
    
    public function new_numero()
@@ -290,8 +293,7 @@ class asiento extends fs_model
          if($fac->idasiento != $this->idasiento)
          {
             $status = FALSE;
-            $this->new_error_msg("Este asiento apunta a una <a href='".
-                    $fac->url()."'>factura incorrecta</a>.");
+            $this->new_error_msg("Este asiento apunta a una <a href='".$fac->url()."'>factura incorrecta</a>.");
          }
       }
       

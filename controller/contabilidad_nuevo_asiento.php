@@ -178,6 +178,14 @@ class contabilidad_nuevo_asiento extends fs_controller
       $this->template = 'ajax/contabilidad_nuevo_asiento';
       
       $eje0 = $this->ejercicio->get_by_fecha($_POST['fecha']);
-      $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
+      if($eje0)
+      {
+         $this->resultados = $this->subcuenta->search_by_ejercicio($eje0->codejercicio, $this->query);
+      }
+      else
+      {
+         $this->resultados = array();
+         $this->new_error_msg('Ningún ejercicio encontrado para la fecha '.$_POST['fecha']);
+      }
    }
 }

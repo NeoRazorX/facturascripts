@@ -709,18 +709,28 @@ class factura_cliente extends fs_model
    {
       $this->clean_cache();
       
-      if($this->idasiento)
+      if( $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";") )
       {
-         /// eliminamos el asiento asociado
-         $this->db->exec("DELETE FROM co_asientos WHERE idasiento = ".$this->var2str($this->idasiento).";");
+         if($this->idasiento)
+         {
+            /**
+             * Delegamos la eliminación del asiento en la clase correspondiente.
+             */
+            $asiento = new asiento();
+            $asi0 = $asiento->get($this->idasiento);
+            if($asi0)
+            {
+               $asi0->delete();
+            }
+         }
+         
+         /// desvinculamos el/los albaranes asociados
+         $this->db->exec("UPDATE albaranescli SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ".$this->var2str($this->idfactura).";");
+         
+         return TRUE;
       }
-      
-      /// desvinculamos el/los albaranes asociados
-      $this->db->exec("UPDATE albaranescli SET idfactura = NULL, ptefactura = TRUE
-         WHERE idfactura = ".$this->var2str($this->idfactura).";");
-      
-      /// eliminamos
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idfactura = ".$this->var2str($this->idfactura).";");
+      else
+         return FALSE;
    }
    
    private function clean_cache()
@@ -731,8 +741,7 @@ class factura_cliente extends fs_model
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $faclist = array();
-      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name.
-         " ORDER BY fecha DESC, codigo DESC", $limit, $offset);
+      $facturas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY fecha DESC, codigo DESC", $limit, $offset);
       if($facturas)
       {
          foreach($facturas as $f)

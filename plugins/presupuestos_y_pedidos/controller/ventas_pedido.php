@@ -466,6 +466,7 @@ class ventas_pedido extends fs_controller
          if($continuar)
          {
             $this->pedido->idalbaran = $albaran->idalbaran;
+            $this->pedido->editable = FALSE;
             if( $this->pedido->save() )
             {
                $this->new_message("<a href='".$albaran->url()."'>".ucfirst(FS_ALBARAN).'</a> generado correctamente.');
@@ -474,7 +475,9 @@ class ventas_pedido extends fs_controller
             {
                $this->new_error_msg("¡Imposible vincular el pedido con el nuevo ".FS_ALBARAN."!");
                if( $albaran->delete() )
+               {
                   $this->new_error_msg("El ".FS_ALBARAN." se ha borrado.");
+               }
                else
                   $this->new_error_msg("¡Imposible borrar el ".FS_ALBARAN."!");
             }
@@ -482,7 +485,9 @@ class ventas_pedido extends fs_controller
          else
          {
             if( $albaran->delete() )
+            {
                $this->new_error_msg("El ".FS_ALBARAN." se ha borrado.");
+            }
             else
                $this->new_error_msg("¡Imposible borrar el ".FS_ALBARAN."!");
          }

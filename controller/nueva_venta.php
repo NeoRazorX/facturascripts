@@ -48,6 +48,8 @@ class nueva_venta extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->cliente = new cliente();
       $this->cliente_s = FALSE;
       $this->familia = new familia();

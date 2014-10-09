@@ -465,6 +465,7 @@ class ventas_presupuesto extends fs_controller
          if($continuar)
          {
             $this->presupuesto->idpedido = $pedido->idpedido;
+            $this->presupuesto->editable = FALSE;
             if( $this->presupuesto->save() )
             {
                $this->new_message("<a href='".$pedido->url()."'>".ucfirst(FS_PEDIDO).'</a> generado correctamente.');

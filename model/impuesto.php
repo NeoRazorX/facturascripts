@@ -220,7 +220,7 @@ class impuesto extends fs_model
       $impuestolist = $this->cache->get_array('m_impuesto_all');
       if( !$impuestolist )
       {
-         $impuestos = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codimpuesto ASC;");
+         $impuestos = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY iva ASC;");
          if($impuestos)
          {
             foreach($impuestos as $i)
