@@ -1,4 +1,5 @@
-{include="header"}
+<?php if(!class_exists('raintpl')){exit;}?><?php $tpl = new RainTPL;$tpl_dir_temp = self::$tpl_dir;$tpl->assign( $this->var );$tpl->draw( dirname("header") . ( substr("header",-1,1) != "/" ? "/" : "" ) . basename("header") );?>
+
 
 <script type="text/javascript">
    function comprobar_url()
@@ -58,7 +59,7 @@
    });
 </script>
 
-<div class="container-fluid" style="margin-top: 10px;">
+<div class="container-fluid">
    <div class="row">
       <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
@@ -82,7 +83,7 @@
       </div>
       
       <div class="col-lg-10 col-md-10 col-sm-10">
-         <form name="f_empresa" action="{$fsc->page->url()}" method="post" class="form" role="form">
+         <form name="f_empresa" action="<?php echo $fsc->page->url();?>" method="post" class="form" role="form">
             <div class="panel panel-primary" id="panel_generales">
                <div class="panel-heading">
                   <h3 class="panel-title">Datos generales</h3>
@@ -90,55 +91,57 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre:
-                     <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="nombre" value="<?php echo $fsc->empresa->nombre;?>" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Nombre Corto:
-                     <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="nombrecorto" value="<?php echo $fsc->empresa->nombrecorto;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                     {#FS_CIFNIF#}:
-                     <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                     <?php  echo FS_CIFNIF;?>:
+                     <input class="form-control" type="text" name="cifnif" value="<?php echo $fsc->empresa->cifnif;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Administrador:
-                     <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="administrador" value="<?php echo $fsc->empresa->administrador;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                     <a href="{$fsc->pais->url()}">País</a>:
+                     <a href="<?php echo $fsc->pais->url();?>">País</a>:
                      <select name="codpais" class="form-control">
-                        {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if condition="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
-                        {/loop}
+                        <?php $loop_var1=$fsc->pais->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->codpais;?>"<?php if( $fsc->empresa->codpais == $value1->codpais ){ ?> selected="selected"<?php } ?>><?php echo $value1->nombre;?></option>
+                        <?php } ?>
+
                      </select>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Provincia:
-                     <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="provincia" value="<?php echo $fsc->empresa->provincia;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Ciudad:
-                     <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="ciudad" value="<?php echo $fsc->empresa->ciudad;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Dirección:
-                     <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="direccion" value="<?php echo $fsc->empresa->direccion;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Código Postal:
-                     <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="codpostal" value="<?php echo $fsc->empresa->codpostal;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Teléfono:
-                     <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="telefono" value="<?php echo $fsc->empresa->telefono;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Fax:
-                     <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="fax" value="<?php echo $fsc->empresa->fax;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      Web:
-                     <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="web" value="<?php echo $fsc->empresa->web;?>" autocomplete="off"/>
                   </div>
                </div>
                <div class="panel-footer text-right">
@@ -156,19 +159,19 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Email:</label>
-                     <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
+                     <input class="form-control" type="email" name="email" value="<?php echo $fsc->empresa->email;?>" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Contraseña:</label>
-                     <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="Contraseña"/>
+                     <input class="form-control" type="password" name="email_password" value="<?php echo $fsc->empresa->email_password;?>" placeholder="Contraseña"/>
                   </div>
                   <div class="form-group">
                      <label>Firma:</label>
-                     <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                     <textarea class="form-control" name="email_firma"><?php echo $fsc->empresa->email_firma;?></textarea>
                   </div>
                </div>
                <div class="panel-footer text-right">
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#email';this.form.submit();">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='<?php echo $fsc->url();?>#email';this.form.submit();">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
                      &nbsp; Guardar
                   </button>
@@ -182,22 +185,22 @@
                <div class="panel-body">
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Host:</label>
-                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="mail_host" value="<?php echo $fsc->mail['mail_host'];?>" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-lg-2 col-md-2 col-sm-2">
                      <label>Puerto:</label>
-                     <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                     <input class="form-control" type="number" name="mail_port" value="<?php echo $fsc->mail['mail_port'];?>" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-4 col-md-4 col-sm-4">
                      <label>Encriptación:</label>
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
-                        <option value="tls"{if condition="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
+                        <option value="tls"<?php if( $fsc->mail['mail_enc']=='tls' ){ ?> selected="selected"<?php } ?>>TLS</option>
                      </select>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>Usuario:</label>
-                     <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="mail_user" value="<?php echo $fsc->mail['mail_user'];?>" autocomplete="off"/>
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-6">
                      <br/>
@@ -205,7 +208,7 @@
                   </div>
                </div>
                <div class="panel-footer text-right">
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#email';this.form.submit();">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='<?php echo $fsc->url();?>#email';this.form.submit();">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
                      &nbsp; Guardar
                   </button>
@@ -218,62 +221,72 @@
                </div>
                <div class="panel-body">
                   <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                     <a href="{$fsc->divisa->url()}">Divisa</a>:
+                     <a href="<?php echo $fsc->divisa->url();?>">Divisa</a>:
                      <select name="coddivisa" class="form-control">
-                     {loop="$fsc->divisa->all()"}
-                        <option value="{$value->coddivisa}"{if condition="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
-                     {/loop}
+                     <?php $loop_var1=$fsc->divisa->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->coddivisa;?>"<?php if( $fsc->empresa->coddivisa == $value1->coddivisa ){ ?> selected="selected"<?php } ?>><?php echo $value1->descripcion;?></option>
+                     <?php } ?>
+
                      </select>
                   </div>
                   <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                     <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+                     <a href="<?php echo $fsc->ejercicio->url();?>">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
-                     {loop="$fsc->ejercicio->all()"}
-                        <option value="{$value->codejercicio}"{if condition="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
-                     {/loop}
+                     <?php $loop_var1=$fsc->ejercicio->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->codejercicio;?>"<?php if( $fsc->empresa->codejercicio == $value1->codejercicio ){ ?> selected="selected"<?php } ?>><?php echo $value1->nombre;?></option>
+                     <?php } ?>
+
                      </select>
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
                   </div>
                   <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                     <a href="{$fsc->serie->url()}">Serie</a>:
+                     <a href="<?php echo $fsc->serie->url();?>">Serie</a>:
                      <select name="codserie" class="form-control">
-                     {loop="$fsc->serie->all()"}
-                        <option value="{$value->codserie}"{if condition="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
-                     {/loop}
+                     <?php $loop_var1=$fsc->serie->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->codserie;?>"<?php if( $fsc->empresa->codserie == $value1->codserie ){ ?> selected="selected"<?php } ?>><?php echo $value1->descripcion;?></option>
+                     <?php } ?>
+
                      </select>
                      <p class="help-block">El IRPF se define en la serie.</p>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
-                        <input type="checkbox" name="recequivalencia" value="TRUE"{if condition="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
+                        <input type="checkbox" name="recequivalencia" value="TRUE"<?php if( $fsc->empresa->recequivalencia ){ ?> checked="checked"<?php } ?>/>
                         Aplicar recargo de equivalencia
                      </label>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
-                        <input type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                        <input type="checkbox" name="contintegrada" value="TRUE"<?php if( $fsc->empresa->contintegrada ){ ?> checked="checked"<?php } ?>/>
                         Contabilidad integrada
                      </label>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                     <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+                     <a href="<?php echo $fsc->forma_pago->url();?>">Forma de pago</a>:
                      <select name="codpago" class="form-control">
-                     {loop="$fsc->forma_pago->all()"}
-                        <option value="{$value->codpago}"{if condition="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
-                     {/loop}
+                     <?php $loop_var1=$fsc->forma_pago->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->codpago;?>"<?php if( $fsc->empresa->codpago == $value1->codpago ){ ?> selected="selected"<?php } ?>><?php echo $value1->descripcion;?></option>
+                     <?php } ?>
+
                      </select>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                     <a href="{$fsc->almacen->url()}">Almacén</a>:
+                     <a href="<?php echo $fsc->almacen->url();?>">Almacén</a>:
                      <select name="codalmacen" class="form-control">
-                     {loop="$fsc->almacen->all()"}
-                        <option value="{$value->codalmacen}"{if condition="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
-                     {/loop}
+                     <?php $loop_var1=$fsc->almacen->all(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+                        <option value="<?php echo $value1->codalmacen;?>"<?php if( $fsc->empresa->codalmacen == $value1->codalmacen ){ ?> selected="selected"<?php } ?>><?php echo $value1->nombre;?></option>
+                     <?php } ?>
+
                      </select>
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();">
+              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='<?php echo $fsc->url();?>#facturacion';this.form.submit();">
                  <span class="glyphicon glyphicon-floppy-disk"></span>
                  &nbsp; Guardar
               </button>
@@ -292,28 +305,31 @@
                      </button>
 
                   <div style="max-width: 33%;" class="thumbnail">
-                     {if condition="$fsc->logo"}
-                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
-                     {else}
-                     {/if}
+                     <?php if( $fsc->logo ){ ?>
+
+                     <img src="tmp/<?php  echo FS_TMP_NAME;?>logo.png" alt="logotipo"/>
+                     <?php }else{ ?>
+
+                     <?php } ?>
+
                   </div>
 
                   </div>
                   <div class="form-group">
                      Pie de página de la factura:
-                     <input class="form-control" type="text" name="pie_factura" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="pie_factura" value="<?php echo $fsc->empresa->pie_factura;?>" autocomplete="off"/>
                   </div>
                   <div class="form-group">
                      Lema:
-                     <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="lema" value="<?php echo $fsc->empresa->lema;?>" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group">
                      Horario:
-                     <input class="form-control" type="text" name="horario" value="{$fsc->empresa->horario}" autocomplete="off"/>
+                     <input class="form-control" type="text" name="horario" value="<?php echo $fsc->empresa->horario;?>" autocomplete="off"/>
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#impresion';this.form.submit();">
+              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='<?php echo $fsc->url();?>#impresion';this.form.submit();">
                  <span class="glyphicon glyphicon-floppy-disk"></span>
                  &nbsp; Guardar
               </button>
@@ -324,21 +340,22 @@
 
          
          <div class="panel-group" id="panel_cuentas">
-            {loop="$fsc->cuenta_banco->all_from_empresa()"}
-            <form action="{$fsc->url()}#facturacion" method="post" class="form">
-               <input type="hidden" name="codcuenta" value="{$value->codcuenta}"/>
+            <?php $loop_var1=$fsc->cuenta_banco->all_from_empresa(); $counter1=-1; if($loop_var1) foreach( $loop_var1 as $key1 => $value1 ){ $counter1++; ?>
+
+            <form action="<?php echo $fsc->url();?>#facturacion" method="post" class="form">
+               <input type="hidden" name="codcuenta" value="<?php echo $value1->codcuenta;?>"/>
                <div class="panel panel-info">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Cuenta bancaria #{$value->codcuenta}</h3>
+                     <h3 class="panel-title">Cuenta bancaria #<?php echo $value1->codcuenta;?></h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group">
                         Descripción:
-                        <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
+                        <input class="form-control" type="text" name="descripcion" value="<?php echo $value1->descripcion;?>" placeholder="Cuenta principal" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-6">
                         <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
-                        <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
+                        <input class="form-control" type="text" name="iban" value="<?php echo $value1->iban;?>" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-6">
                         Calcular IBAN:
@@ -346,18 +363,19 @@
                      </div>
                   </div>
                   <div class="panel-footer text-right">
-                     <a class="btn btn-sm btn-danger pull-left" type="button" onclick="return confirm('¿Realmente desea eliminar esta Cuenta bancaria?');" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">
+                     <a class="btn btn-sm btn-danger pull-left" type="button" onclick="return confirm('¿Realmente desea eliminar esta Cuenta bancaria?');" href="<?php echo $fsc->url();?>&delete_cuenta=<?php echo $value1->codcuenta;?>#facturacion">
                          <span class="glyphicon glyphicon-trash"></span>
                          &nbsp; Eliminar
                      </a>
-                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion;this.form.submit();">
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='<?php echo $fsc->url();?>#facturacion;this.form.submit();">
                          <span class="glyphicon glyphicon-floppy-disk"></span>
                          &nbsp; Guardar
                      </button>
                   </div>
                </div>
             </form>
-            {/loop}
+            <?php } ?>
+
             <div class="panel panel-success">
                <div class="panel-heading">
                   <h3 class="panel-title">
@@ -372,7 +390,7 @@
    </div>
 </div>
 
-<form enctype='multipart/form-data' action="{$fsc->url()}#impresion" method="post">
+<form enctype='multipart/form-data' action="<?php echo $fsc->url();?>#impresion" method="post">
    <input type='hidden' name='logo' value='TRUE'/>
    <div class="modal fade" id="modal_logo">
       <div class="modal-dialog">
@@ -384,13 +402,16 @@
             <div class="modal-body">
                <div style="text-align: center;">
                   <div class="thumbnail">
-                     {if condition="$fsc->logo"}
-                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
-                     {else}
+                     <?php if( $fsc->logo ){ ?>
+
+                     <img src="tmp/<?php  echo FS_TMP_NAME;?>logo.png" alt="logotipo"/>
+                     <?php }else{ ?>
+
                      <div class="caption">
                         La imagen debe estar en formato PNG.
                      </div>
-                     {/if}
+                     <?php } ?>
+
                   </div>
                </div>
                <div class="form-group">
@@ -398,12 +419,14 @@
                </div>
             </div>
             <div class="modal-footer">
-               {if condition="$fsc->logo"}
-               <a class="btn btn-sm btn-danger" type="button" href="{$fsc->url()}&delete_logo=TRUE#facturacion">
+               <?php if( $fsc->logo ){ ?>
+
+               <a class="btn btn-sm btn-danger" type="button" href="<?php echo $fsc->url();?>&delete_logo=TRUE#facturacion">
                   <span class="glyphicon glyphicon-trash"></span>
                   &nbsp; Eliminar
                </a>
-               {/if}
+               <?php } ?>
+
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
@@ -418,7 +441,7 @@
 
 
 
-<form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post" class="form">
+<form name="f_nueva_cuenta" action="<?php echo $fsc->url();?>#facturacion" method="post" class="form">
    <div class="modal" id="modal_nueva_cuenta">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -452,4 +475,4 @@
 </form>
 
 
-{include="footer"}
+<?php $tpl = new RainTPL;$tpl_dir_temp = self::$tpl_dir;$tpl->assign( $this->var );$tpl->draw( dirname("footer") . ( substr("footer",-1,1) != "/" ? "/" : "" ) . basename("footer") );?>
