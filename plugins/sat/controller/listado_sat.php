@@ -101,12 +101,15 @@ class listado_sat extends fs_controller
                   $cliente->nombrecomercial = $_POST['nombre'];
                   $cliente->telefono1 = $_POST['telefono1'];
                   $cliente->telefono2 = $_POST['telefono2'];
-                    if( $cliente->save() )
-                        $this->new_message('Cliente modificado correctamente.');
-                    else
-                        $this->new_error_msg('Error al guardar los datos del cliente.');
-                    $this->cliente=$cliente;
-
+                  
+                  if( $cliente->save() )
+                  {
+                     $this->new_message('Cliente modificado correctamente.');
+                  }
+                  else
+                     $this->new_error_msg('Error al guardar los datos del cliente.');
+                  
+                  $this->cliente = $cliente;
                   $nsat = $this->agrega_sat();
                   $this->page->title = "Edita SAT: ".$nsat;
                   $this->resultado = $this->registro_sat->get($nsat);
@@ -114,33 +117,18 @@ class listado_sat extends fs_controller
                }
                else /// nuevo
                {
-                  //nuevo sat con un cliente existente
-                  $this->new_message("flag");
-                  $cliente = $this->cliente->get($_GET['codcliente']);
-                  $cliente->nombre = $_POST['nombre'];
-                  $cliente->nombrecomercial = $_POST['nombre'];
-                  $cliente->telefono1 = $_POST['telefono1'];
-                  $cliente->telefono2 = $_POST['telefono2'];
-                    if( $cliente->save() )
-                        $this->new_message('Cliente modificado correctamente.');
-                    else
-                        $this->new_error_msg('Error al guardar los datos del cliente.');
-                    $this->cliente=$cliente;
-                   $this->resultado = $this->cliente->get($_GET['codcliente']);
+                  /// nuevo sat con un cliente existente
+                  $this->resultado = $this->cliente->get($_GET['codcliente']);
                   $this->template = "agregasat";
-                  
-                  
                }
             }
             else
             {
-                  $cliente_id=$this->nuevo_cliente();
-                  $this->new_message($cliente_id);
-                  $cliente = $this->cliente->get($cliente_id);
-                  $this->cliente=$cliente;
-                  $this->resultado = $cliente;
-                  $this->template = "agregasat";
-                  
+               $cliente_id = $this->nuevo_cliente();
+               $cliente = $this->cliente->get($cliente_id);
+               $this->cliente = $cliente;
+               $this->resultado = $cliente;
+               $this->template = "agregasat";
             }
          }
       }
@@ -182,9 +170,19 @@ class listado_sat extends fs_controller
          
          $this->registro_sat->codcliente = $_GET['codcliente'];
          $this->registro_sat->modelo = $_POST['modelo'];
-         $this->registro_sat->fcomienzo = $_POST['fcomienzo'];
          
-         if($_POST['ffin'] != '')
+         if($_POST['fcomienzo'] == '')
+         {
+            $this->registro_sat->fcomienzo = NULL;
+         }
+         else
+            $this->registro_sat->fcomienzo = $_POST['fcomienzo'];
+         
+         if($_POST['ffin'] == '')
+         {
+            $this->registro_sat->ffin = NULL;
+         }
+         else
             $this->registro_sat->ffin = $_POST['ffin'];
          
          $this->registro_sat->averia = $_POST['averia'];

@@ -47,7 +47,10 @@ class registro_sat extends fs_model
          $this->nsat = intval($s['nsat']);
          $this->prioridad = intval($s['prioridad']);
          $this->fentrada = date('d-m-Y', strtotime($s['fentrada']));
-         $this->fcomienzo = date('d-m-Y', strtotime($s['fcomienzo']));
+         
+         $this->fcomienzo = NULL;
+         if( isset($s['fcomiento']) )
+            $this->fcomienzo = date('d-m-Y', strtotime($s['fcomienzo']));
          
          $this->ffin = NULL;
          if( isset($s['ffin']) )

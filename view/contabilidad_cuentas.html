@@ -114,7 +114,7 @@
    {/if}
 </ul>
 {else}
-<h3>Resultados de la búsqueda '{$fsc->query}':</h3>
+<h3 class="text-center">Resultados de la búsqueda '{$fsc->query}':</h3>
 
 <ul class="nav nav-tabs">
   <li{if condition="$fsc->resultados"} class="active"{/if} id="li_cuentas">
@@ -132,15 +132,19 @@
             <tr>
                <th class="text-left">Ejercicio</th>
                <th class="text-left">Código + Descripción</th>
+               <th class="text-right">Cuenta Especial</th>
             </tr>
          </thead>
          {loop="$fsc->resultados"}
          <tr>
             <td>{$value->codejercicio}</td>
             <td><a href="{$value->url()}">{$value->codcuenta}</a> {$value->descripcion}</td>
+            <td class="text-right">{$value->idcuentaesp}</td>
          </tr>
          {else}
-         <tr class="bg-warning"><td colspan="2" class="text-center">Sin resultados.</td></tr>
+         <tr class="bg-warning">
+            <td colspan="3">Sin resultados.</td>
+         </tr>
          {/loop}
       </table>
    </div>
@@ -183,7 +187,9 @@
          <td class="text-right">{$fsc->show_precio($value->saldo, $value->coddivisa)}</td>
       </tr>
       {else}
-      <tr class="bg-warning"><td colspan="5" class="text-center">Sin resultados.</td></tr>
+      <tr class="bg-warning">
+         <td colspan="5">Sin resultados.</td>
+      </tr>
       {/loop}
    </table>
 </div>
