@@ -361,7 +361,7 @@
 </span><span id="220" class="l"><a class="l" href="#220">220: </a>      <span class="php-var">$impuestolist</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'m_impuesto_all'</span>);
 </span><span id="221" class="l"><a class="l" href="#221">221: </a>      <span class="php-keyword1">if</span>( !<span class="php-var">$impuestolist</span> )
 </span><span id="222" class="l"><a class="l" href="#222">222: </a>      {
-</span><span id="223" class="l"><a class="l" href="#223">223: </a>         <span class="php-var">$impuestos</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY codimpuesto ASC;&quot;</span>);
+</span><span id="223" class="l"><a class="l" href="#223">223: </a>         <span class="php-var">$impuestos</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY iva ASC;&quot;</span>);
 </span><span id="224" class="l"><a class="l" href="#224">224: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$impuestos</span>)
 </span><span id="225" class="l"><a class="l" href="#225">225: </a>         {
 </span><span id="226" class="l"><a class="l" href="#226">226: </a>            <span class="php-keyword1">foreach</span>(<span class="php-var">$impuestos</span> <span class="php-keyword1">as</span> <span class="php-var">$i</span>)

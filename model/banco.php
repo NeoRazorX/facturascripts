@@ -74,19 +74,14 @@ class banco extends fs_model
       return $suc->all_from_entidad($this->entidad);
    }
    
-   public function get_cuentas()
-   {
-      $cb = new cuenta_banco();
-      return $cb->all_from_entidad($this->entidad);
-   }
-   
    public function exists()
    {
       if( is_null($this->entidad) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-            " WHERE entidad = ".$this->var2str($this->entidad).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE entidad = ".$this->var2str($this->entidad).";");
    }
    
    public function test()
@@ -97,9 +92,13 @@ class banco extends fs_model
       $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9]{1,4}$/i", $this->entidad) )
+      {
          $this->new_error_msg("Código de entidad no válido.");
+      }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+      {
          $this->new_error_msg("Nombre no válido.");
+      }
       else
          $status = TRUE;
       
@@ -212,10 +211,11 @@ class sucursal extends fs_model
    public function exists()
    {
       if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -231,9 +231,13 @@ class sucursal extends fs_model
       $this->observaciones = $this->no_html($this->observaciones);
       
       if( !is_numeric($this->codpostal) )
+      {
          $status = FALSE;
+      }
       else if( !is_numeric($this->apartado) )
+      {
          $status = FALSE;
+      }
       else
          $status = TRUE;
       
@@ -266,133 +270,12 @@ class sucursal extends fs_model
    public function all_from_entidad($en)
    {
       $listasuc = array();
-      $sucursales = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE entidad = ".$this->var2str($en).";");
+      $sucursales = $this->db->select("SELECT * FROM ".$this->table_name." WHERE entidad = ".$this->var2str($en).";");
       if($sucursales)
       {
          foreach($sucursales as $s)
             $listasuc[] = new sucursal($s);
       }
       return $listasuc;
-   }
-}
-
-/**
- * Cuenta bancaria de la empresa en un banco y sucursal concreta.
- */
-class cuenta_banco extends fs_model
-{
-   public $sufijo;
-   public $ctaagencia;
-   public $idsubcuentaecgc;
-   public $ctaentidad;
-   public $entidad;
-   public $agencia;
-   public $codsubcuenta;
-   public $cuenta;
-   public $descripcion;
-   public $codsubcuentaecgc;
-   public $iban;
-   public $codcuenta; /// pkey
-   public $idsubcuenta;
-   public $swift;
-   
-   public function __construct($c=FALSE)
-   {
-      parent::__construct('cuentasbanco');
-      if($c)
-      {
-         $this->codcuenta = $c['codcuenta'];
-         $this->sufijo = $c['sufijo'];
-         $this->ctaagencia = $c['ctaagencia'];
-         $this->idsubcuentaecgc = intval($c['idsubcuentaecgc']);
-         $this->ctaentidad = $c['ctaentidad'];
-         $this->entidad = $c['entidad'];
-         $this->agencia = $c['agencia'];
-         $this->codsubcuenta = $c['codsubcuenta'];
-         $this->cuenta = $c['cuenta'];
-         $this->descripcion = $c['descripcion'];
-         $this->codsubcuentaecgc = $c['codsubcuentaecgc'];
-         $this->iban = $c['iban'];
-         $this->idsubcuenta = intval($c['idsubcuenta']);
-         $this->swift = $c['swift'];
-      }
-      else
-      {
-         $this->codcuenta = NULL;
-         $this->sufijo = NULL;
-         $this->ctaagencia = NULL;
-         $this->idsubcuentaecgc = NULL;
-         $this->ctaentidad = NULL;
-         $this->entidad = NULL;
-         $this->agencia = NULL;
-         $this->codsubcuenta = NULL;
-         $this->cuenta = NULL;
-         $this->descripcion = NULL;
-         $this->codsubcuentaecgc = NULL;
-         $this->iban = NULL;
-         $this->idsubcuenta = NULL;
-         $this->swift = NULL;
-      }
-   }
-   
-   protected function install()
-   {
-      return '';
-   }
-   
-   public function url()
-   {
-      return 'index.php?page=contabilidad_cuentas&query='.$this->codsubcuenta;
-   }
-   
-   public function exists()
-   {
-      if( is_null($this->codcuenta) )
-         return FALSE;
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE ".$this->var2str($this->codcuenta).";");
-   }
-   
-   public function test()
-   {
-      return TRUE;
-   }
-   
-   public function save()
-   {
-      if( $this->test() )
-      {
-         if( $this->exists() )
-         {
-            $sql = "";
-         }
-         else
-         {
-            $sql = "";
-         }
-         return $this->db->exec($sql);
-      }
-      else
-         return FALSE;
-   }
-   
-   public function delete()
-   {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE ".$this->var2str($this->codcuenta).";");
-   }
-   
-   public function all_from_entidad($entidad)
-   {
-      $clist = array();
-      $cuentas = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE entidad = ".$this->var2str($entidad).";");
-      if( $cuentas )
-      {
-         foreach($cuentas as $c)
-            $clist[] = new cuenta_banco($c);
-      }
-      return $clist;
    }
 }

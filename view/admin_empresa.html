@@ -58,7 +58,7 @@
    });
 </script>
 
-<div class="container-fluid" style="margin-top: 10px;">
+<div class="container-fluid" style="margin-top: 15px;">
    <div class="row">
       <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
@@ -77,6 +77,10 @@
             <a id="b_impresion" href="#impresion" class="list-group-item">
                <span class="glyphicon glyphicon-print"></span>
                &nbsp; Impresión
+            </a>
+            <a href="{$fsc->url()}" class="list-group-item">
+               <span class="glyphicon glyphicon-refresh"></span>
+               &nbsp; Recargar
             </a>
          </div>
       </div>
@@ -290,15 +294,12 @@
                         <span class="glyphicon glyphicon-picture"></span>
                         Añadir / Cambiar logotipo a las facturas
                      </button>
-
+                  </div>
+                  {if condition="$fsc->logo"}
                   <div style="max-width: 33%;" class="thumbnail">
-                     {if condition="$fsc->logo"}
                      <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
-                     {else}
-                     {/if}
                   </div>
-
-                  </div>
+                  {/if}
                   <div class="form-group">
                      Pie de página de la factura:
                      <input class="form-control" type="text" name="pie_factura" value="{$fsc->empresa->pie_factura}" autocomplete="off"/>
@@ -414,10 +415,6 @@
    </div>
 </form>
 
-
-
-
-
 <form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post" class="form">
    <div class="modal" id="modal_nueva_cuenta">
       <div class="modal-dialog">
@@ -450,6 +447,5 @@
       </div>
    </div>
 </form>
-
 
 {include="footer"}

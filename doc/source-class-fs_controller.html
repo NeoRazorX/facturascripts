@@ -845,375 +845,380 @@
 </span><span id="704" class="l"><a class="l" href="#704"> 704: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;default_items-&gt;showing_page()) )
 </span><span id="705" class="l"><a class="l" href="#705"> 705: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_showing_page( <span class="php-var">$this</span>-&gt;page-&gt;name );
 </span><span id="706" class="l"><a class="l" href="#706"> 706: </a>      
-</span><span id="707" class="l"><a class="l" href="#707"> 707: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codejercicio( <span class="php-var">$this</span>-&gt;user-&gt;codejercicio );
-</span><span id="708" class="l"><a class="l" href="#708"> 708: </a>      
-</span><span id="709" class="l"><a class="l" href="#709"> 709: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_almacen'</span>]) )
-</span><span id="710" class="l"><a class="l" href="#710"> 710: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_almacen'</span>] );
+</span><span id="707" class="l"><a class="l" href="#707"> 707: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;user-&gt;codejercicio) )
+</span><span id="708" class="l"><a class="l" href="#708"> 708: </a>      {
+</span><span id="709" class="l"><a class="l" href="#709"> 709: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codejercicio( <span class="php-var">$this</span>-&gt;empresa-&gt;codejercicio );
+</span><span id="710" class="l"><a class="l" href="#710"> 710: </a>      }
 </span><span id="711" class="l"><a class="l" href="#711"> 711: </a>      <span class="php-keyword1">else</span>
-</span><span id="712" class="l"><a class="l" href="#712"> 712: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen( <span class="php-var">$this</span>-&gt;empresa-&gt;codalmacen );
+</span><span id="712" class="l"><a class="l" href="#712"> 712: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codejercicio( <span class="php-var">$this</span>-&gt;user-&gt;codejercicio );
 </span><span id="713" class="l"><a class="l" href="#713"> 713: </a>      
-</span><span id="714" class="l"><a class="l" href="#714"> 714: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_cliente'</span>]) )
-</span><span id="715" class="l"><a class="l" href="#715"> 715: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codcliente( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_cliente'</span>] );
-</span><span id="716" class="l"><a class="l" href="#716"> 716: </a>      
-</span><span id="717" class="l"><a class="l" href="#717"> 717: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_divisa'</span>]) )
-</span><span id="718" class="l"><a class="l" href="#718"> 718: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_divisa'</span>] );
-</span><span id="719" class="l"><a class="l" href="#719"> 719: </a>      <span class="php-keyword1">else</span>
-</span><span id="720" class="l"><a class="l" href="#720"> 720: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa( <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa );
+</span><span id="714" class="l"><a class="l" href="#714"> 714: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_almacen'</span>]) )
+</span><span id="715" class="l"><a class="l" href="#715"> 715: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_almacen'</span>] );
+</span><span id="716" class="l"><a class="l" href="#716"> 716: </a>      <span class="php-keyword1">else</span>
+</span><span id="717" class="l"><a class="l" href="#717"> 717: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen( <span class="php-var">$this</span>-&gt;empresa-&gt;codalmacen );
+</span><span id="718" class="l"><a class="l" href="#718"> 718: </a>      
+</span><span id="719" class="l"><a class="l" href="#719"> 719: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_cliente'</span>]) )
+</span><span id="720" class="l"><a class="l" href="#720"> 720: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codcliente( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_cliente'</span>] );
 </span><span id="721" class="l"><a class="l" href="#721"> 721: </a>      
-</span><span id="722" class="l"><a class="l" href="#722"> 722: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_familia'</span>]) )
-</span><span id="723" class="l"><a class="l" href="#723"> 723: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codfamilia( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_familia'</span>] );
-</span><span id="724" class="l"><a class="l" href="#724"> 724: </a>      
-</span><span id="725" class="l"><a class="l" href="#725"> 725: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_formapago'</span>]) )
-</span><span id="726" class="l"><a class="l" href="#726"> 726: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_formapago'</span>] );
-</span><span id="727" class="l"><a class="l" href="#727"> 727: </a>      <span class="php-keyword1">else</span>
-</span><span id="728" class="l"><a class="l" href="#728"> 728: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago( <span class="php-var">$this</span>-&gt;empresa-&gt;codpago );
+</span><span id="722" class="l"><a class="l" href="#722"> 722: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_divisa'</span>]) )
+</span><span id="723" class="l"><a class="l" href="#723"> 723: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_divisa'</span>] );
+</span><span id="724" class="l"><a class="l" href="#724"> 724: </a>      <span class="php-keyword1">else</span>
+</span><span id="725" class="l"><a class="l" href="#725"> 725: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa( <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa );
+</span><span id="726" class="l"><a class="l" href="#726"> 726: </a>      
+</span><span id="727" class="l"><a class="l" href="#727"> 727: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_familia'</span>]) )
+</span><span id="728" class="l"><a class="l" href="#728"> 728: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codfamilia( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_familia'</span>] );
 </span><span id="729" class="l"><a class="l" href="#729"> 729: </a>      
-</span><span id="730" class="l"><a class="l" href="#730"> 730: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_impuesto'</span>]) )
-</span><span id="731" class="l"><a class="l" href="#731"> 731: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codimpuesto( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_impuesto'</span>] );
-</span><span id="732" class="l"><a class="l" href="#732"> 732: </a>      
-</span><span id="733" class="l"><a class="l" href="#733"> 733: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_pais'</span>]) )
-</span><span id="734" class="l"><a class="l" href="#734"> 734: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_pais'</span>] );
-</span><span id="735" class="l"><a class="l" href="#735"> 735: </a>      <span class="php-keyword1">else</span>
-</span><span id="736" class="l"><a class="l" href="#736"> 736: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais( <span class="php-var">$this</span>-&gt;empresa-&gt;codpais );
+</span><span id="730" class="l"><a class="l" href="#730"> 730: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_formapago'</span>]) )
+</span><span id="731" class="l"><a class="l" href="#731"> 731: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_formapago'</span>] );
+</span><span id="732" class="l"><a class="l" href="#732"> 732: </a>      <span class="php-keyword1">else</span>
+</span><span id="733" class="l"><a class="l" href="#733"> 733: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago( <span class="php-var">$this</span>-&gt;empresa-&gt;codpago );
+</span><span id="734" class="l"><a class="l" href="#734"> 734: </a>      
+</span><span id="735" class="l"><a class="l" href="#735"> 735: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_impuesto'</span>]) )
+</span><span id="736" class="l"><a class="l" href="#736"> 736: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codimpuesto( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_impuesto'</span>] );
 </span><span id="737" class="l"><a class="l" href="#737"> 737: </a>      
-</span><span id="738" class="l"><a class="l" href="#738"> 738: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_proveedor'</span>]) )
-</span><span id="739" class="l"><a class="l" href="#739"> 739: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codproveedor( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_proveedor'</span>] );
-</span><span id="740" class="l"><a class="l" href="#740"> 740: </a>      
-</span><span id="741" class="l"><a class="l" href="#741"> 741: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_serie'</span>]) )
-</span><span id="742" class="l"><a class="l" href="#742"> 742: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_serie'</span>] );
-</span><span id="743" class="l"><a class="l" href="#743"> 743: </a>      <span class="php-keyword1">else</span>
-</span><span id="744" class="l"><a class="l" href="#744"> 744: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie( <span class="php-var">$this</span>-&gt;empresa-&gt;codserie );
-</span><span id="745" class="l"><a class="l" href="#745"> 745: </a>   }
-</span><span id="746" class="l"><a class="l" href="#746"> 746: </a>   
-</span><span id="747" class="l"><a class="l" href="#747"> 747: </a>   <span class="php-comment">/**
-</span></span><span id="748" class="l"><a class="l" href="#748"> 748: </a><span class="php-comment">    * Establece un ejercicio como predeterminado para este usuario
-</span></span><span id="749" class="l"><a class="l" href="#749"> 749: </a><span class="php-comment">    * @param type $cod el código del ejercicio
-</span></span><span id="750" class="l"><a class="l" href="#750"> 750: </a><span class="php-comment">    */</span>
-</span><span id="751" class="l"><a class="l" href="#751"> 751: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codejercicio" href="#_save_codejercicio">save_codejercicio</a>(<span class="php-var">$cod</span>)
-</span><span id="752" class="l"><a class="l" href="#752"> 752: </a>   {
-</span><span id="753" class="l"><a class="l" href="#753"> 753: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$cod</span> != <span class="php-var">$this</span>-&gt;user-&gt;codejercicio)
-</span><span id="754" class="l"><a class="l" href="#754"> 754: </a>      {
-</span><span id="755" class="l"><a class="l" href="#755"> 755: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codejercicio(<span class="php-var">$cod</span>);
-</span><span id="756" class="l"><a class="l" href="#756"> 756: </a>         <span class="php-var">$this</span>-&gt;user-&gt;codejercicio = <span class="php-var">$cod</span>;
-</span><span id="757" class="l"><a class="l" href="#757"> 757: </a>         <span class="php-keyword1">if</span>( !<span class="php-var">$this</span>-&gt;user-&gt;save() )
-</span><span id="758" class="l"><a class="l" href="#758"> 758: </a>         {
-</span><span id="759" class="l"><a class="l" href="#759"> 759: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al establecer el ejercicio '</span>.<span class="php-var">$cod</span>.
-</span><span id="760" class="l"><a class="l" href="#760"> 760: </a>               <span class="php-quote">' como ejercicio predeterminado para este usuario.'</span>);
-</span><span id="761" class="l"><a class="l" href="#761"> 761: </a>         }
-</span><span id="762" class="l"><a class="l" href="#762"> 762: </a>      }
-</span><span id="763" class="l"><a class="l" href="#763"> 763: </a>   }
-</span><span id="764" class="l"><a class="l" href="#764"> 764: </a>   
-</span><span id="765" class="l"><a class="l" href="#765"> 765: </a>   <span class="php-comment">/**
-</span></span><span id="766" class="l"><a class="l" href="#766"> 766: </a><span class="php-comment">    * Establece un almacén como predeterminado para este usuario
-</span></span><span id="767" class="l"><a class="l" href="#767"> 767: </a><span class="php-comment">    * @param type $cod el código del almacén
-</span></span><span id="768" class="l"><a class="l" href="#768"> 768: </a><span class="php-comment">    */</span>
-</span><span id="769" class="l"><a class="l" href="#769"> 769: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codalmacen" href="#_save_codalmacen">save_codalmacen</a>(<span class="php-var">$cod</span>)
-</span><span id="770" class="l"><a class="l" href="#770"> 770: </a>   {
-</span><span id="771" class="l"><a class="l" href="#771"> 771: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_almacen'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="772" class="l"><a class="l" href="#772"> 772: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen(<span class="php-var">$cod</span>);
-</span><span id="773" class="l"><a class="l" href="#773"> 773: </a>   }
-</span><span id="774" class="l"><a class="l" href="#774"> 774: </a>   
-</span><span id="775" class="l"><a class="l" href="#775"> 775: </a>   <span class="php-comment">/**
-</span></span><span id="776" class="l"><a class="l" href="#776"> 776: </a><span class="php-comment">    * Establece un cliente como predeterminado para este usuario
-</span></span><span id="777" class="l"><a class="l" href="#777"> 777: </a><span class="php-comment">    * @param type $cod el código del cliente
-</span></span><span id="778" class="l"><a class="l" href="#778"> 778: </a><span class="php-comment">    */</span>
-</span><span id="779" class="l"><a class="l" href="#779"> 779: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codcliente" href="#_save_codcliente">save_codcliente</a>(<span class="php-var">$cod</span>)
-</span><span id="780" class="l"><a class="l" href="#780"> 780: </a>   {
-</span><span id="781" class="l"><a class="l" href="#781"> 781: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_cliente'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="782" class="l"><a class="l" href="#782"> 782: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codcliente(<span class="php-var">$cod</span>);
-</span><span id="783" class="l"><a class="l" href="#783"> 783: </a>   }
-</span><span id="784" class="l"><a class="l" href="#784"> 784: </a>   
-</span><span id="785" class="l"><a class="l" href="#785"> 785: </a>   <span class="php-comment">/**
-</span></span><span id="786" class="l"><a class="l" href="#786"> 786: </a><span class="php-comment">    * Establece una divisa como predeterminada para este usuario
-</span></span><span id="787" class="l"><a class="l" href="#787"> 787: </a><span class="php-comment">    * @param type $cod el código de la divisa
-</span></span><span id="788" class="l"><a class="l" href="#788"> 788: </a><span class="php-comment">    */</span>
-</span><span id="789" class="l"><a class="l" href="#789"> 789: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_coddivisa" href="#_save_coddivisa">save_coddivisa</a>(<span class="php-var">$cod</span>)
-</span><span id="790" class="l"><a class="l" href="#790"> 790: </a>   {
-</span><span id="791" class="l"><a class="l" href="#791"> 791: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_divisa'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="792" class="l"><a class="l" href="#792"> 792: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa(<span class="php-var">$cod</span>);
-</span><span id="793" class="l"><a class="l" href="#793"> 793: </a>   }
-</span><span id="794" class="l"><a class="l" href="#794"> 794: </a>   
-</span><span id="795" class="l"><a class="l" href="#795"> 795: </a>   <span class="php-comment">/**
-</span></span><span id="796" class="l"><a class="l" href="#796"> 796: </a><span class="php-comment">    * Establece una familia como predeterminada para este usuario
-</span></span><span id="797" class="l"><a class="l" href="#797"> 797: </a><span class="php-comment">    * @param type $cod el código de la familia
-</span></span><span id="798" class="l"><a class="l" href="#798"> 798: </a><span class="php-comment">    */</span>
-</span><span id="799" class="l"><a class="l" href="#799"> 799: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codfamilia" href="#_save_codfamilia">save_codfamilia</a>(<span class="php-var">$cod</span>)
-</span><span id="800" class="l"><a class="l" href="#800"> 800: </a>   {
-</span><span id="801" class="l"><a class="l" href="#801"> 801: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_familia'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="802" class="l"><a class="l" href="#802"> 802: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codfamilia(<span class="php-var">$cod</span>);
-</span><span id="803" class="l"><a class="l" href="#803"> 803: </a>   }
-</span><span id="804" class="l"><a class="l" href="#804"> 804: </a>   
-</span><span id="805" class="l"><a class="l" href="#805"> 805: </a>   <span class="php-comment">/**
-</span></span><span id="806" class="l"><a class="l" href="#806"> 806: </a><span class="php-comment">    * Establece una forma de pago como predeterminada para este usuario
-</span></span><span id="807" class="l"><a class="l" href="#807"> 807: </a><span class="php-comment">    * @param type $cod el código de la forma de pago
-</span></span><span id="808" class="l"><a class="l" href="#808"> 808: </a><span class="php-comment">    */</span>
-</span><span id="809" class="l"><a class="l" href="#809"> 809: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codpago" href="#_save_codpago">save_codpago</a>(<span class="php-var">$cod</span>)
-</span><span id="810" class="l"><a class="l" href="#810"> 810: </a>   {
-</span><span id="811" class="l"><a class="l" href="#811"> 811: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_formapago'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="812" class="l"><a class="l" href="#812"> 812: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago(<span class="php-var">$cod</span>);
-</span><span id="813" class="l"><a class="l" href="#813"> 813: </a>   }
-</span><span id="814" class="l"><a class="l" href="#814"> 814: </a>   
-</span><span id="815" class="l"><a class="l" href="#815"> 815: </a>   <span class="php-comment">/**
-</span></span><span id="816" class="l"><a class="l" href="#816"> 816: </a><span class="php-comment">    * Establece un impuesto (IVA) como predeterminado para este usuario
-</span></span><span id="817" class="l"><a class="l" href="#817"> 817: </a><span class="php-comment">    * @param type $cod el código del iumpuesto
-</span></span><span id="818" class="l"><a class="l" href="#818"> 818: </a><span class="php-comment">    */</span>
-</span><span id="819" class="l"><a class="l" href="#819"> 819: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codimpuesto" href="#_save_codimpuesto">save_codimpuesto</a>(<span class="php-var">$cod</span>)
-</span><span id="820" class="l"><a class="l" href="#820"> 820: </a>   {
-</span><span id="821" class="l"><a class="l" href="#821"> 821: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_impuesto'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="822" class="l"><a class="l" href="#822"> 822: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codimpuesto(<span class="php-var">$cod</span>);
-</span><span id="823" class="l"><a class="l" href="#823"> 823: </a>   }
-</span><span id="824" class="l"><a class="l" href="#824"> 824: </a>   
-</span><span id="825" class="l"><a class="l" href="#825"> 825: </a>   <span class="php-comment">/**
-</span></span><span id="826" class="l"><a class="l" href="#826"> 826: </a><span class="php-comment">    * Establece un código de país como predeterminado para este usuario
-</span></span><span id="827" class="l"><a class="l" href="#827"> 827: </a><span class="php-comment">    * @param type $cod el código del país
-</span></span><span id="828" class="l"><a class="l" href="#828"> 828: </a><span class="php-comment">    */</span>
-</span><span id="829" class="l"><a class="l" href="#829"> 829: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codpais" href="#_save_codpais">save_codpais</a>(<span class="php-var">$cod</span>)
-</span><span id="830" class="l"><a class="l" href="#830"> 830: </a>   {
-</span><span id="831" class="l"><a class="l" href="#831"> 831: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_pais'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="832" class="l"><a class="l" href="#832"> 832: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais(<span class="php-var">$cod</span>);
-</span><span id="833" class="l"><a class="l" href="#833"> 833: </a>   }
-</span><span id="834" class="l"><a class="l" href="#834"> 834: </a>   
-</span><span id="835" class="l"><a class="l" href="#835"> 835: </a>   <span class="php-comment">/**
-</span></span><span id="836" class="l"><a class="l" href="#836"> 836: </a><span class="php-comment">    * Establece un proveedor como predeterminado para este usuario
-</span></span><span id="837" class="l"><a class="l" href="#837"> 837: </a><span class="php-comment">    * @param type $cod el código del proveedor
-</span></span><span id="838" class="l"><a class="l" href="#838"> 838: </a><span class="php-comment">    */</span>
-</span><span id="839" class="l"><a class="l" href="#839"> 839: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codproveedor" href="#_save_codproveedor">save_codproveedor</a>(<span class="php-var">$cod</span>)
-</span><span id="840" class="l"><a class="l" href="#840"> 840: </a>   {
-</span><span id="841" class="l"><a class="l" href="#841"> 841: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_proveedor'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="842" class="l"><a class="l" href="#842"> 842: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codproveedor(<span class="php-var">$cod</span>);
-</span><span id="843" class="l"><a class="l" href="#843"> 843: </a>   }
-</span><span id="844" class="l"><a class="l" href="#844"> 844: </a>   
-</span><span id="845" class="l"><a class="l" href="#845"> 845: </a>   <span class="php-comment">/**
-</span></span><span id="846" class="l"><a class="l" href="#846"> 846: </a><span class="php-comment">    * Establece una serie como predeterminada para este usuario
-</span></span><span id="847" class="l"><a class="l" href="#847"> 847: </a><span class="php-comment">    * @param type $cod el código de la serie
-</span></span><span id="848" class="l"><a class="l" href="#848"> 848: </a><span class="php-comment">    */</span>
-</span><span id="849" class="l"><a class="l" href="#849"> 849: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codserie" href="#_save_codserie">save_codserie</a>(<span class="php-var">$cod</span>)
-</span><span id="850" class="l"><a class="l" href="#850"> 850: </a>   {
-</span><span id="851" class="l"><a class="l" href="#851"> 851: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_serie'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
-</span><span id="852" class="l"><a class="l" href="#852"> 852: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie(<span class="php-var">$cod</span>);
-</span><span id="853" class="l"><a class="l" href="#853"> 853: </a>   }
-</span><span id="854" class="l"><a class="l" href="#854"> 854: </a>   
-</span><span id="855" class="l"><a class="l" href="#855"> 855: </a>   <span class="php-comment">/**
-</span></span><span id="856" class="l"><a class="l" href="#856"> 856: </a><span class="php-comment">    * Devuelve la fecha actual
-</span></span><span id="857" class="l"><a class="l" href="#857"> 857: </a><span class="php-comment">    * @return type la fecha en formato día-mes-año
-</span></span><span id="858" class="l"><a class="l" href="#858"> 858: </a><span class="php-comment">    */</span>
-</span><span id="859" class="l"><a class="l" href="#859"> 859: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_today" href="#_today">today</a>()
-</span><span id="860" class="l"><a class="l" href="#860"> 860: </a>   {
-</span><span id="861" class="l"><a class="l" href="#861"> 861: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y'</span>);
-</span><span id="862" class="l"><a class="l" href="#862"> 862: </a>   }
-</span><span id="863" class="l"><a class="l" href="#863"> 863: </a>   
-</span><span id="864" class="l"><a class="l" href="#864"> 864: </a>   <span class="php-comment">/**
-</span></span><span id="865" class="l"><a class="l" href="#865"> 865: </a><span class="php-comment">    * Devuelve la hora actual
-</span></span><span id="866" class="l"><a class="l" href="#866"> 866: </a><span class="php-comment">    * @return type la hora en formato hora:minutos:segundos
-</span></span><span id="867" class="l"><a class="l" href="#867"> 867: </a><span class="php-comment">    */</span>
-</span><span id="868" class="l"><a class="l" href="#868"> 868: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_hour" href="#_hour">hour</a>()
-</span><span id="869" class="l"><a class="l" href="#869"> 869: </a>   {
-</span><span id="870" class="l"><a class="l" href="#870"> 870: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">Date</span>(<span class="php-quote">'H:i:s'</span>);
-</span><span id="871" class="l"><a class="l" href="#871"> 871: </a>   }
-</span><span id="872" class="l"><a class="l" href="#872"> 872: </a>   
-</span><span id="873" class="l"><a class="l" href="#873"> 873: </a>   <span class="php-comment">/**
-</span></span><span id="874" class="l"><a class="l" href="#874"> 874: </a><span class="php-comment">    * Devuelve un string aleatorio de longitud $length
-</span></span><span id="875" class="l"><a class="l" href="#875"> 875: </a><span class="php-comment">    * @param type $length la longitud del string
-</span></span><span id="876" class="l"><a class="l" href="#876"> 876: </a><span class="php-comment">    * @return type la cadena aleatoria
-</span></span><span id="877" class="l"><a class="l" href="#877"> 877: </a><span class="php-comment">    */</span>
-</span><span id="878" class="l"><a class="l" href="#878"> 878: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_random_string" href="#_random_string">random_string</a>(<span class="php-var">$length</span> = <span class="php-num">30</span>)
-</span><span id="879" class="l"><a class="l" href="#879"> 879: </a>   {
-</span><span id="880" class="l"><a class="l" href="#880"> 880: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">mb_substr</span>(<span class="php-keyword2">str_shuffle</span>(<span class="php-quote">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>),
-</span><span id="881" class="l"><a class="l" href="#881"> 881: </a>              <span class="php-num">0</span>, <span class="php-var">$length</span>);
-</span><span id="882" class="l"><a class="l" href="#882"> 882: </a>   }
-</span><span id="883" class="l"><a class="l" href="#883"> 883: </a>   
-</span><span id="884" class="l"><a class="l" href="#884"> 884: </a>   <span class="php-comment">/**
-</span></span><span id="885" class="l"><a class="l" href="#885"> 885: </a><span class="php-comment">    * He detectado que algunos navegadores, en algunos casos, envían varias veces la
-</span></span><span id="886" class="l"><a class="l" href="#886"> 886: </a><span class="php-comment">    * misma petición del formulario. En consecuencia se crean varios modelos (asientos,
-</span></span><span id="887" class="l"><a class="l" href="#887"> 887: </a><span class="php-comment">    * albaranes, etc...) con los mismos datos, es decir, duplicados.
-</span></span><span id="888" class="l"><a class="l" href="#888"> 888: </a><span class="php-comment">    * Para solucionarlo añado al formulario un campo petition_id con una cadena
-</span></span><span id="889" class="l"><a class="l" href="#889"> 889: </a><span class="php-comment">    * de texto aleatoria. Al llamar a esta función se comprueba si esa cadena
-</span></span><span id="890" class="l"><a class="l" href="#890"> 890: </a><span class="php-comment">    * ya ha sido almacenada, de ser así devuelve TRUE, así no hay que gabar los datos,
-</span></span><span id="891" class="l"><a class="l" href="#891"> 891: </a><span class="php-comment">    * si no, se almacena el ID y se devuelve FALSE.
-</span></span><span id="892" class="l"><a class="l" href="#892"> 892: </a><span class="php-comment">    * @param type $id el identificador de la petición
-</span></span><span id="893" class="l"><a class="l" href="#893"> 893: </a><span class="php-comment">    * @return boolean TRUE si la petición está duplicada
-</span></span><span id="894" class="l"><a class="l" href="#894"> 894: </a><span class="php-comment">    */</span>
-</span><span id="895" class="l"><a class="l" href="#895"> 895: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_duplicated_petition" href="#_duplicated_petition">duplicated_petition</a>(<span class="php-var">$id</span>)
-</span><span id="896" class="l"><a class="l" href="#896"> 896: </a>   {
-</span><span id="897" class="l"><a class="l" href="#897"> 897: </a>      <span class="php-var">$ids</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'petition_ids'</span>);
-</span><span id="898" class="l"><a class="l" href="#898"> 898: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">in_array</span>(<span class="php-var">$id</span>, <span class="php-var">$ids</span>) )
-</span><span id="899" class="l"><a class="l" href="#899"> 899: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="900" class="l"><a class="l" href="#900"> 900: </a>      <span class="php-keyword1">else</span>
-</span><span id="901" class="l"><a class="l" href="#901"> 901: </a>      {
-</span><span id="902" class="l"><a class="l" href="#902"> 902: </a>         <span class="php-var">$ids</span>[] = <span class="php-var">$id</span>;
-</span><span id="903" class="l"><a class="l" href="#903"> 903: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'petition_ids'</span>, <span class="php-var">$ids</span>, <span class="php-num">300</span>);
-</span><span id="904" class="l"><a class="l" href="#904"> 904: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="905" class="l"><a class="l" href="#905"> 905: </a>      }
-</span><span id="906" class="l"><a class="l" href="#906"> 906: </a>   }
-</span><span id="907" class="l"><a class="l" href="#907"> 907: </a>   
-</span><span id="908" class="l"><a class="l" href="#908"> 908: </a>   <span class="php-comment">/**
-</span></span><span id="909" class="l"><a class="l" href="#909"> 909: </a><span class="php-comment">    * Devuelve información del sistema para el informe de errores
-</span></span><span id="910" class="l"><a class="l" href="#910"> 910: </a><span class="php-comment">    * @return type la información del sistema
-</span></span><span id="911" class="l"><a class="l" href="#911"> 911: </a><span class="php-comment">    */</span>
-</span><span id="912" class="l"><a class="l" href="#912"> 912: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_system_info" href="#_system_info">system_info</a>()
-</span><span id="913" class="l"><a class="l" href="#913"> 913: </a>   {
-</span><span id="914" class="l"><a class="l" href="#914"> 914: </a>      <span class="php-var">$txt</span> = <span class="php-quote">'facturascripts: '</span>.<span class="php-var">$this</span>-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="915" class="l"><a class="l" href="#915"> 915: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'os: '</span>.<span class="php-keyword2">php_uname</span>().<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="916" class="l"><a class="l" href="#916"> 916: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'php: '</span>.<span class="php-keyword2">phpversion</span>().<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="917" class="l"><a class="l" href="#917"> 917: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'database type: '</span>.FS_DB_TYPE.<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="918" class="l"><a class="l" href="#918"> 918: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'database version: '</span>.<span class="php-var">$this</span>-&gt;db-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="919" class="l"><a class="l" href="#919"> 919: </a>      
-</span><span id="920" class="l"><a class="l" href="#920"> 920: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;cache-&gt;connected() )
-</span><span id="921" class="l"><a class="l" href="#921"> 921: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;memcache: YES\n&quot;</span>;
-</span><span id="922" class="l"><a class="l" href="#922"> 922: </a>      <span class="php-keyword1">else</span>
-</span><span id="923" class="l"><a class="l" href="#923"> 923: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;memcache: NO\n&quot;</span>;
+</span><span id="738" class="l"><a class="l" href="#738"> 738: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_pais'</span>]) )
+</span><span id="739" class="l"><a class="l" href="#739"> 739: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_pais'</span>] );
+</span><span id="740" class="l"><a class="l" href="#740"> 740: </a>      <span class="php-keyword1">else</span>
+</span><span id="741" class="l"><a class="l" href="#741"> 741: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais( <span class="php-var">$this</span>-&gt;empresa-&gt;codpais );
+</span><span id="742" class="l"><a class="l" href="#742"> 742: </a>      
+</span><span id="743" class="l"><a class="l" href="#743"> 743: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_proveedor'</span>]) )
+</span><span id="744" class="l"><a class="l" href="#744"> 744: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codproveedor( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_proveedor'</span>] );
+</span><span id="745" class="l"><a class="l" href="#745"> 745: </a>      
+</span><span id="746" class="l"><a class="l" href="#746"> 746: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_serie'</span>]) )
+</span><span id="747" class="l"><a class="l" href="#747"> 747: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie( <span class="php-var">$_COOKIE</span>[<span class="php-quote">'default_serie'</span>] );
+</span><span id="748" class="l"><a class="l" href="#748"> 748: </a>      <span class="php-keyword1">else</span>
+</span><span id="749" class="l"><a class="l" href="#749"> 749: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie( <span class="php-var">$this</span>-&gt;empresa-&gt;codserie );
+</span><span id="750" class="l"><a class="l" href="#750"> 750: </a>   }
+</span><span id="751" class="l"><a class="l" href="#751"> 751: </a>   
+</span><span id="752" class="l"><a class="l" href="#752"> 752: </a>   <span class="php-comment">/**
+</span></span><span id="753" class="l"><a class="l" href="#753"> 753: </a><span class="php-comment">    * Establece un ejercicio como predeterminado para este usuario
+</span></span><span id="754" class="l"><a class="l" href="#754"> 754: </a><span class="php-comment">    * @param type $cod el código del ejercicio
+</span></span><span id="755" class="l"><a class="l" href="#755"> 755: </a><span class="php-comment">    */</span>
+</span><span id="756" class="l"><a class="l" href="#756"> 756: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codejercicio" href="#_save_codejercicio">save_codejercicio</a>(<span class="php-var">$cod</span>)
+</span><span id="757" class="l"><a class="l" href="#757"> 757: </a>   {
+</span><span id="758" class="l"><a class="l" href="#758"> 758: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$cod</span> != <span class="php-var">$this</span>-&gt;user-&gt;codejercicio)
+</span><span id="759" class="l"><a class="l" href="#759"> 759: </a>      {
+</span><span id="760" class="l"><a class="l" href="#760"> 760: </a>         <span class="php-var">$this</span>-&gt;default_items-&gt;set_codejercicio(<span class="php-var">$cod</span>);
+</span><span id="761" class="l"><a class="l" href="#761"> 761: </a>         <span class="php-var">$this</span>-&gt;user-&gt;codejercicio = <span class="php-var">$cod</span>;
+</span><span id="762" class="l"><a class="l" href="#762"> 762: </a>         <span class="php-keyword1">if</span>( !<span class="php-var">$this</span>-&gt;user-&gt;save() )
+</span><span id="763" class="l"><a class="l" href="#763"> 763: </a>         {
+</span><span id="764" class="l"><a class="l" href="#764"> 764: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al establecer el ejercicio '</span>.<span class="php-var">$cod</span>.
+</span><span id="765" class="l"><a class="l" href="#765"> 765: </a>               <span class="php-quote">' como ejercicio predeterminado para este usuario.'</span>);
+</span><span id="766" class="l"><a class="l" href="#766"> 766: </a>         }
+</span><span id="767" class="l"><a class="l" href="#767"> 767: </a>      }
+</span><span id="768" class="l"><a class="l" href="#768"> 768: </a>   }
+</span><span id="769" class="l"><a class="l" href="#769"> 769: </a>   
+</span><span id="770" class="l"><a class="l" href="#770"> 770: </a>   <span class="php-comment">/**
+</span></span><span id="771" class="l"><a class="l" href="#771"> 771: </a><span class="php-comment">    * Establece un almacén como predeterminado para este usuario
+</span></span><span id="772" class="l"><a class="l" href="#772"> 772: </a><span class="php-comment">    * @param type $cod el código del almacén
+</span></span><span id="773" class="l"><a class="l" href="#773"> 773: </a><span class="php-comment">    */</span>
+</span><span id="774" class="l"><a class="l" href="#774"> 774: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codalmacen" href="#_save_codalmacen">save_codalmacen</a>(<span class="php-var">$cod</span>)
+</span><span id="775" class="l"><a class="l" href="#775"> 775: </a>   {
+</span><span id="776" class="l"><a class="l" href="#776"> 776: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_almacen'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="777" class="l"><a class="l" href="#777"> 777: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codalmacen(<span class="php-var">$cod</span>);
+</span><span id="778" class="l"><a class="l" href="#778"> 778: </a>   }
+</span><span id="779" class="l"><a class="l" href="#779"> 779: </a>   
+</span><span id="780" class="l"><a class="l" href="#780"> 780: </a>   <span class="php-comment">/**
+</span></span><span id="781" class="l"><a class="l" href="#781"> 781: </a><span class="php-comment">    * Establece un cliente como predeterminado para este usuario
+</span></span><span id="782" class="l"><a class="l" href="#782"> 782: </a><span class="php-comment">    * @param type $cod el código del cliente
+</span></span><span id="783" class="l"><a class="l" href="#783"> 783: </a><span class="php-comment">    */</span>
+</span><span id="784" class="l"><a class="l" href="#784"> 784: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codcliente" href="#_save_codcliente">save_codcliente</a>(<span class="php-var">$cod</span>)
+</span><span id="785" class="l"><a class="l" href="#785"> 785: </a>   {
+</span><span id="786" class="l"><a class="l" href="#786"> 786: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_cliente'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="787" class="l"><a class="l" href="#787"> 787: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codcliente(<span class="php-var">$cod</span>);
+</span><span id="788" class="l"><a class="l" href="#788"> 788: </a>   }
+</span><span id="789" class="l"><a class="l" href="#789"> 789: </a>   
+</span><span id="790" class="l"><a class="l" href="#790"> 790: </a>   <span class="php-comment">/**
+</span></span><span id="791" class="l"><a class="l" href="#791"> 791: </a><span class="php-comment">    * Establece una divisa como predeterminada para este usuario
+</span></span><span id="792" class="l"><a class="l" href="#792"> 792: </a><span class="php-comment">    * @param type $cod el código de la divisa
+</span></span><span id="793" class="l"><a class="l" href="#793"> 793: </a><span class="php-comment">    */</span>
+</span><span id="794" class="l"><a class="l" href="#794"> 794: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_coddivisa" href="#_save_coddivisa">save_coddivisa</a>(<span class="php-var">$cod</span>)
+</span><span id="795" class="l"><a class="l" href="#795"> 795: </a>   {
+</span><span id="796" class="l"><a class="l" href="#796"> 796: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_divisa'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="797" class="l"><a class="l" href="#797"> 797: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_coddivisa(<span class="php-var">$cod</span>);
+</span><span id="798" class="l"><a class="l" href="#798"> 798: </a>   }
+</span><span id="799" class="l"><a class="l" href="#799"> 799: </a>   
+</span><span id="800" class="l"><a class="l" href="#800"> 800: </a>   <span class="php-comment">/**
+</span></span><span id="801" class="l"><a class="l" href="#801"> 801: </a><span class="php-comment">    * Establece una familia como predeterminada para este usuario
+</span></span><span id="802" class="l"><a class="l" href="#802"> 802: </a><span class="php-comment">    * @param type $cod el código de la familia
+</span></span><span id="803" class="l"><a class="l" href="#803"> 803: </a><span class="php-comment">    */</span>
+</span><span id="804" class="l"><a class="l" href="#804"> 804: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codfamilia" href="#_save_codfamilia">save_codfamilia</a>(<span class="php-var">$cod</span>)
+</span><span id="805" class="l"><a class="l" href="#805"> 805: </a>   {
+</span><span id="806" class="l"><a class="l" href="#806"> 806: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_familia'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="807" class="l"><a class="l" href="#807"> 807: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codfamilia(<span class="php-var">$cod</span>);
+</span><span id="808" class="l"><a class="l" href="#808"> 808: </a>   }
+</span><span id="809" class="l"><a class="l" href="#809"> 809: </a>   
+</span><span id="810" class="l"><a class="l" href="#810"> 810: </a>   <span class="php-comment">/**
+</span></span><span id="811" class="l"><a class="l" href="#811"> 811: </a><span class="php-comment">    * Establece una forma de pago como predeterminada para este usuario
+</span></span><span id="812" class="l"><a class="l" href="#812"> 812: </a><span class="php-comment">    * @param type $cod el código de la forma de pago
+</span></span><span id="813" class="l"><a class="l" href="#813"> 813: </a><span class="php-comment">    */</span>
+</span><span id="814" class="l"><a class="l" href="#814"> 814: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codpago" href="#_save_codpago">save_codpago</a>(<span class="php-var">$cod</span>)
+</span><span id="815" class="l"><a class="l" href="#815"> 815: </a>   {
+</span><span id="816" class="l"><a class="l" href="#816"> 816: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_formapago'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="817" class="l"><a class="l" href="#817"> 817: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpago(<span class="php-var">$cod</span>);
+</span><span id="818" class="l"><a class="l" href="#818"> 818: </a>   }
+</span><span id="819" class="l"><a class="l" href="#819"> 819: </a>   
+</span><span id="820" class="l"><a class="l" href="#820"> 820: </a>   <span class="php-comment">/**
+</span></span><span id="821" class="l"><a class="l" href="#821"> 821: </a><span class="php-comment">    * Establece un impuesto (IVA) como predeterminado para este usuario
+</span></span><span id="822" class="l"><a class="l" href="#822"> 822: </a><span class="php-comment">    * @param type $cod el código del iumpuesto
+</span></span><span id="823" class="l"><a class="l" href="#823"> 823: </a><span class="php-comment">    */</span>
+</span><span id="824" class="l"><a class="l" href="#824"> 824: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codimpuesto" href="#_save_codimpuesto">save_codimpuesto</a>(<span class="php-var">$cod</span>)
+</span><span id="825" class="l"><a class="l" href="#825"> 825: </a>   {
+</span><span id="826" class="l"><a class="l" href="#826"> 826: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_impuesto'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="827" class="l"><a class="l" href="#827"> 827: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codimpuesto(<span class="php-var">$cod</span>);
+</span><span id="828" class="l"><a class="l" href="#828"> 828: </a>   }
+</span><span id="829" class="l"><a class="l" href="#829"> 829: </a>   
+</span><span id="830" class="l"><a class="l" href="#830"> 830: </a>   <span class="php-comment">/**
+</span></span><span id="831" class="l"><a class="l" href="#831"> 831: </a><span class="php-comment">    * Establece un código de país como predeterminado para este usuario
+</span></span><span id="832" class="l"><a class="l" href="#832"> 832: </a><span class="php-comment">    * @param type $cod el código del país
+</span></span><span id="833" class="l"><a class="l" href="#833"> 833: </a><span class="php-comment">    */</span>
+</span><span id="834" class="l"><a class="l" href="#834"> 834: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codpais" href="#_save_codpais">save_codpais</a>(<span class="php-var">$cod</span>)
+</span><span id="835" class="l"><a class="l" href="#835"> 835: </a>   {
+</span><span id="836" class="l"><a class="l" href="#836"> 836: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_pais'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="837" class="l"><a class="l" href="#837"> 837: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codpais(<span class="php-var">$cod</span>);
+</span><span id="838" class="l"><a class="l" href="#838"> 838: </a>   }
+</span><span id="839" class="l"><a class="l" href="#839"> 839: </a>   
+</span><span id="840" class="l"><a class="l" href="#840"> 840: </a>   <span class="php-comment">/**
+</span></span><span id="841" class="l"><a class="l" href="#841"> 841: </a><span class="php-comment">    * Establece un proveedor como predeterminado para este usuario
+</span></span><span id="842" class="l"><a class="l" href="#842"> 842: </a><span class="php-comment">    * @param type $cod el código del proveedor
+</span></span><span id="843" class="l"><a class="l" href="#843"> 843: </a><span class="php-comment">    */</span>
+</span><span id="844" class="l"><a class="l" href="#844"> 844: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codproveedor" href="#_save_codproveedor">save_codproveedor</a>(<span class="php-var">$cod</span>)
+</span><span id="845" class="l"><a class="l" href="#845"> 845: </a>   {
+</span><span id="846" class="l"><a class="l" href="#846"> 846: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_proveedor'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="847" class="l"><a class="l" href="#847"> 847: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codproveedor(<span class="php-var">$cod</span>);
+</span><span id="848" class="l"><a class="l" href="#848"> 848: </a>   }
+</span><span id="849" class="l"><a class="l" href="#849"> 849: </a>   
+</span><span id="850" class="l"><a class="l" href="#850"> 850: </a>   <span class="php-comment">/**
+</span></span><span id="851" class="l"><a class="l" href="#851"> 851: </a><span class="php-comment">    * Establece una serie como predeterminada para este usuario
+</span></span><span id="852" class="l"><a class="l" href="#852"> 852: </a><span class="php-comment">    * @param type $cod el código de la serie
+</span></span><span id="853" class="l"><a class="l" href="#853"> 853: </a><span class="php-comment">    */</span>
+</span><span id="854" class="l"><a class="l" href="#854"> 854: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_save_codserie" href="#_save_codserie">save_codserie</a>(<span class="php-var">$cod</span>)
+</span><span id="855" class="l"><a class="l" href="#855"> 855: </a>   {
+</span><span id="856" class="l"><a class="l" href="#856"> 856: </a>      <span class="php-keyword2">setcookie</span>(<span class="php-quote">'default_serie'</span>, <span class="php-var">$cod</span>, <span class="php-keyword2">time</span>()+FS_COOKIES_EXPIRE);
+</span><span id="857" class="l"><a class="l" href="#857"> 857: </a>      <span class="php-var">$this</span>-&gt;default_items-&gt;set_codserie(<span class="php-var">$cod</span>);
+</span><span id="858" class="l"><a class="l" href="#858"> 858: </a>   }
+</span><span id="859" class="l"><a class="l" href="#859"> 859: </a>   
+</span><span id="860" class="l"><a class="l" href="#860"> 860: </a>   <span class="php-comment">/**
+</span></span><span id="861" class="l"><a class="l" href="#861"> 861: </a><span class="php-comment">    * Devuelve la fecha actual
+</span></span><span id="862" class="l"><a class="l" href="#862"> 862: </a><span class="php-comment">    * @return type la fecha en formato día-mes-año
+</span></span><span id="863" class="l"><a class="l" href="#863"> 863: </a><span class="php-comment">    */</span>
+</span><span id="864" class="l"><a class="l" href="#864"> 864: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_today" href="#_today">today</a>()
+</span><span id="865" class="l"><a class="l" href="#865"> 865: </a>   {
+</span><span id="866" class="l"><a class="l" href="#866"> 866: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y'</span>);
+</span><span id="867" class="l"><a class="l" href="#867"> 867: </a>   }
+</span><span id="868" class="l"><a class="l" href="#868"> 868: </a>   
+</span><span id="869" class="l"><a class="l" href="#869"> 869: </a>   <span class="php-comment">/**
+</span></span><span id="870" class="l"><a class="l" href="#870"> 870: </a><span class="php-comment">    * Devuelve la hora actual
+</span></span><span id="871" class="l"><a class="l" href="#871"> 871: </a><span class="php-comment">    * @return type la hora en formato hora:minutos:segundos
+</span></span><span id="872" class="l"><a class="l" href="#872"> 872: </a><span class="php-comment">    */</span>
+</span><span id="873" class="l"><a class="l" href="#873"> 873: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_hour" href="#_hour">hour</a>()
+</span><span id="874" class="l"><a class="l" href="#874"> 874: </a>   {
+</span><span id="875" class="l"><a class="l" href="#875"> 875: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">Date</span>(<span class="php-quote">'H:i:s'</span>);
+</span><span id="876" class="l"><a class="l" href="#876"> 876: </a>   }
+</span><span id="877" class="l"><a class="l" href="#877"> 877: </a>   
+</span><span id="878" class="l"><a class="l" href="#878"> 878: </a>   <span class="php-comment">/**
+</span></span><span id="879" class="l"><a class="l" href="#879"> 879: </a><span class="php-comment">    * Devuelve un string aleatorio de longitud $length
+</span></span><span id="880" class="l"><a class="l" href="#880"> 880: </a><span class="php-comment">    * @param type $length la longitud del string
+</span></span><span id="881" class="l"><a class="l" href="#881"> 881: </a><span class="php-comment">    * @return type la cadena aleatoria
+</span></span><span id="882" class="l"><a class="l" href="#882"> 882: </a><span class="php-comment">    */</span>
+</span><span id="883" class="l"><a class="l" href="#883"> 883: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_random_string" href="#_random_string">random_string</a>(<span class="php-var">$length</span> = <span class="php-num">30</span>)
+</span><span id="884" class="l"><a class="l" href="#884"> 884: </a>   {
+</span><span id="885" class="l"><a class="l" href="#885"> 885: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">mb_substr</span>(<span class="php-keyword2">str_shuffle</span>(<span class="php-quote">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>),
+</span><span id="886" class="l"><a class="l" href="#886"> 886: </a>              <span class="php-num">0</span>, <span class="php-var">$length</span>);
+</span><span id="887" class="l"><a class="l" href="#887"> 887: </a>   }
+</span><span id="888" class="l"><a class="l" href="#888"> 888: </a>   
+</span><span id="889" class="l"><a class="l" href="#889"> 889: </a>   <span class="php-comment">/**
+</span></span><span id="890" class="l"><a class="l" href="#890"> 890: </a><span class="php-comment">    * He detectado que algunos navegadores, en algunos casos, envían varias veces la
+</span></span><span id="891" class="l"><a class="l" href="#891"> 891: </a><span class="php-comment">    * misma petición del formulario. En consecuencia se crean varios modelos (asientos,
+</span></span><span id="892" class="l"><a class="l" href="#892"> 892: </a><span class="php-comment">    * albaranes, etc...) con los mismos datos, es decir, duplicados.
+</span></span><span id="893" class="l"><a class="l" href="#893"> 893: </a><span class="php-comment">    * Para solucionarlo añado al formulario un campo petition_id con una cadena
+</span></span><span id="894" class="l"><a class="l" href="#894"> 894: </a><span class="php-comment">    * de texto aleatoria. Al llamar a esta función se comprueba si esa cadena
+</span></span><span id="895" class="l"><a class="l" href="#895"> 895: </a><span class="php-comment">    * ya ha sido almacenada, de ser así devuelve TRUE, así no hay que gabar los datos,
+</span></span><span id="896" class="l"><a class="l" href="#896"> 896: </a><span class="php-comment">    * si no, se almacena el ID y se devuelve FALSE.
+</span></span><span id="897" class="l"><a class="l" href="#897"> 897: </a><span class="php-comment">    * @param type $id el identificador de la petición
+</span></span><span id="898" class="l"><a class="l" href="#898"> 898: </a><span class="php-comment">    * @return boolean TRUE si la petición está duplicada
+</span></span><span id="899" class="l"><a class="l" href="#899"> 899: </a><span class="php-comment">    */</span>
+</span><span id="900" class="l"><a class="l" href="#900"> 900: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_duplicated_petition" href="#_duplicated_petition">duplicated_petition</a>(<span class="php-var">$id</span>)
+</span><span id="901" class="l"><a class="l" href="#901"> 901: </a>   {
+</span><span id="902" class="l"><a class="l" href="#902"> 902: </a>      <span class="php-var">$ids</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'petition_ids'</span>);
+</span><span id="903" class="l"><a class="l" href="#903"> 903: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">in_array</span>(<span class="php-var">$id</span>, <span class="php-var">$ids</span>) )
+</span><span id="904" class="l"><a class="l" href="#904"> 904: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="905" class="l"><a class="l" href="#905"> 905: </a>      <span class="php-keyword1">else</span>
+</span><span id="906" class="l"><a class="l" href="#906"> 906: </a>      {
+</span><span id="907" class="l"><a class="l" href="#907"> 907: </a>         <span class="php-var">$ids</span>[] = <span class="php-var">$id</span>;
+</span><span id="908" class="l"><a class="l" href="#908"> 908: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'petition_ids'</span>, <span class="php-var">$ids</span>, <span class="php-num">300</span>);
+</span><span id="909" class="l"><a class="l" href="#909"> 909: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="910" class="l"><a class="l" href="#910"> 910: </a>      }
+</span><span id="911" class="l"><a class="l" href="#911"> 911: </a>   }
+</span><span id="912" class="l"><a class="l" href="#912"> 912: </a>   
+</span><span id="913" class="l"><a class="l" href="#913"> 913: </a>   <span class="php-comment">/**
+</span></span><span id="914" class="l"><a class="l" href="#914"> 914: </a><span class="php-comment">    * Devuelve información del sistema para el informe de errores
+</span></span><span id="915" class="l"><a class="l" href="#915"> 915: </a><span class="php-comment">    * @return type la información del sistema
+</span></span><span id="916" class="l"><a class="l" href="#916"> 916: </a><span class="php-comment">    */</span>
+</span><span id="917" class="l"><a class="l" href="#917"> 917: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_system_info" href="#_system_info">system_info</a>()
+</span><span id="918" class="l"><a class="l" href="#918"> 918: </a>   {
+</span><span id="919" class="l"><a class="l" href="#919"> 919: </a>      <span class="php-var">$txt</span> = <span class="php-quote">'facturascripts: '</span>.<span class="php-var">$this</span>-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
+</span><span id="920" class="l"><a class="l" href="#920"> 920: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'os: '</span>.<span class="php-keyword2">php_uname</span>().<span class="php-quote">&quot;\n&quot;</span>;
+</span><span id="921" class="l"><a class="l" href="#921"> 921: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'php: '</span>.<span class="php-keyword2">phpversion</span>().<span class="php-quote">&quot;\n&quot;</span>;
+</span><span id="922" class="l"><a class="l" href="#922"> 922: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'database type: '</span>.FS_DB_TYPE.<span class="php-quote">&quot;\n&quot;</span>;
+</span><span id="923" class="l"><a class="l" href="#923"> 923: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'database version: '</span>.<span class="php-var">$this</span>-&gt;db-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
 </span><span id="924" class="l"><a class="l" href="#924"> 924: </a>      
-</span><span id="925" class="l"><a class="l" href="#925"> 925: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'memcache version: '</span>.<span class="php-var">$this</span>-&gt;cache-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
-</span><span id="926" class="l"><a class="l" href="#926"> 926: </a>      
-</span><span id="927" class="l"><a class="l" href="#927"> 927: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'REQUEST_URI'</span>]) )
-</span><span id="928" class="l"><a class="l" href="#928"> 928: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">'url: '</span>.<span class="php-var">$_SERVER</span>[<span class="php-quote">'REQUEST_URI'</span>].<span class="php-quote">&quot;\n------&quot;</span>;
+</span><span id="925" class="l"><a class="l" href="#925"> 925: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;cache-&gt;connected() )
+</span><span id="926" class="l"><a class="l" href="#926"> 926: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;memcache: YES\n&quot;</span>;
+</span><span id="927" class="l"><a class="l" href="#927"> 927: </a>      <span class="php-keyword1">else</span>
+</span><span id="928" class="l"><a class="l" href="#928"> 928: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;memcache: NO\n&quot;</span>;
 </span><span id="929" class="l"><a class="l" href="#929"> 929: </a>      
-</span><span id="930" class="l"><a class="l" href="#930"> 930: </a>      <span class="php-keyword1">foreach</span>(<span class="php-var">$this</span>-&gt;get_errors() <span class="php-keyword1">as</span> <span class="php-var">$e</span>)
-</span><span id="931" class="l"><a class="l" href="#931"> 931: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;\n&quot;</span> . <span class="php-var">$e</span>;
-</span><span id="932" class="l"><a class="l" href="#932"> 932: </a>      
-</span><span id="933" class="l"><a class="l" href="#933"> 933: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&quot;'</span>, <span class="php-quote">&quot;'&quot;</span>, <span class="php-var">$txt</span>);
-</span><span id="934" class="l"><a class="l" href="#934"> 934: </a>   }
-</span><span id="935" class="l"><a class="l" href="#935"> 935: </a>   
-</span><span id="936" class="l"><a class="l" href="#936"> 936: </a>   <span class="php-comment">/**
-</span></span><span id="937" class="l"><a class="l" href="#937"> 937: </a><span class="php-comment">    * Devuelve el símbolo de divisa predeterminado
-</span></span><span id="938" class="l"><a class="l" href="#938"> 938: </a><span class="php-comment">    * o bien el símbolo de la divisa seleccionada.
-</span></span><span id="939" class="l"><a class="l" href="#939"> 939: </a><span class="php-comment">    * @param type $coddivisa
-</span></span><span id="940" class="l"><a class="l" href="#940"> 940: </a><span class="php-comment">    * @return string
-</span></span><span id="941" class="l"><a class="l" href="#941"> 941: </a><span class="php-comment">    */</span>
-</span><span id="942" class="l"><a class="l" href="#942"> 942: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_simbolo_divisa" href="#_simbolo_divisa">simbolo_divisa</a>(<span class="php-var">$coddivisa</span> = <span class="php-keyword1">FALSE</span>)
-</span><span id="943" class="l"><a class="l" href="#943"> 943: </a>   {
-</span><span id="944" class="l"><a class="l" href="#944"> 944: </a>      <span class="php-keyword1">if</span>(!<span class="php-var">$coddivisa</span>)
-</span><span id="945" class="l"><a class="l" href="#945"> 945: </a>         <span class="php-var">$coddivisa</span> = <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa;
-</span><span id="946" class="l"><a class="l" href="#946"> 946: </a>      
-</span><span id="947" class="l"><a class="l" href="#947"> 947: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>]) )
-</span><span id="948" class="l"><a class="l" href="#948"> 948: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>];
-</span><span id="949" class="l"><a class="l" href="#949"> 949: </a>      <span class="php-keyword1">else</span>
-</span><span id="950" class="l"><a class="l" href="#950"> 950: </a>      {
-</span><span id="951" class="l"><a class="l" href="#951"> 951: </a>         <span class="php-var">$divisa</span> = <span class="php-keyword1">new</span> divisa();
-</span><span id="952" class="l"><a class="l" href="#952"> 952: </a>         <span class="php-var">$divi0</span> = <span class="php-var">$divisa</span>-&gt;get(<span class="php-var">$coddivisa</span>);
-</span><span id="953" class="l"><a class="l" href="#953"> 953: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$divi0</span>)
-</span><span id="954" class="l"><a class="l" href="#954"> 954: </a>         {
-</span><span id="955" class="l"><a class="l" href="#955"> 955: </a>            <span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>] = <span class="php-var">$divi0</span>-&gt;simbolo;
-</span><span id="956" class="l"><a class="l" href="#956"> 956: </a>            <span class="php-keyword1">return</span> <span class="php-var">$divi0</span>-&gt;simbolo;
-</span><span id="957" class="l"><a class="l" href="#957"> 957: </a>         }
-</span><span id="958" class="l"><a class="l" href="#958"> 958: </a>         <span class="php-keyword1">else</span>
-</span><span id="959" class="l"><a class="l" href="#959"> 959: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'?'</span>;
-</span><span id="960" class="l"><a class="l" href="#960"> 960: </a>      }
-</span><span id="961" class="l"><a class="l" href="#961"> 961: </a>   }
-</span><span id="962" class="l"><a class="l" href="#962"> 962: </a>   
-</span><span id="963" class="l"><a class="l" href="#963"> 963: </a>   <span class="php-comment">/**
-</span></span><span id="964" class="l"><a class="l" href="#964"> 964: </a><span class="php-comment">    * Devuelve un string con el precio en el formato predefinido y con la
-</span></span><span id="965" class="l"><a class="l" href="#965"> 965: </a><span class="php-comment">    * divisa seleccionada (o la predeterminada).
-</span></span><span id="966" class="l"><a class="l" href="#966"> 966: </a><span class="php-comment">    * 
-</span></span><span id="967" class="l"><a class="l" href="#967"> 967: </a><span class="php-comment">    * @param type $precio
-</span></span><span id="968" class="l"><a class="l" href="#968"> 968: </a><span class="php-comment">    * @param type $coddivisa
-</span></span><span id="969" class="l"><a class="l" href="#969"> 969: </a><span class="php-comment">    * @param type $simbolo
-</span></span><span id="970" class="l"><a class="l" href="#970"> 970: </a><span class="php-comment">    * @return type
-</span></span><span id="971" class="l"><a class="l" href="#971"> 971: </a><span class="php-comment">    */</span>
-</span><span id="972" class="l"><a class="l" href="#972"> 972: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_show_precio" href="#_show_precio">show_precio</a>(<span class="php-var">$precio</span>=<span class="php-num">0</span>, <span class="php-var">$coddivisa</span>=<span class="php-keyword1">FALSE</span>, <span class="php-var">$simbolo</span>=<span class="php-keyword1">TRUE</span>)
-</span><span id="973" class="l"><a class="l" href="#973"> 973: </a>   {
-</span><span id="974" class="l"><a class="l" href="#974"> 974: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$coddivisa</span> === <span class="php-keyword1">FALSE</span>)
-</span><span id="975" class="l"><a class="l" href="#975"> 975: </a>         <span class="php-var">$coddivisa</span> = <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa;
-</span><span id="976" class="l"><a class="l" href="#976"> 976: </a>      
-</span><span id="977" class="l"><a class="l" href="#977"> 977: </a>      <span class="php-keyword1">if</span>(FS_POS_DIVISA == <span class="php-quote">'right'</span>)
-</span><span id="978" class="l"><a class="l" href="#978"> 978: </a>      {
-</span><span id="979" class="l"><a class="l" href="#979"> 979: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$simbolo</span>)
-</span><span id="980" class="l"><a class="l" href="#980"> 980: </a>            <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2).<span class="php-quote">' '</span>.<span class="php-var">$this</span>-&gt;simbolo_divisa(<span class="php-var">$coddivisa</span>);
-</span><span id="981" class="l"><a class="l" href="#981"> 981: </a>         <span class="php-keyword1">else</span>
-</span><span id="982" class="l"><a class="l" href="#982"> 982: </a>            <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2).<span class="php-quote">' '</span>.<span class="php-var">$coddivisa</span>;
-</span><span id="983" class="l"><a class="l" href="#983"> 983: </a>      }
-</span><span id="984" class="l"><a class="l" href="#984"> 984: </a>      <span class="php-keyword1">else</span>
-</span><span id="985" class="l"><a class="l" href="#985"> 985: </a>      {
-</span><span id="986" class="l"><a class="l" href="#986"> 986: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$simbolo</span>)
-</span><span id="987" class="l"><a class="l" href="#987"> 987: </a>            <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;simbolo_divisa(<span class="php-var">$coddivisa</span>).<span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2);
-</span><span id="988" class="l"><a class="l" href="#988"> 988: </a>         <span class="php-keyword1">else</span>
-</span><span id="989" class="l"><a class="l" href="#989"> 989: </a>            <span class="php-keyword1">return</span> <span class="php-var">$coddivisa</span>.<span class="php-quote">' '</span>.<span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2);
-</span><span id="990" class="l"><a class="l" href="#990"> 990: </a>      }
-</span><span id="991" class="l"><a class="l" href="#991"> 991: </a>   }
-</span><span id="992" class="l"><a class="l" href="#992"> 992: </a>   
-</span><span id="993" class="l"><a class="l" href="#993"> 993: </a>   <span class="php-comment">/**
-</span></span><span id="994" class="l"><a class="l" href="#994"> 994: </a><span class="php-comment">    * Devuelve un string con el número en el formato de número predeterminado.
-</span></span><span id="995" class="l"><a class="l" href="#995"> 995: </a><span class="php-comment">    * @param type $num
-</span></span><span id="996" class="l"><a class="l" href="#996"> 996: </a><span class="php-comment">    * @param type $decimales
-</span></span><span id="997" class="l"><a class="l" href="#997"> 997: </a><span class="php-comment">    * @param type $js
-</span></span><span id="998" class="l"><a class="l" href="#998"> 998: </a><span class="php-comment">    * @return type
-</span></span><span id="999" class="l"><a class="l" href="#999"> 999: </a><span class="php-comment">    */</span>
-</span><span id="1000" class="l"><a class="l" href="#1000">1000: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_show_numero" href="#_show_numero">show_numero</a>(<span class="php-var">$num</span>=<span class="php-num">0</span>, <span class="php-var">$decimales</span>=FS_NF0, <span class="php-var">$js</span>=<span class="php-keyword1">FALSE</span>)
-</span><span id="1001" class="l"><a class="l" href="#1001">1001: </a>   {
-</span><span id="1002" class="l"><a class="l" href="#1002">1002: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$js</span>)
-</span><span id="1003" class="l"><a class="l" href="#1003">1003: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$num</span>, <span class="php-var">$decimales</span>, <span class="php-quote">'.'</span>, <span class="php-quote">''</span>);
-</span><span id="1004" class="l"><a class="l" href="#1004">1004: </a>      <span class="php-keyword1">else</span>
-</span><span id="1005" class="l"><a class="l" href="#1005">1005: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$num</span>, <span class="php-var">$decimales</span>, FS_NF1, FS_NF2);
-</span><span id="1006" class="l"><a class="l" href="#1006">1006: </a>   }
-</span><span id="1007" class="l"><a class="l" href="#1007">1007: </a>   
-</span><span id="1008" class="l"><a class="l" href="#1008">1008: </a>   <span class="php-comment">/**
-</span></span><span id="1009" class="l"><a class="l" href="#1009">1009: </a><span class="php-comment">    * Añade un elemento a la lista de cambios del usuario.
-</span></span><span id="1010" class="l"><a class="l" href="#1010">1010: </a><span class="php-comment">    * @param type $txt texto descriptivo.
-</span></span><span id="1011" class="l"><a class="l" href="#1011">1011: </a><span class="php-comment">    * @param type $url URL del elemento (albarán, factura, artículos...).
-</span></span><span id="1012" class="l"><a class="l" href="#1012">1012: </a><span class="php-comment">    * @param type $nuevo TRUE si el elemento es nuevo, FALSE si se ha modificado.
-</span></span><span id="1013" class="l"><a class="l" href="#1013">1013: </a><span class="php-comment">    */</span>
-</span><span id="1014" class="l"><a class="l" href="#1014">1014: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_new_change" href="#_new_change">new_change</a>(<span class="php-var">$txt</span>, <span class="php-var">$url</span>, <span class="php-var">$nuevo</span>=<span class="php-keyword1">FALSE</span>)
-</span><span id="1015" class="l"><a class="l" href="#1015">1015: </a>   {
-</span><span id="1016" class="l"><a class="l" href="#1016">1016: </a>      <span class="php-var">$this</span>-&gt;get_last_changes();
-</span><span id="1017" class="l"><a class="l" href="#1017">1017: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;last_changes) &gt; <span class="php-num">0</span> )
-</span><span id="1018" class="l"><a class="l" href="#1018">1018: </a>      {
-</span><span id="1019" class="l"><a class="l" href="#1019">1019: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$this</span>-&gt;last_changes[<span class="php-num">0</span>][<span class="php-quote">'url'</span>] == <span class="php-var">$url</span>)
-</span><span id="1020" class="l"><a class="l" href="#1020">1020: </a>            <span class="php-var">$this</span>-&gt;last_changes[<span class="php-num">0</span>][<span class="php-quote">'nuevo'</span>] = <span class="php-var">$nuevo</span>;
-</span><span id="1021" class="l"><a class="l" href="#1021">1021: </a>         <span class="php-keyword1">else</span>
-</span><span id="1022" class="l"><a class="l" href="#1022">1022: </a>            <span class="php-keyword2">array_unshift</span>(<span class="php-var">$this</span>-&gt;last_changes, <span class="php-keyword1">array</span>(<span class="php-quote">'texto'</span> =&gt; <span class="php-keyword2">ucfirst</span>(<span class="php-var">$txt</span>), <span class="php-quote">'url'</span> =&gt; <span class="php-var">$url</span>, <span class="php-quote">'nuevo'</span> =&gt; <span class="php-var">$nuevo</span>, <span class="php-quote">'cambio'</span> =&gt; <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y H:i:s'</span>)) );
-</span><span id="1023" class="l"><a class="l" href="#1023">1023: </a>      }
-</span><span id="1024" class="l"><a class="l" href="#1024">1024: </a>      <span class="php-keyword1">else</span>
-</span><span id="1025" class="l"><a class="l" href="#1025">1025: </a>         <span class="php-keyword2">array_unshift</span>(<span class="php-var">$this</span>-&gt;last_changes, <span class="php-keyword1">array</span>(<span class="php-quote">'texto'</span> =&gt; <span class="php-keyword2">ucfirst</span>(<span class="php-var">$txt</span>), <span class="php-quote">'url'</span> =&gt; <span class="php-var">$url</span>, <span class="php-quote">'nuevo'</span> =&gt; <span class="php-var">$nuevo</span>, <span class="php-quote">'cambio'</span> =&gt; <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y H:i:s'</span>)) );
-</span><span id="1026" class="l"><a class="l" href="#1026">1026: </a>      
-</span><span id="1027" class="l"><a class="l" href="#1027">1027: </a>      <span class="php-comment">/// sólo queremos 10 elementos</span>
-</span><span id="1028" class="l"><a class="l" href="#1028">1028: </a>      <span class="php-var">$num</span> = <span class="php-num">10</span>;
-</span><span id="1029" class="l"><a class="l" href="#1029">1029: </a>      <span class="php-keyword1">foreach</span>(<span class="php-var">$this</span>-&gt;last_changes <span class="php-keyword1">as</span> <span class="php-var">$i</span> =&gt; <span class="php-var">$value</span>)
-</span><span id="1030" class="l"><a class="l" href="#1030">1030: </a>      {
-</span><span id="1031" class="l"><a class="l" href="#1031">1031: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$num</span> &gt; <span class="php-num">0</span>)
-</span><span id="1032" class="l"><a class="l" href="#1032">1032: </a>         {
-</span><span id="1033" class="l"><a class="l" href="#1033">1033: </a>            <span class="php-var">$num</span>--;
-</span><span id="1034" class="l"><a class="l" href="#1034">1034: </a>         }
-</span><span id="1035" class="l"><a class="l" href="#1035">1035: </a>         <span class="php-keyword1">else</span>
-</span><span id="1036" class="l"><a class="l" href="#1036">1036: </a>         {
-</span><span id="1037" class="l"><a class="l" href="#1037">1037: </a>            <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;last_changes[<span class="php-var">$i</span>]);
-</span><span id="1038" class="l"><a class="l" href="#1038">1038: </a>         }
-</span><span id="1039" class="l"><a class="l" href="#1039">1039: </a>      }
-</span><span id="1040" class="l"><a class="l" href="#1040">1040: </a>      
-</span><span id="1041" class="l"><a class="l" href="#1041">1041: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'last_changes_'</span>.<span class="php-var">$this</span>-&gt;user-&gt;nick, <span class="php-var">$this</span>-&gt;last_changes);
-</span><span id="1042" class="l"><a class="l" href="#1042">1042: </a>   }
-</span><span id="1043" class="l"><a class="l" href="#1043">1043: </a>   
-</span><span id="1044" class="l"><a class="l" href="#1044">1044: </a>   <span class="php-comment">/**
-</span></span><span id="1045" class="l"><a class="l" href="#1045">1045: </a><span class="php-comment">    * Devuelve la lista con los últimos cambios del usuario.
-</span></span><span id="1046" class="l"><a class="l" href="#1046">1046: </a><span class="php-comment">    */</span>
-</span><span id="1047" class="l"><a class="l" href="#1047">1047: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_last_changes" href="#_get_last_changes">get_last_changes</a>()
-</span><span id="1048" class="l"><a class="l" href="#1048">1048: </a>   {
-</span><span id="1049" class="l"><a class="l" href="#1049">1049: </a>      <span class="php-keyword1">if</span>( !<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;last_changes) )
-</span><span id="1050" class="l"><a class="l" href="#1050">1050: </a>      {
-</span><span id="1051" class="l"><a class="l" href="#1051">1051: </a>         <span class="php-var">$this</span>-&gt;last_changes = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'last_changes_'</span>.<span class="php-var">$this</span>-&gt;user-&gt;nick);
-</span><span id="1052" class="l"><a class="l" href="#1052">1052: </a>      }
-</span><span id="1053" class="l"><a class="l" href="#1053">1053: </a>      
-</span><span id="1054" class="l"><a class="l" href="#1054">1054: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;last_changes;
-</span><span id="1055" class="l"><a class="l" href="#1055">1055: </a>   }
-</span><span id="1056" class="l"><a class="l" href="#1056">1056: </a>   
-</span><span id="1057" class="l"><a class="l" href="#1057">1057: </a>   <span class="php-comment">/**
-</span></span><span id="1058" class="l"><a class="l" href="#1058">1058: </a><span class="php-comment">    * Devuelve el HTML con la primera &quot;página&quot; de la comunidad, es decir,
-</span></span><span id="1059" class="l"><a class="l" href="#1059">1059: </a><span class="php-comment">    * el índice de tutoriales.
-</span></span><span id="1060" class="l"><a class="l" href="#1060">1060: </a><span class="php-comment">    */</span>
-</span><span id="1061" class="l"><a class="l" href="#1061">1061: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_community_html" href="#_get_community_html">get_community_html</a>()
-</span><span id="1062" class="l"><a class="l" href="#1062">1062: </a>   {
-</span><span id="1063" class="l"><a class="l" href="#1063">1063: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/community_index.html'</span>) <span class="php-keyword1">AND</span> <span class="php-keyword2">mt_rand</span>(<span class="php-num">0</span>, <span class="php-num">9</span>) &gt; <span class="php-num">0</span> )
-</span><span id="1064" class="l"><a class="l" href="#1064">1064: </a>      {
-</span><span id="1065" class="l"><a class="l" href="#1065">1065: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">file_get_contents</span>(<span class="php-quote">'tmp/community_index.html'</span>);
-</span><span id="1066" class="l"><a class="l" href="#1066">1066: </a>      }
-</span><span id="1067" class="l"><a class="l" href="#1067">1067: </a>      <span class="php-keyword1">else</span>
-</span><span id="1068" class="l"><a class="l" href="#1068">1068: </a>      {
-</span><span id="1069" class="l"><a class="l" href="#1069">1069: </a>         <span class="php-var">$html</span> = <span class="php-keyword2">file_get_contents</span>(FS_COMMUNITY_URL.<span class="php-quote">'/iframe.php?version='</span>.<span class="php-var">$this</span>-&gt;version());
-</span><span id="1070" class="l"><a class="l" href="#1070">1070: </a>         <span class="php-keyword2">file_put_contents</span>(<span class="php-quote">'tmp/community_index.html'</span>, <span class="php-var">$html</span>);
-</span><span id="1071" class="l"><a class="l" href="#1071">1071: </a>         <span class="php-keyword1">return</span> <span class="php-var">$html</span>;
-</span><span id="1072" class="l"><a class="l" href="#1072">1072: </a>      }
-</span><span id="1073" class="l"><a class="l" href="#1073">1073: </a>   }
-</span><span id="1074" class="l"><a class="l" href="#1074">1074: </a>}
-</span><span id="1075" class="l"><a class="l" href="#1075">1075: </a></span></code></pre>
+</span><span id="930" class="l"><a class="l" href="#930"> 930: </a>      <span class="php-var">$txt</span> .= <span class="php-quote">'memcache version: '</span>.<span class="php-var">$this</span>-&gt;cache-&gt;version().<span class="php-quote">&quot;\n&quot;</span>;
+</span><span id="931" class="l"><a class="l" href="#931"> 931: </a>      
+</span><span id="932" class="l"><a class="l" href="#932"> 932: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'REQUEST_URI'</span>]) )
+</span><span id="933" class="l"><a class="l" href="#933"> 933: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">'url: '</span>.<span class="php-var">$_SERVER</span>[<span class="php-quote">'REQUEST_URI'</span>].<span class="php-quote">&quot;\n------&quot;</span>;
+</span><span id="934" class="l"><a class="l" href="#934"> 934: </a>      
+</span><span id="935" class="l"><a class="l" href="#935"> 935: </a>      <span class="php-keyword1">foreach</span>(<span class="php-var">$this</span>-&gt;get_errors() <span class="php-keyword1">as</span> <span class="php-var">$e</span>)
+</span><span id="936" class="l"><a class="l" href="#936"> 936: </a>         <span class="php-var">$txt</span> .= <span class="php-quote">&quot;\n&quot;</span> . <span class="php-var">$e</span>;
+</span><span id="937" class="l"><a class="l" href="#937"> 937: </a>      
+</span><span id="938" class="l"><a class="l" href="#938"> 938: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&quot;'</span>, <span class="php-quote">&quot;'&quot;</span>, <span class="php-var">$txt</span>);
+</span><span id="939" class="l"><a class="l" href="#939"> 939: </a>   }
+</span><span id="940" class="l"><a class="l" href="#940"> 940: </a>   
+</span><span id="941" class="l"><a class="l" href="#941"> 941: </a>   <span class="php-comment">/**
+</span></span><span id="942" class="l"><a class="l" href="#942"> 942: </a><span class="php-comment">    * Devuelve el símbolo de divisa predeterminado
+</span></span><span id="943" class="l"><a class="l" href="#943"> 943: </a><span class="php-comment">    * o bien el símbolo de la divisa seleccionada.
+</span></span><span id="944" class="l"><a class="l" href="#944"> 944: </a><span class="php-comment">    * @param type $coddivisa
+</span></span><span id="945" class="l"><a class="l" href="#945"> 945: </a><span class="php-comment">    * @return string
+</span></span><span id="946" class="l"><a class="l" href="#946"> 946: </a><span class="php-comment">    */</span>
+</span><span id="947" class="l"><a class="l" href="#947"> 947: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_simbolo_divisa" href="#_simbolo_divisa">simbolo_divisa</a>(<span class="php-var">$coddivisa</span> = <span class="php-keyword1">FALSE</span>)
+</span><span id="948" class="l"><a class="l" href="#948"> 948: </a>   {
+</span><span id="949" class="l"><a class="l" href="#949"> 949: </a>      <span class="php-keyword1">if</span>(!<span class="php-var">$coddivisa</span>)
+</span><span id="950" class="l"><a class="l" href="#950"> 950: </a>         <span class="php-var">$coddivisa</span> = <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa;
+</span><span id="951" class="l"><a class="l" href="#951"> 951: </a>      
+</span><span id="952" class="l"><a class="l" href="#952"> 952: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>]) )
+</span><span id="953" class="l"><a class="l" href="#953"> 953: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>];
+</span><span id="954" class="l"><a class="l" href="#954"> 954: </a>      <span class="php-keyword1">else</span>
+</span><span id="955" class="l"><a class="l" href="#955"> 955: </a>      {
+</span><span id="956" class="l"><a class="l" href="#956"> 956: </a>         <span class="php-var">$divisa</span> = <span class="php-keyword1">new</span> divisa();
+</span><span id="957" class="l"><a class="l" href="#957"> 957: </a>         <span class="php-var">$divi0</span> = <span class="php-var">$divisa</span>-&gt;get(<span class="php-var">$coddivisa</span>);
+</span><span id="958" class="l"><a class="l" href="#958"> 958: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$divi0</span>)
+</span><span id="959" class="l"><a class="l" href="#959"> 959: </a>         {
+</span><span id="960" class="l"><a class="l" href="#960"> 960: </a>            <span class="php-var">$this</span>-&gt;simbolo_divisas[<span class="php-var">$coddivisa</span>] = <span class="php-var">$divi0</span>-&gt;simbolo;
+</span><span id="961" class="l"><a class="l" href="#961"> 961: </a>            <span class="php-keyword1">return</span> <span class="php-var">$divi0</span>-&gt;simbolo;
+</span><span id="962" class="l"><a class="l" href="#962"> 962: </a>         }
+</span><span id="963" class="l"><a class="l" href="#963"> 963: </a>         <span class="php-keyword1">else</span>
+</span><span id="964" class="l"><a class="l" href="#964"> 964: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'?'</span>;
+</span><span id="965" class="l"><a class="l" href="#965"> 965: </a>      }
+</span><span id="966" class="l"><a class="l" href="#966"> 966: </a>   }
+</span><span id="967" class="l"><a class="l" href="#967"> 967: </a>   
+</span><span id="968" class="l"><a class="l" href="#968"> 968: </a>   <span class="php-comment">/**
+</span></span><span id="969" class="l"><a class="l" href="#969"> 969: </a><span class="php-comment">    * Devuelve un string con el precio en el formato predefinido y con la
+</span></span><span id="970" class="l"><a class="l" href="#970"> 970: </a><span class="php-comment">    * divisa seleccionada (o la predeterminada).
+</span></span><span id="971" class="l"><a class="l" href="#971"> 971: </a><span class="php-comment">    * 
+</span></span><span id="972" class="l"><a class="l" href="#972"> 972: </a><span class="php-comment">    * @param type $precio
+</span></span><span id="973" class="l"><a class="l" href="#973"> 973: </a><span class="php-comment">    * @param type $coddivisa
+</span></span><span id="974" class="l"><a class="l" href="#974"> 974: </a><span class="php-comment">    * @param type $simbolo
+</span></span><span id="975" class="l"><a class="l" href="#975"> 975: </a><span class="php-comment">    * @return type
+</span></span><span id="976" class="l"><a class="l" href="#976"> 976: </a><span class="php-comment">    */</span>
+</span><span id="977" class="l"><a class="l" href="#977"> 977: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_show_precio" href="#_show_precio">show_precio</a>(<span class="php-var">$precio</span>=<span class="php-num">0</span>, <span class="php-var">$coddivisa</span>=<span class="php-keyword1">FALSE</span>, <span class="php-var">$simbolo</span>=<span class="php-keyword1">TRUE</span>)
+</span><span id="978" class="l"><a class="l" href="#978"> 978: </a>   {
+</span><span id="979" class="l"><a class="l" href="#979"> 979: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$coddivisa</span> === <span class="php-keyword1">FALSE</span>)
+</span><span id="980" class="l"><a class="l" href="#980"> 980: </a>         <span class="php-var">$coddivisa</span> = <span class="php-var">$this</span>-&gt;empresa-&gt;coddivisa;
+</span><span id="981" class="l"><a class="l" href="#981"> 981: </a>      
+</span><span id="982" class="l"><a class="l" href="#982"> 982: </a>      <span class="php-keyword1">if</span>(FS_POS_DIVISA == <span class="php-quote">'right'</span>)
+</span><span id="983" class="l"><a class="l" href="#983"> 983: </a>      {
+</span><span id="984" class="l"><a class="l" href="#984"> 984: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$simbolo</span>)
+</span><span id="985" class="l"><a class="l" href="#985"> 985: </a>            <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2).<span class="php-quote">' '</span>.<span class="php-var">$this</span>-&gt;simbolo_divisa(<span class="php-var">$coddivisa</span>);
+</span><span id="986" class="l"><a class="l" href="#986"> 986: </a>         <span class="php-keyword1">else</span>
+</span><span id="987" class="l"><a class="l" href="#987"> 987: </a>            <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2).<span class="php-quote">' '</span>.<span class="php-var">$coddivisa</span>;
+</span><span id="988" class="l"><a class="l" href="#988"> 988: </a>      }
+</span><span id="989" class="l"><a class="l" href="#989"> 989: </a>      <span class="php-keyword1">else</span>
+</span><span id="990" class="l"><a class="l" href="#990"> 990: </a>      {
+</span><span id="991" class="l"><a class="l" href="#991"> 991: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$simbolo</span>)
+</span><span id="992" class="l"><a class="l" href="#992"> 992: </a>            <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;simbolo_divisa(<span class="php-var">$coddivisa</span>).<span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2);
+</span><span id="993" class="l"><a class="l" href="#993"> 993: </a>         <span class="php-keyword1">else</span>
+</span><span id="994" class="l"><a class="l" href="#994"> 994: </a>            <span class="php-keyword1">return</span> <span class="php-var">$coddivisa</span>.<span class="php-quote">' '</span>.<span class="php-keyword2">number_format</span>(<span class="php-var">$precio</span>, FS_NF0, FS_NF1, FS_NF2);
+</span><span id="995" class="l"><a class="l" href="#995"> 995: </a>      }
+</span><span id="996" class="l"><a class="l" href="#996"> 996: </a>   }
+</span><span id="997" class="l"><a class="l" href="#997"> 997: </a>   
+</span><span id="998" class="l"><a class="l" href="#998"> 998: </a>   <span class="php-comment">/**
+</span></span><span id="999" class="l"><a class="l" href="#999"> 999: </a><span class="php-comment">    * Devuelve un string con el número en el formato de número predeterminado.
+</span></span><span id="1000" class="l"><a class="l" href="#1000">1000: </a><span class="php-comment">    * @param type $num
+</span></span><span id="1001" class="l"><a class="l" href="#1001">1001: </a><span class="php-comment">    * @param type $decimales
+</span></span><span id="1002" class="l"><a class="l" href="#1002">1002: </a><span class="php-comment">    * @param type $js
+</span></span><span id="1003" class="l"><a class="l" href="#1003">1003: </a><span class="php-comment">    * @return type
+</span></span><span id="1004" class="l"><a class="l" href="#1004">1004: </a><span class="php-comment">    */</span>
+</span><span id="1005" class="l"><a class="l" href="#1005">1005: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_show_numero" href="#_show_numero">show_numero</a>(<span class="php-var">$num</span>=<span class="php-num">0</span>, <span class="php-var">$decimales</span>=FS_NF0, <span class="php-var">$js</span>=<span class="php-keyword1">FALSE</span>)
+</span><span id="1006" class="l"><a class="l" href="#1006">1006: </a>   {
+</span><span id="1007" class="l"><a class="l" href="#1007">1007: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$js</span>)
+</span><span id="1008" class="l"><a class="l" href="#1008">1008: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$num</span>, <span class="php-var">$decimales</span>, <span class="php-quote">'.'</span>, <span class="php-quote">''</span>);
+</span><span id="1009" class="l"><a class="l" href="#1009">1009: </a>      <span class="php-keyword1">else</span>
+</span><span id="1010" class="l"><a class="l" href="#1010">1010: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">number_format</span>(<span class="php-var">$num</span>, <span class="php-var">$decimales</span>, FS_NF1, FS_NF2);
+</span><span id="1011" class="l"><a class="l" href="#1011">1011: </a>   }
+</span><span id="1012" class="l"><a class="l" href="#1012">1012: </a>   
+</span><span id="1013" class="l"><a class="l" href="#1013">1013: </a>   <span class="php-comment">/**
+</span></span><span id="1014" class="l"><a class="l" href="#1014">1014: </a><span class="php-comment">    * Añade un elemento a la lista de cambios del usuario.
+</span></span><span id="1015" class="l"><a class="l" href="#1015">1015: </a><span class="php-comment">    * @param type $txt texto descriptivo.
+</span></span><span id="1016" class="l"><a class="l" href="#1016">1016: </a><span class="php-comment">    * @param type $url URL del elemento (albarán, factura, artículos...).
+</span></span><span id="1017" class="l"><a class="l" href="#1017">1017: </a><span class="php-comment">    * @param type $nuevo TRUE si el elemento es nuevo, FALSE si se ha modificado.
+</span></span><span id="1018" class="l"><a class="l" href="#1018">1018: </a><span class="php-comment">    */</span>
+</span><span id="1019" class="l"><a class="l" href="#1019">1019: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_new_change" href="#_new_change">new_change</a>(<span class="php-var">$txt</span>, <span class="php-var">$url</span>, <span class="php-var">$nuevo</span>=<span class="php-keyword1">FALSE</span>)
+</span><span id="1020" class="l"><a class="l" href="#1020">1020: </a>   {
+</span><span id="1021" class="l"><a class="l" href="#1021">1021: </a>      <span class="php-var">$this</span>-&gt;get_last_changes();
+</span><span id="1022" class="l"><a class="l" href="#1022">1022: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;last_changes) &gt; <span class="php-num">0</span> )
+</span><span id="1023" class="l"><a class="l" href="#1023">1023: </a>      {
+</span><span id="1024" class="l"><a class="l" href="#1024">1024: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$this</span>-&gt;last_changes[<span class="php-num">0</span>][<span class="php-quote">'url'</span>] == <span class="php-var">$url</span>)
+</span><span id="1025" class="l"><a class="l" href="#1025">1025: </a>            <span class="php-var">$this</span>-&gt;last_changes[<span class="php-num">0</span>][<span class="php-quote">'nuevo'</span>] = <span class="php-var">$nuevo</span>;
+</span><span id="1026" class="l"><a class="l" href="#1026">1026: </a>         <span class="php-keyword1">else</span>
+</span><span id="1027" class="l"><a class="l" href="#1027">1027: </a>            <span class="php-keyword2">array_unshift</span>(<span class="php-var">$this</span>-&gt;last_changes, <span class="php-keyword1">array</span>(<span class="php-quote">'texto'</span> =&gt; <span class="php-keyword2">ucfirst</span>(<span class="php-var">$txt</span>), <span class="php-quote">'url'</span> =&gt; <span class="php-var">$url</span>, <span class="php-quote">'nuevo'</span> =&gt; <span class="php-var">$nuevo</span>, <span class="php-quote">'cambio'</span> =&gt; <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y H:i:s'</span>)) );
+</span><span id="1028" class="l"><a class="l" href="#1028">1028: </a>      }
+</span><span id="1029" class="l"><a class="l" href="#1029">1029: </a>      <span class="php-keyword1">else</span>
+</span><span id="1030" class="l"><a class="l" href="#1030">1030: </a>         <span class="php-keyword2">array_unshift</span>(<span class="php-var">$this</span>-&gt;last_changes, <span class="php-keyword1">array</span>(<span class="php-quote">'texto'</span> =&gt; <span class="php-keyword2">ucfirst</span>(<span class="php-var">$txt</span>), <span class="php-quote">'url'</span> =&gt; <span class="php-var">$url</span>, <span class="php-quote">'nuevo'</span> =&gt; <span class="php-var">$nuevo</span>, <span class="php-quote">'cambio'</span> =&gt; <span class="php-keyword2">date</span>(<span class="php-quote">'d-m-Y H:i:s'</span>)) );
+</span><span id="1031" class="l"><a class="l" href="#1031">1031: </a>      
+</span><span id="1032" class="l"><a class="l" href="#1032">1032: </a>      <span class="php-comment">/// sólo queremos 10 elementos</span>
+</span><span id="1033" class="l"><a class="l" href="#1033">1033: </a>      <span class="php-var">$num</span> = <span class="php-num">10</span>;
+</span><span id="1034" class="l"><a class="l" href="#1034">1034: </a>      <span class="php-keyword1">foreach</span>(<span class="php-var">$this</span>-&gt;last_changes <span class="php-keyword1">as</span> <span class="php-var">$i</span> =&gt; <span class="php-var">$value</span>)
+</span><span id="1035" class="l"><a class="l" href="#1035">1035: </a>      {
+</span><span id="1036" class="l"><a class="l" href="#1036">1036: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$num</span> &gt; <span class="php-num">0</span>)
+</span><span id="1037" class="l"><a class="l" href="#1037">1037: </a>         {
+</span><span id="1038" class="l"><a class="l" href="#1038">1038: </a>            <span class="php-var">$num</span>--;
+</span><span id="1039" class="l"><a class="l" href="#1039">1039: </a>         }
+</span><span id="1040" class="l"><a class="l" href="#1040">1040: </a>         <span class="php-keyword1">else</span>
+</span><span id="1041" class="l"><a class="l" href="#1041">1041: </a>         {
+</span><span id="1042" class="l"><a class="l" href="#1042">1042: </a>            <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;last_changes[<span class="php-var">$i</span>]);
+</span><span id="1043" class="l"><a class="l" href="#1043">1043: </a>         }
+</span><span id="1044" class="l"><a class="l" href="#1044">1044: </a>      }
+</span><span id="1045" class="l"><a class="l" href="#1045">1045: </a>      
+</span><span id="1046" class="l"><a class="l" href="#1046">1046: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'last_changes_'</span>.<span class="php-var">$this</span>-&gt;user-&gt;nick, <span class="php-var">$this</span>-&gt;last_changes);
+</span><span id="1047" class="l"><a class="l" href="#1047">1047: </a>   }
+</span><span id="1048" class="l"><a class="l" href="#1048">1048: </a>   
+</span><span id="1049" class="l"><a class="l" href="#1049">1049: </a>   <span class="php-comment">/**
+</span></span><span id="1050" class="l"><a class="l" href="#1050">1050: </a><span class="php-comment">    * Devuelve la lista con los últimos cambios del usuario.
+</span></span><span id="1051" class="l"><a class="l" href="#1051">1051: </a><span class="php-comment">    */</span>
+</span><span id="1052" class="l"><a class="l" href="#1052">1052: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_last_changes" href="#_get_last_changes">get_last_changes</a>()
+</span><span id="1053" class="l"><a class="l" href="#1053">1053: </a>   {
+</span><span id="1054" class="l"><a class="l" href="#1054">1054: </a>      <span class="php-keyword1">if</span>( !<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;last_changes) )
+</span><span id="1055" class="l"><a class="l" href="#1055">1055: </a>      {
+</span><span id="1056" class="l"><a class="l" href="#1056">1056: </a>         <span class="php-var">$this</span>-&gt;last_changes = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'last_changes_'</span>.<span class="php-var">$this</span>-&gt;user-&gt;nick);
+</span><span id="1057" class="l"><a class="l" href="#1057">1057: </a>      }
+</span><span id="1058" class="l"><a class="l" href="#1058">1058: </a>      
+</span><span id="1059" class="l"><a class="l" href="#1059">1059: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;last_changes;
+</span><span id="1060" class="l"><a class="l" href="#1060">1060: </a>   }
+</span><span id="1061" class="l"><a class="l" href="#1061">1061: </a>   
+</span><span id="1062" class="l"><a class="l" href="#1062">1062: </a>   <span class="php-comment">/**
+</span></span><span id="1063" class="l"><a class="l" href="#1063">1063: </a><span class="php-comment">    * Devuelve el HTML con la primera &quot;página&quot; de la comunidad, es decir,
+</span></span><span id="1064" class="l"><a class="l" href="#1064">1064: </a><span class="php-comment">    * el índice de tutoriales.
+</span></span><span id="1065" class="l"><a class="l" href="#1065">1065: </a><span class="php-comment">    */</span>
+</span><span id="1066" class="l"><a class="l" href="#1066">1066: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_get_community_html" href="#_get_community_html">get_community_html</a>()
+</span><span id="1067" class="l"><a class="l" href="#1067">1067: </a>   {
+</span><span id="1068" class="l"><a class="l" href="#1068">1068: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-quote">'tmp/community_index.html'</span>) <span class="php-keyword1">AND</span> <span class="php-keyword2">mt_rand</span>(<span class="php-num">0</span>, <span class="php-num">9</span>) &gt; <span class="php-num">0</span> )
+</span><span id="1069" class="l"><a class="l" href="#1069">1069: </a>      {
+</span><span id="1070" class="l"><a class="l" href="#1070">1070: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">file_get_contents</span>(<span class="php-quote">'tmp/community_index.html'</span>);
+</span><span id="1071" class="l"><a class="l" href="#1071">1071: </a>      }
+</span><span id="1072" class="l"><a class="l" href="#1072">1072: </a>      <span class="php-keyword1">else</span>
+</span><span id="1073" class="l"><a class="l" href="#1073">1073: </a>      {
+</span><span id="1074" class="l"><a class="l" href="#1074">1074: </a>         <span class="php-var">$html</span> = <span class="php-keyword2">file_get_contents</span>(FS_COMMUNITY_URL.<span class="php-quote">'/iframe.php?version='</span>.<span class="php-var">$this</span>-&gt;version());
+</span><span id="1075" class="l"><a class="l" href="#1075">1075: </a>         <span class="php-keyword2">file_put_contents</span>(<span class="php-quote">'tmp/community_index.html'</span>, <span class="php-var">$html</span>);
+</span><span id="1076" class="l"><a class="l" href="#1076">1076: </a>         <span class="php-keyword1">return</span> <span class="php-var">$html</span>;
+</span><span id="1077" class="l"><a class="l" href="#1077">1077: </a>      }
+</span><span id="1078" class="l"><a class="l" href="#1078">1078: </a>   }
+</span><span id="1079" class="l"><a class="l" href="#1079">1079: </a>}
+</span><span id="1080" class="l"><a class="l" href="#1080">1080: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

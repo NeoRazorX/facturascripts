@@ -788,125 +788,134 @@
 </span><span id="647" class="l"><a class="l" href="#647">647: </a>   {
 </span><span id="648" class="l"><a class="l" href="#648">648: </a>      <span class="php-var">$this</span>-&gt;clean_cache();
 </span><span id="649" class="l"><a class="l" href="#649">649: </a>      
-</span><span id="650" class="l"><a class="l" href="#650">650: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$this</span>-&gt;idasiento)
+</span><span id="650" class="l"><a class="l" href="#650">650: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idfactura = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idfactura).<span class="php-quote">&quot;;&quot;</span>) )
 </span><span id="651" class="l"><a class="l" href="#651">651: </a>      {
-</span><span id="652" class="l"><a class="l" href="#652">652: </a>         <span class="php-comment">/// eliminamos el asiento asociado</span>
-</span><span id="653" class="l"><a class="l" href="#653">653: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM co_asientos WHERE idasiento = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idasiento).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="654" class="l"><a class="l" href="#654">654: </a>      }
-</span><span id="655" class="l"><a class="l" href="#655">655: </a>      
-</span><span id="656" class="l"><a class="l" href="#656">656: </a>      <span class="php-comment">/// desvinculamos el/los albaranes asociados</span>
-</span><span id="657" class="l"><a class="l" href="#657">657: </a>      <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE
-</span></span><span id="658" class="l"><a class="l" href="#658">658: </a><span class="php-quote">         WHERE idfactura = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idfactura).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="659" class="l"><a class="l" href="#659">659: </a>      
-</span><span id="660" class="l"><a class="l" href="#660">660: </a>      <span class="php-comment">/// eliminamos</span>
-</span><span id="661" class="l"><a class="l" href="#661">661: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idfactura = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idfactura).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="662" class="l"><a class="l" href="#662">662: </a>   }
-</span><span id="663" class="l"><a class="l" href="#663">663: </a>   
-</span><span id="664" class="l"><a class="l" href="#664">664: </a>   <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
-</span><span id="665" class="l"><a class="l" href="#665">665: </a>   {
-</span><span id="666" class="l"><a class="l" href="#666">666: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;<span class="php-keyword2">delete</span>(<span class="php-quote">'factura_proveedor_huecos'</span>);
-</span><span id="667" class="l"><a class="l" href="#667">667: </a>   }
-</span><span id="668" class="l"><a class="l" href="#668">668: </a>   
-</span><span id="669" class="l"><a class="l" href="#669">669: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>, <span class="php-var">$limit</span>=FS_ITEM_LIMIT)
-</span><span id="670" class="l"><a class="l" href="#670">670: </a>   {
-</span><span id="671" class="l"><a class="l" href="#671">671: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="672" class="l"><a class="l" href="#672">672: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="673" class="l"><a class="l" href="#673">673: </a>         <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, <span class="php-var">$limit</span>, <span class="php-var">$offset</span>);
-</span><span id="674" class="l"><a class="l" href="#674">674: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="675" class="l"><a class="l" href="#675">675: </a>      {
-</span><span id="676" class="l"><a class="l" href="#676">676: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="677" class="l"><a class="l" href="#677">677: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="678" class="l"><a class="l" href="#678">678: </a>      }
-</span><span id="679" class="l"><a class="l" href="#679">679: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="680" class="l"><a class="l" href="#680">680: </a>   }
-</span><span id="681" class="l"><a class="l" href="#681">681: </a>   
-</span><span id="682" class="l"><a class="l" href="#682">682: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_sin_pagar" href="#_all_sin_pagar">all_sin_pagar</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>, <span class="php-var">$limit</span>=FS_ITEM_LIMIT)
-</span><span id="683" class="l"><a class="l" href="#683">683: </a>   {
-</span><span id="684" class="l"><a class="l" href="#684">684: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="685" class="l"><a class="l" href="#685">685: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="686" class="l"><a class="l" href="#686">686: </a>         <span class="php-quote">&quot; WHERE pagada = false ORDER BY fecha DESC, codigo DESC&quot;</span>, <span class="php-var">$limit</span>, <span class="php-var">$offset</span>);
-</span><span id="687" class="l"><a class="l" href="#687">687: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="688" class="l"><a class="l" href="#688">688: </a>      {
-</span><span id="689" class="l"><a class="l" href="#689">689: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="690" class="l"><a class="l" href="#690">690: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="691" class="l"><a class="l" href="#691">691: </a>      }
-</span><span id="692" class="l"><a class="l" href="#692">692: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="693" class="l"><a class="l" href="#693">693: </a>   }
-</span><span id="694" class="l"><a class="l" href="#694">694: </a>   
-</span><span id="695" class="l"><a class="l" href="#695">695: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_agente" href="#_all_from_agente">all_from_agente</a>(<span class="php-var">$codagente</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
-</span><span id="696" class="l"><a class="l" href="#696">696: </a>   {
-</span><span id="697" class="l"><a class="l" href="#697">697: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="698" class="l"><a class="l" href="#698">698: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="699" class="l"><a class="l" href="#699">699: </a>         <span class="php-quote">&quot; WHERE codagente = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codagente</span>).
-</span><span id="700" class="l"><a class="l" href="#700">700: </a>         <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
-</span><span id="701" class="l"><a class="l" href="#701">701: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="702" class="l"><a class="l" href="#702">702: </a>      {
-</span><span id="703" class="l"><a class="l" href="#703">703: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="704" class="l"><a class="l" href="#704">704: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="705" class="l"><a class="l" href="#705">705: </a>      }
-</span><span id="706" class="l"><a class="l" href="#706">706: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="707" class="l"><a class="l" href="#707">707: </a>   }
-</span><span id="708" class="l"><a class="l" href="#708">708: </a>   
-</span><span id="709" class="l"><a class="l" href="#709">709: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_proveedor" href="#_all_from_proveedor">all_from_proveedor</a>(<span class="php-var">$codproveedor</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
-</span><span id="710" class="l"><a class="l" href="#710">710: </a>   {
-</span><span id="711" class="l"><a class="l" href="#711">711: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="712" class="l"><a class="l" href="#712">712: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="713" class="l"><a class="l" href="#713">713: </a>         <span class="php-quote">&quot; WHERE codproveedor = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codproveedor</span>).
-</span><span id="714" class="l"><a class="l" href="#714">714: </a>         <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
-</span><span id="715" class="l"><a class="l" href="#715">715: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="716" class="l"><a class="l" href="#716">716: </a>      {
-</span><span id="717" class="l"><a class="l" href="#717">717: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="718" class="l"><a class="l" href="#718">718: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="719" class="l"><a class="l" href="#719">719: </a>      }
-</span><span id="720" class="l"><a class="l" href="#720">720: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="721" class="l"><a class="l" href="#721">721: </a>   }
-</span><span id="722" class="l"><a class="l" href="#722">722: </a>   
-</span><span id="723" class="l"><a class="l" href="#723">723: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_desde" href="#_all_desde">all_desde</a>(<span class="php-var">$desde</span>, <span class="php-var">$hasta</span>)
-</span><span id="724" class="l"><a class="l" href="#724">724: </a>   {
-</span><span id="725" class="l"><a class="l" href="#725">725: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="726" class="l"><a class="l" href="#726">726: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="727" class="l"><a class="l" href="#727">727: </a>         <span class="php-quote">&quot; WHERE fecha &gt;= &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$desde</span>).<span class="php-quote">&quot; AND fecha &lt;= &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$hasta</span>).
-</span><span id="728" class="l"><a class="l" href="#728">728: </a>         <span class="php-quote">&quot; ORDER BY codigo ASC;&quot;</span>);
-</span><span id="729" class="l"><a class="l" href="#729">729: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="730" class="l"><a class="l" href="#730">730: </a>      {
-</span><span id="731" class="l"><a class="l" href="#731">731: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="732" class="l"><a class="l" href="#732">732: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="733" class="l"><a class="l" href="#733">733: </a>      }
-</span><span id="734" class="l"><a class="l" href="#734">734: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="735" class="l"><a class="l" href="#735">735: </a>   }
-</span><span id="736" class="l"><a class="l" href="#736">736: </a>   
-</span><span id="737" class="l"><a class="l" href="#737">737: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search" href="#_search">search</a>(<span class="php-var">$query</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
-</span><span id="738" class="l"><a class="l" href="#738">738: </a>   {
-</span><span id="739" class="l"><a class="l" href="#739">739: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
-</span><span id="740" class="l"><a class="l" href="#740">740: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
-</span><span id="741" class="l"><a class="l" href="#741">741: </a>      
-</span><span id="742" class="l"><a class="l" href="#742">742: </a>      <span class="php-var">$consulta</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE &quot;</span>;
-</span><span id="743" class="l"><a class="l" href="#743">743: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_numeric</span>(<span class="php-var">$query</span>) )
-</span><span id="744" class="l"><a class="l" href="#744">744: </a>      {
-</span><span id="745" class="l"><a class="l" href="#745">745: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;codigo LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR numproveedor LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR observaciones LIKE '%&quot;</span>.
-</span><span id="746" class="l"><a class="l" href="#746">746: </a>            <span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR total BETWEEN &quot;</span>.(<span class="php-var">$query</span>-<span class="php-num">.01</span>).<span class="php-quote">&quot; AND &quot;</span>.(<span class="php-var">$query</span>+<span class="php-num">.01</span>);
-</span><span id="747" class="l"><a class="l" href="#747">747: </a>      }
-</span><span id="748" class="l"><a class="l" href="#748">748: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>( <span class="php-keyword2">preg_match</span>(<span class="php-quote">'/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i'</span>, <span class="php-var">$query</span>) )
-</span><span id="749" class="l"><a class="l" href="#749">749: </a>      {
-</span><span id="750" class="l"><a class="l" href="#750">750: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;fecha = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$query</span>).<span class="php-quote">&quot; OR observaciones LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%'&quot;</span>;
-</span><span id="751" class="l"><a class="l" href="#751">751: </a>      }
-</span><span id="752" class="l"><a class="l" href="#752">752: </a>      <span class="php-keyword1">else</span>
+</span><span id="652" class="l"><a class="l" href="#652">652: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$this</span>-&gt;idasiento)
+</span><span id="653" class="l"><a class="l" href="#653">653: </a>         {
+</span><span id="654" class="l"><a class="l" href="#654">654: </a>            <span class="php-comment">/**
+</span></span><span id="655" class="l"><a class="l" href="#655">655: </a><span class="php-comment">             * Delegamos la eliminación del asiento en la clase correspondiente.
+</span></span><span id="656" class="l"><a class="l" href="#656">656: </a><span class="php-comment">             */</span>
+</span><span id="657" class="l"><a class="l" href="#657">657: </a>            <span class="php-var">$asiento</span> = <span class="php-keyword1">new</span> asiento();
+</span><span id="658" class="l"><a class="l" href="#658">658: </a>            <span class="php-var">$asi0</span> = <span class="php-var">$asiento</span>-&gt;get(<span class="php-var">$this</span>-&gt;idasiento);
+</span><span id="659" class="l"><a class="l" href="#659">659: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$asi0</span>)
+</span><span id="660" class="l"><a class="l" href="#660">660: </a>            {
+</span><span id="661" class="l"><a class="l" href="#661">661: </a>               <span class="php-var">$asi0</span>-&gt;<span class="php-keyword2">delete</span>();
+</span><span id="662" class="l"><a class="l" href="#662">662: </a>            }
+</span><span id="663" class="l"><a class="l" href="#663">663: </a>         }
+</span><span id="664" class="l"><a class="l" href="#664">664: </a>         
+</span><span id="665" class="l"><a class="l" href="#665">665: </a>         <span class="php-comment">/// desvinculamos el/los albaranes asociados</span>
+</span><span id="666" class="l"><a class="l" href="#666">666: </a>         <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idfactura).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="667" class="l"><a class="l" href="#667">667: </a>         
+</span><span id="668" class="l"><a class="l" href="#668">668: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="669" class="l"><a class="l" href="#669">669: </a>      }
+</span><span id="670" class="l"><a class="l" href="#670">670: </a>      <span class="php-keyword1">else</span>
+</span><span id="671" class="l"><a class="l" href="#671">671: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="672" class="l"><a class="l" href="#672">672: </a>   }
+</span><span id="673" class="l"><a class="l" href="#673">673: </a>   
+</span><span id="674" class="l"><a class="l" href="#674">674: </a>   <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
+</span><span id="675" class="l"><a class="l" href="#675">675: </a>   {
+</span><span id="676" class="l"><a class="l" href="#676">676: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;<span class="php-keyword2">delete</span>(<span class="php-quote">'factura_proveedor_huecos'</span>);
+</span><span id="677" class="l"><a class="l" href="#677">677: </a>   }
+</span><span id="678" class="l"><a class="l" href="#678">678: </a>   
+</span><span id="679" class="l"><a class="l" href="#679">679: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>, <span class="php-var">$limit</span>=FS_ITEM_LIMIT)
+</span><span id="680" class="l"><a class="l" href="#680">680: </a>   {
+</span><span id="681" class="l"><a class="l" href="#681">681: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="682" class="l"><a class="l" href="#682">682: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, <span class="php-var">$limit</span>, <span class="php-var">$offset</span>);
+</span><span id="683" class="l"><a class="l" href="#683">683: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="684" class="l"><a class="l" href="#684">684: </a>      {
+</span><span id="685" class="l"><a class="l" href="#685">685: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="686" class="l"><a class="l" href="#686">686: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="687" class="l"><a class="l" href="#687">687: </a>      }
+</span><span id="688" class="l"><a class="l" href="#688">688: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="689" class="l"><a class="l" href="#689">689: </a>   }
+</span><span id="690" class="l"><a class="l" href="#690">690: </a>   
+</span><span id="691" class="l"><a class="l" href="#691">691: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_sin_pagar" href="#_all_sin_pagar">all_sin_pagar</a>(<span class="php-var">$offset</span>=<span class="php-num">0</span>, <span class="php-var">$limit</span>=FS_ITEM_LIMIT)
+</span><span id="692" class="l"><a class="l" href="#692">692: </a>   {
+</span><span id="693" class="l"><a class="l" href="#693">693: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="694" class="l"><a class="l" href="#694">694: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="695" class="l"><a class="l" href="#695">695: </a>         <span class="php-quote">&quot; WHERE pagada = false ORDER BY fecha DESC, codigo DESC&quot;</span>, <span class="php-var">$limit</span>, <span class="php-var">$offset</span>);
+</span><span id="696" class="l"><a class="l" href="#696">696: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="697" class="l"><a class="l" href="#697">697: </a>      {
+</span><span id="698" class="l"><a class="l" href="#698">698: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="699" class="l"><a class="l" href="#699">699: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="700" class="l"><a class="l" href="#700">700: </a>      }
+</span><span id="701" class="l"><a class="l" href="#701">701: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="702" class="l"><a class="l" href="#702">702: </a>   }
+</span><span id="703" class="l"><a class="l" href="#703">703: </a>   
+</span><span id="704" class="l"><a class="l" href="#704">704: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_agente" href="#_all_from_agente">all_from_agente</a>(<span class="php-var">$codagente</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="705" class="l"><a class="l" href="#705">705: </a>   {
+</span><span id="706" class="l"><a class="l" href="#706">706: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="707" class="l"><a class="l" href="#707">707: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="708" class="l"><a class="l" href="#708">708: </a>         <span class="php-quote">&quot; WHERE codagente = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codagente</span>).
+</span><span id="709" class="l"><a class="l" href="#709">709: </a>         <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="710" class="l"><a class="l" href="#710">710: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="711" class="l"><a class="l" href="#711">711: </a>      {
+</span><span id="712" class="l"><a class="l" href="#712">712: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="713" class="l"><a class="l" href="#713">713: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="714" class="l"><a class="l" href="#714">714: </a>      }
+</span><span id="715" class="l"><a class="l" href="#715">715: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="716" class="l"><a class="l" href="#716">716: </a>   }
+</span><span id="717" class="l"><a class="l" href="#717">717: </a>   
+</span><span id="718" class="l"><a class="l" href="#718">718: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_from_proveedor" href="#_all_from_proveedor">all_from_proveedor</a>(<span class="php-var">$codproveedor</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="719" class="l"><a class="l" href="#719">719: </a>   {
+</span><span id="720" class="l"><a class="l" href="#720">720: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="721" class="l"><a class="l" href="#721">721: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="722" class="l"><a class="l" href="#722">722: </a>         <span class="php-quote">&quot; WHERE codproveedor = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codproveedor</span>).
+</span><span id="723" class="l"><a class="l" href="#723">723: </a>         <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="724" class="l"><a class="l" href="#724">724: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="725" class="l"><a class="l" href="#725">725: </a>      {
+</span><span id="726" class="l"><a class="l" href="#726">726: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="727" class="l"><a class="l" href="#727">727: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="728" class="l"><a class="l" href="#728">728: </a>      }
+</span><span id="729" class="l"><a class="l" href="#729">729: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="730" class="l"><a class="l" href="#730">730: </a>   }
+</span><span id="731" class="l"><a class="l" href="#731">731: </a>   
+</span><span id="732" class="l"><a class="l" href="#732">732: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all_desde" href="#_all_desde">all_desde</a>(<span class="php-var">$desde</span>, <span class="php-var">$hasta</span>)
+</span><span id="733" class="l"><a class="l" href="#733">733: </a>   {
+</span><span id="734" class="l"><a class="l" href="#734">734: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="735" class="l"><a class="l" href="#735">735: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="736" class="l"><a class="l" href="#736">736: </a>         <span class="php-quote">&quot; WHERE fecha &gt;= &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$desde</span>).<span class="php-quote">&quot; AND fecha &lt;= &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$hasta</span>).
+</span><span id="737" class="l"><a class="l" href="#737">737: </a>         <span class="php-quote">&quot; ORDER BY codigo ASC;&quot;</span>);
+</span><span id="738" class="l"><a class="l" href="#738">738: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="739" class="l"><a class="l" href="#739">739: </a>      {
+</span><span id="740" class="l"><a class="l" href="#740">740: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="741" class="l"><a class="l" href="#741">741: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="742" class="l"><a class="l" href="#742">742: </a>      }
+</span><span id="743" class="l"><a class="l" href="#743">743: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="744" class="l"><a class="l" href="#744">744: </a>   }
+</span><span id="745" class="l"><a class="l" href="#745">745: </a>   
+</span><span id="746" class="l"><a class="l" href="#746">746: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search" href="#_search">search</a>(<span class="php-var">$query</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="747" class="l"><a class="l" href="#747">747: </a>   {
+</span><span id="748" class="l"><a class="l" href="#748">748: </a>      <span class="php-var">$faclist</span> = <span class="php-keyword1">array</span>();
+</span><span id="749" class="l"><a class="l" href="#749">749: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
+</span><span id="750" class="l"><a class="l" href="#750">750: </a>      
+</span><span id="751" class="l"><a class="l" href="#751">751: </a>      <span class="php-var">$consulta</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE &quot;</span>;
+</span><span id="752" class="l"><a class="l" href="#752">752: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_numeric</span>(<span class="php-var">$query</span>) )
 </span><span id="753" class="l"><a class="l" href="#753">753: </a>      {
-</span><span id="754" class="l"><a class="l" href="#754">754: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;lower(codigo) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR lower(numproveedor) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' &quot;</span>
-</span><span id="755" class="l"><a class="l" href="#755">755: </a>                 . <span class="php-quote">&quot;OR lower(observaciones) LIKE '%&quot;</span>.<span class="php-keyword2">str_replace</span>(<span class="php-quote">' '</span>, <span class="php-quote">'%'</span>, <span class="php-var">$query</span>).<span class="php-quote">&quot;%'&quot;</span>;
+</span><span id="754" class="l"><a class="l" href="#754">754: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;codigo LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR numproveedor LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR observaciones LIKE '%&quot;</span>.
+</span><span id="755" class="l"><a class="l" href="#755">755: </a>            <span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR total BETWEEN &quot;</span>.(<span class="php-var">$query</span>-<span class="php-num">.01</span>).<span class="php-quote">&quot; AND &quot;</span>.(<span class="php-var">$query</span>+<span class="php-num">.01</span>);
 </span><span id="756" class="l"><a class="l" href="#756">756: </a>      }
-</span><span id="757" class="l"><a class="l" href="#757">757: </a>      <span class="php-var">$consulta</span> .= <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>;
-</span><span id="758" class="l"><a class="l" href="#758">758: </a>      
-</span><span id="759" class="l"><a class="l" href="#759">759: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-var">$consulta</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
-</span><span id="760" class="l"><a class="l" href="#760">760: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
-</span><span id="761" class="l"><a class="l" href="#761">761: </a>      {
-</span><span id="762" class="l"><a class="l" href="#762">762: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
-</span><span id="763" class="l"><a class="l" href="#763">763: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
-</span><span id="764" class="l"><a class="l" href="#764">764: </a>      }
-</span><span id="765" class="l"><a class="l" href="#765">765: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
-</span><span id="766" class="l"><a class="l" href="#766">766: </a>   }
-</span><span id="767" class="l"><a class="l" href="#767">767: </a>}
-</span><span id="768" class="l"><a class="l" href="#768">768: </a></span></code></pre>
+</span><span id="757" class="l"><a class="l" href="#757">757: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>( <span class="php-keyword2">preg_match</span>(<span class="php-quote">'/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i'</span>, <span class="php-var">$query</span>) )
+</span><span id="758" class="l"><a class="l" href="#758">758: </a>      {
+</span><span id="759" class="l"><a class="l" href="#759">759: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;fecha = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$query</span>).<span class="php-quote">&quot; OR observaciones LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%'&quot;</span>;
+</span><span id="760" class="l"><a class="l" href="#760">760: </a>      }
+</span><span id="761" class="l"><a class="l" href="#761">761: </a>      <span class="php-keyword1">else</span>
+</span><span id="762" class="l"><a class="l" href="#762">762: </a>      {
+</span><span id="763" class="l"><a class="l" href="#763">763: </a>         <span class="php-var">$consulta</span> .= <span class="php-quote">&quot;lower(codigo) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR lower(numproveedor) LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' &quot;</span>
+</span><span id="764" class="l"><a class="l" href="#764">764: </a>                 . <span class="php-quote">&quot;OR lower(observaciones) LIKE '%&quot;</span>.<span class="php-keyword2">str_replace</span>(<span class="php-quote">' '</span>, <span class="php-quote">'%'</span>, <span class="php-var">$query</span>).<span class="php-quote">&quot;%'&quot;</span>;
+</span><span id="765" class="l"><a class="l" href="#765">765: </a>      }
+</span><span id="766" class="l"><a class="l" href="#766">766: </a>      <span class="php-var">$consulta</span> .= <span class="php-quote">&quot; ORDER BY fecha DESC, codigo DESC&quot;</span>;
+</span><span id="767" class="l"><a class="l" href="#767">767: </a>      
+</span><span id="768" class="l"><a class="l" href="#768">768: </a>      <span class="php-var">$facturas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-var">$consulta</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="769" class="l"><a class="l" href="#769">769: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$facturas</span>)
+</span><span id="770" class="l"><a class="l" href="#770">770: </a>      {
+</span><span id="771" class="l"><a class="l" href="#771">771: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$facturas</span> <span class="php-keyword1">as</span> <span class="php-var">$f</span>)
+</span><span id="772" class="l"><a class="l" href="#772">772: </a>            <span class="php-var">$faclist</span>[] = <span class="php-keyword1">new</span> factura_proveedor(<span class="php-var">$f</span>);
+</span><span id="773" class="l"><a class="l" href="#773">773: </a>      }
+</span><span id="774" class="l"><a class="l" href="#774">774: </a>      <span class="php-keyword1">return</span> <span class="php-var">$faclist</span>;
+</span><span id="775" class="l"><a class="l" href="#775">775: </a>   }
+</span><span id="776" class="l"><a class="l" href="#776">776: </a>}
+</span><span id="777" class="l"><a class="l" href="#777">777: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

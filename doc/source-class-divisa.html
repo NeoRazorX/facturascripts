@@ -308,33 +308,32 @@
 </span><span id="167" class="l"><a class="l" href="#167">167: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
 </span><span id="168" class="l"><a class="l" href="#168">168: </a>   {
 </span><span id="169" class="l"><a class="l" href="#169">169: </a>      <span class="php-var">$this</span>-&gt;clean_cache();
-</span><span id="170" class="l"><a class="l" href="#170">170: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="171" class="l"><a class="l" href="#171">171: </a>              <span class="php-quote">&quot; WHERE coddivisa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="172" class="l"><a class="l" href="#172">172: </a>   }
-</span><span id="173" class="l"><a class="l" href="#173">173: </a>   
-</span><span id="174" class="l"><a class="l" href="#174">174: </a>   <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
-</span><span id="175" class="l"><a class="l" href="#175">175: </a>   {
-</span><span id="176" class="l"><a class="l" href="#176">176: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;<span class="php-keyword2">delete</span>(<span class="php-quote">'m_divisa_all'</span>);
-</span><span id="177" class="l"><a class="l" href="#177">177: </a>   }
-</span><span id="178" class="l"><a class="l" href="#178">178: </a>   
-</span><span id="179" class="l"><a class="l" href="#179">179: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
-</span><span id="180" class="l"><a class="l" href="#180">180: </a>   {
-</span><span id="181" class="l"><a class="l" href="#181">181: </a>      <span class="php-var">$listad</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'m_divisa_all'</span>);
-</span><span id="182" class="l"><a class="l" href="#182">182: </a>      <span class="php-keyword1">if</span>( !<span class="php-var">$listad</span> )
-</span><span id="183" class="l"><a class="l" href="#183">183: </a>      {
-</span><span id="184" class="l"><a class="l" href="#184">184: </a>         <span class="php-var">$divisas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="185" class="l"><a class="l" href="#185">185: </a>                 <span class="php-quote">&quot; ORDER BY coddivisa ASC;&quot;</span>);
-</span><span id="186" class="l"><a class="l" href="#186">186: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$divisas</span>)
-</span><span id="187" class="l"><a class="l" href="#187">187: </a>         {
-</span><span id="188" class="l"><a class="l" href="#188">188: </a>            <span class="php-keyword1">foreach</span>(<span class="php-var">$divisas</span> <span class="php-keyword1">as</span> <span class="php-var">$d</span>)
-</span><span id="189" class="l"><a class="l" href="#189">189: </a>               <span class="php-var">$listad</span>[] = <span class="php-keyword1">new</span> divisa(<span class="php-var">$d</span>);
-</span><span id="190" class="l"><a class="l" href="#190">190: </a>         }
-</span><span id="191" class="l"><a class="l" href="#191">191: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'m_divisa_all'</span>, <span class="php-var">$listad</span>);
-</span><span id="192" class="l"><a class="l" href="#192">192: </a>      }
-</span><span id="193" class="l"><a class="l" href="#193">193: </a>      <span class="php-keyword1">return</span> <span class="php-var">$listad</span>;
-</span><span id="194" class="l"><a class="l" href="#194">194: </a>   }
-</span><span id="195" class="l"><a class="l" href="#195">195: </a>}
-</span><span id="196" class="l"><a class="l" href="#196">196: </a></span></code></pre>
+</span><span id="170" class="l"><a class="l" href="#170">170: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE coddivisa = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;coddivisa).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="171" class="l"><a class="l" href="#171">171: </a>   }
+</span><span id="172" class="l"><a class="l" href="#172">172: </a>   
+</span><span id="173" class="l"><a class="l" href="#173">173: </a>   <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_clean_cache" href="#_clean_cache">clean_cache</a>()
+</span><span id="174" class="l"><a class="l" href="#174">174: </a>   {
+</span><span id="175" class="l"><a class="l" href="#175">175: </a>      <span class="php-var">$this</span>-&gt;cache-&gt;<span class="php-keyword2">delete</span>(<span class="php-quote">'m_divisa_all'</span>);
+</span><span id="176" class="l"><a class="l" href="#176">176: </a>   }
+</span><span id="177" class="l"><a class="l" href="#177">177: </a>   
+</span><span id="178" class="l"><a class="l" href="#178">178: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
+</span><span id="179" class="l"><a class="l" href="#179">179: </a>   {
+</span><span id="180" class="l"><a class="l" href="#180">180: </a>      <span class="php-var">$listad</span> = <span class="php-var">$this</span>-&gt;cache-&gt;get_array(<span class="php-quote">'m_divisa_all'</span>);
+</span><span id="181" class="l"><a class="l" href="#181">181: </a>      <span class="php-keyword1">if</span>( !<span class="php-var">$listad</span> )
+</span><span id="182" class="l"><a class="l" href="#182">182: </a>      {
+</span><span id="183" class="l"><a class="l" href="#183">183: </a>         <span class="php-var">$divisas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="184" class="l"><a class="l" href="#184">184: </a>                 <span class="php-quote">&quot; ORDER BY coddivisa ASC;&quot;</span>);
+</span><span id="185" class="l"><a class="l" href="#185">185: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$divisas</span>)
+</span><span id="186" class="l"><a class="l" href="#186">186: </a>         {
+</span><span id="187" class="l"><a class="l" href="#187">187: </a>            <span class="php-keyword1">foreach</span>(<span class="php-var">$divisas</span> <span class="php-keyword1">as</span> <span class="php-var">$d</span>)
+</span><span id="188" class="l"><a class="l" href="#188">188: </a>               <span class="php-var">$listad</span>[] = <span class="php-keyword1">new</span> divisa(<span class="php-var">$d</span>);
+</span><span id="189" class="l"><a class="l" href="#189">189: </a>         }
+</span><span id="190" class="l"><a class="l" href="#190">190: </a>         <span class="php-var">$this</span>-&gt;cache-&gt;set(<span class="php-quote">'m_divisa_all'</span>, <span class="php-var">$listad</span>);
+</span><span id="191" class="l"><a class="l" href="#191">191: </a>      }
+</span><span id="192" class="l"><a class="l" href="#192">192: </a>      <span class="php-keyword1">return</span> <span class="php-var">$listad</span>;
+</span><span id="193" class="l"><a class="l" href="#193">193: </a>   }
+</span><span id="194" class="l"><a class="l" href="#194">194: </a>}
+</span><span id="195" class="l"><a class="l" href="#195">195: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

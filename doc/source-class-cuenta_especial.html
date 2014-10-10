@@ -233,23 +233,22 @@
 </span><span id="92" class="l"><a class="l" href="#92"> 92: </a>   
 </span><span id="93" class="l"><a class="l" href="#93"> 93: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">delete</span>()
 </span><span id="94" class="l"><a class="l" href="#94"> 94: </a>   {
-</span><span id="95" class="l"><a class="l" href="#95"> 95: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="96" class="l"><a class="l" href="#96"> 96: </a>            <span class="php-quote">&quot; WHERE idcuentaesp = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuentaesp).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="97" class="l"><a class="l" href="#97"> 97: </a>   }
-</span><span id="98" class="l"><a class="l" href="#98"> 98: </a>   
-</span><span id="99" class="l"><a class="l" href="#99"> 99: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
-</span><span id="100" class="l"><a class="l" href="#100">100: </a>   {
-</span><span id="101" class="l"><a class="l" href="#101">101: </a>      <span class="php-var">$culist</span> = <span class="php-keyword1">array</span>();
-</span><span id="102" class="l"><a class="l" href="#102">102: </a>      <span class="php-var">$cuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY idcuentaesp ASC;&quot;</span>);
-</span><span id="103" class="l"><a class="l" href="#103">103: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$cuentas</span>)
-</span><span id="104" class="l"><a class="l" href="#104">104: </a>      {
-</span><span id="105" class="l"><a class="l" href="#105">105: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$cuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$c</span>)
-</span><span id="106" class="l"><a class="l" href="#106">106: </a>            <span class="php-var">$culist</span>[] = <span class="php-keyword1">new</span> cuenta_especial(<span class="php-var">$c</span>);
-</span><span id="107" class="l"><a class="l" href="#107">107: </a>      }
-</span><span id="108" class="l"><a class="l" href="#108">108: </a>      <span class="php-keyword1">return</span> <span class="php-var">$culist</span>;
-</span><span id="109" class="l"><a class="l" href="#109">109: </a>   }
-</span><span id="110" class="l"><a class="l" href="#110">110: </a>}
-</span><span id="111" class="l"><a class="l" href="#111">111: </a></span></code></pre>
+</span><span id="95" class="l"><a class="l" href="#95"> 95: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idcuentaesp = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idcuentaesp).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="96" class="l"><a class="l" href="#96"> 96: </a>   }
+</span><span id="97" class="l"><a class="l" href="#97"> 97: </a>   
+</span><span id="98" class="l"><a class="l" href="#98"> 98: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
+</span><span id="99" class="l"><a class="l" href="#99"> 99: </a>   {
+</span><span id="100" class="l"><a class="l" href="#100">100: </a>      <span class="php-var">$culist</span> = <span class="php-keyword1">array</span>();
+</span><span id="101" class="l"><a class="l" href="#101">101: </a>      <span class="php-var">$cuentas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY idcuentaesp ASC;&quot;</span>);
+</span><span id="102" class="l"><a class="l" href="#102">102: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$cuentas</span>)
+</span><span id="103" class="l"><a class="l" href="#103">103: </a>      {
+</span><span id="104" class="l"><a class="l" href="#104">104: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$cuentas</span> <span class="php-keyword1">as</span> <span class="php-var">$c</span>)
+</span><span id="105" class="l"><a class="l" href="#105">105: </a>            <span class="php-var">$culist</span>[] = <span class="php-keyword1">new</span> cuenta_especial(<span class="php-var">$c</span>);
+</span><span id="106" class="l"><a class="l" href="#106">106: </a>      }
+</span><span id="107" class="l"><a class="l" href="#107">107: </a>      <span class="php-keyword1">return</span> <span class="php-var">$culist</span>;
+</span><span id="108" class="l"><a class="l" href="#108">108: </a>   }
+</span><span id="109" class="l"><a class="l" href="#109">109: </a>}
+</span><span id="110" class="l"><a class="l" href="#110">110: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

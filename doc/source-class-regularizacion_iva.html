@@ -312,20 +312,20 @@
 </span><span id="171" class="l"><a class="l" href="#171">171: </a>            <span class="php-var">$as0</span>-&gt;<span class="php-keyword2">delete</span>();
 </span><span id="172" class="l"><a class="l" href="#172">172: </a>      }
 </span><span id="173" class="l"><a class="l" href="#173">173: </a>      
-</span><span id="174" class="l"><a class="l" href="#174">174: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="175" class="l"><a class="l" href="#175">175: </a>         <span class="php-quote">&quot; WHERE idregiva = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idregiva).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="176" class="l"><a class="l" href="#176">176: </a>   }
-</span><span id="177" class="l"><a class="l" href="#177">177: </a>   
-</span><span id="178" class="l"><a class="l" href="#178">178: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
-</span><span id="179" class="l"><a class="l" href="#179">179: </a>   {
-</span><span id="180" class="l"><a class="l" href="#180">180: </a>      <span class="php-var">$reglist</span> = <span class="php-keyword1">array</span>();
-</span><span id="181" class="l"><a class="l" href="#181">181: </a>      <span class="php-var">$regivas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="182" class="l"><a class="l" href="#182">182: </a>              <span class="php-quote">&quot; ORDER BY fechafin DESC;&quot;</span>);
-</span><span id="183" class="l"><a class="l" href="#183">183: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$regivas</span>)
-</span><span id="184" class="l"><a class="l" href="#184">184: </a>      {
-</span><span id="185" class="l"><a class="l" href="#185">185: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$regivas</span> <span class="php-keyword1">as</span> <span class="php-var">$r</span>)
-</span><span id="186" class="l"><a class="l" href="#186">186: </a>            <span class="php-var">$reglist</span>[] = <span class="php-keyword1">new</span> regularizacion_iva(<span class="php-var">$r</span>);
-</span><span id="187" class="l"><a class="l" href="#187">187: </a>      }
+</span><span id="174" class="l"><a class="l" href="#174">174: </a>      <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-quote">&quot;DELETE FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idregiva = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$this</span>-&gt;idregiva).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="175" class="l"><a class="l" href="#175">175: </a>   }
+</span><span id="176" class="l"><a class="l" href="#176">176: </a>   
+</span><span id="177" class="l"><a class="l" href="#177">177: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_all" href="#_all">all</a>()
+</span><span id="178" class="l"><a class="l" href="#178">178: </a>   {
+</span><span id="179" class="l"><a class="l" href="#179">179: </a>      <span class="php-var">$reglist</span> = <span class="php-keyword1">array</span>();
+</span><span id="180" class="l"><a class="l" href="#180">180: </a>      
+</span><span id="181" class="l"><a class="l" href="#181">181: </a>      <span class="php-var">$regivas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; ORDER BY fechafin DESC;&quot;</span>);
+</span><span id="182" class="l"><a class="l" href="#182">182: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$regivas</span>)
+</span><span id="183" class="l"><a class="l" href="#183">183: </a>      {
+</span><span id="184" class="l"><a class="l" href="#184">184: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$regivas</span> <span class="php-keyword1">as</span> <span class="php-var">$r</span>)
+</span><span id="185" class="l"><a class="l" href="#185">185: </a>            <span class="php-var">$reglist</span>[] = <span class="php-keyword1">new</span> regularizacion_iva(<span class="php-var">$r</span>);
+</span><span id="186" class="l"><a class="l" href="#186">186: </a>      }
+</span><span id="187" class="l"><a class="l" href="#187">187: </a>      
 </span><span id="188" class="l"><a class="l" href="#188">188: </a>      <span class="php-keyword1">return</span> <span class="php-var">$reglist</span>;
 </span><span id="189" class="l"><a class="l" href="#189">189: </a>   }
 </span><span id="190" class="l"><a class="l" href="#190">190: </a>}
