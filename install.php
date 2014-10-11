@@ -289,7 +289,7 @@ $system_info = str_replace('"', "'", $system_info);
                db_port: { required: true, minlength: 2},
                db_name: { required: true, minlength: 2},
                db_user: { required: true, minlength: 2},
-               db_pass: { required: true, minlength: 2},
+               db_pass: { required: false},
                num_nf0: { required: false},
                num_nf1: { required: false},
                num_nf2: { required: false},
@@ -299,13 +299,30 @@ $system_info = str_replace('"', "'", $system_info);
                cache_prefix: { required: false, minlength: 2}
             },
             messages: {
-               db_host: "El campo es obligatorio.",
-               db_port: "El campo es obligatorio.",
-               db_name: "El campo es obligatorio.",
-               db_user: "El campo es obligatorio.",
-               db_pass: "El campo es obligatorio.",
-               cache_host: "El campo es obligatorio.",
-               cache_port: "El campo es obligatorio."
+               db_host: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
+               db_port: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
+               db_name: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
+               db_user: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
+               cache_host: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
+               cache_port: {
+                           required: "El campo es obligatorio.",
+                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                        },
             }
          });
       });
