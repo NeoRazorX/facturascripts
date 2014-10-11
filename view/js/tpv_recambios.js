@@ -110,7 +110,7 @@ function get_precios(ref)
       type: 'POST',
       url: tpv_url,
       dataType: 'html',
-      data: "referencia4precios="+ref+"codcliente="+document.f_new_albaran.cliente.value,
+      data: "referencia4precios="+ref+"&codcliente="+document.f_new_albaran.cliente.value,
       success: function(datos) {
          $("#search_results").html(datos);
       }

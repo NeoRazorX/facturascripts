@@ -80,7 +80,7 @@ class tpv_recambios extends fs_controller
       {
          $this->new_search();
       }
-      else if( isset($_POST['referencia4precios']) )
+      else if( isset($_REQUEST['referencia4precios']) )
       {
          $this->get_precios_articulo();
       }
@@ -186,7 +186,7 @@ class tpv_recambios extends fs_controller
    {
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/tpv_recambios_precios';
-      $this->articulo = $this->articulo->get($_POST['referencia4precios']);
+      $this->articulo = $this->articulo->get($_REQUEST['referencia4precios']);
    }
    
    private function nuevo_albaran_cliente()

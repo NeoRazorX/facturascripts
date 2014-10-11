@@ -11,11 +11,11 @@
 
 {if condition="$fsc->articulo"}
 <div style="padding: 5px;">
-   <h3>
+   <h3 style="margin-top: 0px; text-align: center;">
       <a target="_blank" href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
    </h3>
-   <p>{$fsc->articulo->descripcion}</p>
-   <p>{$fsc->articulo->observaciones}</p>
+   <p class="text-center">{$fsc->articulo->descripcion}</p>
+   <p class="text-center">{$fsc->articulo->observaciones}</p>
 </div>
 
 <div class="table-responsive">
@@ -34,12 +34,12 @@
          <td class="text-left">{$fsc->articulo->stockmin}</td>
          <td class="text-left">{$fsc->articulo->stockmax}</td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->costemedio}','0','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$fsc->articulo->costemedio}','0','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($fsc->articulo->costemedio)}
             </a>
          </td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$fsc->articulo->pvp}','0','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$fsc->articulo->pvp}','0','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($fsc->articulo->pvp)}
             </a>
          </td>
@@ -68,7 +68,7 @@
          </td>
          <td class="text-right">{$fsc->show_precio($value->costemedio)}</td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->costemedio}','0','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->costemedio}','0','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($value->costemedio_iva())}
             </a>
          </td>
@@ -101,17 +101,17 @@
          <td>{$value->show_fecha()}</td>
          <td class="text-center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($value->pvpunitario)}
             </a>
          </td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_numero($value->dtopor)} %
             </a>
          </td>
          <td class="text-right">
-            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}','{$fsc->articulo->get_descripcion_64()}','{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->get_iva()}')">
+            <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($value->total_iva2())}
             </a>
          </td>
