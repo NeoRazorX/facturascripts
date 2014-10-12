@@ -3,150 +3,222 @@
    <div class="container-fluid">
       <section class="content">
          
+         <!-- Inicio Fila 1 de widgets -->
          <div class="row">
-            
+            <!-- Widget 1x1 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-teal">
-                  <div class="inner">
-                     <h3>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop}</h3>
-                     <p>Presupuestos</p>
+               <div class="alert alert-info">
+                  <div>
+                     <h3><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h3>
+                     <p>
+                        <span class="badge pull-left">{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
+                        <span class="badge pull-right">{loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</span>
+                     </p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-bag"></i>
+                  </br></br>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_presupuestos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_presupuestos&pendientes=TRUE" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 1x2 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-aqua">
-                  <div class="inner">
-                     <h3>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop}</h3>
-                     <p>Pedidos</p>
+               <div class="alert alert-success">
+                  <div>
+                     <h3><span class="text-capitalize">{#FS_PEDIDOS#}</span></h3>
+                     <p>
+                        <span class="badge pull-left">{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
+                        <span class="badge pull-right">{loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</span>
+                     </p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-bag"></i>
+                  </br></br>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_pedidos&pendientes=TRUE" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 1x3 -->
             <div class="col-lg-3 col-xs-6">
-               
-               <div class="small-box bg-light-blue">
-                  <div class="inner">
-                     <h3>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop}</h3>
-                     <p>Albaranes</p>
+               <div class="alert alert-warning">
+                  <div>
+                     <h3><span class="text-capitalize">{#FS_ALBARANES#}</span></h3>
+                     <p>
+                        <span class="badge pull-left">{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes</span>
+                        <span class="badge pull-right">{loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</span>
+                     </p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-ios7-cart-outline"></i>
+                  </br></br>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_albaranes&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_albaranes&ptefactura=TRUE" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 1x4 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-blue">
-                  <div class="inner">
-                     <h3>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop}</h3>
-                     <p>Facturas</p>
+               <div class="alert alert-danger">
+                  <div>
+                     <h3><span class="text-capitalize">Facturas</span></h3>
+                     <p>
+                        <span class="badge pull-left">{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes</span>
+                        <span class="badge pull-right">{loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</span>
+                     </p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-ios7-cart-outline"></i>
+                  </br></br>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_facturas&sinpagar=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_facturas&sinpagar=TRUE" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-         
          </div>
-         
+         <!-- Fin Fila 1 de widgets -->
+         <!-- Inicio Fila 2 de widgets -->
          <div class="row">
-            
+            <!-- Widget 2x1 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-maroon">
+               <div class="bs-callout bs-callout-info">
                   <div class="inner">
-                     <h3>{loop="$fsc->num_articulos()"}{$value["total"]}{/loop}</h3>
-                     <p>Artículos</p>
+                     <h3><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h3>
+                     <p>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-ios7-pricetag-outline"></i>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_articulos" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 2x2 -->
             <div class="col-lg-3 col-xs-6">
-               
-               <div class="small-box bg-yellow">
+               <div class="bs-callout bs-callout-success">
                   <div class="inner">
-                     <h3>{loop="$fsc->num_clientes()"}{$value["total"]}{/loop}</h3>
-                     <p>Clientes</p>
+                     <h3><span class="text-capitalize">{#FS_PEDIDOS#}</span></h3>
+                     <p>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-person-add"></i>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=ventas_clientes" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 2x3 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-green">
+               <div class="bs-callout bs-callout-warning">
                   <div class="inner">
-                     <h3>53</h3>
-                     <p>Contabilidad</p>
+                     <h3><span class="text-capitalize">{#FS_ALBARANES#}</span></h3>
+                     <p>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-stats-bars"></i>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_albaranes&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=informe_contabilidad" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-            
+            <!-- Widget 2x4 -->
             <div class="col-lg-3 col-xs-6">
-            
-               <div class="small-box bg-red">
+               <div class="bs-callout bs-callout-danger">
                   <div class="inner">
-                     <h3>65</h3>
-                     <p>Informes de venta</p>
+                     <h3><span class="text-capitalize">Facturas</span></h3>
+                     <p>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
-                  <div class="icon">
-                     <i class="ion ion-pie-graph"></i>
+                  <div class="text-center">
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_facturas&sinpagar=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
-                  <a href="index.php?page=informe_facturas" class="small-box-footer">
-                     Más detalles <i class="fa fa-arrow-circle-right"></i>
-                  </a>
                </div>
-            
             </div>
-         
          </div>
-      
+         <!-- Fin Fila 2 de widgets -->
+         <!-- Inicio Fila 3 de widgets -->
+         <div class="row">
+            <!-- Widget 3x1 -->
+            <div class="col-lg-3 col-xs-6">
+               <div class="panel panel-info">
+                  <div class="panel-heading"><span class="text-capitalize">Artículos</span></div>
+                  <div class="panel-body">
+                     <p>
+                        <h4>{loop="$fsc->num_articulos()"}{$value["total"]}{/loop} artículos</h4>
+                        <div class="text-center">
+                           <span class="glyphicon glyphicon-list-alt"></span>
+                           <a href="index.php?page=ventas_articulos">
+                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                           </a>
+                        </div>
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <!-- Widget 3x2 -->
+            <div class="col-lg-3 col-xs-6">
+               <div class="panel panel-success">
+                  <div class="panel-heading"><span class="text-capitalize">Clientes</span></div>
+                  <div class="panel-body">
+                     <p>
+                        <h4>{loop="$fsc->num_clientes()"}{$value["total"]}{/loop} clientes</h4>
+                        <div class="text-center">
+                           <span class="glyphicon glyphicon-list-alt"></span>
+                           <a href="index.php?page=ventas_clientes">
+                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                           </a>
+                        </div>
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <!-- Widget 3x3 -->
+            <div class="col-lg-3 col-xs-6">
+               <div class="panel panel-warning">
+                  <div class="panel-heading"><span class="text-capitalize">Contabilidad</span></div>
+                  <div class="panel-body">
+                     <p>
+                        <h4>53</h4>
+                        <div class="text-center">
+                           <span class="glyphicon glyphicon-list-alt"></span>
+                           <a href="index.php?page=informe_contabilidad">
+                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                           </a>
+                        </div>
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <!-- Widget 3x4 -->
+            <div class="col-lg-3 col-xs-6">
+               <div class="panel panel-danger">
+                  <div class="panel-heading">Informes de venta</div>
+                  <div class="panel-body">
+                     <p>
+                        <h4>65</h4>
+                        <div class="text-center">
+                           <span class="glyphicon glyphicon-list-alt"></span>
+                           <a href="index.php?page=informe_facturas">
+                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                           </a>
+                        </div>
+                     </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- Fin Fila 3 de widgets -->
       </section>
    </div>
 

@@ -31,36 +31,8 @@ class dashboard extends fs_controller
           'from' => __CLASS__,
           'to' => 'dashboard',
           'type' => 'head',
-          'name' => 'AdminLTE.css',
-          'text' => '<link href="plugins/dashboard/view/css/AdminLTE.css" rel="stylesheet" type="text/css" />'
-      );
-      $fsext = new fs_extension();
-      if( !$fsext->array_save($extension) )
-      {
-         $this->new_error_msg('Error al guardar la extensión.');
-      }
-      
-      /// Guardamos la extensión
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'dashboard',
-          'type' => 'head',
-          'name' => 'ionicons.min.css',
-          'text' => '<link href="plugins/dashboard/view/css/ionicons.min.css" rel="stylesheet" type="text/css" />'
-      );
-      $fsext = new fs_extension();
-      if( !$fsext->array_save($extension) )
-      {
-         $this->new_error_msg('Error al guardar la extensión.');
-      }
-      
-      /// Guardamos la extensión
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'dashboard',
-          'type' => 'head',
-          'name' => 'font-awesome.min.css',
-          'text' => '<link href="plugins/dashboard/view/css/font-awesome.min.css" rel="stylesheet" type="text/css" />'
+          'name' => 'docs.min.css',
+          'text' => '<link href="plugins/dashboard/view/css/docs.min.css" rel="stylesheet" type="text/css" />'
       );
       $fsext = new fs_extension();
       if( !$fsext->array_save($extension) )
