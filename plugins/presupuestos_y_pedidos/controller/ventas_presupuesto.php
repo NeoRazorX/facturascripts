@@ -58,6 +58,9 @@ class ventas_presupuesto extends fs_controller
       $this->ppage = $this->page->get('ventas_presupuestos');
       $this->agente = FALSE;
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       $presupuesto = new presupuesto_cliente();
       $this->presupuesto = FALSE;
       $this->cliente = new cliente();
@@ -126,31 +129,7 @@ class ventas_presupuesto extends fs_controller
                else
                   $this->generar_pedido();
             }
-            
-            $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
-            
-            /// comprobamos si se pueden enviar emails
-            if( $this->empresa->can_send_mail() )
-            {
-               $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
-               
-               if( isset($_POST['email']) )
-               {
-                  $this->enviar_email();
-               }
-            }
-         
-            if( is_null($this->presupuesto->idpedido) )
-            {
-               $this->buttons[] = new fs_button('b_pedir', 'Generar '.FS_PEDIDO, $this->url()."&pedir=TRUE&petid=".$this->random_string());
-            }
-            else
-            {
-               $this->buttons[] = new fs_button('b_ver_pedido', 'Ver '.FS_PEDIDO, $this->presupuesto->pedido_url());
-            }
          }
-         
-         $this->buttons[] = new fs_button_img('b_remove_presupuesto', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PRESUPUESTO)." de cliente no encontrado!");

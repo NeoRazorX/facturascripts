@@ -40,6 +40,9 @@ class ventas_presupuestos extends fs_controller
    {
       $presupuesto = new presupuesto_cliente();
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);

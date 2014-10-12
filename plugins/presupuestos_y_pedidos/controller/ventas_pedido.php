@@ -58,6 +58,9 @@ class ventas_pedido extends fs_controller
       $this->ppage = $this->page->get('ventas_pedidos');
       $this->agente = FALSE;
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       $pedido = new pedido_cliente();
       $this->pedido = FALSE;
       $this->cliente = new cliente();
@@ -126,31 +129,7 @@ class ventas_pedido extends fs_controller
                else
                   $this->generar_albaran();
             }
-            
-            $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
-            
-            /// comprobamos si se pueden enviar emails
-            if( $this->empresa->can_send_mail() )
-            {
-               $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
-               
-               if( isset($_POST['email']) )
-               {
-                  $this->enviar_email();
-               }
-            }
-         
-            if( is_null($this->pedido->idalbaran) )
-            {
-               $this->buttons[] = new fs_button('b_albaranar', 'Generar '.FS_ALBARAN, $this->url()."&albaranar=TRUE&petid=".$this->random_string());
-            }
-            else
-            {
-               $this->buttons[] = new fs_button('b_ver_albaran', 'Ver '.FS_ALBARAN, $this->pedido->albaran_url());
-            }
          }
-         
-         $this->buttons[] = new fs_button_img('b_remove_pedido', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PEDIDO)." de cliente no encontrado!");

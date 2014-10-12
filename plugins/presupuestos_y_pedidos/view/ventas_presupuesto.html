@@ -51,6 +51,67 @@
    });
 </script>
 
+<div class="container-fluid">
+   <div class="row" style="margin-top: 10px;">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&default_page=TRUE" title="Marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+         </div>
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}" title="Presupuestos de clientes">
+               <span class="glyphicon glyphicon-arrow-left"></span> Presupuestos de clientes
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
+         <div class="btn-group">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;document.f_presupuesto.submit();" title="Guardar {#FS_PRESUPUESTO#}">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+            </button>
+            <a id="b_imprimir" class="btn btn-sm btn-default" title="Imprimir {#FS_PRESUPUESTO#}">
+               <span class="glyphicon glyphicon-print"></span>
+            </a>
+            {if condition="$fsc->empresa->can_send_mail()"}
+            <a id="b_enviar" class="btn btn-sm btn-default" title="Enviar {#FS_PRESUPUESTO#}">
+               <span class="glyphicon glyphicon-envelope"></span>
+            </a>
+            {/if}
+            {if condition="$fsc->presupuesto->idpedido"}
+            <a id="b_ver_pedido" href="{$fsc->presupuesto->pedido_url()}" class="btn btn-sm btn-default" title="Ver {#FS_PEDIDO#}">
+               <span class="glyphicon glyphicon-eye-open"></span>
+            </a>
+            {else}
+            <a id="b_pedir" href="{$fsc->url()}&pedir=TRUE&petid={$fsc->random_string()}" class="btn btn-sm btn-default" title="Aprobar {#FS_PRESUPUESTO#}">
+               <span class="glyphicon glyphicon-saved"></span>
+            </a>
+            {/if}
+            
+
+         </div>
+         <div class="btn-group">
+            <a id="b_remove_presupuesto" class="btn btn-sm btn-danger" href="index.php?page=nueva_venta&tipo=presupuesto" title="Eliminar {#FS_PRESUPUESTO#}">
+               <span class="glyphicon glyphicon-trash"></span>
+            </a>
+         </div>
+      </div>
+   </div>
+   
+   <div class="row">
+      <div class="col-lg-12">
+         <h3>
+            <span class="text-capitalize">{#FS_PRESUPUESTO#}</span> de <a href="{$fsc->presupuesto->cliente_url()}">{$fsc->presupuesto->nombrecliente}</a> 
+            / 
+            <a href="{$fsc->url()}">{$fsc->presupuesto->codigo}</a>
+         </h3>
+      </div>
+   </div>
+</div>
+
 <div class="modal" id="modal_articulos">
    <div class="modal-dialog" style="width: 99%; max-width: 1000px;">
       <div class="modal-content">
@@ -224,34 +285,17 @@
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
-         <div class="col-lg-8 col-md-8 col-sm-10">
-            {if condition="$fsc->presupuesto->editable"}
+         {if condition="$fsc->presupuesto->editable"}
+         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                <a href="{$fsc->presupuesto->cliente_url()}">Cliente actual</a>:
                <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" value="{$fsc->presupuesto->nombrecliente}"
                       placeholder="Buscar..." autocomplete="off"/>
             </div>
-            {else}
-            <h3 style="margin: 0px;">
-               <span class="text-capitalize">{#FS_PRESUPUESTO#}</span> de
-               <a href="{$fsc->presupuesto->cliente_url()}">{$fsc->presupuesto->nombrecliente}</a>
-            </h3>
-            {/if}
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-2 text-right">
-            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-         </div>
+         {/if}
       </div>
       <div class="row">
-         <div class="col-lg-2 col-md-2 col-sm-2">
-            <div class="form-group">
-               Número:
-               <div class="form-control">{$fsc->presupuesto->numero}</div>
-            </div>
-         </div>
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Número 2:
@@ -289,7 +333,7 @@
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             <div class="form-group">
                Agente:
                <div class="form-control">
