@@ -15,7 +15,10 @@ class documentos extends fs_controller
    {
       $this->custom_search = TRUE;
       $this->documento = new documento();
-            
+      
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['descripcion']) )
       {
          /// si tenemos el id, buscamos el documento y así lo modificamos
@@ -59,7 +62,7 @@ class documentos extends fs_controller
    
    public function listar_documentos()
    {
-      if($this->query != '')
+      if( isset($_POST['query']) )
       {
          return $this->documento->buscar($_POST['query']);
       }

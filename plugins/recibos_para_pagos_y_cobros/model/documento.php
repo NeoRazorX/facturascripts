@@ -28,7 +28,7 @@ class documento extends fs_model
    
    public function get($id)
    {
-      $data = $this->db->select("select * from documentos where iddocumento = ".$this->var2str($id).";");
+      $data = $this->db->select("SELECT * FROM documentos WHERE iddocumento = ".$this->var2str($id).";");
       if($data)
       {
          return new documento($data[0]);
@@ -45,7 +45,7 @@ class documento extends fs_model
       }
       else
       {
-         return $this->db->select("select * from documentos where iddocumento = ".$this->var2str($this->iddocumento).";");
+         return $this->db->select("SELECT * FROM documentos WHERE iddocumento = ".$this->var2str($this->iddocumento).";");
       }
    }
    
@@ -55,7 +55,7 @@ class documento extends fs_model
    
    public function nuevo_numero()
    {
-      $data = $this->db->select("select max(iddocumento) as num from documentos;");
+      $data = $this->db->select("SELECT max(iddocumento) AS num FROM documentos;");
       if($data)
          return intval($data[0]['num']) + 1;
       else
@@ -66,12 +66,12 @@ class documento extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE documentos set descripcion = ".$this->var2str($this->descripcion).
-                 " where iddocumento = ".$this->var2str($this->iddocumento).";";
+         $sql = "UPDATE documentos SET descripcion = ".$this->var2str($this->descripcion).
+                 " WHERE iddocumento = ".$this->var2str($this->iddocumento).";";
       }
       else
       {
-         $sql = "INSERT into documentos (iddocumento,descripcion) VALUES ("
+         $sql = "INSERT INTO documentos (iddocumento,descripcion) VALUES ("
                  .$this->var2str($this->iddocumento).","
                  .$this->var2str($this->descripcion).");";
       }
@@ -81,17 +81,17 @@ class documento extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("delete from documentos where iddocumento = ".$this->var2str($this->iddocumento).";");
+      return $this->db->exec("delete FROM documentos WHERE iddocumento = ".$this->var2str($this->iddocumento).";");
    }
    
    public function listar()
    {
       $listag = array();
       
-      $data = $this->db->select("select * from documentos;");
+      $data = $this->db->select("SELECT * FROM documentos;");
       if($data)
       {
-         foreach($data as $d)
+         foreach($data AS $d)
          {
             $listag[] = new documento($d);
          }
@@ -104,10 +104,10 @@ class documento extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("select * from documentos where nombre like '%".$texto."%';");
+      $data = $this->db->select("SELECT * FROM documentos WHERE descripcion LIKE '%".$texto."%';");
       if($data)
       {
-         foreach($data as $d)
+         foreach($data AS $d)
          {
             $listag[] = new documento($d);
          }
@@ -123,7 +123,7 @@ class documento extends fs_model
       $data = $this->db->select("SELECT * FROM documentos");
       if($data)
       {
-         foreach($data as $d)
+         foreach($data AS $d)
              $todos[] = new documento($d);
       }
 

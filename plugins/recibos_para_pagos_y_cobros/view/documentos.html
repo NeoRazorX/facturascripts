@@ -1,5 +1,33 @@
 {include="header"}
 
+<div class="container-fluid">
+   <div class="row" style="margin-top: 10px;">
+      <div class="col-lg-6">
+         <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+      </div>
+      <div class="col-lg-6 text-right">
+         <form id="f_buscar_documento" name="f_buscar_documento" action="{$fsc->url()}" method="post" class="form form-inline">
+         <div class="form-group">
+            <input type="text" class="form-control" name="buscar" size="10" placeholder="Buscar..."/>
+         </div>
+         <button class="btn btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon-search"></span>
+         </button>
+         </form>
+      </div>
+   </div>
+   
+   <div class="row">
+      <div class="col-lg-12">
+         <h1>
+            <a href="{$fsc->url()}">Documentos</a>
+         </h1>
+      </div>
+   </div>
+</div>
+
 <div class="table-responsive">
     <table class="table table-condensed">
         <thead>
