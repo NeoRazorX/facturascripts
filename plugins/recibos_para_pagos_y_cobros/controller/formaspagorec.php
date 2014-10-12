@@ -82,7 +82,7 @@ class formaspagorec extends fs_controller
                   $fp0->descripcion = $_POST['descripcion_'.$i];
                   $fp0->genrecibos = $_POST['genrecibos_'.$i];
                   $fp0->numerorecibos = $_POST['numerorecibos_'.$i];
-                  $fp0->codperiodo = $_POST['numerorecibos_'.$i];
+                  $fp0->codperiodo = $_POST['codperiodo_'.$i];
                   $fp0->domiciliado = isset($_POST['domiciliado_'.$i]);
                   if( !$fp0->save() )
                      $this->new_error_msg('Error al guardar la forma de pago.');
