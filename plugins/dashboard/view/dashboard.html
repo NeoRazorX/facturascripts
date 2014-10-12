@@ -9,7 +9,7 @@
             <div class="col-lg-3 col-xs-6">
                <div class="alert alert-info">
                   <div>
-                     <h3><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h4>
                      <p>
                         <span class="badge pull-left">{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
                         <span class="badge pull-right">{loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</span>
@@ -28,7 +28,7 @@
             <div class="col-lg-3 col-xs-6">
                <div class="alert alert-success">
                   <div>
-                     <h3><span class="text-capitalize">{#FS_PEDIDOS#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_PEDIDOS#}</span></h4>
                      <p>
                         <span class="badge pull-left">{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
                         <span class="badge pull-right">{loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</span>
@@ -47,7 +47,7 @@
             <div class="col-lg-3 col-xs-6">
                <div class="alert alert-warning">
                   <div>
-                     <h3><span class="text-capitalize">{#FS_ALBARANES#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_ALBARANES#}</span></h4>
                      <p>
                         <span class="badge pull-left">{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes</span>
                         <span class="badge pull-right">{loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</span>
@@ -66,7 +66,7 @@
             <div class="col-lg-3 col-xs-6">
                <div class="alert alert-danger">
                   <div>
-                     <h3><span class="text-capitalize">Facturas</span></h3>
+                     <h4><span class="text-capitalize">Facturas</span></h4>
                      <p>
                         <span class="badge pull-left">{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes</span>
                         <span class="badge pull-right">{loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</span>
@@ -89,10 +89,11 @@
             <div class="col-lg-3 col-xs-6">
                <div class="bs-callout bs-callout-info">
                   <div class="inner">
-                     <h3><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h4>
                      <p>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
+                     </br>
                      <span class="glyphicon glyphicon-list-alt"></span>
                      <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
                         Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
@@ -104,10 +105,11 @@
             <div class="col-lg-3 col-xs-6">
                <div class="bs-callout bs-callout-success">
                   <div class="inner">
-                     <h3><span class="text-capitalize">{#FS_PEDIDOS#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_PEDIDOS#}</span></h4>
                      <p>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
+                     </br>
                      <span class="glyphicon glyphicon-list-alt"></span>
                      <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
                         Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
@@ -119,10 +121,11 @@
             <div class="col-lg-3 col-xs-6">
                <div class="bs-callout bs-callout-warning">
                   <div class="inner">
-                     <h3><span class="text-capitalize">{#FS_ALBARANES#}</span></h3>
+                     <h4><span class="text-capitalize">{#FS_ALBARANES#}</span></h4>
                      <p>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
+                     </br>
                      <span class="glyphicon glyphicon-list-alt"></span>
                      <a href="index.php?page=ventas_albaranes&pendientes=TRUE">
                         Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
@@ -134,10 +137,11 @@
             <div class="col-lg-3 col-xs-6">
                <div class="bs-callout bs-callout-danger">
                   <div class="inner">
-                     <h3><span class="text-capitalize">Facturas</span></h3>
+                     <h4><span class="text-capitalize">Facturas</span></h4>
                      <p>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
+                     </br>
                      <span class="glyphicon glyphicon-list-alt"></span>
                      <a href="index.php?page=ventas_facturas&sinpagar=TRUE">
                         Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
