@@ -44,7 +44,7 @@ class remesas_clientes extends fs_controller
    
    protected function process()
    {
-      $this->ppage = $this->page->get('compras_facturas');
+      $this->ppage = $this->page->get('ventas_facturas');
       $this->facturas = new factura_cliente();
       $this->clientes = new cliente();
       $this->recibos = new recibo_cliente();
