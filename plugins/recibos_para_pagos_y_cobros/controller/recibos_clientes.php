@@ -49,6 +49,9 @@ class recibos_clientes extends fs_controller
       $this->serie = new serie();
       $this->total = 0;
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['cliente']) )
       {
          $this->save_codcliente($_POST['cliente']);

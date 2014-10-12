@@ -51,6 +51,9 @@ class remesas_clientes extends fs_controller
       $this->remesas = new remesas_cliente();
       $this->serie = new serie();
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['cliente']) )
       {
          $this->save_codcliente($_POST['cliente']);

@@ -49,6 +49,9 @@ class recibos_proveedores extends fs_controller
       $this->serie = new serie();
       $this->total = 0;
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['proveedor']) )
       {
          $this->save_codproveedor($_POST['proveedor']);

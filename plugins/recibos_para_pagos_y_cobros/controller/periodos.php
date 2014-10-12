@@ -33,6 +33,9 @@ class periodos extends fs_controller
    {
       $this->periodo = new periodo();
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['codperiodo']) )
       {
          $pe0 = $this->periodo->get($_POST['codperiodo']);

@@ -36,6 +36,9 @@ class formaspagorec extends fs_controller
       $this->formapagorec = new formapagorec();
       $this->periodo = new periodo();
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_POST['codpago']) )
       {
          $fp0 = $this->formapagorec->get($_POST['codpago']);
