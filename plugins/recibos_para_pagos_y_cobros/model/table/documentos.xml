@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : documentos.xml
+    Description:
+        Estructura de la tabla documentos.
+-->
+<tabla>
+<columna>
+    <nombre>iddocumento</nombre>
+    <tipo>serial</tipo>
+    <nulo>NO</nulo>
+    <defecto>nextval('documentos_iddocumento_seq'::regclass)</defecto>
+</columna>
+<columna>
+    <nombre>descripcion</nombre>
+    <tipo>varchar(100)</tipo>
+    <nulo>NO</nulo>
+</columna>
+<restriccion>
+    <nombre>tecnicos_pkey</nombre>
+    <consulta>PRIMARY KEY (iddocumento)</consulta>
+</restriccion>
+</tabla>

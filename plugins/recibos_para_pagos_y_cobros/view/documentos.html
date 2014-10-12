@@ -1,0 +1,61 @@
+{include="header"}
+
+<div class="table-responsive">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="text-left">Identificador</th>
+                <th class="text-left">Descripción</th>
+                <th class="text-right" width="120">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+         {loop="$fsc->listar_documentos()"}
+         <form action="{$fsc->url()}" method="post" class="form">
+            <input type="hidden" name="iddocumento" value="{$value->iddocumento}"/> 
+            <tr>
+                <td> 
+                    <div class="form-control">{$value->iddocumento}</div>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" size="100" autocomplete="off"/>
+                </td>
+                <td class="text-right">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->iddocumento}" title="Eliminar">
+                        <span class="glyphicon glyphicon-trash"></span>
+                     </a>
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                     </button>
+                  </div>
+               </td>
+            </tr>
+         </form>  
+         {else}
+          <tr class="bg-warning">
+            <td colspan="7">Sin resultados</td>
+         </tr>
+         {/loop}
+         
+         {if condition="$fsc->query==''"}
+         <form action="{$fsc->url()}" method="post" class="form">
+            <tr class="bg-info">
+               <td>
+                  <div class="form-control">Nuevo</div>
+               </td>
+               <td>
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </td>
+               <td class="text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </td>
+            </tr>
+         </form>
+        {/if}
+        </tbody>
+    </table>
+</div>
+{include="footer"}
