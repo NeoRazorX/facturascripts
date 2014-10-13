@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_socios.xml
+    Description:
+        Estructura de la tabla fbm_socios.
+-->
+<tabla>
+	<columna>
+		<nombre>idsocio</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+      <defecto>nextval('fbm_socios_idsocio_seq'::regclass)</defecto>
+	</columna>
+   <columna>
+      <nombre>codcliente</nombre>
+      <tipo>varchar(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha_alta</nombre>
+      <tipo>date</tipo>
+   </columna>
+   <columna>
+      <nombre>fecha_baja</nombre>
+      <tipo>date</tipo>
+   </columna>
+   <columna>
+      <nombre>en_alta</nombre>
+      <tipo>boolean</tipo>
+   </columna>
+   <columna>
+      <nombre>cuota</nombre>
+      <tipo>double precision</tipo>
+   </columna>
+   <columna>
+      <nombre>periodicidad</nombre>
+      <tipo>varchar(1)</tipo>
+   </columna>
+   <columna>
+      <nombre>al_corriente</nombre>
+      <tipo>boolean</tipo>
+   </columna>
+   <columna>
+      <nombre>ultimo_pago</nombre>
+      <tipo>date</tipo>
+   </columna>
+   <columna>
+      <nombre>proximo_pago</nombre>
+      <tipo>date</tipo>
+   </columna>
+	<restriccion>
+		<nombre>fbm_socios_pkey</nombre>
+		<consulta>PRIMARY KEY (idsocio)</consulta>
+	</restriccion>
+</tabla>

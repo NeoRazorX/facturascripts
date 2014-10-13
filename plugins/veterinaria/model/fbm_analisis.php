@@ -18,6 +18,7 @@
  */
 
 require_once 'base/fs_model.php';
+require_model('fbm_mascota.php');
 
 class fbm_analisis extends fs_model
 {
@@ -62,6 +63,9 @@ class fbm_analisis extends fs_model
    
    protected function install()
    {
+      /// forzamos la comprobación de mascota
+      new fbm_mascota();
+      
       return '';
    }
    

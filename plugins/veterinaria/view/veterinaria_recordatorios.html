@@ -1,0 +1,30 @@
+{include="header"}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left">Mascota</th>
+            <th class="text-left">Cliente</th>
+            <th class="text-left">Acción</th>
+            <th class="text-right">Fecha</th>
+         </tr>
+      </thead>
+      <tbody>
+         {loop="$fsc->resultados"}
+         <tr>
+            <td><a href="index.php?page=veterinaria_mascota&id={$value['idmascota']}">{$value['mascota']}</a></td>
+            <td>{$value['cliente']}</td>
+            <td>{$value['tipo']} ({$value['analisis']})</td>
+            <td class="text-right">{$value['nueva_fecha']}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="4">Sin resultados.</td>
+         </tr>
+         {/loop}
+      </tbody>
+   </table>
+</div>
+
+{include="footer"}

@@ -167,6 +167,14 @@
                   {/if}
                </ul>
             </div>
+            
+            {loop="$fsc->extensiones"}
+               {if condition="$value->type=='button'"}
+               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">
+                  {$value->text}
+               </a>
+               {/if}
+            {/loop}
          </div>
          <div class="col-lg-6 text-right">
             <div class="btn-group">

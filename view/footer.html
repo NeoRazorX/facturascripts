@@ -1,4 +1,14 @@
-   <hr style="margin-top: 50px;"/>   
+   <hr style="margin-top: 50px;"/>
+   
+   {if condition="FS_DEMO"}
+   <div class="container-fluid hidden-print">
+      <div class="row" style="margin-bottom: 30px;">
+         <div class="col-lg-12">
+            {$fsc->get_community_html()}
+         </div>
+      </div>
+   </div>
+   {/if}
    
    <div class="container-fluid hidden-print" style="margin-bottom: 10px;">
       {if condition="FS_DB_HISTORY"}

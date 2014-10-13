@@ -33,6 +33,7 @@ class ventas_factura extends fs_controller
    public $agente;
    public $cliente;
    public $ejercicio;
+   public $extensiones;
    public $factura;
    
    public function __construct()
@@ -51,6 +52,10 @@ class ventas_factura extends fs_controller
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
+      
+      /// cargamos las extensiones
+      $fsext = new fs_extension();
+      $this->extensiones = $fsext->all_to(__CLASS__);
       
       if( isset($_POST['idfactura']) )
       {
