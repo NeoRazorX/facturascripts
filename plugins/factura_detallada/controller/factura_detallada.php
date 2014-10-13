@@ -18,6 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//
+//
+// NOTA: Este Script esta TOTALMENTE DESLIGADO del controller ventas_factura.php
+//
+//
+
 require_once 'plugins/factura_detallada/fpdf17/fs_fpdf.php';
 define('FPDF_FONTPATH', 'plugins/factura_detallada/fpdf17/font/');
 
@@ -177,24 +183,22 @@ class factura_detallada extends fs_controller
             $pdf_doc->fdc_fax               = $this->cliente->fax;
             $pdf_doc->fdc_email             = $this->cliente->email;
 
+            $pdf_doc->fdf_epago = $pdf_doc->fdf_divisa = $pdf_doc->fdf_pais = '';
+
             // Forma de Pago de la Factura
             $pago = new forma_pago();
             $epago = $pago->get($this->factura->codpago);
-            if($epago)
-            {
-               $pdf_doc->fdf_epago          = $epago->descripcion;
-            }
-            $pdf_doc->fdf_epago          = '-';
+            if($epago) { $pdf_doc->fdf_epago = $epago->descripcion; }
 
             // Divisa de la Factura
             $divisa = new divisa();
             $edivisa = $divisa->get($this->factura->coddivisa);
-            $pdf_doc->fdf_divisa            = $edivisa->descripcion;
+            if($edivisa) { $pdf_doc->fdf_divisa = $edivisa->descripcion; }
 
             // Pais de la Factura
             $pais = new pais();
             $epais = $pais->get($this->factura->codpais);
-            $pdf_doc->fdf_pais              = $epais->nombre;
+            if($epais) { $pdf_doc->fdf_pais = $epais->nombre; }
 
             // Cabecera Titulos Columnas
             $pdf_doc->Setdatoscab(array('ALB','DESCRIPCION','CANT','PRECIO','DTO','IVA','IMPORTE'));
@@ -344,7 +348,7 @@ class factura_detallada extends fs_controller
             $mail->IsHTML(TRUE);
 
             if( $mail->Send() )
-               $this->new_message('Mensaje enviado correctamente.');
+               $this->new_message('Email enviado correctamente.');
             else
                $this->new_error_msg("Error al enviar el email: " . $mail->ErrorInfo);
          }
@@ -353,3 +357,4 @@ class factura_detallada extends fs_controller
       }
    }
 }
+?>

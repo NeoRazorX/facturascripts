@@ -18,6 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//
+//
+// NOTA: Script para la creacion del Archivo
+// 'plugins/factura_detallada/view/ventas_factura.html'
+// a partir del Archivo
+// 'view/ventas_factura.html'
+//
+//
+
 class fc_detallada
 {
     public $ruta_html = 'view/ventas_factura.html';
@@ -28,6 +37,16 @@ class fc_detallada
 
     public function MadeHtml()
     {
+        if ( file_exists($this->ruta_html_plugin) && file_exists('tmp/enabled_plugins/factura_detallada') )
+        {
+            $activacion = filemtime('tmp/enabled_plugins/factura_detallada');
+            $viewhtml = filemtime($this->ruta_html_plugin);
+            if ($activacion > $viewhtml)
+            {
+                unlink ($this->ruta_html_plugin);
+            }
+        }
+
         $error = FALSE;
         if (!file_exists ($this->ruta_html) )
         {
