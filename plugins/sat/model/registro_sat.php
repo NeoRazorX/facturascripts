@@ -49,7 +49,7 @@ class registro_sat extends fs_model
          $this->fentrada = date('d-m-Y', strtotime($s['fentrada']));
          
          $this->fcomienzo = NULL;
-         if( isset($s['fcomiento']) )
+         if( isset($s['fcomienzo']) )
             $this->fcomienzo = date('d-m-Y', strtotime($s['fcomienzo']));
          
          $this->ffin = NULL;
@@ -280,7 +280,7 @@ class registro_sat extends fs_model
       return $satlist;
    }
    
-   public function search($buscar='', $desde='', $hasta='', $estado='todos')
+   public function search($buscar='', $desde='', $hasta='', $estado='activos',$orden="nsat")
    {
       $satlist = array();
       
@@ -306,19 +306,19 @@ class registro_sat extends fs_model
          $sql .= " AND fcomienzo <= ".$this->var2str($hasta);
       }
       
-      if($estado != "todos" AND $estado != "")
+      if($estado != "todos" AND $estado != "activos")
       {
          $sql .= " AND registros_sat.estado = ".$estado;
       }
-      
-      if($estado != 6)
+      else 
       {
-         $sql .= " AND registros_sat.estado != 6";
+          if($estado == "activos")
+          {
+              $sql .= " AND registros_sat.estado != 6";
+          }
+          //si no entra en ninguno de los 2 if anteriores muestra todos los estados.
       }
-      else
-      {
-         $sql .= " AND registros_sat.estado = 6";
-      }
+      $sql.= " ORDER BY ".$orden." ASC ";
       
       $data = $this->db->select($sql.";");
       if($data)

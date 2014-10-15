@@ -27,6 +27,7 @@ class listado_sat extends fs_controller
 {
    public $cliente;
    public $registro_sat;
+   public $busqueda = array();
    public $detalles_sat;
    public $resultado;
    public $estado;
@@ -276,17 +277,55 @@ class listado_sat extends fs_controller
    
    public function listar_sat()
    {
-      if( isset($_POST['query']) )
+      if(isset($_POST['query']) || isset($_POST['desde']) ||isset($_POST['hasta']) || isset($_POST['desde']))
       {
-         return $this->registro_sat->search($_POST['query']);
+        if( isset($_POST['buscar']) )
+        {
+            $this->busqueda['contenido']=$_POST['buscar'];
+        }
+        else 
+        {
+            $this->busqueda['contenido']="";
+        }
+        if( isset($_POST['desde']) )
+        {
+            $this->busqueda['desde']=$_POST['desde'];
+        }
+        else 
+        {
+            $this->busqueda['desde']="";
+        }
+        if( isset($_POST['hasta']) )
+        {
+            $this->busqueda['hasta']=$_POST['hasta'];
+        }
+        else 
+        {
+            $this->busqueda['hasta']="";
+        }
+        if( isset($_POST['estado']) )
+        {
+            $this->busqueda['estado']=$_POST['estado'];
+        }
+        else 
+        {
+            $this->busqueda['estado']="";
+        }
+        
+        if( isset($_POST['orden']) )
+        {
+            $this->busqueda['orden']=$_POST['orden'];
+        }
+        else 
+        {
+            $this->busqueda['orden']="nsat";
+        }
+        
+        return $this->registro_sat->search($this->busqueda['contenido'], $this->busqueda['desde'], $this->busqueda['hasta'], $this->busqueda['estado'], $this->busqueda['orden']);
       }
-      else if( isset($_POST['desde']) )
+      if( isset($_GET['codcliente']) )
       {
-         return $this->registro_sat->search('', $_POST['desde'], $_POST['hasta'], $_POST['estado']);
-      }
-      else if( isset($_GET['codcliente']) )
-      {
-         return $this->registro_sat->all_from_cliente($_GET['codcliente']);
+        return $this->registro_sat->all_from_cliente($_GET['codcliente']);
       }
       else
       {
