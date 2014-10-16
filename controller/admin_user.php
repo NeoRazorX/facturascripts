@@ -61,11 +61,11 @@ class admin_user extends fs_controller
             $age0->email = $_POST['nemail'];
             if( $age0->save() )
             {
-               $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
+               $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
                $this->suser->codagente = $_POST['ncodagente'];
                
                if( $this->suser->save() )
-                  $this->new_message("Agente ".$age0->codagente." asignado correctamente.");
+                  $this->new_message("Empleado ".$age0->codagente." asignado correctamente.");
                else
                   $this->new_error_msg("¡Imposible asignar el agente!");
             }

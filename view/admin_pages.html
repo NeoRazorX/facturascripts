@@ -68,8 +68,12 @@
                {/if}
             </td>
             <td>{$value->version}</td>
-            <td class="text-center">{if condition="$value->important"}Si{else}-{/if}</td>
-            <td class="text-center">{if condition="$value->exists"}Si{else}-{/if}</td>
+            <td class="text-center">
+               {if condition="$value->important"}<span class="glyphicon glyphicon-ok"></span>{/if}
+            </td>
+            <td class="text-center">
+               {if condition="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}
+            </td>
          </tr>
          {/loop}
       </table>

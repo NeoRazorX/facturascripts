@@ -34,7 +34,7 @@
                   </label>
                </div>
                <div class="form-group">
-                  <a target="_blank" href="{$fsc->agente->url()}">Agente</a>:
+                  <a target="_blank" href="{$fsc->agente->url()}">Empleado</a>:
                   <select name="ncodagente" class="form-control">
                      <option value="">Ninguno</option>
                      {loop="$fsc->agente->all()"}
@@ -59,7 +59,7 @@
       <thead>
          <tr>
             <th class="text-left">Nick</th>
-            <th class="text-left">Agente</th>
+            <th class="text-left">Empleado</th>
             <th>Administrador</th>
             <th>IP</th>
             <th class="text-left">Página de inicio</th>
@@ -71,7 +71,9 @@
       <tr>
          <td><a href="{$value->url()}">{$value->nick}</a></td>
          <td>{$value->get_agente_fullname()}</td>
-         <td class="text-center">{if condition="$value->admin"}Si{else}-{/if}</td>
+         <td class="text-center">
+            {if condition="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
+         </td>
          <td class="text-center">{$value->last_ip}</td>
          <td>{$value->fs_page}</td>
          <td class="text-center">{$value->codejercicio}</td>

@@ -17,8 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('cliente.php');
+require_model('fbm_socio.php');
+
 class veterinaria_socios extends fs_controller
 {
+   public $resultados;
+   public $socio;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Socios', 'Veterinaria');
@@ -27,5 +33,43 @@ class veterinaria_socios extends fs_controller
    protected function process()
    {
       $this->show_fs_toolbar = FALSE;
+      $this->socio = new fbm_socio();
+      
+      if( isset($_POST['nombre']) )
+      {
+         $cliente = new cliente();
+         $cliente->codcliente = $cliente->get_new_codigo();
+         $cliente->nombre = $_POST['nombre'];
+         $cliente->nombrecomercial = $_POST['nombre'];
+         $cliente->cifnif = $_POST['cifnif'];
+         $cliente->codserie = $this->empresa->codserie;;
+         if( $cliente->save() )
+         {
+            $dircliente = new direccion_cliente();
+            $dircliente->codcliente = $cliente->codcliente;
+            $dircliente->codpais = $this->empresa->codpais;;
+            $dircliente->provincia = $_POST['provincia'];
+            $dircliente->ciudad = $_POST['ciudad'];
+            $dircliente->codpostal = $_POST['codpostal'];
+            $dircliente->direccion = $_POST['direccion'];
+            $dircliente->descripcion = 'Principal';
+            if( $dircliente->save() )
+            {
+               $this->socio->codcliente = $cliente->codcliente;
+               if( $this->socio->save() )
+               {
+                  $this->new_message('Socio creado correctamente.');
+               }
+               else
+                  $this->new_error_msg("¡Imposible crear el socio!");
+            }
+            else
+               $this->new_error_msg("¡Imposible guardar la dirección del cliente!");
+         }
+         else
+            $this->new_error_msg("¡Imposible guardar los datos del cliente!");
+      }
+      
+      $this->resultados = $this->socio->all();
    }
 }

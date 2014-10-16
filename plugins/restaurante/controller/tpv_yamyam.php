@@ -422,7 +422,7 @@ class tpv_yamyam extends fs_controller
       {
          $fpt = new fs_printer();
          $fpt->add_big("\nCIERRE DE CAJA:\n");
-         $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
+         $fpt->add("Empleado: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
          $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
          $fpt->add("Dinero inicial: ".$this->show_precio($this->caja->dinero_inicial, FALSE, FALSE)."\n");

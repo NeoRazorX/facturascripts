@@ -67,10 +67,8 @@ class informe_facturas extends fs_controller
          $total_lineas = count($facturas);
          $linea_actual = 0;
          $lppag = 31;
-         $total = $totalre = $totalirpf = 0;
-         $bases = array();
+         $total = $totalrecargo = $totalirpf = 0;
          $impuestos = array();
-         $recargos = array();
          $pagina = 1;
          
          while($linea_actual < $total_lineas)
@@ -82,7 +80,7 @@ class informe_facturas extends fs_controller
             }
             
             /// encabezado
-            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas de ventas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
             
             /// tabla principal
             $pdf_doc->new_table();
@@ -117,7 +115,7 @@ class informe_facturas extends fs_controller
                    'iva' => 0,
                    'totaliva' => 0,
                    'totalrecargo' => 0,
-                   'totalirpf' => $facturas[$linea_actual]->totalirpf,
+                   'totalirpf' => '-',
                    'total' => 0
                );
                $asiento = $facturas[$linea_actual]->get_asiento();
@@ -128,6 +126,15 @@ class informe_facturas extends fs_controller
                   if($partidas)
                      $linea['subcuenta'] = $partidas[0]->codsubcuenta;
                }
+               
+               if($facturas[$linea_actual]->totalirpf != 0)
+               {
+                  $linea['totalirpf'] = $this->show_numero($facturas[$linea_actual]->totalirpf);
+                  $linea['total'] = $this->show_numero($facturas[$linea_actual]->total);
+                  $pdf_doc->add_table_row($linea);
+                  $linea['totalirpf'] = '-';
+               }
+               
                $linivas = $facturas[$linea_actual]->get_lineas_iva();
                if($linivas)
                {
@@ -136,22 +143,20 @@ class informe_facturas extends fs_controller
                   foreach($linivas as $liva)
                   {
                      /// acumulamos la base
-                     if( !isset($bases[$liva->iva]) )
-                        $bases[$liva->iva] = $liva->neto;
+                     if( !isset($impuestos[$liva->iva]['base']) )
+                     {
+                        $impuestos[$liva->iva]['base'] = $liva->neto;
+                     }
                      else
-                        $bases[$liva->iva] += $liva->neto;
+                        $impuestos[$liva->iva]['base'] += $liva->neto;
                      
                      /// acumulamos el iva
-                     if( !isset($impuestos[$liva->iva]) )
-                        $impuestos[$liva->iva] = $liva->totaliva;
+                     if( !isset($impuestos[$liva->iva]['iva']) )
+                     {
+                        $impuestos[$liva->iva]['iva'] = $liva->totaliva;
+                     }
                      else
-                        $impuestos[$liva->iva] += $liva->totaliva;
-                     
-                     /// acumulamos el recargo de equivalencia
-                     if( !isset($recargos[$liva->iva]) )
-                        $recargos[$liva->iva] = $liva->totalrecargo;
-                     else
-                        $recargos[$liva->iva] += $liva->totalrecargo;
+                        $impuestos[$liva->iva]['iva'] += $liva->totaliva;
                      
                      /// completamos y añadimos la línea al PDF
                      $linea['base'] = $this->show_numero($liva->neto);
@@ -162,13 +167,15 @@ class informe_facturas extends fs_controller
                      $pdf_doc->add_table_row($linea);
                      
                      if($nueva_linea)
+                     {
                         $i++;
+                     }
                      else
                         $nueva_linea = TRUE;
                   }
                }
                
-               $totalre += $facturas[$linea_actual]->totalrecargo;
+               $totalrecargo += $facturas[$linea_actual]->totalrecargo;
                $totalirpf += $facturas[$linea_actual]->totalirpf;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
@@ -200,26 +207,26 @@ class informe_facturas extends fs_controller
                 'showLines' => 0,
                 'width' => 780
             );
-            foreach($bases as $i => $value)
-            {
-               $titulo['base'.$i] = '<b>Base '.$i.'%</b>';
-               $fila['base'.$i] = $this->show_precio($value);
-               $opciones['cols']['base'.$i] = array('justification' => 'right');
-            }
             foreach($impuestos as $i => $value)
             {
-               $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = $this->show_precio($value);
-               $opciones['cols']['iva'.$i] = array('justification' => 'right');
+               $titulo['base'.$i] = '<b>Base '.$i.'%</b>';
+               $fila['base'.$i] = $this->show_precio($value['base']);
+               $opciones['cols']['base'.$i] = array('justification' => 'right');
+               if($i != 0)
+               {
+                  $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
+                  $fila['iva'.$i] = $this->show_precio($value['iva']);
+                  $opciones['cols']['iva'.$i] = array('justification' => 'right');
+               }
             }
-            $titulo['re'] = '<b>RE</b>';
-            $titulo['irpf'] = '<b>IRPF</b>';
+            $titulo['totalrecargo'] = '<b>RE</b>';
+            $titulo['totalirpf'] = '<b>IRPF</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['re'] = $this->show_precio($totalre);
-            $fila['irpf'] = $this->show_precio($totalirpf);
+            $fila['totalrecargo'] = $this->show_precio($totalrecargo);
+            $fila['totalirpf'] = $this->show_precio($totalirpf);
             $fila['total'] = $this->show_precio($total);
-            $opciones['cols']['re'] = array('justification' => 'right');
-            $opciones['cols']['irpf'] = array('justification' => 'right');
+            $opciones['cols']['totalrecargo'] = array('justification' => 'right');
+            $opciones['cols']['totalirpf'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
             $pdf_doc->add_table_row($fila);
@@ -228,7 +235,7 @@ class informe_facturas extends fs_controller
       }
       else
       {
-         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas emitidas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas de ventas del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
          $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       
@@ -248,15 +255,13 @@ class informe_facturas extends fs_controller
       $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
       if($facturas)
       {
-         $total_lineas = count( $facturas );
+         $total_lineas = count($facturas);
          $linea_actual = 0;
          $lppag = 31;
-         $total = $totalre = $totalirpf = 0;
-         $bases = array();
+         $total = $totalrecargo = $totalirpf = 0;
          $impuestos = array();
-         $recargos = array();
          $pagina = 1;
-
+         
          while($linea_actual < $total_lineas)
          {
             if($linea_actual > 0)
@@ -266,7 +271,7 @@ class informe_facturas extends fs_controller
             }
             
             /// encabezado
-            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+            $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas de compras del ".$_POST['dfecha']." al ".$_POST['hfecha'].":\n\n", 14);
             
             /// tabla principal
             $pdf_doc->new_table();
@@ -282,7 +287,7 @@ class informe_facturas extends fs_controller
                    'base' => '<b>Base Im.</b>',
                    'iva' => '<b>% IVA</b>',
                    'totaliva' => '<b>IVA</b>',
-                   'totalre' => '<b>RE</b>',
+                   'totalrecargo' => '<b>RE</b>',
                    'totalirpf' => '<b>IRPF</b>',
                    'total' => '<b>Total</b>'
                )
@@ -300,8 +305,8 @@ class informe_facturas extends fs_controller
                    'base' => 0,
                    'iva' => 0,
                    'totaliva' => 0,
-                   'totalre' => $facturas[$linea_actual]->totalrecargo,
-                   'totalirpf' => $facturas[$linea_actual]->totalirpf,
+                   'totalrecargo' => 0,
+                   'totalirpf' => '-',
                    'total' => 0
                );
                $asiento = $facturas[$linea_actual]->get_asiento();
@@ -312,6 +317,15 @@ class informe_facturas extends fs_controller
                   if($partidas)
                      $linea['subcuenta'] = $partidas[0]->codsubcuenta;
                }
+               
+               if($facturas[$linea_actual]->totalirpf != 0)
+               {
+                  $linea['totalirpf'] = $this->show_numero($facturas[$linea_actual]->totalirpf);
+                  $linea['total'] = $this->show_numero($facturas[$linea_actual]->total);
+                  $pdf_doc->add_table_row($linea);
+                  $linea['totalirpf'] = '-';
+               }
+               
                $linivas = $facturas[$linea_actual]->get_lineas_iva();
                if($linivas)
                {
@@ -319,25 +333,23 @@ class informe_facturas extends fs_controller
                   
                   foreach($linivas as $liva)
                   {
-                     /// acumuluamos la base
-                     if( !isset($bases[$liva->iva]) )
-                        $bases[$liva->iva] = $liva->neto;
+                     /// acumulamos la base
+                     if( !isset($impuestos[$liva->iva]['base']) )
+                     {
+                        $impuestos[$liva->iva]['base'] = $liva->neto;
+                     }
                      else
-                        $bases[$liva->iva] += $liva->neto;
+                        $impuestos[$liva->iva]['base'] += $liva->neto;
                      
                      /// acumulamos el iva
-                     if( !isset($impuestos[$liva->iva]) )
-                        $impuestos[$liva->iva] = $liva->totaliva;
+                     if( !isset($impuestos[$liva->iva]['iva']) )
+                     {
+                        $impuestos[$liva->iva]['iva'] = $liva->totaliva;
+                     }
                      else
-                        $impuestos[$liva->iva] += $liva->totaliva;
+                        $impuestos[$liva->iva]['iva'] += $liva->totaliva;
                      
-                     /// acumulamos el recargo
-                     if( !isset($recargos[$liva->iva]) )
-                        $recargos[$liva->iva] = $liva->totalrecargo;
-                     else
-                        $recargos[$liva->iva] += $liva->totalrecargo;
-                     
-                     /// completamos y añadimos la línea al pdf
+                     /// completamos y añadimos la línea al PDF
                      $linea['base'] = $this->show_numero($liva->neto);
                      $linea['iva'] = $this->show_numero($liva->iva);
                      $linea['totaliva'] = $this->show_numero($liva->totaliva);
@@ -346,13 +358,15 @@ class informe_facturas extends fs_controller
                      $pdf_doc->add_table_row($linea);
                      
                      if($nueva_linea)
+                     {
                         $i++;
+                     }
                      else
                         $nueva_linea = TRUE;
                   }
                }
                
-               $totalre += $facturas[$linea_actual]->totalrecargo;
+               $totalrecargo += $facturas[$linea_actual]->totalrecargo;
                $totalirpf += $facturas[$linea_actual]->totalirpf;
                $total += $facturas[$linea_actual]->total;
                $linea_actual++;
@@ -364,7 +378,7 @@ class informe_facturas extends fs_controller
                        'base' => array('justification' => 'right'),
                        'iva' => array('justification' => 'right'),
                        'totaliva' => array('justification' => 'right'),
-                       'totalre' => array('justification' => 'right'),
+                       'totalrecargo' => array('justification' => 'right'),
                        'totalirpf' => array('justification' => 'right'),
                        'total' => array('justification' => 'right')
                    ),
@@ -384,25 +398,25 @@ class informe_facturas extends fs_controller
                 'showLines' => 0,
                 'width' => 780
             );
-            foreach($bases as $i => $value)
-            {
-               $titulo['base'.$i] = '<b>BASE '.$i.'%</b>';
-               $fila['base'.$i] = $this->show_precio($value);
-               $opciones['cols']['base'.$i] = array('justification' => 'right');
-            }
             foreach($impuestos as $i => $value)
             {
-               $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
-               $fila['iva'.$i] = $this->show_precio($value);
-               $opciones['cols']['iva'.$i] = array('justification' => 'right');
+               $titulo['base'.$i] = '<b>Base '.$i.'%</b>';
+               $fila['base'.$i] = $this->show_precio($value['base']);
+               $opciones['cols']['base'.$i] = array('justification' => 'right');
+               if($i != 0)
+               {
+                  $titulo['iva'.$i] = '<b>IVA '.$i.'%</b>';
+                  $fila['iva'.$i] = $this->show_precio($value['iva']);
+                  $opciones['cols']['iva'.$i] = array('justification' => 'right');
+               }
             }
-            $titulo['totalre'] = '<b>RE</b>';
+            $titulo['totalrecargo'] = '<b>RE</b>';
             $titulo['totalirpf'] = '<b>IRPF</b>';
             $titulo['total'] = '<b>Total</b>';
-            $fila['totalre'] = $this->show_precio($totalre);
+            $fila['totalrecargo'] = $this->show_precio($totalrecargo);
             $fila['totalirpf'] = $this->show_precio($totalirpf);
             $fila['total'] = $this->show_precio($total);
-            $opciones['cols']['totalre'] = array('justification' => 'right');
+            $opciones['cols']['totalrecargo'] = array('justification' => 'right');
             $opciones['cols']['totalirpf'] = array('justification' => 'right');
             $opciones['cols']['total'] = array('justification' => 'right');
             $pdf_doc->add_table_header($titulo);
@@ -412,7 +426,7 @@ class informe_facturas extends fs_controller
       }
       else
       {
-         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas recibidas del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
+         $pdf_doc->pdf->ezText($this->empresa->nombre." - Facturas de compras del ".$_POST['dfecha'].' al '.$_POST['hfecha'].":\n\n", 14);
          $pdf_doc->pdf->ezText("Ninguna.\n\n", 14);
       }
       

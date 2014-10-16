@@ -155,7 +155,7 @@ function ajustar_neto()
          l_uds = parseFloat( $("#cantidad_"+i).val() );
          l_pvp = parseFloat( $("#pvp_"+i).val() );
          l_dto = parseFloat( $("#dto_"+i).val() );
-         l_neto = parseFloat( $("#total_"+i).val() );
+         l_neto = parseFloat( $("#neto_"+i).val() );
          if( isNaN(l_neto) )
             l_neto = 0;
          

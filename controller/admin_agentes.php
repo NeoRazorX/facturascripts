@@ -25,7 +25,7 @@ class admin_agentes extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Agentes', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Empleados', 'admin', TRUE, TRUE);
    }
    
    protected function process()
@@ -37,7 +37,9 @@ class admin_agentes extends fs_controller
       {
          $age0 = $this->agente->get($_POST['scodagente']);
          if( $age0 )
+         {
             header('location: '.$age0->url());
+         }
          else
          {
             $age0 = new agente();
@@ -49,11 +51,11 @@ class admin_agentes extends fs_controller
             $age0->email = $_POST['semail'];
             if( $age0->save() )
             {
-               $this->new_message("Agente ".$age0->codagente." guardado correctamente.");
+               $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
                header('location: '.$age0->url());
             }
             else
-               $this->new_error_msg("¡Imposible guardar el agente!");
+               $this->new_error_msg("¡Imposible guardar el empleado!");
          }
       }
       else if( isset($_GET['delete']) )
@@ -63,16 +65,17 @@ class admin_agentes extends fs_controller
          {
             if( FS_DEMO )
             {
-               $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar agentes.
-                  Otro usuario podría estar usándolo.');
+               $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar empleados. Otro usuario podría estar usándolo.');
             }
             else if( $age0->delete() )
-               $this->new_message("Agente ".$age0->codagente." eliminado correctamente.");
+            {
+               $this->new_message("Empleado ".$age0->codagente." eliminado correctamente.");
+            }
             else
-               $this->new_error_msg("¡Imposible eliminar el agente!");
+               $this->new_error_msg("¡Imposible eliminar el empleado!");
          }
          else
-            $this->new_error_msg("¡Agente no encontrado!");
+            $this->new_error_msg("¡Empleado no encontrado!");
       }
    }
 }

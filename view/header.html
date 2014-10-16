@@ -108,7 +108,7 @@
                   <ul class="dropdown-menu">
                      <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>
                      {if condition="$fsc->user->codagente"}
-                     <li><a href="{$fsc->user->get_agente_url()}">Agente: {$fsc->user->codagente}</a></li>
+                     <li><a href="{$fsc->user->get_agente_url()}">Empleado: {$fsc->user->codagente}</a></li>
                      {/if}
                      {if condition="count($fsc->user->all())>1 AND !FS_DEMO"}
                         <li class="divider"></li>
@@ -151,11 +151,7 @@
    {if condition="$fsc->show_fs_toolbar"}
    <div class="container-fluid" style="margin: 10px 0px 10px 0px;">
       <div class="row">
-         {if condition="$fsc->custom_search"}
-         <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
-         {else}
-         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-         {/if}
+         <div class="{if condition="$fsc->custom_search"}col-lg-10 col-md-10 col-sm-10 col-xs-12{else}col-lg-12{/if}">
             <div class="btn-toolbar" role="toolbar">
                <div class="btn-group hidden-xs">
                   <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
@@ -206,11 +202,11 @@
             </div>
          </div>
          {if condition="$fsc->custom_search"}
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
             <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
                <div class="input-group">
                   <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
-                  <span class="input-group-btn hidden-xs hidden-sm">
+                  <span class="input-group-btn hidden-sm">
                      <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
                      </button>

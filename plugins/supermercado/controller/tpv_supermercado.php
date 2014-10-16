@@ -420,7 +420,7 @@ class tpv_supermercado extends fs_controller
       
       $agente = new agente();
       $age0 = $agente->get($albaran->codagente);
-      $fpt->add("Agente: ".$age0->nombre."\n\n");
+      $fpt->add("Empleado: ".$age0->nombre."\n\n");
       
       $fpt->add(sprintf("%3s", "Ud.")." ".sprintf("%-25s", "Articulo")." ".sprintf("%10s", "TOTAL")."\n");
       $fpt->add(sprintf("%3s", "---")." ".sprintf("%-25s", "-------------------------")." ".sprintf("%10s", "----------")."\n");

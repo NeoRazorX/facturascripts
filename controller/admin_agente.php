@@ -31,7 +31,7 @@ class admin_agente extends fs_controller
     */
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Agente', 'admin', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Empleado', 'admin', FALSE, FALSE);
    }
    
    protected function process()
@@ -69,17 +69,17 @@ class admin_agente extends fs_controller
                
                if( $this->agente->save() )
                {
-                  $this->new_message("Datos del agente guardados correctamente.");
+                  $this->new_message("Datos del empleado guardados correctamente.");
                }
                else
-                  $this->new_error_msg("¡Imposible guardar los datos del agente!");
+                  $this->new_error_msg("¡Imposible guardar los datos del empleado!");
             }
             else
                $this->new_error_msg('No tienes permiso para modificar estos datos.');
          }
       }
       else
-         $this->new_error_msg("Agente no encontrado.");
+         $this->new_error_msg("Empleado no encontrado.");
    }
    
    private function user_can_edit()
@@ -103,9 +103,13 @@ class admin_agente extends fs_controller
    public function url()
    {
       if( !isset($this->agente) )
+      {
          return parent::url();
+      }
       else if($this->agente)
+      {
          return $this->agente->url();
+      }
       else
          return $this->page->url();
    }

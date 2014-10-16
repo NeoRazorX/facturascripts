@@ -29,7 +29,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nuevo agente</h4>
+               <h4 class="modal-title">Nuevo empleado</h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -99,7 +99,7 @@
             <input class="form-control" type="password" name="spassword"/>
          </div>
          <div class="form-group col-lg-3 col-md-3 col-sm-3">
-            <a href="{$fsc->agente->url()}">Agente</a>
+            <a href="{$fsc->agente->url()}">Empleado</a>
             <select name="scodagente" class="form-control">
                <option value="">Ninguno</option>
                {loop="$fsc->agente->all()"}
@@ -107,7 +107,7 @@
                {/loop}
             </select>
             <p class="help-block">
-               <a id="b_nuevo_agente" href="#">Crear un nuevo agente y asignarlo a este usuario</a>
+               <a id="b_nuevo_agente" href="#">Crear un nuevo empleado y asignarlo a este usuario</a>
             </p>
          </div>
          <div class="form-group col-lg-2 col-md-2 col-sm-2">

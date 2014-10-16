@@ -425,7 +425,7 @@ class tpv_recambios extends fs_controller
       {
          $fpt = new fs_printer();
          $fpt->add_big("\nCIERRE DE CAJA:\n");
-         $fpt->add("Agente: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
+         $fpt->add("Empleado: ".$this->user->codagente." ".$this->agente->get_fullname()."\n");
          $fpt->add("Caja: ".$this->caja->fs_id."\n");
          $fpt->add("Fecha inicial: ".$this->caja->fecha_inicial."\n");
          $fpt->add("Dinero inicial: ".$this->show_precio($this->caja->dinero_inicial, FALSE, FALSE)."\n");
@@ -528,7 +528,7 @@ class tpv_recambios extends fs_controller
          $linea .= " " . $albaran->show_hora(FALSE) . "\n";
          $fpt->add($linea);
          $fpt->add("Cliente: " . $albaran->nombrecliente . "\n");
-         $fpt->add("Agente: " . $albaran->codagente . "\n\n");
+         $fpt->add("Empleado: " . $albaran->codagente . "\n\n");
          
          if($this->imprimir_observaciones)
          {

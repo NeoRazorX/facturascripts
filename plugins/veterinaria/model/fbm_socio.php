@@ -122,4 +122,18 @@ class fbm_socio extends fs_model
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE idsocio = ".$this->var2str($this->idsocio).";");
    }
+   
+   public function all()
+   {
+      $lista = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY idsocio ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $lista[] = new fbm_socio($d);
+      }
+      
+      return $lista;
+   }
 }
