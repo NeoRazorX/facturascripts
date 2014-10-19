@@ -63,4 +63,109 @@
    </div>
 </form>
 
+
+
+<form class="form" action="{$fsc->url()}" method="post">
+   <div class="container-fluid" style="padding-top: 10px;">
+      
+      <div class="row">
+         <div class="col-lg-12">
+            <h2>Artículos:</h2>
+         </div>
+      </div>
+
+      <div class="row">
+         <div class="form-group col-lg-4 col-md-4 col-sm-4">
+            Método para calcular el Margen 
+            <!-- Button trigger modal -->
+            (<a xclass="btn btn-lg btn-default" data-toggle="modal"
+               data-target="#modal_help_FS_MARGIN_METHOD"
+               xdata-remote="remote-page.html">Ayuda</a>):
+                  <select class="form-control" id="FS_MARGIN_METHOD" name="FS_MARGIN_METHOD">
+                      <option {if condition="$fsc->confKeys['articulos']['FS_MARGIN_METHOD']=='PVP'"}selected="selected"{/if} value="PVP">&nbsp; Sobre el Precio de Venta &nbsp;</option>
+                      <option {if condition="$fsc->confKeys['articulos']['FS_MARGIN_METHOD']=='CST'"}selected="selected"{/if} value="CST">&nbsp; Sobre el Precio de Coste &nbsp;</option>
+                  </select>
+            <p class="help-block">.</p>
+         </div>
+         <div class="form-group col-lg-4 col-md-4 col-sm-4"">
+            <label>
+            <input type="checkbox" value="TRUE" id="FS_COST_IS_AVERAGE" name="FS_COST_IS_AVERAGE" {if condition="$fsc->confKeys['articulos']['FS_COST_IS_AVERAGE']"}checked="checked"{/if}>
+            Usar el Precio Medio de Compra como Coste para los Artículos que se compran
+            </label>
+         </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-6 col-md-6 col-sm-6">
+            <!-- button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&reset=TRUE'">
+               <span class="glyphicon glyphicon-trash"></span>
+               &nbsp; Reiniciar
+            </button -->
+         </div>
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar
+            </button>
+            <input type="hidden" name="submitKeysArticulos" value="submitKeysArticulos"/>
+         </div>
+      </div>
+   </div>
+</form>
+
+<!-- Modal -->
+   <div class="modal fade" id="modal_help_FS_MARGIN_METHOD" tabindex="-1" role="dialog" aria-labelledby="modal_help_FS_MARGIN_METHOD" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Método para calcular el Margen</h4>
+            </div>
+            <div class="modal-body">
+               El Precio de Venta (PVP) es igual al Coste (CST) mas el Margen Comercial (M), es decir:<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST + M<br />
+               <br />
+               El Margen como ratio se puede calcular de dos maneras:<br />
+               <br />
+               - Sobre el Precio de Venta<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Mv = ( PVP - CST ) / PVP <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Entonces, <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST / ( 1 - Mv ) &nbsp; y &nbsp; M = CST * Mv / ( 1 - Mv )<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>v</sub> = 100 * Mv <br />
+               <br />
+               - Sobre el Precio de Coste<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Mc = ( PVP - CST ) / CST <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Entonces, <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST * ( 1 + Mc ) &nbsp; y &nbsp; M = CST * Mc<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>c</sub> = 100 * Mc <br />
+               <br />
+               <br />
+               Se dan las relaciones:<br />
+               <br />
+               &nbsp; Mv = Mc / ( 1 + Mc ) &nbsp; &nbsp; y &nbsp; &nbsp; Mc = Mv / ( 1 - Mv )<br />
+               <br />
+               <br />
+               Por otro lado, la Rentabilidad (R) de un Artículo es:<br />
+               <br />
+               &nbsp; R = M / CST &nbsp; &nbsp; y en porcentaje, &nbsp; &nbsp; r = 100 * R<br />
+               <br />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <!-- button type="button" class="btn btn-primary">Save changes</button -->
+            </div>
+         </div>
+      </div>
+   </div>
+<!-- Modal ENDS -->
+
 {include="footer"}

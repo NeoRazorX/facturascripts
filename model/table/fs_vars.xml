@@ -7,12 +7,12 @@
 <tabla>
    <columna>
       <nombre>name</nombre>
-      <tipo>character varying(20)</tipo>
+      <tipo>varchar(35)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>varchar</nombre>
-      <tipo>character varying(255)</tipo>
+      <tipo>text</tipo>
       <nulo>YES</nulo>
    </columna>
    <restriccion>

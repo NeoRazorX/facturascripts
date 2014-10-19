@@ -15,6 +15,26 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+2014-10-18  Añadidos nuevos métodos y comportamiento. Se conserva la funcionalidad original
+
+Principales Métodos:
+
+fs_var::loadConfiguration()
+Carga los pares clave/valor en un array estático. Debería llamarse en index.php, 
+para que los pares clave/valor estén disponibles en todos los controladores
+
+fs_var::getValue($key)
+Devuelve el valor de la clave $key o FALSE en caso de que no se encuentre.
+
+fs_var::updateValue($key)
+Actualiza el valor de la clave $key. Si no se encuentra la clave, se creará
+
+NOTA:
+Ciertas claves, como FS_MARGIN_METHOD y FS_COST_IS_AVERAGE deben tener valores para 
+usar ciertos controladores.
+FS_MARGIN_METHOD y FS_COST_IS_AVERAGE se inicializan en método install
+
  */
 
 require_once 'base/fs_model.php';
@@ -27,6 +47,14 @@ class fs_var extends fs_model
 {
    public $name; /// pkey
    public $varchar;
+
+   /** @var array Configuration cache */
+   protected static $_CONF;
+
+   /** Allowed values for Validation **/
+   // Son los valores posibles para variables. En la Vista aparecerán en un "select"
+   // Por convenio, el primer valor se tomará por defecto cuando sea necesario inicializar la clave
+   public static $confKeysValues = array( 'FS_MARGIN_METHOD' => array( 'PVP', 'CST' ) );
    
    public function __construct($f=FALSE)
    {
@@ -45,7 +73,8 @@ class fs_var extends fs_model
    
    protected function install()
    {
-      return '';
+      return "INSERT INTO `fs_vars` (`name`, `varchar`) VALUES ('FS_COST_IS_AVERAGE', '1');
+              INSERT INTO `fs_vars` (`name`, `varchar`) VALUES ('FS_MARGIN_METHOD', 'PVP');";
    }
    
    /**
@@ -63,6 +92,48 @@ class fs_var extends fs_model
       else
          return FALSE;
    }
+
+  /**
+    * Set TEMPORARY a single configuration value
+    *
+    * @param string $key Key wanted
+    * @param mixed $values $values is an array if the configuration is multilingual, a single string else.
+    *
+    */
+  public static function set($key, $values)
+  {
+    if (!self::isConfigName($key))
+      return FALSE;
+
+    /* Update classic values */
+    self::$_CONF[$key] = $values;
+  }
+
+  /**
+    * Get a single configuration value 
+    *
+    * @param string $key Key wanted
+    * @return string Value
+    */
+  public static function getValue($key)
+  {
+    if (isset(self::$_CONF[$key]))
+      return self::$_CONF[$key];
+    return false;
+  }
+
+
+  /**
+    * Get a single configuration value 
+    *
+    * @param string $key Key wanted
+    * @return string Value
+    */
+  public static function getInt($key)
+  {
+    $result = self::get($key);
+    return isset($result) ? $result : NULL;
+  }
    
    public function exists()
    {
@@ -119,6 +190,32 @@ class fs_var extends fs_model
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
    }
+
+  /**
+    * Delete a configuration key in database 
+    *
+    * @param string $key Key to delete
+    * @return boolean Deletion result
+    */
+  public static function deleteByName($key)
+  {
+    /* If the key does not exist, return true (emulate a successful deletion) */
+    if (!isset(self::$_CONF[$key]))
+      return true;
+
+    // If the key is invalid or if it does not exists, do nothing.
+    if (!self::isConfigName($key))
+      return false;   
+
+    /* Delete the key from the main configuration table */
+    $newConfig = new fs_var( array('name' => $key, 'varchar' => '') );
+    if ( $newConfig->delete() )
+      unset(self::$_CONF[$key]);
+    else
+      return false;
+
+    return true;
+  }
    
    public function all()
    {
@@ -189,4 +286,115 @@ class fs_var extends fs_model
       
       return $done;
    }
+
+  /**
+    * Insert configuration key and value into database
+    *
+    * @param string $key Key
+    * @param string $value Value
+    * @eturn boolean Insert result
+    */
+  protected static function _addConfiguration($key, $value = null)
+  {
+    $newConfig = new fs_var();
+    $newConfig->name = $key;
+    $newConfig->varchar = $value;
+    return $newConfig->save();
+  }
+
+  /**
+    * Update configuration key and value into database (automatically insert if key does not exist)
+    *
+    * @param string $key Key
+    * @param mixed $values $values is an array if the configuration is multilingual, a single string else.
+    * @param boolean $html Specify if html is authorized in value
+    *
+    * @return boolean Update result
+    */
+  public static function updateValue($key, $values, $html = false)
+  {
+    if ($key == null)
+      return;
+
+    if (!self::isConfigName($key))
+      return;
+
+    $current_value = self::getValue($key);
+    $values = self::pSQL($values, $html);
+
+      /* Update classic values */
+      if ( $current_value !== false )   // $key está definido, actualizar el valor
+      {
+        /* Do not update the database if the current value is the same one than the new one */
+        if ($values == $current_value)
+          $result = true;
+        else
+        {
+          $newConfig = new fs_var();
+          $newConfig->name = $key;
+          $newConfig->varchar = $values;
+          $result = $newConfig->save();
+          if ($result)
+            self::$_CONF[$key] = stripslashes($values);
+        }
+      }
+      else
+      {
+        $result = self::_addConfiguration($key, $values);
+        if ($result)
+        {
+          self::$_CONF[$key] = stripslashes($values);
+        }
+      }
+    
+    return (bool)$result;
+  }
+
+  public static function loadConfiguration()
+  {
+    self::$_CONF = array();
+
+    $newConfig = new fs_var();
+    $result = $newConfig->all();
+
+    if ($result)
+      foreach ($result as $row)
+      {
+        self::$_CONF[$row->name] = $row->varchar;
+      }
+  }
+
+  /**
+  * Check for configuration key validity
+  *
+  * @param string $configName Configuration key to validate
+  * @return boolean Validity is ok or not
+  */
+  static public function isConfigName($configName)
+  {
+    return preg_match('/^[a-z_0-9-]+$/ui', $configName);
+  }
+
+  /**
+   * Sanitize data which will be injected into SQL query
+   *
+   * @param string $string SQL data which will be injected into SQL query
+   * @param boolean $htmlOK Does data contain HTML code ? (optional)
+   * @return string Sanitized data
+   */
+  static public function pSQL($string, $htmlOK = false)
+  {
+    if ( get_magic_quotes_gpc() )
+      $string = stripslashes($string);
+    if (!is_numeric($string))
+    {
+      $string = addslashes($string);
+    //  if (!$htmlOK)
+    //    $string = strip_tags(nl2br2($string));
+    }
+      
+    return $string;
+  }
+
 }
+
