@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fbm_pago_socios.xml
+    Description:
+        Estructura de la tabla fbm_pago_socios.
+-->
+<tabla>
+   <columna>
+		<nombre>id</nombre>
+		<tipo>serial</tipo>
+		<nulo>NO</nulo>
+      <defecto>nextval('fbm_pago_socios_id_seq'::regclass)</defecto>
+	</columna>
+	<columna>
+		<nombre>idsocio</nombre>
+		<tipo>integer</tipo>
+		<nulo>NO</nulo>
+	</columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+   </columna>
+   <columna>
+      <nombre>cuota</nombre>
+      <tipo>double precision</tipo>
+   </columna>
+   <columna>
+      <nombre>codpago</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>pagado</nombre>
+      <tipo>boolean</tipo>
+   </columna>
+	<restriccion>
+		<nombre>fbm_pago_socios_pkey</nombre>
+		<consulta>PRIMARY KEY (id)</consulta>
+	</restriccion>
+   <restriccion>
+      <nombre>ca_pagos_socios</nombre>
+      <consulta>FOREIGN KEY (idsocio)
+      REFERENCES fbm_socios (idsocio)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+</tabla>

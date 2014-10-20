@@ -5,6 +5,7 @@
       $("#b_nuevo_socio").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_socio").modal('show');
+         document.f_nuevo_socio.nombre.focus();
       });
    });
 </script>
@@ -47,6 +48,31 @@
    </div>
 </div>
 
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th width="40"></th>
+            <th class="text-left">Nº + Nombre</th>
+            <th class="text-right">Fecha de alta</th>
+         </tr>
+      </thead>
+      <tbody>
+         {loop="$fsc->resultados"}
+         <tr{if condition="!$value->en_alta"} class="bg-warning"{/if}>
+            <td class="text-center">
+               {if condition="$value->al_corriente"}
+               <span class="glyphicon glyphicon-ok"></span>
+               {/if}
+            </td>
+            <td><a href="{$value->url()}">{$value->idsocio}</a> {$value->nombre_cliente()}</td>
+            <td class="text-right">{$value->fecha_alta}</td>
+         </tr>
+         {/loop}
+      </tbody>
+   </table>
+</div>
+
 <form name="f_nuevo_socio" action="{$fsc->url()}" method="post" class="form-horizontal">
    <div class="modal" id="modal_nuevo_socio">
       <div class="modal-dialog">
@@ -56,6 +82,12 @@
                <h4 class="modal-title">Nuevo socio</h4>
             </div>
             <div class="modal-body">
+               <div class="form-group">
+                  <label for="idsocio" class="col-lg-2 col-md-2 col-sm-2 control-label">Nº Socio</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="number" name="idsocio" value="{$fsc->socio->get_new_id()}" autocomplete="off"/>
+                  </div>
+               </div>
                <div class="form-group">
                   <label for="nombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
@@ -92,6 +124,36 @@
                      <input class="form-control" type="text" name="direccion" value="C/ " autocomplete="off"/>
                   </div>
                </div>
+               <div class="form-group">
+                  <label for="cuota" class="col-lg-2 col-md-2 col-sm-2 control-label">Cuota</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="cuota" value="50" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="periodicidad" class="col-lg-2 col-md-2 col-sm-2 control-label">Periodicidad</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="periodicidad" class="form-control">
+                        {loop="$fsc->socio->periodicidad()"}
+                        <option value="{$key}">{$value}</option>
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="forma_pago" class="col-lg-2 col-md-2 col-sm-2 control-label">Forma de pago</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="forma_pago" class="form-control">
+                     {loop="$fsc->forma_pago->all()"}
+                        {if condition="$value->is_default()"}
+                        <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->codpago}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+               </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
@@ -103,26 +165,5 @@
       </div>
    </div>
 </form>
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Nº</th>
-            <th class="text-left">Nombre</th>
-            <th class="text-right">Fecha de alta</th>
-         </tr>
-      </thead>
-      <tbody>
-         {loop="$fsc->resultados"}
-         <tr>
-            <td>{$value->idsocio}</td>
-            <td>{$value->codcliente}</td>
-            <td class="text-right">{$value->fecha_alta}</td>
-         </tr>
-         {/loop}
-      </tbody>
-   </table>
-</div>
 
 {include="footer"}

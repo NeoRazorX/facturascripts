@@ -27,7 +27,7 @@ class veterinaria_ajustes extends fs_controller
 
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Ajustes', 'Veterinaria', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Ajustes', 'Veterinaria', FALSE, FALSE);
    }
    
    protected function process()

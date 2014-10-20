@@ -78,6 +78,84 @@ class fbm_socio extends fs_model
       return '';
    }
    
+   public function nombre_cliente()
+   {
+      $nombre = '-';
+      
+      $data = $this->db->select("SELECT * FROM clientes WHERE codcliente = ".$this->var2str($this->codcliente).";");
+      if($data)
+      {
+         $nombre = $data[0]['nombre'];
+      }
+      
+      return $nombre;
+   }
+   
+   public function periodicidad()
+   {
+      $p = array(
+          'm' => 'Mensual',
+          't' => 'Trimestral',
+          's' => 'Semestral',
+          'a' => 'Anual'
+      );
+      
+      return $p;
+   }
+   
+   public function fecha_proximo_pago()
+   {
+      $fecha = Date('d-m-Y');
+      
+      switch ($this->periodicidad)
+      {
+         case 'a':
+            $fecha = Date('1-m-Y', strtotime('+1 year', strtotime($this->ultimo_pago)));
+            break;
+         
+         case 't':
+            $fecha = Date('1-m-Y', strtotime('+3 months', strtotime($this->ultimo_pago)));
+            break;
+         
+         case 's':
+            $fecha = Date('1-m-Y', strtotime('+6 months', strtotime($this->ultimo_pago)));
+            break;
+         
+         default:
+            $fecha = Date('1-m-Y', strtotime('+1 month', strtotime($this->ultimo_pago)));
+            break;
+      }
+      
+      return $fecha;
+   }
+   
+   public function url()
+   {
+      return 'index.php?page=veterinaria_socio&id='.$this->idsocio;
+   }
+   
+   public function get_new_id()
+   {
+      $data = $this->db->select("SELECT max(idsocio) AS id FROM ".$this->table_name.";");
+      if($data)
+      {
+         return intval($data[0]['id']) + 1;
+      }
+      else
+         return 1;
+   }
+   
+   public function get($id)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idsocio = ".$this->var2str($id).";");
+      if($data)
+      {
+         return new fbm_socio($data[0]);
+      }
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->idsocio) )

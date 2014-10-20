@@ -2,6 +2,11 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      if(window.location.hash.substring(1) == 'nueva')
+      {
+         $("#modal_nueva_mascota").modal('show');
+         document.f_nueva_mascota.ac_cliente.focus();
+      }
       $("#b_nueva").click(function(event) {
          event.preventDefault();
          $("#modal_nueva_mascota").modal('show');
@@ -133,7 +138,7 @@
             <th class="text-left">Especie</th>
             <th class="text-left">Raza</th>
             <th class="text-left">Sexo</th>
-            <th class="text-right">F.Alta</th>
+            <th class="text-right">Fecha de alta</th>
          </tr>
       </thead>
       <tbody>

@@ -162,6 +162,7 @@
                <th class="text-left">Fecha</th>
                <th class="text-left">Análisis</th>
                <th class="text-left">Resultado</th>
+               <th class="text-left">Notas</th>
                <th class="text-right">Nueva cita</th>
             </tr>
          </thead>
@@ -170,11 +171,12 @@
             <td>{$value->fecha}</td>
             <td><a href="{$value->url()}">{$value->nombre}</a></td>
             <td>{$value->resultado}</td>
+            <td>{$value->notas()}</td>
             <td class="text-right">{$value->nueva_fecha}</td>
          </tr>
          {else}
          <tr class="bg-warning">
-            <td colspan="4">Sin resultados.</td>
+            <td colspan="4">Sin resultados. Pulsa en la pestaña <b>Nueva...</b> para añadir una.</td>
          </tr>
          {/loop}
       </table>
@@ -186,6 +188,7 @@
             <tr>
                <th class="text-left">Fecha</th>
                <th class="text-left">Tipo</th>
+               <th class="text-left">Notas</th>
                <th class="text-right">Nueva cita</th>
             </tr>
          </thead>
@@ -193,11 +196,12 @@
          <tr>
             <td>{$value->fecha}</td>
             <td><a href="{$value->url()}">{$value->nombre}</a></td>
+            <td>{$value->notas()}</td>
             <td class="text-right">{$value->nueva_fecha}</td>
          </tr>
          {else}
          <tr class="bg-warning">
-            <td colspan="3">Sin resultados.</td>
+            <td colspan="3">Sin resultados. Pulsa en la pestaña <b>Nueva...</b> para añadir una.</td>
          </tr>
          {/loop}
       </table>
@@ -230,6 +234,7 @@
             <tr>
                <th class="text-left">Fecha</th>
                <th class="text-left">Tipo</th>
+               <th class="text-left">Notas</th>
                <th class="text-right">Nueva cita</th>
             </tr>
          </thead>
@@ -237,11 +242,12 @@
          <tr>
             <td>{$value->fecha}</td>
             <td><a href="{$value->url()}">{$value->nombre}</a></td>
+            <td>{$value->notas()}</td>
             <td class="text-right">{$value->nueva_fecha}</td>
          </tr>
          {else}
          <tr class="bg-warning">
-            <td colspan="3">Sin resultados.</td>
+            <td colspan="3">Sin resultados. Pulsa en la pestaña <b>Nueva...</b> para añadir una.</td>
          </tr>
          {/loop}
       </table>
@@ -395,6 +401,10 @@
       </div>
    </div>
 </form>
+{else}
+<div class="text-center">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
 {/if}
 
 {include="footer"}

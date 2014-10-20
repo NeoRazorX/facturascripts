@@ -96,6 +96,8 @@ class veterinaria_mascotas extends fs_controller
          }
          else
             $this->new_error_msg('Mascota no encontrada.');
+         
+         $this->resultados = $this->mascota->all();
       }
       else
       {

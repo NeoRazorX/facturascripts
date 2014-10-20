@@ -88,6 +88,16 @@ class fbm_analisis extends fs_model
          return ucfirst($this->tipo);
    }
    
+   public function notas($num = 90)
+   {
+      if( strlen($this->notas) > $num )
+      {
+         return substr($this->notas, 0, $num-3).'...';
+      }
+      else
+         return $this->notas;
+   }
+   
    public function get($id)
    {
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
