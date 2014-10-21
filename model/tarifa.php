@@ -26,19 +26,8 @@ class tarifa extends fs_model
 {
    public $codtarifa;
    public $nombre;
-   public $tipo;
    public $incporcentual;
    public $inclineal;
-   public $margenincporcentual;
-/*
-Valores de $tipo :
-
-- $tipo = 0   =>  Aplicar porcentaje de descuento. El valor se toma de $incporcentual. 
-                  Es el valor por defecto
-
-- $tipo = 1   =>  Aplicar porcentaje de margen. El valor se toma de $margenincporcentual. 
-                  El margen se calculará según el valor de la clave FS_MARGIN_METHOD (tabla fs_var)
-*/
    
    public function __construct($t = FALSE)
    {
@@ -47,19 +36,15 @@ Valores de $tipo :
       {
          $this->codtarifa = $t['codtarifa'];
          $this->nombre = $t['nombre'];
-         $this->tipo = intval($t['tipo']);
          $this->incporcentual = floatval( $t['incporcentual'] );
          $this->inclineal = floatval( $t['inclineal'] );
-         $this->margenincporcentual = floatval( $t['margenincporcentual'] );
       }
       else
       {
          $this->codtarifa = NULL;
          $this->nombre = NULL;
-         $this->tipo = 0;
          $this->incporcentual = 0;
          $this->inclineal = 0;
-         $this->margenincporcentual = 0;
       }
    }
    
@@ -72,11 +57,6 @@ Valores de $tipo :
    public function dtopor()
    {
       return 0-$this->incporcentual;
-   }
-   
-   public function margenpor()
-   {
-      return $this->margenincporcentual;
    }
    
    public function get($cod)
@@ -116,8 +96,6 @@ Valores de $tipo :
          $this->new_error_msg("Código de tarifa no válido.");
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
          $this->new_error_msg("Nombre de tarifa no válido.");
-      else if( intval($this->tipo) < 0 )
-         $this->new_error_msg("Tipo de tarifa no válido.");
       else
          $status = TRUE;
       
@@ -131,24 +109,16 @@ Valores de $tipo :
          $this->clean_cache();
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET 
-               nombre = ".$this->var2str($this->nombre).",
-               tipo = ".$this->var2str(intval($this->tipo)).",
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
                incporcentual = ".$this->var2str($this->incporcentual).",
-               inclineal = ".$this->var2str($this->inclineal).",
-               margenincporcentual = ".$this->var2str($this->margenincporcentual)."
+               inclineal = ".$this->var2str($this->inclineal)."
                WHERE codtarifa = ".$this->var2str($this->codtarifa).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,tipo,incporcentual,inclineal,margenincporcentual)
-               VALUES (".
-                  $this->var2str($this->codtarifa).",".
-                  $this->var2str($this->nombre).",".
-                  $this->var2str(intval($this->tipo)).",".
-                  $this->var2str($this->incporcentual).",".
-                  $this->var2str($this->inclineal).",".
-                  $this->var2str($this->margenincporcentual).");";
+            $sql = "INSERT INTO ".$this->table_name." (codtarifa,nombre,incporcentual,inclineal)
+               VALUES (".$this->var2str($this->codtarifa).",".$this->var2str($this->nombre).",
+               ".$this->var2str($this->incporcentual).",".$this->var2str($this->inclineal).");";
          }
          return $this->db->exec($sql);
       }

@@ -12,7 +12,7 @@
    </columna>
    <columna>
       <nombre>varchar</nombre>
-      <tipo>text</tipo>
+      <tipo>character varying(255)</tipo>
       <nulo>YES</nulo>
    </columna>
    <restriccion>

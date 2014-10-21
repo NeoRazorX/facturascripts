@@ -48,7 +48,7 @@ if( !defined('FS_NF0') OR !defined('FS_NF1') OR !defined('FS_NF2') OR !defined('
 
 if( !defined('FS_COMMUNITY_URL') )
 {
-   define('FS_COMMUNITY_URL', 'http://www.facturascripts.com/community');
+   define('FS_COMMUNITY_URL', '//www.facturascripts.com/community');
 }
 
 if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )

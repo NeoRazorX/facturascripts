@@ -16,50 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-require_model('fs_var.php');
 
 class admin_config2 extends fs_controller
 {
-   public $confKeys = array();
-
-   // public $confKeysValues = array( 'FS_MARGIN_METHOD' => array( 'PVP', 'CST' ) );
-   // public $confKeysValues = array( 'FS_MARGIN_METHOD' => fs_var::$confKeysValues['FS_MARGIN_METHOD'] );
-   public $confKeysValues = array();
-
    public function __construct()
    {
-      $this->confKeysValues = array( 'FS_MARGIN_METHOD' => fs_var::$confKeysValues['FS_MARGIN_METHOD'] );
-
       parent::__construct(__CLASS__, 'Configuración avanzada', 'admin', TRUE, TRUE);
-
-      fs_var::loadConfiguration();
-
-      $this->confKeys['articulos'] = array(
-                  'FS_MARGIN_METHOD'   => fs_var::getValue('FS_MARGIN_METHOD') !== FALSE ? fs_var::getValue('FS_MARGIN_METHOD') : $this->confKeysValues['FS_MARGIN_METHOD'][0],
-                  'FS_COST_IS_AVERAGE' => fs_var::getValue('FS_COST_IS_AVERAGE')
-         );
    }
    
    protected function process()
    {
-      if ( isset($_POST['submitKeysArticulos']) ) 
-      {
-         if ( isset($_POST['FS_MARGIN_METHOD']) )
-            if ( in_array($_POST['FS_MARGIN_METHOD'], $this->confKeysValues['FS_MARGIN_METHOD']) )
-               $FS_MARGIN_METHOD = $_POST['FS_MARGIN_METHOD'];
-            else
-               $FS_MARGIN_METHOD = $this->confKeysValues['FS_MARGIN_METHOD'][0];
-         else 
-            $FS_MARGIN_METHOD = $this->confKeysValues['FS_MARGIN_METHOD'][0];
-
-         fs_var::updateValue('FS_MARGIN_METHOD', $FS_MARGIN_METHOD);
-
-         $FS_COST_IS_AVERAGE = ( isset($_POST['FS_COST_IS_AVERAGE']) ? 1 : 0 );
-         fs_var::updateValue('FS_COST_IS_AVERAGE', $FS_COST_IS_AVERAGE);
-
-         return ;
-      }
-
       $guardar = FALSE;
       
       foreach($GLOBALS['config2'] as $i => $value)

@@ -247,8 +247,7 @@
          <tr>
             <th class="text-left">Código</th>
             <th class="text-left">Nombre</th>
-            <th class="text-right">Tipo</th>
-            <th class="text-right">Porcentaje</th>
+            <th class="text-right">% dto.</th>
             <th class="text-right">Acción</th>
          </tr>
       </thead>
@@ -262,25 +261,9 @@
             <td>
                <input class="form-control" type="text" name="nombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
             </td>
-            {if condition="$value->tipo>0"}
-            <td>
-               <select class="form-control" id="tipo" name="tipo" disabled="disabled">
-                  <option selected="selected" value="1">&nbsp; Aplicar Margen &nbsp;</option>
-               </select>
-            </td>
-            <td>
-               <input class="form-control text-right" type="number" step="any" name="dtopor" value="{$value->margenpor()}" autocomplete="off"/>
-            </td>
-            {else}
-            <td>
-               <select class="form-control" id="tipo" name="tipo" disabled="disabled">
-                  <option selected="selected" value="0">&nbsp; Aplicar Descuento &nbsp;</option>
-               </select>
-            </td>
             <td>
                <input class="form-control text-right" type="number" step="any" name="dtopor" value="{$value->dtopor()}" autocomplete="off"/>
             </td>
-            {/if}
             <td class="text-right">
                <div class="btn-group">
                   <a class="btn btn-sm btn-danger" type="button" title="Eliminar" href="{$fsc->url()}&delete_tarifa={$value->codtarifa}#tarifas">
@@ -303,21 +286,9 @@
                <input class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nueva Tarifa" autocomplete="off"/>
             </td>
             <td>
-               <select class="form-control" id="tipo" name="tipo">
-                  <option value="0" selected="selected" >&nbsp; Aplicar Descuento &nbsp;</option>
-                  <option value="1">&nbsp; Aplicar Margen &nbsp;</option>
-               </select>
-            </td>
-            <td>
                <input class="form-control text-right" type="number" step="any" name="dtopor" value="0" autocomplete="off"/>
             </td>
             <td class="text-right">
-               <a class="btn btn-sm btn-success" 
-               data-toggle="modal"
-               data-target="#modal_help_tarifas"
-               xdata-remote="remote-page.html" type="button" title=" Ayuda ">
-                     <span class="glyphicon glyphicon-question-sign"></span>
-               </a>
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                </button>
@@ -325,79 +296,6 @@
          </tr>
       </form>
    </table>
-   <div class="row">
-   <div class="form-group col-lg-4 col-md-4 col-sm-4">
-      El Método para calcular el Margen es:
-      <input class="form-control" type="text" disabled="disabled" value="
-            {if condition="fs_var::getValue('FS_MARGIN_METHOD')=='PVP'"} &nbsp; Sobre el Precio de Venta
-            {elseif condition="fs_var::getValue('FS_MARGIN_METHOD')=='CST'"} &nbsp; Sobre el Precio de Coste
-            {else}NO está definido. Vaya a Admin -> Configuración Avanzada y fije un valor para Artículos :: Método para calcular el Margen{/if}
-      " name="mmethod">
-      <p class="help-block">.</p>
-   </div>
-   <div class="form-group col-lg-8 col-md-8 col-sm-8">
-   </div>
-   </div>
-
-<!-- Modal -->
-   <div class="modal fade" id="modal_help_tarifas" tabindex="-1" role="dialog" aria-labelledby="modal_help_tarifas" aria-hidden="true">
-      <div class="modal-dialog">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Tarifas: Cálculo del Precio de Venta</h4>
-            </div>
-            <div class="modal-body">
-               El Precio de Venta (PVPtar) de un Artículo en una Tarifa se puede calcular de dos maneras:<br />
-               <br />
-               - Aplicando un Margen al Coste (CST) <br />
-               <br />
-               - Aplicando un Descuento al Precio de Venta en la Tarifa General (PVP)<br />
-               <br />
-            <!--
-               &nbsp; &nbsp; &nbsp; PVP = CST + M<br />
-               <br />
-               El Margen como ratio se puede calcular de dos maneras:<br />
-               <br />
-               - Sobre el Precio de Venta<br />
-               <br />
-               &nbsp; &nbsp; &nbsp; Mv = ( PVP - CST ) / PVP <br />
-               <br />
-               &nbsp; &nbsp; &nbsp; Entonces, <br />
-               <br />
-               &nbsp; &nbsp; &nbsp; PVP = CST / ( 1 - Mv ) &nbsp; y &nbsp; M = CST * Mv / ( 1 - Mv )<br />
-               <br />
-               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>v</sub> = 100 * Mv <br />
-               <br />
-               - Sobre el Precio de Coste<br />
-               <br />
-               &nbsp; &nbsp; &nbsp; Mc = ( PVP - CST ) / CST <br />
-               <br />
-               &nbsp; &nbsp; &nbsp; Entonces, <br />
-               <br />
-               &nbsp; &nbsp; &nbsp; PVP = CST * ( 1 + Mc ) &nbsp; y &nbsp; M = CST * Mc<br />
-               <br />
-               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>c</sub> = 100 * Mc <br />
-               <br />
-               <br />
-               Se dan las relaciones:<br />
-               <br />
-               &nbsp; Mv = Mc / ( 1 + Mc ) &nbsp; &nbsp; y &nbsp; &nbsp; Mc = Mv / ( 1 - Mv )<br />
-               <br />
-               <br />
-               Por otro lado, la Rentabilidad (R) de un Artículo es:<br />
-               <br />
-               &nbsp; R = M / CST &nbsp; &nbsp; y en porcentaje, &nbsp; &nbsp; r = 100 * R<br />
-            -->
-               <br />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <!-- button type="button" class="btn btn-primary">Save changes</button -->
-            </div>
-         </div>
-      </div>
-   </div>
-<!-- Modal ENDS -->
+</div>
 
 {include="footer"}

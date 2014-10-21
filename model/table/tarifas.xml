@@ -6,12 +6,6 @@
 -->
 <tabla>
    <columna>
-      <nombre>margenincporcentual</nombre>
-      <tipo>double precision</tipo>
-      <nulo>NO</nulo>
-      <defecto>0</defecto>
-   </columna>
-   <columna>
       <nombre>incporcentual</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
@@ -22,12 +16,6 @@
       <nulo>NO</nulo>
       <defecto>0</defecto>
    </columna>
-    <columna>
-      <nombre>tipo</nombre>
-      <tipo>tinyint(1)</tipo>
-      <nulo>NO</nulo>
-      <defecto>0</defecto>
-    </columna>
    <columna>
       <nombre>nombre</nombre>
       <tipo>character varying(50)</tipo>

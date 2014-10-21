@@ -21,7 +21,6 @@ require_model('articulo.php');
 require_model('familia.php');
 require_model('impuesto.php');
 require_model('tarifa.php');
-require_model('fs_var.php');
 
 class ventas_articulos extends fs_controller
 {
@@ -32,20 +31,10 @@ class ventas_articulos extends fs_controller
    public $offset;
    public $resultados;
    public $tarifa;
-   public $mMethod;
    
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Artículos', 'ventas', FALSE, TRUE);
-
-      fs_var::loadConfiguration();
-
-      $mMethod = fs_var::getValue('FS_MARGIN_METHOD');
-      if ( !in_array($mMethod, fs_var::$confKeysValues['FS_MARGIN_METHOD']) )
-      {
-         fs_var::updateValue('FS_MARGIN_METHOD', fs_var::$confKeysValues['FS_MARGIN_METHOD'][0]);
-         $this->new_error_msg("No se ha encontrado un Método válido para calcular el Margen. Se ha fijado al valor por defecto (<b>sobre el Precio de Venta</b>)");
-      }
    }
    
    protected function process()
@@ -76,23 +65,11 @@ class ventas_articulos extends fs_controller
          $tar0 = $this->tarifa->get($_POST['codtarifa']);
          if( !$tar0 )
          {
-            // La Tarifa es nueva
             $tar0 = new tarifa();
             $tar0->codtarifa = $_POST['codtarifa'];
-            $tar0->tipo = intval( $_POST['tipo'] ) > 0 ? 1 : 0;
          }
          $tar0->nombre = $_POST['nombre'];
-         // Si la tarifa existe, NO DEBE CAMBIARSE el tipo ( $tar0->tipo )
-         if ( $tar0->tipo > 0 ) { 
-               // Aplicar porcentaje de margen 
-               $tar0->incporcentual       = 0;
-               $tar0->margenincporcentual = floatval($_POST['dtopor']);
-         } else { 
-               // Aplicar porcentaje de descuento
-               $tar0->incporcentual       = 0-floatval($_POST['dtopor']); 
-               $tar0->margenincporcentual = 0;
-         } 
-
+         $tar0->incporcentual = 0-floatval($_POST['dtopor']);
          if( $tar0->save() )
          {
             $this->new_message("Tarifa guardada correctamente.");
