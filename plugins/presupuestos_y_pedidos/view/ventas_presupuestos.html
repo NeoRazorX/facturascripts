@@ -44,7 +44,7 @@
 
 <div class="container-fluid">
    <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-      <div class="col-lg-8">
+      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
          <div class="btn-group">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
@@ -59,10 +59,10 @@
             &nbsp; Nuevo
          </a>
       </div>
-      <div class="col-lg-2 text-right">
+      <div class="col-lg-2 col-md-2 col-sm-2 vol-xs-2 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
             <span class="glyphicon glyphicon-search"></span>
-            &nbsp; líneas
+            &nbsp; Líneas
          </a>
       </div>
       <div class="col-lg-2">
@@ -109,7 +109,7 @@
 {/if}
 
 <ul class="nav nav-tabs" role="tablist">
-   <li{if condition="!isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}">Todos los {#FS_PRESUPUESTO#}</a></li>
+   <li{if condition="!isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}">Todos los {#FS_PRESUPUESTOS#}</a></li>
    <li{if condition="isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}&pendientes=TRUE">Pendientes</a></li>
 </ul>
 
