@@ -63,12 +63,8 @@ class compras_albaranes extends fs_controller
       }
       else if( isset($_GET['codproveedor']) )
       {
+         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/compras_albaranes_proveedor';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: proveedor';
-         
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
          
          $proveedor = new proveedor();
          $this->proveedor = $proveedor->get($_GET['codproveedor']);

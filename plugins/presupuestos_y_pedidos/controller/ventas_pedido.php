@@ -310,7 +310,7 @@ class ventas_pedido extends fs_controller
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if($imp0)
-                              $lineas[$k]->codimpuesto = $imp0->codimpuesto;
+                              $linea->codimpuesto = $imp0->codimpuesto;
                            
                            $linea->iva = floatval($_POST['iva_'.$num]);
                            $linea->recargo = floatval($_POST['recargo_'.$num]);
@@ -353,9 +353,8 @@ class ventas_pedido extends fs_controller
       
       if( !$this->pedido->floatcmp($this->pedido->total, $_POST['atotal'], FS_NF0) )
       {
-         $this->new_error_msg("El total difiere entre la vista y el controlador (".$this->pedido->total.
+         $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->pedido->total.
                  " frente a ".$_POST['atotal']."). Debes informar del error.");
-         $this->pedido->delete();
       }
       else if( $this->pedido->save() )
       {

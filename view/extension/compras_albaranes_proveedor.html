@@ -41,11 +41,20 @@
    });
 </script>
 
-<h3 class="text-center" style="margin-bottom: 0px;">
-   <span class="text-capitalize">{#FS_ALBARANES#}</span> de
-   <a href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
-</h3>
-<p class="text-center">Si quieres buscar en las líneas de los {#FS_ALBARANES#} pulsa el botón <b>líneas</b>.</p>
+<div class="container-fluid" style="margin-top: 10px;">
+   <div class="row">
+      <div class="col-lg-10">
+         <h2>
+            <span class="text-capitalize">{#FS_ALBARANES#}</span> de <a href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a>
+         </h2>
+      </div>
+      <div class="col-lg-2 text-right">
+         <a id="b_buscar_lineas" class="btn btn-sm btn-primary">
+            <span class="glyphicon glyphicon-search"></span> &nbsp; líneas
+         </a>
+      </div>
+   </div>
+</div>
 
 <div class="table-responsive">
    <table class="table table-hover">

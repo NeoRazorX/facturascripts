@@ -52,10 +52,8 @@ class ventas_albaranes extends fs_controller
       }
       else if( isset($_GET['codagente']) )
       {
+         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_albaranes_agente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: agente';
          
          $agente = new agente();
          $this->agente = $agente->get($_GET['codagente']);
@@ -63,12 +61,8 @@ class ventas_albaranes extends fs_controller
       }
       else if( isset($_GET['codcliente']) )
       {
+         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_albaranes_cliente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: cliente';
-         
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
          
          $cliente = new cliente();
          $this->cliente = $cliente->get($_GET['codcliente']);

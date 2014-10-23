@@ -635,7 +635,7 @@ class nueva_venta extends fs_controller
                
                if( !$factura->floatcmp($factura->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                  $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $factura->total." frente a ".$_POST['atotal']."). Debes informar del error.");
                   $factura->delete();
                }
@@ -836,7 +836,7 @@ class nueva_venta extends fs_controller
                
                if( !$presupuesto->floatcmp($presupuesto->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                  $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $presupuesto->total." frente a ".$_POST['atotal']."). Debes informar del error.");
                   $presupuesto->delete();
                }
@@ -1037,7 +1037,7 @@ class nueva_venta extends fs_controller
                
                if( !$pedido->floatcmp($pedido->total, $_POST['atotal'], FS_NF0) )
                {
-                  $this->new_error_msg("El total difiere entre la vista y el controlador (".
+                  $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $pedido->total." frente a ".$_POST['atotal']."). Debes informar del error.");
                   $pedido->delete();
                }
