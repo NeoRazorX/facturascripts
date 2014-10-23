@@ -225,10 +225,10 @@ $system_info = str_replace('"', "'", $system_info);
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="http://www.facturascripts.com/community/questions.php" target="_blank">Preguntas</a></li>
-                     <li><a href="http://www.facturascripts.com/community/errors.php" target="_blank">Errores</a></li>
-                     <li><a href="http://www.facturascripts.com/community/ideas.php" target="_blank">Sugerencias</a></li>
-                     <li><a href="http://www.facturascripts.com/community/all.php" target="_blank">Todo</a></li>
+                     <li><a href="//www.facturascripts.com/community/questions.php" target="_blank">Preguntas</a></li>
+                     <li><a href="//www.facturascripts.com/community/errors.php" target="_blank">Errores</a></li>
+                     <li><a href="//www.facturascripts.com/community/ideas.php" target="_blank">Sugerencias</a></li>
+                     <li><a href="//www.facturascripts.com/community/all.php" target="_blank">Todo</a></li>
                      <li class="divider"></li>
                      <li><a href="#" id="b_feedback">Informar...</a></li>
                   </ul>
@@ -238,7 +238,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="http://www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
+   <form name="f_feedback" action="//www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <div class="modal" id="modal_feedback">
          <div class="modal-dialog">
@@ -249,7 +249,7 @@ $system_info = str_replace('"', "'", $system_info);
                </div>
                <div class="modal-body">
                   <p>
-                     La <a href="http://www.facturascripts.com/community" target="_blank">comunidad FacturaScripts</a>
+                     La <a href="//www.facturascripts.com/community" target="_blank">comunidad FacturaScripts</a>
                      está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
                      lo antes posible.
                   </p>
@@ -398,7 +398,7 @@ $system_info = str_replace('"', "'", $system_info);
                   <p>
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Si lo deseas, <a href="http://www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
+                     Si lo deseas, <a href="//www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
                      te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
                   </p>
                </div>
@@ -423,7 +423,7 @@ $system_info = str_replace('"', "'", $system_info);
                   <p>
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Si lo deseas, <a href="http://www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
+                     Si lo deseas, <a href="//www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
                      te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
                   </p>
                </div>
@@ -590,7 +590,7 @@ $system_info = str_replace('"', "'", $system_info);
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Prefijo:
-                        <input class="form-control" type="text" name="cache_prefix" value="fs_<?php echo random_string(4) ?>_" autocomplete="off"/>
+                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8) ?>_" autocomplete="off"/>
                      </div>
                   </div>
                </div>
@@ -609,7 +609,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="col-lg-12 col-md-12 col-sm-12 text-center">
             <hr/>
             <small>
-               Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>
+               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>
             </small>
          </div>
       </div>

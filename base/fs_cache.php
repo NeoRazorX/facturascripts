@@ -72,40 +72,71 @@ class fs_cache
    public function close()
    {
       if( isset(self::$memcache) AND self::$connected )
+      {
          self::$memcache->close();
+      }
    }
    
-   public function set($key, $object, $expire=5400)
+   public function set($key, $object, $expire=5400, $json=FALSE)
    {
-      if( self::$connected )
+      if(self::$connected)
+      {
          self::$memcache->set(FS_CACHE_PREFIX.$key, $object, FALSE, $expire);
+      }
+      else if($json)
+      {
+         file_put_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key, json_encode($object) );
+      }
    }
    
-   public function get($key)
+   public function get($key, $json=FALSE)
    {
-      if( self::$connected )
+      if(self::$connected)
+      {
          return self::$memcache->get(FS_CACHE_PREFIX.$key);
+      }
+      else if($json)
+      {
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         {
+            return json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+         }
+         else
+            return FALSE;
+      }
       else
          return FALSE;
    }
    
-   public function get_array($key)
+   public function get_array($key, $json=FALSE)
    {
       $aa = array();
-      if( self::$connected )
+      
+      if(self::$connected)
       {
          $a = self::$memcache->get(FS_CACHE_PREFIX.$key);
          if($a)
+         {
             $aa = $a;
+         }
       }
+      else if($json)
+      {
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         {
+            $aa = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+         }
+      }
+      
       return $aa;
    }
    
-   public function get_array2($key, &$error)
+   public function get_array2($key, &$error, $json=FALSE)
    {
       $aa = array();
       $error = TRUE;
-      if( self::$connected )
+      
+      if(self::$connected)
       {
          $a = self::$memcache->get(FS_CACHE_PREFIX.$key);
          if( is_array($a) )
@@ -114,29 +145,60 @@ class fs_cache
             $error = FALSE;
          }
       }
+      else if($json)
+      {
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         {
+            $a = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+            if( is_array($a) )
+            {
+               $aa = $a;
+               $error = FALSE;
+            }
+         }
+      }
+      
       return $aa;
    }
    
    public function delete($key)
    {
-      if( self::$connected )
+      if(self::$connected)
+      {
          return self::$memcache->delete(FS_CACHE_PREFIX.$key);
+      }
       else
          return FALSE;
    }
    
    public function clean()
    {
-      if( self::$connected )
+      if(self::$connected)
+      {
          return self::$memcache->flush();
+      }
       else
-         return FALSE;
+      {
+         $done = FALSE;
+         foreach( scandir(getcwd().'/tmp/'.FS_TMP_NAME) as $f)
+         {
+            if( substr($f, 0, 9) == 'memcache_' )
+            {
+               unlink('tmp/'.FS_TMP_NAME.$f);
+               $done = TRUE;
+            }
+         }
+         
+         return $done;
+      }
    }
    
    public function version()
    {
-      if( self::$connected )
+      if(self::$connected)
+      {
          return self::$memcache->getVersion();
+      }
       else
          return '-';
    }

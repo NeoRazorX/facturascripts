@@ -1065,13 +1065,19 @@ class fs_controller
     */
    public function get_community_html()
    {
-      if( file_exists('tmp/community_index.html') AND mt_rand(0, 9) > 0 )
+      if( file_exists('tmp/community_index.html') AND mt_rand(0, 14) > 0 )
       {
          return file_get_contents('tmp/community_index.html');
       }
       else
       {
-         $html = file_get_contents(FS_COMMUNITY_URL.'/iframe.php?version='.$this->version());
+         $url = FS_COMMUNITY_URL.'/iframe.php?version='.$this->version();
+         if( substr($url, 0, 1) == '/' )
+         {
+            $url = 'http:'.$url;
+         }
+         
+         $html = file_get_contents($url);
          file_put_contents('tmp/community_index.html', $html);
          return $html;
       }

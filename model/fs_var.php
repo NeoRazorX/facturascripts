@@ -109,15 +109,15 @@ class fs_var extends fs_model
       if( strtolower(FS_DB_TYPE) == 'mysql' )
          $comillas = '`';
       
-      if( $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";") )
+      if( $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";") )
       {
-         $sql = "UPDATE ".$this->table_name." SET ".$comillas."varchar".$comillas." = ".$this->var2str($this->varchar).
-                 " WHERE name = ".$this->var2str($this->name).";";
+         $sql = "UPDATE ".$this->table_name." SET ".$comillas."varchar".$comillas." = ".$this->var2str($value).
+                 " WHERE name = ".$this->var2str($name).";";
       }
       else
       {
          $sql = "INSERT INTO ".$this->table_name." (name,".$comillas."varchar".$comillas.") VALUES
-            (".$this->var2str($this->name).",".$this->var2str($this->varchar).");";
+            (".$this->var2str($name).",".$this->var2str($value).");";
       }
       
       return $this->db->exec($sql);
@@ -165,16 +165,14 @@ class fs_var extends fs_model
       {
          if($value === FALSE)
          {
-            $fv0 = $this->get($i);
-            if($fv0)
-               $fv0->delete();
+            $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($i).";");
          }
          else
          {
-            $fv0 = new fs_var( array('name' => $i, 'varchar' => $value) );
-            
-            if( !$fv0->save() )
+            if( !$this->simple_save($i, $value) )
+            {
                $done = FALSE;
+            }
          }
       }
       

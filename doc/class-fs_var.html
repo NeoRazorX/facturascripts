@@ -143,7 +143,7 @@
 
 	<div class="description">
 	
-<p>Una clase genércia para consultar o almacenar en la base de datos pares
+<p>Una clase genérica para consultar o almacenar en la base de datos pares
 clave/valor.</p>
 
 	</div>
@@ -176,7 +176,7 @@ clave/valor.</p>
 		
 		
 
-		<b>Located at</b> <a href="source-class-fs_var.html#22-192" title="Go to source code">fs_var.php</a><br>
+		<b>Located at</b> <a href="source-class-fs_var.html#22-181" title="Go to source code">fs_var.php</a><br>
 	</div>
 
 
@@ -194,7 +194,7 @@ clave/valor.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-fs_var.html#31-44" title="Go to source code">__construct</a>( <span>type <var>$f</var> = <span class="php-keyword1">FALSE</span></span> )</code>
+		<code><a href="source-class-fs_var.html#30-43" title="Go to source code">__construct</a>( <span>type <var>$f</var> = <span class="php-keyword1">FALSE</span></span> )</code>
 
 		<div class="description short">
 			
@@ -230,7 +230,7 @@ clave/valor.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_install">#</a>
-		<code><a href="source-class-fs_var.html#46-49" title="Go to source code">install</a>( )</code>
+		<code><a href="source-class-fs_var.html#45-48" title="Go to source code">install</a>( )</code>
 
 		<div class="description short">
 			
@@ -247,48 +247,6 @@ tabla.</p>
 
 
 
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="get" id="_get">
-
-		<td class="attributes"><code>
-			 public 
-			<code><a href="class-fs_var.html">fs_var</a></code>|boolean
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-fs_var.html#51-65" title="Go to source code">get</a>( <span>type <var>$cod</var></span> )</code>
-
-		<div class="description short">
-			
-<p>Devuelve la variable $cod o FALSE en caso de que no se encuentre.</p>
-
-		</div>
-
-		<div class="description detailed hidden">
-			
-<p>Devuelve la variable $cod o FALSE en caso de que no se encuentre.</p>
-
-
-
-				<h4>Parameters</h4>
-				<div class="list"><dl>
-					<dt><var>$cod</var></dt>
-					<dd><code>type</code><br>$cod</dd>
-				</dl></div>
-
-				<h4>Returns</h4>
-				<div class="list">
-					<code><code><a href="class-fs_var.html">fs_var</a></code>|boolean</code><br>
-				</div>
 
 
 
@@ -307,7 +265,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_exists">#</a>
-		<code><a href="source-class-fs_var.html#67-77" title="Go to source code">exists</a>( )</code>
+		<code><a href="source-class-fs_var.html#50-60" title="Go to source code">exists</a>( )</code>
 
 		<div class="description short">
 			
@@ -321,35 +279,6 @@ de datos.</p>
 <p>Esta función devuelve TRUE si los datos del objeto se encuentran en la base
 de datos.</p>
 
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="test" id="_test">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_test">#</a>
-		<code><a href="source-class-fs_var.html#79-91" title="Go to source code">test</a>( )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
 
 
 
@@ -371,7 +300,7 @@ de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-fs_var.html#93-116" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-fs_var.html#62-80" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			
@@ -406,7 +335,7 @@ objeto en la base de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_delete">#</a>
-		<code><a href="source-class-fs_var.html#118-121" title="Go to source code">delete</a>( )</code>
+		<code><a href="source-class-fs_var.html#82-85" title="Go to source code">delete</a>( )</code>
 
 		<div class="description short">
 			
@@ -441,7 +370,65 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all">#</a>
-		<code><a href="source-class-fs_var.html#123-133" title="Go to source code">all</a>( )</code>
+		<code><a href="source-class-fs_var.html#87-99" title="Go to source code">all</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="simple_get" id="_simple_get">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_simple_get">#</a>
+		<code><a href="source-class-fs_var.html#101-104" title="Go to source code">simple_get</a>( <span>mixed <var>$name</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="simple_save" id="_simple_save">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_simple_save">#</a>
+		<code><a href="source-class-fs_var.html#106-124" title="Go to source code">simple_save</a>( <span>mixed <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
 
 		<div class="description short">
 			
@@ -470,7 +457,7 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_array_get">#</a>
-		<code><a href="source-class-fs_var.html#135-162" title="Go to source code">array_get</a>( <span>type <var>$array</var></span>, <span>mixed <var>$replace</var> = <span class="php-keyword1">TRUE</span></span> )</code>
+		<code><a href="source-class-fs_var.html#126-153" title="Go to source code">array_get</a>( <span>type <var>$array</var></span>, <span>mixed <var>$replace</var> = <span class="php-keyword1">TRUE</span></span> )</code>
 
 		<div class="description short">
 			
@@ -519,7 +506,7 @@ menos que pongas FALSE en el segundo parámetro.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_array_save">#</a>
-		<code><a href="source-class-fs_var.html#164-191" title="Go to source code">array_save</a>( <span>type <var>$array</var></span> )</code>
+		<code><a href="source-class-fs_var.html#155-180" title="Go to source code">array_save</a>( <span>type <var>$array</var></span> )</code>
 
 		<div class="description short">
 			
@@ -593,7 +580,7 @@ menos que pongas FALSE en el segundo parámetro.</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_var.html#28" title="Go to source code"><var>$name</var></a>
+				<a href="source-class-fs_var.html#27" title="Go to source code"><var>$name</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
@@ -616,7 +603,7 @@ menos que pongas FALSE en el segundo parámetro.</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_var.html#29" title="Go to source code"><var>$varchar</var></a>
+				<a href="source-class-fs_var.html#28" title="Go to source code"><var>$varchar</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>

@@ -54,7 +54,13 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
+            {if condition="FS_DEMO"}
+            <a class="navbar-brand" href="index.php">DEMO</a>
+            {elseif condition="$fsc->empresa->nombrecorto"}
+            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
+            {else}
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
+            {/if}
          </div>
          
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -207,16 +213,16 @@
          {/if}
       </div>
       <div class="row">
-         <div class="col-lg-4 col-md-4 col-sm-4">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
             <small>
-               Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>.
+               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+         <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">
             <span class="label label-default">Consultas: {$fsc->selects()}</span>
             <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 text-right">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 text-right">
             <span class="label label-default">Procesado en: {$fsc->duration()}</span>
          </div>
       </div>

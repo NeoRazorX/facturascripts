@@ -21,7 +21,9 @@
 define('CAR_GE_PLU', 'tmp/repositorio_plugins' );
 require_model('ad_plugins.php');
 
-if(class_exists('admin_plugins') != true) {
+if(class_exists('admin_plugins') != true)
+{
+   
 class admin_plugins extends fs_controller
 {
     public $unstables;
@@ -212,6 +214,9 @@ class admin_plugins extends fs_controller
             // Instalar en el Servidor un Plugin desde el CLIENTE
             if( isset($_POST['subirlocal']) )
             {
+               if( !file_exists(CAR_GE_PLU) )
+                  mkdir(CAR_GE_PLU);
+               
                 if ($_FILES['pluginlocal']['name'] == '')
                 {
                     header( 'Location: '.$this->url().'&seccion=5&error=ERROR al instalar el Plugin desde Nuestro Ordenador :: No se ha seleccionado ningún Archivo.' );
@@ -445,5 +450,6 @@ class admin_plugins extends fs_controller
             $this->cache->clean();
         }
     }
-}}
-?>
+}
+
+}

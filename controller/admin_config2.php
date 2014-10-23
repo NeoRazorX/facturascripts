@@ -26,6 +26,7 @@ class admin_config2 extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $guardar = FALSE;
       
       foreach($GLOBALS['config2'] as $i => $value)
@@ -69,7 +70,7 @@ class admin_config2 extends fs_controller
    public function claves()
    {
       $clist = array();
-      $exclude = array('zona_horaria', 'nfactura_cli');
+      $exclude = array('zona_horaria', 'nfactura_cli', 'margin_method', 'cost_is_average');
       
       foreach($GLOBALS['config2'] as $i => $value)
       {

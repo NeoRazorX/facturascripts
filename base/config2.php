@@ -66,7 +66,9 @@ else
        'pedidos' => 'pedidos',
        'presupuesto' => 'presupuesto',
        'presupuestos' => 'presupuestos',
-       'nfactura_cli' => '1'
+       'nfactura_cli' => '1',
+       'margin_method' => 'PVP',
+       'cost_is_average' => '1'
    );
 }
 

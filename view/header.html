@@ -42,8 +42,10 @@
             </button>
             {if condition="FS_DEMO"}
             <a class="navbar-brand" href="index.php">DEMO</a>
+            {elseif condition="$fsc->empresa->nombrecorto"}
+            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
             {else}
-            <a class="navbar-brand" href="index.php">{if condition="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</a>
+            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
             {/if}
          </div>
          
