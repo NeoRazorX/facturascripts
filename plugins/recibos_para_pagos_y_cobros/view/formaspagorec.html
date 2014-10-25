@@ -85,7 +85,7 @@
 <form action="{$fsc->url()}" method="post" class="form" role="form">
    <div class="container-fluid">
       <div class="row" style="margin-top: 10px;">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -105,20 +105,20 @@
                </a>
             </div>
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
             <div class="btn-group">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar todos los cambios realizados">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-               </button>
                <a id="b_eliminar" class="btn btn-sm btn-danger" href="#" title="Eliminar formas de pago seleccionadas">
                   <span class="glyphicon glyphicon-trash"></span>
                </a>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar todos los cambios realizados">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
             </div>
          </div>
       </div>
       
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h1>
                <a href="{$fsc->url()}">Formas de pago</a>
             </h1>
