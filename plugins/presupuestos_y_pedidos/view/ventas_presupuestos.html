@@ -44,7 +44,7 @@
 
 <div class="container-fluid">
    <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
          <div class="btn-group">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
@@ -59,13 +59,13 @@
             &nbsp; Nuevo
          </a>
       </div>
-      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 text-right">
+      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
             <span class="glyphicon glyphicon-search"></span>
             &nbsp; Líneas
          </a>
       </div>
-      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3">
          <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
             <div class="input-group">
                <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
