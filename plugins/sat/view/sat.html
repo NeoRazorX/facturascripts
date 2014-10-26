@@ -14,7 +14,7 @@
       </div>
       <!-- Se muestra si la resolución es LG, sino se oculta -->
       <div class="col-lg-10 hidden-md hidden-sm hidden-xs text-right">
-         <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
+         <form id="f_edita_sat" name="f_edita_sat_lg" action="{$fsc->url()}" method="post" class="form form-inline">
          <div class="form-group">
             <select name="orden" class="form-control">
                <option value="nsat">Numero de sat</option>
@@ -56,7 +56,7 @@
       </div>
       <!-- Se muestra si la resolucion es SM o XS, sino se oculta -->
       <div class="hidden-lg hidden-md col-sm-8 col-xs-6 text-right">
-         <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
+         <form id="f_edita_sat" name="f_edita_sat_sm_xs" action="{$fsc->url()}" method="post" class="form form-inline">
          <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
             <span class="glyphicon glyphicon-search"></span>
             &nbsp; Buscar
@@ -65,7 +65,7 @@
       <!-- Se muestra si la resolución es MD, sino se oculta -->
       <div class="hidden-lg col-md-8 hidden-sm hidden-xs">
          <div class="row">
-            <form id="f_edita_sat" name="f_edita_sat" action="{$fsc->url()}" method="post" class="form form-inline">
+            <form id="f_edita_sat" name="f_edita_sat_md" action="{$fsc->url()}" method="post" class="form form-inline">
             <div class="hidden-lg col-md-6 hidden-sm hidden-xs">
                <div class="form-group">
                   <select name="orden" class="form-control">
