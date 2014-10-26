@@ -22,8 +22,17 @@ class documento extends fs_model
       }
    }
    
-   protected function install() {
-      ;
+   protected function install() 
+   {        
+      $this->clean_cache();
+      return "INSERT INTO documentos (iddocumento,descripcion) VALUES
+            (0,'No Asignado'),
+            (1,'Cotización de Cliente'),
+            (2,'Pedido de Cliente'),
+            (3,'Remisión de Cliente'),
+            (4,'Factura de Cliente'),
+            (5,'Remisión de Proveedor'),
+            (6,'Factura de Proveedor');";
    }
    
    public function get($id)

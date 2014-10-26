@@ -36,13 +36,13 @@
             <select name="estado" class="form-control">
                <option value="activos">SAT activos</option>
                {loop="fsc->listar_estados()"}
-                {if="$fsc->busquda['estado']==$value['id_estado']"}
+                {if="$fsc->busqueda['estado']==$value['id_estado']"}
                     <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
                 {else}
                     <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
                 {/if}
                {/loop}
-               {if="$fsc->busquda['estado']=='todos'"}
+               {if="$fsc->busqueda['estado']=='todos'"}
                <option value="todos" selected>Todos</option>
                {else}
                <option value="todos">Todos</option>
