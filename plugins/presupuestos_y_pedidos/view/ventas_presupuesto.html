@@ -57,7 +57,7 @@
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 10px;">
-         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -82,26 +82,24 @@
                {/if}
             </div>
          </div>
-         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-right">
             <div class="btn-group">
                <a id="b_eliminar" class="btn btn-sm btn-danger" href="#">
                   <span class="glyphicon glyphicon-trash"></span>
-                  &nbsp; Eliminar
                </a>
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
                </button>
             </div>
          </div>
       </div>
       <div class="row">
          <div class="col-lg-12">
-            <h2 class="text-capitalize">
+            <h3 class="text-capitalize">
                <a href="{$fsc->ppage->url()}">{#FS_PRESUPUESTOS#}</a> /
                <a href="{$fsc->presupuesto->cliente_url()}">{$fsc->presupuesto->nombrecliente}</a> /
                {$fsc->presupuesto->codigo}
-            </h2>
+            </h3>
          </div>
       </div>
       {if condition="$fsc->presupuesto->editable"}
@@ -325,7 +323,7 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Buscar artículos</h4>
+            <h3 class="modal-title">Buscar artículos</h3>
          </div>
          <div class="modal-body">
             <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
@@ -409,7 +407,7 @@
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Imprimir {#FS_PRESUPUESTO#}</h4>
+            <h3 class="modal-title">Imprimir {#FS_PRESUPUESTO#}</h3>
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
@@ -432,7 +430,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Enviar {#FS_PRESUPUESTO#}</h4>
+               <h3 class="modal-title">Enviar {#FS_PRESUPUESTO#}</h3>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -463,7 +461,7 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">¿Realmente desea eliminar este {#FS_PRESUPUESTO#}?</h4>
+               <h3 class="modal-title">¿Realmente desea eliminar este {#FS_PRESUPUESTO#}?</h3>
             </div>
             <div class="modal-footer">
                <div class="pull-left">
