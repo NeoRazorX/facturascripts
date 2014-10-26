@@ -9,12 +9,14 @@
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
          <form id="f_buscar_documento" name="f_buscar_documento" action="{$fsc->url()}" method="post" class="form form-inline">
-         <div class="form-group">
-            <input type="text" class="form-control" name="query" size="10" placeholder="Buscar..."/>
-         </div>
-         <button class="btn btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-            <span class="glyphicon glyphicon-search"></span>
-         </button>
+            <div class="input-group">
+               <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+               <span class="input-group-btn hidden-xs hidden-sm">
+                  <button class="btn btn-primary" type="submit">
+                     <span class="glyphicon glyphicon-search"></span>
+                  </button>
+               </span>
+            </div>
          </form>
       </div>
    </div>
