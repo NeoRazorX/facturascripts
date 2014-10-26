@@ -50,7 +50,7 @@
    <input type="hidden" name="idfactura" value="{$fsc->factura->idfactura}"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 10px;">
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -96,7 +96,7 @@
                {/if}
             {/loop}
          </div>
-         <div class="col-lg-6 text-right">
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
             <div class="btn-group">
                <a id="b_eliminar" class="btn btn-sm btn-danger" href="#">
                   <span class="glyphicon glyphicon-trash"></span>
@@ -123,12 +123,6 @@
       <div class="row">
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
-               Número:
-               <div class="form-control">{$fsc->factura->numero}</div>
-            </div>
-         </div>
-         <div class="col-lg-2 col-md-2 col-sm-2">
-            <div class="form-group">
                Num. Proveedor:
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->factura->numproveedor}"/>
             </div>
@@ -152,7 +146,7 @@
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-lg-4 col-md-4 col-sm-4">
             <div class="form-group">
                Empleado:
                <div class="form-control">

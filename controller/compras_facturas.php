@@ -27,6 +27,7 @@ class compras_facturas extends fs_controller
 {
    public $agente;
    public $articulo;
+   public $buscar_lineas;
    public $factura;
    public $offset;
    public $proveedor;
@@ -41,11 +42,18 @@ class compras_facturas extends fs_controller
    {
       $this->factura = new factura_proveedor();
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       $this->offset = 0;
       if( isset($_GET['offset']) )
          $this->offset = intval($_GET['offset']);
       
-      if( isset($_GET['codagente']) )
+      if( isset($_POST['buscar_lineas']) )
+      {
+         $this->buscar_lineas();
+      }
+      else if( isset($_GET['codagente']) )
       {
          $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/compras_facturas_agente';
@@ -184,6 +192,25 @@ class compras_facturas extends fs_controller
       }
       
       return $url;
+   }
+   
+
+   public function buscar_lineas()
+   {
+      /// cambiamos la plantilla HTML
+      $this->template = 'ajax/compras_lineas_facturas';
+
+      $this->buscar_lineas = $_POST['buscar_lineas'];
+      $linea = new linea_factura_cliente();
+
+      if( isset($_POST['codcliente']) )
+      {
+         $this->lineas = $linea->search_from_cliente2($_POST['codcliente'], $this->buscar_lineas, $_POST['buscar_lineas_o']);
+      }
+      else
+      {
+         $this->lineas = $linea->search($this->buscar_lineas);
+      }
    }
    
    private function share_extension()
