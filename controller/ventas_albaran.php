@@ -56,6 +56,9 @@ class ventas_albaran extends fs_controller
       $this->ppage = $this->page->get('ventas_albaranes');
       $this->agente = FALSE;
       
+      /// desactivamos la barra de botones
+      $this->show_fs_toolbar = FALSE;
+      
       $albaran = new albaran_cliente();
       $this->albaran = FALSE;
       $this->cliente = new cliente();

@@ -836,6 +836,27 @@ class factura_cliente extends fs_model
       return $faclist;
    }
    
+   public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs='')
+   {
+      $faclist = array();
+      $sql = "SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcliente).
+         " AND fecha BETWEEN ".$this->var2str($desde)." AND ".$this->var2str($hasta).
+         " AND codserie = ".$this->var2str($serie);
+      
+      if($obs != '')
+         $sql .= " AND lower(observaciones) = ".$this->var2str(strtolower($obs));
+      
+      $sql .= " ORDER BY fecha DESC, codigo DESC;";
+      
+      $facturas = $this->db->select($sql);
+      if($facturas)
+      {
+         foreach($facturas as $f)
+            $faclist[] = new factura_cliente($f);
+      }
+      return $faclist;
+   }
+   
    public function huecos()
    {
       $error = TRUE;

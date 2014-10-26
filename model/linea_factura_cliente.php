@@ -378,6 +378,88 @@ class linea_factura_cliente extends fs_model
       return $linealist;
    }
    
+   public function search($query='', $offset=0)
+   {
+      $linealist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+      {
+         $sql .= "referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%'";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%'";
+      }
+      $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_cliente($l);
+      }
+      return $linealist;
+   }
+   
+   public function search_from_cliente($codcliente, $query='', $offset=0)
+   {
+      $linealist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idfactura IN
+         (SELECT idfactura FROM facturascli WHERE codcliente = ".$this->var2str($codcliente).") AND ";
+      if( is_numeric($query) )
+      {
+         $sql .= "(referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%')";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "(lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%')";
+      }
+      $sql .= " ORDER BY idfactura DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_cliente($l);
+      }
+      return $linealist;
+   }
+   
+   public function search_from_cliente2($codcliente, $ref='', $obs='', $offset=0)
+   {
+      $linealist = array();
+      $ref = strtolower( $this->no_html($ref) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idfactura IN
+         (SELECT idfactura FROM facturascli WHERE codcliente = ".$this->var2str($codcliente)."
+         AND lower(observaciones) LIKE '".strtolower($obs)."%') AND ";
+      if( is_numeric($ref) )
+      {
+         $sql .= "(referencia LIKE '%".$ref."%' OR descripcion LIKE '%".$ref."%')";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $ref);
+         $sql .= "(lower(referencia) LIKE '%".$ref."%' OR lower(descripcion) LIKE '%".$ref."%')";
+      }
+      $sql .= " ORDER BY idfactura DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_cliente($l);
+      }
+      return $linealist;
+   }
+   
+   
    public function facturas_from_albaran($id)
    {
       $facturalist = array();

@@ -73,7 +73,7 @@
                {/if}
                {if condition="$fsc->presupuesto->idpedido"}
                <a class="btn btn-sm btn-default text-capitalize" href="{$fsc->presupuesto->pedido_url()}">
-                  <span class="glyphicon glyphicon-eye-open"></span> &nbsp; {#FS_PEDIDO#}
+                  <span class="glyphicon glyphicon-eye-open"></span> &nbsp; Ver {#FS_PEDIDO#}
                </a>
                {else}
                <a class="btn btn-sm btn-default" href="{$fsc->url()}&pedir=TRUE&petid={$fsc->random_string()}">
