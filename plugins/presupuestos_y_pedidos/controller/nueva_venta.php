@@ -24,12 +24,12 @@ require_model('cliente.php');
 require_model('divisa.php');
 require_model('familia.php');
 require_model('forma_pago.php');
+require_model('grupo_clientes.php');
 require_model('impuesto.php');
 require_model('pedido_cliente.php');
 require_model('presupuesto_cliente.php');
 require_model('serie.php');
-require_model('pedido_cliente.php');
-require_model('presupuesto_cliente.php');
+require_model('tarifa.php');
 
 class nueva_venta extends fs_controller
 {
@@ -227,14 +227,42 @@ class nueva_venta extends fs_controller
       $articulo = new articulo();
       $codfamilia = '';
       if( isset($_REQUEST['codfamilia']) )
+      {
          $codfamilia = $_REQUEST['codfamilia'];
+      }
       
       $con_stock = isset($_REQUEST['con_stock']);
       $this->results = $articulo->search($this->query, 0, $codfamilia, $con_stock);
       
       /// añadimos la busqueda
       foreach($this->results as $i => $value)
+      {
          $this->results[$i]->query = $this->query;
+         $this->results[$i]->dtopor = 0;
+      }
+      
+      /// buscamos el grupo de clientes y la tarifa
+      if( isset($_REQUEST['codcliente']) )
+      {
+         $cliente = $this->cliente->get($_REQUEST['codcliente']);
+         if($cliente->codgrupo)
+         {
+            $grupo0 = new grupo_clientes();
+            $grupo = $grupo0->get($cliente->codgrupo);
+            if($grupo)
+            {
+               $tarifa0 = new tarifa();
+               $tarifa = $tarifa0->get($grupo->codtarifa);
+               if($tarifa)
+               {
+                  foreach($this->results as $i => $value)
+                  {
+                     $this->results[$i]->dtopor = 0 - $tarifa->incporcentual;
+                  }
+               }
+            }
+         }
+      }
       
       header('Content-Type: application/json');
       echo json_encode($this->results);
