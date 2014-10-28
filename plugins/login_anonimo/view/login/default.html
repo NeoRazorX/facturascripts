@@ -76,30 +76,28 @@
    </div>
    {/if}
    
-   <div class="container">
-      <div class="row" style="margin-top: 20px;">
-         <div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
-            <div class="well well-lg" id="box_login">
-               <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
-                  <div class="form-group">
-                     <label>Usuario</label>
-                     <input type="text" name="user" class="form-control input-lg" placeholder="Usuario" autocomplete="off"/>
-                  </div>
-                  <div class="form-group">
-                     <label>Contraseña</label>
-                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
-                  </div>
-                  <div class="text-right">
-                     <button class="btn btn-sm btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-log-in"></span>
-                        &nbsp; Iniciar sesión
-                     </button>
-                  </div>
-               </form>
+   <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
+      <div class="container">
+         <div class="row" style="margin-top: 20px;">
+            <div class="col-lg-3 col-lg-offset-3">
+               <div class="thumbnail">
+                  <img src="view/img/big_lock.png" alt="login"/>
+               </div>
+            </div>
+            <div class="col-lg-3">
+               <div class="form-group">
+                  <input type="text" name="user" class="form-control input-lg" placeholder="Usuario" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+               </div>
+               <button class="btn btn-block btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-log-in"></span> &nbsp; Iniciar sesión
+               </button>
             </div>
          </div>
       </div>
-   </div>
+   </form>
    
    {include="feedback"}
    
@@ -123,16 +121,16 @@
          {/if}
       </div>
       <div class="row">
-         <div class="col-lg-4 col-md-4 col-sm-4">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
             <small>
-               Creado con <a target="_blank" href="http://www.facturascripts.com">FacturaScripts</a>.
+               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+         <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">
             <span class="label label-default">Consultas: {$fsc->selects()}</span>
             <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 text-right">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 text-right">
             <span class="label label-default">Procesado en: {$fsc->duration()}</span>
          </div>
       </div>

@@ -2,6 +2,13 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      {if condition="$fsc->cliente"}
+      $("#modal_nuevo_socio").modal('show');
+      document.f_nuevo_socio.nombre.focus();
+      {else}
+      document.f_custom_search.query.focus();
+      {/if}
+      
       $("#b_nuevo_socio").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_socio").modal('show');
@@ -48,6 +55,72 @@
    </div>
 </div>
 
+{if condition="isset($_REQUEST['query'])"}
+<h3 class="text-center">Resultados de la búsqueda <b>{$_REQUEST['query']}</b>:</h3>
+
+<ul class="nav nav-tabs" role="tablist">
+   <li class="active"><a href="#home" role="tab" data-toggle="tab">Socios</a></li>
+   <li><a href="#clientes" role="tab" data-toggle="tab">Clientes</a></li>
+</ul>
+
+<div class="tab-content">
+   <div class="tab-pane active" id="home">
+      <div class="table-responsive">
+         <table class="table table-hover">
+            <thead>
+               <tr>
+                  <th width="40"></th>
+                  <th class="text-left">Nº + Nombre</th>
+                  <th class="text-right">Fecha de alta</th>
+               </tr>
+            </thead>
+            <tbody>
+               {loop="$fsc->resultados"}
+               <tr{if condition="!$value->en_alta"} class="bg-warning"{/if}>
+                  <td class="text-center">
+                     {if condition="$value->al_corriente"}
+                     <span class="glyphicon glyphicon-ok" title="está al corriente de sus pagos"></span>
+                     {/if}
+                  </td>
+                  <td><a href="{$value->url()}">{$value->idsocio}</a> {$value->nombre_cliente()}</td>
+                  <td class="text-right">{$value->fecha_alta}</td>
+               </tr>
+               {else}
+               <tr class="bg-warning">
+                  <td></td>
+                  <td colspan="2">Sin resultados.</td>
+               </tr>
+               {/loop}
+            </tbody>
+         </table>
+      </div>
+   </div>
+   <div class="tab-pane" id="clientes">
+      <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Código + Nombre</th>
+               <th class="text-left">{#FS_CIFNIF#}</th>
+               <th class="text-left">Observaciones</th>
+            </tr>
+         </thead>
+         {loop="$fsc->clientes"}
+         <tr>
+            <td><a href="{$fsc->url()}&codcliente={$value->codcliente}">{$value->codcliente}</a> {$value->nombre}</td>
+            <td>{$value->cifnif}</td>
+            <td>{$value->observaciones_resume()}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="3">Ningún cliente encontrado. Pulse el botón <b>Nuevo</b> para crear uno.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   </div>
+</div>
+{else}
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
@@ -68,10 +141,16 @@
             <td><a href="{$value->url()}">{$value->idsocio}</a> {$value->nombre_cliente()}</td>
             <td class="text-right">{$value->fecha_alta}</td>
          </tr>
+         {else}
+         <tr class="bg-warning">
+            <td></td>
+            <td colspan="2">Sin resultados.</td>
+         </tr>
          {/loop}
       </tbody>
    </table>
 </div>
+{/if}
 
 <form name="f_nuevo_socio" action="{$fsc->url()}" method="post" class="form-horizontal">
    <div class="modal" id="modal_nuevo_socio">
@@ -81,6 +160,82 @@
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nuevo socio</h4>
             </div>
+            {if condition="$fsc->cliente AND $fsc->direccion_cliente"}
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="idsocio" class="col-lg-2 col-md-2 col-sm-2 control-label">Nº Socio</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="number" name="idsocio" value="{$fsc->socio->get_new_id()}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="nombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="nombre" value="{$fsc->cliente->nombre}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="cifnif" class="col-lg-2 col-md-2 col-sm-2 control-label">{#FS_CIFNIF#}</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="cifnif" value="{$fsc->cliente->cifnif}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="provincia" class="col-lg-2 col-md-2 col-sm-2 control-label">Provincia</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="provincia" autocomplete="off" value="{$fsc->direccion_cliente->provincia}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="ciudad" class="col-lg-2 col-md-2 col-sm-2 control-label">Ciudad</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="ciudad" autocomplete="off" value="{$fsc->direccion_cliente->ciudad}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="codpostal" class="col-lg-2 col-md-2 col-sm-2 control-label">Código Postal</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="codpostal" autocomplete="off" value="{$fsc->direccion_cliente->codpostal}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="direccion" class="col-lg-2 col-md-2 col-sm-2 control-label">Dirección</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="direccion" value="{$fsc->direccion_cliente->direccion}" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="cuota" class="col-lg-2 col-md-2 col-sm-2 control-label">Cuota</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="cuota" value="50" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="periodicidad" class="col-lg-2 col-md-2 col-sm-2 control-label">Periodicidad</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="periodicidad" class="form-control">
+                        {loop="$fsc->socio->periodicidad()"}
+                        <option value="{$key}">{$value}</option>
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="forma_pago" class="col-lg-2 col-md-2 col-sm-2 control-label">Forma de pago</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="forma_pago" class="form-control">
+                     {loop="$fsc->forma_pago->all()"}
+                        {if condition="$value->codpago==$fsc->cliente->codpago"}
+                        <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                        {else}
+                        <option value="{$value->codpago}">{$value->descripcion}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+               </div>
+            </div>
+            {else}
             <div class="modal-body">
                <div class="form-group">
                   <label for="idsocio" class="col-lg-2 col-md-2 col-sm-2 control-label">Nº Socio</label>
@@ -98,6 +253,9 @@
                   <label for="cifnif" class="col-lg-2 col-md-2 col-sm-2 control-label">{#FS_CIFNIF#}</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
                      <input class="form-control" type="text" name="cifnif" autocomplete="off"/>
+                     <p class="help-block">
+                        Si se encuentra un cliente con el mismo {#FS_CIFNIF#} se usará ese cliente.
+                     </p>
                   </div>
                </div>
                <div class="form-group">
@@ -155,6 +313,7 @@
                   </div>
                </div>
             </div>
+            {/if}
             <div class="modal-footer">
               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                  <span class="glyphicon glyphicon-floppy-disk"></span>

@@ -48,6 +48,8 @@ class tpv_supermercado extends fs_controller
    
    protected function process()
    {
+      header('Access-Control-Allow-Origin: *');
+      
       $this->agente = $this->user->get_agente();
       $this->busqueda = '';
       $this->caja = new caja();

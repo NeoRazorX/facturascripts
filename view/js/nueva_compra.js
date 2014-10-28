@@ -139,6 +139,24 @@ function recalcular()
    $("#are").html( show_numero(total_recargo) );
    $("#airpf").html( '-'+show_numero(total_irpf) );
    $("#atotal").val( number_format(neto + total_iva - total_irpf + total_recargo, fs_nf0, '.', '') );
+   
+   if(total_recargo == 0)
+   {
+      $(".recargo").hide();
+   }
+   else
+   {
+      $(".recargo").show();
+   }
+   
+   if(total_irpf == 0)
+   {
+      $(".irpf").hide();
+   }
+   else
+   {
+      $(".irpf").show();
+   }
 }
 
 function ajustar_neto()
@@ -293,7 +311,7 @@ function aux_all_impuestos(num,codimpuesto)
    html += "<td class=\"recargo\"><input type=\"text\" class=\"form-control text-right\" id=\"recargo_"+num+"\" name=\"recargo_"+num+
          "\" value=\""+recargo+"\" onclick=\"this.select()\" onkeyup=\"recalcular()\" autocomplete=\"off\"/></td>";
    
-   html += "<td><div class=\"form-control text-right irpf\" id=\"irpf_"+num+"\">"+show_numero(irpf)+"</div></td>";
+   html += "<td class=\"irpf\"><div class=\"form-control text-right irpf\" id=\"irpf_"+num+"\">"+show_numero(irpf)+"</div></td>";
    
    return html;
 }

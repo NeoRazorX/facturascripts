@@ -348,15 +348,16 @@ class ventas_pedido extends fs_controller
             $this->pedido->totalirpf = round($this->pedido->totalirpf, FS_NF0);
             $this->pedido->totalrecargo = round($this->pedido->totalrecargo, FS_NF0);
             $this->pedido->total = $this->pedido->neto + $this->pedido->totaliva - $this->pedido->totalirpf + $this->pedido->totalrecargo;
+            
+            if( !$this->pedido->floatcmp($this->pedido->total, $_POST['atotal'], FS_NF0) )
+            {
+               $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->pedido->total.
+                       " frente a ".$_POST['atotal']."). Debes informar del error.");
+            }
          }
       }
       
-      if( !$this->pedido->floatcmp($this->pedido->total, $_POST['atotal'], FS_NF0) )
-      {
-         $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->pedido->total.
-                 " frente a ".$_POST['atotal']."). Debes informar del error.");
-      }
-      else if( $this->pedido->save() )
+      if( $this->pedido->save() )
       {
          $this->new_message(ucfirst(FS_PEDIDO)." modificado correctamente.");
          $this->new_change(ucfirst(FS_PEDIDO).' Cliente '.$this->pedido->codigo, $this->pedido->url());

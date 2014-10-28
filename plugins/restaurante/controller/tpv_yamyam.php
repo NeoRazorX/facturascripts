@@ -58,6 +58,8 @@ class tpv_yamyam extends fs_controller
    
    protected function process()
    {
+      header('Access-Control-Allow-Origin: *');
+      
       $this->css_file = 'touch.css';
       $this->agente = $this->user->get_agente();
       $this->almacen = new almacen();

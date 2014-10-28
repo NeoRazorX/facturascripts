@@ -115,7 +115,6 @@
    </div>
 </div>
 
-
 <form id="f_new_albaran" class="form" name="f_new_albaran" action="{$fsc->url()}" method="post">
    <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
    <input type="hidden" id="numlineas" name="numlineas" value="0"/>
@@ -159,8 +158,8 @@
                <th class="text-right" width="90">Dto. %</th>
                <th class="text-right">Neto</th>
                <th class="text-right" width="115">IVA</th>
-               <th class="text-right">RE %</th>
-               <th class="text-right">IRPF %</th>
+               <th class="text-right recargo">RE %</th>
+               <th class="text-right irpf">IRPF %</th>
                <th class="text-right">Total</th>
             </tr>
          </thead>
@@ -175,10 +174,10 @@
                <td>
                   <div id="aiva" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
-               <td>
+               <td class="recargo">
                   <div id="are" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
-               <td>
+               <td class="irpf">
                   <div id="airpf" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                </td>
                <td>

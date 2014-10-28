@@ -214,4 +214,34 @@ class fbm_socio extends fs_model
       
       return $lista;
    }
+   
+   public function all_from_cliente($codcli)
+   {
+      $lista = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente = ".$this->var2str($codcli)." ORDER BY idsocio ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $lista[] = new fbm_socio($d);
+      }
+      
+      return $lista;
+   }
+   
+   public function search($query='')
+   {
+      $query = trim( strtolower($query) );
+      $lista = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcliente IN
+              (SELECT codcliente FROM clientes WHERE lower(nombre) LIKE '%".$query."%') ORDER BY idsocio ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $lista[] = new fbm_socio($d);
+      }
+      
+      return $lista;
+   }
 }

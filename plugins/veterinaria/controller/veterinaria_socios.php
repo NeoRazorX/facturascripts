@@ -25,6 +25,9 @@ require_model('forma_pago.php');
 
 class veterinaria_socios extends fs_controller
 {
+   public $cliente;
+   public $clientes;
+   public $direccion_cliente;
    public $forma_pago;
    public $resultados;
    public $socio;
@@ -37,8 +40,13 @@ class veterinaria_socios extends fs_controller
    protected function process()
    {
       $this->show_fs_toolbar = FALSE;
+      $this->cliente = FALSE;
+      $this->direccion_cliente = FALSE;
       $this->forma_pago = new forma_pago();
       $this->socio = new fbm_socio();
+      
+      $this->resultados = array();
+      $this->clientes = array();
       
       if( isset($_POST['cifnif']) )
       {
@@ -61,7 +69,38 @@ class veterinaria_socios extends fs_controller
             $this->new_error_msg('Socio no encontrado');
       }
       
-      $this->resultados = $this->socio->all();
+      if( isset($_REQUEST['query']) )
+      {
+         $this->resultados = $this->socio->search($_REQUEST['query']);
+         
+         $cliente = new cliente();
+         $this->clientes = $cliente->search($_REQUEST['query']);
+      }
+      else if( isset($_GET['codcliente']) )
+      {
+         foreach($this->socio->all_from_cliente($_GET['codcliente']) as $socio)
+         {
+            header('Location: '.$socio->url());
+            break;
+         }
+         
+         $cliente = new cliente();
+         $this->cliente = $cliente->get($_GET['codcliente']);
+         if($cliente)
+         {
+            foreach($this->cliente->get_direcciones() as $dir)
+            {
+               $this->direccion_cliente = $dir;
+               break;
+            }
+         }
+      }
+      else
+      {
+         $this->resultados = $this->socio->all();
+         
+         $this->share_extensions();
+      }
    }
    
    private function nuevo_socio()
@@ -249,6 +288,23 @@ class veterinaria_socios extends fs_controller
          }
          else
             $this->new_error_msg('Imposible guardar la factura.');
+      }
+   }
+   
+   private function share_extensions()
+   {
+      /// añadimos la extensión para clientes
+      $extension = array(
+          'from' => __CLASS__,
+          'to' => 'ventas_cliente',
+          'type' => 'button',
+          'name' => 'socio_cliente',
+          'text' => 'Socio'
+      );
+      $fsext0 = new fs_extension();
+      if( !$fsext0->array_save($extension) )
+      {
+         $this->new_error_msg('Imposible guardar los datos de la extensión.');
       }
    }
 }

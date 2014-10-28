@@ -388,15 +388,16 @@ class ventas_albaran extends fs_controller
             $this->albaran->totalirpf = round($this->albaran->totalirpf, FS_NF0);
             $this->albaran->totalrecargo = round($this->albaran->totalrecargo, FS_NF0);
             $this->albaran->total = $this->albaran->neto + $this->albaran->totaliva - $this->albaran->totalirpf + $this->albaran->totalrecargo;
+            
+            if( !$this->albaran->floatcmp($this->albaran->total, $_POST['atotal'], FS_NF0) )
+            {
+               $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->albaran->total.
+                       " frente a ".$_POST['atotal']."). Debes informar del error.");
+            }
          }
       }
       
-      if( !$this->albaran->floatcmp($this->albaran->total, $_POST['atotal'], FS_NF0) )
-      {
-         $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->albaran->total.
-                 " frente a ".$_POST['atotal']."). Debes informar del error.");
-      }
-      else if( $this->albaran->save() )
+      if( $this->albaran->save() )
       {
          $this->new_message(ucfirst(FS_ALBARAN)." modificado correctamente.");
          $this->new_change(ucfirst(FS_ALBARAN).' Cliente '.$this->albaran->codigo, $this->albaran->url());

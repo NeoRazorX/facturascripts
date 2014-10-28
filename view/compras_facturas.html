@@ -42,10 +42,10 @@
    });
 </script>
 
-<div class="container-fluid">
-   <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-         <div class="btn-group">
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-8 col-sm-7 col-xs-8">
+         <div class="btn-group hidden-xs">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -59,28 +59,14 @@
             &nbsp; Nueva
          </a>
       </div>
-      <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 text-right">
-         <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
+      <div class="col-md-2 col-sm-2 col-xs-4 text-right">
+         <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en las líneas">
             <span class="glyphicon glyphicon-search"></span>
             &nbsp; Líneas
          </a>
       </div>
-      <div class="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+      <div class="col-md-2 col-sm-3 hidden-xs">
          <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
-            <div class="input-group">
-               <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
-               <span class="input-group-btn hidden-xs hidden-sm">
-                  <button class="btn btn-primary" type="submit">
-                     <span class="glyphicon glyphicon-search"></span>
-                  </button>
-               </span>
-            </div>
-         </form>
-      </div>
-   </div>
-   <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-      <div class=" hidden-lg hidden-md hidden-sm col-xs-12">
-         <form name="f_custom_search_xs" action="{$fsc->url()}" method="post" class="form">
             <div class="input-group">
                <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
                <span class="input-group-btn">
@@ -93,30 +79,6 @@
       </div>
    </div>
 </div>
-
-<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-   <div class="modal" id="modal_buscar_lineas">
-      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Buscar en las líneas</h4>
-            </div>
-            <div class="modal-body">
-               <div class="input-group">
-                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                     </button>
-                  </span>
-               </div>
-            </div>
-            <div id="search_results" class="table-responsive"></div>
-         </div>
-      </div>
-   </div>
-</form>
 
 {if condition="$fsc->query!=''"}
 <h3 class="text-center">Resultados de "{$fsc->query}":</h1>
@@ -187,5 +149,29 @@
    </li>
    {/if}
 </ul>
+
+<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_buscar_lineas">
+      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar en las líneas</h4>
+            </div>
+            <div class="modal-body">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+            <div id="search_results" class="table-responsive"></div>
+         </div>
+      </div>
+   </div>
+</form>
 
 {include="footer"}
