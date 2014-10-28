@@ -63,16 +63,18 @@
             <div class="row">
                <div class="col-lg-3">
                   <div class="form-group">
-                     Margin method:
+                     Método para calcular el Margen 
+                        <!-- Button triggers modal -->
+                        (<a data-toggle="modal" data-target="#modal_help_FS_MARGIN_METHOD">Ayuda</a>):
                      <select name="margin_method" class="form-control">
-                        <option value="PVP"{if condition="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>Sobre el PVP</option>
-                        <option value="CST"{if condition="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>Sobre el coste</option>
+                        <option value="PVP"{if condition="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>&nbsp; Sobre el Precio de Venta &nbsp;</option>
+                        <option value="CST"{if condition="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>&nbsp; Sobre el Precio de Coste &nbsp;</option>
                      </select>
                   </div>
                </div>
                <div class="col-lg-3">
                   <div class="form-group">
-                     Cost average:
+                     Usar el Precio Medio de Compra como Coste para los Artículos que se compran:
                      <select name="cost_is_average" class="form-control">
                         <option value="1"{if condition="$GLOBALS['config2']['cost_is_average']=='1'"} selected='selected'{/if}>Si</option>
                         <option value="0"{if condition="$GLOBALS['config2']['cost_is_average']=='0'"} selected='selected'{/if}>No</option>
@@ -101,5 +103,60 @@
       </div>
    </div>
 </form>
+
+<!-- Modal -->
+   <div class="modal fade" id="modal_help_FS_MARGIN_METHOD" tabindex="-1" role="dialog" aria-labelledby="modal_help_FS_MARGIN_METHOD" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Método para calcular el Margen</h4>
+            </div>
+            <div class="modal-body">
+               El Precio de Venta (PVP) es igual al Coste (CST) mas el Margen Comercial (M), es decir:<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST + M<br />
+               <br />
+               El Margen como ratio se puede calcular de dos maneras:<br />
+               <br />
+               - Sobre el Precio de Venta<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Mv = ( PVP - CST ) / PVP <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Entonces, <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST / ( 1 - Mv ) &nbsp; y &nbsp; M = CST * Mv / ( 1 - Mv )<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>v</sub> = 100 * Mv <br />
+               <br />
+               - Sobre el Precio de Coste<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Mc = ( PVP - CST ) / CST <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; Entonces, <br />
+               <br />
+               &nbsp; &nbsp; &nbsp; PVP = CST * ( 1 + Mc ) &nbsp; y &nbsp; M = CST * Mc<br />
+               <br />
+               &nbsp; &nbsp; &nbsp; En porcentaje, &nbsp; m<sub>c</sub> = 100 * Mc <br />
+               <br />
+               <br />
+               Se dan las relaciones:<br />
+               <br />
+               &nbsp; Mv = Mc / ( 1 + Mc ) &nbsp; &nbsp; y &nbsp; &nbsp; Mc = Mv / ( 1 - Mv )<br />
+               <br />
+               <br />
+               Por otro lado, la Rentabilidad (R) de un Artículo es:<br />
+               <br />
+               &nbsp; R = M / CST &nbsp; &nbsp; y en porcentaje, &nbsp; &nbsp; r = 100 * R<br />
+               <br />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <!-- button type="button" class="btn btn-primary">Save changes</button -->
+            </div>
+         </div>
+      </div>
+   </div>
+<!-- Modal ENDS -->
 
 {include="footer"}
