@@ -117,7 +117,7 @@
                      </select>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                     {#FS_PROVINCIA#}:
+                     <div class="text-capitalize">{#FS_PROVINCIA#}:</div>
                      <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autocomplete="off"/>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
@@ -321,8 +321,6 @@
                </div>
             </div>
          </form>
-
-
          
          <div class="panel-group" id="panel_cuentas">
             {loop="$fsc->cuenta_banco->all_from_empresa()"}
@@ -367,8 +365,6 @@
                </div>
             </div>
          </div>
-
-
       </div>
    </div>
 </div>
