@@ -24,7 +24,6 @@ class documento extends fs_model
    
    protected function install() 
    {        
-      $this->clean_cache();
       return "INSERT INTO documentos (iddocumento,descripcion) VALUES
             (0,'No Asignado'),
             (1,'Cotización de Cliente'),
