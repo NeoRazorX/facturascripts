@@ -1,12 +1,14 @@
 {include="header"}
 
-<h3 class="text-center"><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span> con el artículo <a href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a></h3>
+<h3 class="text-center">
+   <span class="text-capitalize">{#FS_PRESUPUESTOS#}</span> con el artículo <a href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
+</h3>
 
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
          <tr>
-            <th class="text-left">Código + Cliente</th>
+            <th class="text-left text-capitalize">{#FS_PRESUPUESTO#} + Cliente</th>
             <th class="text-right">Cantidad</th>
             <th class="text-left">Artículo</th>
             <th class="text-right">Total+IVA</th>

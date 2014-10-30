@@ -54,9 +54,6 @@ class ventas_pedidos extends fs_controller
       else if( isset($_GET['codagente']) )
       {
          $this->template = 'extension/ventas_pedidos_agente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: agente';
          
          $agente = new agente();
          $this->agente = $agente->get($_GET['codagente']);
@@ -65,9 +62,6 @@ class ventas_pedidos extends fs_controller
       else if( isset($_GET['codcliente']) )
       {
          $this->template = 'extension/ventas_pedidos_cliente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: cliente';
          
          $cliente = new cliente();
          $this->cliente = $cliente->get($_GET['codcliente']);
@@ -76,9 +70,6 @@ class ventas_pedidos extends fs_controller
       else if( isset($_GET['ref']) )
       {
          $this->template = 'extension/ventas_pedidos_articulo';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: artículo';
          
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
@@ -88,11 +79,7 @@ class ventas_pedidos extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
          $this->share_extension();
-         
-         $this->buttons[] = new fs_button('b_nuevo_pedido', 'Nuevo', 'index.php?page=nueva_venta&tipo=pedido');
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Lineas');
          
          if( isset($_POST['delete']) )
          {

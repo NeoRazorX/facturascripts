@@ -536,7 +536,7 @@ class nueva_compra extends fs_controller
                         
                         if($articulo->costemedio == 0)
                         {
-                           $articulo->costemedio = $linea->pvpunitario;
+                           $articulo->costemedio = $linea->pvptotal/$linea->cantidad;
                            $articulo->save();
                         }
                         

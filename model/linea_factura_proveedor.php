@@ -343,11 +343,36 @@ class linea_factura_proveedor extends fs_model
       return $linealist;
    }
    
+   public function search($query='', $offset=0)
+   {
+      $linealist = array();
+      $query = strtolower( $this->no_html($query) );
+      
+      $sql = "SELECT * FROM ".$this->table_name." WHERE ";
+      if( is_numeric($query) )
+      {
+         $sql .= "referencia LIKE '%".$query."%' OR descripcion LIKE '%".$query."%'";
+      }
+      else
+      {
+         $buscar = str_replace(' ', '%', $query);
+         $sql .= "lower(referencia) LIKE '%".$buscar."%' OR lower(descripcion) LIKE '%".$buscar."%'";
+      }
+      $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+      
+      $lineas = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
+      if( $lineas )
+      {
+         foreach($lineas as $l)
+            $linealist[] = new linea_factura_proveedor($l);
+      }
+      return $linealist;
+   }
+   
    public function facturas_from_albaran($id)
    {
       $facturalist = array();
-      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name.
-              " WHERE idalbaran = ".$this->var2str($id).";");
+      $lineas = $this->db->select("SELECT DISTINCT idfactura FROM ".$this->table_name." WHERE idalbaran = ".$this->var2str($id).";");
       if($lineas)
       {
          $factura = new factura_proveedor();

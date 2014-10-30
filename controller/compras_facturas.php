@@ -55,11 +55,7 @@ class compras_facturas extends fs_controller
       }
       else if( isset($_GET['codagente']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/compras_facturas_agente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: agente';
          
          $agente = new agente();
          $this->agente = $agente->get($_GET['codagente']);
@@ -67,11 +63,7 @@ class compras_facturas extends fs_controller
       }
       else if( isset($_GET['codproveedor']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/compras_facturas_proveedor';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: proveedor';
          
          $proveedor = new proveedor();
          $this->proveedor = $proveedor->get($_GET['codproveedor']);
@@ -80,9 +72,6 @@ class compras_facturas extends fs_controller
       else if( isset($_GET['ref']) )
       {
          $this->template = 'extension/compras_facturas_articulo';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: artículo';
          
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
@@ -92,10 +81,7 @@ class compras_facturas extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
          $this->share_extension();
-         
-         $this->buttons[] = new fs_button('b_nueva', 'Nueva', 'index.php?page=nueva_compra&tipo=factura');
          
          if( isset($_GET['delete']) )
          {
@@ -194,23 +180,15 @@ class compras_facturas extends fs_controller
       return $url;
    }
    
-
    public function buscar_lineas()
    {
       /// cambiamos la plantilla HTML
       $this->template = 'ajax/compras_lineas_facturas';
 
       $this->buscar_lineas = $_POST['buscar_lineas'];
-      $linea = new linea_factura_cliente();
-
-      if( isset($_POST['codcliente']) )
-      {
-         $this->lineas = $linea->search_from_cliente2($_POST['codcliente'], $this->buscar_lineas, $_POST['buscar_lineas_o']);
-      }
-      else
-      {
-         $this->lineas = $linea->search($this->buscar_lineas);
-      }
+      $linea = new linea_factura_proveedor();
+      
+      $this->lineas = $linea->search($this->buscar_lineas);
    }
    
    private function share_extension()

@@ -128,30 +128,15 @@ class ventas_albaran extends fs_controller
                   $this->generar_factura();
             }
             
-            $this->buttons[] = new fs_button_img('b_imprimir', 'Imprimir', 'print.png');
-            
             /// comprobamos si se pueden enviar emails
             if( $this->empresa->can_send_mail() )
             {
-               $this->buttons[] = new fs_button_img('b_enviar', 'Enviar', 'send.png');
-               
                if( isset($_POST['email']) )
                {
                   $this->enviar_email();
                }
             }
-         
-            if( $this->albaran->ptefactura )
-            {
-               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
-            }
-            else if( isset($this->albaran->idfactura) )
-            {
-               $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
-            }
          }
-         
-         $this->buttons[] = new fs_button_img('b_remove_albaran', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de cliente no encontrado!");

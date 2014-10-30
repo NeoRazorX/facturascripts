@@ -519,21 +519,102 @@
 </span><span id="378" class="l"><a class="l" href="#378">378: </a>      <span class="php-keyword1">return</span> <span class="php-var">$linealist</span>;
 </span><span id="379" class="l"><a class="l" href="#379">379: </a>   }
 </span><span id="380" class="l"><a class="l" href="#380">380: </a>   
-</span><span id="381" class="l"><a class="l" href="#381">381: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_facturas_from_albaran" href="#_facturas_from_albaran">facturas_from_albaran</a>(<span class="php-var">$id</span>)
+</span><span id="381" class="l"><a class="l" href="#381">381: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search" href="#_search">search</a>(<span class="php-var">$query</span>=<span class="php-quote">''</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
 </span><span id="382" class="l"><a class="l" href="#382">382: </a>   {
-</span><span id="383" class="l"><a class="l" href="#383">383: </a>      <span class="php-var">$facturalist</span> = <span class="php-keyword1">array</span>();
-</span><span id="384" class="l"><a class="l" href="#384">384: </a>      <span class="php-var">$lineas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT DISTINCT idfactura FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
-</span><span id="385" class="l"><a class="l" href="#385">385: </a>              <span class="php-quote">&quot; WHERE idalbaran = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
-</span><span id="386" class="l"><a class="l" href="#386">386: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$lineas</span>)
-</span><span id="387" class="l"><a class="l" href="#387">387: </a>      {
-</span><span id="388" class="l"><a class="l" href="#388">388: </a>         <span class="php-var">$factura</span> = <span class="php-keyword1">new</span> factura_cliente();
-</span><span id="389" class="l"><a class="l" href="#389">389: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$lineas</span> <span class="php-keyword1">as</span> <span class="php-var">$l</span>)
-</span><span id="390" class="l"><a class="l" href="#390">390: </a>            <span class="php-var">$facturalist</span>[] = <span class="php-var">$factura</span>-&gt;get( <span class="php-var">$l</span>[<span class="php-quote">'idfactura'</span>] );
-</span><span id="391" class="l"><a class="l" href="#391">391: </a>      }
-</span><span id="392" class="l"><a class="l" href="#392">392: </a>      <span class="php-keyword1">return</span> <span class="php-var">$facturalist</span>;
-</span><span id="393" class="l"><a class="l" href="#393">393: </a>   }
-</span><span id="394" class="l"><a class="l" href="#394">394: </a>}
-</span><span id="395" class="l"><a class="l" href="#395">395: </a></span></code></pre>
+</span><span id="383" class="l"><a class="l" href="#383">383: </a>      <span class="php-var">$linealist</span> = <span class="php-keyword1">array</span>();
+</span><span id="384" class="l"><a class="l" href="#384">384: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
+</span><span id="385" class="l"><a class="l" href="#385">385: </a>      
+</span><span id="386" class="l"><a class="l" href="#386">386: </a>      <span class="php-var">$sql</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE &quot;</span>;
+</span><span id="387" class="l"><a class="l" href="#387">387: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_numeric</span>(<span class="php-var">$query</span>) )
+</span><span id="388" class="l"><a class="l" href="#388">388: </a>      {
+</span><span id="389" class="l"><a class="l" href="#389">389: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;referencia LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR descripcion LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%'&quot;</span>;
+</span><span id="390" class="l"><a class="l" href="#390">390: </a>      }
+</span><span id="391" class="l"><a class="l" href="#391">391: </a>      <span class="php-keyword1">else</span>
+</span><span id="392" class="l"><a class="l" href="#392">392: </a>      {
+</span><span id="393" class="l"><a class="l" href="#393">393: </a>         <span class="php-var">$buscar</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">' '</span>, <span class="php-quote">'%'</span>, <span class="php-var">$query</span>);
+</span><span id="394" class="l"><a class="l" href="#394">394: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;lower(referencia) LIKE '%&quot;</span>.<span class="php-var">$buscar</span>.<span class="php-quote">&quot;%' OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$buscar</span>.<span class="php-quote">&quot;%'&quot;</span>;
+</span><span id="395" class="l"><a class="l" href="#395">395: </a>      }
+</span><span id="396" class="l"><a class="l" href="#396">396: </a>      <span class="php-var">$sql</span> .= <span class="php-quote">&quot; ORDER BY idalbaran DESC, idlinea ASC&quot;</span>;
+</span><span id="397" class="l"><a class="l" href="#397">397: </a>      
+</span><span id="398" class="l"><a class="l" href="#398">398: </a>      <span class="php-var">$lineas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-var">$sql</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="399" class="l"><a class="l" href="#399">399: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$lineas</span> )
+</span><span id="400" class="l"><a class="l" href="#400">400: </a>      {
+</span><span id="401" class="l"><a class="l" href="#401">401: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$lineas</span> <span class="php-keyword1">as</span> <span class="php-var">$l</span>)
+</span><span id="402" class="l"><a class="l" href="#402">402: </a>            <span class="php-var">$linealist</span>[] = <span class="php-keyword1">new</span> linea_factura_cliente(<span class="php-var">$l</span>);
+</span><span id="403" class="l"><a class="l" href="#403">403: </a>      }
+</span><span id="404" class="l"><a class="l" href="#404">404: </a>      <span class="php-keyword1">return</span> <span class="php-var">$linealist</span>;
+</span><span id="405" class="l"><a class="l" href="#405">405: </a>   }
+</span><span id="406" class="l"><a class="l" href="#406">406: </a>   
+</span><span id="407" class="l"><a class="l" href="#407">407: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search_from_cliente" href="#_search_from_cliente">search_from_cliente</a>(<span class="php-var">$codcliente</span>, <span class="php-var">$query</span>=<span class="php-quote">''</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="408" class="l"><a class="l" href="#408">408: </a>   {
+</span><span id="409" class="l"><a class="l" href="#409">409: </a>      <span class="php-var">$linealist</span> = <span class="php-keyword1">array</span>();
+</span><span id="410" class="l"><a class="l" href="#410">410: </a>      <span class="php-var">$query</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$query</span>) );
+</span><span id="411" class="l"><a class="l" href="#411">411: </a>      
+</span><span id="412" class="l"><a class="l" href="#412">412: </a>      <span class="php-var">$sql</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idfactura IN
+</span></span><span id="413" class="l"><a class="l" href="#413">413: </a><span class="php-quote">         (SELECT idfactura FROM facturascli WHERE codcliente = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codcliente</span>).<span class="php-quote">&quot;) AND &quot;</span>;
+</span><span id="414" class="l"><a class="l" href="#414">414: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_numeric</span>(<span class="php-var">$query</span>) )
+</span><span id="415" class="l"><a class="l" href="#415">415: </a>      {
+</span><span id="416" class="l"><a class="l" href="#416">416: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;(referencia LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%' OR descripcion LIKE '%&quot;</span>.<span class="php-var">$query</span>.<span class="php-quote">&quot;%')&quot;</span>;
+</span><span id="417" class="l"><a class="l" href="#417">417: </a>      }
+</span><span id="418" class="l"><a class="l" href="#418">418: </a>      <span class="php-keyword1">else</span>
+</span><span id="419" class="l"><a class="l" href="#419">419: </a>      {
+</span><span id="420" class="l"><a class="l" href="#420">420: </a>         <span class="php-var">$buscar</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">' '</span>, <span class="php-quote">'%'</span>, <span class="php-var">$query</span>);
+</span><span id="421" class="l"><a class="l" href="#421">421: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;(lower(referencia) LIKE '%&quot;</span>.<span class="php-var">$buscar</span>.<span class="php-quote">&quot;%' OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$buscar</span>.<span class="php-quote">&quot;%')&quot;</span>;
+</span><span id="422" class="l"><a class="l" href="#422">422: </a>      }
+</span><span id="423" class="l"><a class="l" href="#423">423: </a>      <span class="php-var">$sql</span> .= <span class="php-quote">&quot; ORDER BY idfactura DESC, idlinea ASC&quot;</span>;
+</span><span id="424" class="l"><a class="l" href="#424">424: </a>      
+</span><span id="425" class="l"><a class="l" href="#425">425: </a>      <span class="php-var">$lineas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-var">$sql</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="426" class="l"><a class="l" href="#426">426: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$lineas</span> )
+</span><span id="427" class="l"><a class="l" href="#427">427: </a>      {
+</span><span id="428" class="l"><a class="l" href="#428">428: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$lineas</span> <span class="php-keyword1">as</span> <span class="php-var">$l</span>)
+</span><span id="429" class="l"><a class="l" href="#429">429: </a>            <span class="php-var">$linealist</span>[] = <span class="php-keyword1">new</span> linea_factura_cliente(<span class="php-var">$l</span>);
+</span><span id="430" class="l"><a class="l" href="#430">430: </a>      }
+</span><span id="431" class="l"><a class="l" href="#431">431: </a>      <span class="php-keyword1">return</span> <span class="php-var">$linealist</span>;
+</span><span id="432" class="l"><a class="l" href="#432">432: </a>   }
+</span><span id="433" class="l"><a class="l" href="#433">433: </a>   
+</span><span id="434" class="l"><a class="l" href="#434">434: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_search_from_cliente2" href="#_search_from_cliente2">search_from_cliente2</a>(<span class="php-var">$codcliente</span>, <span class="php-var">$ref</span>=<span class="php-quote">''</span>, <span class="php-var">$obs</span>=<span class="php-quote">''</span>, <span class="php-var">$offset</span>=<span class="php-num">0</span>)
+</span><span id="435" class="l"><a class="l" href="#435">435: </a>   {
+</span><span id="436" class="l"><a class="l" href="#436">436: </a>      <span class="php-var">$linealist</span> = <span class="php-keyword1">array</span>();
+</span><span id="437" class="l"><a class="l" href="#437">437: </a>      <span class="php-var">$ref</span> = <span class="php-keyword2">strtolower</span>( <span class="php-var">$this</span>-&gt;no_html(<span class="php-var">$ref</span>) );
+</span><span id="438" class="l"><a class="l" href="#438">438: </a>      
+</span><span id="439" class="l"><a class="l" href="#439">439: </a>      <span class="php-var">$sql</span> = <span class="php-quote">&quot;SELECT * FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.<span class="php-quote">&quot; WHERE idfactura IN
+</span></span><span id="440" class="l"><a class="l" href="#440">440: </a><span class="php-quote">         (SELECT idfactura FROM facturascli WHERE codcliente = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$codcliente</span>).<span class="php-quote">&quot;
+</span></span><span id="441" class="l"><a class="l" href="#441">441: </a><span class="php-quote">         AND lower(observaciones) LIKE '&quot;</span>.<span class="php-keyword2">strtolower</span>(<span class="php-var">$obs</span>).<span class="php-quote">&quot;%') AND &quot;</span>;
+</span><span id="442" class="l"><a class="l" href="#442">442: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_numeric</span>(<span class="php-var">$ref</span>) )
+</span><span id="443" class="l"><a class="l" href="#443">443: </a>      {
+</span><span id="444" class="l"><a class="l" href="#444">444: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;(referencia LIKE '%&quot;</span>.<span class="php-var">$ref</span>.<span class="php-quote">&quot;%' OR descripcion LIKE '%&quot;</span>.<span class="php-var">$ref</span>.<span class="php-quote">&quot;%')&quot;</span>;
+</span><span id="445" class="l"><a class="l" href="#445">445: </a>      }
+</span><span id="446" class="l"><a class="l" href="#446">446: </a>      <span class="php-keyword1">else</span>
+</span><span id="447" class="l"><a class="l" href="#447">447: </a>      {
+</span><span id="448" class="l"><a class="l" href="#448">448: </a>         <span class="php-var">$buscar</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">' '</span>, <span class="php-quote">'%'</span>, <span class="php-var">$ref</span>);
+</span><span id="449" class="l"><a class="l" href="#449">449: </a>         <span class="php-var">$sql</span> .= <span class="php-quote">&quot;(lower(referencia) LIKE '%&quot;</span>.<span class="php-var">$ref</span>.<span class="php-quote">&quot;%' OR lower(descripcion) LIKE '%&quot;</span>.<span class="php-var">$ref</span>.<span class="php-quote">&quot;%')&quot;</span>;
+</span><span id="450" class="l"><a class="l" href="#450">450: </a>      }
+</span><span id="451" class="l"><a class="l" href="#451">451: </a>      <span class="php-var">$sql</span> .= <span class="php-quote">&quot; ORDER BY idfactura DESC, idlinea ASC&quot;</span>;
+</span><span id="452" class="l"><a class="l" href="#452">452: </a>      
+</span><span id="453" class="l"><a class="l" href="#453">453: </a>      <span class="php-var">$lineas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select_limit(<span class="php-var">$sql</span>, FS_ITEM_LIMIT, <span class="php-var">$offset</span>);
+</span><span id="454" class="l"><a class="l" href="#454">454: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$lineas</span> )
+</span><span id="455" class="l"><a class="l" href="#455">455: </a>      {
+</span><span id="456" class="l"><a class="l" href="#456">456: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$lineas</span> <span class="php-keyword1">as</span> <span class="php-var">$l</span>)
+</span><span id="457" class="l"><a class="l" href="#457">457: </a>            <span class="php-var">$linealist</span>[] = <span class="php-keyword1">new</span> linea_factura_cliente(<span class="php-var">$l</span>);
+</span><span id="458" class="l"><a class="l" href="#458">458: </a>      }
+</span><span id="459" class="l"><a class="l" href="#459">459: </a>      <span class="php-keyword1">return</span> <span class="php-var">$linealist</span>;
+</span><span id="460" class="l"><a class="l" href="#460">460: </a>   }
+</span><span id="461" class="l"><a class="l" href="#461">461: </a>   
+</span><span id="462" class="l"><a class="l" href="#462">462: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_facturas_from_albaran" href="#_facturas_from_albaran">facturas_from_albaran</a>(<span class="php-var">$id</span>)
+</span><span id="463" class="l"><a class="l" href="#463">463: </a>   {
+</span><span id="464" class="l"><a class="l" href="#464">464: </a>      <span class="php-var">$facturalist</span> = <span class="php-keyword1">array</span>();
+</span><span id="465" class="l"><a class="l" href="#465">465: </a>      <span class="php-var">$lineas</span> = <span class="php-var">$this</span>-&gt;db-&gt;select(<span class="php-quote">&quot;SELECT DISTINCT idfactura FROM &quot;</span>.<span class="php-var">$this</span>-&gt;table_name.
+</span><span id="466" class="l"><a class="l" href="#466">466: </a>              <span class="php-quote">&quot; WHERE idalbaran = &quot;</span>.<span class="php-var">$this</span>-&gt;var2str(<span class="php-var">$id</span>).<span class="php-quote">&quot;;&quot;</span>);
+</span><span id="467" class="l"><a class="l" href="#467">467: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$lineas</span>)
+</span><span id="468" class="l"><a class="l" href="#468">468: </a>      {
+</span><span id="469" class="l"><a class="l" href="#469">469: </a>         <span class="php-var">$factura</span> = <span class="php-keyword1">new</span> factura_cliente();
+</span><span id="470" class="l"><a class="l" href="#470">470: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$lineas</span> <span class="php-keyword1">as</span> <span class="php-var">$l</span>)
+</span><span id="471" class="l"><a class="l" href="#471">471: </a>            <span class="php-var">$facturalist</span>[] = <span class="php-var">$factura</span>-&gt;get( <span class="php-var">$l</span>[<span class="php-quote">'idfactura'</span>] );
+</span><span id="472" class="l"><a class="l" href="#472">472: </a>      }
+</span><span id="473" class="l"><a class="l" href="#473">473: </a>      <span class="php-keyword1">return</span> <span class="php-var">$facturalist</span>;
+</span><span id="474" class="l"><a class="l" href="#474">474: </a>   }
+</span><span id="475" class="l"><a class="l" href="#475">475: </a>}
+</span><span id="476" class="l"><a class="l" href="#476">476: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

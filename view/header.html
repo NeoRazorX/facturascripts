@@ -112,19 +112,10 @@
                      {if condition="$fsc->user->codagente"}
                      <li><a href="{$fsc->user->get_agente_url()}">Empleado: {$fsc->user->codagente}</a></li>
                      {/if}
-                     {if condition="count($fsc->user->all())>1 AND !FS_DEMO"}
-                        <li class="divider"></li>
-                        {loop name="$fsc->user->all()"}
-                           {if condition="$value->nick != $fsc->user->nick"}
-                           <li><a href="index.php?logout=TRUE&amp;nlogin={$value->nick}">{$value->nick}</a></li>
-                           {/if}
-                        {/loop}
-                     {/if}
                      <li class="divider"></li>
                      <li>
                         <a href="{$fsc->url()}&logout=TRUE">
-                           <span class="glyphicon glyphicon-log-out"></span> &nbsp;
-                           Cerrar sesión
+                           <span class="glyphicon glyphicon-log-out"></span> &nbsp; Cerrar sesión
                         </a>
                      </li>
                   </ul>

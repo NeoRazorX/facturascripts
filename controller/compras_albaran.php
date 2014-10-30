@@ -112,20 +112,7 @@ class compras_albaran extends fs_controller
             
             if( isset($_POST['actualizar_precios']) )
                $this->actualizar_precios();
-            
-            if( $this->albaran->ptefactura )
-            {
-               $this->buttons[] = new fs_button('b_facturar', 'Generar factura', $this->url()."&facturar=TRUE&petid=".$this->random_string());
-            }
-            else if( isset($this->albaran->idfactura) )
-            {
-               $this->buttons[] = new fs_button('b_ver_factura', 'Factura', $this->albaran->factura_url());
-            }
-            
-            $this->buttons[] = new fs_button('b_precios', 'Precios');
          }
-         
-         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡".FS_ALBARAN." de proveedor no encontrado!");

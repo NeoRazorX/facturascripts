@@ -55,10 +55,6 @@
          event.preventDefault();
          $("#modal_eliminar").modal('show');
       });
-      $("#b_imprimir").click(function(event) {
-         event.preventDefault();
-         $("#modal_imprimir_albaran").modal('show');
-      });
    });
 </script>
 
@@ -74,9 +70,6 @@
             </a>
             
             <div class="btn-group">
-               <a id="b_imprimir" class="btn btn-sm btn-default">
-                  <span class="glyphicon glyphicon-print"></span> &nbsp; Imprimir
-               </a>
                {if condition="$fsc->albaran->ptefactura"}
                <a class="btn btn-sm btn-default" href="{$fsc->url()}&facturar=TRUE&petid={$fsc->random_string()}">
                   <span class="glyphicon glyphicon-paperclip"></span> &nbsp; Aprobar
@@ -128,7 +121,7 @@
       <div class="row">
          <div class="col-lg-12">
             <div class="form-group">
-               Cliente actual:
+               Proveedor actual:
                <input class="form-control" type="text" name="ac_proveedor" id="ac_proveedor" value="{$fsc->albaran->nombre}"
                       placeholder="Buscar" autocomplete="off"/>
             </div>
@@ -419,28 +412,6 @@
                   </button>
                </div>
             </form>
-         </div>
-      </div>
-   </div>
-</div>
-
-<div class="modal fade" id="modal_imprimir_albaran">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">Imprimir {#FS_ALBARAN#}</h3>
-         </div>
-         <div class="modal-body">
-            <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; <span class="text-capitalize">{#FS_ALBARAN#}</span> simple
-            </a>
-            
-            <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; Cuartilla sin logotipo
-            </a>
          </div>
       </div>
    </div>

@@ -55,7 +55,6 @@ class ventas_albaranes extends fs_controller
       }
       else if( isset($_GET['codagente']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_albaranes_agente';
          
          $agente = new agente();
@@ -64,7 +63,6 @@ class ventas_albaranes extends fs_controller
       }
       else if( isset($_GET['codcliente']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_albaranes_cliente';
          
          $cliente = new cliente();
@@ -74,9 +72,6 @@ class ventas_albaranes extends fs_controller
       else if( isset($_GET['ref']) )
       {
          $this->template = 'extension/ventas_albaranes_articulo';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: artículo';
          
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
@@ -86,12 +81,7 @@ class ventas_albaranes extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
          $this->share_extension();
-         
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'Nuevo', 'index.php?page=nueva_venta&tipo=albaran');
-         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=ventas_agrupar_albaranes');
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
          
          if( isset($_POST['delete']) )
          {

@@ -55,7 +55,6 @@ class ventas_facturas extends fs_controller
       }
       else if( isset($_GET['codagente']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_facturas_agente';
          
          $agente = new agente();
@@ -64,7 +63,6 @@ class ventas_facturas extends fs_controller
       }
       else if( isset($_GET['codcliente']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/ventas_facturas_cliente';
          
          $cliente = new cliente();
@@ -74,9 +72,6 @@ class ventas_facturas extends fs_controller
       else if( isset($_GET['ref']) )
       {
          $this->template = 'extension/ventas_facturas_articulo';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: artículo';
          
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
@@ -86,7 +81,6 @@ class ventas_facturas extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
          $this->share_extension();
          
          if( isset($_GET['delete']) )
@@ -104,9 +98,6 @@ class ventas_facturas extends fs_controller
             else
                $this->new_error_msg("¡Factura no encontrada!");
          }
-         
-         $this->buttons[] = new fs_button('b_nueva', 'Nueva', 'index.php?page=nueva_venta&tipo=factura');
-         $this->buttons[] = new fs_button('b_huecos', 'Huecos');
          
          if($this->query != '')
          {

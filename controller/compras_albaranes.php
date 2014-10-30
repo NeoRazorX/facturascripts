@@ -56,9 +56,6 @@ class compras_albaranes extends fs_controller
       else if( isset($_GET['codagente']) )
       {
          $this->template = 'extension/compras_albaranes_agente';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: agente';
          
          $agente = new agente();
          $this->agente = $agente->get($_GET['codagente']);
@@ -66,7 +63,6 @@ class compras_albaranes extends fs_controller
       }
       else if( isset($_GET['codproveedor']) )
       {
-         $this->show_fs_toolbar = FALSE;
          $this->template = 'extension/compras_albaranes_proveedor';
          
          $proveedor = new proveedor();
@@ -76,9 +72,6 @@ class compras_albaranes extends fs_controller
       else if( isset($_GET['ref']) )
       {
          $this->template = 'extension/compras_albaranes_articulo';
-         $this->ppage = clone $this->page;
-         $this->page->show_on_menu = FALSE;
-         $this->page->title = 'Filtro: artículo';
          
          $articulo = new articulo();
          $this->articulo = $articulo->get($_GET['ref']);
@@ -88,12 +81,7 @@ class compras_albaranes extends fs_controller
       }
       else
       {
-         $this->custom_search = TRUE;
          $this->share_extension();
-         
-         $this->buttons[] = new fs_button('b_nuevo_albaran', 'Nuevo', 'index.php?page=nueva_compra&tipo=albaran');
-         $this->buttons[] = new fs_button('b_agrupar_albaranes', 'Agrupar', 'index.php?page=compras_agrupar_albaranes');
-         $this->buttons[] = new fs_button('b_buscar_lineas', 'Líneas');
          
          if( isset($_POST['delete']) )
          {

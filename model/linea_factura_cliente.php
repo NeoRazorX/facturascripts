@@ -459,7 +459,6 @@ class linea_factura_cliente extends fs_model
       return $linealist;
    }
    
-   
    public function facturas_from_albaran($id)
    {
       $facturalist = array();

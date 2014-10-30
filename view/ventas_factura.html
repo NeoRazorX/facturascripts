@@ -151,6 +151,12 @@
       <div class="row">
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
+               Número:
+               <input class="form-control" type="text" name="numero" value="{$fsc->factura->numero}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
                Número 2:
                <input class="form-control" type="text" name="numero2" value="{$fsc->factura->numero2}"/>
             </div>
@@ -174,7 +180,7 @@
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-4 col-md-4 col-sm-4">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Empleado:
                <div class="form-control">

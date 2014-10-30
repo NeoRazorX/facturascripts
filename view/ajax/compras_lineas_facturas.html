@@ -14,9 +14,9 @@
 <table class="table table-hover">
    <thead>
       <tr>
-         <th class="text-left text-capitalize">{#FS_ALBARAN#}</th>
-         <th class="text-left">Artículo</th>
+         <th class="text-left text-capitalize">Factura</th>
          <th class="text-right">Cantidad</th>
+         <th class="text-left">Artículo</th>
          <th class="text-right">Total+IVA</th>
          <th class="text-right">Fecha</th>
       </tr>
@@ -24,8 +24,8 @@
    {loop="$fsc->lineas"}
    <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
       <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
-      <td><a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
       <td class="text-right">{$value->cantidad}</td>
+      <td><a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
       <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
       <td class="text-right">{$value->show_fecha()}</td>
    </tr>
