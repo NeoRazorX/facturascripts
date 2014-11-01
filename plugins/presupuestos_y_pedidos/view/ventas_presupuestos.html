@@ -99,11 +99,12 @@
             <th class="text-left">Observaciones</th>
             <th class="text-right">Total</th>
             <th class="text-right">Fecha</th>
+            <th class="text-right">Fecha validez</th>
             <th class="text-right">Hora</th>
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$value->finoferta<$fsc->today()"} class="bg-danger"{/if}>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$fsc->today()>$value->finoferta"} class="bg-danger"{/if}>
          <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>
@@ -114,6 +115,7 @@
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha}</td>
+         <td class="text-right">{$value->finoferta}</td>
          <td class="text-right">{$value->show_hora()}</td>
       </tr>
       {else}

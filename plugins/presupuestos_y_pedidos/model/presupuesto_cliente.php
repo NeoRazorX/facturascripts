@@ -222,7 +222,25 @@ class presupuesto_cliente extends fs_model
    public function get_lineas()
    {
       $linea = new linea_presupuesto_cliente();
-      return $linea->all_from_presupuesto($this->idpresupuesto);
+      $lineas = $linea->all_from_presupuesto($this->idpresupuesto);
+      
+      if( is_null($this->idpedido) )
+      {
+         foreach( $lineas as $l )
+         {
+            $db_articulo = $this->db->select("SELECT * FROM articulos WHERE referencia = ".$this->var2str($l->referencia)." ORDER BY referencia ASC;");
+            
+            foreach( $db_articulo as $a)
+            {
+               if (new DateTime($a["factualizado"]) > new DateTime($this->fecha))
+               {
+                  $this->new_error_msg("Artículo ".$l->referencia." actualizado desde la elaboración del ".FS_PRESUPUESTO.".");
+               }
+            }
+         }
+      }
+      
+      return $lineas;
    }
    
    public function get($id)
