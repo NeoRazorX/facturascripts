@@ -757,6 +757,7 @@ class nueva_venta extends fs_controller
       if($continuar)
       {
          $presupuesto->fecha = $_POST['fecha'];
+         $presupuesto->finoferta = date("Y-m-d", strtotime($_POST['fecha']." +30 days"));
          $presupuesto->codalmacen = $almacen->codalmacen;
          $presupuesto->codejercicio = $ejercicio->codejercicio;
          $presupuesto->codserie = $serie->codserie;

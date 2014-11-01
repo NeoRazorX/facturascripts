@@ -90,6 +90,10 @@ class ventas_presupuesto extends fs_controller
       else if( isset($_GET['id']) )
       {
          $this->presupuesto = $presupuesto->get($_GET['id']);
+         if (new DateTime() > new DateTime($this->presupuesto->finoferta))
+         {
+            $this->new_advice("Fecha validez del ".FS_PRESUPUESTO." vencida.");
+         }
       }
       
       if( $this->presupuesto AND isset($_GET['imprimir']) )
@@ -161,6 +165,7 @@ class ventas_presupuesto extends fs_controller
          if($eje0)
          {
             $this->presupuesto->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
+            $this->presupuesto->finoferta = $_POST['finoferta'];
             $this->presupuesto->hora = $_POST['hora'];
          }
          else

@@ -107,11 +107,6 @@
       <defecto>now()</defecto>
    </columna>
    <columna>
-      <nombre>fechasalida</nombre>
-      <tipo>date</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
       <nombre>finoferta</nombre>
       <tipo>date</tipo>
       <nulo>YES</nulo>

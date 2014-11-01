@@ -59,6 +59,7 @@ class presupuesto_cliente extends fs_model
    public $provincia;
    public $apartado;
    public $fecha;
+   public $finoferta;
    public $hora;
    public $neto;
    public $total;
@@ -101,6 +102,7 @@ class presupuesto_cliente extends fs_model
          $this->provincia = $p['provincia'];
          $this->apartado = $p['apartado'];
          $this->fecha = Date('d-m-Y', strtotime($p['fecha']));
+         $this->finoferta = Date('d-m-Y', strtotime($p['finoferta']));
 
          $this->hora = '00:00:00';
          if( !is_null($p['hora']) )
@@ -144,6 +146,7 @@ class presupuesto_cliente extends fs_model
          $this->provincia = NULL;
          $this->apartado = NULL;
          $this->fecha = Date('d-m-Y');
+         $this->finoferta = date("d-m-Y", strtotime(Date('d-m-Y')." +30 days"));
          $this->hora = Date('H:i:s');
          $this->neto = 0;
          $this->total = 0;
@@ -362,10 +365,10 @@ class presupuesto_cliente extends fs_model
                codpais = ".$this->var2str($this->codpais).", codpostal = ".$this->var2str($this->codpostal).",
                codserie = ".$this->var2str($this->codserie).", direccion = ".$this->var2str($this->direccion).",
                editable = ".$this->var2str($this->editable).", fecha = ".$this->var2str($this->fecha).",
-               hora = ".$this->var2str($this->hora).", idpedido = ".$this->var2str($this->idpedido).",
-               irpf = ".$this->var2str($this->irpf).", neto = ".$this->var2str($this->neto).",
-               nombrecliente = ".$this->var2str($this->nombrecliente).", numero = ".$this->var2str($this->numero).",
-               numero2 = ".$this->var2str($this->numero2).",
+               finoferta = ".$this->var2str($this->finoferta).", hora = ".$this->var2str($this->hora).",
+               idpedido = ".$this->var2str($this->idpedido).", irpf = ".$this->var2str($this->irpf).",
+               neto = ".$this->var2str($this->neto).",nombrecliente = ".$this->var2str($this->nombrecliente).",
+               numero = ".$this->var2str($this->numero).", numero2 = ".$this->var2str($this->numero2).",
                observaciones = ".$this->var2str($this->observaciones).", porcomision = ".$this->var2str($this->porcomision).",
                provincia = ".$this->var2str($this->provincia).", recfinanciero = ".$this->var2str($this->recfinanciero).",
                tasaconv = ".$this->var2str($this->tasaconv).", total = ".$this->var2str($this->total).",
@@ -378,7 +381,7 @@ class presupuesto_cliente extends fs_model
          {
             $this->new_codigo();
             $sql = "INSERT INTO ".$this->table_name." (apartado,cifnif,ciudad,codagente,codalmacen,codcliente,coddir,
-               coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,direccion,editable,fecha,hora,idpedido,irpf,neto,
+               coddivisa,codejercicio,codigo,codpais,codpago,codpostal,codserie,direccion,editable,fecha,finoferta,hora,idpedido,irpf,neto,
                nombrecliente,numero,observaciones,porcomision,provincia,recfinanciero,tasaconv,total,totaleuros,totalirpf,
                totaliva,totalrecargo,numero2) VALUES (".$this->var2str($this->apartado).",".$this->var2str($this->cifnif).",
                ".$this->var2str($this->ciudad).",".$this->var2str($this->codagente).",".$this->var2str($this->codalmacen).",
@@ -386,8 +389,8 @@ class presupuesto_cliente extends fs_model
                ".$this->var2str($this->coddir).",".$this->var2str($this->coddivisa).",".$this->var2str($this->codejercicio).",
                ".$this->var2str($this->codigo).",".$this->var2str($this->codpais).",".$this->var2str($this->codpago).",
                ".$this->var2str($this->codpostal).",".$this->var2str($this->codserie).",".$this->var2str($this->direccion).",
-               ".$this->var2str($this->editable).",".$this->var2str($this->fecha).",".$this->var2str($this->hora).",
-               ".$this->var2str($this->idpedido).",".$this->var2str($this->irpf).",
+               ".$this->var2str($this->editable).",".$this->var2str($this->fecha).",".$this->var2str($this->finoferta).",
+               ".$this->var2str($this->hora).",".$this->var2str($this->idpedido).",".$this->var2str($this->irpf).",
                ".$this->var2str($this->neto).",".$this->var2str($this->nombrecliente).",".$this->var2str($this->numero).",
                ".$this->var2str($this->observaciones).",".$this->var2str($this->porcomision).",".$this->var2str($this->provincia).",
                ".$this->var2str($this->recfinanciero).",".$this->var2str($this->tasaconv).",".$this->var2str($this->total).",

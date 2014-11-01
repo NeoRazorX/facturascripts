@@ -159,12 +159,18 @@
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
+               Fecha validez:
+               <input class="form-control datepicker" type="text" name="finoferta" value="{$fsc->presupuesto->finoferta}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
                Hora:
                <input class="form-control" type="text" name="hora" value="{$fsc->presupuesto->hora}" autocomplete="off"/>
             </div>
          </div>
          {if condition="$fsc->agente"}
-         <div class="col-lg-4 col-md-4 col-sm-4">
+         <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                Empleado:
                <div class="form-control">
