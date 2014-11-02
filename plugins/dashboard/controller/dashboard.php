@@ -39,6 +39,20 @@ class dashboard extends fs_controller
       {
          $this->new_error_msg('Error al guardar la extensión.');
       }
+      
+      /// Guardamos la extensión
+      $extension = array(
+          'from' => __CLASS__,
+          'to' => 'dashboard',
+          'type' => 'head',
+          'name' => 'carousel.css',
+          'text' => '<link href="plugins/dashboard/view/css/carousel.css" rel="stylesheet" type="text/css" />'
+      );
+      $fsext = new fs_extension();
+      if( !$fsext->array_save($extension) )
+      {
+         $this->new_error_msg('Error al guardar la extensión.');
+      }
    }
    
    /* Devuelve el número total de presupuestos hechos */

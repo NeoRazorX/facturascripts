@@ -5,91 +5,68 @@
          
          <!-- Inicio Fila 1 de widgets -->
          <div class="row">
-            <!-- Widget 1x1 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="alert alert-info" role="alert">
-                  <div>
-                     <h4><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h4>
-                     <p>
-                        <span class="badge pull-left">{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
-                        <span class="badge pull-right">{loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</span>
-                     </p>
+         <!-- Carousel
+            ================================================== -->
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+              <!-- Indicators -->
+              <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+              </ol>
+              <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Personalización de páginas">
+                  <div class="container">
+                    <div class="carousel-caption">
+                      <h1>Personalización de páginas</h1>
+                      <p>Puedes activar y desactivar páginas desde el menú "Admin -> Páginas" y quedarte con aquellos elementos que realmente necesites.</p>
+                      <p>También puedes hacer que sólo algunos usuarios puedan acceder a ciertas páginas y delimitar sus tareas.</p>
+                      <p><a class="btn btn-lg btn-primary" href="index.php?page=admin_pages" role="button">Ver administración de páginas</a></p>
+                    </div>
                   </div>
-                  </br></br>
-                  <div class="text-center">
-                     <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" style="width: 64px; height: 64px;">
-                     <a class="alert-link" href="index.php?page=ventas_presupuestos&pendientes=TRUE">
-                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                     </a>
+                </div>
+                <div class="item">
+                  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAGZmZgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Plugins para personalización">
+                  <div class="container">
+                    <div class="carousel-caption">
+                      <h1>Plugins para personalización</h1>
+                      <p>Puedes personalizar tu instalación de FacturaScripts mediante su sistema de plugins, gratuitos y/o desarrollados a medida para tus necesidades.</p>
+                      <p>Ya sea con plugins sectoriales o modificaciones personalizadas, tu sistema de facturación se adaptará a lo que realmente necesitas.</p>
+                      <p><a class="btn btn-lg btn-primary" href="index.php?page=admin_plugins" role="button">Ver plugins disponibles</a></p>
+                    </div>
                   </div>
-               </div>
+                </div>
+                <div class="item">
+                  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAFVVVQAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+                  <div class="container">
+                    <div class="carousel-caption">
+                      <h1>Más...</h1>
+                      <p>Más cosas...</p>
+                      <p><a class="btn btn-lg btn-primary" href="#" role="button">Ir...</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Anterior</span>
+              </a>
+              <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Siguiente</span>
+              </a>
             </div>
-            <!-- Widget 1x2 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="alert alert-success" role="alert">
-                  <div>
-                     <h4><span class="text-capitalize">{#FS_PEDIDOS#}</span></h4>
-                     <p>
-                        <span class="badge pull-left">{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes</span>
-                        <span class="badge pull-right">{loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</span>
-                     </p>
-                  </div>
-                  </br></br>
-                  <div class="text-center">
-                     <span class="glyphicon glyphicon-list-alt"></span>
-                     <a class="alert-link" href="index.php?page=ventas_pedidos&pendientes=TRUE">
-                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                     </a>
-                  </div>
-               </div>
-            </div>
-            <!-- Widget 1x3 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="alert alert-warning" role="alert">
-                  <div>
-                     <h4><span class="text-capitalize">{#FS_ALBARANES#}</span></h4>
-                     <p>
-                        <span class="badge pull-left">{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes</span>
-                        <span class="badge pull-right">{loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</span>
-                     </p>
-                  </div>
-                  </br></br>
-                  <div class="text-center">
-                     <span class="glyphicon glyphicon-list-alt"></span>
-                     <a class="alert-link" href="index.php?page=ventas_albaranes&pendientes=TRUE">
-                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                     </a>
-                  </div>
-               </div>
-            </div>
-            <!-- Widget 1x4 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="alert alert-danger" role="alert">
-                  <div>
-                     <h4><span class="text-capitalize">Facturas</span></h4>
-                     <p>
-                        <span class="badge pull-left">{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes</span>
-                        <span class="badge pull-right">{loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</span>
-                     </p>
-                  </div>
-                  </br></br>
-                  <div class="text-center">
-                     <span class="glyphicon glyphicon-list-alt"></span>
-                     <a class="alert-link" href="index.php?page=ventas_facturas&sinpagar=TRUE">
-                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                     </a>
-                  </div>
-               </div>
-            </div>
+         <!-- /.carousel -->
          </div>
          <!-- Fin Fila 1 de widgets -->
          <!-- Inicio Fila 2 de widgets -->
          <div class="row">
             <!-- Widget 2x1 -->
-            <div class="col-lg-3 col-xs-6">
+            <div class="col-lg-3 col-sm-6 col-xs-12">
                <div class="bs-callout bs-callout-info">
                   <div class="inner">
-                     <h4><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span></h4>
+                     <h4><span class="text-capitalize"><strong>{#FS_PRESUPUESTOS#}</strong></span></h4>
                      <p>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
@@ -102,10 +79,10 @@
                </div>
             </div>
             <!-- Widget 2x2 -->
-            <div class="col-lg-3 col-xs-6">
+            <div class="col-lg-3 col-sm-6 col-xs-12">
                <div class="bs-callout bs-callout-success">
                   <div class="inner">
-                     <h4><span class="text-capitalize">{#FS_PEDIDOS#}</span></h4>
+                     <h4><span class="text-capitalize"><strong>{#FS_PEDIDOS#}</strong></span></h4>
                      <p>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
@@ -118,10 +95,10 @@
                </div>
             </div>
             <!-- Widget 2x3 -->
-            <div class="col-lg-3 col-xs-6">
+            <div class="col-lg-3 col-sm-6 col-xs-12">
                <div class="bs-callout bs-callout-warning">
                   <div class="inner">
-                     <h4><span class="text-capitalize">{#FS_ALBARANES#}</span></h4>
+                     <h4><span class="text-capitalize"><strong>{#FS_ALBARANES#}</strong></span></h4>
                      <p>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
@@ -134,10 +111,10 @@
                </div>
             </div>
             <!-- Widget 2x4 -->
-            <div class="col-lg-3 col-xs-6">
+            <div class="col-lg-3 col-sm-6 col-xs-12">
                <div class="bs-callout bs-callout-danger">
                   <div class="inner">
-                     <h4><span class="text-capitalize">Facturas</span></h4>
+                     <h4><span class="text-capitalize"><strong>Facturas</strong></span></h4>
                      <p>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</p>
                   </div>
                   <div class="text-center">
@@ -154,70 +131,66 @@
          <!-- Inicio Fila 3 de widgets -->
          <div class="row">
             <!-- Widget 3x1 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="panel panel-info">
-                  <div class="panel-heading"><span class="text-capitalize">Artículos</span></div>
-                  <div class="panel-body">
-                     <p>
-                        <h4>{loop="$fsc->num_articulos()"}{$value["total"]}{/loop} artículos</h4>
-                        <div class="text-center">
-                           <span class="glyphicon glyphicon-list-alt"></span>
-                           <a href="index.php?page=ventas_articulos">
-                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                           </a>
-                        </div>
-                     </p>
+            <div class="col-lg-3 col-sm-6 col-xs-12">
+               <div class="bs-callout bs-callout-info">
+                  <div class="inner">
+                     <h4><span class="text-capitalize"><strong>{#FS_PRESUPUESTOS#}</strong></span></h4>
+                     <p>{loop="$fsc->num_presupuestos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_presupuestos()"}{$value["total"]}{/loop} aprobados</p>
+                  </div>
+                  <div class="text-center">
+                     </br>
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
                </div>
             </div>
             <!-- Widget 3x2 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="panel panel-success">
-                  <div class="panel-heading"><span class="text-capitalize">Clientes</span></div>
-                  <div class="panel-body">
-                     <p>
-                        <h4>{loop="$fsc->num_clientes()"}{$value["total"]}{/loop} clientes</h4>
-                        <div class="text-center">
-                           <span class="glyphicon glyphicon-list-alt"></span>
-                           <a href="index.php?page=ventas_clientes">
-                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                           </a>
-                        </div>
-                     </p>
+            <div class="col-lg-3 col-sm-6 col-xs-12">
+               <div class="bs-callout bs-callout-success">
+                  <div class="inner">
+                     <h4><span class="text-capitalize"><strong>{#FS_PEDIDOS#}</strong></span></h4>
+                     <p>{loop="$fsc->num_pedidos_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_pedidos()"}{$value["total"]}{/loop} aprobados</p>
+                  </div>
+                  <div class="text-center">
+                     </br>
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_pedidos&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
                </div>
             </div>
             <!-- Widget 3x3 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="panel panel-warning">
-                  <div class="panel-heading"><span class="text-capitalize">Contabilidad</span></div>
-                  <div class="panel-body">
-                     <p>
-                        <h4>53</h4>
-                        <div class="text-center">
-                           <span class="glyphicon glyphicon-list-alt"></span>
-                           <a href="index.php?page=informe_contabilidad">
-                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                           </a>
-                        </div>
-                     </p>
+            <div class="col-lg-3 col-sm-6 col-xs-12">
+               <div class="bs-callout bs-callout-warning">
+                  <div class="inner">
+                     <h4><span class="text-capitalize"><strong>{#FS_ALBARANES#}</strong></span></h4>
+                     <p>{loop="$fsc->num_albaranes_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_albaranes()"}{$value["total"]}{/loop} aprobados</p>
+                  </div>
+                  <div class="text-center">
+                     </br>
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_albaranes&pendientes=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
                </div>
             </div>
             <!-- Widget 3x4 -->
-            <div class="col-lg-3 col-xs-6">
-               <div class="panel panel-danger">
-                  <div class="panel-heading">Informes de venta</div>
-                  <div class="panel-body">
-                     <p>
-                        <h4>65</h4>
-                        <div class="text-center">
-                           <span class="glyphicon glyphicon-list-alt"></span>
-                           <a href="index.php?page=informe_facturas">
-                              Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
-                           </a>
-                        </div>
-                     </p>
+            <div class="col-lg-3 col-sm-6 col-xs-12">
+               <div class="bs-callout bs-callout-danger">
+                  <div class="inner">
+                     <h4><span class="text-capitalize"><strong>Facturas</strong></span></h4>
+                     <p>{loop="$fsc->num_facturas_pendientes()"}{$value["total"]}{/loop} pendientes / {loop="$fsc->num_facturas()"}{$value["total"]}{/loop} aprobados</p>
+                  </div>
+                  <div class="text-center">
+                     </br>
+                     <span class="glyphicon glyphicon-list-alt"></span>
+                     <a href="index.php?page=ventas_facturas&sinpagar=TRUE">
+                        Más detalles <i class="glyphicon glyphicon-chevron-right"></i>
+                     </a>
                   </div>
                </div>
             </div>
