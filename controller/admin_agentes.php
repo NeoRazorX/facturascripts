@@ -33,30 +33,22 @@ class admin_agentes extends fs_controller
       $this->agente = new agente();
       $this->buttons[] = new fs_button_img('b_nuevo_agente', 'Nuevo');
       
-      if( isset($_POST['scodagente']) )
+      if( isset($_POST['sdnicif']) )
       {
-         $age0 = $this->agente->get($_POST['scodagente']);
-         if( $age0 )
+         $age0 = new agente();
+         $age0->codagente = $age0->get_new_codigo();
+         $age0->nombre = $_POST['snombre'];
+         $age0->apellidos = $_POST['sapellidos'];
+         $age0->dnicif = $_POST['sdnicif'];
+         $age0->telefono = $_POST['stelefono'];
+         $age0->email = $_POST['semail'];
+         if( $age0->save() )
          {
+            $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
             header('location: '.$age0->url());
          }
          else
-         {
-            $age0 = new agente();
-            $age0->codagente = $_POST['scodagente'];
-            $age0->nombre = $_POST['snombre'];
-            $age0->apellidos = $_POST['sapellidos'];
-            $age0->dnicif = $_POST['sdnicif'];
-            $age0->telefono = $_POST['stelefono'];
-            $age0->email = $_POST['semail'];
-            if( $age0->save() )
-            {
-               $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
-               header('location: '.$age0->url());
-            }
-            else
-               $this->new_error_msg("¡Imposible guardar el empleado!");
-         }
+            $this->new_error_msg("¡Imposible guardar el empleado!");
       }
       else if( isset($_GET['delete']) )
       {

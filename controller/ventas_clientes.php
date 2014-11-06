@@ -99,13 +99,13 @@ class ventas_clientes extends fs_controller
          else
             $this->new_error_msg('Cliente no encontrado.');
       }
-      else if( isset($_POST['codcliente']) )
+      else if( isset($_POST['cifnif']) )
       {
          $this->save_codpais( $_POST['pais'] );
          $this->save_codserie( $_POST['codserie'] );
          
          $cliente = new cliente();
-         $cliente->codcliente = $_POST['codcliente'];
+         $cliente->codcliente = $cliente->get_new_codigo();
          $cliente->nombre = $_POST['nombre'];
          $cliente->nombrecomercial = $_POST['nombre'];
          $cliente->cifnif = $_POST['cifnif'];

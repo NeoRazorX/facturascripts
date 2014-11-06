@@ -55,8 +55,8 @@
             </tr>
          </thead>
          {loop="$fsc->paginas"}
-         <tr>
-            <td{if condition="!$value->exists"} class="bg-danger"{/if}>
+         <tr{if condition="!$value->exists"} class="bg-danger"{/if}>
+            <td>
                <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if condition="$value->enabled"} checked="checked"{/if}/>
                &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
             </td>

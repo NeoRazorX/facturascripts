@@ -92,6 +92,9 @@ class ventas_albaran extends fs_controller
       
       if( $this->albaran AND isset($_GET['imprimir']) )
       {
+         /// cargamos el cliente
+         $this->cliente_s = $this->cliente->get($this->albaran->codcliente);
+         
          if($_GET['imprimir'] == 'simple')
          {
             $this->generar_pdf_simple();
@@ -709,7 +712,7 @@ class ventas_albaran extends fs_controller
                    'campo1' => "<b>Dirección:</b>",
                    'dato1' => $this->albaran->direccion.' CP: '.$this->albaran->codpostal.' - '.$this->albaran->ciudad.' ('.$this->albaran->provincia.')',
                    'campo2' => "<b>Teléfonos:</b>",
-                   'dato2' => $this->cliente->telefono1.'  '.$this->cliente->telefono2
+                   'dato2' => $this->cliente_s->telefono1.'  '.$this->cliente_s->telefono2
                )
             );
             $pdf_doc->save_table(

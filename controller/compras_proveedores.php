@@ -57,12 +57,12 @@ class compras_proveedores extends fs_controller
          else
             $this->new_message('Proveedor no encontrado.');
       }
-      else if( isset($_POST['codproveedor']) )
+      else if( isset($_POST['cifnif']) )
       {
          $this->save_codpais( $_POST['pais'] );
          
          $proveedor = new proveedor();
-         $proveedor->codproveedor = $_POST['codproveedor'];
+         $proveedor->codproveedor = $proveedor->get_new_codigo();
          $proveedor->nombre = $_POST['nombre'];
          $proveedor->nombrecomercial = $_POST['nombre'];
          $proveedor->cifnif = $_POST['cifnif'];
