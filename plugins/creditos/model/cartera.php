@@ -24,9 +24,7 @@ class cartera extends fs_model
    
    protected function install() 
    {        
-      $this->clean_cache();
-      return "INSERT INTO carteras (idcartera,descripcion) VALUES
-            (1,'Cartera Inicial');";
+      return "INSERT INTO carteras (idcartera,descripcion) VALUES (1,'Cartera Inicial');";
    }
    
    public function get($id)
@@ -50,10 +48,6 @@ class cartera extends fs_model
       {
          return $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
       }
-   }
-   
-   public function test() {
-      ;
    }
    
    public function nuevo_numero()
@@ -132,5 +126,4 @@ class cartera extends fs_model
 
       return $todos;
    }
-
- }
+}

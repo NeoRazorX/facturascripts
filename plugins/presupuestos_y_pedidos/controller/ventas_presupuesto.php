@@ -133,6 +133,15 @@ class ventas_presupuesto extends fs_controller
                else
                   $this->generar_pedido();
             }
+            
+            /// comprobamos si se pueden enviar emails
+            if( $this->empresa->can_send_mail() )
+            {
+               if( isset($_POST['email']) )
+               {
+                  $this->enviar_email();
+               }
+            }
          }
       }
       else

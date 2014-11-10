@@ -110,7 +110,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$fsc->today()>$value->finoferta"} class="bg-danger"{/if}>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$fsc->finoferta($value->finoferta)"} class="bg-danger"{/if}>
          <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>
@@ -127,7 +127,7 @@
       {else}
       <tr class="bg-warning">
          <td></td>
-         <td colspan="6">Ningún {#FS_PRESUPUESTO#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         <td colspan="7">Ningún {#FS_PRESUPUESTO#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
       </tr>
       {/loop}
    </table>

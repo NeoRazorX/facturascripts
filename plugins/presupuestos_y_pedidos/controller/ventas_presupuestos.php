@@ -229,4 +229,9 @@ class ventas_presupuestos extends fs_controller
          }
       }
    }
+   
+   public function finoferta($date)
+   {
+      return strtotime($date) < strtotime( Date('d-m-Y') );
+   }
 }
