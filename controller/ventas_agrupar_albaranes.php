@@ -166,6 +166,10 @@ class ventas_agrupar_albaranes extends fs_controller
       $factura->codpago = $albaranes[0]->codpago;
       $factura->codserie = $albaranes[0]->codserie;
       $factura->editable = FALSE;
+      $factura->irpf = $albaranes[0]->irpf;
+      $factura->numero2 = $albaranes[0]->numero2;
+      $factura->observaciones = $albaranes[0]->observaciones;
+      $factura->recfinanciero = $albaranes[0]->recfinanciero;
       
       /// obtenemos los datos actuales del cliente, por si ha habido cambios
       $cliente = $this->cliente->get($albaranes[0]->codcliente);
@@ -195,14 +199,19 @@ class ventas_agrupar_albaranes extends fs_controller
       {
          foreach($alb->get_lineas() as $l)
          {
-            $factura->neto += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100);
-            $factura->totaliva += ($l->cantidad * $l->pvpunitario * (100 - $l->dtopor)/100 * $l->iva/100);
+            $factura->neto += $l->pvptotal;
+            $factura->totaliva += $l->pvptotal * $l->iva/100;
+            $factura->totalirpf += $l->pvptotal * $l->irpf/100;
+            $factura->totalrecargo += $l->pvptotal * $l->recargo/100;
          }
       }
+      
       /// redondeamos
-      $factura->neto = round($factura->neto, 2);
-      $factura->totaliva = round($factura->totaliva, 2);
-      $factura->total = $factura->neto + $factura->totaliva;
+      $factura->neto = round($factura->neto, FS_NF0);
+      $factura->totaliva = round($factura->totaliva, FS_NF0);
+      $factura->totalirpf = round($factura->totalirpf, FS_NF0);
+      $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
+      $factura->total = $factura->neto + $factura->totaliva - $factura->irpf + $factura->totalrecargo;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $ejercicio = new ejercicio();
@@ -303,6 +312,10 @@ class ventas_agrupar_albaranes extends fs_controller
       {
          $this->new_message("El cliente no tiene asociada una subcuenta y por tanto no se generará
             un asiento. Aun así la <a href='".$factura->url()."'>factura</a> se ha generado correctamente.");
+      }
+      else if($factura->totalirpf != 0 OR $factura->totalrecargo != 0)
+      {
+         $this->new_error_msg('Todavía no se pueden generar asientos de facturas con IRPF o recargo.');
       }
       else
       {

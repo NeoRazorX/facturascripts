@@ -165,8 +165,6 @@ class compras_agrupar_albaranes extends fs_controller
       $factura->numproveedor = $albaranes[0]->numproveedor;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
-      $factura->totalirpf = $albaranes[0]->totalirpf;
-      $factura->totalrecargo = $albaranes[0]->totalrecargo;
       
       /// obtenemos los datos actualizados del proveedor
       $proveedor = $this->proveedor->get($albaranes[0]->codproveedor);
@@ -188,6 +186,7 @@ class compras_agrupar_albaranes extends fs_controller
             $factura->totalrecargo += $l->pvptotal * $l->recargo/100;
          }
       }
+      
       /// redondeamos
       $factura->neto = round($factura->neto, FS_NF0);
       $factura->totaliva = round($factura->totaliva, FS_NF0);
