@@ -1,0 +1,109 @@
+{include="header"}
+
+<form action="{$fsc->resultado->url()}" method="post" class="form">
+   <div class="panel panel-info" style="margin: 5px;">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a href="{$fsc->resultado->cliente_url()}">
+               Cliente actual
+            </a>
+         </h3>
+      </div>
+      <div class="panel-body">
+         <div class="form-group col-lg-6 col-md-6 col-sm-6">
+            <label>Nombre:</label>
+            <input class="form-control" type="text" name="nombre" value="{$fsc->resultado->nombre_cliente}" size="40"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Teléfono fijo:</label>
+            <input class="form-control" type="text" name="telefono1" value="{$fsc->resultado->telefono1_cliente}" size="9"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Teléfono móvil:</label>
+            <input class="form-control" type="text" name="telefono2" value="{$fsc->resultado->telefono2_cliente}" size="9"/>
+         </div>
+     
+      <div id="content">
+    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+        <li class="active"><a href="#datos" data-toggle="tab"><span class="glyphicon glyphicon-wrench"></span> Datos del SAT</a></li>
+        <li><a href="#observacioes" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Observaciones</a></li>
+        <li><a href="#comentarios" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span><span class="badge pull-left">42</span> Comentarios</a></li>
+    </ul>
+    <div id="my-tab-content" class="tab-content">
+        <div class="tab-pane active" id="datos">
+         <div class="form-group col-lg">
+             <label><strong>Modelo:</strong></label>
+            <input class="form-control" type="text" name="modelo" value="{$fsc->resultado->modelo}" size="50"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Prioridad</label>         
+            <select name="estado" class="form-control" >
+              {loop="fsc->listar_prioridad()"}
+              <option value="{$value['id_prioridad']}">{$value['nombre_prioridad']}</option>
+              {/loop}
+          </select>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Estado</label>         
+            <select name="estado" class="form-control" >
+              {loop="fsc->listar_estados()"}
+              {if="$value['id_estado'] == $fsc->resultado->estado"}
+              <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+              {else}
+              <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+              {/if}
+              {/loop}
+          </select>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Fecha de comienzo:</label>
+            <input class="form-control datepicker" type="text" name="fcomienzo" value="{$fsc->resultado->fcomienzo}" size="10"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Fecha finalización:</label>
+            <input class="form-control datepicker" type="text" name="ffin" value="{$fsc->resultado->ffin}" size="10"/>
+         </div>
+         <div class="form-group col-lg-6 col-md-6 col-sm-6">
+            <label>Avería:</label>
+            <textarea class="form-control" name="averia" cols="60">{$fsc->resultado->averia}</textarea>
+         </div>
+         <div class="form-group col-lg-6 col-md-6 col-sm-6">
+            <label>Accesorios:</label>
+            <textarea class="form-control" name="accesorios" cols="60">{$fsc->resultado->accesorios}</textarea>
+         </div>
+        </div>
+        <div class="tab-pane" id="observacioes">
+         <div class="form-group col-lg">
+            <label>Observaciones:</label>
+            <textarea class="form-control" name="observaciones" cols="60">{$fsc->resultado->observaciones}</textarea>
+         </div>
+        </div>
+        <div class="tab-pane" id="comentarios">
+            <p>Aquí la lista de comentarios</p>
+        </div>
+    </div>
+</div>
+           </div>
+      <div class="panel-footer">
+        <button type="button" class="btn btn-sm btn-primary" value="Guardar" onclick="javascript:window.open('{$fsc->url()}&opcion=imprimir&id=1','','width=600,height=400,left=50,top=50,toolbar=yes');">
+         <span class="glyphicon glyphicon-floppy-saved"></span> Guardar
+        </button>
+         <button type="button" class="btn btn-sm" onclick="windows.print();" />
+         <span class="glyphicon glyphicon-print" ></span> Imprimir
+        </button>
+      </div>
+   </div>
+</form>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $('#tabs').tab();
+    }
+            
+            
+            
+            );
+</script>    
+
+<!-- container -->
+{include="footer"}
+ <script>

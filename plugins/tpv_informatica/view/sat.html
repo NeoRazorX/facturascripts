@@ -1,0 +1,364 @@
+{include="header"}
+
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <!-- Estos botones se muestran siempre, ocupando 2 o 6 de las 12 columnas -->
+      <div class="col-lg-2 col-md-4 col-sm-4 col-xs-6">
+         <a href="{$fsc->url()}" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+         <a href="#" id="b_nuevo_sat" class="btn btn-sm btn-success">
+            <span class="glyphicon glyphicon-pencil"></span>
+            &nbsp; Nuevo SAT
+         </a>
+      </div>
+      <!-- Se muestra si la resolución es LG, sino se oculta -->
+      <div class="col-lg-10 hidden-md hidden-sm hidden-xs text-right">
+         <form id="f_edita_sat" name="f_edita_sat_lg" action="{$fsc->url()}" method="post" class="form form-inline">
+         <div class="form-group">
+            <select name="orden" class="form-control">
+               <option value="nsat">Numero de sat</option>
+               <option value="fcomienzo">Fecha de comienzo</option>
+               <option value="ffin">Fecha de finalizacion</option>
+               <option value="prioridad">Prioridad</option>
+            </select>
+         </div>
+         <div class="form-group">
+            <input type="text" class="form-control" name="buscar" size="10" placeholder="Buscar"/>
+         </div>
+          <div class="form-group">
+             <input class="form-control datepicker" type="text" name="desde" size="10" placeholder="Desde..."/>
+         </div>
+         <div class="form-group">
+            <input class="form-control datepicker" type="text" name="hasta" size="10" placeholder="Hasta..."/>
+         </div>
+         <div class="form-group">
+            <select name="estado" class="form-control">
+               <option value="activos">SAT activos</option>
+               {loop="fsc->listar_estados()"}
+                {if="$fsc->busqueda['estado']==$value['id_estado']"}
+                    <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+                {else}
+                    <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+                {/if}
+               {/loop}
+               {if="$fsc->busqueda['estado']=='todos'"}
+               <option value="todos" selected>Todos</option>
+               {else}
+               <option value="todos">Todos</option>
+               {/if}
+            </select>
+         </div>
+         <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon-search"></span>
+         </button>
+         </form>
+      </div>
+      <!-- Se muestra si la resolucion es SM o XS, sino se oculta -->
+      <div class="hidden-lg hidden-md col-sm-8 col-xs-6 text-right">
+         <form id="f_edita_sat" name="f_edita_sat_sm_xs" action="{$fsc->url()}" method="post" class="form form-inline">
+         <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon-search"></span>
+            &nbsp; Buscar
+         </button>
+      </div>
+      <!-- Se muestra si la resolución es MD, sino se oculta -->
+      <div class="hidden-lg col-md-8 hidden-sm hidden-xs">
+         <div class="row">
+            <form id="f_edita_sat" name="f_edita_sat_md" action="{$fsc->url()}" method="post" class="form form-inline">
+            <div class="hidden-lg col-md-6 hidden-sm hidden-xs">
+               <div class="form-group">
+                  <select name="orden" class="form-control">
+                     <option value="nsat">Numero de sat</option>
+                     <option value="fcomienzo">Fecha de comienzo</option>
+                     <option value="ffin">Fecha de finalizacion</option>
+                     <option value="prioridad">Prioridad</option>
+                  </select>
+               </div>
+            </div>
+            <div class="hidden-lg col-md-6 hidden-sm hidden-xs text-right">
+               <div class="form-group">
+                  <select name="estado" class="form-control">
+                     <option value="activos">SAT activos</option>
+                     {loop="fsc->listar_estados()"}
+                      {if="$fsc->busquda['estado']==$value['id_estado']"}
+                          <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+                      {else}
+                          <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+                      {/if}
+                     {/loop}
+                     {if="$fsc->busquda['estado']=='todos'"}
+                     <option value="todos" selected>Todos</option>
+                     {else}
+                     <option value="todos">Todos</option>
+                     {/if}
+                  </select>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="hidden-lg col-md-3 hidden-sm hidden-xs text-right">
+                <div class="form-group">
+                   <input class="form-control datepicker" type="text" name="desde" size="10" placeholder="Desde..."/>
+               </div>
+            </div>
+            <div class="hidden-lg col-md-3 hidden-sm hidden-xs text-right">
+               <div class="form-group">
+                  <input class="form-control datepicker" type="text" name="hasta" size="10" placeholder="Hasta..."/>
+               </div>
+            </div>
+            <div class="hidden-lg col-md-4 hidden-sm hidden-xs text-right">
+               <div class="form-group">
+                  <input type="text" class="form-control" name="buscar" size="10" placeholder="Buscar"/>
+               </div>
+            </div>
+            <div class="hidden-lg col-md-2 hidden-sm hidden-xs text-right">
+               <div class="form-group">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                     <span class="glyphicon glyphicon-search"></span>
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <!-- Se muestra si la resolucion es SM, sino se oculta -->
+      <div class="hidden-lg hidden-md col-sm-12 hidden-xs text-right">
+         <div class="row">
+            <div class="hidden-lg hidden-md col-sm-6 hidden-xs text-right">
+               <div class="form-group">
+                  <select name="orden" class="form-control">
+                     <option value="nsat">Numero de sat</option>
+                     <option value="fcomienzo">Fecha de comienzo</option>
+                     <option value="ffin">Fecha de finalizacion</option>
+                     <option value="prioridad">Prioridad</option>
+                  </select>
+               </div>
+            </div>
+            <div class="hidden-lg hidden-md col-sm-6 hidden-xs text-right">
+               <div class="form-group">
+                  <select name="estado" class="form-control">
+                     <option value="activos">SAT activos</option>
+                     {loop="fsc->listar_estados()"}
+                      {if="$fsc->busquda['estado']==$value['id_estado']"}
+                          <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+                      {else}
+                          <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+                      {/if}
+                     {/loop}
+                     {if="$fsc->busquda['estado']=='todos'"}
+                     <option value="todos" selected>Todos</option>
+                     {else}
+                     <option value="todos">Todos</option>
+                     {/if}
+                  </select>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="hidden-lg hidden-md col-sm-3 hidden-xs text-right">
+                <div class="form-group">
+                   <input class="form-control datepicker" type="text" name="desde" size="10" placeholder="Desde..."/>
+               </div>
+            </div>
+            <div class="hidden-lg hidden-md col-sm-3 hidden-xs text-right">
+               <div class="form-group">
+                  <input class="form-control datepicker" type="text" name="hasta" size="10" placeholder="Hasta..."/>
+               </div>
+            </div>
+            <div class="hidden-lg hidden-md col-sm-6 hidden-xs text-right">
+               <div class="form-group">
+                  <input type="text" class="form-control" name="buscar" size="10" placeholder="Buscar"/>
+               </div>
+            </div>
+         </div>
+      </div>
+      </form>
+   </div>
+   <div class="row">
+	   <!-- Se muestra si la resolucion es XS, sino se oculta -->
+      <div class="hidden-lg hidden-md hidden-sm col-xs-12 text-right">
+         <div class="form-group">
+            <select name="orden" class="form-control">
+               <option value="nsat">Numero de sat</option>
+               <option value="fcomienzo">Fecha de comienzo</option>
+               <option value="ffin">Fecha de finalizacion</option>
+               <option value="prioridad">Prioridad</option>
+            </select>
+         </div>
+         <div class="form-group">
+            <input type="text" class="form-control" name="buscar" size="10" placeholder="Buscar"/>
+         </div>
+          <div class="form-group">
+             <input class="form-control datepicker" type="text" name="desde" size="10" placeholder="Desde..."/>
+         </div>
+         <div class="form-group">
+            <input class="form-control datepicker" type="text" name="hasta" size="10" placeholder="Hasta..."/>
+         </div>
+         <div class="form-group">
+            <select name="estado" class="form-control">
+               <option value="activos">SAT activos</option>
+               {loop="fsc->listar_estados()"}
+                {if="$fsc->busquda['estado']==$value['id_estado']"}
+                    <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+                {else}
+                    <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+                {/if}
+               {/loop}
+               {if="$fsc->busquda['estado']=='todos'"}
+               <option value="todos" selected>Todos</option>
+               {else}
+               <option value="todos">Todos</option>
+               {/if}
+            </select>
+         </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+{if condition="isset($_GET['codcliente'])"}
+<h3 class="text-center">Registros del cliente {$_GET['codcliente']}</h3>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">N sat</th>
+               <th class="text-left">Prioridad</th>
+               <th class="text-left">Fecha de comienzo</th>
+               <th class="text-left">Fecha de finalización</th>
+               <th class="text-left">Modelo</th>
+               <th class="text-left">Nombre</th>
+               <th class="text-left">Telefono</th>
+               <th class="text-left">Movil</th>
+               <th class="text-right">Estado</th>
+            </tr>
+         </thead>
+         {loop="fsc->listar_sat()"}
+         <tr{if condition="$value->estado==5"} class="bg-success"{/if}>
+            <td><a href="{$value->url()}">{$value->nsat}</a></td>
+            <td>{$value->nombre_prioridad()}</td>
+            <td>{$value->fcomienzo}</td>
+            <td>{$value->ffin}</td>
+            <td>{$value->modelo}</td>
+            <td>{$value->nombre_cliente}</td>
+            <td>{$value->telefono1_cliente}</td>
+            <td>{$value->telefono2_cliente}</td>
+            <td class="text-right">{$value->nombre_estado()}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="9" class="text-center">Sin resultados.</td>
+         </tr>
+         {/loop}
+   </table>
+</div>
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_sat").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_sat").modal('show');
+         document.f_nuevo_sat.ac_cliente.focus();
+      });
+      $("#ac_cliente").autocomplete({
+         serviceUrl: '{$fsc->url()}',
+         paramName: 'buscar_cliente',
+         onSelect: function (suggestion) {
+            if(suggestion)
+            {
+               if(document.f_nuevo_sat.codcliente.value != suggestion.data)
+               {
+                  document.f_nuevo_sat.codcliente.value = suggestion.data;
+               }
+            }
+         }
+      });
+   });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+       
+      if(window.location.hash.substring(1) == 'detalles')
+      {
+         $("#tabs").tabs("active", "#detalles");
+      }
+      else
+      {
+          $('#tabs').tab();
+      }
+    });
+    
+</script>    
+
+
+
+   <div class="modal" id="modal_nuevo_sat">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+               <li class="active"><a href="#buscar" data-toggle="tab"><span class="glyphicon glyphicon-search"></span> Buscar</a></li>
+               <li><a href="#agregar" data-toggle="tab"><span class="glyphicon glyphicon-plus"></span><span class="badge"></span> Agregar Cliente</a></li>
+            </ul>
+            <div class="modal-body">
+              <div id="my-tab-content" class="tab-content">
+                <div class="tab-pane active" id="buscar">
+                    <form name="f_nuevo_sat" class="form" action="index.php" method="get">
+                    <input type="hidden" name="codcliente"/>
+                    <input type="hidden" name="opcion" value="nuevosat"/>
+                    <input type="hidden" name="page" value="{$fsc->page->name}"/>
+                    <div class="form-group col-lg-12">
+                        <label>Buscar cliente:</label>
+                        <input class="form-control" type="text" name="ac_cliente" id="ac_cliente" placeholder="Buscar" autocomplete="off"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                            <span class="glyphicon glyphicon-play"></span>
+                            &nbsp; Selecionar
+                        </button>
+                    </div>
+                    </form>
+                </div>
+                <div class="tab-pane" id="agregar">
+                    <form name="f_nuevo_cliente" action="{$fsc->url()}&opcion=nuevosat" method="post" class="form">
+                    <div class="form-group col-lg-12">
+                        
+                        <label>Nuevo cliente:</label>
+                        <div class="form-group">
+                            Nombre:
+                            <input class="form-control" type="text" name="nombre" size="30" autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                            Telefono:
+                            <input class="form-control" type="text" name="telefono1" size="9" autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                            Móvil:
+                            <input class="form-control" type="text" name="telefono2" size="9" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                            <span class="glyphicon glyphicon-play"></span>
+                            &nbsp; Guardar
+                        </button>
+                    </div>
+                </div>
+             </div>
+
+            </div>
+            
+         </div>
+      </div>
+   </div>
+</form>
+
+{include="footer"}

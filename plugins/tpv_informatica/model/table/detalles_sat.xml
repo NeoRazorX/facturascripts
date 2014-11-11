@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : detalles_sat.xml
+    Description:
+        Estructura de la tabla detalles_sat.
+-->
+<tabla>
+   <columna>
+      <nombre>id</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('detalles_sat_id_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>text</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>nsat</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>detalles_sat_pkey</nombre>
+      <consulta>PRIMARY KEY (id)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_detalle_sat</nombre>
+      <consulta>FOREIGN KEY (nsat)
+      REFERENCES registros_sat (nsat)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+</tabla>

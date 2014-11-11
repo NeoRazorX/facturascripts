@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : registros_sat.xml
+    Description:
+        Estructura de la tabla registros_sat.
+-->
+<tabla>
+   <columna>
+      <nombre>nsat</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('registros_sat_nsat_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>prioridad</nombre>
+      <tipo>integer</tipo>
+   </columna>
+   <columna>
+      <nombre>fentrada</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fcomienzo</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>ffin</nombre>
+      <tipo>date</tipo>
+   </columna>
+   <columna>
+      <nombre>modelo</nombre>
+      <tipo>text</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codcliente</nombre>
+      <tipo>varchar(6)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>estado</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>averia</nombre>
+      <tipo>text</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>accesorios</nombre>
+      <tipo>text</tipo>
+   </columna>
+   <columna>
+      <nombre>observaciones</nombre>
+      <tipo>text</tipo>
+   </columna>
+   <columna>
+      <nombre>posicion</nombre>
+      <tipo>text</tipo>
+   </columna>
+   <restriccion>
+      <nombre>registros_sat_pkey</nombre>
+      <consulta>PRIMARY KEY (nsat)</consulta>
+   </restriccion>
+</tabla>

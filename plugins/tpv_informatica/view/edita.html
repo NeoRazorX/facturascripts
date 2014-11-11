@@ -1,0 +1,383 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_nuevo_detalle").click(function() {
+         $("#modal_nuevo_detalle").modal('show');
+      });
+   });
+</script>
+
+<div class="container-fluid hidden-print">
+   <div class="row">
+      <div class="col-lg-8">
+         <h1>
+            <a href="{$fsc->url()}">SAT</a> /
+            <a href="{$fsc->resultado->cliente_url()}">{$fsc->resultado->nombre_cliente}</a> /
+            {$fsc->resultado->nsat}
+         </h1>
+      </div>
+      
+      <div class="col-lg-4 text-right">
+         <h2>
+            Fecha entrada: {$fsc->resultado->fentrada}
+         </h2>
+      </div>
+   </div>
+</div>
+
+<form action="{$fsc->resultado->url()}" method="post" class="form">
+   <div class="panel panel-info hidden-print" style="margin: 5px;">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            Editar
+         </h3>
+      </div>
+      <div class="panel-body ">
+         <div class="form-group col-lg-6 col-md-6 col-sm-6">
+            <label>Nombre:</label>
+            <input class="form-control" type="text" name="nombre" value="{$fsc->resultado->nombre_cliente}" size="40"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Teléfono fijo:</label>
+            <input class="form-control" type="text" name="telefono1" value="{$fsc->resultado->telefono1_cliente}" size="9"/>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <label>Teléfono móvil:</label>
+            <input class="form-control" type="text" name="telefono2" value="{$fsc->resultado->telefono2_cliente}" size="9"/>
+         </div>
+         
+         <div id="content">
+            <ul id="tabs" class="nav nav-tabs">
+               <li id='tab_datos' class="active">
+                  <a href="#datos">
+                     <span class="glyphicon glyphicon-wrench"></span> Datos del SAT
+                  </a>
+               </li>
+               <li id='tab_detalles'>
+                  <a href="#detalles">
+                     <span class="glyphicon glyphicon-comment"></span>
+                     <span class="badge">{$fsc->resultado->num_detalles()}</span> Detalles
+                  </a>
+               </li>
+               <li id='tab_observaciones'>
+                  <a href="#observaciones">
+                     <span class="glyphicon glyphicon-eye-open"></span> Observaciones
+                  </a>
+               </li>
+            </ul>
+            
+            <div id="my-tab-content" class="tab-content">
+               <div class="tab-pane active" id="tabc_datos">
+                  <div class="form-group col-lg-9 col-md-9 col-sm-9">
+                     <label><strong>Modelo:</strong></label>
+                     <input class="form-control" type="text" name="modelo" value="{$fsc->resultado->modelo}" size="50"/>
+                  </div>
+                 <div class="form-group col-lg-3 col-md-3 col-sm-3">             
+                    {if="'' == $fsc->resultado->posicion"}
+                        <label STYLE="color:red">Posicion sin asignar</label>
+                    {else}
+                        <label>Posicion:</label>
+                    {/if}
+                    <input class="form-control" type="text" name="posicion" value="{$fsc->resultado->posicion}" size="20"/>
+                 </div>
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                     <label>Prioridad</label>         
+                     <select name="prioridad" class="form-control">
+                     {loop="fsc->listar_prioridad()"}
+                        {if="$value['id_prioridad'] == $fsc->resultado->prioridad"}
+                        <option value="{$value['id_prioridad']}" selected>{$value['nombre_prioridad']}</option>
+                        {else}
+                        <option value="{$value['id_prioridad']}">{$value['nombre_prioridad']}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                     <label>Estado</label>         
+                     <select name="estado" class="form-control">
+                     {loop="fsc->listar_estados()"}
+                        {if="$value['id_estado'] == $fsc->resultado->estado"}
+                        <option value="{$value['id_estado']}" selected>{$value['nombre_estado']}</option>
+                        {else}
+                        <option value="{$value['id_estado']}">{$value['nombre_estado']}</option>
+                        {/if}
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                     <label>Fecha de comienzo:</label>
+                     <input class="form-control datepicker" type="text" name="fcomienzo" value="{$fsc->resultado->fcomienzo}" size="10"/>
+                  </div>
+                  <div class="form-group col-lg-3 col-md-3 col-sm-3">
+                     <label>Fecha finalización:</label>
+                     <input class="form-control datepicker" type="text" name="ffin" value="{$fsc->resultado->ffin}" size="10"/>
+                  </div>
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <label>Avería:</label>
+                     <textarea class="form-control" name="averia" cols="60">{$fsc->resultado->averia}</textarea>
+                  </div>
+                  <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                     <label>Accesorios:</label>
+                     <textarea class="form-control" name="accesorios" cols="60">{$fsc->resultado->accesorios}</textarea>
+                  </div>
+               </div>
+               <div class="tab-pane" id="tabc_detalles">
+                  <table class="table table-hover">
+                     <thead>
+                        <tr>
+                           <th class="text-left">Detalle</th>
+                           <th class="text-left">Fecha</th>
+                           <th class="text-left"></span></th>
+                        </tr>
+                     </thead>
+                     {loop="fsc->listar_sat_detalle()"}
+                     <tr>
+                        <td>{$value->descripcion}</td>
+                        <td>{$value->fecha}</td>
+                        <td><span class="glyphicon glyphicon-edit"></span></td>
+                     </tr>
+                     {/loop}
+                     <tr>
+                        <td colspan="3">
+                           <a href='#' class="btn btn-info btn-block btn-sm" data-toggle="modal" data-target="#modal_nuevo_detalle">
+                              Nuevo detalle
+                           </a>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <div class="tab-pane" id="tabc_observaciones">
+                  <div class="form-group col-lg-12">
+                     <label>Observaciones:</label>
+                     <textarea class="form-control" name="observaciones" cols="60">{$fsc->resultado->observaciones}</textarea>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+      </div>
+      <div class="panel-footer">
+         <button type="button" class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();">
+            <span class="glyphicon glyphicon-floppy-saved"></span> Guardar
+         </button>
+         <button class="btn btn-sm" onclick="window.print();"><span class="glyphicon glyphicon-print" ></span> Imprimir</button>
+      </div>
+   </div>
+   
+   <div class="panel visible-print">
+      <div class="panel-body col-xs-6">
+         <div class="col-xs-12">
+             <strong>Nombre:</strong><br/>
+            {$fsc->resultado->nombre_cliente}
+         </div>
+         <div class="col-xs-6">
+             <strong>Teléfono fijo:</strong><br/>
+            {$fsc->resultado->telefono1_cliente}
+         </div>
+         <div class="col-xs-6">
+            <strong>Teléfono móvil:</strong><br/>
+            {$fsc->resultado->telefono2_cliente}
+         </div>
+         <div class="col-xs-12">
+            <strong>Modelo:</strong><br/>
+            {$fsc->resultado->modelo}
+         </div>
+         <div class="col-xs-12">
+            <strong>Averia:</strong><br/>
+            {$fsc->resultado->averia}
+         </div>
+         <div class="col-xs-12">
+            <strong>Accesorios:</strong><br/>
+            {$fsc->resultado->accesorios}
+         </div>
+         <div class="col-xs-12">
+            <strong>Observaciones:</strong><br/>
+            {$fsc->resultado->observaciones}
+         </div>
+      </div>
+      <div class="col-xs-6">
+         <h4><strong>Numero de SAT: {$fsc->resultado->nsat}</strong><br/></h4>
+         <p>Condiciondes del deposito:<br/>
+            Los presupuestos realizados tienen una<br/>
+				validez de 15 dias<br/>
+				Una vez avisado al cliente para que recoja
+				el producto este dispondrá de un plazo maximo de
+				2 meses para recogerlo, de no ser así y no
+				haber aviso por parte del cliente se empezará a
+				cobrar 1 euro al dia por gasto de almacenaje.<br/>
+				Los accesorios y productos externos al equipo 
+				no especificados en este documento no podran ser
+				reclamados en caso de disconformidad con el tecnico.
+         </p>
+         <h4>
+            Servicio prestado por: Info Coste Lucena<br/>
+            Le a atendido el tecnico: <strong>Javier Trujillo</strong><br/>
+            Tlf: <strong>957509551</strong> Movil: <strong>658114492</strong><br/>
+         </h4>
+      </div>
+   </div>
+   <p class="visible-print">...............................................................................................................................................................................................</p>
+   <div class="panel visible-print">
+      <div class="panel-body col-xs-6">
+         <div class="col-xs-6">
+            <h4><strong>Numero de SAT: {$fsc->resultado->nsat}</strong><br/></h4>
+         </div>
+         <div class="col-xs-6">
+            <h4><strong>Prioridad</strong><br/>
+                    {loop="fsc->listar_prioridad()"}
+                        {if="$value['id_prioridad'] == $fsc->resultado->prioridad"}
+                        {$value['nombre_prioridad']}
+                        {/if}
+                     {/loop}
+            </h4>
+         </div>
+         <div class="col-xs-6">
+            <h4><strong>Comienzo:</strong><br/>
+               {$fsc->resultado->fcomienzo}</h4>
+         </div>
+         <div class="col-xs-6">
+            <h4><strong>Final:</strong><br/>
+               {$fsc->resultado->ffin}</h4>
+         </div>
+         <div class="col-xs-12">
+            <strong>Nombre:</strong><br/>
+            {$fsc->resultado->nombre_cliente}
+         </div>
+         <div class="col-xs-6">
+             <strong>Teléfono fijo:</strong><br/>
+            {$fsc->resultado->telefono1_cliente}
+         </div>
+         <div class="col-xs-6">
+            <strong>Teléfono móvil:</strong><br/>
+            {$fsc->resultado->telefono2_cliente}
+         </div>
+         <div class="col-xs-12">
+            <strong>Modelo:</strong><br/>
+            {$fsc->resultado->modelo}
+         </div>
+         <div class="col-xs-12">
+            <strong>Averia:</strong><br/>
+            {$fsc->resultado->averia}
+         </div>
+         <div class="col-xs-12">
+            <strong>Accesorios:</strong><br/>
+            {$fsc->resultado->accesorios}
+         </div>
+         <div class="col-xs-12">
+            <strong>Observaciones:</strong><br/>
+            {$fsc->resultado->observaciones}
+         </div>
+      </div>
+      
+      <div class="col-xs-6">
+         <br/>
+         Notas:
+         <br/>  
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+         <br/>
+      </div>
+   </div> 
+</form>
+
+<script type="text/javascript">
+   function show_tab_datos()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_datos").addClass('active');
+      $("#tabc_datos").show();
+   }
+   function show_tab_detalles()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_detalles").addClass('active');
+      $("#tabc_detalles").show();
+   }
+   function show_tab_observaciones()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_observaciones").addClass('active');
+      $("#tabc_observaciones").show();
+   }
+   function pestanyas()
+   {
+      if(window.location.hash.substring(1) == 'detalles')
+      {
+            show_tab_detalles();
+      }
+      else if(window.location.hash.substring(1) == 'observaciones')
+      {
+            show_tab_observaciones();
+      }
+      else
+      {
+            show_tab_datos();
+      }
+   }
+    $(document).ready(function() {
+       pestanyas();
+       window.onpopstate = function() {
+         pestanyas();
+      };
+    });
+    
+</script>    
+
+
+
+<div class="modal fade" id="modal_nuevo_detalle">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_cliente" action="{$fsc->resultado->url()}#detalles" method="post" class="form">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo detalle</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Descripcion del detalle:
+                  <textarea class="form-control" name="detalle" autofocus></textarea>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <input class="btn btn-sm btn-primary" type="submit" value="Guardar" onclick="this.disabled=true;this.form.submit();"/>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<!-- container -->
+{include="footer"}
