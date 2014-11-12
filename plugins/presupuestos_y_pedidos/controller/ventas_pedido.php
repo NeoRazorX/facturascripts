@@ -426,6 +426,8 @@ class ventas_pedido extends fs_controller
       else if( $albaran->save() )
       {
          $continuar = TRUE;
+         $articulo = new articulo();
+         
          foreach($this->pedido->get_lineas() as $l)
          {
             $n = new linea_albaran_cliente();
@@ -443,7 +445,13 @@ class ventas_pedido extends fs_controller
             $n->pvpunitario = $l->pvpunitario;
             $n->recargo = $l->recargo;
             $n->referencia = $l->referencia;
-            if( !$n->save() )
+            
+            if( $n->save() )
+            {
+               /// descontamos del stock
+               $articulo->sum_stock($albaran->codalmacen, 0 - $l->cantidad);
+            }
+            else
             {
                $continuar = FALSE;
                $this->new_error_msg("¡Imposible guardar la línea el artículo ".$n->referencia."! ");

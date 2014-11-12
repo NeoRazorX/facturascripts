@@ -110,7 +110,7 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$fsc->finoferta($value->finoferta)"} class="bg-danger"{/if}>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{elseif condition="$fsc->finoferta($value->finoferta,$value->idpedido)"} class="bg-danger"{/if}>
          <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>

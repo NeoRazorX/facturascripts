@@ -353,6 +353,17 @@ class pedido_cliente extends fs_model
          $status = FALSE;
       }
       
+      if($this->idalbaran)
+      {
+         $alb0 = new albaran_cliente();
+         $albaran = $alb0->get($this->idalbaran);
+         if(!$albaran)
+         {
+            $this->idalbaran = NULL;
+            $this->save();
+         }
+      }
+      
       return $status;
    }
    

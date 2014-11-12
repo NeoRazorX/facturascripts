@@ -441,6 +441,7 @@ class articulo extends fs_model
       $result = FALSE;
       $stock = new stock();
       $encontrado = FALSE;
+      
       $stocks = $stock->all_from_articulo($this->referencia);
       foreach($stocks as $k => $value)
       {
@@ -449,6 +450,7 @@ class articulo extends fs_model
             $stocks[$k]->set_cantidad($cantidad);
             $result = $stocks[$k]->save();
             $encontrado = TRUE;
+            break;
          }
       }
       if( !$encontrado )
@@ -458,6 +460,7 @@ class articulo extends fs_model
          $stock->set_cantidad($cantidad);
          $result = $stock->save();
       }
+      
       if($result)
       {
          $nuevo_stock = $stock->total_from_articulo($this->referencia);
@@ -465,12 +468,22 @@ class articulo extends fs_model
          {
             $this->stockfis =  $nuevo_stock;
             $this->get_costemedio();
-            if( !$this->save() )
-               $this->new_error_msg("Error al actualizar el stock del artículo");
+            
+            if($this->exists)
+            {
+               $this->clean_cache();
+               $result = $this->db->exec("UPDATE ".$this->table_name." SET stockfis = ".$this->var2str($this->stockfis).",
+                  costemedio = ".$this->var2str($this->costemedio)." WHERE referencia = ".$this->var2str($this->referencia).";");
+            }
+            else if( !$this->save() )
+            {
+               $this->new_error_msg("¡Error al actualizar el stock del artículo!");
+            }
          }
       }
       else
          $this->new_error_msg("Error al guardar el stock");
+      
       return $result;
    }
    
@@ -479,6 +492,7 @@ class articulo extends fs_model
       $result = FALSE;
       $stock = new stock();
       $encontrado = FALSE;
+      
       $stocks = $stock->all_from_articulo($this->referencia);
       foreach($stocks as $k => $value)
       {
@@ -497,6 +511,7 @@ class articulo extends fs_model
          $stock->set_cantidad($cantidad);
          $result = $stock->save();
       }
+      
       if($result)
       {
          $nuevo_stock = $stock->total_from_articulo($this->referencia);
@@ -504,12 +519,22 @@ class articulo extends fs_model
          {
             $this->stockfis =  $nuevo_stock;
             $this->get_costemedio();
-            if( !$this->save() )
+            
+            if($this->exists)
+            {
+               $this->clean_cache();
+               $result = $this->db->exec("UPDATE ".$this->table_name." SET stockfis = ".$this->var2str($this->stockfis).",
+                  costemedio = ".$this->var2str($this->costemedio)." WHERE referencia = ".$this->var2str($this->referencia).";");
+            }
+            else if( !$this->save() )
+            {
                $this->new_error_msg("¡Error al actualizar el stock del artículo!");
+            }
          }
       }
       else
          $this->new_error_msg("¡Error al guardar el stock!");
+      
       return $result;
    }
    

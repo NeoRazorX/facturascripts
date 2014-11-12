@@ -230,8 +230,8 @@ class ventas_presupuestos extends fs_controller
       }
    }
    
-   public function finoferta($date)
+   public function finoferta($finoferta, $idpedido)
    {
-      return strtotime($date) < strtotime( Date('d-m-Y') );
+      return is_null($idpedido) AND strtotime($finoferta) < strtotime( Date('d-m-Y') );
    }
 }

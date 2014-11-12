@@ -79,38 +79,47 @@ class stock extends fs_model
    public function set_cantidad($c=0)
    {
       $c = floatval($c);
+      
+      $this->cantidad = 0;
       if($c > 0)
+      {
          $this->cantidad = $c;
-      else
-         $this->cantidad = 0;
-      $this->disponible = ($this->cantidad - $this->reservada);
+      }
+      
+      $this->disponible = $this->cantidad - $this->reservada;
    }
    
    public function sum_cantidad($c=0)
    {
       $c = floatval($c);
+      
       $this->cantidad += $c;
       if($this->cantidad < 0)
+      {
          $this->cantidad = 0;
-      $this->disponible = ($this->cantidad - $this->reservada);
+      }
+      
+      $this->disponible = $this->cantidad - $this->reservada;
    }
    
    public function get($id)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE idstock = ".$this->var2str($id).";");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($id).";");
       if($stock)
+      {
          return new stock($stock[0]);
+      }
       else
          return FALSE;
    }
    
    public function get_by_referencia($ref)
    {
-      $stock = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE referencia = ".$this->var2str($ref).";");
+      $stock = $this->db->select("SELECT * FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($stock)
+      {
          return new stock($stock[0]);
+      }
       else
          return FALSE;
    }
@@ -118,22 +127,11 @@ class stock extends fs_model
    public function exists()
    {
       if( is_null($this->idstock) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE idstock = ".$this->var2str($this->idstock).";");
-   }
-   
-   public function new_idstock()
-   {
-      $id = $this->db->nextval($this->table_name.'_idstock_seq');
-      if($id)
-         $this->idstock = intval($id);
-   }
-   
-   public function test()
-   {
-      return TRUE;
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idstock = ".$this->var2str($this->idstock).";");
    }
    
    public function save()
@@ -147,19 +145,26 @@ class stock extends fs_model
             stockmin = ".$this->var2str($this->stockmin).", stockmax = ".$this->var2str($this->stockmax).",
             cantidadultreg = ".$this->var2str($this->cantidadultreg)."
             WHERE idstock = ".$this->var2str($this->idstock).";";
+         
+         return $this->db->exec($sql);
       }
       else
       {
-         $this->new_idstock();
-         $sql = "INSERT INTO ".$this->table_name." (idstock,codalmacen,referencia,nombre,cantidad,reservada,
-            disponible,pterecibir,stockmin,stockmax,cantidadultreg) VALUES (".$this->var2str($this->idstock).",
-            ".$this->var2str($this->codalmacen).",".$this->var2str($this->referencia).",
-            ".$this->var2str($this->nombre).",".$this->var2str($this->cantidad).",
+         $sql = "INSERT INTO ".$this->table_name." (codalmacen,referencia,nombre,cantidad,reservada,
+            disponible,pterecibir,stockmin,stockmax,cantidadultreg) VALUES (".$this->var2str($this->codalmacen).",
+            ".$this->var2str($this->referencia).",".$this->var2str($this->nombre).",".$this->var2str($this->cantidad).",
             ".$this->var2str($this->reservada).",".$this->var2str($this->disponible).",
             ".$this->var2str($this->pterecibir).",".$this->var2str($this->stockmin).",
             ".$this->var2str($this->stockmax).",".$this->var2str($this->cantidadultreg).");";
+         
+         if( $this->db->exec($sql) )
+         {
+            $this->idstock = $this->db->lastval();
+            return TRUE;
+         }
+         else
+            return FALSE;
       }
-      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -182,28 +187,39 @@ class stock extends fs_model
    public function total_from_articulo($ref)
    {
       $num = 0;
-      $stocks = $this->db->select("SELECT SUM(cantidad) as total FROM ".$this->table_name."
-         WHERE referencia = ".$this->var2str($ref).";");
+      
+      $stocks = $this->db->select("SELECT SUM(cantidad) as total FROM ".$this->table_name." WHERE referencia = ".$this->var2str($ref).";");
       if($stocks)
+      {
          $num = floatval($stocks[0]['total']);
+      }
+      
       return $num;
    }
    
    public function count()
    {
       $num = 0;
+      
       $stocks = $this->db->select("SELECT COUNT(*) as total FROM ".$this->table_name.";");
       if($stocks)
+      {
          $num = intval($stocks[0]['total']);
+      }
+      
       return $num;
    }
    
    public function count_by_articulo()
    {
       $num = 0;
+      
       $stocks = $this->db->select("SELECT COUNT(DISTINCT referencia) as total FROM ".$this->table_name.";");
       if($stocks)
+      {
          $num = intval($stocks[0]['total']);
+      }
+      
       return $num;
    }
 }
