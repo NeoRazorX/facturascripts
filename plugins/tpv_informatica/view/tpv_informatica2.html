@@ -118,7 +118,7 @@ function calculo(entrega,total,inputtext){
                Cliente:
                <select class="form-control chosen-select-no-results" name="cliente">
                {loop="$fsc->cliente->all_full()"}
-                  {if condition="$value->is_default()"}
+                  {if condition="$value->codcliente == 000001"}{* en mi caso es que el 000001 es el cliente de contado y quiero que siempre me salga por defecto *}
                   <option value="{$value->codcliente}" selected="selected">{$value->nombre} tlf {$value->telefono1}</option>
                   {else}
                   <option value="{$value->codcliente}">{$value->nombre} tlf {$value->telefono1} </option>
@@ -132,7 +132,7 @@ function calculo(entrega,total,inputtext){
          <div class="col-lg-2 col-md-2 col-sm-2">
             <div class="form-group">
                <br/>
-               <a href="/facturas/index.php?page=ventas_clientes#nuevo" target="_blank" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span>&nbsp; Nuevo Cliente</a>
+               <a href="index.php?page=ventas_clientes#nuevo" target="_blank" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-plus"></span>&nbsp; Nuevo Cliente</a>
             </div>
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2">
@@ -322,7 +322,6 @@ function calculo(entrega,total,inputtext){
          </div>
       </div>
    </div>
-</form>
    <div class="modal fade" id="modal_guardar">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -382,3 +381,4 @@ function calculo(entrega,total,inputtext){
          </div>
       </div>
    </div>
+</form>
