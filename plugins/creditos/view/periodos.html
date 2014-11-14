@@ -1,0 +1,140 @@
+{include="header"}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).prop('checked', true);
+         i++;
+      }
+   }
+   function fs_marcar_nada()
+   {
+      var i = 0;
+      while( $("#delete_"+i).length > 0 )
+      {
+         $("#delete_"+i).prop('checked', false);
+         i++;
+      }
+   }
+   $(document).ready(function() {
+      $("#b_nuevo_periodo").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_periodo").modal('show');
+         document.f_nuevo_periodo.codperiodo.focus();
+      });
+   });
+</script>
+
+<form class="form" role="form" name="f_nuevo_periodo" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_nuevo_periodo">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo Periodo</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input class="form-control" type="text" name="codperiodo" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Cadencia en Días:
+                  <input class="form-control text-right" type="number" name="cadencia" autocomplete="off"/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->url()}" method="post" class="form" role="form">
+   <div class="container-fluid">
+      <div class="row" style="margin-top: 10px;">
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            
+            <div class="btn-group">
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                  <span class="glyphicon glyphicon-check"></span>
+               </button>
+               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                  <span class="glyphicon glyphicon-unchecked"></span>
+               </button>
+            </div>
+            <div class="btn-group">
+               <a id="b_nuevo_periodo" class="btn btn-sm btn-success" type="button">
+                  <span class="glyphicon glyphicon-plus"></span>
+                  &nbsp; Nuevo Periodo
+               </a>
+            </div>
+         </div>
+         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
+            <div class="btn-group">
+               <a id="b_eliminar" class="btn btn-sm btn-danger" href="#">
+                  <span class="glyphicon glyphicon-trash"></span>
+               </a>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
+            </div>
+         </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h1>
+               <a href="{$fsc->url()}">Periodos</a>
+            </h1>
+         </div>
+      </div>
+   </div>
+   
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th>Eliminar</th>
+               <th class="text-left">Código</th>
+               <th class="text-left">Descripción</th>
+               <th>Cadencia Dias</th>
+            </tr>
+         </thead>
+         {loop="$fsc->periodo->all()"}
+         <tr>
+            <td class="text-center">
+               <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
+            </td>
+            <td>
+               <input type="hidden" name="codperiodo_{$counter}" value="{$value->codperiodo}"/>
+               <div class="form-control">{$value->codperiodo}</div>
+            </td>
+            <td>
+                <input class="form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control text-right" type="number" name="cadencia_{$counter}" value="{$value->cadencia}" autocomplete="off"/>
+            </td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+</form>
+
+{include="footer"}

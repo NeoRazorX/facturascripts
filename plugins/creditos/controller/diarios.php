@@ -17,41 +17,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('cartera.php');
+require_model('diario.php');
 
-class carteras extends fs_controller
+class diarios extends fs_controller
 {
-   public $cartera;
+   public $diario;
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Carteras', 'creditos', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Diarios', 'tesoreria', FALSE, TRUE);
    }
    
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->cartera = new cartera();
+      $this->diario = new diario();
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
       if( isset($_POST['descripcion']) )
       {
-         /// si tenemos el id, buscamos la cartera y así lo modificamos
-         if( isset($_POST['idcartera']) )
+         /// si tenemos el id, buscamos la diario y así lo modificamos
+         if( isset($_POST['iddiario']) )
          {
-            $cart0 = $this->cartera->get($_POST['idcartera']);
+            $diar0 = $this->diario->get($_POST['iddiario']);
          }
          else /// si no está el id, seguimos como si fuese nuevo
          {
-            $cart0 = new cartera();
-            $cart0->idcartera = $this->cartera->nuevo_numero();
+            $diar0 = new diario();
+            $diar0->iddiario = $this->diario->nuevo_numero();
          }
          
-         $cart0->descripcion = $_POST['descripcion'];
+         $diar0->descripcion = $_POST['descripcion'];
          
-         if( $cart0->save() )
+         if( $diar0->save() )
          {
             $this->new_message('Datos guardados correctamente.');
          }
@@ -62,10 +62,10 @@ class carteras extends fs_controller
       }
       else if( isset($_GET['delete']) )
       {
-         $cart0 = $this->cartera->get($_GET['delete']);
-         if($cart0)
+         $diar0 = $this->diario->get($_GET['delete']);
+         if($diar0)
          {
-            if( $cart0->delete() )
+            if( $diar0->delete() )
             {
                $this->new_message('Identificador '. $_GET['delete'] .' eliminado correctamente.');
             }
@@ -77,15 +77,15 @@ class carteras extends fs_controller
       }
    }
    
-   public function listar_carteras()
+   public function listar_diarios()
    {
       if( isset($_POST['query']) )
       {
-         return $this->cartera->buscar($_POST['query']);
+         return $this->diario->buscar($_POST['query']);
       }
       else
       {
-         return $this->cartera->listar();
+         return $this->diario->listar();
       }
    }
 }

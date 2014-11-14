@@ -17,38 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class cartera extends fs_model
+class ruta extends fs_model
 {
-   public $idcartera;
+   public $idruta;
    public $descripcion;
+   public $idcobrador;
    
    public function __construct($g = FALSE)
    {
-      parent::__construct('carteras', 'plugins/creditos/');
+      parent::__construct('rutas', 'plugins/creditos/');
       
       if($g)
       {
-         $this->idcartera = $g['idcartera'];
+         $this->idruta = $g['idruta'];
          $this->descripcion = $g['descripcion'];
+         $this->idcobrador = $g['idcobrador'];
       }
       else
       {
-         $this->idcartera = NULL;
+         $this->idruta = NULL;
          $this->descripcion = "";
+         $this->idcobrador = "";
       }
    }
    
    protected function install() 
-   {        
-      return "INSERT INTO carteras (idcartera,descripcion) VALUES (1,'Cartera Inicial');";
+   {
+      return "INSERT INTO rutas (idruta,descripcion) VALUES
+            (1,'Ruta Inicial');";
    }
    
    public function get($id)
    {
-      $data = $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($id).";");
+      $data = $this->db->select("SELECT * FROM rutas WHERE idruta = ".$this->var2str($id).";");
       if($data)
       {
-         return new cartera($data[0]);
+         return new ruta($data[0]);
       }
       else
          return FALSE;
@@ -56,19 +60,23 @@ class cartera extends fs_model
    
    public function exists()
    {
-      if( is_null($this->idcartera) )
+      if( is_null($this->idruta) )
       {
          return FALSE;
       }
       else
       {
-         return $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+         return $this->db->select("SELECT * FROM rutas WHERE idruta = ".$this->var2str($this->idruta).";");
       }
+   }
+   
+   public function test() {
+      ;
    }
    
    public function nuevo_numero()
    {
-      $data = $this->db->select("SELECT max(idcartera) AS num FROM carteras;");
+      $data = $this->db->select("SELECT max(idruta) AS num FROM rutas;");
       if($data)
          return intval($data[0]['num']) + 1;
       else
@@ -79,14 +87,16 @@ class cartera extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE carteras SET descripcion = ".$this->var2str($this->descripcion).
-                 " WHERE idcartera = ".$this->var2str($this->idcartera).";";
+         $sql = "UPDATE rutas SET descripcion = ".$this->var2str($this->descripcion).
+                 ", idcobrador = ".$this->var2str($this->idcobrador).
+                 " WHERE idruta = ".$this->var2str($this->idruta).";";
       }
       else
       {
-         $sql = "INSERT INTO carteras (idcartera,descripcion) VALUES ("
-                 .$this->var2str($this->idcartera).","
-                 .$this->var2str($this->descripcion).");";
+         $sql = "INSERT INTO rutas (idruta,descripcion,idcobrador) VALUES ("
+                 .$this->var2str($this->idruta).","
+                 .$this->var2str($this->descripcion).","
+                 .$this->var2str($this->idcobrador).");";
       }
       
       return $this->db->exec($sql);
@@ -94,19 +104,19 @@ class cartera extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("delete FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+      return $this->db->exec("delete FROM rutas WHERE idruta = ".$this->var2str($this->idruta).";");
    }
    
    public function listar()
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras;");
+      $data = $this->db->select("SELECT * FROM rutas;");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new ruta($d);
          }
       }
       
@@ -117,12 +127,12 @@ class cartera extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras WHERE descripcion LIKE '%".$texto."%';");
+      $data = $this->db->select("SELECT * FROM rutas WHERE descripcion LIKE '%".$texto."%';");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new ruta($d);
          }
       }
       
@@ -133,13 +143,14 @@ class cartera extends fs_model
    {
       $todos = array();
 
-      $data = $this->db->select("SELECT * FROM carteras");
+      $data = $this->db->select("SELECT * FROM rutas");
       if($data)
       {
          foreach($data AS $d)
-             $todos[] = new cartera($d);
+             $todos[] = new ruta($d);
       }
 
       return $todos;
    }
-}
+
+ }

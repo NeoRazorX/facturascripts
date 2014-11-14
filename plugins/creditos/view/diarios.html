@@ -8,7 +8,7 @@
          </a>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
-         <form id="f_buscar_cartera" name="f_buscar_cartera" action="{$fsc->url()}" method="post" class="form form-inline">
+         <form id="f_buscar_diario" name="f_buscar_diario" action="{$fsc->url()}" method="post" class="form form-inline">
             <div class="input-group">
                <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
                <span class="input-group-btn hidden-xs hidden-sm">
@@ -24,7 +24,7 @@
    <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
          <h1>
-            <a href="{$fsc->url()}">Carteras</a>
+            <a href="{$fsc->url()}">Diarios</a>
          </h1>
       </div>
    </div>
@@ -40,19 +40,19 @@
             </tr>
         </thead>
         <tbody>
-         {loop="$fsc->listar_carteras()"}
+         {loop="$fsc->listar_diarios()"}
          <form action="{$fsc->url()}" method="post" class="form">
-            <input type="hidden" name="idcartera" value="{$value->idcartera}"/> 
+            <input type="hidden" name="iddiario" value="{$value->iddiario}"/> 
             <tr>
                 <td> 
-                    <div class="form-control">{$value->idcartera}</div>
+                    <div class="form-control">{$value->iddiario}</div>
                 </td>
                 <td>
                     <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" size="100" autocomplete="off"/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">
-                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->idcartera}" title="Eliminar">
+                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->iddiario}" title="Eliminar">
                         <span class="glyphicon glyphicon-trash"></span>
                      </a>
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">

@@ -17,38 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class cartera extends fs_model
+class diario extends fs_model
 {
-   public $idcartera;
+   public $iddiario;
    public $descripcion;
    
    public function __construct($g = FALSE)
    {
-      parent::__construct('carteras', 'plugins/creditos/');
+      parent::__construct('diarios', 'plugins/creditos/');
       
       if($g)
       {
-         $this->idcartera = $g['idcartera'];
+         $this->iddiario = $g['iddiario'];
          $this->descripcion = $g['descripcion'];
       }
       else
       {
-         $this->idcartera = NULL;
+         $this->iddiario = NULL;
          $this->descripcion = "";
       }
    }
    
    protected function install() 
    {        
-      return "INSERT INTO carteras (idcartera,descripcion) VALUES (1,'Cartera Inicial');";
+      return "INSERT INTO diarios (iddiario,descripcion) VALUES
+            (1,'Diario Inicial');";
    }
    
    public function get($id)
    {
-      $data = $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($id).";");
+      $data = $this->db->select("SELECT * FROM diarios WHERE iddiario = ".$this->var2str($id).";");
       if($data)
       {
-         return new cartera($data[0]);
+         return new diario($data[0]);
       }
       else
          return FALSE;
@@ -56,19 +57,23 @@ class cartera extends fs_model
    
    public function exists()
    {
-      if( is_null($this->idcartera) )
+      if( is_null($this->iddiario) )
       {
          return FALSE;
       }
       else
       {
-         return $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+         return $this->db->select("SELECT * FROM diarios WHERE iddiario = ".$this->var2str($this->iddiario).";");
       }
+   }
+   
+   public function test() {
+      ;
    }
    
    public function nuevo_numero()
    {
-      $data = $this->db->select("SELECT max(idcartera) AS num FROM carteras;");
+      $data = $this->db->select("SELECT max(iddiario) AS num FROM diarios;");
       if($data)
          return intval($data[0]['num']) + 1;
       else
@@ -79,13 +84,13 @@ class cartera extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE carteras SET descripcion = ".$this->var2str($this->descripcion).
-                 " WHERE idcartera = ".$this->var2str($this->idcartera).";";
+         $sql = "UPDATE diarios SET descripcion = ".$this->var2str($this->descripcion).
+                 " WHERE iddiario = ".$this->var2str($this->iddiario).";";
       }
       else
       {
-         $sql = "INSERT INTO carteras (idcartera,descripcion) VALUES ("
-                 .$this->var2str($this->idcartera).","
+         $sql = "INSERT INTO diarios (iddiario,descripcion) VALUES ("
+                 .$this->var2str($this->iddiario).","
                  .$this->var2str($this->descripcion).");";
       }
       
@@ -94,19 +99,19 @@ class cartera extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("delete FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+      return $this->db->exec("delete FROM diarios WHERE iddiario = ".$this->var2str($this->iddiario).";");
    }
    
    public function listar()
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras;");
+      $data = $this->db->select("SELECT * FROM diarios;");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new diario($d);
          }
       }
       
@@ -117,12 +122,12 @@ class cartera extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras WHERE descripcion LIKE '%".$texto."%';");
+      $data = $this->db->select("SELECT * FROM diarios WHERE descripcion LIKE '%".$texto."%';");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new diario($d);
          }
       }
       
@@ -133,13 +138,14 @@ class cartera extends fs_model
    {
       $todos = array();
 
-      $data = $this->db->select("SELECT * FROM carteras");
+      $data = $this->db->select("SELECT * FROM diarios");
       if($data)
       {
          foreach($data AS $d)
-             $todos[] = new cartera($d);
+             $todos[] = new diario($d);
       }
 
       return $todos;
    }
-}
+
+ }

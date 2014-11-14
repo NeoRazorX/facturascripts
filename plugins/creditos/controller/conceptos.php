@@ -17,41 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('cartera.php');
+require_model('concepto.php');
 
-class carteras extends fs_controller
+class conceptos extends fs_controller
 {
-   public $cartera;
+   public $concepto;
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Carteras', 'creditos', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Conceptos', 'tesoreria', FALSE, TRUE);
    }
    
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->cartera = new cartera();
+      $this->concepto = new concepto();
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
       if( isset($_POST['descripcion']) )
       {
-         /// si tenemos el id, buscamos la cartera y así lo modificamos
-         if( isset($_POST['idcartera']) )
+         /// si tenemos el id, buscamos el concepto y así lo modificamos
+         if( isset($_POST['idconcepto']) )
          {
-            $cart0 = $this->cartera->get($_POST['idcartera']);
+            $coms0 = $this->concepto->get($_POST['idconcepto']);
          }
          else /// si no está el id, seguimos como si fuese nuevo
          {
-            $cart0 = new cartera();
-            $cart0->idcartera = $this->cartera->nuevo_numero();
+            $coms0 = new concepto();
+            $coms0->idconcepto = $this->concepto->nuevo_numero();
          }
          
-         $cart0->descripcion = $_POST['descripcion'];
+         $coms0->descripcion = $_POST['descripcion'];
+         $coms0->precio = intval($_POST['precio']);
          
-         if( $cart0->save() )
+         if( $coms0->save() )
          {
             $this->new_message('Datos guardados correctamente.');
          }
@@ -62,10 +63,10 @@ class carteras extends fs_controller
       }
       else if( isset($_GET['delete']) )
       {
-         $cart0 = $this->cartera->get($_GET['delete']);
-         if($cart0)
+         $coms0 = $this->concepto->get($_GET['delete']);
+         if($coms0)
          {
-            if( $cart0->delete() )
+            if( $coms0->delete() )
             {
                $this->new_message('Identificador '. $_GET['delete'] .' eliminado correctamente.');
             }
@@ -77,15 +78,15 @@ class carteras extends fs_controller
       }
    }
    
-   public function listar_carteras()
+   public function listar_conceptos()
    {
-      if( isset($_POST['query']) )
+      if($this->query != '')
       {
-         return $this->cartera->buscar($_POST['query']);
+         return $this->concepto->buscar($_POST['query']);
       }
       else
       {
-         return $this->cartera->listar();
+         return $this->concepto->listar();
       }
    }
 }

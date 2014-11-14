@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : carteras.xml
+    Document   : diarios.xml
     Description:
-        Estructura de la tabla carteras.
+        Estructura de la tabla diarios.
 -->
 <tabla>
     <columna>
-        <nombre>idcartera</nombre>
+        <nombre>iddiario</nombre>
         <tipo>serial</tipo>
         <nulo>NO</nulo>
-        <defecto>nextval('carteras_idcartera_seq'::regclass)</defecto>
+        <defecto>nextval('diarios_iddiario_seq'::regclass)</defecto>
     </columna>
     <columna>
         <nombre>descripcion</nombre>
@@ -17,7 +17,7 @@
         <nulo>NO</nulo>
     </columna>
     <restriccion>
-        <nombre>carteras_pkey</nombre>
-        <consulta>PRIMARY KEY (idcartera)</consulta>
+        <nombre>diarios_pkey</nombre>
+        <consulta>PRIMARY KEY (iddiario)</consulta>
     </restriccion>
 </tabla>

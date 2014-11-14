@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : rutas.xml
+    Description:
+        Estructura de la tabla rutas.
+-->
+<tabla>
+    <columna>
+        <nombre>idruta</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('rutas_idruta_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>varchar(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idcobrador</nombre>
+        <tipo>int</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>rutas_pkey</nombre>
+        <consulta>PRIMARY KEY (idruta)</consulta>
+    </restriccion>
+</tabla>

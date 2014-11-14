@@ -8,7 +8,7 @@
          </a>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
-         <form id="f_buscar_cartera" name="f_buscar_cartera" action="{$fsc->url()}" method="post" class="form form-inline">
+         <form id="f_buscar_cobrador" name="f_buscar_cobrador" action="{$fsc->url()}" method="post" class="form form-inline">
             <div class="input-group">
                <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
                <span class="input-group-btn hidden-xs hidden-sm">
@@ -24,7 +24,7 @@
    <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
          <h1>
-            <a href="{$fsc->url()}">Carteras</a>
+            <a href="{$fsc->url()}">Cobradores</a>
          </h1>
       </div>
    </div>
@@ -35,24 +35,28 @@
         <thead>
             <tr>
                 <th class="text-left">Identificador</th>
-                <th class="text-left">Descripción</th>
+                <th class="text-left">Nombre</th>
+                <th class="text-left">Teléfono</th>
                 <th class="text-right" width="120">Acciones</th>
             </tr>
         </thead>
         <tbody>
-         {loop="$fsc->listar_carteras()"}
+         {loop="$fsc->listar_cobradores()"}
          <form action="{$fsc->url()}" method="post" class="form">
-            <input type="hidden" name="idcartera" value="{$value->idcartera}"/> 
+            <input type="hidden" name="idcobrador" value="{$value->idcobrador}"/> 
             <tr>
                 <td> 
-                    <div class="form-control">{$value->idcartera}</div>
+                    <div class="form-control">{$value->idcobrador}</div>
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" size="100" autocomplete="off"/>
+                    <input class="form-control" type="text" name="nombre" value="{$value->nombre}" size="100" autocomplete="off"/>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="telefono" value="{$value->telefono}" size="100" autocomplete="off"/>
                 </td>
                 <td class="text-right">
                   <div class="btn-group">
-                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->idcartera}" title="Eliminar">
+                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete={$value->idcobrador}" title="Eliminar">
                         <span class="glyphicon glyphicon-trash"></span>
                      </a>
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">
@@ -75,7 +79,10 @@
                   <div class="form-control">Nuevo</div>
                </td>
                <td>
-                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+                  <input class="form-control" type="text" name="nombre" autocomplete="off"/>
+               </td>
+               <td>
+                  <input class="form-control" type="text" name="telefono" autocomplete="off"/>
                </td>
                <td class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true; this.form.submit();" title="Guardar">

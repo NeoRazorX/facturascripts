@@ -17,41 +17,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('cartera.php');
+require_model('ruta.php');
+require_model('cobrador.php');
 
-class carteras extends fs_controller
+class rutas extends fs_controller
 {
-   public $cartera;
+   public $ruta;
+   public $cobrador;
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Carteras', 'creditos', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Rutas', 'creditos', FALSE, TRUE);
    }
    
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->cartera = new cartera();
+      $this->ruta = new ruta();
+      $this->cobrador = new cobrador();
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
       if( isset($_POST['descripcion']) )
       {
-         /// si tenemos el id, buscamos la cartera y así lo modificamos
-         if( isset($_POST['idcartera']) )
+         /// si tenemos el id, buscamos la ruta y así lo modificamos
+         if( isset($_POST['idruta']) )
          {
-            $cart0 = $this->cartera->get($_POST['idcartera']);
+            $ruta0 = $this->ruta->get($_POST['idruta']);
          }
          else /// si no está el id, seguimos como si fuese nuevo
          {
-            $cart0 = new cartera();
-            $cart0->idcartera = $this->cartera->nuevo_numero();
+            $ruta0 = new ruta();
+            $ruta0->idruta = $this->ruta->nuevo_numero();
          }
          
-         $cart0->descripcion = $_POST['descripcion'];
+         $ruta0->descripcion = $_POST['descripcion'];
+         $ruta0->idcobrador = $_POST['idcobrador'];
          
-         if( $cart0->save() )
+         if( $ruta0->save() )
          {
             $this->new_message('Datos guardados correctamente.');
          }
@@ -62,10 +66,10 @@ class carteras extends fs_controller
       }
       else if( isset($_GET['delete']) )
       {
-         $cart0 = $this->cartera->get($_GET['delete']);
-         if($cart0)
+         $ruta0 = $this->ruta->get($_GET['delete']);
+         if($ruta0)
          {
-            if( $cart0->delete() )
+            if( $ruta0->delete() )
             {
                $this->new_message('Identificador '. $_GET['delete'] .' eliminado correctamente.');
             }
@@ -77,15 +81,15 @@ class carteras extends fs_controller
       }
    }
    
-   public function listar_carteras()
+   public function listar_rutas()
    {
       if( isset($_POST['query']) )
       {
-         return $this->cartera->buscar($_POST['query']);
+         return $this->ruta->buscar($_POST['query']);
       }
       else
       {
-         return $this->cartera->listar();
+         return $this->ruta->listar();
       }
    }
 }

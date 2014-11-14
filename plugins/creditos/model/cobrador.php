@@ -17,38 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class cartera extends fs_model
+class cobrador extends fs_model
 {
-   public $idcartera;
-   public $descripcion;
+   public $idcobrador;
+   public $nombre;
+   public $telefono;
    
    public function __construct($g = FALSE)
    {
-      parent::__construct('carteras', 'plugins/creditos/');
+      parent::__construct('cobradores', 'plugins/creditos/');
       
       if($g)
       {
-         $this->idcartera = $g['idcartera'];
-         $this->descripcion = $g['descripcion'];
+         $this->idcobrador = $g['idcobrador'];
+         $this->nombre = $g['nombre'];
+         $this->telefono = $g['telefono'];
       }
       else
       {
-         $this->idcartera = NULL;
-         $this->descripcion = "";
+         $this->idcobrador = NULL;
+         $this->nombre = "";
+         $this->telefono = "";
       }
    }
    
    protected function install() 
    {        
-      return "INSERT INTO carteras (idcartera,descripcion) VALUES (1,'Cartera Inicial');";
+      return "INSERT INTO cobradores (idcobrador,nombre,telefono) VALUES
+            (1,'Cobrador Inicial','');";
    }
    
    public function get($id)
    {
-      $data = $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($id).";");
+      $data = $this->db->select("SELECT * FROM cobradores WHERE idcobrador = ".$this->var2str($id).";");
       if($data)
       {
-         return new cartera($data[0]);
+         return new cobrador($data[0]);
       }
       else
          return FALSE;
@@ -56,19 +60,23 @@ class cartera extends fs_model
    
    public function exists()
    {
-      if( is_null($this->idcartera) )
+      if( is_null($this->idcobrador) )
       {
          return FALSE;
       }
       else
       {
-         return $this->db->select("SELECT * FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+         return $this->db->select("SELECT * FROM cobradores WHERE idcobrador = ".$this->var2str($this->idcobrador).";");
       }
+   }
+   
+   public function test() {
+      ;
    }
    
    public function nuevo_numero()
    {
-      $data = $this->db->select("SELECT max(idcartera) AS num FROM carteras;");
+      $data = $this->db->select("SELECT max(idcobrador) AS num FROM cobradores;");
       if($data)
          return intval($data[0]['num']) + 1;
       else
@@ -79,14 +87,16 @@ class cartera extends fs_model
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE carteras SET descripcion = ".$this->var2str($this->descripcion).
-                 " WHERE idcartera = ".$this->var2str($this->idcartera).";";
+         $sql = "UPDATE cobradores SET nombre = ".$this->var2str($this->nombre).
+                 ", telefono = ". $this->var2str($this->telefono).
+                 " WHERE idcobrador = ".$this->var2str($this->idcobrador).";";
       }
       else
       {
-         $sql = "INSERT INTO carteras (idcartera,descripcion) VALUES ("
-                 .$this->var2str($this->idcartera).","
-                 .$this->var2str($this->descripcion).");";
+         $sql = "INSERT INTO cobradores (idcobrador,nombre,telefono) VALUES ("
+                 .$this->var2str($this->idcobrador).","
+                 .$this->var2str($this->nombre).","
+                 .$this->var2str($this->telefono).");";
       }
       
       return $this->db->exec($sql);
@@ -94,19 +104,19 @@ class cartera extends fs_model
    
    public function delete()
    {
-      return $this->db->exec("delete FROM carteras WHERE idcartera = ".$this->var2str($this->idcartera).";");
+      return $this->db->exec("delete FROM cobradores WHERE idcobrador = ".$this->var2str($this->idcobrador).";");
    }
    
    public function listar()
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras;");
+      $data = $this->db->select("SELECT * FROM cobradores;");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new cobrador($d);
          }
       }
       
@@ -117,12 +127,12 @@ class cartera extends fs_model
    {
       $listag = array();
       
-      $data = $this->db->select("SELECT * FROM carteras WHERE descripcion LIKE '%".$texto."%';");
+      $data = $this->db->select("SELECT * FROM cobradores WHERE nombre LIKE '%".$texto."%';");
       if($data)
       {
          foreach($data AS $d)
          {
-            $listag[] = new cartera($d);
+            $listag[] = new cobrador($d);
          }
       }
       
@@ -133,13 +143,14 @@ class cartera extends fs_model
    {
       $todos = array();
 
-      $data = $this->db->select("SELECT * FROM carteras");
+      $data = $this->db->select("SELECT * FROM cobradores");
       if($data)
       {
          foreach($data AS $d)
-             $todos[] = new cartera($d);
+             $todos[] = new cobrador($d);
       }
 
       return $todos;
    }
-}
+
+ }

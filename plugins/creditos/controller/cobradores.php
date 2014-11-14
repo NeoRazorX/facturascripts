@@ -17,41 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('cartera.php');
+require_model('cobrador.php');
 
-class carteras extends fs_controller
+class cobradores extends fs_controller
 {
-   public $cartera;
+   public $cobrador;
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Carteras', 'creditos', FALSE, TRUE);
+      parent::__construct(__CLASS__, 'Cobradores', 'creditos', FALSE, TRUE);
    }
    
    protected function process()
    {
       $this->custom_search = TRUE;
-      $this->cartera = new cartera();
+      $this->cobrador = new cobrador();
       
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
-      if( isset($_POST['descripcion']) )
+      if( isset($_POST['nombre']) )
       {
-         /// si tenemos el id, buscamos la cartera y así lo modificamos
-         if( isset($_POST['idcartera']) )
+         /// si tenemos el id, buscamos el cobrador y así lo modificamos
+         if( isset($_POST['idcobrador']) )
          {
-            $cart0 = $this->cartera->get($_POST['idcartera']);
+            $cobr0 = $this->cobrador->get($_POST['idcobrador']);
          }
          else /// si no está el id, seguimos como si fuese nuevo
          {
-            $cart0 = new cartera();
-            $cart0->idcartera = $this->cartera->nuevo_numero();
+            $cobr0 = new cobrador();
+            $cobr0->idcobrador = $this->cobrador->nuevo_numero();
          }
          
-         $cart0->descripcion = $_POST['descripcion'];
+         $cobr0->nombre = $_POST['nombre'];
+         $cobr0->telefono = $_POST['telefono'];
          
-         if( $cart0->save() )
+         if( $cobr0->save() )
          {
             $this->new_message('Datos guardados correctamente.');
          }
@@ -62,10 +63,10 @@ class carteras extends fs_controller
       }
       else if( isset($_GET['delete']) )
       {
-         $cart0 = $this->cartera->get($_GET['delete']);
-         if($cart0)
+         $cobr0 = $this->cobrador->get($_GET['delete']);
+         if($cobr0)
          {
-            if( $cart0->delete() )
+            if( $cobr0->delete() )
             {
                $this->new_message('Identificador '. $_GET['delete'] .' eliminado correctamente.');
             }
@@ -77,15 +78,15 @@ class carteras extends fs_controller
       }
    }
    
-   public function listar_carteras()
+   public function listar_cobradores()
    {
       if( isset($_POST['query']) )
       {
-         return $this->cartera->buscar($_POST['query']);
+         return $this->cobrador->buscar($_POST['query']);
       }
       else
       {
-         return $this->cartera->listar();
+         return $this->cobrador->listar();
       }
    }
 }

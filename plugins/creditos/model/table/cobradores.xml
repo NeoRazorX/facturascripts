@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cobradores.xml
+    Description:
+        Estructura de la tabla cobradores.
+-->
+<tabla>
+    <columna>
+        <nombre>idcobrador</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('cobradores_idcobrador_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>varchar(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono</nombre>
+        <tipo>varchar(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>cobradores_pkey</nombre>
+        <consulta>PRIMARY KEY (idcobrador)</consulta>
+    </restriccion>
+</tabla>
