@@ -77,6 +77,12 @@
       <defecto>0</defecto>
    </columna>
    <columna>
+      <nombre>preciocoste</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+      <defecto>0</defecto>
+   </columna>
+   <columna>
       <nombre>tipocodbarras</nombre>
       <tipo>character varying(8)</tipo>
       <nulo>YES</nulo>

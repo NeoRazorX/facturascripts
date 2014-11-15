@@ -2,10 +2,53 @@
 
 {if condition="$fsc->articulo"}
 <script type="text/javascript">
+{if condition="$GLOBALS['config2']['margin_method'] == 'CST'"} {* Margen sobre el precio de coste *}
+   function margencalc(icst, ipvp)
+   {
+      var margen = 0;
+
+      if (icst==0) return '-';
+
+      margen = (ipvp-icst)/icst;
+
+      return margen;
+   }
+   function pvpcalc(icst, imc)
+   {
+      var pvp = 0;
+
+      pvp = icst*(1+imc);
+
+      return pvp;
+   }
+{else} {* Default: sobre el precio de venta *}
+   function margencalc(icst, ipvp)
+   {
+      var margen = 0;
+
+      if (ipvp==0) return '-';
+
+      margen = (ipvp-icst)/ipvp;
+
+      return margen;
+   }
+   function pvpcalc(icst, imv)
+   {
+      var pvp = 0;
+
+      if ((1-imv)==0) return '-';
+
+      pvp = icst/(1-imv);
+
+      return pvp;
+   }
+{/if}
    function recalcular()
    {
+      var coste = parseFloat( $("#coste").val() );
       var iva = parseFloat( $("#iva").val() );
       var pvp = parseFloat( $("#pvp").val() );
+      var npvp = 0;
       var dto = 0;
       for(var i=0; i<100; i++)
       {
@@ -14,43 +57,83 @@
             dto = parseFloat( $("#dto_"+i).val() );
             if( isNaN(dto) )
                dto = 0;
-            
-            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
+            npvp = pvp * (100 - dto)/100;
+            $("#pvp_"+i).val( npvp );
             $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+            $("#margen_"+i).val( margencalc( coste, npvp ) * 100  );
          }
       }
    }
    function cambiar_pvp()
    {
+      var coste = parseFloat( $("#coste").val() );
       var iva = parseFloat( $("#iva").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      $("#pvpi").val( pvp * (100 + iva)/100 );
+      $("#margen").val( margencalc( coste, pvp ) * 100 );
+      recalcular();
+   }
+   function cambiar_margen()
+   {
+      var margen = parseFloat( $("#margen").val() );
+      var coste = parseFloat( $("#coste").val() );
+      var iva = parseFloat( $("#iva").val() );
+      $("#pvp").val( pvpcalc(coste, margen/100.0) );
       var pvp = parseFloat( $("#pvp").val() );
       $("#pvpi").val( pvp * (100 + iva)/100 );
       recalcular();
    }
    function cambiar_pvpi()
    {
+      var coste = parseFloat( $("#coste").val() );
       var iva = parseFloat( $("#iva").val() );
       var pvpi = parseFloat( $("#pvpi").val() );
       $("#pvp").val( (100 * pvpi) / (100 + iva) );
+      var pvp = parseFloat( $("#pvp").val() );
+      $("#margen").val( margencalc( coste, pvp ) * 100 );
       recalcular();
    }
    function ajustar_dto()
    {
+      var coste = parseFloat( $("#coste").val() );
       var pvp = parseFloat( $("#pvp").val() );
       var iva = parseFloat( $("#iva").val() );
+      var npvp = 0;
       var dto = 0;
       for(var i=0; i<100; i++)
       {
          if( $("#dto_"+i) )
          {
             dto = parseFloat( $("#dto_"+i).val() );
-            $("#pvp_"+i).val( pvp * (100 - dto)/100 );
-            $("#pvpi_"+i).val( pvp * (100 - dto)/100 * (100 + iva)/100 );
+            npvp = pvp * (100 - dto)/100;
+            $("#pvp_"+i).val( npvp );
+            $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
+            $("#margen_"+i).val( ( margencalc(coste, npvp) ) * 100  );
+         }
+      }
+   }
+   function ajustar_margen()
+   {
+      var coste = parseFloat( $("#coste").val() );
+      var pvp = parseFloat( $("#pvp").val() );
+      var iva = parseFloat( $("#iva").val() );
+      var margen = 0;
+      var npvp = 0;
+      for(var i=0; i<3; i++)
+      {
+         if( $("#margen_"+i) )
+         {
+            margen = parseFloat( $("#margen_"+i).val() );
+            npvp = parseFloat( pvpcalc(coste, margen/100.0) );
+            $("#pvp_"+i).val( npvp );
+            $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
+            $("#dto_"+i).val( 100 * ( pvp - npvp ) / pvp );
          }
       }
    }
    function ajustar_pvp()
    {
+      var coste = parseFloat( $("#coste").val() );
       var pvp = parseFloat( $("#pvp").val() );
       var iva = parseFloat( $("#iva").val() );
       var npvp = 0;
@@ -70,11 +153,13 @@
             
             $("#dto_"+i).val( 100 - (100*npvp)/pvp );
             $("#pvpi_"+i).val( npvp * (100 + iva)/100 );
+            $("#margen_"+i).val( margencalc(coste, npvp) * 100  );
          }
       }
    }
    function ajustar_pvpi()
    {
+      var coste = parseFloat( $("#coste").val() );
       var pvp = parseFloat( $("#pvp").val() );
       var iva = parseFloat( $("#iva").val() );
       var npvp = 0;
@@ -96,6 +181,7 @@
             npvp = (100*npvpi)/(100+iva);
             $("#pvp_"+i).val( npvp );
             $("#dto_"+i).val( 100 - (100*npvp)/pvp );
+            $("#margen_"+i).val( margencalc(coste, npvp) * 100  );
          }
       }
    }
@@ -140,6 +226,7 @@
       $("#b_precios").click(function(event) {
          event.preventDefault();
          show_div('precios');
+         cambiar_pvp();
       });
       $("#b_stock").click(function(event) {
          event.preventDefault();
@@ -291,28 +378,31 @@
 <form action="{$fsc->url()}#precios" method="post" class="form">
    <input type="hidden" name="referencia" value="{$fsc->articulo->referencia}"/>
    <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
+   <input type="hidden" id="coste" name="coste" value="{$fsc->articulo->preciocoste()}"/>
    <div id="div_precios">
       <div class="table-responsive">
          <table class="table table-hover">
             <thead>
                <tr>
                   <th class="text-left">Tarifa</th>
-                  <th class="text-right">Dto</th>
+                  <th class="text-right">Coste</th>
+                  <th class="text-right">Dto (%)</th>
+                  {if condition="$GLOBALS['config2']['margin_method'] == 'CST'"}
+                     <th class="text-right">Margen (% sobre Coste)</th>
+                  {else}
+                     <th class="text-right">Margen (% de Ventas)</th>
+                  {/if}
                   <th class="text-right">PVP</th>
                   <th class="text-right">PVP+IVA</th>
                </tr>
             </thead>
-            {if condition="$fsc->articulo->costemedio!=0"}
-            <tr>
-               <td><div class="form-control">Coste</div></td>
-               <td><div class="form-control text-right">0.00</div></td>
-               <td><div class="form-control text-right">{$fsc->show_numero($fsc->articulo->costemedio)}</div></td>
-               <td><div class="form-control text-right">{$fsc->show_numero($fsc->articulo->costemedio_iva())}</div></td>
-            </tr>
-            {/if}
             <tr>
                <td><div class="form-control">General</div></td>
-               <td><div class="form-control text-right">0.00</div></td>
+               <td><div class="form-control text-right" style="background-color: #eeeeee;">{$fsc->articulo->preciocoste()}</div></td>
+               <td> </td>
+               <td>
+                  <input type="number" step="any" class="form-control text-right" id="margen" name="margen" value="" autocomplete="off" onchange="cambiar_margen()" onkeyup="cambiar_margen()" onclick="this.select()"/>
+               </td>
                <td>
                   <input type="number" step="any" class="form-control text-right" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onchange="cambiar_pvp()" onkeyup="cambiar_pvp()" onclick="this.select()"/>
                </td>
@@ -325,10 +415,14 @@
                <td>
                   <div class="form-control"><a href="{$value->url()}">{$value->nombre}</a></div>
                </td>
+               <td> </td>
                <td>
                   <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                   <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
                   <input type="number" step="any" class="form-control text-right" id="dto_{$counter}" name="dto_{$counter}" value="{$value->descuento}" autocomplete="off" onchange="ajustar_dto()" onkeyup="ajustar_dto()" onclick="this.select()"/>
+               </td>
+               <td>
+                  <input type="number" step="any" class="form-control text-right" id="margen_{$counter}" name="margen_{$counter}" value="" autocomplete="off" onchange="ajustar_margen()" onkeyup="ajustar_margen()" onclick="this.select()"/>
                </td>
                <td>
                   <input type="number" step="any" class="form-control text-right" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvp()}" autocomplete="off" onchange="ajustar_pvp()" onkeyup="ajustar_pvp()" onclick="this.select()"/>
@@ -339,14 +433,27 @@
             </tr>
             {/loop}
             <tr>
-               <td colspan="4" class="text-center">
+               <td colspan="6" class="text-center">
                   <a class="btn btn-sm btn-block btn-success" href="{$fsc->ppage->url()}#tarifas">Nueva tarifa</a>
-               </td>
+               </td>          
             </tr>
          </table>
       </div>
       <div class="container-fluid">
          <div class="row">
+            <div class="form-group col-lg-3 col-md-3 col-sm-3">
+               Precio de Coste (
+                  <a data-target="#modal_help_tarifas" data-toggle="modal" onclick="return false;" href="">Ayuda</a>
+               ):
+               {if condition="$fsc->articulo->secompra AND $GLOBALS['config2']['cost_is_average']"}
+                  <input type="text" class="form-control" disabled="disabled" value="{$fsc->articulo->preciocoste()}" name="coste">
+                  <p class="help-block">El Precio de Coste es el Precio Medio de Compra.</p>
+                  <input type="hidden" name="preciocoste" value="0"/>
+               {else}
+                  <input class="form-control" step="any" type="number" value="{$fsc->articulo->preciocoste()}" name="preciocoste">
+                  <p class="help-block">Introduzca el Precio de Coste aquí y <b><i>Guardar</i></b>.</p>
+               {/if}
+            </div>
             <div class="form-group col-lg-3 col-md-3 col-sm-3">
                <a href="{$fsc->impuesto->url()}">IVA</a>:
                <select class="form-control" name="codimpuesto">
@@ -363,7 +470,8 @@
                Último cambio de precio:
                <div class="form-control">{$fsc->articulo->factualizado}</div>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 text-right">
+            <div class="col-lg-3 col-md-3 col-sm-3 text-right">
+               <br />
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   &nbsp; Guardar
@@ -504,5 +612,45 @@
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}
+
+<!-- Modal -->
+   <div class="modal fade" id="modal_help_tarifas" tabindex="-1" role="dialog" aria-labelledby="modal_help_tarifas" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Precio de Coste y Precio de Venta</h4>
+            </div>
+            <div class="modal-body">
+               <b>Tarifa General</b>. Dado el Precio de Coste, <br />
+               <br />
+               - introduciendo el Precio de Venta se calcula el Margen<br />
+               <br />
+               - introduciendo el Margen se calcula el Precio de Venta<br />
+               <br />
+               <br />
+               <b>Otras Tarifas</b>. Dado el Precio de Coste, y el Porcentaje de Descuento definido en la tarifa, se calcula el Precio de Venta del Artículo en esa Tarifa. El Precio de Venta así calculado puede modificarse:<br />
+               <br />
+               - introduciendo el Precio de Venta se calcula el Descuento y el Margen que corresponden<br />
+               <br />
+               - introduciendo el Descuento se calcula el Precio de Venta y el Margen que corresponden<br />
+               <br />
+               - introduciendo el Margen se calcula el Precio de Venta y el Descuento que corresponden<br />
+               <br />
+               <br />
+               NOTA: si se modifica el Precio de Venta de la Tarifa General, se modificará el Precio de Venta del resto de tarifas teniendo en cuenta el Porcentaje de Descuento vigente para el Artículo en cada tarifa y en ese momento, que no se altera. Se calcula también el nuevo Margen. <br />
+               <br />
+               <br />
+               El &quot;Método para calcular el Margen&quot; y &quot;Usar el Precio Medio de Compra como Coste&quot; se fijan en la sección: Admin -> Configuración Avanzada -> Cálculo de precios.
+               <br />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <!-- button type="button" class="btn btn-primary">Save changes</button -->
+            </div>
+         </div>
+      </div>
+   </div>
+<!-- Modal ENDS -->
 
 {include="footer"}

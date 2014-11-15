@@ -37,6 +37,7 @@ class articulo extends fs_model
    public $pvp_ant;
    public $factualizado;
    public $costemedio;
+   public $preciocoste;
    public $codimpuesto;
    public $iva;
    public $destacado;
@@ -75,6 +76,7 @@ class articulo extends fs_model
          $this->pvp = floatval($a['pvp']);
          $this->factualizado = Date('d-m-Y', strtotime($a['factualizado']));
          $this->costemedio = floatval($a['costemedio']);
+         $this->preciocoste = floatval($a['preciocoste']);
          $this->codimpuesto = $a['codimpuesto'];
          $this->stockfis = floatval($a['stockfis']);
          $this->stockmin = floatval($a['stockmin']);
@@ -102,6 +104,7 @@ class articulo extends fs_model
          $this->pvp = 0;
          $this->factualizado = Date('d-m-Y');
          $this->costemedio = 0;
+         $this->preciocoste = 0;
          $this->codimpuesto = NULL;
          $this->stockfis = 0;
          $this->stockmin = 0;
@@ -158,6 +161,16 @@ class articulo extends fs_model
    public function costemedio_iva()
    {
       return $this->costemedio * (100+$this->get_iva()) / 100;
+   }
+   
+   public function preciocoste()
+   {
+      return ( $this->secompra AND $GLOBALS['config2']['cost_is_average'] ) ? $this->costemedio : $this->preciocoste ;
+   }
+   
+   public function preciocoste_iva()
+   {
+      return $this-> preciocoste() * (100+$this->get_iva()) / 100;
    }
    
    public function factualizado()
@@ -619,7 +632,9 @@ class articulo extends fs_model
          {
             $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
                codfamilia = ".$this->var2str($this->codfamilia).", pvp = ".$this->var2str($this->pvp).",
-               factualizado = ".$this->var2str($this->factualizado).", costemedio = ".$this->var2str($this->costemedio).",
+               factualizado = ".$this->var2str($this->factualizado).", 
+               costemedio = ".$this->var2str($this->costemedio).",
+               preciocoste = ".$this->var2str($this->preciocoste).",
                codimpuesto = ".$this->var2str($this->codimpuesto).",
                stockfis = ".$this->var2str($this->stockfis).", stockmin = ".$this->var2str($this->stockmin).",
                stockmax = ".$this->var2str($this->stockmax).",
@@ -636,11 +651,11 @@ class articulo extends fs_model
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (referencia,codfamilia,descripcion,pvp,
-               factualizado,costemedio,codimpuesto,stockfis,stockmin,stockmax,controlstock,destacado,bloqueado,
+               factualizado,costemedio,preciocoste,codimpuesto,stockfis,stockmin,stockmax,controlstock,destacado,bloqueado,
                secompra,sevende,equivalencia,codbarras,observaciones,imagen,publico)
                VALUES (".$this->var2str($this->referencia).",".$this->var2str($this->codfamilia).",
                ".$this->var2str($this->descripcion).",".$this->var2str($this->pvp).",
-               ".$this->var2str($this->factualizado).",".$this->var2str($this->costemedio).",
+               ".$this->var2str($this->factualizado).",".$this->var2str($this->costemedio).",".$this->var2str($this->preciocoste).",
                ".$this->var2str($this->codimpuesto).",".$this->var2str($this->stockfis).",".$this->var2str($this->stockmin).",
                ".$this->var2str($this->stockmax).",".$this->var2str($this->controlstock).",
                ".$this->var2str($this->destacado).",".$this->var2str($this->bloqueado).",

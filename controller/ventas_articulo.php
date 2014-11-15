@@ -58,37 +58,43 @@ class ventas_articulo extends fs_controller
             $continuar = TRUE;
             $this->articulo->set_impuesto( $_POST['codimpuesto'] );
             $this->articulo->set_pvp_iva( $_POST['pvpiva'] );
+            $this->articulo->preciocoste = ( $this->articulo->secompra AND $GLOBALS['config2']['cost_is_average'] ) ? 0 : floatval($_POST['preciocoste']);
             if( !$this->articulo->save() )
             {
                $this->new_error_msg("¡Imposible modificar el artículo!");
                $continuar = FALSE;
             }
-            $tarifa_articulo = new tarifa_articulo();
-            for($i = 0; $i < 100; $i++)
+            if ($_POST['pvpiva']>0)  // No se guardan los precios si PVP es cero, porque se guarda 0% de descuento, independientemente de la tarifa
             {
-               if( isset($_POST['codtarifa_'.$i]) )
-               {
-                  if($_POST['id_'.$i] != '')
-                     $ta = $tarifa_articulo->get($_POST['id_'.$i]);
-                  else
-                     $ta = FALSE;
-                  if( !$ta )
+                  $tarifa_articulo = new tarifa_articulo();
+                  for($i = 0; $i < 100; $i++)
                   {
-                     $ta = new tarifa_articulo();
-                     $ta->codtarifa = $_POST['codtarifa_'.$i];
-                     $ta->referencia = $this->articulo->referencia;
+                     if( isset($_POST['codtarifa_'.$i]) )
+                     {
+                        if($_POST['id_'.$i] != '')
+                           $ta = $tarifa_articulo->get($_POST['id_'.$i]);
+                        else
+                           $ta = FALSE;
+                        if( !$ta )
+                        {
+                           $ta = new tarifa_articulo();
+                           $ta->codtarifa = $_POST['codtarifa_'.$i];
+                           $ta->referencia = $this->articulo->referencia;
+                        }
+                        $ta->pvp = $this->articulo->pvp;
+                        $ta->iva = $this->articulo->get_iva();
+                        $ta->set_pvp_iva($_POST['pvpiva_'.$i]);
+                        if( !$ta->save() )
+                        {
+                           $this->new_error_msg("¡Imposible modificar la tarifa!");
+                           $continuar = FALSE;
+                        }
+                     }
+                     else
+                        break;
                   }
-                  $ta->pvp = $this->articulo->pvp;
-                  $ta->iva = $this->articulo->get_iva();
-                  $ta->set_pvp_iva($_POST['pvpiva_'.$i]);
-                  if( !$ta->save() )
-                  {
-                     $this->new_error_msg("¡Imposible modificar la tarifa!");
-                     $continuar = FALSE;
-                  }
-               }
-               else
-                  break;
+            } else {
+               $this->new_advice("Debe establecer el Precio de Venta");
             }
             if( $continuar )
                $this->new_message("Precios modificadas correctamente.");
