@@ -54,7 +54,7 @@ class clan_familiar extends fs_model
    
    public function url()
    {
-      return 'index.php?page=general_clan&cod='.$this->codclan;
+      return 'index.php?page=ventas_clan&cod='.$this->codclan;
    }
    
    public function get_clientes()
@@ -258,5 +258,3 @@ class cliente2clan extends fs_model
       return $clilist;
    }
 }
-
-?>

@@ -4,19 +4,37 @@
          <input type="hidden" name="referencia_{$fsc->numlineas}" value="{$fsc->articulo->referencia}"/>
          <input type="hidden" id="pvp_{$fsc->numlineas}" name="pvp_{$fsc->numlineas}" value="{$fsc->articulo->pvp}"/>
          <input type="hidden" id="iva_{$fsc->numlineas}" name="iva_{$fsc->numlineas}" value="{$fsc->articulo->get_iva()}"/>
-         <a class="link" target="_blank" href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
+         <div class="form-group">
+            <div class="form-control">
+               <a target="_blank" href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
+            </div>
+         </div>
       </td>
       <td>
-         <input type="text" class="form-control full" name="desc_{$fsc->numlineas}" value="{$fsc->articulo->descripcion}" onclick="this.select()"/>
-      </td>
-      <td class="text-center">{$fsc->articulo->stockfis}</td>
-      <td class="text-center">
-         <input class="btn btn-sm btn-warning" type="button" value="-" onclick="linea_sum_ud('{$fsc->numlineas}','-1')"/>
-         <input class="form-control" type="text" id="cantidad_{$fsc->numlineas}" name="cantidad_{$fsc->numlineas}" onkeyup="recalcular()" autocomplete="off" value="1" size="5"/>
-         <input class="btn btn-sm btn-primary" type="button" value="+" onclick="linea_sum_ud('{$fsc->numlineas}','1')"/>
+         <div class="form-group">
+            <input type="text" class="form-control" name="desc_{$fsc->numlineas}" value="{$fsc->articulo->descripcion}" onclick="this.select()"/>
+         </div>
       </td>
       <td>
-         <input class="form-control full" type="text" id="pvpt_{$fsc->numlineas}" name="pvpt_{$fsc->numlineas}" size="6" disabled="disabled"/>
+         <div class="form-group">
+            <div class="form-control text-right">{$fsc->articulo->stockfis}</div>
+         </div>
+      </td>
+      <td class="text-right">
+         <input class="btn btn-sm btn-default" type="button" value="-" onclick="linea_sum_ud('{$fsc->numlineas}','-1')"/>
+      </td>
+      <td>
+         <div class="form-group">
+            <input class="form-control text-right" type="text" id="cantidad_{$fsc->numlineas}" name="cantidad_{$fsc->numlineas}" value="1" onkeyup="recalcular()" autocomplete="off"/>
+         </div>
+      </td>
+      <td>
+         <input class="btn btn-sm btn-default" type="button" value="+" onclick="linea_sum_ud('{$fsc->numlineas}','1')"/>
+      </td>
+      <td>
+         <div class="form-group">
+            <input class="form-control text-right" type="text" id="pvpt_{$fsc->numlineas}" name="pvpt_{$fsc->numlineas}" disabled="disabled"/>
+         </div>
       </td>
    </tr>
 {else}

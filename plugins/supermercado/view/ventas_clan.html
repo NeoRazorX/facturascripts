@@ -1,0 +1,209 @@
+{include="header"}
+
+{if condition="$fsc->clan"}
+<script type="text/javascript">
+   function buscar_cliente()
+   {
+      if(document.f_buscar_cliente.buscar_cliente.value == '')
+      {
+         $("#search_results_clientes").html('');
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_cliente]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_cliente.buscar_cliente.value )
+               {
+                  $("#search_results_clientes").html(datos);
+               }
+            }
+         });
+      }
+   }
+   $(document).ready(function() {
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar este clan?") )
+            window.location.href = 'index.php?page=ventas_clan&delete={$fsc->clan->codclan}';
+      });
+      $("#b_buscar_cliente").click(function(event) {
+         event.preventDefault();
+         $("#modal_buscar_cliente").modal('show');
+         document.f_buscar_cliente.buscar_cliente.focus();
+      });
+      $("#f_buscar_cliente").keyup(function() {
+         buscar_cliente();
+      });
+      $("#f_buscar_cliente").submit(function(event) {
+         event.preventDefault();
+         buscar_cliente();
+      });
+   });
+</script>
+
+<form action="{$fsc->url()}" method="post" class="form">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-md-6">
+            <div class="form-group">
+               Nombre del clan:
+               <input class="form-control" type="text" name="nombre" value="{$fsc->clan->nombre}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-md-6 text-right">
+            <a href="{$fsc->url()}" class="btn btn-sm btn-default">
+               <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            </a>
+            <div class="btn-group">
+               <a href="#" class="btn btn-sm btn-danger" id="b_eliminar">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> &nbsp; Eliminar
+               </a>
+               <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-md-4">
+            <div class="form-group">
+               Límite de gasto ({$fsc->simbolo_divisa()}):
+               <input class="form-control" type="text" name="limite" value="{$fsc->clan->limite}" autocomplete="off" onclick="this.select()"/>
+            </div>
+         </div>
+         <div class="col-md-4">
+            <div class="form-group">
+               Gastados:
+               <div class="form-control">{$fsc->show_precio($fsc->clan->gastado())}</div>
+            </div>
+         </div>
+         <div class="col-md-4">
+            <div class="checkbox">
+               <label>
+                  <input type="checkbox" name="restringido" value="TRUE"{if condition="$fsc->clan->restringido"} checked="checked"{/if}/>
+                  sólo un administrador puede vender a estos clientes
+               </label>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <div role="tabpanel">
+      <ul class="nav nav-tabs" role="tablist">
+         <li role="presentation" class="active">
+            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Clientes</a>
+         </li>
+         <li>
+            <a href="#nuevo" title="añadir un nuevo cliente al clan" id="b_buscar_cliente">
+               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </a>
+         </li>
+         <li role="presentation">
+            <a href="#albaranes" aria-controls="albaranes" role="tab" data-toggle="tab">Últimos {#FS_ALBARANES#}</a>
+         </li>
+      </ul>
+      <div class="tab-content">
+         <div role="tabpanel" class="tab-pane active" id="home">
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th width="40"></th>
+                        <th class="text-left">Código + Nombre</th>
+                        <th class="text-left">{#FS_CIFNIF#}</th>
+                        <th class="text-left">Observaciones</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->clientes"}
+                  <tr>
+                     <td class="text-center">
+                        <input type="checkbox" name="codcliente[]" value="{$value->codcliente}" checked="checked"/>
+                     </td>
+                     <td><a href="{$value->url()}">{$value->codcliente}</a> {$value->nombre}</td>
+                     <td>{$value->cifnif}</td>
+                     <td>{$value->observaciones_resume()}</td>
+                  </tr>
+                  {else}
+                  <tr class="bg-warning">
+                     <td></td>
+                     <td colspan="3">No hay clientes en este clan.</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         </div>
+         <div role="tabpanel" class="tab-pane" id="albaranes">
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th class="text-left">código + número 2</th>
+                        <th class="text-left">cliente</th>
+                        <th class="text-left">observaciones</th>
+                        <th class="text-right">total</th>
+                        <th class="text-right">fecha</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->clan->last_albaranes()"}
+                  <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
+                     <td class="text-center">
+                        {if condition="!$value->ptefactura"}
+                        <span class="glyphicon glyphicon-paperclip" title="El {#FS_ALBARAN#} tiene vinculada una factura"></span>
+                        {/if}
+                     </td>
+                     <td><a href="{$value->url()}">{$value->codigo}</a> {$value->numero2}</td>
+                     <td>{$value->nombrecliente}</td>
+                     <td>{$value->observaciones_resume()}</td>
+                     <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+                     <td class="text-right">{$value->fecha}</td>
+                  </tr>
+                  {else}
+                  <tr class="bg-warning">
+                     <td></td>
+                     <td colspan="5">Sin resultados.</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form id="f_buscar_cliente" name="f_buscar_cliente" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_buscar_cliente">
+      <div class="modal-dialog" style="width: 99%; max-width: 1000px;">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Escribe el DNI del cliente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="input-group">
+                  <input type="text" class="form-control" name="buscar_cliente" autocomplete="off">
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="button">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+            <div id="search_results_clientes"></div>
+         </div>
+      </div>
+   </div>
+</form>
+{else}
+<div class="text-center">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

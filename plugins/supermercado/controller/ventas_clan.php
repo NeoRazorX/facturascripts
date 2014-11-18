@@ -20,7 +20,7 @@
 require_model('cliente.php');
 require_model('clan_familiar.php');
 
-class general_clan extends fs_controller
+class ventas_clan extends fs_controller
 {
    public $busqueda;
    public $clan;
@@ -29,15 +29,14 @@ class general_clan extends fs_controller
    
    public function __construct()
    {
-      parent::__construct('general_clan', 'Clan', 'general', FALSE, FALSE);
+      parent::__construct(__CLASS__, 'Clan', 'ventas', FALSE, FALSE);
    }
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->busqueda = '';
       $this->resultado = array();
-      
-      $this->ppage = $this->page->get('general_clanes');
       
       if( isset($_GET['cod']) )
       {
@@ -88,7 +87,6 @@ class general_clan extends fs_controller
          }
          
          $this->page->title = 'Clan '.$this->clan->codclan;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
          $this->clientes = $this->clan->get_clientes();
       }
       else
@@ -121,5 +119,3 @@ class general_clan extends fs_controller
       $this->resultado = $cliente->search($this->busqueda);
    }
 }
-
-?>

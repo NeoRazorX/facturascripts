@@ -50,11 +50,11 @@
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
-               <li class="dropdown{if condition="$value==$fsc->page->folder"} active{/if}">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value}</a>
+               <li class="dropdown{if condition="$value1==$fsc->page->folder"} active{/if}">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value1}</a>
                   <ul class="dropdown-menu">
-                     {loop="$fsc->pages($value)"}
-                     <li{if condition="$value->showing()"} class="active"{/if}><a href="{$value->url()}">{$value->title}</a></li>
+                     {loop="$fsc->pages($value1)"}
+                     <li{if condition="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
                      {/loop}
                   </ul>
                </li>

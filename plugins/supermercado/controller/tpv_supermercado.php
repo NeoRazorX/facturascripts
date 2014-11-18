@@ -50,6 +50,7 @@ class tpv_supermercado extends fs_controller
    {
       header('Access-Control-Allow-Origin: *');
       
+      $this->show_fs_toolbar = FALSE;
       $this->agente = $this->user->get_agente();
       $this->busqueda = '';
       $this->caja = new caja();
@@ -520,6 +521,9 @@ class tpv_supermercado extends fs_controller
       else
          $this->new_error_msg("Ticket no encontrado.");
    }
+   
+   public function progressbar()
+   {
+      return intval($this->clan->gastado()/$this->clan->limite*100);
+   }
 }
-
-?>

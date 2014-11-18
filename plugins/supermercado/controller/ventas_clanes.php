@@ -19,17 +19,18 @@
 
 require_model('clan_familiar.php');
 
-class general_clanes extends fs_controller
+class ventas_clanes extends fs_controller
 {
    public $clan;
    
    public function __construct()
    {
-      parent::__construct('general_clanes', 'Clanes familiares', 'general');
+      parent::__construct(__CLASS__, 'Clanes familiares', 'ventas');
    }
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->clan = new clan_familiar();
       
       if( isset($_GET['delete']) )
@@ -53,9 +54,5 @@ class general_clanes extends fs_controller
          else
             $this->new_error_msg('Imposible guardar el clan familiar.');
       }
-      
-      $this->buttons[] = new fs_button_img('b_nuevo_clan', 'Nuevo');
    }
 }
-
-?>
