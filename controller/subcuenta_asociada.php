@@ -42,13 +42,16 @@ class subcuenta_asociada extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->tipo = FALSE;
       $this->subcuenta = FALSE;
       $this->cuenta = new cuenta();
       
       $this->codejercicio = $this->default_items->codejercicio();
       if( isset($_POST['codejercicio']) )
+      {
          $this->codejercicio = $_POST['codejercicio'];
+      }
       
       /// comprobamos el ejercicio
       $ejercicio = new ejercicio();
@@ -74,13 +77,24 @@ class subcuenta_asociada extends fs_controller
          
          if($this->cliente)
          {
-            $this->ppage = $this->page->get('ventas_cliente');
-            $this->ppage->title = 'Volver al cliente';
-            $this->ppage->extra_url = '&cod='.$this->cliente->codcliente.'#subcuentas';
-            
             $subcuenta_cliente = new subcuenta_cliente();
             
-            if( isset($_GET['idsc']) )
+            if( isset($_GET['delete_sca']) )
+            {
+               $aux_sca = $subcuenta_cliente->get2($_GET['delete_sca']);
+               if($aux_sca)
+               {
+                  if( $aux_sca->delete() )
+                  {
+                     $this->new_message('El cliente ya no está asocuado a esa subcuenta.');
+                  }
+                  else
+                     $this->new_error_msg('Imposible quitar la subcuenta.');
+               }
+               else
+                  $this->new_error_msg('Relación con la subcuenta no encontrada.');
+            }
+            else if( isset($_GET['idsc']) )
             {
                $this->subcuenta_a = $subcuenta_cliente->get($_GET['cli'], $_GET['idsc']);
                if($this->subcuenta_a)
@@ -204,13 +218,24 @@ class subcuenta_asociada extends fs_controller
          
          if($this->proveedor)
          {
-            $this->ppage = $this->page->get('compras_proveedor');
-            $this->ppage->title = 'Volver al proveedor';
-            $this->ppage->extra_url = '&cod='.$this->proveedor->codproveedor.'#subcuentas';
-            
             $subcuenta_proveedor = new subcuenta_proveedor();
             
-            if( isset($_GET['idsc']) )
+            if( isset($_GET['delete_sca']) )
+            {
+               $aux_sca = $subcuenta_proveedor->get2($_GET['delete_sca']);
+               if($aux_sca)
+               {
+                  if( $aux_sca->delete() )
+                  {
+                     $this->new_message('El proveedor ya no está asocuado a esa subcuenta.');
+                  }
+                  else
+                     $this->new_error_msg('Imposible quitar la subcuenta.');
+               }
+               else
+                  $this->new_error_msg('Relación con la subcuenta no encontrada.');
+            }
+            else if( isset($_GET['idsc']) )
             {
                $this->subcuenta_a = $subcuenta_proveedor->get($_GET['pro'], $_GET['idsc']);
                if($this->subcuenta_a)

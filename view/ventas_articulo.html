@@ -248,6 +248,27 @@
    });
 </script>
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-8">
+         <a href="{$fsc->url()}" class="btn btn-sm btn-default" title="Recargar la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+         <a href="{$fsc->ppage->url()}" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Todos los artículos
+         </a>
+         <a href="#" id="b_imagen" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-picture"></span> &nbsp; Imagen
+         </a>
+      </div>
+      <div class="col-md-4 text-right">
+         <a href="#" id="b_eliminar_articulo" class="btn btn-sm btn-danger">
+            <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+         </a>
+      </div>
+   </div>
+</div>
+
 <ul class="nav nav-tabs" role="tablist">
    <li id="b_generales"><a href="#">Datos generales</a></li>
    <li id="b_precios"><a href="#precios">Precios</a></li>
@@ -264,8 +285,7 @@
          {if condition="$value->type=='button'"}
          <li>
             <a href="index.php?page={$value->from}&ref={function="urlencode($fsc->articulo->referencia)"}">
-               <span class="glyphicon glyphicon-list"></span>
-               &nbsp; {$value->text}
+               <span class="glyphicon glyphicon-list"></span> &nbsp; {$value->text}
             </a>
          </li>
          {/if}
@@ -367,8 +387,7 @@
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
+               <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
             </button>
          </div>
       </div>
@@ -380,12 +399,68 @@
    <input type="hidden" id="iva" name="iva" value="{$fsc->articulo->get_iva()}"/>
    <input type="hidden" id="coste" name="coste" value="{$fsc->articulo->preciocoste()}"/>
    <div id="div_precios">
+      <div class="container-fluid" style="margin-top: 10px;">
+         <div class="row">
+            <div class="col-md-4">
+               <div class="form-group">
+                  PVP:
+                  <input type="text" class="form-control" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onchange="cambiar_pvp()" onkeyup="cambiar_pvp()" onclick="this.select()"/>
+                  <p class="help-block">Último cambio de precio: {$fsc->articulo->factualizado}</p>
+               </div>
+            </div>
+            <div class="col-md-4">
+               <div class="form-group">
+                  <a href="{$fsc->impuesto->url()}">IVA</a>:
+                  <select class="form-control" name="codimpuesto">
+                  {loop="$fsc->impuesto->all()"}
+                     {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
+                     <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->codimpuesto}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-4">
+               <div class="form-group">
+                  PVP+IVA:
+                  <input type="text" class="form-control" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" autocomplete="off" onchange="cambiar_pvpi()" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-md-4">
+               <div class="form-group">
+                  Precio de Coste:
+                  {if condition="$fsc->articulo->secompra AND $GLOBALS['config2']['cost_is_average']"}
+                     <input type="text" class="form-control" disabled="disabled" value="{$fsc->articulo->preciocoste()}" name="coste">
+                     <p class="help-block">
+                        El precio de coste es el precio medio de compra. <a data-target="#modal_help_tarifas" data-toggle="modal" href="#">Ayuda</a>.
+                     </p>
+                     <input type="hidden" name="preciocoste" value="0"/>
+                  {else}
+                     <input class="form-control" type="text" value="{$fsc->articulo->preciocoste()}" name="preciocoste">
+                     <p class="help-block">
+                        Introduzca el precio de coste aquí. <a data-target="#modal_help_tarifas" data-toggle="modal" href="#">Ayuda</a>.
+                     </p>
+                  {/if}
+               </div>
+            </div>
+            <div class="col-md-4">
+               <div class="form-group">
+                  Margen de ganancia:
+                  <input type="text" class="form-control" id="margen" name="margen" value="0" autocomplete="off" onchange="cambiar_margen()" onkeyup="cambiar_margen()" onclick="this.select()"/>
+               </div>
+            </div>
+         </div>
+      </div>
+      
       <div class="table-responsive">
          <table class="table table-hover">
             <thead>
                <tr>
                   <th class="text-left">Tarifa</th>
-                  <th class="text-right">Coste</th>
                   <th class="text-right">Dto (%)</th>
                   {if condition="$GLOBALS['config2']['margin_method'] == 'CST'"}
                      <th class="text-right">Margen (% sobre Coste)</th>
@@ -396,26 +471,11 @@
                   <th class="text-right">PVP+IVA</th>
                </tr>
             </thead>
-            <tr>
-               <td><div class="form-control">General</div></td>
-               <td><div class="form-control text-right" style="background-color: #eeeeee;">{$fsc->articulo->preciocoste()}</div></td>
-               <td> </td>
-               <td>
-                  <input type="number" step="any" class="form-control text-right" id="margen" name="margen" value="" autocomplete="off" onchange="cambiar_margen()" onkeyup="cambiar_margen()" onclick="this.select()"/>
-               </td>
-               <td>
-                  <input type="number" step="any" class="form-control text-right" id="pvp" name="pvp" value="{$fsc->articulo->pvp}" autocomplete="off" onchange="cambiar_pvp()" onkeyup="cambiar_pvp()" onclick="this.select()"/>
-               </td>
-               <td>
-                  <input type="number" step="any" class="form-control text-right" id="pvpi" name="pvpiva" value="{$fsc->articulo->pvp_iva()}" autocomplete="off" onchange="cambiar_pvpi()" onkeyup="cambiar_pvpi()" onclick="this.select()"/>
-               </td>
-            </tr>
             {loop="$fsc->articulo->get_tarifas(TRUE)"}
             <tr>
                <td>
                   <div class="form-control"><a href="{$value->url()}">{$value->nombre}</a></div>
                </td>
-               <td> </td>
                <td>
                   <input type="hidden" name="id_{$counter}" value="{$value->id}"/>
                   <input type="hidden" name="codtarifa_{$counter}" value="{$value->codtarifa}"/>
@@ -441,40 +501,10 @@
       </div>
       <div class="container-fluid">
          <div class="row">
-            <div class="form-group col-lg-3 col-md-3 col-sm-3">
-               Precio de Coste (
-                  <a data-target="#modal_help_tarifas" data-toggle="modal" onclick="return false;" href="">Ayuda</a>
-               ):
-               {if condition="$fsc->articulo->secompra AND $GLOBALS['config2']['cost_is_average']"}
-                  <input type="text" class="form-control" disabled="disabled" value="{$fsc->articulo->preciocoste()}" name="coste">
-                  <p class="help-block">El Precio de Coste es el Precio Medio de Compra.</p>
-                  <input type="hidden" name="preciocoste" value="0"/>
-               {else}
-                  <input class="form-control" step="any" type="number" value="{$fsc->articulo->preciocoste()}" name="preciocoste">
-                  <p class="help-block">Introduzca el Precio de Coste aquí y <b><i>Guardar</i></b>.</p>
-               {/if}
-            </div>
-            <div class="form-group col-lg-3 col-md-3 col-sm-3">
-               <a href="{$fsc->impuesto->url()}">IVA</a>:
-               <select class="form-control" name="codimpuesto">
-               {loop="$fsc->impuesto->all()"}
-                  {if condition="$value->codimpuesto==$fsc->articulo->codimpuesto"}
-                  <option value="{$value->codimpuesto}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codimpuesto}">{$value->descripcion}</option>
-                  {/if}
-               {/loop}
-               </select>
-            </div>
-            <div class="form-group col-lg-3 col-md-3 col-sm-3">
-               Último cambio de precio:
-               <div class="form-control">{$fsc->articulo->factualizado}</div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-3 text-right">
+            <div class="col-md-12 text-right">
                <br />
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
+                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                </button>
             </div>
          </div>
@@ -613,44 +643,44 @@
 </div>
 {/if}
 
-<!-- Modal -->
-   <div class="modal fade" id="modal_help_tarifas" tabindex="-1" role="dialog" aria-labelledby="modal_help_tarifas" aria-hidden="true">
-      <div class="modal-dialog">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Precio de Coste y Precio de Venta</h4>
-            </div>
-            <div class="modal-body">
-               <b>Tarifa General</b>. Dado el Precio de Coste, <br />
-               <br />
-               - introduciendo el Precio de Venta se calcula el Margen<br />
-               <br />
-               - introduciendo el Margen se calcula el Precio de Venta<br />
-               <br />
-               <br />
-               <b>Otras Tarifas</b>. Dado el Precio de Coste, y el Porcentaje de Descuento definido en la tarifa, se calcula el Precio de Venta del Artículo en esa Tarifa. El Precio de Venta así calculado puede modificarse:<br />
-               <br />
-               - introduciendo el Precio de Venta se calcula el Descuento y el Margen que corresponden<br />
-               <br />
-               - introduciendo el Descuento se calcula el Precio de Venta y el Margen que corresponden<br />
-               <br />
-               - introduciendo el Margen se calcula el Precio de Venta y el Descuento que corresponden<br />
-               <br />
-               <br />
-               NOTA: si se modifica el Precio de Venta de la Tarifa General, se modificará el Precio de Venta del resto de tarifas teniendo en cuenta el Porcentaje de Descuento vigente para el Artículo en cada tarifa y en ese momento, que no se altera. Se calcula también el nuevo Margen. <br />
-               <br />
-               <br />
-               El &quot;Método para calcular el Margen&quot; y &quot;Usar el Precio Medio de Compra como Coste&quot; se fijan en la sección: Admin -> Configuración Avanzada -> Cálculo de precios.
-               <br />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <!-- button type="button" class="btn btn-primary">Save changes</button -->
-            </div>
+<div class="modal fade" id="modal_help_tarifas" tabindex="-1" role="dialog" aria-labelledby="modal_help_tarifas" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Precio de Coste y Precio de Venta</h4>
+         </div>
+         <div class="modal-body">
+            <h3 style="margin-top: 0px;">Tarifa General</h3>
+            Dado el Precio de Coste:
+            <ul>
+               <li>Introduciendo el Precio de Venta se calcula el Margen.</li>
+               <li>Introduciendo el Margen se calcula el Precio de Venta.</li>
+            </ul>
+            <h3 style="margin-top: 0px;">Otras Tarifas</h3>
+            Dado el Precio de Coste, y el Porcentaje de Descuento definido en la tarifa,
+            se calcula el Precio de Venta del Artículo en esa Tarifa.
+            El Precio de Venta así calculado puede modificarse:
+            <ul>
+               <li>Introduciendo el Precio de Venta se calcula el Descuento y el Margen que corresponden.</li>
+               <li>Introduciendo el Descuento se calcula el Precio de Venta y el Margen que corresponden.</li>
+               <li>Introduciendo el Margen se calcula el Precio de Venta y el Descuento que corresponden.</li>
+            </ul>
+            <p class="small">
+               NOTA: si se modifica el Precio de Venta de la Tarifa General, se modificará el Precio de Venta del
+               resto de tarifas teniendo en cuenta el Porcentaje de Descuento vigente para el Artículo en cada tarifa
+               y en ese momento, que no se altera. Se calcula también el nuevo Margen.
+            </p>
+            <p class="small">
+               El &quot;Método para calcular el Margen&quot; y &quot;Usar el Precio Medio de Compra como Coste&quot;
+               se fijan en la sección: Admin -> Configuración Avanzada -> Cálculo de precios.
+            </p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
          </div>
       </div>
    </div>
-<!-- Modal ENDS -->
+</div>
 
 {include="footer"}

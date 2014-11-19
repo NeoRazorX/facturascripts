@@ -145,6 +145,7 @@
                <th class="text-right">Debe</th>
                <th class="text-right">Haber</th>
                <th class="text-right">Saldo</th>
+               <th></th>
             </tr>
          </thead>
          {if condition="$fsc->subcuenta"}
@@ -175,9 +176,14 @@
                <input class="form-control text-right" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled"/>
             </td>
             <td class="text-right">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-               </button>
+               <div class="btn-group">
+                  <a href="{$fsc->url()}&delete_sca={$fsc->subcuenta_a->id}" class="btn btn-sm btn-danger" title="Quitar">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
             </td>
          </tr>
          {else}
@@ -241,6 +247,7 @@
                <th class="text-right">Debe</th>
                <th class="text-right">Haber</th>
                <th class="text-right">Saldo</th>
+               <th></th>
             </tr>
          </thead>
          {if condition="$fsc->subcuenta"}
@@ -271,9 +278,14 @@
                <input class="form-control text-right" type="text" name="saldo" value="{$fsc->subcuenta->saldo}" disabled="disabled"/>
             </td>
             <td class="text-right">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-               </button>
+               <div class="btn-group">
+                  <a href="{$fsc->url()}&delete_sca={$fsc->subcuenta_a->id}" class="btn btn-sm btn-danger" title="Quitar">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
             </td>
          </tr>
          {else}

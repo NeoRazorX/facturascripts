@@ -72,13 +72,23 @@ class subcuenta_proveedor extends fs_model
          return FALSE;
    }
    
+   public function get2($id)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      if($data)
+         return new subcuenta_proveedor($data[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE id = ".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()

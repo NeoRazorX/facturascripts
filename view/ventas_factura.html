@@ -88,7 +88,7 @@
             
             {loop="$fsc->extensiones"}
                {if condition="$value->type=='button'"}
-               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">
+               <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" class="btn btn-sm btn-default">
                   {$value->text}
                </a>
                {/if}

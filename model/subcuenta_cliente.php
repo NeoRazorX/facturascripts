@@ -28,7 +28,7 @@ class subcuenta_cliente extends fs_model
    public $codsubcuenta;
    public $codejercicio;
    public $idsubcuenta;
-   public $id;
+   public $id; /// pkey
    
    public function __construct($s = FALSE)
    {
@@ -72,10 +72,21 @@ class subcuenta_cliente extends fs_model
          return FALSE;
    }
    
+   public function get2($id)
+   {
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
+      if($data)
+         return new subcuenta_cliente($data[0]);
+      else
+         return FALSE;
+   }
+   
    public function exists()
    {
       if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
