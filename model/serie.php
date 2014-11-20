@@ -55,8 +55,7 @@ class serie extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
-            VALUES ('A','SERIE A',FALSE,'0',NULL);";
+      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta) VALUES ('A','SERIE A',FALSE,'0',NULL);";
    }
    
    public function url()
@@ -104,10 +103,6 @@ class serie extends fs_model
       else if( strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100 )
       {
          $this->new_error_msg("Descripción de serie no válida.");
-      }
-      else if($this->siniva AND $this->irpf != 0)
-      {
-         $this->new_error_msg("Si no hay IVA no se puede retener el IRPF.");
       }
       else
          $status = TRUE;

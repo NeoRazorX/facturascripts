@@ -286,7 +286,7 @@ class ventas_albaran extends fs_controller
                         $lineas[$k]->codimpuesto = NULL;
                         $lineas[$k]->iva = 0;
                         $lineas[$k]->recargo = 0;
-                        $lineas[$k]->irpf = 0;
+                        $lineas[$k]->irpf = $this->albaran->irpf;
                         if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
@@ -295,9 +295,6 @@ class ventas_albaran extends fs_controller
                            
                            $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
                            $lineas[$k]->recargo = floatval($_POST['recargo_'.$num]);
-                           
-                           if($lineas[$k]->iva > 0)
-                              $lineas[$k]->irpf = $this->albaran->irpf;
                         }
                         
                         if( $lineas[$k]->save() )
@@ -330,6 +327,7 @@ class ventas_albaran extends fs_controller
                         $linea = new linea_albaran_cliente();
                         $linea->referencia = $art0->referencia;
                         $linea->descripcion = $_POST['desc_'.$num];
+                        $linea->irpf = $this->albaran->irpf;
                         
                         if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
@@ -339,9 +337,6 @@ class ventas_albaran extends fs_controller
                            
                            $linea->iva = floatval($_POST['iva_'.$num]);
                            $linea->recargo = floatval($_POST['recargo_'.$num]);
-                           
-                           if($linea->iva > 0)
-                              $linea->irpf = $this->albaran->irpf;
                         }
                         
                         $linea->idalbaran = $this->albaran->idalbaran;

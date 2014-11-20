@@ -105,6 +105,7 @@ function recalcular()
          l_dto = parseFloat( $("#dto_"+i).val() );
          l_neto = l_uds*l_pvp*(100-l_dto)/100;
          l_iva = parseFloat( $("#iva_"+i).val() );
+         l_irpf = irpf;
          
          if(tiene_recargo)
          {
@@ -115,10 +116,6 @@ function recalcular()
             l_recargo = 0;
             $("#recargo_"+i).val(0);
          }
-         
-         l_irpf = 0;
-         if(l_iva > 0)
-            l_irpf = irpf;
          
          $("#neto_"+i).val( l_neto );
          $("#total_"+i).val( number_format(l_neto + (l_neto*(l_iva-l_irpf+l_recargo)/100), fs_nf0, '.', '') );

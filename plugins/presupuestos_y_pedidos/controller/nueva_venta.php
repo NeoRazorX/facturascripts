@@ -397,6 +397,7 @@ class nueva_venta extends fs_controller
                      $linea->idalbaran = $albaran->idalbaran;
                      $linea->referencia = $articulo->referencia;
                      $linea->descripcion = $_POST['desc_'.$i];
+                     $linea->irpf = $albaran->irpf;
                      
                      if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
@@ -413,9 +414,6 @@ class nueva_venta extends fs_controller
                            $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
-                     
-                     if($linea->iva > 0)
-                        $linea->irpf = $albaran->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
@@ -602,6 +600,7 @@ class nueva_venta extends fs_controller
                      $linea->idfactura = $factura->idfactura;
                      $linea->referencia = $articulo->referencia;
                      $linea->descripcion = $_POST['desc_'.$i];
+                     $linea->irpf = $factura->irpf;
                      
                      if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
@@ -618,9 +617,6 @@ class nueva_venta extends fs_controller
                            $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
-                     
-                     if($linea->iva > 0)
-                        $linea->irpf = $factura->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
@@ -807,6 +803,7 @@ class nueva_venta extends fs_controller
                      $linea->idpresupuesto = $presupuesto->idpresupuesto;
                      $linea->referencia = $articulo->referencia;
                      $linea->descripcion = $_POST['desc_'.$i];
+                     $linea->irpf = $presupuesto->irpf;
                      
                      if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
@@ -823,9 +820,6 @@ class nueva_venta extends fs_controller
                            $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
-                     
-                     if($linea->iva > 0)
-                        $linea->irpf = $presupuesto->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);
@@ -1008,6 +1002,7 @@ class nueva_venta extends fs_controller
                      $linea->idpedido = $pedido->idpedido;
                      $linea->referencia = $articulo->referencia;
                      $linea->descripcion = $_POST['desc_'.$i];
+                     $linea->irpf = $pedido->irpf;
                      
                      if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                      {
@@ -1024,9 +1019,6 @@ class nueva_venta extends fs_controller
                            $linea->recargo = floatval($_POST['recargo_'.$i]);
                         }
                      }
-                     
-                     if($linea->iva > 0)
-                        $linea->irpf = $pedido->irpf;
                      
                      $linea->pvpunitario = floatval($_POST['pvp_'.$i]);
                      $linea->cantidad = floatval($_POST['cantidad_'.$i]);

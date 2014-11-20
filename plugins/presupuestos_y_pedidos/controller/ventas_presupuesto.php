@@ -283,7 +283,7 @@ class ventas_presupuesto extends fs_controller
                         $lineas[$k]->codimpuesto = NULL;
                         $lineas[$k]->iva = 0;
                         $lineas[$k]->recargo = 0;
-                        $lineas[$k]->irpf = 0;
+                        $lineas[$k]->irpf = $this->presupuesto->irpf;
                         if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
@@ -292,9 +292,6 @@ class ventas_presupuesto extends fs_controller
                            
                            $lineas[$k]->iva = floatval($_POST['iva_'.$num]);
                            $lineas[$k]->recargo = floatval($_POST['recargo_'.$num]);
-                           
-                           if($lineas[$k]->iva > 0)
-                              $lineas[$k]->irpf = $this->presupuesto->irpf;
                         }
                         
                         if( $lineas[$k]->save() )
@@ -319,6 +316,7 @@ class ventas_presupuesto extends fs_controller
                         $linea = new linea_presupuesto_cliente();
                         $linea->referencia = $art0->referencia;
                         $linea->descripcion = $_POST['desc_'.$num];
+                        $linea->irpf = $this->presupuesto->irpf;
                         
                         if( !$serie->siniva AND $cliente->regimeniva != 'Exento' )
                         {
@@ -328,9 +326,6 @@ class ventas_presupuesto extends fs_controller
                            
                            $linea->iva = floatval($_POST['iva_'.$num]);
                            $linea->recargo = floatval($_POST['recargo_'.$num]);
-                           
-                           if($linea->iva > 0)
-                              $linea->irpf = $this->presupuesto->irpf;
                         }
                         
                         $linea->idpresupuesto = $this->presupuesto->idpresupuesto;

@@ -70,7 +70,12 @@
       var iva = parseFloat( $("#iva").val() );
       var pvp = parseFloat( $("#pvp").val() );
       $("#pvpi").val( pvp * (100 + iva)/100 );
-      $("#margen").val( margencalc( coste, pvp ) * 100 );
+      if(pvp == 0)
+      {
+         $("#margen").val(0);
+      }
+      else
+         $("#margen").val( margencalc( coste, pvp ) * 100 );
       recalcular();
    }
    function cambiar_margen()

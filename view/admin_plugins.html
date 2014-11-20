@@ -5,12 +5,14 @@
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {else}
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 15px;">
    <div class="row">
       <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
             <a href="{$fsc->url()}" class="list-group-item{if condition="!$fsc->unstables"} active{/if}">Estables</a>
-            <a href="{$fsc->url()}&unstable=TRUE" class="list-group-item{if condition="$fsc->unstables"} active{/if}">Inestables</a>
+            <a href="{$fsc->url()}&unstable=TRUE" class="list-group-item{if condition="$fsc->unstables"} active{/if}">
+               <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> &nbsp; Inestables
+            </a>
          </div>
       </div>
       <div class="col-lg-10 col-md-10 col-sm-10">
@@ -19,6 +21,9 @@
             <div class="panel{if condition="$value['enabled']"} panel-success{else} panel-default{/if}">
                <div class="panel-heading">
                   <h3 class="panel-title">
+                     {if condition="$fsc->unstables"}
+                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Esta plugin está en desarrollo y puede dar probemas"></span> &nbsp;
+                     {/if}
                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$counter}">{$value['name']}</a>
                   </h3>
                </div>

@@ -28,6 +28,7 @@ class admin_plugins extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->unstables = isset($_GET['unstable']);
       
       if(FS_DEMO)
@@ -81,27 +82,31 @@ class admin_plugins extends fs_controller
          {
             $GLOBALS['plugins'][] = $name;
             
-            /// activamos las páginas del plugin
-            $page_list = array();
-            foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
+            if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
             {
-               if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+               /// activamos las páginas del plugin
+               $page_list = array();
+               foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
                {
-                  $page_name = substr($f, 0, -4);
-                  $page_list[] = $page_name;
-                  
-                  require_once 'plugins/'.$name.'/controller/'.$f;
-                  $new_fsc = new $page_name();
-                  
-                  if( !$new_fsc->page->save() )
-                     $this->new_error_msg("Imposible guardar la página ".$page_name);
-                  
-                  unset($new_fsc);
+                  if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+                  {
+                     $page_name = substr($f, 0, -4);
+                     $page_list[] = $page_name;
+                     
+                     require_once 'plugins/'.$name.'/controller/'.$f;
+                     $new_fsc = new $page_name();
+                     
+                     if( !$new_fsc->page->save() )
+                        $this->new_error_msg("Imposible guardar la página ".$page_name);
+                     
+                     unset($new_fsc);
+                  }
                }
+               
+               $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
             }
             
             $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
-            $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
             $this->load_menu(TRUE);
             
             /// limpiamos la caché

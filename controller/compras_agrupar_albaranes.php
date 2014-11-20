@@ -192,7 +192,7 @@ class compras_agrupar_albaranes extends fs_controller
       $factura->totaliva = round($factura->totaliva, FS_NF0);
       $factura->totalirpf = round($factura->totalirpf, FS_NF0);
       $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
-      $factura->total = $factura->neto + $factura->totaliva - $factura->irpf + $factura->totalrecargo;
+      $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $ejercicio = new ejercicio();
@@ -207,8 +207,7 @@ class compras_agrupar_albaranes extends fs_controller
       
       if( $regularizacion->get_fecha_inside($factura->fecha) )
       {
-         $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más facturas en esa fecha.');
+         $this->new_error_msg('El IVA de ese periodo ya ha sido regularizado. No se pueden añadir más facturas en esa fecha.');
       }
       else if( $factura->save() )
       {
