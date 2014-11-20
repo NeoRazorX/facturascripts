@@ -43,8 +43,7 @@ class ruta extends fs_model
    
    protected function install() 
    {
-      return "INSERT INTO rutas (idruta,descripcion) VALUES
-            (1,'Ruta Inicial');";
+      return "";
    }
    
    public function get($id)
@@ -68,10 +67,6 @@ class ruta extends fs_model
       {
          return $this->db->select("SELECT * FROM rutas WHERE idruta = ".$this->var2str($this->idruta).";");
       }
-   }
-   
-   public function test() {
-      ;
    }
    
    public function nuevo_numero()

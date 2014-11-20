@@ -18,7 +18,7 @@
     </columna>
     <columna>
         <nombre>idcobrador</nombre>
-        <tipo>int</tipo>
+        <tipo>integer</tipo>
         <nulo>NO</nulo>
     </columna>
     <restriccion>

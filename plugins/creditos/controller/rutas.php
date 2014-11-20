@@ -32,7 +32,6 @@ class rutas extends fs_controller
    
    protected function process()
    {
-      $this->custom_search = TRUE;
       $this->ruta = new ruta();
       $this->cobrador = new cobrador();
       

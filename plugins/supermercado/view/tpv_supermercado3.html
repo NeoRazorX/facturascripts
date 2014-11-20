@@ -155,12 +155,8 @@
             Cliente: <a href="{$fsc->cliente->url()}">{$fsc->cliente->nombre}</a> |
             Gastados: {$fsc->show_precio($fsc->clan->gastado())} de {$fsc->show_precio($fsc->clan->limite)}
          </div>
-         <div class="col-md-4">
-            <div class="progress">
-               <div class="progress-bar" role="progressbar" aria-valuenow="{$fsc->clan->gastado()}" aria-valuemin="0" aria-valuemax="{$fsc->clan->limite}" style="width: {$fsc->progressbar()}%">
-                  {$fsc->progressbar()}%
-               </div>
-            </div>
+         <div class="col-md-4 text-right">
+            <div id="tpv_total" style="font-size: 30px;">{$fsc->show_precio(0)}</div>
          </div>
       </div>
    </div>

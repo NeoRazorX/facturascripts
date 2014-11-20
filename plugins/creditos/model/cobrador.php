@@ -43,8 +43,7 @@ class cobrador extends fs_model
    
    protected function install() 
    {        
-      return "INSERT INTO cobradores (idcobrador,nombre,telefono) VALUES
-            (1,'Cobrador Inicial','');";
+      return "INSERT INTO cobradores (nombre,telefono) VALUES ('Cobrador Inicial','');";
    }
    
    public function get($id)
@@ -68,10 +67,6 @@ class cobrador extends fs_model
       {
          return $this->db->select("SELECT * FROM cobradores WHERE idcobrador = ".$this->var2str($this->idcobrador).";");
       }
-   }
-   
-   public function test() {
-      ;
    }
    
    public function nuevo_numero()

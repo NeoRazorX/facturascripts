@@ -30,7 +30,6 @@ class carteras extends fs_controller
    
    protected function process()
    {
-      $this->custom_search = TRUE;
       $this->cartera = new cartera();
       
       /// desactivamos la barra de botones

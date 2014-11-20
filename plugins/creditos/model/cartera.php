@@ -40,7 +40,7 @@ class cartera extends fs_model
    
    protected function install() 
    {        
-      return "INSERT INTO carteras (idcartera,descripcion) VALUES (1,'Cartera Inicial');";
+      return "INSERT INTO carteras (descripcion) VALUES ('Cartera Inicial');";
    }
    
    public function get($id)
