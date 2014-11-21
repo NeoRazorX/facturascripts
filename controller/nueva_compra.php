@@ -375,7 +375,7 @@ class nueva_compra extends fs_controller
                $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
                $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
-               if( !$albaran->floatcmp($albaran->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $albaran->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre la vista y el controlador (".
                           $_POST['atotal']." frente a ".$albaran->total."). Debes informar del error.");
@@ -564,7 +564,7 @@ class nueva_compra extends fs_controller
                $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
                $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
                
-               if( !$factura->floatcmp($factura->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $factura->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $factura->total." frente a ".$_POST['atotal']."). Debes informar del error.");

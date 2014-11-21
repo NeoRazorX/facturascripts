@@ -134,7 +134,7 @@ function recalcular()
    $("#aiva").html( show_numero(total_iva) );
    $("#are").html( show_numero(total_recargo) );
    $("#airpf").html( '-'+show_numero(total_irpf) );
-   $("#atotal").val( number_format(neto + total_iva - total_irpf + total_recargo, fs_nf0, '.', '') );
+   $("#atotal").val( neto + total_iva - total_irpf + total_recargo );
    
    if(total_recargo == 0)
    {

@@ -353,7 +353,7 @@ class ventas_pedido extends fs_controller
             $this->pedido->totalrecargo = round($this->pedido->totalrecargo, FS_NF0);
             $this->pedido->total = $this->pedido->neto + $this->pedido->totaliva - $this->pedido->totalirpf + $this->pedido->totalrecargo;
             
-            if( !$this->pedido->floatcmp($this->pedido->total, $_POST['atotal'], FS_NF0) )
+            if( abs(floatval($_POST['atotal']) - $this->pedido->total) > .01 )
             {
                $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->pedido->total.
                        " frente a ".$_POST['atotal']."). Debes informar del error.");

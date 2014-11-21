@@ -358,7 +358,7 @@ class ventas_presupuesto extends fs_controller
             $this->presupuesto->totalrecargo = round($this->presupuesto->totalrecargo, FS_NF0);
             $this->presupuesto->total = $this->presupuesto->neto + $this->presupuesto->totaliva - $this->presupuesto->totalirpf + $this->presupuesto->totalrecargo;
             
-            if( !$this->presupuesto->floatcmp($this->presupuesto->total, $_POST['atotal'], FS_NF0) )
+            if( abs(floatval($_POST['atotal']) - $this->presupuesto->total) > .01 )
             {
                $this->new_error_msg("El total difiere entre el controlador y la vista (".$this->presupuesto->total.
                        " frente a ".$_POST['atotal']."). Debes informar del error.");

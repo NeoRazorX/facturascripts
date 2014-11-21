@@ -454,7 +454,7 @@ class nueva_venta extends fs_controller
                $albaran->totalrecargo = round($albaran->totalrecargo, FS_NF0);
                $albaran->total = $albaran->neto + $albaran->totaliva - $albaran->totalirpf + $albaran->totalrecargo;
                
-               if( !$albaran->floatcmp($albaran->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $albaran->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre la vista y el controlador (".
                           $_POST['atotal']." frente a ".$albaran->total."). Debes informar del error.");
@@ -657,7 +657,7 @@ class nueva_venta extends fs_controller
                $factura->totalrecargo = round($factura->totalrecargo, FS_NF0);
                $factura->total = $factura->neto + $factura->totaliva - $factura->totalirpf + $factura->totalrecargo;
                
-               if( !$factura->floatcmp($factura->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $factura->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $factura->total." frente a ".$_POST['atotal']."). Debes informar del error.");
@@ -857,7 +857,7 @@ class nueva_venta extends fs_controller
                $presupuesto->totalrecargo = round($presupuesto->totalrecargo, FS_NF0);
                $presupuesto->total = $presupuesto->neto + $presupuesto->totaliva - $presupuesto->totalirpf + $presupuesto->totalrecargo;
                
-               if( !$presupuesto->floatcmp($presupuesto->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $presupuesto->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $presupuesto->total." frente a ".$_POST['atotal']."). Debes informar del error.");
@@ -1056,7 +1056,7 @@ class nueva_venta extends fs_controller
                $pedido->totalrecargo = round($pedido->totalrecargo, FS_NF0);
                $pedido->total = $pedido->neto + $pedido->totaliva - $pedido->totalirpf + $pedido->totalrecargo;
                
-               if( !$pedido->floatcmp($pedido->total, $_POST['atotal'], FS_NF0) )
+               if( abs(floatval($_POST['atotal']) - $pedido->total) > .01 )
                {
                   $this->new_error_msg("El total difiere entre el controlador y la vista (".
                           $pedido->total." frente a ".$_POST['atotal']."). Debes informar del error.");
