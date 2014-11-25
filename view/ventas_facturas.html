@@ -147,7 +147,7 @@
          <td colspan="6">Ninguna factura encontrada. Pulsa <b>Nueva</b> para crear una.</td>
       </tr>
       {/loop}
-      {if condition="isset($_GET['sinpagar'])"}
+      {if condition="isset($_GET['sinpagar']) AND $fsc->offset==0"}
       <tr>
          <td colspan="5"></td>
          <td class="text-right"><b>{$fsc->show_precio($total)}</b></td>
