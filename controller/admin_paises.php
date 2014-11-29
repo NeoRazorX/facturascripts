@@ -40,9 +40,14 @@ class admin_paises extends fs_controller
             $pais = new pais();
             $pais->codpais = $_POST['scodpais'];
          }
+         
+         $pais->codiso = $_POST['scodiso'];
          $pais->nombre = $_POST['snombre'];
+         
          if( $pais->save() )
+         {
             $this->new_message("País ".$pais->nombre." guardado correctamente.");
+         }
          else
             $this->new_error_msg("¡Imposible guardar el país!");
       }
@@ -50,8 +55,7 @@ class admin_paises extends fs_controller
       {
          if(FS_DEMO)
          {
-            $this->new_error_msg('En el modo demo no puedes eliminar paises.
-               Otro usuario podría necesitarlo.');
+            $this->new_error_msg('En el modo demo no puedes eliminar paises. Otro usuario podría necesitarlo.');
          }
          else
          {
@@ -59,7 +63,9 @@ class admin_paises extends fs_controller
             if( $pais )
             {
                if( $pais->delete() )
+               {
                   $this->new_message("País ".$pais->nombre." eliminado correctamente.");
+               }
                else
                   $this->new_error_msg("¡Imposible eliminar el país!");
             }

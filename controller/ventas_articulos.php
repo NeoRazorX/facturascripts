@@ -49,16 +49,12 @@ class ventas_articulos extends fs_controller
       $this->buttons[] = new fs_button('b_modificar_iva', 'Modificar IVA', '#mod-iva');
       
       $this->codfamilia = '';
-      if( isset($_POST['codfamilia']) )
+      if( isset($_REQUEST['codfamilia']) )
       {
-         $this->codfamilia = $_POST['codfamilia'];
-      }
-      else if( isset($_GET['codfamilia']) )
-      {
-         $this->codfamilia = $_GET['codfamilia'];
+         $this->codfamilia = $_REQUEST['codfamilia'];
       }
       
-      $this->con_stock = ( isset($_POST['con_stock']) OR isset($_GET['con_stock']) );
+      $this->con_stock = isset($_REQUEST['con_stock']);
       
       if( isset($_POST['codtarifa']) )
       {
@@ -150,6 +146,10 @@ class ventas_articulos extends fs_controller
       if($this->query != '')
       {
          $this->resultados = $articulo->search($this->query, $this->offset, $this->codfamilia, $this->con_stock);
+      }
+      else if( isset($_GET['solo_stock']) )
+      {
+         $this->resultados = $articulo->search('', $this->offset, '', TRUE);
       }
       else if( isset($_GET['public']) )
       {

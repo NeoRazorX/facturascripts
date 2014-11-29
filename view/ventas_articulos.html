@@ -51,6 +51,162 @@
    });
 </script>
 
+
+{if condition="$fsc->query!=''"}
+<form name="custom_search2" action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="query" value="{$fsc->query}"/>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-7 col-md-7 col-sm-7">
+            <h3 style="margin-top: 0px;">Resultados de la búsqueda "{$fsc->query}".</h3>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="checkbox">
+               <label>
+                  <input type="checkbox" name="con_stock"{if condition="$fsc->con_stock"} checked="checked"{/if} value="TRUE" onchange="document.custom_search2.submit()"/>
+                  Sólo con stock
+               </label>
+            </div>
+         </div>
+         <div class="form-group col-lg-3 col-md-3 col-sm-3">
+            <select class="form-control" name="codfamilia" onchange="document.custom_search2.submit()">
+               <option value="">Todas las familias</option>
+               <option value="">-----</option>
+               {loop="$fsc->familia->all()"}
+                  {if condition="$value->codfamilia==$fsc->codfamilia"}
+                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+            </select>
+         </div>
+      </div>
+   </div>
+</form>
+{/if}
+
+<ul class="nav nav-tabs" id="ul_tabs">
+   <li{if condition="!isset($_GET['public']) AND !isset($_GET['solo_stock'])"} class="active"{/if}>
+      <a href="{$fsc->url()}">Todos</a>
+   </li>
+   <li{if condition="isset($_GET['solo_stock'])"} class="active"{/if}>
+      <a href="{$fsc->url()}&solo_stock=TRUE">Stock</a>
+   </li>
+   <li{if condition="isset($_GET['public'])"} class="active"{/if}>
+      <a href="{$fsc->url()}&public=TRUE">Públicos</a>
+   </li>
+   <li id="b_tarifas"><a href="#tarifas">Tarifas</a></li>
+</ul>
+
+<div id="div_articulos">
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Familia</th>
+               <th class="text-left">Referencia + Descripción</th>
+               <th class="text-right">PVP</th>
+               <th class="text-right">PVP+IVA</th>
+               <th class="text-right">Stock</th>
+            </tr>
+         </thead>
+         {loop="$fsc->resultados"}
+         <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
+            <td>{$value->codfamilia}</td>
+            {if condition="$value->bloqueado"}
+               <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            {else}
+               <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
+            {/if}
+            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
+            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
+            <td class="text-right">{$value->stockfis}</td>
+         </tr>
+         {else}
+         <tr class="bg-warning">
+            <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+         </tr>
+         {/loop}
+      </table>
+   </div>
+   
+   <ul class="pager" id="ul_paginador">
+      {if condition="$fsc->anterior_url()!=''"}
+      <li class="previous">
+         <a href="{$fsc->anterior_url()}">
+            <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
+         </a>
+      </li>
+      {/if}
+      
+      {if condition="$fsc->siguiente_url()!=''"}
+      <li class="next">
+         <a href="{$fsc->siguiente_url()}">
+            Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+         </a>
+      </li>
+      {/if}
+   </ul>
+</div>
+
+<div id="div_tarifas" class="table-responsive" style="display: none;">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left">Código</th>
+            <th class="text-left">Nombre</th>
+            <th class="text-right">% dto.</th>
+            <th class="text-right">Acción</th>
+         </tr>
+      </thead>
+      {loop="$fsc->tarifa->all()"}
+      <form action="{$fsc->url()}#tarifas" method="post" class="form">
+         <input type="hidden" name="codtarifa" value="{$value->codtarifa}"/>
+         <tr>
+            <td>
+               <input class="form-control" type="text" name="codtarifa" value="{$value->codtarifa}" maxlength="6" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="nombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control text-right" type="number" step="any" name="dtopor" value="{$value->dtopor()}" autocomplete="off"/>
+            </td>
+            <td class="text-right">
+               <div class="btn-group">
+                  <a class="btn btn-sm btn-danger" type="button" title="Eliminar" href="{$fsc->url()}&delete_tarifa={$value->codtarifa}#tarifas">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
+            </td>
+         </tr>
+      </form>
+      {/loop}
+      <form name="f_nueva_tarifa" action="{$fsc->url()}#tarifas" method="post" class="form">
+         <tr class="bg-info">
+            <td>
+               <input class="form-control" type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" maxlength="6" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nueva Tarifa" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control text-right" type="number" step="any" name="dtopor" value="0" autocomplete="off"/>
+            </td>
+            <td class="text-right">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
+            </td>
+         </tr>
+      </form>
+   </table>
+</div>
+
 <form class="form-horizontal" role="form" name="f_nuevo_articulo" action="{$fsc->url()}" method="post">
    <div class="modal" id="modal_nuevo_articulo">
       <div class="modal-dialog">
@@ -147,155 +303,5 @@
       </div>
    </div>
 </form>
-
-{if condition="$fsc->query!=''"}
-<form name="custom_search2" action="{$fsc->url()}" method="post" class="form">
-   <input type="hidden" name="query" value="{$fsc->query}"/>
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-lg-7 col-md-7 col-sm-7">
-            <h3 style="margin-top: 0px;">Resultados de la búsqueda "{$fsc->query}".</h3>
-         </div>
-         <div class="col-lg-2 col-md-2 col-sm-2">
-            <div class="checkbox">
-               <label>
-                  <input type="checkbox" name="con_stock"{if condition="$fsc->con_stock"} checked="checked"{/if} value="TRUE" onchange="document.custom_search2.submit()"/>
-                  Sólo con stock
-               </label>
-            </div>
-         </div>
-         <div class="form-group col-lg-3 col-md-3 col-sm-3">
-            <select class="form-control" name="codfamilia" onchange="document.custom_search2.submit()">
-               <option value="">Todas las familias</option>
-               <option value="">-----</option>
-               {loop="$fsc->familia->all()"}
-                  {if condition="$value->codfamilia==$fsc->codfamilia"}
-                  <option value="{$value->codfamilia}" selected="selected">{$value->descripcion}</option>
-                  {else}
-                  <option value="{$value->codfamilia}">{$value->descripcion}</option>
-                  {/if}
-               {/loop}
-            </select>
-         </div>
-      </div>
-   </div>
-</form>
-{/if}
-
-<ul class="nav nav-tabs" id="ul_tabs">
-   <li{if condition="!isset($_GET['public'])"} class="active"{/if}><a href="{$fsc->url()}">Todos</a></li>
-   <li{if condition="isset($_GET['public'])"} class="active"{/if}><a href="{$fsc->url()}&public=TRUE">Públicos</a></li>
-   <li id="b_tarifas"><a href="#tarifas">Tarifas</a></li>
-</ul>
-
-<div id="div_articulos">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th class="text-left">Familia</th>
-               <th class="text-left">Referencia + Descripción</th>
-               <th class="text-right">PVP</th>
-               <th class="text-right">PVP+IVA</th>
-               <th class="text-right">Stock</th>
-            </tr>
-         </thead>
-         {loop="$fsc->resultados"}
-         <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
-            <td>{$value->codfamilia}</td>
-            {if condition="$value->bloqueado"}
-               <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            {else}
-               <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            {/if}
-            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
-            <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
-            <td class="text-right">{$value->stockfis}</td>
-         </tr>
-         {else}
-         <tr class="bg-warning">
-            <td colspan="5">Ningun artículo encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-         </tr>
-         {/loop}
-      </table>
-   </div>
-   
-   <ul class="pager" id="ul_paginador">
-      {if condition="$fsc->anterior_url()!=''"}
-      <li class="previous">
-         <a href="{$fsc->anterior_url()}">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-            &nbsp; Anteriores
-         </a>
-      </li>
-      {/if}
-      
-      {if condition="$fsc->siguiente_url()!=''"}
-      <li class="next">
-         <a href="{$fsc->siguiente_url()}">
-            Siguientes &nbsp;
-            <span class="glyphicon glyphicon-chevron-right"></span>
-         </a>
-      </li>
-      {/if}
-   </ul>
-</div>
-
-<div id="div_tarifas" class="table-responsive" style="display: none;">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Código</th>
-            <th class="text-left">Nombre</th>
-            <th class="text-right">% dto.</th>
-            <th class="text-right">Acción</th>
-         </tr>
-      </thead>
-      {loop="$fsc->tarifa->all()"}
-      <form action="{$fsc->url()}#tarifas" method="post" class="form">
-         <input type="hidden" name="codtarifa" value="{$value->codtarifa}"/>
-         <tr>
-            <td>
-               <input class="form-control" type="text" name="codtarifa" value="{$value->codtarifa}" maxlength="6" autocomplete="off"/>
-            </td>
-            <td>
-               <input class="form-control" type="text" name="nombre" value="{$value->nombre}" maxlength="50" autocomplete="off"/>
-            </td>
-            <td>
-               <input class="form-control text-right" type="number" step="any" name="dtopor" value="{$value->dtopor()}" autocomplete="off"/>
-            </td>
-            <td class="text-right">
-               <div class="btn-group">
-                  <a class="btn btn-sm btn-danger" type="button" title="Eliminar" href="{$fsc->url()}&delete_tarifa={$value->codtarifa}#tarifas">
-                     <span class="glyphicon glyphicon-trash"></span>
-                  </a>
-                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                  </button>
-               </div>
-            </td>
-         </tr>
-      </form>
-      {/loop}
-      <form name="f_nueva_tarifa" action="{$fsc->url()}#tarifas" method="post" class="form">
-         <tr class="bg-info">
-            <td>
-               <input class="form-control" type="text" name="codtarifa" value="{$fsc->tarifa->get_new_codigo()}" maxlength="6" autocomplete="off"/>
-            </td>
-            <td>
-               <input class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nueva Tarifa" autocomplete="off"/>
-            </td>
-            <td>
-               <input class="form-control text-right" type="number" step="any" name="dtopor" value="0" autocomplete="off"/>
-            </td>
-            <td class="text-right">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-               </button>
-            </td>
-         </tr>
-      </form>
-   </table>
-</div>
 
 {include="footer"}

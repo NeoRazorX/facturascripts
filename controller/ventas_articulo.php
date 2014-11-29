@@ -19,8 +19,6 @@
 
 require_model('almacen.php');
 require_model('articulo.php');
-require_model('factura_cliente.php');
-require_model('factura_proveedor.php');
 require_model('familia.php');
 require_model('fs_extension.php');
 require_model('impuesto.php');
@@ -59,7 +57,10 @@ class ventas_articulo extends fs_controller
             $continuar = TRUE;
             $this->articulo->set_impuesto( $_POST['codimpuesto'] );
             $this->articulo->set_pvp_iva( $_POST['pvpiva'] );
-            $this->articulo->preciocoste = ( $this->articulo->secompra AND $GLOBALS['config2']['cost_is_average'] ) ? 0 : floatval($_POST['preciocoste']);
+            
+            if( isset($_POST['preciocoste']) )
+               $this->articulo->preciocoste = floatval($_POST['preciocoste']);
+            
             if( !$this->articulo->save() )
             {
                $this->new_error_msg("¡Imposible modificar el artículo!");
@@ -200,9 +201,13 @@ class ventas_articulo extends fs_controller
    public function url()
    {
       if( !isset($this->articulo) )
+      {
          return parent::url();
+      }
       else if($this->articulo)
+      {
          return $this->articulo->url();
+      }
       else
          return $this->page->url();
    }

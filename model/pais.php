@@ -24,10 +24,31 @@ require_once 'base/fs_model.php';
  */
 class pais extends fs_model
 {
+   /**
+    * Clave primaria.
+    * @var type Código alfa-3 del país.
+    * http://es.wikipedia.org/wiki/ISO_3166-1
+    */
+   public $codpais;
+   
+   /**
+    * Código alfa-2 del país.
+    * http://es.wikipedia.org/wiki/ISO_3166-1
+    * @var type 
+    */
    public $codiso;
-   public $bandera;
+   
+   /**
+    * Nombre del pais.
+    * @var type 
+    */
    public $nombre;
-   public $codpais; /// pkey
+   
+   /**
+    * No implementado, es simplemente para dar compatibilidad con Eneboo.
+    * @var type
+    */
+   public $bandera;
    
    public function __construct($p=FALSE)
    {
@@ -35,36 +56,67 @@ class pais extends fs_model
       if($p)
       {
          $this->codpais = $p['codpais'];
+         
+         $this->codiso = $p['codiso'];
+         if($p['codiso'] == '')
+         {
+            $codigos = array(
+                'ESP' => 'ES',
+                'ARG' => 'AR',
+                'CHL' => 'CL',
+                'COL' => 'CO',
+                'ECU' => 'EC',
+                'MEX' => 'MX',
+                'PAN' => 'PA',
+                'VEN' => 'VE'
+            );
+            
+            if( isset($codigos[$this->codpais]) )
+            {
+               $this->codiso = $codigos[$this->codpais];
+            }
+         }
+         
          $this->nombre = $p['nombre'];
          $this->bandera = $p['bandera'];
-         $this->codiso = $p['codiso'];
       }
       else
       {
          $this->codpais = '';
+         $this->codiso = NULL;
          $this->nombre = '';
          $this->bandera = NULL;
-         $this->codiso = NULL;
       }
    }
 
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ESP','España',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ARG','Argentina',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('CHL','Chile',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('COL','Colombia',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('ECU','Ecuador',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('MEX','México',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('PAN','Panamá',NULL,'');".
-           "INSERT INTO ".$this->table_name." (codpais,nombre,bandera,codiso) VALUES ('VEN','Venezuela',NULL,'');";
+      return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre,bandera) VALUES ('ESP','ES','España',NULL),".
+           " ('ARG','AR','Argentina',NULL), ('CHL','CL','Chile',NULL), ('COL','CO','Colombia',NULL),".
+           " ('ECU','EC','Ecuador',NULL), ('MEX','MX','México',NULL), ('PAN','PA','Panamá',NULL), ('VEN','VE','Venezuela',NULL);";
+   }
+   
+   private function get_codiso($codpais)
+   {
+      $codigos = array(
+          'ESP' => 'ES',
+          'ARG' => 'AR',
+          'CHL' => 'CL',
+          'COL' => 'CO',
+          'ECU' => 'EC',
+          'MEX' => 'MX',
+          'PAN' => 'PA',
+          'VEN' => 'VE'
+      );
    }
    
    public function url()
    {
       if( is_null($this->codpais) )
+      {
          return 'index.php?page=admin_paises';
+      }
       else
          return 'index.php?page=admin_paises#'.$this->codpais;
    }
@@ -78,7 +130,20 @@ class pais extends fs_model
    {
       $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = ".$this->var2str($cod).";");
       if($pais)
+      {
          return new pais($pais[0]);
+      }
+      else
+         return FALSE;
+   }
+   
+   public function get_by_iso($cod)
+   {
+      $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codiso = ".$this->var2str($cod).";");
+      if($pais)
+      {
+         return new pais($pais[0]);
+      }
       else
          return FALSE;
    }
@@ -86,10 +151,11 @@ class pais extends fs_model
    public function exists()
    {
       if( is_null($this->codpais) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE codpais = ".$this->var2str($this->codpais).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
    public function test()
@@ -100,9 +166,13 @@ class pais extends fs_model
       $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais) )
-         $this->new_error_msg("Código del país no válido.");
+      {
+         $this->new_error_msg("Código del país no válido: ".$this->codpais);
+      }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+      {
          $this->new_error_msg("Nombre del país no válido.");
+      }
       else
          $status = TRUE;
       
@@ -114,12 +184,18 @@ class pais extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
-            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)."
+         {
+            $sql = "UPDATE ".$this->table_name." SET codiso = ".$this->var2str($this->codiso).", nombre = ".$this->var2str($this->nombre)."
                WHERE codpais = ".$this->var2str($this->codpais).";";
+         }
          else
-            $sql = "INSERT INTO ".$this->table_name." (codpais,nombre) VALUES
-               (".$this->var2str($this->codpais).",".$this->var2str($this->nombre).");";
+         {
+            $sql = "INSERT INTO ".$this->table_name." (codpais,codiso,nombre) VALUES
+               (".$this->var2str($this->codpais).",".$this->var2str($this->codiso).",".$this->var2str($this->nombre).");";
+         }
+         
          return $this->db->exec($sql);
       }
       else

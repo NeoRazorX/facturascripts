@@ -357,7 +357,7 @@
          <td class="text-center">
             {if condition="$fsc->asiento->tipodocumento"}{$fsc->asiento->tipodocumento}:{/if}
             {if condition="$fsc->asiento->documento"}
-            <a class='link' href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
+            <a href='{$fsc->asiento->factura_url()}'>{$fsc->asiento->documento}</a>
             {else}
             -
             {/if}
@@ -385,7 +385,7 @@
          {loop="$fsc->asiento->get_partidas()"}
          <tr>
             <td>{$value->concepto}</td>
-            <td class="text-center"><a class='link' href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
+            <td class="text-center"><a href="{$value->subcuenta_url()}">{$value->codsubcuenta}</a></td>
             <td class="text-right"><span title="{$value->debe}">{$fsc->show_precio($value->debe, $value->coddivisa)}</span></td>
             <td class="text-right"><span title="{$value->haber}">{$fsc->show_precio($value->haber, $value->coddivisa)}</span></td>
             <td class="text-right">{if condition="$value->iva!=0"}{$value->iva} %{else}-{/if}</td>

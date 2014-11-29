@@ -415,13 +415,12 @@ class ventas_pedido extends fs_controller
       }
       else if( $regularizacion->get_fecha_inside($albaran->fecha) )
       {
-         $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más ".FS_ALBARANES." en esa fecha.");
+         $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado. No se pueden añadir más ".FS_ALBARANES." en esa fecha.");
       }
       else if( $albaran->save() )
       {
          $continuar = TRUE;
-         $articulo = new articulo();
+         $art0 = new articulo();
          
          foreach($this->pedido->get_lineas() as $l)
          {
@@ -444,7 +443,11 @@ class ventas_pedido extends fs_controller
             if( $n->save() )
             {
                /// descontamos del stock
-               $articulo->sum_stock($albaran->codalmacen, 0 - $l->cantidad);
+               if( !is_null($n->referencia) )
+               {
+                  $articulo = $art0->get($n->referencia);
+                  $articulo->sum_stock($albaran->codalmacen, 0 - $l->cantidad);
+               }
             }
             else
             {

@@ -61,14 +61,12 @@
          </div>
          
          <a class="btn btn-sm btn-success" href="index.php?page=nueva_venta&tipo=presupuesto">
-            <span class="glyphicon glyphicon-plus"></span>
-            &nbsp; Nuevo
+            <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
          </a>
       </div>
       <div class="col-md-2 col-sm-2 col-xs-4 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
-            <span class="glyphicon glyphicon-search"></span>
-            &nbsp; Líneas
+            <span class="glyphicon glyphicon-search"></span> &nbsp; Líneas
          </a>
       </div>
       <div class="col-md-2 col-sm-3 col-xs-12">
@@ -85,30 +83,6 @@
       </div>
    </div>
 </div>
-
-<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
-   <div class="modal" id="modal_buscar_lineas">
-      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Buscar en las líneas</h4>
-            </div>
-            <div class="modal-body">
-               <div class="input-group">
-                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
-                  <span class="input-group-btn">
-                     <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>
-                     </button>
-                  </span>
-               </div>
-            </div>
-            <div id="search_results" class="table-responsive"></div>
-         </div>
-      </div>
-   </div>
-</form>
 
 {if condition="$fsc->query!=''"}
 <h3 class="text-center">Resultados de "{$fsc->query}":</h3>
@@ -139,7 +113,7 @@
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PEDIDO#} tiene vinculado un {#FS_ALBARAN#}"></span>
             {/if}
          </td>
-         <td>{$value->codigo} {$value->numero2}</td>
+         <td><a href="#">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
@@ -159,8 +133,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -168,11 +141,34 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}
 </ul>
+
+<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_buscar_lineas">
+      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar en las líneas</h4>
+            </div>
+            <div class="modal-body">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+            <div id="search_results" class="table-responsive"></div>
+         </div>
+      </div>
+   </div>
+</form>
 
 {include="footer"}

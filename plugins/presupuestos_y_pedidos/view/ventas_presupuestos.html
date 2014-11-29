@@ -61,14 +61,12 @@
          </div>
          
          <a class="btn btn-sm btn-success" href="index.php?page=nueva_venta&tipo=presupuesto">
-            <span class="glyphicon glyphicon-plus"></span>
-            &nbsp; Nuevo
+            <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
          </a>
       </div>
       <div class="col-md-2 col-sm-2 col-xs-4 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
-            <span class="glyphicon glyphicon-search"></span>
-            &nbsp; Líneas
+            <span class="glyphicon glyphicon-search"></span> &nbsp; Líneas
          </a>
       </div>
       <div class="col-md-2 col-sm-3 col-xs-12">
@@ -116,7 +114,7 @@
             <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>
             {/if}
          </td>
-         <td>{$value->codigo} {$value->numero2}</td>
+         <td><a href="#">{$value->codigo}</a> {$value->numero2}</td>
          <td>{$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
@@ -137,8 +135,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -146,8 +143,7 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}
