@@ -17,13 +17,13 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->total<=0"} class="bg-warning"{/if}>
+      <tr{if condition="$value->total<=0"} class="bg-warning"{/if} class="clickableRow" href="{$value->url()}">
          <td class="text-center">
             {if condition="$value->idpedido"}
             <span class="glyphicon glyphicon-paperclip" title="Hay vinculado un {#FS_PEDIDO#}"></span>
             {/if}
          </td>
-         <td><a href="{$value->url()}">{$value->codigo}</a> {$value->nombrecliente}</td>
+         <td>{$value->codigo} {$value->nombrecliente}</td>
          <td>{$value->observaciones_resume()}</td>
          <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
          <td class="text-right">{$value->fecha}</td>

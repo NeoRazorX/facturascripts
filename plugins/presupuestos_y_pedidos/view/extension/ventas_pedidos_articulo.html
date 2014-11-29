@@ -16,13 +16,13 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
+      <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if} class="clickableRow" href="{$value->url()}">
          <td>
             <a href="{$value->url()}">{$value->show_codigo()}</a>
             {$value->show_nombrecliente()}
          </td>
          <td class="text-right">{$value->cantidad}</td>
-         <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+         <td>{$value->referencia} {$value->descripcion}</td>
          <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
          <td class="text-right">{$value->show_fecha()}</td>
       </tr>

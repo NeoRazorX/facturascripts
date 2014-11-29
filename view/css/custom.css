@@ -50,6 +50,7 @@ ul.dropdown-menu li a:first-letter {
 .autocomplete-selected { background: #D9EDF7; }
 .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
 
+/* INICIO Cambio que afecta a las table-hover con link*/
 .clickableRow:hover {
     cursor: pointer;
 }
@@ -57,3 +58,9 @@ ul.dropdown-menu li a:first-letter {
 .clickableRow:out {
     cursor: cursor;
 }
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: #eaeaea;
+}
+/* FIN Cambio que afecta a las table-hover con link*/
