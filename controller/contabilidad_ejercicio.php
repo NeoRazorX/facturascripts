@@ -82,7 +82,6 @@ class contabilidad_ejercicio extends fs_controller
             
             $this->buttons[] = new fs_button('b_importar', 'Importar');
             $this->buttons[] = new fs_button('b_exportar', 'Exportar', $this->url().'&export=TRUE');
-            $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
             
             if( isset($_GET['cerrar']) AND isset($_GET['petid']) )
             {

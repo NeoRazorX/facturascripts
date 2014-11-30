@@ -54,8 +54,7 @@
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Importar">
-                   <span class="glyphicon glyphicon-play"></span>
-                   &nbsp; Importar
+                   <span class="glyphicon glyphicon-play"></span> &nbsp; Importar
                 </button>
             </div>
             <div class="alert alert-info">
@@ -83,7 +82,7 @@
                <th class="text-left">Fecha fin</th>
                <th class="text-left">Longitud subcuenta</th>
                <th class="text-left">Estado</th>
-               <th class="text-right" width="120">Acción</th>
+               <th class="text-right" width="170">Acción</th>
             </tr>
          </thead>
          <tr>
@@ -99,12 +98,14 @@
             </td>
             <td class="text-right">
                <div class="btn-group">
+                  <a href="#" id="b_eliminar" class="btn btn-sm btn-danger" title="Eliminar ejercicio">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
                   {if condition="$fsc->ejercicio->abierto()"}
-                  <button class="btn btn-sm btn-default" type="button" onclick="cerrar_ejercicio()" title="Cerrar ejercicio">
+                  <button class="btn btn-sm btn-warning" type="button" onclick="cerrar_ejercicio()" title="Cerrar ejercicio">
                      <span class="glyphicon glyphicon-lock"></span>
                   </button>
                   {/if}
-                  
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
                      <span class="glyphicon glyphicon-floppy-disk"></span>
                   </button>
