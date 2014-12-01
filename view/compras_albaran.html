@@ -80,7 +80,7 @@
                </a>
                {/if}
                <a id="b_precios" class="btn btn-sm btn-default" href="#">
-                  &nbsp; Precios
+                  <span class="glyphicon glyphicon-euro"></span> &nbsp; Precios
                </a>
             </div>
          </div>
@@ -109,33 +109,43 @@
       </div>
       <div class="row">
          <div class="col-lg-12">
-            <h3 class="text-capitalize">
+            <h3 class="text-capitalize" style="margin-bottom: 0px;">
                <a href="{$fsc->ppage->url()}">{#FS_ALBARANES#}</a> /
                <a href="{$fsc->albaran->proveedor_url()}">{$fsc->albaran->nombre}</a> /
                {$fsc->albaran->codigo}
             </h3>
+            {if condition="$fsc->agente"}
+            <p>
+               <span class="text-capitalize">{#FS_ALBARAN#}</span> creado por
+               <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>.
+            </p>
+            {/if}
          </div>
       </div>
       
-      {if condition="$fsc->albaran->ptefactura"}
       <div class="row">
-         <div class="col-lg-12">
+         {if condition="$fsc->albaran->ptefactura"}
+         <div class="col-md-5 col-sm-12">
             <div class="form-group">
                Proveedor actual:
-               <input class="form-control" type="text" name="ac_proveedor" id="ac_proveedor" value="{$fsc->albaran->nombre}"
-                      placeholder="Buscar" autocomplete="off"/>
+               <div class="input-group">
+                  <input class="form-control" type="text" name="ac_proveedor" id="ac_proveedor" value="{$fsc->albaran->nombre}" placeholder="Buscar" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-default" type="button" onclick="document.f_albaran.ac_proveedor.value=''; document.f_albaran.ac_proveedor.focus();">
+                        <span class="glyphicon glyphicon-edit"></span>
+                     </button>
+                  </span>
+               </div>
             </div>
          </div>
-      </div>
-      {/if}
-      <div class="row">
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         {/if}
+         <div class="col-md-2 col-sm-2">
             <div class="form-group">
                Num. Proveedor:
                <input class="form-control" type="text" name="numproveedor" value="{$fsc->albaran->numproveedor}"/>
             </div>
          </div>
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-md-2 col-sm-2">
             <div class="form-group">
                <a href="{$fsc->serie->url()}">Serie</a>:
                {if condition="$fsc->albaran->ptefactura"}
@@ -153,30 +163,24 @@
                {/if}
             </div>
          </div>
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-md-2 col-sm-2">
             <div class="form-group">
                Fecha:
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->albaran->fecha}" autocomplete="off"/>
             </div>
          </div>
-         <div class="col-lg-2 col-md-2 col-sm-2">
+         <div class="col-md-1 col-sm-2">
             <div class="form-group">
                Hora:
                <input class="form-control" type="text" name="hora" value="{$fsc->albaran->hora}" autocomplete="off"/>
             </div>
          </div>
-         {if condition="$fsc->agente"}
-         <div class="col-lg-4 col-md-4 col-sm-4">
-            <div class="form-group">
-               Empleado:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-         </div>
-         {/if}
       </div>
    </div>
+   
+   <ul class="nav nav-tabs">
+      <li class="active"><a href="#">Líneas</a></li>
+   </ul>
    
    <div class="table-responsive">
       {if condition="$fsc->albaran->ptefactura"}
@@ -255,29 +259,32 @@
          </tbody>
          <tbody>
             <tr class="bg-info">
-               <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar" autocomplete="off"/></td>
-               <td colspan="5"></td>
+               <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar para añadir..." autocomplete="off"/></td>
+               <td colspan="5" class="text-right">Totales:</td>
                <td>
                   <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
-                  <p class="help-block text-right">{$fsc->show_precio($fsc->albaran->neto)}</p>
                </td>
                <td>
                   <div id="aiva" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
-                  <p class="help-block text-right">{$fsc->show_precio($fsc->albaran->totaliva)}</p>
                </td>
                <td class="recargo">
                   <div id="are" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
-                  <p class="help-block text-right">{$fsc->show_precio($fsc->albaran->totalrecargo)}</p>
                </td>
                <td class="irpf">
                   <div id="airpf" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
-                  <p class="help-block text-right">{$fsc->show_precio($fsc->albaran->totalirpf)}</p>
                </td>
                <td>
                   <input type="text" name="atotal" id="atotal" class="form-control text-right" style="font-weight: bold;"
                          value="0" onchange="recalcular()" autocomplete="off"/>
-                  <p class="help-block text-right">{$fsc->show_precio($fsc->albaran->total)}</p>
                </td>
+            </tr>
+            <tr>
+               <td colspan="6"></td>
+               <td class="text-right">{$fsc->show_precio($fsc->albaran->neto)}</td>
+               <td class="text-right">{$fsc->show_precio($fsc->albaran->totaliva)}</td>
+               <td class="recargo text-right">{$fsc->show_precio($fsc->albaran->totalrecargo)}</td>
+               <td class="irpf text-right">{$fsc->show_precio($fsc->albaran->totalirpf)}</td>
+               <td class="text-right">{$fsc->show_precio($fsc->albaran->total)}</td>
             </tr>
          </tbody>
       </table>
@@ -326,7 +333,7 @@
          <div class="col-lg-12">
             <div class="form-group">
                Observaciones:
-               <textarea class="form-control" name="observaciones" rows="2">{$fsc->albaran->observaciones}</textarea>
+               <textarea class="form-control" name="observaciones" rows="3">{$fsc->albaran->observaciones}</textarea>
             </div>
          </div>
       </div>
@@ -392,9 +399,9 @@
                <div class="form-group col-lg-6 col-md-6 col-sm-6">
                   <a href="{$fsc->familia->url()}">Familia</a>:
                   <select name="codfamilia" class="form-control">
-                  {loop="$fsc->familia->all()"}
+                     {loop="$fsc->familia->all()"}
                      <option value="{$value->codfamilia}">{$value->descripcion}</option>
-                  {/loop}
+                     {/loop}
                   </select>
                </div>
                <div class="form-group col-lg-6 col-md-6 col-sm-6">
@@ -407,8 +414,7 @@
                </div>
                <div class="text-right">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="new_articulo();return false;">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar y seleccionar
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar y seleccionar
                   </button>
                </div>
             </form>
@@ -434,8 +440,7 @@
                   </label>
                </div>
                <button class="btn btn-sm btn-danger" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-trash"></span>
-                  &nbsp; Eliminar
+                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </button>
             </div>
             {if condition="$fsc->albaran->idfactura"}
@@ -511,8 +516,7 @@
                   </div>
                   
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                   </button>
                </div>
             </div>
