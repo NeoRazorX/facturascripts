@@ -26,12 +26,22 @@
    });
 </script>
 
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 10px;">
+   <div class="row" style="margin-bottom: 10px;">
+      <div class="col-md-11">
+         <h3 style="margin-top: 0px;">Importar/exportar XML</h3>
+      </div>
+      <div class="col-md-1 text-right">
+         <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+      </div>
+   </div>
    <div class="row">
       <div class="col-lg-2 col-md-2 col-sm-2">
          <div class="list-group">
             <a id="b_exportar" href="#export" class="list-group-item active">Exportar</a>
-            <a id="b_importar" href="#import"class="list-group-item">Importar</a>
+            <a id="b_importar" href="#import" class="list-group-item">Importar</a>
          </div>
       </div>
       <div class="col-lg-10 col-md-10 col-sm-10">
@@ -64,10 +74,15 @@
                   <h3 class="panel-title">Estructura de la tabla...</h3>
                </div>
                <div class="panel-body">
-                  {loop="$fsc->all_tables()"}
-                     {if condition="$counter>0"} &nbsp; | &nbsp; {/if}
-                     <a target="_blank" href='{$fsc->page->url()}&table={$value.name}'>{$value.name}</a>
-                  {/loop}
+                  <div class="container-fluid">
+                     <div class="row">
+                        {loop="$fsc->all_tables()"}
+                        <div class="col-md-4">
+                           <a target="_blank" href='{$fsc->page->url()}&table={$value.name}'>{$value.name}</a>
+                        </div>
+                        {/loop}
+                     </div>
+                  </div>
                </div>
             </div>
          </div>

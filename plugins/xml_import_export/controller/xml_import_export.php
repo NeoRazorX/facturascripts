@@ -26,6 +26,8 @@ class xml_import_export extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       if( isset($_GET['table']) )
       {
          $this->export_structure_xml($_GET['table']);
@@ -272,6 +274,7 @@ class xml_import_export extends fs_controller
       $restricciones = Array();
       if( $this->db->table_exists($table) )
       {
+         $primary_key = '...';
          $columnas = $this->db->get_columns($table);
          $restricciones = $this->db->get_constraints($table);
          
@@ -282,13 +285,41 @@ class xml_import_export extends fs_controller
                $aux = $this->archivo_xml->addChild('columna');
                $aux->addChild('nombre', $col['column_name']);
                
-               /// comprobamos si es tipo serial
-               if($col['data_type'] == 'integer' AND $col['column_default'] == "nextval('".$table.'_'.$col['column_name']."_seq'::regclass)")
+               /// comprobamos si es auto_increment
+               $auto_increment = FALSE;
+               if( isset($col['extra']) )
                {
+                  if($col['extra'] == 'auto_increment')
+                  {
+                     $auto_increment = TRUE;
+                  }
+               }
+               
+               if($auto_increment)
+               {
+                  $primary_key = $col['column_name'];
+                  
                   $aux->addChild('tipo', 'serial');
                   
                   if( $col['is_nullable'] == 'YES')
+                  {
                      $aux->addChild('nulo', 'YES');
+                  }
+                  else
+                     $aux->addChild('nulo', 'NO');
+                  
+                  $aux->addChild('defecto', "nextval('".$table.'_'.$col['column_name']."_seq'::regclass)");
+               }
+               else if($col['data_type'] == 'integer' AND $col['column_default'] == "nextval('".$table.'_'.$col['column_name']."_seq'::regclass)") /// comprobamos si es tipo serial
+               {
+                  $primary_key = $col['column_name'];
+                  
+                  $aux->addChild('tipo', 'serial');
+                  
+                  if( $col['is_nullable'] == 'YES')
+                  {
+                     $aux->addChild('nulo', 'YES');
+                  }
                   else
                      $aux->addChild('nulo', 'NO');
                   
@@ -297,17 +328,23 @@ class xml_import_export extends fs_controller
                else
                {
                   if( isset($col['character_maximum_length']) )
+                  {
                      $aux->addChild('tipo', $col['data_type'] . '(' . $col['character_maximum_length'] . ')');
+                  }
                   else
                      $aux->addChild('tipo', $col['data_type']);
                   
                   if( $col['is_nullable'] == 'YES')
+                  {
                      $aux->addChild('nulo', 'YES');
+                  }
                   else
                      $aux->addChild('nulo', 'NO');
                   
                   if( isset($col['column_default']) )
+                  {
                      $aux->addChild('defecto', $col['column_default']);
+                  }
                }
             }
          }
@@ -319,7 +356,9 @@ class xml_import_export extends fs_controller
                $aux = $this->archivo_xml->addChild('restriccion');
                
                if($col['restriccion'] == 'PRIMARY')
+               {
                   $aux->addChild('nombre', $table.'_pkey');
+               }
                else
                   $aux->addChild('nombre', $col['restriccion']);
                
@@ -332,7 +371,7 @@ class xml_import_export extends fs_controller
                         break;
                         
                      case 'p':
-                        $aux->addChild('consulta', 'PRIMARY KEY (...)');
+                        $aux->addChild('consulta', 'PRIMARY KEY ('.$primary_key.')');
                         break;
                      
                      case 'f':
@@ -346,7 +385,12 @@ class xml_import_export extends fs_controller
                }
                else
                {
-                  $aux->addChild('consulta', $col['tipo'].' (...)');
+                  if($col['tipo'] == 'PRIMARY KEY')
+                  {
+                     $aux->addChild('consulta', 'PRIMARY KEY ('.$primary_key.')');
+                  }
+                  else
+                     $aux->addChild('consulta', $col['tipo'].' (...)');
                }
             }
          }
@@ -357,5 +401,3 @@ class xml_import_export extends fs_controller
       echo $this->archivo_xml->asXML();
    }
 }
-
-?>

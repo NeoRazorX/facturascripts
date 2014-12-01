@@ -29,6 +29,8 @@ class admin_info extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $fsvar = new fs_var();
       $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
       
@@ -41,9 +43,7 @@ class admin_info extends fs_controller
       
       if( !$cron_vars['cron_exists'] )
       {
-         $this->buttons[] = new fs_button_img('b_clean_cache', 'Limpiar la cache', 'trash.png', $this->url()."&clean_cache=TRUE", TRUE);
-         $this->new_advice('Nunca se ha ejecutado el cron, te perderás algunas '
-                 . 'características interesantes de FacturaScripts.');
+         $this->new_advice('Nunca se ha ejecutado el cron, te perderás algunas características interesantes de FacturaScripts.');
       }
       else if( $cron_vars['cron_error'] )
       {
@@ -52,10 +52,6 @@ class admin_info extends fs_controller
       else if( $cron_vars['cron_lock'] )
       {
          $this->new_advice('Se está ejecutando el cron.');
-      }
-      else
-      {
-         $this->buttons[] = new fs_button_img('b_clean_cache', 'Limpiar la cache', 'trash.png', $this->url()."&clean_cache=TRUE", TRUE);
       }
       
       if( isset($_GET['clean_cache']) )
@@ -130,5 +126,10 @@ class admin_info extends fs_controller
    public function get_locks()
    {
       return $this->db->get_locks();
+   }
+   
+   public function get_db_tables()
+   {
+      return $this->db->list_tables();
    }
 }

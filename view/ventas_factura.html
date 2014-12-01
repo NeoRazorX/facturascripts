@@ -29,6 +29,12 @@
          $("#li_lineas_iva").addClass('active');
          $("#div_lineas_iva").show();
       });
+      {if condition="$fsc->factura->totalrecargo==0"}
+      $(".recargo").hide();
+      {/if}
+      {if condition="$fsc->factura->totalirpf==0"}
+      $(".irpf").hide();
+      {/if}
    });
 </script>
 
@@ -140,11 +146,14 @@
       </div>
       <div class="row">
          <div class="col-lg-12">
-            <h3>
+            <h3 style="margin-bottom: 0px;">
                <a href="{$fsc->ppage->url()}">Facturas</a> /
                <a href="{$fsc->factura->cliente_url()}">{$fsc->factura->nombrecliente}</a> /
                {$fsc->factura->codigo}
             </h3>
+            {if condition="$fsc->agente"}
+            <p>Factura creada por <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>.</p>
+            {/if}
          </div>
       </div>
       
@@ -179,16 +188,6 @@
                <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->factura->fecha}"/>
             </div>
          </div>
-         {if condition="$fsc->agente"}
-         <div class="col-lg-2 col-md-2 col-sm-2">
-            <div class="form-group">
-               Empleado:
-               <div class="form-control">
-                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
-               </div>
-            </div>
-         </div>
-         {/if}
       </div>
    </div>
    
@@ -212,8 +211,8 @@
                <th class="text-right">Dto</th>
                <th class="text-right">Neto</th>
                <th class="text-right">IVA</th>
-               <th class="text-right">RE</th>
-               <th class="text-right">IRPF</th>
+               <th class="recargo text-right">RE</th>
+               <th class="irpf text-right">IRPF</th>
                <th class="text-right">Total</th>
             </tr>
          </thead>
@@ -236,8 +235,8 @@
             <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
             <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
             <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td class="text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
-            <td class="text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
+            <td class="recargo text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
+            <td class="irpf text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
             <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
          </tr>
          {/loop}
@@ -245,8 +244,8 @@
             <td colspan="5"></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
-            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totalrecargo, $fsc->factura->coddivisa)}</b></td>
-            <td class="text-right"><b>-{$fsc->show_precio($fsc->factura->totalirpf, $fsc->factura->coddivisa)}</b></td>
+            <td class="recargo text-right"><b>{$fsc->show_precio($fsc->factura->totalrecargo, $fsc->factura->coddivisa)}</b></td>
+            <td class="irpf text-right"><b>-{$fsc->show_precio($fsc->factura->totalirpf, $fsc->factura->coddivisa)}</b></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
          </tr>
       </table>
@@ -284,7 +283,7 @@
          <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                Observaciones:
-               <textarea class="form-control" name="observaciones">{$fsc->factura->observaciones}</textarea>
+               <textarea class="form-control" name="observaciones" rows="3">{$fsc->factura->observaciones}</textarea>
             </div>
          </div>
       </div>
@@ -300,18 +299,15 @@
          </div>
          <div class="modal-body">
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; Factura simple
+               <span class="glyphicon glyphicon-print"></span> &nbsp; Factura simple
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; Modelo carta
+               <span class="glyphicon glyphicon-print"></span> &nbsp; Modelo carta
             </a>
             
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=firma">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; Factura con firma
+               <span class="glyphicon glyphicon-print"></span> &nbsp; Factura con firma
             </a>
          </div>
          <div class="modal-footer">
@@ -342,8 +338,7 @@
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                   <span class="glyphicon glyphicon-send"></span>
-                   &nbsp; Enviar
+                   <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar
                 </button>
             </div>
          </div>
@@ -365,8 +360,7 @@
          {/if}
          <div class="modal-footer">
             <a class="btn btn-sm btn-danger" href="{$fsc->ppage->url()}&delete={$fsc->factura->idfactura}">
-               <span class="glyphicon glyphicon-trash"></span>
-               &nbsp; Eliminar
+               <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
             </a>
          </div>
       </div>

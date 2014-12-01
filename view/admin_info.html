@@ -1,22 +1,51 @@
 {include="header"}
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-2">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if condition="$fsc->page->is_default()"}
+            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {else}
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {/if}
+         </div>
+      </div>
+      <div class="col-md-8 text-center">
+         <h3 style="margin-top: 0px;">{$fsc->page->title}</h3>
+      </div>
+      <div class="col-md-2 text-right">
+         <a class="btn btn-sm btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
+            <span class="glyphicon glyphicon-trash"></span> &nbsp; Limpiar la cache
+         </a>
+      </div>
+   </div>
+</div>
+
 <div class="table-responsive">
    <table class="table table-hover">
       <thead>
          <tr>
-            <th class="text-center">FacturaScripts</th>
+            <th class="text-left">FacturaScripts</th>
             <th class="text-center">PHP</th>
             <th class="text-center">Base de datos</th>
             <th class="text-center">Motor de base de datos</th>
-            <th class="text-center">Memcache</th>
+            <th class="text-right">Memcache</th>
          </tr>
       </thead>
       <tr>
-         <td class="text-center">{$fsc->version()}</td>
+         <td>{$fsc->version()}</td>
          <td class="text-center">{$fsc->php_version()}</td>
          <td class="text-center">{$fsc->fs_db_name()}</td>
          <td class="text-center">{$fsc->fs_db_version()}</td>
-         <td class="text-center">{$fsc->cache_version()}</td>
+         <td class="text-right">{$fsc->cache_version()}</td>
       </tr>
    </table>
 </div>
@@ -61,6 +90,25 @@
       </div>
    </div>
    {/if}
+   
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <h3 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapse_tab">Tablas</a>
+         </h3>
+      </div>
+      <div id="collapse_tab" class="panel-collapse collapse">
+         <div class="panel-body">
+            <div class="container-fluid">
+               <div class="row">
+               {loop="$fsc->get_db_tables()"}
+                  <div class="col-md-4">{$value.name}</div>
+               {/loop}
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
    
    <div class="panel panel-default">
       <div class="panel-heading">
