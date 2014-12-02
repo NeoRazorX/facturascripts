@@ -33,8 +33,7 @@ class admin_plugins extends fs_controller
       
       if(FS_DEMO)
       {
-         $this->new_error_msg('En el modo demo no se pueden activar/desactivar plugins.
-            Sería muy molesto para los demás visitantes.');
+         $this->new_error_msg('En el modo demo no se pueden activar/desactivar plugins. Sería muy molesto para los demás visitantes.');
       }
       else if( isset($_GET['enable']) )
       {
@@ -43,6 +42,30 @@ class admin_plugins extends fs_controller
       else if( isset($_GET['disable']) )
       {
          $this->disable_plugin($_GET['disable']);
+      }
+      else if( isset($_GET['delete']) )
+      {
+         if( $this->delTree('plugins/'.$_GET['delete']) )
+         {
+            $this->new_message('Plugin '.$_GET['delete'].' eliminado correctamente.');
+         }
+         else
+            $this->new_error_msg('Imposible eliminar el plugin '.$_GET['delete']);
+      }
+      else if( isset($_POST['install']) )
+      {
+         if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
+         {
+            $zip = new ZipArchive();
+            if( $zip->open($_FILES['fplugin']['tmp_name']) )
+            {
+               $zip->extractTo('plugins/');
+               $zip->close();
+               $this->new_message('Plugin '.$_FILES['fplugin']['name'].' instalado correctamente. Ya puedes activarlo.');
+            }
+            else
+               $this->new_error_msg('Archivo no encontrado.');
+         }
       }
    }
    
@@ -179,5 +202,15 @@ class admin_plugins extends fs_controller
          /// limpiamos la caché
          $this->cache->clean();
       }
+   }
+   
+   public function delTree($dir)
+   {
+      $files = array_diff(scandir($dir), array('.','..'));
+      foreach ($files as $file)
+      {
+         (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+      }
+      return rmdir($dir);
    }
 }

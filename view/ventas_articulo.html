@@ -625,20 +625,18 @@
                {else}
                <div class="form-group">
                   Selecciona una imagen en formato PNG de tamaño inferior a 1MB.<br/>
-                  <input type="file" name="fimagen" accept="image/png"/>
+                  <input type="file" name="fimagen" accept="image/gif, image/jpeg, image/png"/>
                </div>
                {/if}
             </div>
             <div class="modal-footer">
                {if condition="$fsc->articulo->imagen_url()"}
                <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete_img=TRUE">
-                  <span class="glyphicon glyphicon-trash"></span>
-                  &nbsp; Eliminar
+                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </a>
                {else}
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
+                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                </button>
                {/if}
             </div>

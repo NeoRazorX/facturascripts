@@ -1,70 +1,168 @@
 {include="header"}
 
-{if condition="FS_DEMO"}
-<div class="text-center">
-   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
-</div>
-{else}
-<div class="container-fluid" style="margin-top: 15px;">
-   <div class="row">
-      <div class="col-lg-2 col-md-2 col-sm-2">
-         <div class="list-group">
-            <a href="{$fsc->url()}" class="list-group-item{if condition="!$fsc->unstables"} active{/if}">Estables</a>
-            <a href="{$fsc->url()}&unstable=TRUE" class="list-group-item{if condition="$fsc->unstables"} active{/if}">
-               <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> &nbsp; Inestables
-            </a>
+<script type="text/javascript">
+   function eliminar(name)
+   {
+      if( confirm("¿Realmente desea eliminar este plugin?") )
+      {
+         window.location.href = '{$fsc->url()}&delete='+name;
+      }
+   }
+</script>
+
+<div role="tabpanel">
+   <ul class="nav nav-tabs" role="tablist">
+      {if condition="$fsc->unstables"}
+      <li><a href="{$fsc->url()}">Plugins estables</a></li>
+      <li role="presentation" class="active">
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> &nbsp; Inestables
+         </a>
+      </li>
+      {else}
+      <li role="presentation" class="active">
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Plugins estables</a>
+      </li>
+      <li>
+         <a href="{$fsc->url()}&unstable=TRUE">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> &nbsp; Inestables
+         </a>
+      </li>
+      {/if}
+      <li role="presentation">
+         <a href="#store" aria-controls="store" role="tab" data-toggle="tab">Más...</a>
+      </li>
+   </ul>
+   <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="home" style="margin-top: 10px;">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-md-6">
+               <!--{$total=count($fsc->plugins())}-->
+               {loop="$fsc->plugins()"}
+                  <div class="panel{if condition="$value['enabled']"} panel-success{else} panel-default{/if}">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">
+                           {if condition="$fsc->unstables"}
+                           <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Esta plugin está en desarrollo y puede dar probemas"></span> &nbsp;
+                           {/if}
+                           {$value['name']}
+                        </h3>
+                     </div>
+                     <div class="panel-body">
+                        <div class="pull-right">
+                        {if condition="$fsc->unstables"}
+                           {if condition="$value['enabled']"}
+                           <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">
+                              <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                           </a>
+                           {else}
+                           <div class="btn-group">
+                              <a class="btn btn-sm btn-default" type="button" value="Activar" title="Activar" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">
+                                 <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                              </a>
+                              <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                                 <span class="glyphicon glyphicon-trash"></span>
+                              </a>
+                           </div>
+                           {/if}
+                        {else}
+                           {if condition="$value['enabled']"}
+                           <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&disable={$value['name']}">
+                               <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                           </a>
+                           {else}
+                           <div class="btn-group">
+                              <a class="btn btn-sm btn-default" type="button" value="Activar" title="Activar" href="{$fsc->url()}&enable={$value['name']}">
+                                  <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                              </a>
+                              <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                                 <span class="glyphicon glyphicon-trash"></span>
+                              </a>
+                           </div>
+                           {/if}
+                        {/if}
+                        </div>
+                        <div>{$value['description']}</div>
+                     </div>
+                  </div>
+                  {if condition="$counter+1==intval($total/2)"}
+                  </div><div class="col-md-6">
+                  {/if}
+               {/loop}
+               </div>
+            </div>
          </div>
       </div>
-      <div class="col-lg-10 col-md-10 col-sm-10">
-         <div class="panel-group" id="accordion">
-            {loop="$fsc->plugins()"}
-            <div class="panel{if condition="$value['enabled']"} panel-success{else} panel-default{/if}">
-               <div class="panel-heading">
-                  <h3 class="panel-title">
-                     {if condition="$fsc->unstables"}
-                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Esta plugin está en desarrollo y puede dar probemas"></span> &nbsp;
-                     {/if}
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{$counter}">{$value['name']}</a>
-                  </h3>
-               </div>
-               <div id="collapse_{$counter}" class="panel-collapse collapse{if condition="$counter==0"} in{/if}">
-                  <div class="panel-body">
-                     {$value['description']}
+      <div role="tabpanel" class="tab-pane" id="store">
+         <div class="container-fluid" style="margin-top: 10px;">
+            <div class="row">
+               <div class="col-md-4">
+                  <div class="panel panel-default">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">Subir plugin</h3>
+                     </div>
+                     <div class="panel-body">
+                        <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
+                        <form class="form" action="{$fsc->url()}" enctype="multipart/form-data" method="post">
+                           <input type="hidden" name="install" value="TRUE"/>
+                           <div class="form-group">
+                              <input type="file" name="fplugin" accept="application/zip"/>
+                           </div>
+                           <button type="submit" class="btn btn-default">
+                              <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Instalar
+                           </button>
+                        </form>
+                     </div>
                   </div>
-                  <div class="panel-footer">
-                     {if condition="$fsc->unstables"}
-                        {if condition="$value['enabled']"}
-                        <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&unstable=TRUE&disable={$value['name']}">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            &nbsp; Desactivar
+               </div>
+               <div class="col-md-4">
+                  <div class="panel panel-default">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">Tienda de plugins</h3>
+                     </div>
+                     <div class="panel-body">
+                        <p>Consigue más plugins en la tienda oficial de plugins de FacturaScripts.</p>
+                        <a href="//www.facturascripts.com/store/" target="_blank" class="btn btn-primary">
+                           <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda oficial
                         </a>
-                        {else}
-                        <a class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&unstable=TRUE&enable={$value['name']}">
-                            <span class="glyphicon glyphicon-ok"></span>
-                            &nbsp; Activar
+                     </div>
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <div class="panel panel-default">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">¿Necesitas una personalización?</h3>
+                     </div>
+                     <div class="panel-body">
+                        <p>Podemos crearte uno a medida. Para que FacturaScripts se adapte exáctamente a lo que buscas, y no al contrario.</p>
+                        <a href="//www.facturascripts.com/community/premium.php" target="_blank" class="btn btn-info">
+                           <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> &nbsp; Personalizar
                         </a>
-                        {/if}
-                     {else}
-                        {if condition="$value['enabled']"}
-                        <a class="btn btn-sm btn-danger" type="button" value="Desactivar" title="Desactivar" href="{$fsc->url()}&disable={$value['name']}">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            &nbsp; Desactivar
-                        </a>
-                        {else}
-                        <a class="btn btn-sm btn-success" type="button" value="Activar" title="Activar" href="{$fsc->url()}&enable={$value['name']}">
-                            <span class="glyphicon glyphicon-ok"></span>
-                            &nbsp; Activar
-                        </a>
-                        {/if}
-                     {/if}
+                     </div>
                   </div>
                </div>
             </div>
-            {/loop}
+            <div class="row">
+               <div class="col-md-12 text-center">
+                  <h2 style="margin-top: 50px;">Pon tu granito de arena...</h2>
+                  <p>
+                     Cada negocio es un mundo, y no podemos hacer un software perfecto para ti,
+                     pero podemos acercarnos lo máximo posible a esa perfeccción que buscas.
+                     <b>Compra 1 hora de desarrollo</b> y ayudanos a mejorar el proyecto ;-)
+                  </p>
+                  <p>
+                     Elige a qué quieres que dediquemos el tiempo. Piensa en eso que te haría ganar tanto tiempo,
+                     en esa característica que te haría la vida más fácil y nos pondremos manos a la obra.
+                  </p>
+                  <a href="//www.facturascripts.com/store/?product=1h-de-desarrollo" target="_blank" class="btn btn-success">
+                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span> &nbsp; 1h de desarrollo
+                  </a>
+               </div>
+            </div>
          </div>
       </div>
    </div>
 </div>
-{/if}
 
 {include="footer"}
