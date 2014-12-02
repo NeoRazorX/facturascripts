@@ -54,8 +54,7 @@
          </div>
          <div class="col-lg-2 col-md-2 col-sm-2 text-right">
             <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-search"></span>
-               &nbsp; Buscar
+               <span class="glyphicon glyphicon-search"></span> &nbsp; Buscar
             </button>
          </div>
       </div>
@@ -77,10 +76,12 @@
             </tr>
          </thead>
          {loop="$fsc->resultados"}
-         <tr>
+         <tr{if condition="$value->total<0"} class="bg-warning"{/if}>
             <td>
+               <div>
                   <input type="checkbox" name="idalbaran[]" value="{$value->idalbaran}" checked="checked"/>
                   <a href="{$value->url()}">{$value->codigo}</a> {$value->numproveedor}
+               </div>
             </td>
             <td>{$value->observaciones_resume()}</td>
             <td class="text-right">{$fsc->show_precio($value->neto, $value->coddivisa)}</td>
@@ -117,8 +118,7 @@
          </div>
          <div class="col-lg-4 col-md-4 col-sm-4 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-file"></span>
-               &nbsp; Generar Factura
+               <span class="glyphicon glyphicon-file"></span> &nbsp; Generar Factura
             </button>
          </div>
       </div>

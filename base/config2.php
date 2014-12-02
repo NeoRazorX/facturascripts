@@ -48,6 +48,12 @@ if( !defined('FS_COMMUNITY_URL') )
 if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
 {
    $GLOBALS['config2'] = parse_ini_file('tmp/'.FS_TMP_NAME.'config2.ini');
+   
+   if( !isset($GLOBALS['config2']['margin_method']) )
+   {
+      $GLOBALS['config2']['margin_method'] = 'PVP';
+      $GLOBALS['config2']['cost_is_average'] = '1';
+   }
 }
 else
 {
