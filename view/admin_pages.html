@@ -1,5 +1,21 @@
 {include="header"}
 
+{if condition="$fsc->first_time"}
+<div class="jumbotron">
+  <h1>¡Bienvenido a FacturaScripts!</h1>
+  <p>
+     FacturaScripts tiene un montón de funciones, agrupadas en páginas. Lo mejor
+     es que lo actives todo, lo pruebes, y si hay algo que no necesitas y no quieres
+     que moleste, simplemente lo desactivas. Recuerda que siempre puedes volver aquí
+     desde <b>Admin</b> &gt; <b>Páginas</b>.
+  </p>
+  <p>Y si quieres más, recuerda que tienes los plugins ;-)</p>
+  <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
+     <span class="glyphicon glyphicon-check"></span> &nbsp; Activar todo
+  </a>
+</div>
+{/if}
+
 <script type="text/javascript">
    function fs_marcar_todo()
    {

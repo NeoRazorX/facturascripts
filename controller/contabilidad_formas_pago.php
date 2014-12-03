@@ -33,31 +33,37 @@ class contabilidad_formas_pago extends fs_controller
    {
       $this->forma_pago = new forma_pago();
       
-      if( isset($_POST['codpago']) )
+      if( isset($_POST['codpago']) ) /// nueva forma de pago
       {
          $fp0 = $this->forma_pago->get($_POST['codpago']);
-         if( !$fp0 )
+         if($fp0)
+         {
+            $this->new_error_msg('Ya existe esa forma de pago.');
+         }
+         else
          {
             $fp0 = new forma_pago();
             $fp0->codpago = $_POST['codpago'];
+            $fp0->descripcion = $_POST['descripcion'];
+            $fp0->genrecibos = $_POST['genrecibos'];
+            $fp0->domiciliado = isset($_POST['domiciliado']);
+            
+            if( $fp0->save() )
+            {
+               $this->new_message('Forma pago '.$fp0->codpago.' guardada correctamente.');
+            }
+            else
+               $this->new_error_msg('Error al guardar la forma pago.');
          }
-         $fp0->descripcion = $_POST['descripcion'];
-         $fp0->genrecibos = $_POST['genrecibos'];
-         $fp0->domiciliado = isset($_POST['domiciliado']);
-         
-         if( $fp0->save() )
-            $this->new_message('Forma pago '.$fp0->codpago.' guardada correctamente.');
-         else
-            $this->new_error_msg('Error al guardar la forma pago.');
       }
-      else
+      else /// modificar/eliminar
       {
          for($i = 0; isset($_POST['codpago_'.$i]); $i++)
          {
             $fp0 = $this->forma_pago->get($_POST['codpago_'.$i]);
             if($fp0)
             {
-               if( isset($_POST['delete_'.$i]) )
+               if( isset($_POST['delete_'.$i]) ) /// eliminar
                {
                   if(FS_DEMO)
                   {
@@ -65,17 +71,21 @@ class contabilidad_formas_pago extends fs_controller
                         Otro usuario podría necesitarlas.');
                   }
                   else if( $fp0->delete() )
+                  {
                      $this->new_message('Forma de pago '.$fp0->codpago.' eliminada correctamente.');
+                  }
                   else
                      $this->new_error_msg('Error al eliminar la forma de pago '.$fp0->codpago.'.');
                }
-               else
+               else /// modificar
                {
                   $fp0->descripcion = $_POST['descripcion_'.$i];
                   $fp0->genrecibos = $_POST['genrecibos_'.$i];
                   $fp0->domiciliado = isset($_POST['domiciliado_'.$i]);
                   if( !$fp0->save() )
+                  {
                      $this->new_error_msg('Error al guardar la forma de pago.');
+                  }
                }
             }
             else

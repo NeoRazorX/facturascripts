@@ -26,24 +26,20 @@
          
          <div class="btn-group">
             <a href="#" id="b_reticket" class="btn btn-sm btn-default">
-               <span class="glyphicon glyphicon-print"></span>
-               &nbsp; Reimprimir ticket
+               <span class="glyphicon glyphicon-print"></span> &nbsp; Reimprimir ticket
             </a>
             <a href="#" id="b_borrar_ticket" class="btn btn-sm btn-warning">
-               <span class="glyphicon glyphicon-trash"></span>
-               &nbsp; Borrar ticket
+               <span class="glyphicon glyphicon-trash"></span> &nbsp; Borrar ticket
             </a>
          </div>
       </div>
       <div class="col-md-6 text-right">
          <div class="btn-group">
             <a href="{$fsc->url()}&abrir_caja=TRUE" id="b_abrir_caja" class="btn btn-sm btn-default">
-               <span class="glyphicon glyphicon-inbox"></span>
-               &nbsp; Abrir caja
+               <span class="glyphicon glyphicon-inbox"></span> &nbsp; Abrir caja
             </a>
             <a href="#" id="b_cerrar_caja" class="btn btn-sm btn-danger">
-               <span class="glyphicon glyphicon-lock"></span>
-               &nbsp; Cerrar caja
+               <span class="glyphicon glyphicon-lock"></span> &nbsp; Cerrar caja
             </a>
          </div>
       </div>
@@ -93,8 +89,7 @@
       <li><a href="#tab_opciones" role="tab" data-toggle="tab">Más opciones...</a></li>
       <li>
          <a href="#tab_tickets" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-print"></span>
-            &nbsp; Tickets
+            <span class="glyphicon glyphicon-print"></span> &nbsp; Tickets
          </a>
       </li>
    </ul>
@@ -118,8 +113,8 @@
                </thead>
                <tbody id="lineas_albaran">
                   <tr class="bg-info">
-                     <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar" autocomplete="off"/></td>
-                     <td colspan="5"></td>
+                     <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar para añadir..." autocomplete="off"/></td>
+                     <td colspan="5" class="text-right">Totales:</td>
                      <td>
                         <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                      </td>
@@ -211,7 +206,7 @@
                      <input class="form-control" type="number" name="num_tickets" value="1"/>
                   </div>
                </div>
-               <div class="col-md-2">
+               <div class="col-md-4">
                   <div class="checkbox">
                      <label>
                         <input type="checkbox" name="imprimir_desc" value="TRUE"{if condition="$fsc->imprimir_descripciones"} checked="checked"{/if}/>
@@ -225,13 +220,12 @@
                      </label>
                   </div>
                </div>
-               <div class="col-md-8">
+               <div class="col-md-6">
                   <p>
                      <b>Recuarda</b> que para poder imprimir tickets necesitas estar ejecutando la aplicación Remote printer.
                   </p>
                   <a target="_blank" href="http://www.facturascripts.com/community/item/imprimir-tickets-desde-windows-llevo-toda-la-tarde-programando-para-poder-618.html" class="btn btn-sm btn-default">
-                     <span class="glyphicon glyphicon-download"></span>
-                     &nbsp; Remote printer
+                     <span class="glyphicon glyphicon-download"></span> &nbsp; Remote printer
                   </a>
                </div>
             </div>
@@ -243,14 +237,12 @@
       <div class="row" style="margin-bottom: 30px;">
          <div class="col-lg-6 col-md-6 col-sm-6">
             <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
-               <span class="glyphicon glyphicon-refresh"></span>
-               &nbsp; Reiniciar...
+               <span class="glyphicon glyphicon-refresh"></span> &nbsp; Reiniciar...
             </button>
          </div>
          <div class="col-lg-6 col-md-6 col-sm-6 text-right">
             <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
+               <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
             </button>
          </div>
       </div>

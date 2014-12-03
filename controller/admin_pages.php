@@ -17,10 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_model('fs_var.php');
+
 class admin_pages extends fs_controller
 {
    public $paginas;
    public $demo_warnign_showed;
+   public $first_time;
    
    public function __construct()
    {
@@ -32,8 +35,14 @@ class admin_pages extends fs_controller
       $this->show_fs_toolbar = FALSE;
       $this->demo_warnign_showed = FALSE;
       
+      $fsvar = new fs_var();
+      $this->first_time = !$fsvar->simple_get('first_time');
+      
       if( isset($_POST['modpages']) )
       {
+         $this->first_time = FALSE;
+         $fsvar->simple_save('first_time', '1');
+         
          foreach($this->all_pages() as $p)
          {
             if( !$p->exists ) /// la página está en la base de datos pero ya no existe el controlador
@@ -61,13 +70,6 @@ class admin_pages extends fs_controller
          $this->new_message('Datos guardados correctamente.');
          $this->new_message('Ahora es el momento de <a href="index.php?page=admin_empresa">
             introducir los datos de tu empresa</a>, si todavía no lo has hecho.');
-      }
-      else
-      {
-         $this->new_advice('Desde aquí se activan y desactivan todas las páginas de FacturaScripts.
-            Si quieres, puedes activarlas todas, trastear un poco y luego desactivar las que no
-            necesites. Si quieres ver un pequeño tutorial, haz clic
-            <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5203ccc1b38d447c66000001">aquí</a>.');
       }
       
       $this->paginas = $this->all_pages();

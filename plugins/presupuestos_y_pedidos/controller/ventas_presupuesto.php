@@ -590,9 +590,9 @@ class ventas_presupuesto extends fs_controller
             $pdf_doc->add_table_header(
                array(
                   'descripcion' => '<b>Descripción</b>',
+                  'cantidad' => '<b>Cantidad</b>',
                   'pvp' => '<b>PVP</b>',
                   'dto' => '<b>DTO</b>',
-                  'cantidad' => '<b>Cantidad</b>',
                   'importe' => '<b>Importe</b>'
                )
             );
@@ -607,15 +607,15 @@ class ventas_presupuesto extends fs_controller
                   $impuestos[$lineas[$linea_actual]->iva] += $lineas[$linea_actual]->pvptotal * $lineas[$linea_actual]->iva / 100;
                
                $fila = array(
-                  'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 45),
+                  'descripcion' => substr($lineas[$linea_actual]->descripcion, 0, 60),
+                  'cantidad' => $lineas[$linea_actual]->cantidad,
                   'pvp' => $this->show_precio($lineas[$linea_actual]->pvpunitario, $this->presupuesto->coddivisa),
                   'dto' => $this->show_numero($lineas[$linea_actual]->dtopor, 0) . " %",
-                  'cantidad' => $lineas[$linea_actual]->cantidad,
                   'importe' => $this->show_precio($lineas[$linea_actual]->pvptotal, $this->presupuesto->coddivisa)
                );
                
                if($lineas[$linea_actual]->referencia != '0')
-                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 40);
+                  $fila['descripcion'] = substr($lineas[$linea_actual]->referencia.' - '.$lineas[$linea_actual]->descripcion, 0, 50);
                
                $pdf_doc->add_table_row($fila);
                $saltos++;
@@ -625,9 +625,9 @@ class ventas_presupuesto extends fs_controller
                array(
                    'fontSize' => 8,
                    'cols' => array(
+                       'cantidad' => array('justification' => 'right'),
                        'pvp' => array('justification' => 'right'),
                        'dto' => array('justification' => 'right'),
-                       'cantidad' => array('justification' => 'right'),
                        'importe' => array('justification' => 'right')
                    ),
                    'width' => 540,
