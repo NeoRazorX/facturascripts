@@ -18,6 +18,7 @@
  */
 
 require_model('almacen.php');
+require_model('asiento_factura.php');
 require_model('forma_pago.php');
 
 class nueva_compra extends fs_controller
@@ -572,6 +573,7 @@ class nueva_compra extends fs_controller
                }
                else if( $factura->save() )
                {
+                  $this->generar_asiento($factura);
                   $this->new_message("<a href='".$factura->url()."'>Factura</a> guardada correctamente.");
                   $this->new_change('Factura Proveedor '.$factura->codigo, $factura->url(), TRUE);
                }
@@ -587,6 +589,25 @@ class nueva_compra extends fs_controller
          }
          else
             $this->new_error_msg("¡Imposible guardar la factura!");
+      }
+   }
+   
+   private function generar_asiento($factura)
+   {
+      if($this->empresa->contintegrada)
+      {
+         $asiento_factura = new asiento_factura();
+         $asiento_factura->generar_asiento_compra($factura);
+         
+         foreach($asiento_factura->errors as $err)
+         {
+            $this->new_error_msg($err);
+         }
+         
+         foreach($asiento_factura->messages as $msg)
+         {
+            $this->new_message($msg);
+         }
       }
    }
 }
