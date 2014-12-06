@@ -213,7 +213,7 @@ class fs_user extends fs_model
 
    public function get_template()
    {
-        $templates = array( "bootstrap-cerulean.css" => "Cerulean", "bootstrap-cosmo.css" => "Cosmo", "bootstrap-cyborg.css" => "Cyborg", "bootstrap-darkly.css" => "Darkly", "bootstrap-flatly.css" => "Flatly", "bootstrap-journal.css" => "Journal", "bootstrap-lumen.css" => "Lumen", "bootstrap-paper.css" => "Paper", "bootstrap-readable.css" => "Readable", "bootstrap-sandstone.css" => "SandStone", "bootstrap-simplex.css" => "Simplex", "bootstrap-slate.css" => "Slate", "bootstrap-spacelab.css" => "SpaceLab", "bootstrap-superhero.css" => "SuperHero", "bootstrap-united.css" => "United", "bootstrap-yeti.css" => "Yeti" );
+        $templates = array( "bootstrap-cerulean.css" => "Cerulean", "bootstrap-cosmo.css" => "Cosmo", "bootstrap-cyborg.css" => "Cyborg", "bootstrap-darkly.css" => "Darkly", "bootstrap-flatly.css" => "Flatly", "bootstrap-journal.css" => "Journal", "bootstrap-lumen.css" => "Lumen", "bootstrap-paper.css" => "Paper", "bootstrap-readable.css" => "Readable", "bootstrap-sandstone.css" => "SandStone", "bootstrap-simplex.css" => "Simplex", "bootstrap-slate.css" => "Slate", "bootstrap-spacelab.css" => "SpaceLab", "bootstrap-superhero.css" => "SuperHero", "bootstrap-united.css" => "United", "bootstrap-yeti.css" => "Yeti", "bootstrap-gplus.css" => "GPlus Style", "bootstrap-holo.css" => "Holo Style", "bootstrap-flatty.css" => "Flatty Style", "bootstrap-white_flatty.css" => "White Flatty Style", "bootstrap-blackwhite.css" => "BlackWhite Style", "bootstrap-kanda.css" => "Kanda Style", "bootstrap-adminlte.css" => "AdminLTE Style" );
         $template = array();
         foreach( $templates as $key => $value )
         {
