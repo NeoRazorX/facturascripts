@@ -20,7 +20,6 @@
 require_model('cliente.php');
 require_model('fbm_mascota.php');
 require_model('fbm_raza.php');
-require_model('fs_extension.php');
 
 class veterinaria_mascotas extends fs_controller
 {

@@ -48,10 +48,6 @@ class compras_factura extends fs_controller
       /// desactivamos la barra de botones
       $this->show_fs_toolbar = FALSE;
       
-      /// cargamos las extensiones
-      $fsext = new fs_extension();
-      $this->extensiones = $fsext->all_to(__CLASS__);
-      
       if( isset($_POST['idfactura']) )
       {
          $this->factura = $factura->get($_POST['idfactura']);

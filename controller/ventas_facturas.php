@@ -21,7 +21,6 @@ require_model('agente.php');
 require_model('articulo.php');
 require_model('cliente.php');
 require_model('factura_cliente.php');
-require_model('fs_extension.php');
 
 class ventas_facturas extends fs_controller
 {

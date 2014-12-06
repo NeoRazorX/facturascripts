@@ -21,7 +21,6 @@
 require_model('cliente.php');
 require_model('registro_sat.php');
 require_model('detalles_sat.php');
-require_model('fs_extension.php');
 
 class listado_sat extends fs_controller
 {

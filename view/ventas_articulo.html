@@ -293,7 +293,7 @@
          Buscar en... <span class="caret"></span>
       </a>
       <ul class="dropdown-menu" role="menu">
-      {loop="$fsc->extensiones"}
+      {loop="$fsc->extensions"}
          {if condition="$value->type=='button'"}
          <li>
             <a href="index.php?page={$value->from}&ref={function="urlencode($fsc->articulo->referencia)"}">

@@ -191,4 +191,18 @@ class fs_extension extends fs_model
       
       return $elist;
    }
+   
+   public function all()
+   {
+      $elist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY name ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $elist[] = new fs_extension($d);
+      }
+      
+      return $elist;
+   }
 }

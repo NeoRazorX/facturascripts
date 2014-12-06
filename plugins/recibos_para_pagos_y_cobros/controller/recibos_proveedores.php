@@ -25,7 +25,6 @@ require_model('proveedor.php');
 require_model('factura_proveedor.php');
 // Saber que recibo se paga
 require_model('recibo_proveedor.php');
-require_model('fs_extension.php');
 
 class recibos_proveedores extends fs_controller
 {

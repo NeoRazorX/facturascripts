@@ -82,6 +82,14 @@
                <a id="b_precios" class="btn btn-sm btn-default" href="#">
                   <span class="glyphicon glyphicon-euro"></span> &nbsp; Precios
                </a>
+               
+               {loop="$fsc->extensions"}
+                  {if condition="$value->type=='button'"}
+                  <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">
+                     {$value->text}
+                  </a>
+                  {/if}
+               {/loop}
             </div>
          </div>
          <div class="col-lg-4 col-md-4 col-sm-4 text-right hidden-xs">

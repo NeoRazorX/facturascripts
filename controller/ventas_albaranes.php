@@ -21,7 +21,6 @@ require_model('agente.php');
 require_model('albaran_cliente.php');
 require_model('articulo.php');
 require_model('cliente.php');
-require_model('fs_extension.php');
 
 class ventas_albaranes extends fs_controller
 {

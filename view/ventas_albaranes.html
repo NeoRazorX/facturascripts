@@ -62,19 +62,21 @@
          
          <div class="btn-group">
             <a class="btn btn-sm btn-success" href="index.php?page=nueva_venta&tipo=albaran">
-               <span class="glyphicon glyphicon-plus"></span>
-               &nbsp; Nuevo
+               <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
             </a>
             <a class="btn btn-sm btn-default" href="index.php?page=ventas_agrupar_albaranes">
-               <span class="glyphicon glyphicon-tasks"></span>
-               &nbsp; Agrupar
+               <span class="glyphicon glyphicon-tasks"></span> &nbsp; Agrupar
             </a>
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='button'"}
+               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+               {/if}
+            {/loop}
          </div>
       </div>
       <div class="col-md-2 col-sm-2 col-xs-4 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en las líneas">
-            <span class="glyphicon glyphicon-search"></span>
-            &nbsp; Líneas
+            <span class="glyphicon glyphicon-search"></span> &nbsp; Líneas
          </a>
       </div>
       <div class="col-md-2 col-sm-3 col-xs-12">

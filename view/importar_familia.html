@@ -33,7 +33,7 @@
          </div>
       </div>
       <div class="row">
-         <div class="col-lg-6 col-md-6 col-sm-6">
+         <div class="col-md-4">
             <ul class="list-group">
                <li class="list-group-item">Impuesto: {$fsc->family_data->codimpuesto}</li>
                <li class="list-group-item">Sufijo: {$fsc->family_data->sufijo}</li>
@@ -52,11 +52,15 @@
                <li class="list-group-item">Líneas: {$fsc->family_data->lineas}</li>
             </ul>
          </div>
-         <div class="col-lg-6 col-md-6 col-sm-6">
+         <div class="col-md-4">
             <ul class="list-group">
                <li class="list-group-item">Nuevos: {$fsc->family_data->articulos_nuevos}</li>
                <li class="list-group-item">Actualizados: {$fsc->family_data->articulos_actualizados}</li>
                <li class="list-group-item">Sin modificar: {$fsc->family_data->articulos_sin_modificar}</li>
+            </ul>
+         </div>
+         <div class="col-md-4">
+            <ul class="list-group">
                <li class="list-group-item">Suben de precio: {$fsc->family_data->pvp_suben}</li>
                <li class="list-group-item">Bajan de precio: {$fsc->family_data->pvp_bajan}</li>
                <li class="list-group-item">Mismo precio: {$fsc->family_data->pvp_igual}</li>

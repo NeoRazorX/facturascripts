@@ -20,7 +20,6 @@
 require_model('agente.php');
 require_model('articulo.php');
 require_model('factura_proveedor.php');
-require_model('fs_extension.php');
 require_model('proveedor.php');
 
 class compras_facturas extends fs_controller

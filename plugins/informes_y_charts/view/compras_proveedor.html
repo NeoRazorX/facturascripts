@@ -131,11 +131,10 @@
                <span class="glyphicon glyphicon-credit-card"></span>
                &nbsp; Subcuentas
             </a>
-            {loop="$fsc->extensiones"}
+            {loop="$fsc->extensions"}
                {if condition="$value->type=='button'"}
                <a id="b_{$value->from}" href="index.php?page={$value->from}&codproveedor={$fsc->proveedor->codproveedor}" class="list-group-item">
-                  <span class="glyphicon glyphicon-list"></span>
-                  &nbsp; {$value->text}
+                  <span class="glyphicon glyphicon-list"></span> &nbsp; {$value->text}
                </a>
                {/if}
             {/loop}

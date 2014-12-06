@@ -75,15 +75,16 @@ class almacen extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,
-         direccion,codpostal,telefono,fax,contacto) VALUES
-         ('ALG','ALMACEN GENERAL','','','','','','');";
+      return "INSERT INTO ".$this->table_name." (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
+         VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
    
    public function url()
    {
       if( is_null($this->codalmacen) )
+      {
          return 'index.php?page=admin_almacenes';
+      }
       else
          return 'index.php?page=admin_almacenes#'.$this->codalmacen;
    }
@@ -95,10 +96,11 @@ class almacen extends fs_model
    
    public function get($cod)
    {
-      $almacen = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE codalmacen = ".$this->var2str($cod).";");
+      $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($cod).";");
       if($almacen)
+      {
          return new almacen($almacen[0]);
+      }
       else
          return FALSE;
    }
@@ -106,10 +108,11 @@ class almacen extends fs_model
    public function exists()
    {
       if( is_null($this->codalmacen) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
    public function test()
@@ -127,9 +130,13 @@ class almacen extends fs_model
       $this->contacto = $this->no_html($this->contacto);
       
       if( !preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen) )
+      {
          $this->new_error_msg("Código de almacén no válido.");
+      }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+      {
          $this->new_error_msg("Nombre de almacén no válido.");
+      }
       else
          $status = TRUE;
       

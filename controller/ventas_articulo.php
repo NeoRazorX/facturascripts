@@ -20,7 +20,6 @@
 require_model('almacen.php');
 require_model('articulo.php');
 require_model('familia.php');
-require_model('fs_extension.php');
 require_model('impuesto.php');
 require_model('stock.php');
 
@@ -44,10 +43,6 @@ class ventas_articulo extends fs_controller
       $this->show_fs_toolbar = FALSE;
       $this->ppage = $this->page->get('ventas_articulos');
       $articulo = new articulo();
-      
-      /// cargamos las extensiones
-      $fs_extension = new fs_extension();
-      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       if( isset($_POST['pvpiva']) )
       {

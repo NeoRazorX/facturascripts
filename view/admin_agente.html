@@ -16,14 +16,12 @@
       <div class="col-lg-3 col-md-3 col-sm-3">
          <div class="list-group">
             <a id="b_generales" href="{$fsc->url()}" class="list-group-item active">
-               <span class="glyphicon glyphicon-dashboard"></span>
-               &nbsp; Datos generales
+               <span class="glyphicon glyphicon-dashboard"></span> &nbsp; Datos generales
             </a>
-            {loop="$fsc->extensiones"}
+            {loop="$fsc->extensions"}
                {if condition="$value->type=='button'"}
                <a id="b_{$value->from}" href="index.php?page={$value->from}&codagente={$fsc->agente->codagente}" class="list-group-item">
-                  <span class="glyphicon glyphicon-list"></span>
-                  &nbsp; {$value->text}
+                  <span class="glyphicon glyphicon-list"></span> &nbsp; {$value->text}
                </a>
                {/if}
             {/loop}
@@ -64,8 +62,7 @@
                </div>
                <div class="panel-footer" style="text-align: right;">
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                   </button>
                </div>
             </div>

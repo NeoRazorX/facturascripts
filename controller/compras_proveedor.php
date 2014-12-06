@@ -19,7 +19,6 @@
 
 require_model('cuenta_banco_proveedor.php');
 require_model('divisa.php');
-require_model('fs_extension.php');
 require_model('forma_pago.php');
 require_model('pais.php');
 require_model('proveedor.php');
@@ -29,7 +28,6 @@ class compras_proveedor extends fs_controller
 {
    public $cuenta_banco;
    public $divisa;
-   public $extensiones;
    public $forma_pago;
    public $pais;
    public $proveedor;
@@ -48,10 +46,6 @@ class compras_proveedor extends fs_controller
       $this->forma_pago = new forma_pago();
       $this->pais = new pais();
       $this->serie = new serie();
-      
-      /// cargamos las extensiones
-      $fs_extension = new fs_extension();
-      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       /// cargamos el proveedor
       $proveedor = new proveedor();

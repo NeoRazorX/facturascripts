@@ -91,7 +91,7 @@ class articulo extends fs_model
          $this->codbarras = $a['codbarras'];
          $this->observaciones = $this->no_html($a['observaciones']);
          
-         /// no cargamos la imágen directamente por cuestión de rendimiento
+         /// no cargamos la imagen directamente por cuestión de rendimiento
          $this->imagen = NULL;
          $this->has_imagen = isset($a['imagen']);
          $this->exists = TRUE;
@@ -336,15 +336,18 @@ class articulo extends fs_model
       if( $this->has_imagen )
       {
          if( file_exists('tmp/articulos/'.$this->referencia.'.png') )
+         {
             return 'tmp/articulos/'.$this->referencia.'.png';
+         }
          else
          {
             if( is_null($this->imagen) )
             {
-               $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name.
-                       " WHERE referencia = ".$this->var2str($this->referencia).";");
+               $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
                if($imagen)
+               {
                   $this->imagen = $this->str2bin($imagen[0]['imagen']);
+               }
                else
                   $this->has_imagen = FALSE;
             }
@@ -577,10 +580,11 @@ class articulo extends fs_model
       {
          if( is_null($this->imagen) )
          {
-            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name."
-               WHERE referencia = ".$this->var2str($this->referencia).";");
+            $imagen = $this->db->select("SELECT imagen FROM ".$this->table_name." WHERE referencia = ".$this->var2str($this->referencia).";");
             if($imagen)
+            {
                $this->imagen = $this->str2bin($imagen[0]['imagen']);
+            }
             else
             {
                $this->imagen = NULL;

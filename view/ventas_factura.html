@@ -49,24 +49,20 @@
             
             <div class="btn-group">
                <a id="b_imprimir" class="btn btn-sm btn-default" href="#">
-                  <span class="glyphicon glyphicon-print"></span>
-                  &nbsp; Imprimir
+                  <span class="glyphicon glyphicon-print"></span> &nbsp; Imprimir
                </a>
                {if condition="$fsc->empresa->can_send_mail()"}
                <a id="b_enviar" class="btn btn-sm btn-default" href="#">
-                  <span class="glyphicon glyphicon-envelope"></span>
-                  &nbsp; Enviar
+                  <span class="glyphicon glyphicon-envelope"></span> &nbsp; Enviar
                </a>
                {/if}
                {if condition="$fsc->factura->idasiento"}
                <a class="btn btn-sm btn-default" href="{$fsc->factura->asiento_url()}">
-                  <span class="glyphicon glyphicon-eye-open"></span>
-                  &nbsp; Asiento contable
+                  <span class="glyphicon glyphicon-eye-open"></span> &nbsp; Asiento contable
                </a>
                {else}
                <a class="btn btn-sm btn-default" href="{$fsc->url()}&gen_asiento=TRUE&petid={$fsc->random_string()}">
-                  <span class="glyphicon glyphicon-paperclip"></span>
-                  &nbsp; Generar asiento
+                  <span class="glyphicon glyphicon-paperclip"></span> &nbsp; Generar asiento
                </a>
                {/if}
             </div>
@@ -92,13 +88,15 @@
                </ul>
             </div>
             
-            {loop="$fsc->extensiones"}
+            <div class="btn-group">
+            {loop="$fsc->extensions"}
                {if condition="$value->type=='button'"}
                <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" class="btn btn-sm btn-default">
                   {$value->text}
                </a>
                {/if}
             {/loop}
+            </div>
          </div>
          <div class="col-md-4 col-sm-4 hidden-xs text-right">
             <div class="btn-group">

@@ -23,7 +23,6 @@ require_model('cuenta_banco_cliente.php');
 require_model('direccion_cliente.php');
 require_model('divisa.php');
 require_model('forma_pago.php');
-require_model('fs_extension.php');
 require_model('grupo_clientes.php');
 require_model('pais.php');
 require_model('serie.php');
@@ -34,7 +33,6 @@ class ventas_cliente extends fs_controller
    public $cliente;
    public $cuenta_banco;
    public $divisa;
-   public $extensiones;
    public $forma_pago;
    public $grupo;
    public $pais;
@@ -55,10 +53,6 @@ class ventas_cliente extends fs_controller
       $this->grupo = new grupo_clientes();
       $this->pais = new pais();
       $this->serie = new serie();
-      
-      /// cargamos las extensiones
-      $fs_extension = new fs_extension();
-      $this->extensiones = $fs_extension->all_to(__CLASS__);
       
       /// cargamos el cliente
       $cliente = new cliente();

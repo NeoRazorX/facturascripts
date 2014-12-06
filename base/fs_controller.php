@@ -18,7 +18,9 @@
  */
 
 if(strtolower(FS_DB_TYPE) == 'mysql')
+{
    require_once 'base/fs_mysql.php';
+}
 else
    require_once 'base/fs_postgresql.php';
 
@@ -120,7 +122,7 @@ class fs_controller
    /**
     * Listado de extensiones de la página
     */
-   public $head_extensions;
+   public $extensions;
    
    /**
     * @param type $name sustituir por __CLASS__
@@ -139,7 +141,7 @@ class fs_controller
       $this->messages = array();
       $this->advices = array();
       $this->simbolo_divisas = array();
-      $this->head_extensions = array();
+      $this->extensions = array();
       
       $this->buttons = array();
       $this->custom_search = FALSE;
@@ -147,7 +149,9 @@ class fs_controller
       $this->ppage = FALSE;
       
       if(strtolower(FS_DB_TYPE) == 'mysql')
+      {
          $this->db = new fs_mysql();
+      }
       else
          $this->db = new fs_postgresql();
       
@@ -155,7 +159,9 @@ class fs_controller
       
       /// comprobamos la versión de PHP
       if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
+      {
          $this->new_error_msg('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP '.phpversion().'.');
+      }
       
       if( $this->db->connect() )
       {
@@ -163,18 +169,20 @@ class fs_controller
          $this->page = new fs_page( array('name'=>$name, 'title'=>$title, 'folder'=>$folder,
              'version'=>$this->version(), 'show_on_menu'=>$shmenu, 'important'=>$important) );
          if($name != '')
+         {
             $this->page->save();
+         }
          
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
          
          /// cargamos las extensiones
          $fsext = new fs_extension();
-         foreach($fsext->all_4_type('head') as $ext)
+         foreach($fsext->all() as $ext)
          {
-            if( $ext->to == $name OR is_null($ext->to) )
+            if($ext->to == $name OR ($ext->type == 'head' AND is_null($ext->to)) )
             {
-               $this->head_extensions[] = $ext;
+               $this->extensions[] = $ext;
             }
          }
          
@@ -202,8 +210,7 @@ class fs_controller
             else if( $this->ip_baneada($ips) )
             {
                $this->banear_ip($ips);
-               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar
-                  10 minutos antes de volver a intentar entrar.');
+               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
             }
             else
             {
@@ -212,7 +219,9 @@ class fs_controller
                {
                   $suser->set_password($_POST['new_password']);
                   if( $suser->save() )
+                  {
                      $this->new_message('Contraseña cambiada correctamente.');
+                  }
                   else
                      $this->new_error_msg('Imposible cambiar la contraseña del usuario.');
                }
@@ -238,7 +247,9 @@ class fs_controller
                
                $this->query = '';
                if( isset($_REQUEST['query']) )
+               {
                   $this->query = $_REQUEST['query'];
+               }
                
                $this->process();
             }
@@ -305,7 +316,9 @@ class fs_controller
       $full = array_merge( $this->errors, $this->db->get_errors() );
       
       if( isset($this->empresa) )
+      {
          $full = array_merge( $full, $this->empresa->get_errors() );
+      }
       
       return $full;
    }

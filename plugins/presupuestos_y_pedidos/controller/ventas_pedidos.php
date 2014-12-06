@@ -21,7 +21,6 @@
 require_model('agente.php');
 require_model('articulo.php');
 require_model('cliente.php');
-require_model('fs_extension.php');
 require_model('pedido_cliente.php');
 
 class ventas_pedidos extends fs_controller

@@ -15,93 +15,6 @@
    });
 </script>
 
-<div class="modal" id="modal_nuevo_almacen">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post" class="form-horizontal" role="form">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nuevo almacén</h4>
-            </div>
-            <div class="modal-body">
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="scodalmacen" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="snombre" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">
-                     <a href="{$fsc->pais->url()}">País</a>:
-                  </label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <select name="scodpais" class="form-control col-lg-10 col-md-10 col-sm-10">
-                        {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
-                        {/loop}
-                     </select>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">{#FS_PROVINCIA#}:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Ciudad:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Dirección:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="sdireccion" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código Postal:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Teléfono:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="stelefono" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Fax:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="sfax" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Contacto:</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="scontacto" autocomplete="off"/>
-                  </div>
-               </div>
-            </div>
-            <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  &nbsp; Guardar
-              </button>
-            </div>
-         </form>
-      </div>
-   </div>
-</div>
-
 {loop="$fsc->almacen->all()"}
 <form class="form" role="form" action="{$fsc->url()}" method="post">
    <input type="hidden" name="scodalmacen" value="{$value->codalmacen}"/>
@@ -130,7 +43,7 @@
                </div>
                <div class="col-lg-3 col-md-3 col-sm-3">
                   <div class="form-group">
-                     {#FS_PROVINCIA#}:
+                     <span class="text-capitalize">{#FS_PROVINCIA#}</span>:
                      <input class="form-control" type="text" name="sprovincia" value="{$value->provincia}" autocomplete="off"/>
                   </div>
                </div>
@@ -184,5 +97,91 @@
    </div>
 </form>
 {/loop}
+
+<div class="modal" id="modal_nuevo_almacen">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_almacen" action="{$fsc->url()}" method="post" class="form-horizontal" role="form">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo almacén</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="scodalmacen" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="snombre" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">
+                     <a href="{$fsc->pais->url()}">País</a>:
+                  </label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <select name="scodpais" class="form-control col-lg-10 col-md-10 col-sm-10">
+                        {loop="$fsc->pais->all()"}
+                        <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label text-capitalize">{#FS_PROVINCIA#}:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="sprovincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Ciudad:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="spoblacion" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Dirección:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="sdireccion" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Código Postal:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="scodpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Teléfono:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="stelefono" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Fax:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="sfax" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-lg-2 col-md-2 col-sm-2 control-label">Contacto:</label>
+                  <div class="col-lg-10 col-md-10 col-sm-10">
+                     <input class="form-control" type="text" name="scontacto" autocomplete="off"/>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+              </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
 
 {include="footer"}

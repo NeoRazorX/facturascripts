@@ -29,7 +29,6 @@ require_model('recibo_cliente.php');
 require_model('pagos_devoluciones_cliente.php');
 // Saber si ha habido pagos y devoluciones del recibo en remesa
 require_model('pagos_devoluciones_remesas_cliente.php');
-require_model('fs_extension.php');
 
 class pagos_devoluciones_clientes extends fs_controller
 {

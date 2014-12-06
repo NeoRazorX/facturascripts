@@ -25,7 +25,6 @@ require_model('cliente.php');
 require_model('factura_cliente.php');
 // Saber que recibo se cobra
 require_model('recibo_cliente.php');
-require_model('fs_extension.php');
 
 class recibos_clientes extends fs_controller
 {

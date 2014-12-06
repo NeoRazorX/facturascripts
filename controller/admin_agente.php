@@ -18,12 +18,10 @@
  */
 
 require_model('agente.php');
-require_model('fs_extension.php');
 
 class admin_agente extends fs_controller
 {
    public $agente;
-   public $extensiones;
    
    /*
     * Esta página está en la carpeta admin, pero no se necesita ser admin para usarla.
@@ -38,10 +36,6 @@ class admin_agente extends fs_controller
    {
       $this->ppage = $this->page->get('admin_agentes');
       
-      /// cargamos las extensiones
-      $fs_extension = new fs_extension();
-      $this->extensiones = $fs_extension->all_to(__CLASS__);
-      
       $this->agente = FALSE;
       if( isset($_GET['cod']) )
       {
@@ -54,7 +48,9 @@ class admin_agente extends fs_controller
          $this->page->title .= ' ' . $this->agente->codagente;
          
          if($this->user->codagente != $this->agente->codagente)
+         {
             $this->buttons[] = new fs_button_img('b_delete_agente', 'Eliminar', 'trash.png', '#', TRUE);
+         }
          
          if( isset($_POST['nombre']) )
          {

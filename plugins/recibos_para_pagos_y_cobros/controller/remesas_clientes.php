@@ -27,7 +27,6 @@ require_model('factura_cliente.php');
 require_model('recibo_cliente.php');
 // Saber si el recibo esta en una remesa
 require_model('remesas_cliente.php');
-require_model('fs_extension.php');
 
 class remesas_clientes extends fs_controller
 {

@@ -271,20 +271,7 @@ abstract class fs_model
          return 'NULL';
       }
       else
-         return "'".bin2hex($v)."'";
-   }
-   
-   protected function hex2bin($data)
-   {
-      $bin = '';
-      
-      $i = 0;
-      do {
-         $bin .= chr(hexdec($data{$i}.$data{($i + 1)}));
-         $i += 2;
-      } while($i < strlen($data));
-      
-      return $bin;
+         return "'".base64_encode($v)."'";
    }
    
    protected function str2bin($v)
@@ -294,7 +281,7 @@ abstract class fs_model
          return NULL;
       }
       else
-         return $this->hex2bin($v);
+         return base64_decode($v);
    }
    
    protected function str2bool($v)

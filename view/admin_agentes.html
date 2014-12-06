@@ -10,7 +10,30 @@
    });
 </script>
 
-<form class="form-horizontal" role="form" name="f_nuevo_agente" action ="{$fsc->url()}" method="post">
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left">Código + Nombre + Apellidos</th>
+            <th class="text-left">{#FS_CIFNIF#}</th>
+            <th class="text-left">Teléfono</th>
+            <th class="text-right">Email</th>
+         </tr>
+      </thead>
+      {loop="$fsc->agente->all()"}
+      <tr class="clickableRow" href="{$value->url()}">
+         <td>
+            <a href="{$value->url()}">{$value->codagente}</a> {$value->get_fullname()}
+         </td>
+         <td>{$value->dnicif}</td>
+         <td>{if condition="$value->telefono==''"}-{else}{$value->telefono}{/if}</td>
+         <td class="text-right">{if condition="$value->email==''"}-{else}{$value->email}{/if}</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<form class="form-horizontal" role="form" name="f_nuevo_agente" action="{$fsc->url()}" method="post">
    <div class="modal" id="modal_nuevo_agente">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -59,28 +82,5 @@
       </div>
    </div>
 </form>
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Código + Nombre + Apellidos</th>
-            <th class="text-left">{#FS_CIFNIF#}</th>
-            <th class="text-left">Teléfono</th>
-            <th class="text-right">Email</th>
-         </tr>
-      </thead>
-      {loop="$fsc->agente->all()"}
-      <tr>
-         <td>
-            <a href="{$value->url()}">{$value->codagente}</a> {$value->get_fullname()}
-         </td>
-         <td>{$value->dnicif}</td>
-         <td>{if condition="$value->telefono==''"}-{else}{$value->telefono}{/if}</td>
-         <td class="text-right">{if condition="$value->email==''"}-{else}{$value->email}{/if}</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
 
 {include="footer"}

@@ -260,7 +260,7 @@ class presupuesto_cliente extends fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE idpresupuesto = ".$this->var2str($this->idpresupuesto).";");
    }
    
-   private function new_codigo()
+   public function new_codigo()
    {
       $sec = new secuencia();
       $sec = $sec->get_by_params2($this->codejercicio, $this->codserie, 'npresupuestocli');

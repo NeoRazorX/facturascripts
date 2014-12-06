@@ -42,7 +42,7 @@
                   </select>
                </div>
                <div class="form-group">
-                  {#FS_PROVINCIA#}:
+                  <span class="text-capitalize">{#FS_PROVINCIA#}</span>:
                   <input class="form-control" type="text" name="provincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
                </div>
                <div class="form-group">
@@ -60,8 +60,7 @@
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                   &nbsp; Guardar
+                   <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                 </button>
             </div>
          </form>
@@ -100,8 +99,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -109,8 +107,7 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}
