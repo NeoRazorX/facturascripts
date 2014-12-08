@@ -240,6 +240,7 @@ $system_info = str_replace('"', "'", $system_info);
    
    <form name="f_feedback" action="//www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
+      <input type="hidden" name="feedback_type" value="error"/>
       <div class="modal" id="modal_feedback">
          <div class="modal-dialog">
             <div class="modal-content">
@@ -248,20 +249,8 @@ $system_info = str_replace('"', "'", $system_info);
                   <h4 class="modal-title">¿Necesitas ayuda?</h4>
                </div>
                <div class="modal-body">
-                  <p>
-                     La <a href="//www.facturascripts.com/community" target="_blank">comunidad FacturaScripts</a>
-                     está para ayudarte. Escribe tus preguntas o sugerencias y te contestaremos
-                     lo antes posible.
-                  </p>
                   <div class="form-group">
-                     <select class="form-control" id="feedback_type" name="feedback_type">
-                        <option value="question">Preguntar</option>
-                        <option value="error">Informar de un error</option>
-                        <option value="idea">Aportar una idea</option>
-                     </select>
-                  </div>
-                  <div class="form-group">
-                     <label for="feedback_textarea">Observaciones</label>
+                     <label for="feedback_textarea">Detalla tu duda o problema:</label>
                      <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6"></textarea>
                   </div>
                   <div class="form-group">
@@ -271,8 +260,7 @@ $system_info = str_replace('"', "'", $system_info);
                </div>
                <div class="modal-footer">
                   <button type="submit" class="btn btn-sm btn-primary">
-                     <span class="glyphicon glyphicon-send"></span>
-                     &nbsp; Enviar
+                     <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar
                   </button>
                </div>
             </div>
