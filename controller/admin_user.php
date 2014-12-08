@@ -25,6 +25,7 @@ class admin_user extends fs_controller
 {
    public $agente;
    public $ejercicio;
+   public $user_log;
    public $suser;
    
    public function __construct()
@@ -34,21 +35,21 @@ class admin_user extends fs_controller
    
    public function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->ppage = $this->page->get('admin_users');
       $this->agente = new agente();
       $this->ejercicio = new ejercicio();
       $user_no_more_admin = FALSE;
       
+      $this->suser = FALSE;
       if( isset($_GET['snick']) )
+      {
          $this->suser = $this->user->get($_GET['snick']);
+      }
       
-      if( $this->suser )
+      if($this->suser)
       {
          $this->page->title = $this->suser->nick;
-         
-         /// no puedes eliminar tu propio usuario
-         if($this->user->nick != $this->suser->nick)
-            $this->buttons[] = new fs_button_img('b_eliminar_usuario', 'Eliminar', 'trash.png', '#', TRUE);
          
          if( isset($_POST['ncodagente']) )
          {
@@ -65,7 +66,9 @@ class admin_user extends fs_controller
                $this->suser->codagente = $_POST['ncodagente'];
                
                if( $this->suser->save() )
+               {
                   $this->new_message("Empleado ".$age0->codagente." asignado correctamente.");
+               }
                else
                   $this->new_error_msg("¡Imposible asignar el agente!");
             }
@@ -75,12 +78,16 @@ class admin_user extends fs_controller
          else if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
          {
             if($_POST['spassword'] != '')
+            {
                $this->suser->set_password($_POST['spassword']);
+            }
             
             if( isset($_POST['scodagente']) )
             {
                if($_POST['scodagente'] == '')
+               {
                   $this->suser->codagente = NULL;
+               }
                else
                   $this->suser->codagente = $_POST['scodagente'];
             }
@@ -95,20 +102,24 @@ class admin_user extends fs_controller
                 * a algunas páginas, en caso contrario no podrá continuar
                 */
                if($this->suser->admin AND !isset($_POST['sadmin']))
+               {
                   $user_no_more_admin = TRUE;
+               }
                
                $this->suser->admin = isset($_POST['sadmin']);
             }
             
+            $this->suser->fs_page = NULL;
             if( isset($_POST['udpage']) )
+            {
                $this->suser->fs_page = $_POST['udpage'];
-            else
-               $this->suser->fs_page = NULL;
+            }
             
+            $this->suser->codejercicio = NULL;
             if( isset($_POST['ejercicio']) )
+            {
                $this->suser->codejercicio = $_POST['ejercicio'];
-            else
-               $this->suser->codejercicio = NULL;
+            }
             
             if(FS_DEMO AND $this->user->nick != $this->suser->nick)
             {
@@ -125,13 +136,21 @@ class admin_user extends fs_controller
                      $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name) );
                      
                      if( $user_no_more_admin )
+                     {
                         $a->save();
+                     }
                      else if( !isset($_POST['enabled']) )
+                     {
                         $a->delete();
+                     }
                      else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
+                     {
                         $a->save();
+                     }
                      else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) )
+                     {
                         $a->delete();
+                     }
                   }
                }
                
@@ -160,6 +179,9 @@ class admin_user extends fs_controller
                   . ' desde el panel de más abajo.');
             }
          }
+         
+         $fslog = new fs_log();
+         $this->user_log = $fslog->all_from($this->suser->nick);
       }
       else
          $this->new_error_msg("Usuario no encontrado.");
@@ -168,9 +190,13 @@ class admin_user extends fs_controller
    public function url()
    {
       if( !isset($this->suser) )
+      {
          return parent::url();
+      }
       else if($this->suser)
+      {
          return $this->suser->url();
+      }
       else
          return $this->page->url();
    }

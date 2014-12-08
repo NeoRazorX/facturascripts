@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="generator" content="ApiGen 2.8.0">
 
-	<title>Class grupo_clientes</title>
+	<title>Class fs_log</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
 	<script type="text/javascript" src="elementlist.js?553530925"></script>
@@ -63,7 +63,7 @@
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
 				<li><a href="class-fs_extension.html">fs_extension</a></li>
-				<li><a href="class-fs_log.html">fs_log</a></li>
+				<li class="active"><a href="class-fs_log.html">fs_log</a></li>
 				<li><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -72,7 +72,7 @@
 				<li><a href="class-fs_printer.html">fs_printer</a></li>
 				<li><a href="class-fs_user.html">fs_user</a></li>
 				<li><a href="class-fs_var.html">fs_var</a></li>
-				<li class="active"><a href="class-grupo_clientes.html">grupo_clientes</a></li>
+				<li><a href="class-grupo_clientes.html">grupo_clientes</a></li>
 				<li><a href="class-grupo_epigrafes.html">grupo_epigrafes</a></li>
 				<li><a href="class-impuesto.html">impuesto</a></li>
 				<li><a href="class-linea_albaran_cliente.html">linea_albaran_cliente</a></li>
@@ -140,12 +140,12 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Class grupo_clientes</h1>
+	<h1>Class fs_log</h1>
 
 
 	<div class="description">
 	
-<p>Un grupo de clientes, que puede estar asociado a una tarifa.</p>
+<p>Clase para almacenar el historial de acciones de los usuarios.</p>
 
 	</div>
 
@@ -158,7 +158,7 @@
 		</dd>
 		<dd style="padding-left:30px">
 			<img src="resources/inherit.png" alt="Extended by">
-<b><span>grupo_clientes</span></b>			
+<b><span>fs_log</span></b>			
 			
 			
 		</dd>
@@ -177,7 +177,9 @@
 		
 		
 
-		<b>Located at</b> <a href="source-class-grupo_clientes.html#22-123" title="Go to source code">grupo_clientes.php</a><br>
+				<b>Author:</b>
+				salvador<br>
+		<b>Located at</b> <a href="source-class-fs_log.html#20-163" title="Go to source code">fs_log.php</a><br>
 	</div>
 
 
@@ -195,7 +197,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-grupo_clientes.html#31-47" title="Go to source code">__construct</a>( <span>type <var>$g</var> = <span class="php-keyword1">FALSE</span></span> )</code>
+		<code><a href="source-class-fs_log.html#35-58" title="Go to source code">__construct</a>( <span>type <var>$l</var> = <span class="php-keyword1">FALSE</span></span> )</code>
 
 		<div class="description short">
 			
@@ -207,7 +209,7 @@
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
-					<dt><var>$g</var></dt>
+					<dt><var>$l</var></dt>
 					<dd><code>type</code><br>$name nombre de la tabla de la base de datos.</dd>
 				</dl></div>
 
@@ -231,7 +233,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_install">#</a>
-		<code><a href="source-class-grupo_clientes.html#49-52" title="Go to source code">install</a>( )</code>
+		<code><a href="source-class-fs_log.html#60-63" title="Go to source code">install</a>( )</code>
 
 		<div class="description short">
 			
@@ -245,35 +247,6 @@ tabla.</p>
 <p>Esta función es llamada al crear una tabla. Permite insertar valores en la
 tabla.</p>
 
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="get_new_codigo" id="_get_new_codigo">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_get_new_codigo">#</a>
-		<code><a href="source-class-grupo_clientes.html#54-62" title="Go to source code">get_new_codigo</a>( )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
 
 
 
@@ -295,7 +268,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-grupo_clientes.html#64-71" title="Go to source code">get</a>( <span>mixed <var>$cod</var></span> )</code>
+		<code><a href="source-class-fs_log.html#65-74" title="Go to source code">get</a>( <span>mixed <var>$id</var></span> )</code>
 
 		<div class="description short">
 			
@@ -324,7 +297,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_exists">#</a>
-		<code><a href="source-class-grupo_clientes.html#73-79" title="Go to source code">exists</a>( )</code>
+		<code><a href="source-class-fs_log.html#76-84" title="Go to source code">exists</a>( )</code>
 
 		<div class="description short">
 			
@@ -338,35 +311,6 @@ de datos.</p>
 <p>Esta función devuelve TRUE si los datos del objeto se encuentran en la base
 de datos.</p>
 
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="test" id="_test">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_test">#</a>
-		<code><a href="source-class-grupo_clientes.html#81-85" title="Go to source code">test</a>( )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
 
 
 
@@ -388,7 +332,7 @@ de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-grupo_clientes.html#87-103" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-fs_log.html#86-115" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			
@@ -423,7 +367,7 @@ objeto en la base de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_delete">#</a>
-		<code><a href="source-class-grupo_clientes.html#105-108" title="Go to source code">delete</a>( )</code>
+		<code><a href="source-class-fs_log.html#117-120" title="Go to source code">delete</a>( )</code>
 
 		<div class="description short">
 			
@@ -458,7 +402,65 @@ datos</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all">#</a>
-		<code><a href="source-class-grupo_clientes.html#110-122" title="Go to source code">all</a>( )</code>
+		<code><a href="source-class-fs_log.html#122-134" title="Go to source code">all</a>( <span>mixed <var>$offset</var> = <span class="php-num">0</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="all_from" id="_all_from">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_all_from">#</a>
+		<code><a href="source-class-fs_log.html#136-148" title="Go to source code">all_from</a>( <span>mixed <var>$usuario</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="all_by" id="_all_by">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_all_by">#</a>
+		<code><a href="source-class-fs_log.html#150-162" title="Go to source code">all_by</a>( <span>mixed <var>$tipo</var></span> )</code>
 
 		<div class="description short">
 			
@@ -515,18 +517,18 @@ datos</p>
 
 	<table class="summary" id="properties">
 	<caption>Properties summary</caption>
-	<tr data-order="codgrupo" id="$codgrupo">
+	<tr data-order="id" id="$id">
 		<td class="attributes"><code>
 			public  
 			mixed
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-grupo_clientes.html#27" title="Go to source code"><var>$codgrupo</var></a>
+				<a href="source-class-fs_log.html#27" title="Go to source code"><var>$id</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
-			<a href="#$codgrupo" class="anchor">#</a>
+			<a href="#$id" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -538,18 +540,18 @@ datos</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="nombre" id="$nombre">
+	<tr data-order="tipo" id="$tipo">
 		<td class="attributes"><code>
 			public  
 			mixed
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-grupo_clientes.html#28" title="Go to source code"><var>$nombre</var></a>
+				<a href="source-class-fs_log.html#28" title="Go to source code"><var>$tipo</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
-			<a href="#$nombre" class="anchor">#</a>
+			<a href="#$tipo" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -561,18 +563,110 @@ datos</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="codtarifa" id="$codtarifa">
+	<tr data-order="detalle" id="$detalle">
 		<td class="attributes"><code>
 			public  
 			mixed
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-grupo_clientes.html#29" title="Go to source code"><var>$codtarifa</var></a>
+				<a href="source-class-fs_log.html#29" title="Go to source code"><var>$detalle</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
-			<a href="#$codtarifa" class="anchor">#</a>
+			<a href="#$detalle" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="fecha" id="$fecha">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_log.html#30" title="Go to source code"><var>$fecha</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$fecha" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="usuario" id="$usuario">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_log.html#31" title="Go to source code"><var>$usuario</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$usuario" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="ip" id="$ip">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_log.html#32" title="Go to source code"><var>$ip</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$ip" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="alerta" id="$alerta">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_log.html#33" title="Go to source code"><var>$alerta</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$alerta" class="anchor">#</a>
 
 			<div class="description short">
 				

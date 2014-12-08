@@ -23,6 +23,7 @@ require_model('fs_user.php');
 class admin_users extends fs_controller
 {
    public $agente;
+   public $historial;
    
    public function __construct()
    {
@@ -31,31 +32,38 @@ class admin_users extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->agente = new agente();
-      $this->buttons[] = new fs_button_img('b_nuevo_usuario', 'Nuevo');
+      
+      $fslog = new fs_log();
+      $this->historial = $fslog->all_by('login');
       
       if( isset($_POST['nnick']) )
       {
          $nu = $this->user->get($_POST['nnick']);
-         if( $nu )
+         if($nu)
+         {
             Header( 'location: '.$nu->url() );
+         }
          else
          {
             $nu = new fs_user();
             $nu->nick = $_POST['nnick'];
             if( $nu->set_password($_POST['npassword']) )
             {
-               if( isset($_POST['nadmin']) )
-                  $nu->admin = TRUE;
-               
+               $nu->admin = isset($_POST['nadmin']);
                if( isset($_POST['ncodagente']) )
                {
                   if($_POST['ncodagente'] != '')
+                  {
                      $nu->codagente = $_POST['ncodagente'];
+                  }
                }
                
                if( $nu->save() )
+               {
                   Header('location: index.php?page=admin_user&snick=' . $nu->nick);
+               }
                else
                   $this->new_error_msg("¡Imposible guardar el usuario!");
             }
@@ -64,7 +72,7 @@ class admin_users extends fs_controller
       else if( isset($_GET['delete']) )
       {
          $nu = $this->user->get($_GET['delete']);
-         if( $nu )
+         if($nu)
          {
             if( FS_DEMO )
             {
@@ -72,7 +80,9 @@ class admin_users extends fs_controller
                   Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
             }
             else if( $nu->delete() )
+            {
                $this->new_message("Usuario ".$nu->nick." eliminado correctamente.");
+            }
             else
                $this->new_error_msg("¡Imposible eliminar al usuario!");
          }

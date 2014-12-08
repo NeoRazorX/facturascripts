@@ -36,6 +36,7 @@ require_model('fs_access.php');
 require_model('fs_page.php');
 require_model('fs_user.php');
 require_model('fs_extension.php');
+require_model('fs_log.php');
 
 /**
  * La clase principal de la que deben heredar todos los controladores
@@ -166,8 +167,7 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page( array('name'=>$name, 'title'=>$title, 'folder'=>$folder,
-             'version'=>$this->version(), 'show_on_menu'=>$shmenu, 'important'=>$important) );
+         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu, 'important'=>$important) );
          if($name != '')
          {
             $this->page->save();
@@ -396,7 +396,25 @@ class fs_controller
                if( intval($linea[2]) > time() )
                {
                   if($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 5)
+                  {
                      $baneada = TRUE;
+                     
+                     if( intval($linea[1]) == 6 )
+                     {
+                        $fslog = new fs_log();
+                        
+                        if( isset($_POST['user']) )
+                        {
+                           $fslog->usuario = $_POST['user'];
+                        }
+                        
+                        $fslog->tipo = 'login';
+                        $fslog->detalle = 'IP baneada';
+                        $fslog->ip = $_SERVER['REMOTE_ADDR'];
+                        $fslog->alerta = TRUE;
+                        $fslog->save();
+                     }
+                  }
                   
                   $ips[] = $linea;
                }
@@ -449,8 +467,7 @@ class fs_controller
       if( $this->ip_baneada($ips) )
       {
          $this->banear_ip($ips);
-         $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar
-            10 minutos antes de volver a intentar entrar.');
+         $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
       }
       else if( isset($_POST['user']) AND isset($_POST['password']) )
       {
@@ -500,6 +517,13 @@ class fs_controller
                   }
                   else
                      $this->new_error_msg('Imposible guardar los datos de usuario.');
+                  
+                  $fslog = new fs_log();
+                  $fslog->usuario = $user->nick;
+                  $fslog->tipo = 'login';
+                  $fslog->detalle = 'Login correcto.';
+                  $fslog->ip = $user->last_ip;
+                  $fslog->save();
                }
                else
                {

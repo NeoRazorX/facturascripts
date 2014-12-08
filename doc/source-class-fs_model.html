@@ -8,7 +8,7 @@
 	<title>File fs_model.php</title>
 
 	<script type="text/javascript" src="resources/combined.js?3770084987"></script>
-	<script type="text/javascript" src="elementlist.js?3085221703"></script>
+	<script type="text/javascript" src="elementlist.js?553530925"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360">
 
 </head>
@@ -64,6 +64,7 @@
 				<li><a href="class-fs_db.html">fs_db</a></li>
 				<li><a href="class-fs_default_items.html">fs_default_items</a></li>
 				<li><a href="class-fs_extension.html">fs_extension</a></li>
+				<li><a href="class-fs_log.html">fs_log</a></li>
 				<li class="active"><a href="class-fs_model.html">fs_model</a></li>
 				<li><a href="class-fs_mysql.html">fs_mysql</a></li>
 				<li><a href="class-fs_page.html">fs_page</a></li>
@@ -413,283 +414,270 @@
 </span><span id="271" class="l"><a class="l" href="#271">271: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'NULL'</span>;
 </span><span id="272" class="l"><a class="l" href="#272">272: </a>      }
 </span><span id="273" class="l"><a class="l" href="#273">273: </a>      <span class="php-keyword1">else</span>
-</span><span id="274" class="l"><a class="l" href="#274">274: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;'&quot;</span>.<span class="php-keyword2">bin2hex</span>(<span class="php-var">$v</span>).<span class="php-quote">&quot;'&quot;</span>;
+</span><span id="274" class="l"><a class="l" href="#274">274: </a>         <span class="php-keyword1">return</span> <span class="php-quote">&quot;'&quot;</span>.<span class="php-keyword2">base64_encode</span>(<span class="php-var">$v</span>).<span class="php-quote">&quot;'&quot;</span>;
 </span><span id="275" class="l"><a class="l" href="#275">275: </a>   }
 </span><span id="276" class="l"><a class="l" href="#276">276: </a>   
-</span><span id="277" class="l"><a class="l" href="#277">277: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <span class="php-keyword2">hex2bin</span>(<span class="php-var">$data</span>)
+</span><span id="277" class="l"><a class="l" href="#277">277: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_str2bin" href="#_str2bin">str2bin</a>(<span class="php-var">$v</span>)
 </span><span id="278" class="l"><a class="l" href="#278">278: </a>   {
-</span><span id="279" class="l"><a class="l" href="#279">279: </a>      <span class="php-var">$bin</span> = <span class="php-quote">''</span>;
-</span><span id="280" class="l"><a class="l" href="#280">280: </a>      
-</span><span id="281" class="l"><a class="l" href="#281">281: </a>      <span class="php-var">$i</span> = <span class="php-num">0</span>;
-</span><span id="282" class="l"><a class="l" href="#282">282: </a>      <span class="php-keyword1">do</span> {
-</span><span id="283" class="l"><a class="l" href="#283">283: </a>         <span class="php-var">$bin</span> .= <span class="php-keyword2">chr</span>(<span class="php-keyword2">hexdec</span>(<span class="php-var">$data</span>{<span class="php-var">$i</span>}.<span class="php-var">$data</span>{(<span class="php-var">$i</span> + <span class="php-num">1</span>)}));
-</span><span id="284" class="l"><a class="l" href="#284">284: </a>         <span class="php-var">$i</span> += <span class="php-num">2</span>;
-</span><span id="285" class="l"><a class="l" href="#285">285: </a>      } <span class="php-keyword1">while</span>(<span class="php-var">$i</span> &lt; <span class="php-keyword2">strlen</span>(<span class="php-var">$data</span>));
-</span><span id="286" class="l"><a class="l" href="#286">286: </a>      
-</span><span id="287" class="l"><a class="l" href="#287">287: </a>      <span class="php-keyword1">return</span> <span class="php-var">$bin</span>;
-</span><span id="288" class="l"><a class="l" href="#288">288: </a>   }
-</span><span id="289" class="l"><a class="l" href="#289">289: </a>   
-</span><span id="290" class="l"><a class="l" href="#290">290: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_str2bin" href="#_str2bin">str2bin</a>(<span class="php-var">$v</span>)
-</span><span id="291" class="l"><a class="l" href="#291">291: </a>   {
-</span><span id="292" class="l"><a class="l" href="#292">292: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$v</span>) )
-</span><span id="293" class="l"><a class="l" href="#293">293: </a>      {
-</span><span id="294" class="l"><a class="l" href="#294">294: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">NULL</span>;
-</span><span id="295" class="l"><a class="l" href="#295">295: </a>      }
-</span><span id="296" class="l"><a class="l" href="#296">296: </a>      <span class="php-keyword1">else</span>
-</span><span id="297" class="l"><a class="l" href="#297">297: </a>         <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">hex2bin</span>(<span class="php-var">$v</span>);
-</span><span id="298" class="l"><a class="l" href="#298">298: </a>   }
-</span><span id="299" class="l"><a class="l" href="#299">299: </a>   
-</span><span id="300" class="l"><a class="l" href="#300">300: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_str2bool" href="#_str2bool">str2bool</a>(<span class="php-var">$v</span>)
-</span><span id="301" class="l"><a class="l" href="#301">301: </a>   {
-</span><span id="302" class="l"><a class="l" href="#302">302: </a>      <span class="php-keyword1">return</span> (<span class="php-var">$v</span> == <span class="php-quote">'t'</span> <span class="php-keyword1">OR</span> <span class="php-var">$v</span> == <span class="php-quote">'1'</span>);
-</span><span id="303" class="l"><a class="l" href="#303">303: </a>   }
-</span><span id="304" class="l"><a class="l" href="#304">304: </a>   
-</span><span id="305" class="l"><a class="l" href="#305">305: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">intval</span>(<span class="php-var">$s</span>)
-</span><span id="306" class="l"><a class="l" href="#306">306: </a>   {
-</span><span id="307" class="l"><a class="l" href="#307">307: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$s</span>) )
-</span><span id="308" class="l"><a class="l" href="#308">308: </a>      {
-</span><span id="309" class="l"><a class="l" href="#309">309: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">NULL</span>;
-</span><span id="310" class="l"><a class="l" href="#310">310: </a>      }
-</span><span id="311" class="l"><a class="l" href="#311">311: </a>      <span class="php-keyword1">else</span>
-</span><span id="312" class="l"><a class="l" href="#312">312: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">intval</span>(<span class="php-var">$s</span>);
-</span><span id="313" class="l"><a class="l" href="#313">313: </a>   }
-</span><span id="314" class="l"><a class="l" href="#314">314: </a>   
-</span><span id="315" class="l"><a class="l" href="#315">315: </a>   <span class="php-comment">/**
-</span></span><span id="316" class="l"><a class="l" href="#316">316: </a><span class="php-comment">    * Compara dos números en coma flotante con una precisión de $precision,
-</span></span><span id="317" class="l"><a class="l" href="#317">317: </a><span class="php-comment">    * devuelve TRUE si son iguales, FALSE en caso contrario.
-</span></span><span id="318" class="l"><a class="l" href="#318">318: </a><span class="php-comment">    */</span>
-</span><span id="319" class="l"><a class="l" href="#319">319: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_floatcmp" href="#_floatcmp">floatcmp</a>(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$precision</span> = <span class="php-num">10</span>, <span class="php-var">$round</span> = <span class="php-keyword1">FALSE</span>)
-</span><span id="320" class="l"><a class="l" href="#320">320: </a>   {
-</span><span id="321" class="l"><a class="l" href="#321">321: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$round</span>)
-</span><span id="322" class="l"><a class="l" href="#322">322: </a>      {
-</span><span id="323" class="l"><a class="l" href="#323">323: </a>         <span class="php-keyword1">return</span>( <span class="php-keyword2">abs</span>(<span class="php-var">$f1</span>-<span class="php-var">$f2</span>) &lt; <span class="php-num">6</span>/<span class="php-keyword2">pow</span>(<span class="php-num">10</span>,<span class="php-var">$precision</span>+<span class="php-num">1</span>) );
-</span><span id="324" class="l"><a class="l" href="#324">324: </a>      }
-</span><span id="325" class="l"><a class="l" href="#325">325: </a>      <span class="php-keyword1">else</span>
-</span><span id="326" class="l"><a class="l" href="#326">326: </a>         <span class="php-keyword1">return</span>( <span class="php-keyword2">bccomp</span>( (string)<span class="php-var">$f1</span>, (string)<span class="php-var">$f2</span>, <span class="php-var">$precision</span> ) == <span class="php-num">0</span> );
-</span><span id="327" class="l"><a class="l" href="#327">327: </a>   }
-</span><span id="328" class="l"><a class="l" href="#328">328: </a>   
-</span><span id="329" class="l"><a class="l" href="#329">329: </a>   <span class="php-comment">/**
-</span></span><span id="330" class="l"><a class="l" href="#330">330: </a><span class="php-comment">    * Compara tres números en coma flotante usando la función floatcmp().
-</span></span><span id="331" class="l"><a class="l" href="#331">331: </a><span class="php-comment">    * ATENCIÓN: NO COPARA LOS TRES NÚMERO ENTRE SI, solamente compara el
-</span></span><span id="332" class="l"><a class="l" href="#332">332: </a><span class="php-comment">    * primero con los otros dos.
-</span></span><span id="333" class="l"><a class="l" href="#333">333: </a><span class="php-comment">    * Devuelve TRUE si el primer número es igual a alguno de los otros dos.
-</span></span><span id="334" class="l"><a class="l" href="#334">334: </a><span class="php-comment">    */</span>
-</span><span id="335" class="l"><a class="l" href="#335">335: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_floatcmp3" href="#_floatcmp3">floatcmp3</a>(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$f3</span>, <span class="php-var">$precision</span> = <span class="php-num">10</span>, <span class="php-var">$round</span> = <span class="php-keyword1">FALSE</span>)
-</span><span id="336" class="l"><a class="l" href="#336">336: </a>   {
-</span><span id="337" class="l"><a class="l" href="#337">337: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$precision</span>, <span class="php-var">$round</span>) )
-</span><span id="338" class="l"><a class="l" href="#338">338: </a>      {
-</span><span id="339" class="l"><a class="l" href="#339">339: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="340" class="l"><a class="l" href="#340">340: </a>      }
-</span><span id="341" class="l"><a class="l" href="#341">341: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$f1</span>, <span class="php-var">$f3</span>, <span class="php-var">$precision</span>, <span class="php-var">$round</span>) )
-</span><span id="342" class="l"><a class="l" href="#342">342: </a>      {
-</span><span id="343" class="l"><a class="l" href="#343">343: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
-</span><span id="344" class="l"><a class="l" href="#344">344: </a>      }
-</span><span id="345" class="l"><a class="l" href="#345">345: </a>      <span class="php-keyword1">else</span>
-</span><span id="346" class="l"><a class="l" href="#346">346: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
-</span><span id="347" class="l"><a class="l" href="#347">347: </a>   }
-</span><span id="348" class="l"><a class="l" href="#348">348: </a>   
-</span><span id="349" class="l"><a class="l" href="#349">349: </a>   <span class="php-comment">/**
-</span></span><span id="350" class="l"><a class="l" href="#350">350: </a><span class="php-comment">    * functión auxiliar para facilitar el uso de fechas
-</span></span><span id="351" class="l"><a class="l" href="#351">351: </a><span class="php-comment">    * @param type $v
-</span></span><span id="352" class="l"><a class="l" href="#352">352: </a><span class="php-comment">    * @return string
-</span></span><span id="353" class="l"><a class="l" href="#353">353: </a><span class="php-comment">    */</span>
-</span><span id="354" class="l"><a class="l" href="#354">354: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_var2timesince" href="#_var2timesince">var2timesince</a>(<span class="php-var">$v</span>)
-</span><span id="355" class="l"><a class="l" href="#355">355: </a>   {
-</span><span id="356" class="l"><a class="l" href="#356">356: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$v</span>) )
-</span><span id="357" class="l"><a class="l" href="#357">357: </a>      {
-</span><span id="358" class="l"><a class="l" href="#358">358: </a>         <span class="php-var">$v</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$v</span>);
-</span><span id="359" class="l"><a class="l" href="#359">359: </a>         <span class="php-var">$time</span> = <span class="php-keyword2">time</span>() - <span class="php-var">$v</span>;
-</span><span id="360" class="l"><a class="l" href="#360">360: </a>         
-</span><span id="361" class="l"><a class="l" href="#361">361: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$time</span> &lt;= <span class="php-num">60</span>)
-</span><span id="362" class="l"><a class="l" href="#362">362: </a>         {
-</span><span id="363" class="l"><a class="l" href="#363">363: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">60</span>,<span class="php-num">0</span>).<span class="php-quote">' segundos'</span>;
-</span><span id="364" class="l"><a class="l" href="#364">364: </a>         }
-</span><span id="365" class="l"><a class="l" href="#365">365: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">60</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">3600</span>)
-</span><span id="366" class="l"><a class="l" href="#366">366: </a>         {
-</span><span id="367" class="l"><a class="l" href="#367">367: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">60</span>,<span class="php-num">0</span>).<span class="php-quote">' minutos'</span>;
-</span><span id="368" class="l"><a class="l" href="#368">368: </a>         }
-</span><span id="369" class="l"><a class="l" href="#369">369: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">3600</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">86400</span>)
-</span><span id="370" class="l"><a class="l" href="#370">370: </a>         {
-</span><span id="371" class="l"><a class="l" href="#371">371: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">3600</span>,<span class="php-num">0</span>).<span class="php-quote">' horas'</span>;
-</span><span id="372" class="l"><a class="l" href="#372">372: </a>         }
-</span><span id="373" class="l"><a class="l" href="#373">373: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">86400</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">604800</span>)
-</span><span id="374" class="l"><a class="l" href="#374">374: </a>         {
-</span><span id="375" class="l"><a class="l" href="#375">375: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">86400</span>,<span class="php-num">0</span>).<span class="php-quote">' dias'</span>;
-</span><span id="376" class="l"><a class="l" href="#376">376: </a>         }
-</span><span id="377" class="l"><a class="l" href="#377">377: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">604800</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">2592000</span>)
-</span><span id="378" class="l"><a class="l" href="#378">378: </a>         {
-</span><span id="379" class="l"><a class="l" href="#379">379: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">604800</span>,<span class="php-num">0</span>).<span class="php-quote">' semanas'</span>;
-</span><span id="380" class="l"><a class="l" href="#380">380: </a>         }
-</span><span id="381" class="l"><a class="l" href="#381">381: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">2592000</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">29030400</span>)
-</span><span id="382" class="l"><a class="l" href="#382">382: </a>         {
-</span><span id="383" class="l"><a class="l" href="#383">383: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">2592000</span>,<span class="php-num">0</span>).<span class="php-quote">' meses'</span>;
-</span><span id="384" class="l"><a class="l" href="#384">384: </a>         }
-</span><span id="385" class="l"><a class="l" href="#385">385: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-var">$time</span> &gt; <span class="php-num">29030400</span>)
-</span><span id="386" class="l"><a class="l" href="#386">386: </a>         {
-</span><span id="387" class="l"><a class="l" href="#387">387: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace más de un año'</span>;
-</span><span id="388" class="l"><a class="l" href="#388">388: </a>         }
-</span><span id="389" class="l"><a class="l" href="#389">389: </a>      }
-</span><span id="390" class="l"><a class="l" href="#390">390: </a>      <span class="php-keyword1">else</span>
-</span><span id="391" class="l"><a class="l" href="#391">391: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'fecha desconocida'</span>;
-</span><span id="392" class="l"><a class="l" href="#392">392: </a>   }
-</span><span id="393" class="l"><a class="l" href="#393">393: </a>   
-</span><span id="394" class="l"><a class="l" href="#394">394: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_date_range" href="#_date_range">date_range</a>(<span class="php-var">$first</span>, <span class="php-var">$last</span>, <span class="php-var">$step</span> = <span class="php-quote">'+1 day'</span>, <span class="php-var">$format</span> = <span class="php-quote">'d-m-Y'</span> )
-</span><span id="395" class="l"><a class="l" href="#395">395: </a>   {
-</span><span id="396" class="l"><a class="l" href="#396">396: </a>      <span class="php-var">$dates</span> = <span class="php-keyword1">array</span>();
-</span><span id="397" class="l"><a class="l" href="#397">397: </a>      <span class="php-var">$current</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$first</span>);
-</span><span id="398" class="l"><a class="l" href="#398">398: </a>      <span class="php-var">$last</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$last</span>);
-</span><span id="399" class="l"><a class="l" href="#399">399: </a>      
-</span><span id="400" class="l"><a class="l" href="#400">400: </a>      <span class="php-keyword1">while</span>( <span class="php-var">$current</span> &lt;= <span class="php-var">$last</span> )
-</span><span id="401" class="l"><a class="l" href="#401">401: </a>      {
-</span><span id="402" class="l"><a class="l" href="#402">402: </a>         <span class="php-var">$dates</span>[] = <span class="php-keyword2">date</span>(<span class="php-var">$format</span>, <span class="php-var">$current</span>);
-</span><span id="403" class="l"><a class="l" href="#403">403: </a>         <span class="php-var">$current</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$step</span>, <span class="php-var">$current</span>);
-</span><span id="404" class="l"><a class="l" href="#404">404: </a>      }
-</span><span id="405" class="l"><a class="l" href="#405">405: </a>      
-</span><span id="406" class="l"><a class="l" href="#406">406: </a>      <span class="php-keyword1">return</span> <span class="php-var">$dates</span>;
-</span><span id="407" class="l"><a class="l" href="#407">407: </a>   }
-</span><span id="408" class="l"><a class="l" href="#408">408: </a>   
-</span><span id="409" class="l"><a class="l" href="#409">409: </a>   <span class="php-comment">/**
-</span></span><span id="410" class="l"><a class="l" href="#410">410: </a><span class="php-comment">    * Esta función convierte:
-</span></span><span id="411" class="l"><a class="l" href="#411">411: </a><span class="php-comment">    * &lt; en &amp;lt;
-</span></span><span id="412" class="l"><a class="l" href="#412">412: </a><span class="php-comment">    * &gt; en &amp;gt;
-</span></span><span id="413" class="l"><a class="l" href="#413">413: </a><span class="php-comment">    * &quot; en &amp;quot;
-</span></span><span id="414" class="l"><a class="l" href="#414">414: </a><span class="php-comment">    * ' en &amp;#39;
-</span></span><span id="415" class="l"><a class="l" href="#415">415: </a><span class="php-comment">    * 
-</span></span><span id="416" class="l"><a class="l" href="#416">416: </a><span class="php-comment">    * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
-</span></span><span id="417" class="l"><a class="l" href="#417">417: </a><span class="php-comment">    * porque te encontrarás con muchas sorpresas desagradables.
-</span></span><span id="418" class="l"><a class="l" href="#418">418: </a><span class="php-comment">    */</span>
-</span><span id="419" class="l"><a class="l" href="#419">419: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_no_html" href="#_no_html">no_html</a>(<span class="php-var">$t</span>)
-</span><span id="420" class="l"><a class="l" href="#420">420: </a>   {
-</span><span id="421" class="l"><a class="l" href="#421">421: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&lt;'</span>, <span class="php-quote">'&amp;lt;'</span>, <span class="php-var">$t</span>);
-</span><span id="422" class="l"><a class="l" href="#422">422: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&gt;'</span>, <span class="php-quote">'&amp;gt;'</span>, <span class="php-var">$newt</span>);
-</span><span id="423" class="l"><a class="l" href="#423">423: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&quot;'</span>, <span class="php-quote">'&amp;quot;'</span>, <span class="php-var">$newt</span>);
-</span><span id="424" class="l"><a class="l" href="#424">424: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">&quot;'&quot;</span>, <span class="php-quote">'&amp;#39;'</span>, <span class="php-var">$newt</span>);
-</span><span id="425" class="l"><a class="l" href="#425">425: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">trim</span>(<span class="php-var">$newt</span>);
-</span><span id="426" class="l"><a class="l" href="#426">426: </a>   }
-</span><span id="427" class="l"><a class="l" href="#427">427: </a>   
-</span><span id="428" class="l"><a class="l" href="#428">428: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_random_string" href="#_random_string">random_string</a>(<span class="php-var">$length</span> = <span class="php-num">10</span>)
-</span><span id="429" class="l"><a class="l" href="#429">429: </a>   {
-</span><span id="430" class="l"><a class="l" href="#430">430: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">mb_substr</span>(<span class="php-keyword2">str_shuffle</span>(<span class="php-quote">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>), <span class="php-num">0</span>, <span class="php-var">$length</span>);
-</span><span id="431" class="l"><a class="l" href="#431">431: </a>   }
-</span><span id="432" class="l"><a class="l" href="#432">432: </a>   
-</span><span id="433" class="l"><a class="l" href="#433">433: </a>   <span class="php-comment">/**
-</span></span><span id="434" class="l"><a class="l" href="#434">434: </a><span class="php-comment">    * Comprueba y actualiza la estructura de la tabla si es necesario
-</span></span><span id="435" class="l"><a class="l" href="#435">435: </a><span class="php-comment">    * @param type $table_name
-</span></span><span id="436" class="l"><a class="l" href="#436">436: </a><span class="php-comment">    * @return boolean
-</span></span><span id="437" class="l"><a class="l" href="#437">437: </a><span class="php-comment">    */</span>
-</span><span id="438" class="l"><a class="l" href="#438">438: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_check_table" href="#_check_table">check_table</a>(<span class="php-var">$table_name</span>)
-</span><span id="439" class="l"><a class="l" href="#439">439: </a>   {
-</span><span id="440" class="l"><a class="l" href="#440">440: </a>      <span class="php-var">$done</span> = <span class="php-keyword1">TRUE</span>;
-</span><span id="441" class="l"><a class="l" href="#441">441: </a>      <span class="php-var">$consulta</span> = <span class="php-quote">''</span>;
-</span><span id="442" class="l"><a class="l" href="#442">442: </a>      <span class="php-var">$columnas</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="443" class="l"><a class="l" href="#443">443: </a>      <span class="php-var">$restricciones</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="444" class="l"><a class="l" href="#444">444: </a>      <span class="php-var">$xml_columnas</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="445" class="l"><a class="l" href="#445">445: </a>      <span class="php-var">$xml_restricciones</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="446" class="l"><a class="l" href="#446">446: </a>      
-</span><span id="447" class="l"><a class="l" href="#447">447: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;get_xml_table(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$xml_restricciones</span>) )
-</span><span id="448" class="l"><a class="l" href="#448">448: </a>      {
-</span><span id="449" class="l"><a class="l" href="#449">449: </a>         <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;db-&gt;table_exists(<span class="php-var">$table_name</span>) )
-</span><span id="450" class="l"><a class="l" href="#450">450: </a>         {
-</span><span id="451" class="l"><a class="l" href="#451">451: </a>            <span class="php-comment">/// comparamos las columnas</span>
-</span><span id="452" class="l"><a class="l" href="#452">452: </a>            <span class="php-var">$columnas</span> = <span class="php-var">$this</span>-&gt;db-&gt;get_columns(<span class="php-var">$table_name</span>);
-</span><span id="453" class="l"><a class="l" href="#453">453: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;compare_columns(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$columnas</span>);
-</span><span id="454" class="l"><a class="l" href="#454">454: </a>            
-</span><span id="455" class="l"><a class="l" href="#455">455: </a>            <span class="php-comment">/// comparamos las restricciones</span>
-</span><span id="456" class="l"><a class="l" href="#456">456: </a>            <span class="php-var">$restricciones</span> = <span class="php-var">$this</span>-&gt;db-&gt;get_constraints(<span class="php-var">$table_name</span>);
-</span><span id="457" class="l"><a class="l" href="#457">457: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;compare_constraints(<span class="php-var">$table_name</span>, <span class="php-var">$xml_restricciones</span>, <span class="php-var">$restricciones</span>);
-</span><span id="458" class="l"><a class="l" href="#458">458: </a>         }
-</span><span id="459" class="l"><a class="l" href="#459">459: </a>         <span class="php-keyword1">else</span>
-</span><span id="460" class="l"><a class="l" href="#460">460: </a>         {
-</span><span id="461" class="l"><a class="l" href="#461">461: </a>            <span class="php-comment">/// generamos el sql para crear la tabla</span>
-</span><span id="462" class="l"><a class="l" href="#462">462: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;generate_table(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$xml_restricciones</span>);
-</span><span id="463" class="l"><a class="l" href="#463">463: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;install();
-</span><span id="464" class="l"><a class="l" href="#464">464: </a>         }
-</span><span id="465" class="l"><a class="l" href="#465">465: </a>         
-</span><span id="466" class="l"><a class="l" href="#466">466: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$consulta</span> != <span class="php-quote">''</span>)
-</span><span id="467" class="l"><a class="l" href="#467">467: </a>         {
-</span><span id="468" class="l"><a class="l" href="#468">468: </a>            <span class="php-keyword1">if</span>( !<span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$consulta</span>) )
-</span><span id="469" class="l"><a class="l" href="#469">469: </a>            {
-</span><span id="470" class="l"><a class="l" href="#470">470: </a>               <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al comprobar la tabla '</span>.<span class="php-var">$table_name</span>);
-</span><span id="471" class="l"><a class="l" href="#471">471: </a>               <span class="php-var">$done</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="472" class="l"><a class="l" href="#472">472: </a>            }
-</span><span id="473" class="l"><a class="l" href="#473">473: </a>         }
-</span><span id="474" class="l"><a class="l" href="#474">474: </a>      }
-</span><span id="475" class="l"><a class="l" href="#475">475: </a>      <span class="php-keyword1">else</span>
-</span><span id="476" class="l"><a class="l" href="#476">476: </a>      {
-</span><span id="477" class="l"><a class="l" href="#477">477: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error con el xml.'</span>);
-</span><span id="478" class="l"><a class="l" href="#478">478: </a>         <span class="php-var">$done</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="479" class="l"><a class="l" href="#479">479: </a>      }
-</span><span id="480" class="l"><a class="l" href="#480">480: </a>      
-</span><span id="481" class="l"><a class="l" href="#481">481: </a>      <span class="php-keyword1">return</span> <span class="php-var">$done</span>;
-</span><span id="482" class="l"><a class="l" href="#482">482: </a>   }
-</span><span id="483" class="l"><a class="l" href="#483">483: </a>   
-</span><span id="484" class="l"><a class="l" href="#484">484: </a>   <span class="php-comment">/**
-</span></span><span id="485" class="l"><a class="l" href="#485">485: </a><span class="php-comment">    * Obtiene las columnas y restricciones del fichero xml para una tabla
-</span></span><span id="486" class="l"><a class="l" href="#486">486: </a><span class="php-comment">    * @param type $table_name
-</span></span><span id="487" class="l"><a class="l" href="#487">487: </a><span class="php-comment">    * @param type $columnas
-</span></span><span id="488" class="l"><a class="l" href="#488">488: </a><span class="php-comment">    * @param type $restricciones
-</span></span><span id="489" class="l"><a class="l" href="#489">489: </a><span class="php-comment">    * @return boolean
-</span></span><span id="490" class="l"><a class="l" href="#490">490: </a><span class="php-comment">    */</span>
-</span><span id="491" class="l"><a class="l" href="#491">491: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_get_xml_table" href="#_get_xml_table">get_xml_table</a>(<span class="php-var">$table_name</span>, &amp;<span class="php-var">$columnas</span>, &amp;<span class="php-var">$restricciones</span>)
-</span><span id="492" class="l"><a class="l" href="#492">492: </a>   {
-</span><span id="493" class="l"><a class="l" href="#493">493: </a>      <span class="php-var">$retorno</span> = <span class="php-keyword1">FALSE</span>;
-</span><span id="494" class="l"><a class="l" href="#494">494: </a>      <span class="php-var">$filename</span> = <span class="php-var">$this</span>-&gt;base_dir.<span class="php-quote">'model/table/'</span>.<span class="php-var">$table_name</span>.<span class="php-quote">'.xml'</span>;
-</span><span id="495" class="l"><a class="l" href="#495">495: </a>      
-</span><span id="496" class="l"><a class="l" href="#496">496: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-var">$filename</span>) )
-</span><span id="497" class="l"><a class="l" href="#497">497: </a>      {
-</span><span id="498" class="l"><a class="l" href="#498">498: </a>         <span class="php-var">$xml</span> = <span class="php-keyword2">simplexml_load_string</span>( <span class="php-keyword2">file_get_contents</span>(<span class="php-quote">'./'</span>.<span class="php-var">$filename</span>, FILE_USE_INCLUDE_PATH) );
-</span><span id="499" class="l"><a class="l" href="#499">499: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>)
-</span><span id="500" class="l"><a class="l" href="#500">500: </a>         {
-</span><span id="501" class="l"><a class="l" href="#501">501: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>-&gt;columna)
-</span><span id="502" class="l"><a class="l" href="#502">502: </a>            {
-</span><span id="503" class="l"><a class="l" href="#503">503: </a>               <span class="php-var">$i</span> = <span class="php-num">0</span>;
-</span><span id="504" class="l"><a class="l" href="#504">504: </a>               <span class="php-keyword1">foreach</span>(<span class="php-var">$xml</span>-&gt;columna <span class="php-keyword1">as</span> <span class="php-var">$col</span>)
-</span><span id="505" class="l"><a class="l" href="#505">505: </a>               {
-</span><span id="506" class="l"><a class="l" href="#506">506: </a>                  <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nombre'</span>] = <span class="php-var">$col</span>-&gt;nombre;
-</span><span id="507" class="l"><a class="l" href="#507">507: </a>                  <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'tipo'</span>] = <span class="php-var">$col</span>-&gt;tipo;
-</span><span id="508" class="l"><a class="l" href="#508">508: </a>                  
-</span><span id="509" class="l"><a class="l" href="#509">509: </a>                  <span class="php-keyword1">if</span>(<span class="php-var">$col</span>-&gt;nulo)
-</span><span id="510" class="l"><a class="l" href="#510">510: </a>                  {
-</span><span id="511" class="l"><a class="l" href="#511">511: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nulo'</span>] = <span class="php-var">$col</span>-&gt;nulo;
-</span><span id="512" class="l"><a class="l" href="#512">512: </a>                  }
-</span><span id="513" class="l"><a class="l" href="#513">513: </a>                  <span class="php-keyword1">else</span>
-</span><span id="514" class="l"><a class="l" href="#514">514: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nulo'</span>] = <span class="php-quote">'YES'</span>;
-</span><span id="515" class="l"><a class="l" href="#515">515: </a>                  
-</span><span id="516" class="l"><a class="l" href="#516">516: </a>                  <span class="php-keyword1">if</span>(<span class="php-var">$col</span>-&gt;defecto == <span class="php-quote">''</span>)
-</span><span id="517" class="l"><a class="l" href="#517">517: </a>                  {
-</span><span id="518" class="l"><a class="l" href="#518">518: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'defecto'</span>] = <span class="php-keyword1">NULL</span>;
-</span><span id="519" class="l"><a class="l" href="#519">519: </a>                  }
-</span><span id="520" class="l"><a class="l" href="#520">520: </a>                  <span class="php-keyword1">else</span>
-</span><span id="521" class="l"><a class="l" href="#521">521: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'defecto'</span>] = <span class="php-var">$col</span>-&gt;defecto;
-</span><span id="522" class="l"><a class="l" href="#522">522: </a>                  
-</span><span id="523" class="l"><a class="l" href="#523">523: </a>                  <span class="php-var">$i</span>++;
-</span><span id="524" class="l"><a class="l" href="#524">524: </a>               }
-</span><span id="525" class="l"><a class="l" href="#525">525: </a>               
-</span><span id="526" class="l"><a class="l" href="#526">526: </a>               <span class="php-comment">/// debe de haber columnas, sino es un fallo</span>
-</span><span id="527" class="l"><a class="l" href="#527">527: </a>               <span class="php-var">$retorno</span> = <span class="php-keyword1">TRUE</span>;
-</span><span id="528" class="l"><a class="l" href="#528">528: </a>            }
-</span><span id="529" class="l"><a class="l" href="#529">529: </a>            
-</span><span id="530" class="l"><a class="l" href="#530">530: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>-&gt;restriccion)
-</span><span id="531" class="l"><a class="l" href="#531">531: </a>            {
-</span><span id="532" class="l"><a class="l" href="#532">532: </a>               <span class="php-var">$i</span> = <span class="php-num">0</span>;
-</span><span id="533" class="l"><a class="l" href="#533">533: </a>               <span class="php-keyword1">foreach</span>(<span class="php-var">$xml</span>-&gt;restriccion <span class="php-keyword1">as</span> <span class="php-var">$col</span>)
-</span><span id="534" class="l"><a class="l" href="#534">534: </a>               {
-</span><span id="535" class="l"><a class="l" href="#535">535: </a>                  <span class="php-var">$restricciones</span>[<span class="php-var">$i</span>][<span class="php-quote">'nombre'</span>] = <span class="php-var">$col</span>-&gt;nombre;
-</span><span id="536" class="l"><a class="l" href="#536">536: </a>                  <span class="php-var">$restricciones</span>[<span class="php-var">$i</span>][<span class="php-quote">'consulta'</span>] = <span class="php-var">$col</span>-&gt;consulta;
-</span><span id="537" class="l"><a class="l" href="#537">537: </a>                  <span class="php-var">$i</span>++;
-</span><span id="538" class="l"><a class="l" href="#538">538: </a>               }
-</span><span id="539" class="l"><a class="l" href="#539">539: </a>            }
-</span><span id="540" class="l"><a class="l" href="#540">540: </a>         }
-</span><span id="541" class="l"><a class="l" href="#541">541: </a>         <span class="php-keyword1">else</span>
-</span><span id="542" class="l"><a class="l" href="#542">542: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al leer el archivo '</span>.<span class="php-var">$filename</span>);
-</span><span id="543" class="l"><a class="l" href="#543">543: </a>      }
-</span><span id="544" class="l"><a class="l" href="#544">544: </a>      <span class="php-keyword1">else</span>
-</span><span id="545" class="l"><a class="l" href="#545">545: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Archivo '</span>.<span class="php-var">$filename</span>.<span class="php-quote">' no encontrado.'</span>);
-</span><span id="546" class="l"><a class="l" href="#546">546: </a>      
-</span><span id="547" class="l"><a class="l" href="#547">547: </a>      <span class="php-keyword1">return</span> <span class="php-var">$retorno</span>;
-</span><span id="548" class="l"><a class="l" href="#548">548: </a>   }
-</span><span id="549" class="l"><a class="l" href="#549">549: </a>}
-</span><span id="550" class="l"><a class="l" href="#550">550: </a></span></code></pre>
+</span><span id="279" class="l"><a class="l" href="#279">279: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$v</span>) )
+</span><span id="280" class="l"><a class="l" href="#280">280: </a>      {
+</span><span id="281" class="l"><a class="l" href="#281">281: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">NULL</span>;
+</span><span id="282" class="l"><a class="l" href="#282">282: </a>      }
+</span><span id="283" class="l"><a class="l" href="#283">283: </a>      <span class="php-keyword1">else</span>
+</span><span id="284" class="l"><a class="l" href="#284">284: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">base64_decode</span>(<span class="php-var">$v</span>);
+</span><span id="285" class="l"><a class="l" href="#285">285: </a>   }
+</span><span id="286" class="l"><a class="l" href="#286">286: </a>   
+</span><span id="287" class="l"><a class="l" href="#287">287: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_str2bool" href="#_str2bool">str2bool</a>(<span class="php-var">$v</span>)
+</span><span id="288" class="l"><a class="l" href="#288">288: </a>   {
+</span><span id="289" class="l"><a class="l" href="#289">289: </a>      <span class="php-keyword1">return</span> (<span class="php-var">$v</span> == <span class="php-quote">'t'</span> <span class="php-keyword1">OR</span> <span class="php-var">$v</span> == <span class="php-quote">'1'</span>);
+</span><span id="290" class="l"><a class="l" href="#290">290: </a>   }
+</span><span id="291" class="l"><a class="l" href="#291">291: </a>   
+</span><span id="292" class="l"><a class="l" href="#292">292: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">intval</span>(<span class="php-var">$s</span>)
+</span><span id="293" class="l"><a class="l" href="#293">293: </a>   {
+</span><span id="294" class="l"><a class="l" href="#294">294: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">is_null</span>(<span class="php-var">$s</span>) )
+</span><span id="295" class="l"><a class="l" href="#295">295: </a>      {
+</span><span id="296" class="l"><a class="l" href="#296">296: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">NULL</span>;
+</span><span id="297" class="l"><a class="l" href="#297">297: </a>      }
+</span><span id="298" class="l"><a class="l" href="#298">298: </a>      <span class="php-keyword1">else</span>
+</span><span id="299" class="l"><a class="l" href="#299">299: </a>         <span class="php-keyword1">return</span> <span class="php-keyword2">intval</span>(<span class="php-var">$s</span>);
+</span><span id="300" class="l"><a class="l" href="#300">300: </a>   }
+</span><span id="301" class="l"><a class="l" href="#301">301: </a>   
+</span><span id="302" class="l"><a class="l" href="#302">302: </a>   <span class="php-comment">/**
+</span></span><span id="303" class="l"><a class="l" href="#303">303: </a><span class="php-comment">    * Compara dos números en coma flotante con una precisión de $precision,
+</span></span><span id="304" class="l"><a class="l" href="#304">304: </a><span class="php-comment">    * devuelve TRUE si son iguales, FALSE en caso contrario.
+</span></span><span id="305" class="l"><a class="l" href="#305">305: </a><span class="php-comment">    */</span>
+</span><span id="306" class="l"><a class="l" href="#306">306: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_floatcmp" href="#_floatcmp">floatcmp</a>(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$precision</span> = <span class="php-num">10</span>, <span class="php-var">$round</span> = <span class="php-keyword1">FALSE</span>)
+</span><span id="307" class="l"><a class="l" href="#307">307: </a>   {
+</span><span id="308" class="l"><a class="l" href="#308">308: </a>      <span class="php-keyword1">if</span>(<span class="php-var">$round</span>)
+</span><span id="309" class="l"><a class="l" href="#309">309: </a>      {
+</span><span id="310" class="l"><a class="l" href="#310">310: </a>         <span class="php-keyword1">return</span>( <span class="php-keyword2">abs</span>(<span class="php-var">$f1</span>-<span class="php-var">$f2</span>) &lt; <span class="php-num">6</span>/<span class="php-keyword2">pow</span>(<span class="php-num">10</span>,<span class="php-var">$precision</span>+<span class="php-num">1</span>) );
+</span><span id="311" class="l"><a class="l" href="#311">311: </a>      }
+</span><span id="312" class="l"><a class="l" href="#312">312: </a>      <span class="php-keyword1">else</span>
+</span><span id="313" class="l"><a class="l" href="#313">313: </a>         <span class="php-keyword1">return</span>( <span class="php-keyword2">bccomp</span>( (string)<span class="php-var">$f1</span>, (string)<span class="php-var">$f2</span>, <span class="php-var">$precision</span> ) == <span class="php-num">0</span> );
+</span><span id="314" class="l"><a class="l" href="#314">314: </a>   }
+</span><span id="315" class="l"><a class="l" href="#315">315: </a>   
+</span><span id="316" class="l"><a class="l" href="#316">316: </a>   <span class="php-comment">/**
+</span></span><span id="317" class="l"><a class="l" href="#317">317: </a><span class="php-comment">    * Compara tres números en coma flotante usando la función floatcmp().
+</span></span><span id="318" class="l"><a class="l" href="#318">318: </a><span class="php-comment">    * ATENCIÓN: NO COPARA LOS TRES NÚMERO ENTRE SI, solamente compara el
+</span></span><span id="319" class="l"><a class="l" href="#319">319: </a><span class="php-comment">    * primero con los otros dos.
+</span></span><span id="320" class="l"><a class="l" href="#320">320: </a><span class="php-comment">    * Devuelve TRUE si el primer número es igual a alguno de los otros dos.
+</span></span><span id="321" class="l"><a class="l" href="#321">321: </a><span class="php-comment">    */</span>
+</span><span id="322" class="l"><a class="l" href="#322">322: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_floatcmp3" href="#_floatcmp3">floatcmp3</a>(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$f3</span>, <span class="php-var">$precision</span> = <span class="php-num">10</span>, <span class="php-var">$round</span> = <span class="php-keyword1">FALSE</span>)
+</span><span id="323" class="l"><a class="l" href="#323">323: </a>   {
+</span><span id="324" class="l"><a class="l" href="#324">324: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$f1</span>, <span class="php-var">$f2</span>, <span class="php-var">$precision</span>, <span class="php-var">$round</span>) )
+</span><span id="325" class="l"><a class="l" href="#325">325: </a>      {
+</span><span id="326" class="l"><a class="l" href="#326">326: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="327" class="l"><a class="l" href="#327">327: </a>      }
+</span><span id="328" class="l"><a class="l" href="#328">328: </a>      <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;floatcmp(<span class="php-var">$f1</span>, <span class="php-var">$f3</span>, <span class="php-var">$precision</span>, <span class="php-var">$round</span>) )
+</span><span id="329" class="l"><a class="l" href="#329">329: </a>      {
+</span><span id="330" class="l"><a class="l" href="#330">330: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">TRUE</span>;
+</span><span id="331" class="l"><a class="l" href="#331">331: </a>      }
+</span><span id="332" class="l"><a class="l" href="#332">332: </a>      <span class="php-keyword1">else</span>
+</span><span id="333" class="l"><a class="l" href="#333">333: </a>         <span class="php-keyword1">return</span> <span class="php-keyword1">FALSE</span>;
+</span><span id="334" class="l"><a class="l" href="#334">334: </a>   }
+</span><span id="335" class="l"><a class="l" href="#335">335: </a>   
+</span><span id="336" class="l"><a class="l" href="#336">336: </a>   <span class="php-comment">/**
+</span></span><span id="337" class="l"><a class="l" href="#337">337: </a><span class="php-comment">    * functión auxiliar para facilitar el uso de fechas
+</span></span><span id="338" class="l"><a class="l" href="#338">338: </a><span class="php-comment">    * @param type $v
+</span></span><span id="339" class="l"><a class="l" href="#339">339: </a><span class="php-comment">    * @return string
+</span></span><span id="340" class="l"><a class="l" href="#340">340: </a><span class="php-comment">    */</span>
+</span><span id="341" class="l"><a class="l" href="#341">341: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_var2timesince" href="#_var2timesince">var2timesince</a>(<span class="php-var">$v</span>)
+</span><span id="342" class="l"><a class="l" href="#342">342: </a>   {
+</span><span id="343" class="l"><a class="l" href="#343">343: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword1">isset</span>(<span class="php-var">$v</span>) )
+</span><span id="344" class="l"><a class="l" href="#344">344: </a>      {
+</span><span id="345" class="l"><a class="l" href="#345">345: </a>         <span class="php-var">$v</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$v</span>);
+</span><span id="346" class="l"><a class="l" href="#346">346: </a>         <span class="php-var">$time</span> = <span class="php-keyword2">time</span>() - <span class="php-var">$v</span>;
+</span><span id="347" class="l"><a class="l" href="#347">347: </a>         
+</span><span id="348" class="l"><a class="l" href="#348">348: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$time</span> &lt;= <span class="php-num">60</span>)
+</span><span id="349" class="l"><a class="l" href="#349">349: </a>         {
+</span><span id="350" class="l"><a class="l" href="#350">350: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">60</span>,<span class="php-num">0</span>).<span class="php-quote">' segundos'</span>;
+</span><span id="351" class="l"><a class="l" href="#351">351: </a>         }
+</span><span id="352" class="l"><a class="l" href="#352">352: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">60</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">3600</span>)
+</span><span id="353" class="l"><a class="l" href="#353">353: </a>         {
+</span><span id="354" class="l"><a class="l" href="#354">354: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">60</span>,<span class="php-num">0</span>).<span class="php-quote">' minutos'</span>;
+</span><span id="355" class="l"><a class="l" href="#355">355: </a>         }
+</span><span id="356" class="l"><a class="l" href="#356">356: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">3600</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">86400</span>)
+</span><span id="357" class="l"><a class="l" href="#357">357: </a>         {
+</span><span id="358" class="l"><a class="l" href="#358">358: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">3600</span>,<span class="php-num">0</span>).<span class="php-quote">' horas'</span>;
+</span><span id="359" class="l"><a class="l" href="#359">359: </a>         }
+</span><span id="360" class="l"><a class="l" href="#360">360: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">86400</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">604800</span>)
+</span><span id="361" class="l"><a class="l" href="#361">361: </a>         {
+</span><span id="362" class="l"><a class="l" href="#362">362: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">86400</span>,<span class="php-num">0</span>).<span class="php-quote">' dias'</span>;
+</span><span id="363" class="l"><a class="l" href="#363">363: </a>         }
+</span><span id="364" class="l"><a class="l" href="#364">364: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">604800</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">2592000</span>)
+</span><span id="365" class="l"><a class="l" href="#365">365: </a>         {
+</span><span id="366" class="l"><a class="l" href="#366">366: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">604800</span>,<span class="php-num">0</span>).<span class="php-quote">' semanas'</span>;
+</span><span id="367" class="l"><a class="l" href="#367">367: </a>         }
+</span><span id="368" class="l"><a class="l" href="#368">368: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-num">2592000</span> &lt; <span class="php-var">$time</span> &amp;&amp; <span class="php-var">$time</span> &lt;= <span class="php-num">29030400</span>)
+</span><span id="369" class="l"><a class="l" href="#369">369: </a>         {
+</span><span id="370" class="l"><a class="l" href="#370">370: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace '</span>.<span class="php-keyword2">round</span>(<span class="php-var">$time</span>/<span class="php-num">2592000</span>,<span class="php-num">0</span>).<span class="php-quote">' meses'</span>;
+</span><span id="371" class="l"><a class="l" href="#371">371: </a>         }
+</span><span id="372" class="l"><a class="l" href="#372">372: </a>         <span class="php-keyword1">else</span> <span class="php-keyword1">if</span>(<span class="php-var">$time</span> &gt; <span class="php-num">29030400</span>)
+</span><span id="373" class="l"><a class="l" href="#373">373: </a>         {
+</span><span id="374" class="l"><a class="l" href="#374">374: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'hace más de un año'</span>;
+</span><span id="375" class="l"><a class="l" href="#375">375: </a>         }
+</span><span id="376" class="l"><a class="l" href="#376">376: </a>      }
+</span><span id="377" class="l"><a class="l" href="#377">377: </a>      <span class="php-keyword1">else</span>
+</span><span id="378" class="l"><a class="l" href="#378">378: </a>         <span class="php-keyword1">return</span> <span class="php-quote">'fecha desconocida'</span>;
+</span><span id="379" class="l"><a class="l" href="#379">379: </a>   }
+</span><span id="380" class="l"><a class="l" href="#380">380: </a>   
+</span><span id="381" class="l"><a class="l" href="#381">381: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_date_range" href="#_date_range">date_range</a>(<span class="php-var">$first</span>, <span class="php-var">$last</span>, <span class="php-var">$step</span> = <span class="php-quote">'+1 day'</span>, <span class="php-var">$format</span> = <span class="php-quote">'d-m-Y'</span> )
+</span><span id="382" class="l"><a class="l" href="#382">382: </a>   {
+</span><span id="383" class="l"><a class="l" href="#383">383: </a>      <span class="php-var">$dates</span> = <span class="php-keyword1">array</span>();
+</span><span id="384" class="l"><a class="l" href="#384">384: </a>      <span class="php-var">$current</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$first</span>);
+</span><span id="385" class="l"><a class="l" href="#385">385: </a>      <span class="php-var">$last</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$last</span>);
+</span><span id="386" class="l"><a class="l" href="#386">386: </a>      
+</span><span id="387" class="l"><a class="l" href="#387">387: </a>      <span class="php-keyword1">while</span>( <span class="php-var">$current</span> &lt;= <span class="php-var">$last</span> )
+</span><span id="388" class="l"><a class="l" href="#388">388: </a>      {
+</span><span id="389" class="l"><a class="l" href="#389">389: </a>         <span class="php-var">$dates</span>[] = <span class="php-keyword2">date</span>(<span class="php-var">$format</span>, <span class="php-var">$current</span>);
+</span><span id="390" class="l"><a class="l" href="#390">390: </a>         <span class="php-var">$current</span> = <span class="php-keyword2">strtotime</span>(<span class="php-var">$step</span>, <span class="php-var">$current</span>);
+</span><span id="391" class="l"><a class="l" href="#391">391: </a>      }
+</span><span id="392" class="l"><a class="l" href="#392">392: </a>      
+</span><span id="393" class="l"><a class="l" href="#393">393: </a>      <span class="php-keyword1">return</span> <span class="php-var">$dates</span>;
+</span><span id="394" class="l"><a class="l" href="#394">394: </a>   }
+</span><span id="395" class="l"><a class="l" href="#395">395: </a>   
+</span><span id="396" class="l"><a class="l" href="#396">396: </a>   <span class="php-comment">/**
+</span></span><span id="397" class="l"><a class="l" href="#397">397: </a><span class="php-comment">    * Esta función convierte:
+</span></span><span id="398" class="l"><a class="l" href="#398">398: </a><span class="php-comment">    * &lt; en &amp;lt;
+</span></span><span id="399" class="l"><a class="l" href="#399">399: </a><span class="php-comment">    * &gt; en &amp;gt;
+</span></span><span id="400" class="l"><a class="l" href="#400">400: </a><span class="php-comment">    * &quot; en &amp;quot;
+</span></span><span id="401" class="l"><a class="l" href="#401">401: </a><span class="php-comment">    * ' en &amp;#39;
+</span></span><span id="402" class="l"><a class="l" href="#402">402: </a><span class="php-comment">    * 
+</span></span><span id="403" class="l"><a class="l" href="#403">403: </a><span class="php-comment">    * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
+</span></span><span id="404" class="l"><a class="l" href="#404">404: </a><span class="php-comment">    * porque te encontrarás con muchas sorpresas desagradables.
+</span></span><span id="405" class="l"><a class="l" href="#405">405: </a><span class="php-comment">    */</span>
+</span><span id="406" class="l"><a class="l" href="#406">406: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_no_html" href="#_no_html">no_html</a>(<span class="php-var">$t</span>)
+</span><span id="407" class="l"><a class="l" href="#407">407: </a>   {
+</span><span id="408" class="l"><a class="l" href="#408">408: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&lt;'</span>, <span class="php-quote">'&amp;lt;'</span>, <span class="php-var">$t</span>);
+</span><span id="409" class="l"><a class="l" href="#409">409: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&gt;'</span>, <span class="php-quote">'&amp;gt;'</span>, <span class="php-var">$newt</span>);
+</span><span id="410" class="l"><a class="l" href="#410">410: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&quot;'</span>, <span class="php-quote">'&amp;quot;'</span>, <span class="php-var">$newt</span>);
+</span><span id="411" class="l"><a class="l" href="#411">411: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">&quot;'&quot;</span>, <span class="php-quote">'&amp;#39;'</span>, <span class="php-var">$newt</span>);
+</span><span id="412" class="l"><a class="l" href="#412">412: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">trim</span>(<span class="php-var">$newt</span>);
+</span><span id="413" class="l"><a class="l" href="#413">413: </a>   }
+</span><span id="414" class="l"><a class="l" href="#414">414: </a>   
+</span><span id="415" class="l"><a class="l" href="#415">415: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_random_string" href="#_random_string">random_string</a>(<span class="php-var">$length</span> = <span class="php-num">10</span>)
+</span><span id="416" class="l"><a class="l" href="#416">416: </a>   {
+</span><span id="417" class="l"><a class="l" href="#417">417: </a>      <span class="php-keyword1">return</span> <span class="php-keyword2">mb_substr</span>(<span class="php-keyword2">str_shuffle</span>(<span class="php-quote">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>), <span class="php-num">0</span>, <span class="php-var">$length</span>);
+</span><span id="418" class="l"><a class="l" href="#418">418: </a>   }
+</span><span id="419" class="l"><a class="l" href="#419">419: </a>   
+</span><span id="420" class="l"><a class="l" href="#420">420: </a>   <span class="php-comment">/**
+</span></span><span id="421" class="l"><a class="l" href="#421">421: </a><span class="php-comment">    * Comprueba y actualiza la estructura de la tabla si es necesario
+</span></span><span id="422" class="l"><a class="l" href="#422">422: </a><span class="php-comment">    * @param type $table_name
+</span></span><span id="423" class="l"><a class="l" href="#423">423: </a><span class="php-comment">    * @return boolean
+</span></span><span id="424" class="l"><a class="l" href="#424">424: </a><span class="php-comment">    */</span>
+</span><span id="425" class="l"><a class="l" href="#425">425: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_check_table" href="#_check_table">check_table</a>(<span class="php-var">$table_name</span>)
+</span><span id="426" class="l"><a class="l" href="#426">426: </a>   {
+</span><span id="427" class="l"><a class="l" href="#427">427: </a>      <span class="php-var">$done</span> = <span class="php-keyword1">TRUE</span>;
+</span><span id="428" class="l"><a class="l" href="#428">428: </a>      <span class="php-var">$consulta</span> = <span class="php-quote">''</span>;
+</span><span id="429" class="l"><a class="l" href="#429">429: </a>      <span class="php-var">$columnas</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="430" class="l"><a class="l" href="#430">430: </a>      <span class="php-var">$restricciones</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="431" class="l"><a class="l" href="#431">431: </a>      <span class="php-var">$xml_columnas</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="432" class="l"><a class="l" href="#432">432: </a>      <span class="php-var">$xml_restricciones</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="433" class="l"><a class="l" href="#433">433: </a>      
+</span><span id="434" class="l"><a class="l" href="#434">434: </a>      <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;get_xml_table(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$xml_restricciones</span>) )
+</span><span id="435" class="l"><a class="l" href="#435">435: </a>      {
+</span><span id="436" class="l"><a class="l" href="#436">436: </a>         <span class="php-keyword1">if</span>( <span class="php-var">$this</span>-&gt;db-&gt;table_exists(<span class="php-var">$table_name</span>) )
+</span><span id="437" class="l"><a class="l" href="#437">437: </a>         {
+</span><span id="438" class="l"><a class="l" href="#438">438: </a>            <span class="php-comment">/// comparamos las columnas</span>
+</span><span id="439" class="l"><a class="l" href="#439">439: </a>            <span class="php-var">$columnas</span> = <span class="php-var">$this</span>-&gt;db-&gt;get_columns(<span class="php-var">$table_name</span>);
+</span><span id="440" class="l"><a class="l" href="#440">440: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;compare_columns(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$columnas</span>);
+</span><span id="441" class="l"><a class="l" href="#441">441: </a>            
+</span><span id="442" class="l"><a class="l" href="#442">442: </a>            <span class="php-comment">/// comparamos las restricciones</span>
+</span><span id="443" class="l"><a class="l" href="#443">443: </a>            <span class="php-var">$restricciones</span> = <span class="php-var">$this</span>-&gt;db-&gt;get_constraints(<span class="php-var">$table_name</span>);
+</span><span id="444" class="l"><a class="l" href="#444">444: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;compare_constraints(<span class="php-var">$table_name</span>, <span class="php-var">$xml_restricciones</span>, <span class="php-var">$restricciones</span>);
+</span><span id="445" class="l"><a class="l" href="#445">445: </a>         }
+</span><span id="446" class="l"><a class="l" href="#446">446: </a>         <span class="php-keyword1">else</span>
+</span><span id="447" class="l"><a class="l" href="#447">447: </a>         {
+</span><span id="448" class="l"><a class="l" href="#448">448: </a>            <span class="php-comment">/// generamos el sql para crear la tabla</span>
+</span><span id="449" class="l"><a class="l" href="#449">449: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;db-&gt;generate_table(<span class="php-var">$table_name</span>, <span class="php-var">$xml_columnas</span>, <span class="php-var">$xml_restricciones</span>);
+</span><span id="450" class="l"><a class="l" href="#450">450: </a>            <span class="php-var">$consulta</span> .= <span class="php-var">$this</span>-&gt;install();
+</span><span id="451" class="l"><a class="l" href="#451">451: </a>         }
+</span><span id="452" class="l"><a class="l" href="#452">452: </a>         
+</span><span id="453" class="l"><a class="l" href="#453">453: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$consulta</span> != <span class="php-quote">''</span>)
+</span><span id="454" class="l"><a class="l" href="#454">454: </a>         {
+</span><span id="455" class="l"><a class="l" href="#455">455: </a>            <span class="php-keyword1">if</span>( !<span class="php-var">$this</span>-&gt;db-&gt;<span class="php-keyword2">exec</span>(<span class="php-var">$consulta</span>) )
+</span><span id="456" class="l"><a class="l" href="#456">456: </a>            {
+</span><span id="457" class="l"><a class="l" href="#457">457: </a>               <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al comprobar la tabla '</span>.<span class="php-var">$table_name</span>);
+</span><span id="458" class="l"><a class="l" href="#458">458: </a>               <span class="php-var">$done</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="459" class="l"><a class="l" href="#459">459: </a>            }
+</span><span id="460" class="l"><a class="l" href="#460">460: </a>         }
+</span><span id="461" class="l"><a class="l" href="#461">461: </a>      }
+</span><span id="462" class="l"><a class="l" href="#462">462: </a>      <span class="php-keyword1">else</span>
+</span><span id="463" class="l"><a class="l" href="#463">463: </a>      {
+</span><span id="464" class="l"><a class="l" href="#464">464: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error con el xml.'</span>);
+</span><span id="465" class="l"><a class="l" href="#465">465: </a>         <span class="php-var">$done</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="466" class="l"><a class="l" href="#466">466: </a>      }
+</span><span id="467" class="l"><a class="l" href="#467">467: </a>      
+</span><span id="468" class="l"><a class="l" href="#468">468: </a>      <span class="php-keyword1">return</span> <span class="php-var">$done</span>;
+</span><span id="469" class="l"><a class="l" href="#469">469: </a>   }
+</span><span id="470" class="l"><a class="l" href="#470">470: </a>   
+</span><span id="471" class="l"><a class="l" href="#471">471: </a>   <span class="php-comment">/**
+</span></span><span id="472" class="l"><a class="l" href="#472">472: </a><span class="php-comment">    * Obtiene las columnas y restricciones del fichero xml para una tabla
+</span></span><span id="473" class="l"><a class="l" href="#473">473: </a><span class="php-comment">    * @param type $table_name
+</span></span><span id="474" class="l"><a class="l" href="#474">474: </a><span class="php-comment">    * @param type $columnas
+</span></span><span id="475" class="l"><a class="l" href="#475">475: </a><span class="php-comment">    * @param type $restricciones
+</span></span><span id="476" class="l"><a class="l" href="#476">476: </a><span class="php-comment">    * @return boolean
+</span></span><span id="477" class="l"><a class="l" href="#477">477: </a><span class="php-comment">    */</span>
+</span><span id="478" class="l"><a class="l" href="#478">478: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_get_xml_table" href="#_get_xml_table">get_xml_table</a>(<span class="php-var">$table_name</span>, &amp;<span class="php-var">$columnas</span>, &amp;<span class="php-var">$restricciones</span>)
+</span><span id="479" class="l"><a class="l" href="#479">479: </a>   {
+</span><span id="480" class="l"><a class="l" href="#480">480: </a>      <span class="php-var">$retorno</span> = <span class="php-keyword1">FALSE</span>;
+</span><span id="481" class="l"><a class="l" href="#481">481: </a>      <span class="php-var">$filename</span> = <span class="php-var">$this</span>-&gt;base_dir.<span class="php-quote">'model/table/'</span>.<span class="php-var">$table_name</span>.<span class="php-quote">'.xml'</span>;
+</span><span id="482" class="l"><a class="l" href="#482">482: </a>      
+</span><span id="483" class="l"><a class="l" href="#483">483: </a>      <span class="php-keyword1">if</span>( <span class="php-keyword2">file_exists</span>(<span class="php-var">$filename</span>) )
+</span><span id="484" class="l"><a class="l" href="#484">484: </a>      {
+</span><span id="485" class="l"><a class="l" href="#485">485: </a>         <span class="php-var">$xml</span> = <span class="php-keyword2">simplexml_load_string</span>( <span class="php-keyword2">file_get_contents</span>(<span class="php-quote">'./'</span>.<span class="php-var">$filename</span>, FILE_USE_INCLUDE_PATH) );
+</span><span id="486" class="l"><a class="l" href="#486">486: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>)
+</span><span id="487" class="l"><a class="l" href="#487">487: </a>         {
+</span><span id="488" class="l"><a class="l" href="#488">488: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>-&gt;columna)
+</span><span id="489" class="l"><a class="l" href="#489">489: </a>            {
+</span><span id="490" class="l"><a class="l" href="#490">490: </a>               <span class="php-var">$i</span> = <span class="php-num">0</span>;
+</span><span id="491" class="l"><a class="l" href="#491">491: </a>               <span class="php-keyword1">foreach</span>(<span class="php-var">$xml</span>-&gt;columna <span class="php-keyword1">as</span> <span class="php-var">$col</span>)
+</span><span id="492" class="l"><a class="l" href="#492">492: </a>               {
+</span><span id="493" class="l"><a class="l" href="#493">493: </a>                  <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nombre'</span>] = <span class="php-var">$col</span>-&gt;nombre;
+</span><span id="494" class="l"><a class="l" href="#494">494: </a>                  <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'tipo'</span>] = <span class="php-var">$col</span>-&gt;tipo;
+</span><span id="495" class="l"><a class="l" href="#495">495: </a>                  
+</span><span id="496" class="l"><a class="l" href="#496">496: </a>                  <span class="php-keyword1">if</span>(<span class="php-var">$col</span>-&gt;nulo)
+</span><span id="497" class="l"><a class="l" href="#497">497: </a>                  {
+</span><span id="498" class="l"><a class="l" href="#498">498: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nulo'</span>] = <span class="php-var">$col</span>-&gt;nulo;
+</span><span id="499" class="l"><a class="l" href="#499">499: </a>                  }
+</span><span id="500" class="l"><a class="l" href="#500">500: </a>                  <span class="php-keyword1">else</span>
+</span><span id="501" class="l"><a class="l" href="#501">501: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'nulo'</span>] = <span class="php-quote">'YES'</span>;
+</span><span id="502" class="l"><a class="l" href="#502">502: </a>                  
+</span><span id="503" class="l"><a class="l" href="#503">503: </a>                  <span class="php-keyword1">if</span>(<span class="php-var">$col</span>-&gt;defecto == <span class="php-quote">''</span>)
+</span><span id="504" class="l"><a class="l" href="#504">504: </a>                  {
+</span><span id="505" class="l"><a class="l" href="#505">505: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'defecto'</span>] = <span class="php-keyword1">NULL</span>;
+</span><span id="506" class="l"><a class="l" href="#506">506: </a>                  }
+</span><span id="507" class="l"><a class="l" href="#507">507: </a>                  <span class="php-keyword1">else</span>
+</span><span id="508" class="l"><a class="l" href="#508">508: </a>                     <span class="php-var">$columnas</span>[<span class="php-var">$i</span>][<span class="php-quote">'defecto'</span>] = <span class="php-var">$col</span>-&gt;defecto;
+</span><span id="509" class="l"><a class="l" href="#509">509: </a>                  
+</span><span id="510" class="l"><a class="l" href="#510">510: </a>                  <span class="php-var">$i</span>++;
+</span><span id="511" class="l"><a class="l" href="#511">511: </a>               }
+</span><span id="512" class="l"><a class="l" href="#512">512: </a>               
+</span><span id="513" class="l"><a class="l" href="#513">513: </a>               <span class="php-comment">/// debe de haber columnas, sino es un fallo</span>
+</span><span id="514" class="l"><a class="l" href="#514">514: </a>               <span class="php-var">$retorno</span> = <span class="php-keyword1">TRUE</span>;
+</span><span id="515" class="l"><a class="l" href="#515">515: </a>            }
+</span><span id="516" class="l"><a class="l" href="#516">516: </a>            
+</span><span id="517" class="l"><a class="l" href="#517">517: </a>            <span class="php-keyword1">if</span>(<span class="php-var">$xml</span>-&gt;restriccion)
+</span><span id="518" class="l"><a class="l" href="#518">518: </a>            {
+</span><span id="519" class="l"><a class="l" href="#519">519: </a>               <span class="php-var">$i</span> = <span class="php-num">0</span>;
+</span><span id="520" class="l"><a class="l" href="#520">520: </a>               <span class="php-keyword1">foreach</span>(<span class="php-var">$xml</span>-&gt;restriccion <span class="php-keyword1">as</span> <span class="php-var">$col</span>)
+</span><span id="521" class="l"><a class="l" href="#521">521: </a>               {
+</span><span id="522" class="l"><a class="l" href="#522">522: </a>                  <span class="php-var">$restricciones</span>[<span class="php-var">$i</span>][<span class="php-quote">'nombre'</span>] = <span class="php-var">$col</span>-&gt;nombre;
+</span><span id="523" class="l"><a class="l" href="#523">523: </a>                  <span class="php-var">$restricciones</span>[<span class="php-var">$i</span>][<span class="php-quote">'consulta'</span>] = <span class="php-var">$col</span>-&gt;consulta;
+</span><span id="524" class="l"><a class="l" href="#524">524: </a>                  <span class="php-var">$i</span>++;
+</span><span id="525" class="l"><a class="l" href="#525">525: </a>               }
+</span><span id="526" class="l"><a class="l" href="#526">526: </a>            }
+</span><span id="527" class="l"><a class="l" href="#527">527: </a>         }
+</span><span id="528" class="l"><a class="l" href="#528">528: </a>         <span class="php-keyword1">else</span>
+</span><span id="529" class="l"><a class="l" href="#529">529: </a>            <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Error al leer el archivo '</span>.<span class="php-var">$filename</span>);
+</span><span id="530" class="l"><a class="l" href="#530">530: </a>      }
+</span><span id="531" class="l"><a class="l" href="#531">531: </a>      <span class="php-keyword1">else</span>
+</span><span id="532" class="l"><a class="l" href="#532">532: </a>         <span class="php-var">$this</span>-&gt;new_error_msg(<span class="php-quote">'Archivo '</span>.<span class="php-var">$filename</span>.<span class="php-quote">' no encontrado.'</span>);
+</span><span id="533" class="l"><a class="l" href="#533">533: </a>      
+</span><span id="534" class="l"><a class="l" href="#534">534: </a>      <span class="php-keyword1">return</span> <span class="php-var">$retorno</span>;
+</span><span id="535" class="l"><a class="l" href="#535">535: </a>   }
+</span><span id="536" class="l"><a class="l" href="#536">536: </a>}
+</span><span id="537" class="l"><a class="l" href="#537">537: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
