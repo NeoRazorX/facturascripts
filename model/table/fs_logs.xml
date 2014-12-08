@@ -29,7 +29,6 @@
    <columna>
       <nombre>usuario</nombre>
       <tipo>varchar(12)</tipo>
-      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>ip</nombre>

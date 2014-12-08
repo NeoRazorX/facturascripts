@@ -10,18 +10,39 @@
    });
 </script>
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 5px;">
+   <div class="row">
+      <div class="col-md-2">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if condition="$fsc->page->is_default()"}
+            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {else}
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {/if}
+         </div>
+      </div>
+      <div class="col-md-8 text-center">
+         <h2 style="margin-top: 0px;">Usuarios</h2>
+      </div>
+      <div class="col-md-2 text-right">
+         <a id="b_nuevo_usuario" class="btn btn-sm btn-success" href="#">
+            <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
+         </a>
+      </div>
+   </div>
+</div>
+
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
-      <li>
-         <a href="{$fsc->url()}" title="Recargar la página">
-            <span class="glyphicon glyphicon-refresh"></span>
-         </a>
-      </li>
       <li role="presentation" class="active">
          <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Usuarios</a>
-      </li>
-      <li>
-         <a href="#" id="b_nuevo_usuario">Nuevo...</a>
       </li>
       <li role="presentation">
          <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Historial</a>

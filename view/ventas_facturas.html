@@ -64,20 +64,25 @@
          </div>
          
          <div class="btn-group">
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='button'"}
+            <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+            {/if}
+         {/loop}
+         </div>
+         
+         <div class="btn-group">
             <a class="btn btn-sm btn-success" href="index.php?page=nueva_venta&tipo=factura">
-               <span class="glyphicon glyphicon-plus"></span>
-               &nbsp; Nueva
+               <span class="glyphicon glyphicon-plus"></span> &nbsp; Nueva
             </a>
             <button class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal_huecos">
-               <span class="glyphicon glyphicon-tasks"></span>
-               &nbsp; Huecos
+               <span class="glyphicon glyphicon-tasks"></span> &nbsp; Huecos
             </button>
          </div>
       </div>
       <div class="col-md-2 col-sm-2 col-xs-4 text-right">
          <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en las líneas">
-            <span class="glyphicon glyphicon-search"></span>
-            &nbsp; Líneas
+            <span class="glyphicon glyphicon-search"></span> &nbsp; Líneas
          </a>
       </div>
       <div class="col-md-2 col-sm-3 hidden-xs">
@@ -161,8 +166,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -170,8 +174,7 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}

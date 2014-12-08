@@ -304,6 +304,18 @@ class fs_controller
       if($msg)
       {
          $this->errors[] = str_replace("\n", ' ', $msg);
+         
+         $fslog = new fs_log();
+         $fslog->tipo = 'error';
+         $fslog->detalle = $msg;
+         $fslog->ip = $_SERVER['REMOTE_ADDR'];
+         
+         if($this->user)
+         {
+            $fslog->usuario = $this->user->nick;
+         }
+         
+         $fslog->save();
       }
    }
    
@@ -576,6 +588,18 @@ class fs_controller
    private function log_out()
    {
       setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
+      
+      $fslog = new fs_log();
+      
+      if( isset($_COOKIE['user']) )
+      {
+         $fslog->usuario = $_COOKIE['user'];
+      }
+      
+      $fslog->tipo = 'login';
+      $fslog->detalle = 'El usuario ha cerrado la sesión.';
+      $fslog->ip = $_SERVER['REMOTE_ADDR'];
+      $fslog->save();
    }
    
    /**
