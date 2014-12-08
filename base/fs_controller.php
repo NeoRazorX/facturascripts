@@ -195,7 +195,12 @@ class fs_controller
          {
             $ips = array();
             
-            if($_POST['new_password'] != $_POST['new_password2'])
+            if( $this->ip_baneada($ips) )
+            {
+               $this->banear_ip($ips);
+               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
+            }
+            else if($_POST['new_password'] != $_POST['new_password2'])
             {
                $this->new_error_msg('Las contraseñas no coinciden.');
             }
@@ -205,12 +210,8 @@ class fs_controller
             }
             else if($_POST['db_password'] != FS_DB_PASS)
             {
-               $this->new_error_msg('La contraseña de la base de datos es incorrecta.');
-            }
-            else if( $this->ip_baneada($ips) )
-            {
                $this->banear_ip($ips);
-               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
+               $this->new_error_msg('La contraseña de la base de datos es incorrecta.');
             }
             else
             {
