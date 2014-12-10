@@ -1,13 +1,14 @@
 <?php
 
 /*
-  MySQL database backup class, version 1.0.0
+  MySQL database backup class, version 1.0.1b
   Written by Vagharshak Tozalakyan <vagh@armdex.com>
+  Modified by Valentín González
   Released under GNU Public license
 */
 
 
-define('MSB_VERSION', '1.0.0');
+define('MSB_VERSION', '1.0.1b');
 
 define('MSB_NL', "\r\n");
 
@@ -49,7 +50,7 @@ class MySQL_Backup
         $fname .= ($compress ? '.sql.gz' : '.sql');
       } else {
         $fname = $this->backup_dir . date($this->fname_format) . $fname;
-        $fname .= ($compress ? '.sql.gz' : '.sql');	  
+        $fname .= ($compress ? '.sql.gz' : '.sql');
       }
       return $this->_SaveToFile($fname, $sql, $compress);
     }
@@ -61,7 +62,7 @@ class MySQL_Backup
         $fname .= ($compress ? '.sql.gz' : '.sql');
       } else {
         $fname = date($this->fname_format) . $fname;
-        $fname .= ($compress ? '.sql.gz' : '.sql');	  
+        $fname .= ($compress ? '.sql.gz' : '.sql');
       }
       return $this->_DownloadFile($fname, $sql, $compress);
     }
@@ -137,7 +138,7 @@ class MySQL_Backup
     }
     if (!sizeof($value))
     {
-      $this->error = 'No tables found in database.';
+      $this->error = 'No se encuentran tablas en la Base de Datos.';
       return false;
     }
     return $value;
@@ -151,7 +152,7 @@ class MySQL_Backup
     if ($this->comments)
     {
       $value .= '#' . MSB_NL;
-      $value .= '# Table structure for table `' . $table . '`' . MSB_NL;
+      $value .= '# Estructura de la tabla `' . $table . '`' . MSB_NL;
       $value .= '#' . MSB_NL . MSB_NL;
     }
     if ($this->drop_tables)
@@ -170,7 +171,7 @@ class MySQL_Backup
       if ($this->comments)
       {
         $value .= '#' . MSB_NL;
-        $value .= '# Dumping data for table `' . $table . '`' . MSB_NL;
+        $value .= '# Volcado de datos de la tabla `' . $table . '`' . MSB_NL;
         $value .= '#' . MSB_NL . MSB_NL;
       }
       $value .= $this->_GetInserts($table);
@@ -212,19 +213,21 @@ class MySQL_Backup
     if ($this->comments)
     {
       $value .= '#' . MSB_NL;
-      $value .= '# MySQL database dump' . MSB_NL;
-      $value .= '# Created by MySQL_Backup class, ver. ' . MSB_VERSION . MSB_NL;
+      $value .= '# Respaldo de Base de Datos MySQL' . MSB_NL;
+      $value .= '# Creada con la clase MySQL_Backup - Versión. ' . MSB_VERSION . MSB_NL;
+      $value .= '# (Adaptada y traducida por Valentín González)' . MSB_NL;
       $value .= '#' . MSB_NL;
-      $value .= '# Host: ' . $this->server . MSB_NL;
-      $value .= '# Generated: ' . date('M j, Y') . ' at ' . date('H:i') . MSB_NL;
-      $value .= '# MySQL version: ' . mysql_get_server_info() . MSB_NL;
-      $value .= '# PHP version: ' . phpversion() . MSB_NL;
+      $value .= '# Servidor: ' . $this->server . MSB_NL;
+      $value .= '# Generada el: ' . date('d/m/Y') . ' a las ' . date('H:i:s') . MSB_NL;
+      $value .= '# Versión de MySQL: ' . mysql_get_server_info() . MSB_NL;
+      $value .= '# Versión de PHP: ' . phpversion() . MSB_NL;
       if (!empty($this->database))
       {
         $value .= '#' . MSB_NL;
-        $value .= '# Database: `' . $this->database . '`' . MSB_NL;
+        $value .= '# Base de Datos: `' . $this->database . '`' . MSB_NL;
       }
       $value .= '#' . MSB_NL . MSB_NL . MSB_NL;
+      $value .= 'SET FOREIGN_KEY_CHECKS=0;' . MSB_NL . MSB_NL . MSB_NL;
     }
     if (!($tables = $this->_GetTables()))
     {
@@ -239,6 +242,7 @@ class MySQL_Backup
       }
       $value .= $table_dump;
     }
+    $value .= 'SET FOREIGN_KEY_CHECKS=1;' . MSB_NL . MSB_NL . MSB_NL;
     return $value;
   }
 
@@ -249,7 +253,7 @@ class MySQL_Backup
     {
       if (!($zf = gzopen($fname, 'w9')))
       {
-        $this->error = 'Can\'t create the output file.';
+        $this->error = 'No se puede crear el archivo de salida.';
         return false;
       }
       gzwrite($zf, $sql);
@@ -259,7 +263,7 @@ class MySQL_Backup
     {
       if (!($f = fopen($fname, 'w')))
       {
-        $this->error = 'Can\'t create the output file.';
+        $this->error = 'No se puede crear el archivo de salida.';
         return false;
       }
       fwrite($f, $sql);
