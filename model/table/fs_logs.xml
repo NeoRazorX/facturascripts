@@ -13,22 +13,22 @@
    </columna>
    <columna>
       <nombre>tipo</nombre>
-      <tipo>varchar(50)</tipo>
+      <tipo>character varying(50)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>detalle</nombre>
-      <tipo>varchar(128)</tipo>
+      <tipo>character varying(128)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>fecha</nombre>
-      <tipo>datetime</tipo>
+      <tipo>timestamp</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>usuario</nombre>
-      <tipo>varchar(12)</tipo>
+      <tipo>character varying(12)</tipo>
    </columna>
    <columna>
       <nombre>ip</nombre>

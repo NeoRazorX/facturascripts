@@ -36,6 +36,17 @@
       });
    });
 </script>
+{else}
+<script type="text/javascript">
+   $(document).ready(function() {
+      {if condition="$fsc->albaran->totalrecargo==0"}
+      $(".recargo").hide();
+      {/if}
+      {if condition="$fsc->albaran->totalirpf==0"}
+      $(".irpf").hide();
+      {/if}
+   });
+</script>
 {/if}
 <script type="text/javascript">
    function fs_marcar_todo()
@@ -306,8 +317,8 @@
                <th class="text-right">Dto</th>
                <th class="text-right">Neto</th>
                <th class="text-right">IVA</th>
-               <th class="text-right">RE</th>
-               <th class="text-right">IRPF</th>
+               <th class="text-right recargo">RE</th>
+               <th class="text-right irpf">IRPF</th>
                <th class="text-right">Total</th>
             </tr>
          </thead>
@@ -319,8 +330,8 @@
             <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
             <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->albaran->coddivisa)}</td>
             <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td class="text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
-            <td class="text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
+            <td class="text-right recargo">{$fsc->show_numero($value->recargo, 2)} %</td>
+            <td class="text-right irpf">{$fsc->show_numero($value->irpf, 2)} %</td>
             <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->albaran->coddivisa)}</td>
          </tr>
          {/loop}
@@ -328,8 +339,8 @@
             <td colspan="4"></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->neto, $fsc->albaran->coddivisa)}</b></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->totaliva, $fsc->albaran->coddivisa)}</b></td>
-            <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->totalrecargo, $fsc->albaran->coddivisa)}</b></td>
-            <td class="text-right"><b>-{$fsc->show_precio($fsc->albaran->totalirpf, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right recargo"><b>{$fsc->show_precio($fsc->albaran->totalrecargo, $fsc->albaran->coddivisa)}</b></td>
+            <td class="text-right irpf"><b>-{$fsc->show_precio($fsc->albaran->totalirpf, $fsc->albaran->coddivisa)}</b></td>
             <td class="text-right"><b>{$fsc->show_precio($fsc->albaran->total, $fsc->albaran->coddivisa)}</b></td>
          </tr>
       </table>

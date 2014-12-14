@@ -7,45 +7,45 @@
 <tabla>
    <columna>
       <nombre>descripcion</nombre>
-      <tipo>char(100)</tipo>
+      <tipo>character varying(100)</tipo>
    </columna>
    <columna>
       <nombre>swift</nombre>
-      <tipo>char(11)</tipo>
+      <tipo>character varying(11)</tipo>
    </columna>
    <columna>
       <nombre>ctaentidad</nombre>
-      <tipo>char(4)</tipo>
+      <tipo>character varying(4)</tipo>
    </columna>
    <columna>
       <nombre>iban</nombre>
-      <tipo>char(34)</tipo>
+      <tipo>character varying(34)</tipo>
    </columna>
    <columna>
       <nombre>agencia</nombre>
-      <tipo>char(4)</tipo>
+      <tipo>character varying(4)</tipo>
    </columna>
    <columna>
       <nombre>entidad</nombre>
-      <tipo>char(4)</tipo>
+      <tipo>character varying(4)</tipo>
    </columna>
    <columna>
       <nombre>codcliente</nombre>
-      <tipo>char(6)</tipo>
+      <tipo>character varying(6)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>ctaagencia</nombre>
-      <tipo>char(4)</tipo>
+      <tipo>character varying(4)</tipo>
    </columna>
    <columna>
       <nombre>codcuenta</nombre>
-      <tipo>char(6)</tipo>
+      <tipo>character varying(6)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>cuenta</nombre>
-      <tipo>char(10)</tipo>
+      <tipo>character varying(10)</tipo>
    </columna>
    <restriccion>
       <nombre>cuentasbcocli_pkey</nombre>

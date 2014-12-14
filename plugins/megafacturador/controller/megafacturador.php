@@ -36,6 +36,7 @@ class megafacturador extends fs_controller
    private $cliente;
    private $ejercicio;
    private $proveedor;
+   public $opciones;
    private $regularizacion;
    private $total;
    
@@ -46,28 +47,48 @@ class megafacturador extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->cliente = new cliente();
       $this->ejercicio = new ejercicio();
       $this->proveedor = new proveedor();
       $this->regularizacion = new regularizacion_iva();
       
-      if( isset($_GET['start']) )
+      $this->opciones = array(
+          'ventas' => TRUE,
+          'compras' => TRUE,
+          'fecha' => 'hoy'
+      );
+      
+      if( isset($_REQUEST['fecha']) )
       {
-         $this->total = 0;
-         $albaran_cli = new albaran_cliente();
-         foreach($albaran_cli->all_ptefactura(0, 'ASC') as $alb)
-         {
-            $this->generar_factura_cliente( array($alb) );
-         }
-         $this->new_message($this->total.' '.FS_ALBARANES.' de cliente facturados.');
+         $this->opciones['fecha'] = $_REQUEST['fecha'];
          
          $this->total = 0;
-         $albaran_pro = new albaran_proveedor();
-         foreach($albaran_pro->all_ptefactura(0, 'ASC') as $alb)
+         if( isset($_REQUEST['ventas']) )
          {
-            $this->generar_factura_proveedor( array($alb) );
+            $albaran_cli = new albaran_cliente();
+            foreach($albaran_cli->all_ptefactura(0, 'ASC') as $alb)
+            {
+               $this->generar_factura_cliente( array($alb) );
+            }
+            $this->new_message($this->total.' '.FS_ALBARANES.' de cliente facturados.');
          }
-         $this->new_message($this->total.' '.FS_ALBARANES.' de proveedor facturados.');
+         else
+            $this->opciones['ventas'] = FALSE;
+         
+         $this->total = 0;
+         if( isset($_REQUEST['compras']) )
+         {
+            $albaran_pro = new albaran_proveedor();
+            foreach($albaran_pro->all_ptefactura(0, 'ASC') as $alb)
+            {
+               $this->generar_factura_proveedor( array($alb) );
+            }
+            $this->new_message($this->total.' '.FS_ALBARANES.' de proveedor facturados.');
+         }
+         else
+            $this->opciones['compras'] = FALSE;
       }
    }
    
@@ -88,6 +109,11 @@ class megafacturador extends fs_controller
       $factura->numero2 = $albaranes[0]->numero2;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
+      
+      if( $_REQUEST['fecha'] == 'albaran' )
+      {
+         $factura->fecha = $albaranes[0]->fecha;
+      }
       
       /// obtenemos los datos actuales del cliente, por si ha habido cambios
       $cliente = $this->cliente->get($albaranes[0]->codcliente);
@@ -259,6 +285,11 @@ class megafacturador extends fs_controller
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
       
+      if( $_REQUEST['fecha'] == 'albaran' )
+      {
+         $factura->fecha = $albaranes[0]->fecha;
+      }
+      
       /// obtenemos los datos actualizados del proveedor
       $proveedor = $this->proveedor->get($albaranes[0]->codproveedor);
       if($proveedor)
@@ -395,5 +426,31 @@ class megafacturador extends fs_controller
             $this->new_message($msg);
          }
       }
+   }
+   
+   public function pendientes_venta()
+   {
+      $total = 0;
+      
+      $data = $this->db->select("SELECT count(idalbaran) as total FROM albaranescli WHERE ptefactura = true;");
+      if($data)
+      {
+         $total = intval($data[0]['total']);
+      }
+      
+      return $total;
+   }
+   
+   public function pendientes_compra()
+   {
+      $total = 0;
+      
+      $data = $this->db->select("SELECT count(idalbaran) as total FROM albaranesprov WHERE ptefactura = true;");
+      if($data)
+      {
+         $total = intval($data[0]['total']);
+      }
+      
+      return $total;
    }
 }

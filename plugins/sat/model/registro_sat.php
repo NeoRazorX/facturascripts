@@ -237,7 +237,7 @@ class registro_sat extends fs_model
    
    public function delete()
    {
-      
+      return $this->db->exec("DELETE FROM registros_sat WHERE nsat = ".$this->var2str($this->nsat).";");
    }
    
    public function all()

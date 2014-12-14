@@ -229,7 +229,7 @@ class fs_mysql extends fs_db
          $sql = str_replace('without time zone', '', $sql);
          $sql = str_replace('now()', "'00:00:00'", $sql);
          $sql = str_replace('CURRENT_TIMESTAMP', "'00:00:00'", $sql);
-         $sql = str_replace('CURRENT_DATE', "'2013-01-01'", $sql);
+         $sql = str_replace('CURRENT_DATE', "'".Date('Y-m-d')."'", $sql);
          $sql = str_replace('::character varying', '', $sql);
          self::$history[] = $sql;
          self::$t_transactions++;
@@ -428,8 +428,8 @@ class fs_mysql extends fs_db
          $v2 = str_replace('now()', "'00:00:00'", $v2);
          $v1 = str_replace('CURRENT_TIMESTAMP', "'00:00:00'", $v1);
          $v2 = str_replace('CURRENT_TIMESTAMP', "'00:00:00'", $v2);
-         $v1 = str_replace('CURRENT_DATE', "'2013-01-01'", $v1);
-         $v2 = str_replace('CURRENT_DATE', "'2013-01-01'", $v2);
+         $v1 = str_replace('CURRENT_DATE', "'".Date('Y-m-d')."'", $v1);
+         $v2 = str_replace('CURRENT_DATE', "'".Date('Y-m-d')."'", $v2);
          $v1 = str_replace('::character varying', '', $v1);
          $v2 = str_replace('::character varying', '', $v2);
          $v1 = str_replace("'", '', $v1);

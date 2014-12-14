@@ -132,4 +132,10 @@ class admin_info extends fs_controller
    {
       return $this->db->list_tables();
    }
+   
+   public function get_fs_log()
+   {
+      $fslog = new fs_log();
+      return $fslog->all();
+   }
 }

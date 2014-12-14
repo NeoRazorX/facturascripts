@@ -10,10 +10,31 @@
    }
 </script>
 
+<div class="container-fluid" style="margin-top: 10px;">
+   <div class="row">
+      <div class="col-md-9">
+         <h2 style="margin-top: 0px;">Plugins</h2>
+      </div>
+      <div class="col-md-3">
+         <form class="form" action="https://www.facturascripts.com/store/" target="_blank">
+            <input type="hidden" name="post_type" value="product"/>
+            <div class="input-group">
+               <input type="text" name="s" class="form-control">
+               <span class="input-group-btn">
+                  <button class="btn btn-primary" type="button">
+                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                  </button>
+               </span>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       {if condition="$fsc->unstables"}
-      <li><a href="{$fsc->url()}">Plugins estables</a></li>
+      <li><a href="{$fsc->url()}">Estables</a></li>
       <li role="presentation" class="active">
          <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> &nbsp; Inestables
@@ -21,7 +42,7 @@
       </li>
       {else}
       <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Plugins estables</a>
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Estables</a>
       </li>
       <li>
          <a href="{$fsc->url()}&unstable=TRUE">
@@ -144,24 +165,6 @@
                </div>
             </div>
          </div>
-      </div>
-   </div>
-</div>
-
-<div class="container">
-   <div class="row">
-      <div class="col-md-12 text-center">
-         <h2 style="margin-top: 50px;">Invierte en tu negocio...</h2>
-         <p>
-            Cada negocio es un mundo, y no podemos hacer un software perfecto para ti,
-            pero podemos acercarnos lo máximo posible a esa perfeccción que buscas.
-            <b>Compra 1 hora de desarrollo</b> y elige a qué quieres que dediquemos el tiempo.
-            Piensa en eso que te haría ganar tanto tiempo, en esa característica que te haría
-            la vida más fácil y nos pondremos manos a la obra.
-         </p>
-         <a href="https://www.facturascripts.com/store/?product=1h-de-desarrollo" target="_blank" class="btn btn-success">
-            <span class="glyphicon glyphicon-time" aria-hidden="true"></span> &nbsp; 1h de desarrollo
-         </a>
       </div>
    </div>
 </div>

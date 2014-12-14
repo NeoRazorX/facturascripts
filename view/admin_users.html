@@ -56,10 +56,10 @@
                   <tr>
                      <th class="text-left">Nick</th>
                      <th class="text-left">Empleado</th>
-                     <th>Administrador</th>
-                     <th>IP</th>
+                     <th class="text-center">Administrador</th>
+                     <th class="text-left">IP</th>
                      <th class="text-left">Página de inicio</th>
-                     <th>Ejercicio</th>
+                     <th class="text-left">Ejercicio</th>
                      <th class="text-right">Último login</th>
                   </tr>
                </thead>
@@ -70,9 +70,9 @@
                   <td class="text-center">
                      {if condition="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
                   </td>
-                  <td class="text-center">{$value->last_ip}</td>
+                  <td>{$value->last_ip}</td>
                   <td>{$value->fs_page}</td>
-                  <td class="text-center">{$value->codejercicio}</td>
+                  <td>{$value->codejercicio}</td>
                   <td class="text-right">{$value->show_last_login()}</td>
                </tr>
                {/loop}
