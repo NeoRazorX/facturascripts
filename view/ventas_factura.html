@@ -299,14 +299,19 @@
             <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Factura simple
             </a>
-            
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Modelo carta
             </a>
-            
             <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=firma">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Factura con firma
             </a>
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='pdf'"}
+               <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" target="_blank" class="btn btn-block btn-info">
+                  <span class="glyphicon glyphicon-print"></span> &nbsp; {$value->text}
+               </a>
+               {/if}
+            {/loop}
          </div>
          <div class="modal-footer">
             <a href="{$fsc->url()}&updatedir=TRUE">Actualizar la dirección de la factura.</a>
