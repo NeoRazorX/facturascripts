@@ -307,7 +307,7 @@
             </a>
             {loop="$fsc->extensions"}
                {if condition="$value->type=='pdf'"}
-               <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" target="_blank" class="btn btn-block btn-info">
+               <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" target="_blank" class="btn btn-block btn-default">
                   <span class="glyphicon glyphicon-print"></span> &nbsp; {$value->text}
                </a>
                {/if}
