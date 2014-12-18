@@ -30,15 +30,17 @@ class informe_albaranes extends fs_controller
    protected function process()
    {
       /// Guardamos la extensión
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => NULL,
-          'type' => 'head',
-          'name' => 'chart.js',
-          'text' => '<script src="plugins/informes_y_charts/view/js/chartjs/Chart.min.js"></script>'
+      $fsext = new fs_extension(
+              array(
+                  'name' => 'chart.js',
+                  'page_from' => __CLASS__,
+                  'page_to' => NULL,
+                  'type' => 'head',
+                  'text' => '<script src="plugins/informes_y_charts/view/js/chartjs/Chart.min.js"></script>',
+                  'params' => ''
+              )
       );
-      $fsext = new fs_extension();
-      if( !$fsext->array_save($extension) )
+      if( !$fsext->save() )
       {
          $this->new_error_msg('Error al guardar la extensión.');
       }

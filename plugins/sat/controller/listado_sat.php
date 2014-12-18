@@ -391,15 +391,18 @@ class listado_sat extends fs_controller
    private function meter_extensiones()
    {
       /// añadimos la extensión para clientes
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'ventas_cliente',
-          'type' => 'button',
-          'name' => 'cliente_sat',
-          'text' => 'SAT'
+      $fsext0 = new fs_extension(
+              array(
+                  'name' => 'cliente_sat',
+                  'page_from' => __CLASS__,
+                  'page_to' => 'ventas_cliente',
+                  'type' => 'button',
+                  'text' => 'SAT',
+                  'params' => ''
+              )
       );
-      $fsext0 = new fs_extension();
-      if (!$fsext0->array_save($extension)) {
+      if( !$fsext0->save() )
+      {
          $this->new_error_msg('Imposible guardar los datos de la extensión.');
       }
    }

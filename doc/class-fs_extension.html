@@ -178,7 +178,7 @@ de un reemplazo completo.</p>
 		
 		
 
-		<b>Located at</b> <a href="source-class-fs_extension.html#20-208" title="Go to source code">fs_extension.php</a><br>
+		<b>Located at</b> <a href="source-class-fs_extension.html#20-147" title="Go to source code">fs_extension.php</a><br>
 	</div>
 
 
@@ -196,7 +196,7 @@ de un reemplazo completo.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-fs_extension.html#39-63" title="Go to source code">__construct</a>( <span><code><a href="class-fs_extension.html#$type">fs_extension::<var>$type</var></a></code> <var>$e</var> = <span class="php-keyword1">FALSE</span></span> )</code>
+		<code><a href="source-class-fs_extension.html#33-54" title="Go to source code">__construct</a>( <span><code><a href="class-fs_extension.html#$type">fs_extension::<var>$type</var></a></code> <var>$e</var> = <span class="php-keyword1">FALSE</span></span> )</code>
 
 		<div class="description short">
 			
@@ -232,7 +232,7 @@ de un reemplazo completo.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_install">#</a>
-		<code><a href="source-class-fs_extension.html#65-68" title="Go to source code">install</a>( )</code>
+		<code><a href="source-class-fs_extension.html#56-59" title="Go to source code">install</a>( )</code>
 
 		<div class="description short">
 			
@@ -267,36 +267,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-fs_extension.html#70-79" title="Go to source code">get</a>( <span>mixed <var>$id</var></span> )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="get_by" id="_get_by">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_get_by">#</a>
-		<code><a href="source-class-fs_extension.html#81-90" title="Go to source code">get_by</a>( <span>mixed <var>$from</var></span>, <span>mixed <var>$to</var></span> )</code>
+		<code><a href="source-class-fs_extension.html#61-70" title="Go to source code">get</a>( <span>mixed <var>$name</var></span>, <span>mixed <var>$from</var></span> )</code>
 
 		<div class="description short">
 			
@@ -325,7 +296,7 @@ tabla.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_exists">#</a>
-		<code><a href="source-class-fs_extension.html#92-100" title="Go to source code">exists</a>( )</code>
+		<code><a href="source-class-fs_extension.html#72-80" title="Go to source code">exists</a>( )</code>
 
 		<div class="description short">
 			
@@ -339,35 +310,6 @@ de datos.</p>
 <p>Esta función devuelve TRUE si los datos del objeto se encuentran en la base
 de datos.</p>
 
-
-
-
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="test" id="_test">
-
-		<td class="attributes"><code>
-			 public 
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_test">#</a>
-		<code><a href="source-class-fs_extension.html#102-105" title="Go to source code">test</a>( )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
 
 
 
@@ -389,7 +331,7 @@ de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-fs_extension.html#107-131" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-fs_extension.html#82-99" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			
@@ -424,7 +366,7 @@ objeto en la base de datos.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_delete">#</a>
-		<code><a href="source-class-fs_extension.html#133-136" title="Go to source code">delete</a>( )</code>
+		<code><a href="source-class-fs_extension.html#101-104" title="Go to source code">delete</a>( )</code>
 
 		<div class="description short">
 			
@@ -441,50 +383,6 @@ datos</p>
 
 
 
-
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="array_save" id="_array_save">
-
-		<td class="attributes"><code>
-			 public 
-			boolean
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_array_save">#</a>
-		<code><a href="source-class-fs_extension.html#138-165" title="Go to source code">array_save</a>( <span><code><a href="class-fs_extension.html#$type">fs_extension::<var>$type</var></a></code> <var>$array</var></span> )</code>
-
-		<div class="description short">
-			
-<p>Guarda o actualiza los datos de una estensión comparándolos con los datos
-del array que le pasas como parametro.</p>
-
-		</div>
-
-		<div class="description detailed hidden">
-			
-<p>Guarda o actualiza los datos de una estensión comparándolos con los datos
-del array que le pasas como parametro.</p>
-
-
-
-				<h4>Parameters</h4>
-				<div class="list"><dl>
-					<dt><var>$array</var></dt>
-					<dd><code><code><a href="class-fs_extension.html#$type">fs_extension::<var>$type</var></a></code></code><br>$array</dd>
-				</dl></div>
-
-				<h4>Returns</h4>
-				<div class="list">
-					<code>boolean</code><br>
-				</div>
 
 
 
@@ -503,7 +401,7 @@ del array que le pasas como parametro.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all_to">#</a>
-		<code><a href="source-class-fs_extension.html#167-179" title="Go to source code">all_to</a>( <span>mixed <var>$to</var></span> )</code>
+		<code><a href="source-class-fs_extension.html#106-118" title="Go to source code">all_to</a>( <span>mixed <var>$to</var></span> )</code>
 
 		<div class="description short">
 			
@@ -532,7 +430,7 @@ del array que le pasas como parametro.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all_4_type">#</a>
-		<code><a href="source-class-fs_extension.html#181-193" title="Go to source code">all_4_type</a>( <span>mixed <var>$tipo</var></span> )</code>
+		<code><a href="source-class-fs_extension.html#120-132" title="Go to source code">all_4_type</a>( <span>mixed <var>$tipo</var></span> )</code>
 
 		<div class="description short">
 			
@@ -561,7 +459,7 @@ del array que le pasas como parametro.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_all">#</a>
-		<code><a href="source-class-fs_extension.html#195-207" title="Go to source code">all</a>( )</code>
+		<code><a href="source-class-fs_extension.html#134-146" title="Go to source code">all</a>( )</code>
 
 		<div class="description short">
 			
@@ -618,56 +516,6 @@ del array que le pasas como parametro.</p>
 
 	<table class="summary" id="properties">
 	<caption>Properties summary</caption>
-	<tr data-order="from" id="$from">
-		<td class="attributes"><code>
-			public  
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-fs_extension.html#26" title="Go to source code"><var>$from</var></a>
-		</td>
-		<td class="value"><code></code></td>
-		<td class="description"><div>
-			<a href="#$from" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="id" id="$id">
-		<td class="attributes"><code>
-			public  
-			<code><a href="class-fs_extension.html#$type">fs_extension::<var>$type</var></a></code>
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-fs_extension.html#28-32" title="Go to source code"><var>$id</var></a>
-		</td>
-		<td class="value"><code></code></td>
-		<td class="description"><div>
-			<a href="#$id" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>Clave primaria.</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>Clave primaria.</p>
-
-
-			</div>
-		</div></td>
-	</tr>
 	<tr data-order="name" id="$name">
 		<td class="attributes"><code>
 			public  
@@ -675,7 +523,7 @@ del array que le pasas como parametro.</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_extension.html#33" title="Go to source code"><var>$name</var></a>
+				<a href="source-class-fs_extension.html#26" title="Go to source code"><var>$name</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
@@ -691,41 +539,18 @@ del array que le pasas como parametro.</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="plugin" id="$plugin">
+	<tr data-order="from" id="$from">
 		<td class="attributes"><code>
 			public  
 			mixed
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_extension.html#34" title="Go to source code"><var>$plugin</var></a>
+				<a href="source-class-fs_extension.html#27" title="Go to source code"><var>$from</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
-			<a href="#$plugin" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="text" id="$text">
-		<td class="attributes"><code>
-			public  
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-fs_extension.html#35" title="Go to source code"><var>$text</var></a>
-		</td>
-		<td class="value"><code></code></td>
-		<td class="description"><div>
-			<a href="#$text" class="anchor">#</a>
+			<a href="#$from" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -744,7 +569,7 @@ del array que le pasas como parametro.</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_extension.html#36" title="Go to source code"><var>$to</var></a>
+				<a href="source-class-fs_extension.html#28" title="Go to source code"><var>$to</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
@@ -767,11 +592,57 @@ del array que le pasas como parametro.</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-fs_extension.html#37" title="Go to source code"><var>$type</var></a>
+				<a href="source-class-fs_extension.html#29" title="Go to source code"><var>$type</var></a>
 		</td>
 		<td class="value"><code></code></td>
 		<td class="description"><div>
 			<a href="#$type" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="text" id="$text">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_extension.html#30" title="Go to source code"><var>$text</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$text" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="params" id="$params">
+		<td class="attributes"><code>
+			public  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-fs_extension.html#31" title="Go to source code"><var>$params</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$params" class="anchor">#</a>
 
 			<div class="description short">
 				

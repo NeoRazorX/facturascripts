@@ -1,0 +1,17 @@
+{include="header"}
+
+{if="$fsc->factura"}
+<div class="text-center">
+   <a href="{$fsc->factura->url()}" class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> &nbsp; Volver
+   </a>
+</div>
+{elseif="$fsc->albaran"}
+<div class="text-center">
+   <a href="{$fsc->albaran->url()}" class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> &nbsp; Volver
+   </a>
+</div>
+{/if}
+
+{include="footer"}

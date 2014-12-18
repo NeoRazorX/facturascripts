@@ -10,24 +10,11 @@
       $("#b_enviar").click(function(event) {
          event.preventDefault();
          $("#modal_enviar").modal('show');
+         document.enviar_email.email.focus();
       });
-      $("#b_eliminar, #b_eliminar2").click(function(event) {
+      $("#b_eliminar").click(function(event) {
          event.preventDefault();
          $("#modal_eliminar").modal('show');
-      });
-      $("#b_lineas").click(function(event) {
-         event.preventDefault();
-         $("#li_lineas_iva").removeClass('active');
-         $("#div_lineas_iva").hide();
-         $("#li_lineas").addClass('active');
-         $("#div_lineas").show();
-      });
-      $("#b_lineas_iva").click(function(event) {
-         event.preventDefault();
-         $("#li_lineas").removeClass('active');
-         $("#div_lineas").hide();
-         $("#li_lineas_iva").addClass('active');
-         $("#div_lineas_iva").show();
       });
       {if condition="$fsc->factura->totalrecargo==0"}
       $(".recargo").hide();
@@ -67,7 +54,7 @@
                {/if}
             </div>
             
-            <div class="btn-group hidden-xs">
+            <div class="btn-group">
                {if condition="$fsc->factura->pagada"}
                <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">
                   <span class="glyphicon glyphicon-ok"></span>
@@ -98,42 +85,9 @@
             {/loop}
             </div>
          </div>
-         <div class="col-md-4 col-sm-4 hidden-xs text-right">
+         <div class="col-md-4 col-sm-4 text-right">
             <div class="btn-group">
                <a id="b_eliminar" class="btn btn-sm btn-danger" href="#">
-                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
-               </a>
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
-               </button>
-            </div>
-         </div>
-      </div>
-      <div class="row hidden-lg hidden-md hidden-sm">
-         <div class="col-xs-12 text-right" style="margin-top: 10px;">
-            <div class="btn-group">
-               {if condition="$fsc->factura->pagada"}
-               <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">
-                  <span class="glyphicon glyphicon-ok"></span>
-                  &nbsp; Pagada <span class="caret"></span>
-               </button>
-               {else}
-               <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown">
-                  <span class="glyphicon glyphicon-remove"></span>
-                  &nbsp; Sin pagar <span class="caret"></span>
-               </button>
-               {/if}
-               <ul class="dropdown-menu" role="menu">
-                  {if condition="!$fsc->factura->pagada"}
-                  <li><a href="{$fsc->url()}&pagada=TRUE"><span class="glyphicon glyphicon-ok"></span> &nbsp; Pagada</a></li>
-                  {else}
-                  <li><a href="{$fsc->url()}&pagada=FALSE"><span class="glyphicon glyphicon-remove"></span> &nbsp; Sin pagar</a></li>
-                  {/if}
-               </ul>
-            </div>
-            
-            <div class="btn-group">
-               <a id="b_eliminar2" class="btn btn-sm btn-danger" href="#">
                   <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </a>
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
@@ -189,91 +143,108 @@
       </div>
    </div>
    
-   <ul class="nav nav-tabs" role="tablist">
-      <li id="li_lineas" class="active">
-         <a href="#" id="b_lineas">Líneas</a>
-      </li>
-      <li id="li_lineas_iva">
-         <a href="#" id="b_lineas_iva">Impuestos</a>
-      </li>
-   </ul>
-   
-   <div class="table-responsive" id="div_lineas">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th align="left"><span class="text-capitalize">{#FS_ALBARAN#}</span></th>
-               <th class="text-left">Artículo</th>
-               <th class="text-right">Cantidad</th>
-               <th class="text-right">PVP</th>
-               <th class="text-right">Dto</th>
-               <th class="text-right">Neto</th>
-               <th class="text-right">IVA</th>
-               <th class="recargo text-right">RE</th>
-               <th class="irpf text-right">IRPF</th>
-               <th class="text-right">Total</th>
-            </tr>
-         </thead>
-         {loop="$fsc->factura->get_lineas()"}
-         <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
-            <td>
-               {if condition="$value->idalbaran"}
-               <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
-               {$value->albaran_numero()}
-               {else}
-               -
-               {/if}
-            </td>
-            <td>
-               <a href="{$value->articulo_url()}">{$value->referencia}</a>
-               {$value->descripcion}
-            </td>
-            <td class="text-right">{$value->cantidad}</td>
-            <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
-            <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
-            <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
-            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td class="recargo text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
-            <td class="irpf text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
-            <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
-         </tr>
+   <div role="tabpanel">
+      <ul class="nav nav-tabs" role="tablist">
+         <li role="presentation" class="active">
+            <a href="#lineas_f" aria-controls="lineas_f" role="tab" data-toggle="tab">Líneas</a>
+         </li>
+         <li role="presentation">
+            <a href="#lineas_iva" aria-controls="lineas_iva" role="tab" data-toggle="tab">Impuestos</a>
+         </li>
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='tab'"}
+            <li role="presentation">
+               <a href="#ext_{$value->name}" aria-controls="ext_{$value->name}" role="tab" data-toggle="tab">{$value->text}</a>
+            </li>
+            {/if}
          {/loop}
-         <tr>
-            <td colspan="5"></td>
-            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
-            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
-            <td class="recargo text-right"><b>{$fsc->show_precio($fsc->factura->totalrecargo, $fsc->factura->coddivisa)}</b></td>
-            <td class="irpf text-right"><b>-{$fsc->show_precio($fsc->factura->totalirpf, $fsc->factura->coddivisa)}</b></td>
-            <td class="text-right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
-         </tr>
-      </table>
-   </div>
-   
-   <div class="table-responsive" id="div_lineas_iva" style="display: none;">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th class="text-left">Impuesto</th>
-               <th class="text-right">Neto</th>
-               <th class="text-right">IVA</th>
-               <th class="text-right">Total IVA</th>
-               <th class="text-right">RE</th>
-               <th class="text-right">Total RE</th>
-               <th class="text-right">Total</th>
-            </tr>
-         </thead>
-         {loop="$fsc->factura->get_lineas_iva()"}
-         <tr>
-            <td>{$value->codimpuesto}</td>
-            <td class="text-right">{$fsc->show_precio($value->neto, $fsc->factura->coddivisa)}</td>
-            <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
-            <td class="text-right">{$fsc->show_precio($value->totaliva, $fsc->factura->coddivisa)}</td>
-            <td class="text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
-            <td class="text-right">{$fsc->show_precio($value->totalrecargo, $fsc->factura->coddivisa)}</td>
-            <td class="text-right">{$fsc->show_precio($value->totallinea, $fsc->factura->coddivisa)}</td>
-         </tr>
+      </ul>
+      <div class="tab-content">
+         <div role="tabpanel" class="tab-pane active" id="lineas_f">
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left"><span class="text-capitalize">{#FS_ALBARAN#}</span></th>
+                        <th class="text-left">Artículo</th>
+                        <th class="text-right">Cantidad</th>
+                        <th class="text-right">PVP</th>
+                        <th class="text-right">Dto</th>
+                        <th class="text-right">Neto</th>
+                        <th class="text-right">IVA</th>
+                        <th class="recargo text-right">RE</th>
+                        <th class="irpf text-right">IRPF</th>
+                        <th class="text-right">Total</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->factura->get_lineas()"}
+                  <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
+                     <td>
+                        {if condition="$value->idalbaran"}
+                        <a href="{$value->albaran_url()}">{$value->albaran_codigo()}</a>
+                        {$value->albaran_numero()}
+                        {else}
+                        -
+                        {/if}
+                     </td>
+                     <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+                     <td class="text-right">{$value->cantidad}</td>
+                     <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->factura->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->factura->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+                     <td class="recargo text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
+                     <td class="irpf text-right">{$fsc->show_numero($value->irpf, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->factura->coddivisa)}</td>
+                  </tr>
+                  {/loop}
+                  <tr>
+                     <td colspan="5"></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->factura->neto, $fsc->factura->coddivisa)}</b></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->factura->totaliva, $fsc->factura->coddivisa)}</b></td>
+                     <td class="recargo text-right"><b>{$fsc->show_precio($fsc->factura->totalrecargo, $fsc->factura->coddivisa)}</b></td>
+                     <td class="irpf text-right"><b>-{$fsc->show_precio($fsc->factura->totalirpf, $fsc->factura->coddivisa)}</b></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->factura->total, $fsc->factura->coddivisa)}</b></td>
+                  </tr>
+               </table>
+            </div>
+         </div>
+         <div role="tabpanel" class="tab-pane" id="lineas_iva">
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Impuesto</th>
+                        <th class="text-right">Neto</th>
+                        <th class="text-right">IVA</th>
+                        <th class="text-right">Total IVA</th>
+                        <th class="text-right">RE</th>
+                        <th class="text-right">Total RE</th>
+                        <th class="text-right">Total</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->factura->get_lineas_iva()"}
+                  <tr>
+                     <td>{$value->codimpuesto}</td>
+                     <td class="text-right">{$fsc->show_precio($value->neto, $fsc->factura->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->totaliva, $fsc->factura->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->recargo, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->totalrecargo, $fsc->factura->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_precio($value->totallinea, $fsc->factura->coddivisa)}</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+         </div>
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='tab'"}
+            <div role="tabpanel" class="tab-pane" id="ext_{$value->name}">
+               <iframe src="index.php?page={$value->from}&id={$fsc->factura->idfactura}" width="100%" height="600" frameborder="0"></iframe>
+            </div>
+            {/if}
          {/loop}
-      </table>
+      </div>
    </div>
    
    <div class="container-fluid">
@@ -296,18 +267,9 @@
             <h4 class="modal-title">Imprimir factura</h4>
          </div>
          <div class="modal-body">
-            <a class="btn btn-block btn-primary" target="_blank" href="{$fsc->url()}&imprimir=simple">
-               <span class="glyphicon glyphicon-print"></span> &nbsp; Factura simple
-            </a>
-            <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=carta">
-               <span class="glyphicon glyphicon-print"></span> &nbsp; Modelo carta
-            </a>
-            <a class="btn btn-block btn-default" target="_blank" href="{$fsc->url()}&imprimir=firma">
-               <span class="glyphicon glyphicon-print"></span> &nbsp; Factura con firma
-            </a>
             {loop="$fsc->extensions"}
                {if condition="$value->type=='pdf'"}
-               <a href="index.php?page={$value->from}&id={$fsc->factura->idfactura}" target="_blank" class="btn btn-block btn-default">
+               <a href="index.php?page={$value->from}{$value->params}&id={$fsc->factura->idfactura}" target="_blank" class="btn btn-block btn-default">
                   <span class="glyphicon glyphicon-print"></span> &nbsp; {$value->text}
                </a>
                {/if}
@@ -320,8 +282,8 @@
    </div>
 </div>
 
-<form class="form" role="form" name="enviar_email" action ="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_enviar">
+<form class="form" role="form" name="enviar_email" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_enviar">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -331,7 +293,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Email del cliente:
-                  <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off" autofocus />
+                  <input class="form-control" type="text" name="email" value="{$fsc->cliente->email}" autocomplete="off"/>
                </div>
                <div class="form-group">
                   Mensaje:
@@ -340,9 +302,13 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                   <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar
-                </button>
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='email'"}
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='index.php?page={$value->from}{$value->params}&id={$fsc->factura->idfactura}';this.form.submit();">
+                  <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar {$value->text}
+               </button>
+               {/if}
+            {/loop}
             </div>
          </div>
       </div>

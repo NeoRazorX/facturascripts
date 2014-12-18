@@ -195,31 +195,34 @@ class compras_facturas extends fs_controller
       /// añadimos las extensiones para proveedores, agentes y artículos
       $extensiones = array(
           array(
-              'from' => __CLASS__,
-              'to' => 'compras_proveedor',
-              'type' => 'button',
               'name' => 'facturas_proveedor',
-              'text' => 'Facturas'
+              'page_from' => __CLASS__,
+              'page_to' => 'compras_proveedor',
+              'type' => 'button',
+              'text' => 'Facturas',
+              'params' => ''
           ),
           array(
-              'from' => __CLASS__,
-              'to' => 'admin_agente',
-              'type' => 'button',
               'name' => 'facturas_agente',
-              'text' => 'Facturas de proveedor'
+              'page_from' => __CLASS__,
+              'page_to' => 'admin_agente',
+              'type' => 'button',
+              'text' => 'Facturas de proveedor',
+              'params' => ''
           ),
           array(
-              'from' => __CLASS__,
-              'to' => 'ventas_articulo',
-              'type' => 'button',
               'name' => 'facturas_articulo',
-              'text' => 'Facturas de proveedor'
+              'page_from' => __CLASS__,
+              'page_to' => 'ventas_articulo',
+              'type' => 'button',
+              'text' => 'Facturas de proveedor',
+              'params' => ''
           )
       );
-      $fsext0 = new fs_extension();
       foreach($extensiones as $ext)
       {
-         if( !$fsext0->array_save($ext) )
+         $fsext0 = new fs_extension($ext);
+         if( !$fsext0->save() )
          {
             $this->new_error_msg('Imposible guardar los datos de la extensión '.$ext['name'].'.');
          }

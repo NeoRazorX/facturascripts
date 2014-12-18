@@ -273,14 +273,16 @@ class factura_detallada extends fs_controller {
    
    private function share_extensions()
    {
-      $fsext = new fs_extension();
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'ventas_factura',
-          'type' => 'pdf',
-          'name' => 'factura_detallada',
-          'text' => 'Factura detallada'
+      $fsext = new fs_extension(
+              array(
+                  'name' => 'factura_detallada',
+                  'page_from' => __CLASS__,
+                  'page_to' => 'ventas_factura',
+                  'type' => 'pdf',
+                  'text' => 'Factura detallada',
+                  'params' => ''
+              )
       );
-      $fsext->array_save($extension);
+      $fsext->save();
    }
 }

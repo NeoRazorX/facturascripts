@@ -59,14 +59,14 @@ if( $db->connect() )
                }
             }
             else
-               echo 'ERROR';
+               echo 'ERROR 3';
          }
       }
       else
-         echo 'ERROR';
+         echo 'ERROR 2';
    }
    else
-      echo 'ERROR';
+      echo 'ERROR 1';
 }
 else
-   echo 'ERROR';
+   echo 'ERROR 0';

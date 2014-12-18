@@ -198,31 +198,34 @@ class ventas_anteriores extends fs_controller
       /// añadimos las extensiones para clientes, agentes y artículos
       $extensiones = array(
           array(
-              'from' => __CLASS__,
-              'to' => 'ventas_cliente',
-              'type' => 'button',
               'name' => 'presupuestos_cliente',
-              'text' => ucfirst(FS_PRESUPUESTOS)
+              'page_from' => __CLASS__,
+              'page_to' => 'ventas_cliente',
+              'type' => 'button',
+              'text' => ucfirst(FS_PRESUPUESTOS),
+              'params' => ''
           ),
           array(
-              'from' => __CLASS__,
-              'to' => 'admin_agente',
-              'type' => 'button',
               'name' => 'presupuestos_agente',
-              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente'
+              'page_from' => __CLASS__,
+              'page_to' => 'admin_agente',
+              'type' => 'button',
+              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente',
+              'params' => ''
           ),
           array(
-              'from' => __CLASS__,
-              'to' => 'ventas_articulo',
-              'type' => 'button',
               'name' => 'presupuestos_articulo',
-              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente'
+              'page_from' => __CLASS__,
+              'page_to' => 'ventas_articulo',
+              'type' => 'button',
+              'text' => ucfirst(FS_PRESUPUESTOS).' de cliente',
+              'params' => ''
           ),
       );
-      $fsext0 = new fs_extension();
       foreach($extensiones as $ext)
       {
-         if( !$fsext0->array_save($ext) )
+         $fsext0 = new fs_extension($ext);
+         if( !$fsext0->save() )
          {
             $this->new_error_msg('Imposible guardar los datos de la extensión '.$ext['name'].'.');
          }

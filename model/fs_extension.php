@@ -23,42 +23,33 @@
  */
 class fs_extension extends fs_model
 {
-   public $from;
-   
-   /**
-    * Clave primaria.
-    * @var type 
-    */
-   public $id;
    public $name;
-   public $plugin;
-   public $text;
+   public $from;
    public $to;
    public $type;
+   public $text;
+   public $params;
    
    public function __construct($e = FALSE)
    {
-      parent::__construct('fs_extensions');
-      
+      parent::__construct('fs_extensions2');
       if($e)
       {
-         $this->from = $e['page_from'];
-         $this->id = intval($e['id']);
          $this->name = $e['name'];
-         $this->plugin = $e['plugin'];
-         $this->text = $e['text'];
+         $this->from = $e['page_from'];
          $this->to = $e['page_to'];
          $this->type = $e['type'];
+         $this->text = $e['text'];
+         $this->params = $e['params'];
       }
       else
       {
-         $this->from = NULL;
-         $this->id = NULL;
          $this->name = NULL;
-         $this->plugin = NULL;
-         $this->text = NULL;
+         $this->from = NULL;
          $this->to = NULL;
          $this->type = NULL;
+         $this->text = NULL;
+         $this->params = NULL;
       }
    }
    
@@ -67,20 +58,9 @@ class fs_extension extends fs_model
       return '';
    }
    
-   public function get($id)
+   public function get($name, $from)
    {
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($id).";");
-      if($data)
-      {
-         return new fs_extension($data[0]);
-      }
-      else
-         return FALSE;
-   }
-   
-   public function get_by($from, $to)
-   {
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_from = ".$this->var2str($from)." AND page_to = ".$this->var2str($to).";");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name)." AND page_from = ".$this->var2str($from).";");
       if($data)
       {
          return new fs_extension($data[0]);
@@ -91,84 +71,43 @@ class fs_extension extends fs_model
    
    public function exists()
    {
-      if( is_null($this->id) )
+      if( is_null($this->name) )
       {
          return FALSE;
       }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
-   }
-   
-   public function test()
-   {
-      return TRUE;
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name)." AND page_from = ".$this->var2str($this->from).";");
    }
    
    public function save()
    {
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET plugin = ".$this->var2str($this->plugin).",
-                 page_from = ".$this->var2str($this->from).", page_to = ".$this->var2str($this->to).",
-                 type = ".$this->var2str($this->type).", text = ".$this->var2str($this->text).",
-                 name = ".$this->var2str($this->name)." WHERE id = ".$this->var2str($this->id).";";
-         return $this->db->exec($sql);
+         $sql = "UPDATE ".$this->table_name." SET page_to = ".$this->var2str($this->to).",
+            type = ".$this->var2str($this->type).", text = ".$this->var2str($this->text).",
+            params = ".$this->var2str($this->params)." WHERE name = ".$this->var2str($this->name).
+                 " AND page_from = ".$this->var2str($this->from).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (plugin,page_from,page_to,type,text,name) VALUES
-                 (".$this->var2str($this->plugin).",".$this->var2str($this->from).",".$this->var2str($this->to).",
-                 ".$this->var2str($this->type).",".$this->var2str($this->text).",".$this->var2str($this->name).");";
-         
-         if( $this->db->exec($sql) )
-         {
-            $this->id = $this->db->lastval();
-            return TRUE;
-         }
-         else
-            return FALSE;
+         $sql = "INSERT INTO ".$this->table_name." (name,page_from,page_to,type,text,params) VALUES
+            (".$this->var2str($this->name).",".$this->var2str($this->from).",".$this->var2str($this->to).",
+            ".$this->var2str($this->type).",".$this->var2str($this->text).",".$this->var2str($this->params).");";
       }
+      
+      return $this->db->exec($sql);
    }
    
    public function delete()
    {
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
-   }
-   
-   /**
-    * Guarda o actualiza los datos de una estensión comparándolos con los datos
-    * del array que le pasas como parametro.
-    * @param type $array
-    * @return boolean
-    */
-   public function array_save($array)
-   {
-      $fsext0 = new fs_extension();
-      $fsext0->from = $array['from'];
-      $fsext0->to = $array['to'];
-      $fsext0->type = $array['type'];
-      $fsext0->name = $array['name'];
-      
-      if( isset($array['plugin']) )
-         $fsext0->plugin = $array['plugin'];
-      
-      $fsext0->text = $array['text'];
-      
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_from = ".$this->var2str($array['from']).
-              " AND page_to = ".$this->var2str($array['to'])." AND name = ".$this->var2str($array['name']).";");
-      if($data)
-      {
-         $fsext0->id = $this->intval($data[0]['id']);
-      }
-      
-      return $fsext0->save();
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name)." AND page_from = ".$this->var2str($this->from).";");
    }
    
    public function all_to($to)
    {
       $elist = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_to = ".$this->var2str($to)." ORDER BY page_from ASC;");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_to = ".$this->var2str($to)." ORDER BY name ASC;");
       if($data)
       {
          foreach($data as $d)
@@ -182,7 +121,7 @@ class fs_extension extends fs_model
    {
       $elist = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE type = ".$this->var2str($tipo)." ORDER BY page_from ASC;");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE type = ".$this->var2str($tipo)." ORDER BY name ASC;");
       if($data)
       {
          foreach($data as $d)

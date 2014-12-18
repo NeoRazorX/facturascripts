@@ -391,6 +391,7 @@ class tpv_recambios extends fs_controller
                   /// actualizamos la caja
                   $this->caja->dinero_fin += $albaran->total;
                   $this->caja->tickets += 1;
+                  $this->caja->ip = $_SERVER['REMOTE_ADDR'];
                   if( !$this->caja->save() )
                      $this->new_error_msg("¡Imposible actualizar la caja!");
                }

@@ -26,32 +26,32 @@ class dashboard extends fs_controller
    
    protected function process()
    {
-      /// Guardamos la extensión
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'dashboard',
-          'type' => 'head',
-          'name' => 'docs.min.css',
-          'text' => '<link href="plugins/dashboard/view/css/docs.min.css" rel="stylesheet" type="text/css" />'
+      /// Guardamos las extensiones
+      $extensiones = array(
+          array(
+              'name' => 'docs.min.css',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'head',
+              'text' => '<link href="plugins/dashboard/view/css/docs.min.css" rel="stylesheet" type="text/css" />',
+              'params' => ''
+          ),
+          array(
+              'name' => 'carousel.css',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'head',
+              'text' => '<link href="plugins/dashboard/view/css/carousel.css" rel="stylesheet" type="text/css" />',
+              'params' => ''
+          )
       );
-      $fsext = new fs_extension();
-      if( !$fsext->array_save($extension) )
+      foreach($extensiones as $ext)
       {
-         $this->new_error_msg('Error al guardar la extensión.');
-      }
-      
-      /// Guardamos la extensión
-      $extension = array(
-          'from' => __CLASS__,
-          'to' => 'dashboard',
-          'type' => 'head',
-          'name' => 'carousel.css',
-          'text' => '<link href="plugins/dashboard/view/css/carousel.css" rel="stylesheet" type="text/css" />'
-      );
-      $fsext = new fs_extension();
-      if( !$fsext->array_save($extension) )
-      {
-         $this->new_error_msg('Error al guardar la extensión.');
+         $fsext0 = new fs_extension($ext);
+         if( !$fsext0->save() )
+         {
+            $this->new_error_msg('Imposible guardar los datos de la extensión '.$ext['name'].'.');
+         }
       }
    }
    
