@@ -21,7 +21,7 @@
       </tr>
       {loop="$fsc->resultado"}
       <tr>
-         <td><a class="link" href="{$fsc->url()}&cliente={$value->codcliente}">{$value->codcliente}</a></td>
+         <td><a href="{$fsc->url()}&cliente={$value->codcliente}">{$value->codcliente}</a></td>
          <td>{$value->nombre}</td>
          <td>{$value->cifnif}</td>
          <td>{$value->observaciones_resume()}</td>

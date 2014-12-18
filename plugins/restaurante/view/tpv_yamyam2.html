@@ -244,7 +244,7 @@
                               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}" size="10"/>
                            </div>
                            <div class="form-group">
-                              <a class="link" href="{$fsc->cliente->url()}">Cliente:</a>
+                              <a href="{$fsc->cliente->url()}">Cliente:</a>
                               <select name="cliente" class="form-control">
                                  {loop="$fsc->cliente->all_full()"}
                                     {if condition="$value->is_default()"}
@@ -258,7 +258,7 @@
                               </select>
                            </div>
                            <div class="form-group">
-                              <a class="link" href="{$fsc->almacen->url()}">Almacén</a>:
+                              <a href="{$fsc->almacen->url()}">Almacén</a>:
                               <select name="almacen" class="form-control">
                                  {loop="$fsc->almacen->all()"}
                                     {if condition="$value->is_default()"}
@@ -270,7 +270,7 @@
                               </select>
                            </div>
                            <div class="form-group">
-                              <a class="link" href="{$fsc->serie->url()}">Serie</a>:
+                              <a href="{$fsc->serie->url()}">Serie</a>:
                                  <select name="serie" class="form-control">
                                     {loop="$fsc->serie->all()"}
                                        {if condition="$value->is_default()"}
@@ -322,7 +322,7 @@
                <div class="well well-sm">
                   <div class="row">
                      <div class="col-lg-6 col-md-6 col-sm-6 text-left">
-                        Atiende: <a class="link" href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+                        Atiende: <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
                      </div>
                      <div class="col-lg-6 col-md-6 col-sm-6 text-right" id="tpv_total">
                         {$fsc->show_precio(0)}

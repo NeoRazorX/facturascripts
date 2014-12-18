@@ -128,7 +128,7 @@
    <h4>Paquetes:</h4>
    <ul class="horizontal">
       {loop="$fsc->paquete->all()"}
-      <li><a class="link" href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a href="{$value->url()}">{$value->referencia}</a></li>
       {else}
       <li>No hay paquetes creados. Pulsa el botón <b>Nuevo</b> para crear uno.</li>
       {/loop}
@@ -146,7 +146,7 @@
    </h4>
    <ul class="horizontal">
       {loop="$fsc->cache_paquete->articulos"}
-      <li><a class="link" href="{$value->url()}">{$value->referencia}</a></li>
+      <li><a href="{$value->url()}">{$value->referencia}</a></li>
       {else}
       <li>No hay artículos en la cesta. Los paquetes se crean a partir de los artículos que hay en la cesta.</li>
       {/loop}

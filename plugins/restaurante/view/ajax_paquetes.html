@@ -21,7 +21,7 @@
       </tr>
       {loop="$fsc->results"}
       <tr>
-         <td><a class="link" href="{$fsc->cache_paquete->add_url($value->referencia)}">{$value->referencia}</a></td>
+         <td><a href="{$fsc->cache_paquete->add_url($value->referencia)}">{$value->referencia}</a></td>
          <td>{$value->descripcion}</td>
          <td class="text-right">
             <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
