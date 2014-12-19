@@ -13,6 +13,7 @@
    <columna>
       <nombre>page_from</nombre>
       <tipo>character varying(30)</tipo>
+      <nulo>NO</nulo>
    </columna>
    <columna>
       <nombre>page_to</nombre>
