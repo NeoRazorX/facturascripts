@@ -48,7 +48,9 @@ function require_model($name)
             if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {
                if( file_exists('plugins/'.$f) )
+               {
                   $GLOBALS['plugins'][] = $f;
+               }
                else
                   unlink('tmp/enabled_plugins/'.$f);
             }
@@ -57,7 +59,9 @@ function require_model($name)
    }
    
    if( !isset($GLOBALS['models']) )
+   {
       $GLOBALS['models'] = array();
+   }
    
    if( !in_array($name, $GLOBALS['models']) )
    {
@@ -68,15 +72,17 @@ function require_model($name)
          if( file_exists('plugins/'.$plugin.'/model/'.$name) )
          {
             require_once 'plugins/'.$plugin.'/model/'.$name;
+            $GLOBALS['models'][] = $name;
             $found = TRUE;
             break;
          }
       }
       
-      if( !$found )
+      if( !$found AND file_exists('model/'.$name) )
+      {
          require_once 'model/'.$name;
-      
-      $GLOBALS['models'][] = $name;
+         $GLOBALS['models'][] = $name;
+      }
    }
 }
 
