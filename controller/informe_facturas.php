@@ -45,13 +45,189 @@ class informe_facturas extends fs_controller
       if( isset($_POST['listado']) )
       {
          if($_POST['listado'] == 'facturascli')
-            $this->listar_facturas_cli();
+         {
+            if($_POST['generar'] == 'pdf')
+            {
+               $this->pdf_facturas_cli();
+            }
+            else
+               $this->csv_facturas_cli();
+         }
          else
-            $this->listar_facturas_prov();
+         {
+            if($_POST['generar'] == 'pdf')
+            {
+               $this->pdf_facturas_prov();
+            }
+            else
+               $this->csv_facturas_prov();
+         }
       }
    }
    
-   private function listar_facturas_cli()
+   private function csv_facturas_cli()
+   {
+      $this->template = FALSE;
+      
+      header("content-type:application/csv;charset=UTF-8");
+      echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
+      
+      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      if($facturas)
+      {
+         foreach($facturas as $fac)
+         {
+            $linea = array(
+                'serie' => $fac->codserie,
+                'factura' => $fac->numero,
+                'asiento' => '-',
+                'fecha' => $fac->fecha,
+                'subcuenta' => '-',
+                'descripcion' => $fac->nombrecliente,
+                'cifnif' => $fac->cifnif,
+                'base' => 0,
+                'iva' => 0,
+                'totaliva' => 0,
+                'totalrecargo' => 0,
+                'totalirpf' => '-',
+                'total' => 0
+            );
+            
+            $asiento = $fac->get_asiento();
+            if($asiento)
+            {
+               $linea['asiento'] = $asiento->numero;
+               $partidas = $asiento->get_partidas();
+               if($partidas)
+               {
+                  $linea['subcuenta'] = $partidas[0]->codsubcuenta;
+               }
+            }
+            
+            if($fac->totalirpf != 0)
+            {
+               $linea['totalirpf'] = $fac->totalirpf;
+               $linea['total'] = $fac->total;
+               echo join(',', $linea)."\n";
+               $linea['totalirpf'] = '-';
+            }
+            
+            $linivas = $fac->get_lineas_iva();
+            if($linivas)
+            {
+               foreach($linivas as $liva)
+               {
+                  /// acumulamos la base
+                  if( !isset($impuestos[$liva->iva]['base']) )
+                  {
+                     $impuestos[$liva->iva]['base'] = $liva->neto;
+                  }
+                  else
+                     $impuestos[$liva->iva]['base'] += $liva->neto;
+                     
+                  /// acumulamos el iva
+                  if( !isset($impuestos[$liva->iva]['iva']) )
+                  {
+                     $impuestos[$liva->iva]['iva'] = $liva->totaliva;
+                  }
+                  else
+                     $impuestos[$liva->iva]['iva'] += $liva->totaliva;
+                     
+                  /// completamos y añadimos la línea al CSV
+                  $linea['base'] = $liva->neto;
+                  $linea['iva'] = $liva->iva;
+                  $linea['totaliva'] = $liva->totaliva;
+                  $linea['totalrecargo'] = $liva->totalrecargo;
+                  $linea['total'] = $liva->totallinea;
+                  echo join(',', $linea)."\n";
+               }
+            }
+         }
+      }
+   }
+   
+   private function csv_facturas_prov()
+   {
+      $this->template = FALSE;
+      
+      header("content-type:application/csv;charset=UTF-8");
+      echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
+      
+      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      if($facturas)
+      {
+         foreach($facturas as $fac)
+         {
+            $linea = array(
+                'serie' => $fac->codserie,
+                'factura' => $fac->numero,
+                'asiento' => '-',
+                'fecha' => $fac->fecha,
+                'subcuenta' => '-',
+                'descripcion' => $fac->nombre,
+                'cifnif' => $fac->cifnif,
+                'base' => 0,
+                'iva' => 0,
+                'totaliva' => 0,
+                'totalrecargo' => 0,
+                'totalirpf' => '-',
+                'total' => 0
+            );
+            
+            $asiento = $fac->get_asiento();
+            if($asiento)
+            {
+               $linea['asiento'] = $asiento->numero;
+               $partidas = $asiento->get_partidas();
+               if($partidas)
+               {
+                  $linea['subcuenta'] = $partidas[0]->codsubcuenta;
+               }
+            }
+            
+            if($fac->totalirpf != 0)
+            {
+               $linea['totalirpf'] = $fac->totalirpf;
+               $linea['total'] = $fac->total;
+               echo join(',', $linea)."\n";
+               $linea['totalirpf'] = '-';
+            }
+            
+            $linivas = $fac->get_lineas_iva();
+            if($linivas)
+            {
+               foreach($linivas as $liva)
+               {
+                  /// acumulamos la base
+                  if( !isset($impuestos[$liva->iva]['base']) )
+                  {
+                     $impuestos[$liva->iva]['base'] = $liva->neto;
+                  }
+                  else
+                     $impuestos[$liva->iva]['base'] += $liva->neto;
+                  
+                  /// acumulamos el iva
+                  if( !isset($impuestos[$liva->iva]['iva']) )
+                  {
+                     $impuestos[$liva->iva]['iva'] = $liva->totaliva;
+                  }
+                  else
+                     $impuestos[$liva->iva]['iva'] += $liva->totaliva;
+                  
+                  /// completamos y añadimos la línea al CSV
+                  $linea['base'] = $liva->neto;
+                  $linea['iva'] = $liva->iva;
+                  $linea['totaliva'] = $liva->totaliva;
+                  $linea['totalrecargo'] = $liva->totalrecargo;
+                  $linea['total'] = $liva->totallinea;
+                  echo join(',', $linea)."\n";
+               }
+            }
+         }
+      }
+   }
+   
+   private function pdf_facturas_cli()
    {
       /// desactivamos el motor de plantillas
       $this->template = FALSE;
@@ -124,13 +300,16 @@ class informe_facturas extends fs_controller
                   $linea['asiento'] = $asiento->numero;
                   $partidas = $asiento->get_partidas();
                   if($partidas)
+                  {
                      $linea['subcuenta'] = $partidas[0]->codsubcuenta;
+                  }
                }
                
                if($facturas[$linea_actual]->totalirpf != 0)
                {
                   $linea['totalirpf'] = $this->show_numero($facturas[$linea_actual]->totalirpf);
                   $linea['total'] = $this->show_numero($facturas[$linea_actual]->total);
+                  /// añade la línea al PDF
                   $pdf_doc->add_table_row($linea);
                   $linea['totalirpf'] = '-';
                }
@@ -242,7 +421,7 @@ class informe_facturas extends fs_controller
       $pdf_doc->show();
    }
    
-   private function listar_facturas_prov()
+   private function pdf_facturas_prov()
    {
       /// desactivamos el motor de plantillas
       $this->template = FALSE;
@@ -315,13 +494,16 @@ class informe_facturas extends fs_controller
                   $linea['asiento'] = $asiento->numero;
                   $partidas = $asiento->get_partidas();
                   if($partidas)
+                  {
                      $linea['subcuenta'] = $partidas[0]->codsubcuenta;
+                  }
                }
                
                if($facturas[$linea_actual]->totalirpf != 0)
                {
                   $linea['totalirpf'] = $this->show_numero($facturas[$linea_actual]->totalirpf);
                   $linea['total'] = $this->show_numero($facturas[$linea_actual]->total);
+                  /// añade la línea al PDF
                   $pdf_doc->add_table_row($linea);
                   $linea['totalirpf'] = '-';
                }
