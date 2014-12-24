@@ -138,7 +138,7 @@
    </columna>
    <columna>
       <nombre>pie_factura</nombre>
-      <tipo>character varying(250)</tipo>
+      <tipo>text</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'plugins/factura_detallada/fpdf17/fpdf.php';
+require_once 'plugins/astroradio/fpdf17/fpdf.php';
 
 class PDF_MC_Table extends FPDF
 {	

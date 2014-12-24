@@ -70,6 +70,7 @@ class informe_facturas extends fs_controller
       $this->template = FALSE;
       
       header("content-type:application/csv;charset=UTF-8");
+      header("Content-Disposition: attachment; filename=\"facturas_cli.csv\"");
       echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
       
       $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
@@ -89,7 +90,7 @@ class informe_facturas extends fs_controller
                 'iva' => 0,
                 'totaliva' => 0,
                 'totalrecargo' => 0,
-                'totalirpf' => '-',
+                'totalirpf' => 0,
                 'total' => 0
             );
             
@@ -108,8 +109,8 @@ class informe_facturas extends fs_controller
             {
                $linea['totalirpf'] = $fac->totalirpf;
                $linea['total'] = $fac->total;
-               echo join(',', $linea)."\n";
-               $linea['totalirpf'] = '-';
+               echo '"'.join('","', $linea)."\"\n";
+               $linea['totalirpf'] = 0;
             }
             
             $linivas = $fac->get_lineas_iva();
@@ -139,7 +140,7 @@ class informe_facturas extends fs_controller
                   $linea['totaliva'] = $liva->totaliva;
                   $linea['totalrecargo'] = $liva->totalrecargo;
                   $linea['total'] = $liva->totallinea;
-                  echo join(',', $linea)."\n";
+                  echo '"'.join('","', $linea)."\"\n";
                }
             }
          }
@@ -151,6 +152,7 @@ class informe_facturas extends fs_controller
       $this->template = FALSE;
       
       header("content-type:application/csv;charset=UTF-8");
+      header("Content-Disposition: attachment; filename=\"facturas_prov.csv\"");
       echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
       
       $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
@@ -170,7 +172,7 @@ class informe_facturas extends fs_controller
                 'iva' => 0,
                 'totaliva' => 0,
                 'totalrecargo' => 0,
-                'totalirpf' => '-',
+                'totalirpf' => 0,
                 'total' => 0
             );
             
@@ -189,8 +191,8 @@ class informe_facturas extends fs_controller
             {
                $linea['totalirpf'] = $fac->totalirpf;
                $linea['total'] = $fac->total;
-               echo join(',', $linea)."\n";
-               $linea['totalirpf'] = '-';
+               echo '"'.join('","', $linea)."\"\n";
+               $linea['totalirpf'] = 0;
             }
             
             $linivas = $fac->get_lineas_iva();
@@ -220,7 +222,7 @@ class informe_facturas extends fs_controller
                   $linea['totaliva'] = $liva->totaliva;
                   $linea['totalrecargo'] = $liva->totalrecargo;
                   $linea['total'] = $liva->totallinea;
-                  echo join(',', $linea)."\n";
+                  echo '"'.join('","', $linea)."\"\n";
                }
             }
          }

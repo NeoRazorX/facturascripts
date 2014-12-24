@@ -23,20 +23,22 @@
          </tr>
       </thead>
       {loop="$fsc->results"}
-      <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<=0"} class="bg-warning"{else} class="bg-success"{/if}>
-         <td>
-            <a href="#" onclick="get_precios('{$value->referencia}')" title="más detalles"><span class="glyphicon glyphicon-eye-open"></span></a> &nbsp;
-            <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
-               {$value->referencia}</a> {$value->descripcion}
-         </td>
-         <td class="text-right">
-            <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span>
-         </td>
-         <td class="text-right">
-            <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
-         </td>
-         <td class="text-right">{$value->stockfis}</td>
-      </tr>
+         {if="$value->sevende"}
+         <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<=0"} class="bg-warning"{else} class="bg-success"{/if}>
+            <td>
+               <a href="#" onclick="get_precios('{$value->referencia}')" title="más detalles"><span class="glyphicon glyphicon-eye-open"></span></a> &nbsp;
+               <a href="#" onclick="add_articulo('{$value->referencia}','{$value->get_descripcion_64()}','{$value->pvp}','0','{$value->get_iva()}')">
+                  {$value->referencia}</a> {$value->descripcion}
+            </td>
+            <td class="text-right">
+               <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span>
+            </td>
+            <td class="text-right">
+               <span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span>
+            </td>
+            <td class="text-right">{$value->stockfis}</td>
+         </tr>
+         {/if}
       {/loop}
    </table>
 </div>

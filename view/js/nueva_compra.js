@@ -425,11 +425,15 @@ function buscar_articulos()
                {
                   tr_aux = "<tr class=\"bg-info\">";
                }
-               items.push(tr_aux+"<td><a href=\"#\" onclick=\"get_precios('"+val.referencia+"')\" title=\"más detalles\"><span class=\"glyphicon glyphicon-eye-open\"></span></a>\n\
-                  &nbsp; <a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+val.referencia+'</a> '+val.descripcion+"</td>\n\
-                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.costemedio+"','0','"+val.codimpuesto+"')\">"+show_precio(val.costemedio)+"</a></td>\n\
-                  <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+show_precio(val.pvp)+"</a></td>\n\
-                  <td class=\"text-right\">"+val.stockfis+"</td></tr>");
+               
+               if(val.secompra)
+               {
+                  items.push(tr_aux+"<td><a href=\"#\" onclick=\"get_precios('"+val.referencia+"')\" title=\"más detalles\"><span class=\"glyphicon glyphicon-eye-open\"></span></a>\n\
+                     &nbsp; <a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+val.referencia+'</a> '+val.descripcion+"</td>\n\
+                     <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.costemedio+"','0','"+val.codimpuesto+"')\">"+show_precio(val.costemedio)+"</a></td>\n\
+                     <td class=\"text-right\"><a href=\"#\" onclick=\"add_articulo('"+val.referencia+"','"+val.descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\">"+show_precio(val.pvp)+"</a></td>\n\
+                     <td class=\"text-right\">"+val.stockfis+"</td></tr>");
+               }
                
                if(val.query == document.f_buscar_articulos.query.value)
                {

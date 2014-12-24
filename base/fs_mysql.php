@@ -348,10 +348,17 @@ class fs_mysql extends fs_db
             {
                if($col2['column_name'] == $col['nombre'])
                {
+                  if($col2['data_type'] != $col['tipo'] AND !in_array($col['tipo'], array('serial')))
+                  {
+                     $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].';';
+                  }
+                  
                   if( !$this->compare_defaults($col2['column_default'], $col['defecto']) )
                   {
                      if( is_null($col['defecto']) )
+                     {
                         $consulta .= 'ALTER TABLE '.$table_name.' ALTER `'.$col['nombre'].'` DROP DEFAULT;';
+                     }
                      else
                      {
                         if( strtolower(substr($col['defecto'], 0, 9)) == "nextval('" ) /// nextval es para postgresql
@@ -361,7 +368,9 @@ class fs_mysql extends fs_db
                               $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col2['column_name'].'` '.$col2['data_type'];
                               
                               if($col2['is_nullable'] == 'YES')
+                              {
                                  $consulta .= ' NULL AUTO_INCREMENT;';
+                              }
                               else
                                  $consulta .= ' NOT NULL AUTO_INCREMENT;';
                            }
@@ -374,7 +383,9 @@ class fs_mysql extends fs_db
                   if($col2['is_nullable'] != $col['nulo'])
                   {
                      if($col['nulo'] == 'YES')
+                     {
                         $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NULL;';
+                     }
                      else
                         $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NOT NULL;';
                   }
@@ -389,20 +400,28 @@ class fs_mysql extends fs_db
             $consulta .= 'ALTER TABLE '.$table_name.' ADD `'.$col['nombre'].'` ';
             
             if($col['tipo'] == 'serial')
+            {
                $consulta .= '`'.$col['nombre'].'` INT NOT NULL AUTO_INCREMENT;';
+            }
             else
             {
                $consulta .= $col['tipo'];
                
                if($col['nulo'] == 'NO')
+               {
                   $consulta .= " NOT NULL";
+               }
                else
                   $consulta .= " NULL";
                
                if($col['defecto'])
+               {
                   $consulta .= " DEFAULT ".$col['defecto'].";";
+               }
                else if($col['nulo'] == 'YES')
+               {
                   $consulta .= " DEFAULT NULL;";
+               }
                else
                   $consulta .= ';';
             }

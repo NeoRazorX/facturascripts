@@ -250,10 +250,17 @@ class fs_postgresql extends fs_db
             {
                if($col2['column_name'] == $col['nombre'])
                {
+                  if($col2['data_type'] != $col['tipo'] AND !in_array($col['tipo'], array('serial')))
+                  {
+                     $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" TYPE '.$col['tipo'].';';
+                  }
+                  
                   if($col2['column_default'] != $col['defecto'])
                   {
                      if( is_null($col['defecto']) )
+                     {
                         $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP DEFAULT;';
+                     }
                      else
                      {
                         $this->default2check_sequence($table_name, $col['defecto'], $col['nombre']);
@@ -264,7 +271,9 @@ class fs_postgresql extends fs_db
                   if($col2['is_nullable'] != $col['nulo'])
                   {
                      if($col['nulo'] == 'YES')
+                     {
                         $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" DROP NOT NULL;';
+                     }
                      else
                         $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" SET NOT NULL;';
                   }
@@ -279,10 +288,14 @@ class fs_postgresql extends fs_db
             $consulta .= 'ALTER TABLE '.$table_name.' ADD COLUMN "'.$col['nombre'].'" '.$col['tipo'];
             
             if($col['defecto'])
+            {
                $consulta .= ' DEFAULT '.$col['defecto'];
+            }
             
             if($col['nulo'] == 'NO')
+            {
                $consulta .= ' NOT NULL';
+            }
             
             $consulta .= ';';
          }
