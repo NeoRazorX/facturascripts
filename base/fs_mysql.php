@@ -348,7 +348,7 @@ class fs_mysql extends fs_db
             {
                if($col2['column_name'] == $col['nombre'])
                {
-                  if($col2['data_type'] != $col['tipo'] AND !in_array($col['tipo'], array('serial')))
+                  if( $this->compare_data_types($col2['data_type'], $col['tipo']) )
                   {
                      $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].';';
                   }
@@ -429,6 +429,38 @@ class fs_mysql extends fs_db
       }
       
       return $consulta;
+   }
+   
+   private function compare_data_types($v1, $v2)
+   {
+      if( strtolower($v2) == 'serial')
+      {
+         return FALSE;
+      }
+      else if( substr($v1, 0, 7) == 'varchar' AND substr($v2, 0, 17) == 'character varying' )
+      {
+         return FALSE;
+      }
+      else if($v1 == 'tinyint(1)' AND $v2 == 'boolean')
+      {
+         return FALSE;
+      }
+      else if( substr($v1, 0, 3) == 'int' AND $v2 == 'integer')
+      {
+         return FALSE;
+      }
+      else if( substr($v1, 0, 6) == 'double' AND $v2 == 'double precision')
+      {
+         return FALSE;
+      }
+      else if( substr($v1, 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
+      {
+         return FALSE;
+      }
+      else if($v1 != $v2)
+      {
+         return TRUE;
+      }
    }
    
    private function compare_defaults($v1, $v2)

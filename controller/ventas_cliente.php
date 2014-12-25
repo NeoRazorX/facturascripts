@@ -45,6 +45,7 @@ class ventas_cliente extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->ppage = $this->page->get('ventas_clientes');
       $this->agente = new agente();
       $this->cuenta_banco = new cuenta_banco_cliente();
@@ -181,7 +182,6 @@ class ventas_cliente extends fs_controller
       if($this->cliente)
       {
          $this->page->title = $this->cliente->codcliente;
-         $this->buttons[] = new fs_button_img('b_eliminar', 'Eliminar', 'trash.png', '#', TRUE);
       }
       else
          $this->new_error_msg("¡Cliente no encontrado!");
@@ -190,9 +190,13 @@ class ventas_cliente extends fs_controller
    public function url()
    {
       if( !isset($this->cliente) )
+      {
          return parent::url();
+      }
       else if($this->cliente)
+      {
          return $this->cliente->url();
+      }
       else
          return $this->ppage->url();
    }

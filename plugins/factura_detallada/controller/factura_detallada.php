@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'plugins/astroradio/fpdf17/fs_fpdf.php';
-define('FPDF_FONTPATH', 'plugins/astroradio/fpdf17/font/');
+require_once 'plugins/factura_detallada/fpdf17/fs_fpdf.php';
+define('FPDF_FONTPATH', 'plugins/factura_detallada/fpdf17/font/');
 
 require_once 'base/fs_pdf.php';
 require_model('cliente.php');

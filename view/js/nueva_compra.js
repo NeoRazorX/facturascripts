@@ -343,7 +343,7 @@ function add_articulo(ref,desc,pvp,dto,codimpuesto)
    $("#nuevo_articulo").hide();
    $("#modal_articulos").modal('hide');
    
-   $("#pvp_"+(numlineas-1)).focus();
+   $("#pvp_"+(numlineas-1)).select();
 }
 
 function get_precios(ref)

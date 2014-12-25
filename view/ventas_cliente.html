@@ -68,6 +68,27 @@
    });
 </script>
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-2">
+         <a href="{$fsc->url()}" class="btn btn-sm btn-default" title="Recarga la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+         <a href="{$fsc->ppage->url()}" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Clientes
+         </a>
+      </div>
+      <div class="col-md-8 text-center">
+         <h2 style="margin-top: 0px;">Editar cliente {$fsc->cliente->codcliente}</h2>
+      </div>
+      <div class="col-md-2 text-right">
+         <a href="#" id="b_eliminar" class="btn btn-sm btn-danger">
+            <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+         </a>
+      </div>
+   </div>
+</div>
+
 {if condition="isset($_GET['stats'])"}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">

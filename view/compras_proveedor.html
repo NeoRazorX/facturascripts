@@ -68,6 +68,27 @@
    });
 </script>
 
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-2">
+         <a href="{$fsc->url()}" class="btn btn-sm btn-default" title="Recarga la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+         <a href="{$fsc->ppage->url()}" class="btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Proveedores
+         </a>
+      </div>
+      <div class="col-md-8 text-center">
+         <h2 style="margin-top: 0px;">Editar proveedor {$fsc->proveedor->codproveedor}</h2>
+      </div>
+      <div class="col-md-2 text-right">
+         <a href="#" id="b_eliminar" class="btn btn-sm btn-danger">
+            <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+         </a>
+      </div>
+   </div>
+</div>
+
 {if condition="isset($_GET['stats'])"}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -104,20 +125,16 @@
       <div class="col-lg-2 col-md-2 col-sm-3">
          <div class="list-group">
             <a id="b_generales" href="#" class="list-group-item active">
-               <span class="glyphicon glyphicon-dashboard"></span>
-               &nbsp; Datos generales
+               <span class="glyphicon glyphicon-dashboard"></span> &nbsp; Datos generales
             </a>
             <a id="b_facturacion" href="#facturacion" class="list-group-item">
-               <span class="glyphicon glyphicon-euro"></span>
-               &nbsp; Facturación
+               <span class="glyphicon glyphicon-euro"></span> &nbsp; Facturación
             </a>
             <a id="b_direcciones" href="#direcciones" class="list-group-item">
-               <span class="glyphicon glyphicon-road"></span>
-               &nbsp; Direcciones
+               <span class="glyphicon glyphicon-road"></span> &nbsp; Direcciones
             </a>
             <a id="b_subcuentas" href="#subcuentas" class="list-group-item">
-               <span class="glyphicon glyphicon-credit-card"></span>
-               &nbsp; Subcuentas
+               <span class="glyphicon glyphicon-credit-card"></span> &nbsp; Subcuentas
             </a>
             {loop="$fsc->extensions"}
                {if condition="$value->type=='button'"}
@@ -127,8 +144,7 @@
                {/if}
             {/loop}
             <a id="b_stats" href="{$fsc->url()}&stats=TRUE#stats" class="list-group-item">
-               <span class="glyphicon glyphicon-stats"></span>
-               &nbsp; Estadísticas
+               <span class="glyphicon glyphicon-stats"></span> &nbsp; Estadísticas
             </a>
          </div>
       </div>
