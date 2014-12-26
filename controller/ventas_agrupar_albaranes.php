@@ -33,6 +33,7 @@ class ventas_agrupar_albaranes extends fs_controller
    public $albaran;
    public $cliente;
    public $desde;
+   private $forma_pago;
    public $hasta;
    public $neto;
    public $observaciones;
@@ -50,6 +51,7 @@ class ventas_agrupar_albaranes extends fs_controller
       $this->ppage = $this->page->get('ventas_albaranes');
       $this->albaran = new albaran_cliente();
       $this->cliente = new cliente();
+      $this->forma_pago = new forma_pago();
       $this->serie = new serie();
       $this->neto = 0;
       $this->total = 0;
@@ -74,9 +76,7 @@ class ventas_agrupar_albaranes extends fs_controller
       {
          $this->save_codcliente($_POST['cliente']);
          
-         $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'],
-                 $_POST['desde'], $_POST['hasta'], $_POST['serie'], $_POST['observaciones']);
-         
+         $this->resultados = $this->albaran->search_from_cliente($_POST['cliente'], $_POST['desde'], $_POST['hasta'], $_POST['serie'], $_POST['observaciones']);
          if($this->resultados)
          {
             foreach($this->resultados as $alb)
@@ -171,6 +171,16 @@ class ventas_agrupar_albaranes extends fs_controller
       $factura->numero2 = $albaranes[0]->numero2;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
+      
+      /// comprobamos la forma de pago para saber si hay que marcar la factura como pagada
+      $formapago = $this->forma_pago->get($factura->codpago);
+      if($formapago)
+      {
+         if($formapago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
+      }
       
       /// obtenemos los datos actuales del cliente, por si ha habido cambios
       $cliente = $this->cliente->get($albaranes[0]->codcliente);

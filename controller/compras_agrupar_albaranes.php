@@ -32,6 +32,7 @@ class compras_agrupar_albaranes extends fs_controller
 {
    public $albaran;
    public $desde;
+   private $forma_pago;
    public $hasta;
    public $proveedor;
    public $resultados;
@@ -48,6 +49,7 @@ class compras_agrupar_albaranes extends fs_controller
    {
       $this->ppage = $this->page->get('compras_albaranes');
       $this->albaran = new albaran_proveedor();
+      $this->forma_pago = new forma_pago();
       $this->proveedor = new proveedor();
       $this->serie = new serie();
       $this->neto = 0;
@@ -69,9 +71,7 @@ class compras_agrupar_albaranes extends fs_controller
       {
          $this->save_codproveedor($_POST['proveedor']);
          
-         $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'],
-                 $_POST['desde'], $_POST['hasta'], $_POST['serie']);
-         
+         $this->resultados = $this->albaran->search_from_proveedor($_POST['proveedor'], $_POST['desde'], $_POST['hasta'], $_POST['serie']);
          if($this->resultados)
          {
             foreach($this->resultados as $alb)
@@ -166,6 +166,16 @@ class compras_agrupar_albaranes extends fs_controller
       $factura->numproveedor = $albaranes[0]->numproveedor;
       $factura->observaciones = $albaranes[0]->observaciones;
       $factura->recfinanciero = $albaranes[0]->recfinanciero;
+      
+      /// comprobamos la forma de pago para saber si hay que marcar la factura como pagada
+      $formapago = $this->forma_pago->get($factura->codpago);
+      if($formapago)
+      {
+         if($formapago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
+      }
       
       /// obtenemos los datos actualizados del proveedor
       $proveedor = $this->proveedor->get($albaranes[0]->codproveedor);

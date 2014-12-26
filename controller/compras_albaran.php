@@ -24,6 +24,7 @@ require_model('asiento_factura.php');
 require_model('ejercicio.php');
 require_model('factura_proveedor.php');
 require_model('familia.php');
+require_model('forma_pago.php');
 require_model('impuesto.php');
 require_model('partida.php');
 require_model('proveedor.php');
@@ -373,6 +374,17 @@ class compras_albaran extends fs_controller
       $factura->totaliva = $this->albaran->totaliva;
       $factura->totalrecargo = $this->albaran->totalrecargo;
       $factura->codagente = $this->albaran->codagente;
+      
+      /// comprobamos la forma de pago para saber si hay que marcar la factura como pagada
+      $forma0 = new forma_pago();
+      $formapago = $forma0->get($factura->codpago);
+      if($formapago)
+      {
+         if($formapago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
+      }
       
       /// asignamos la mejor fecha posible, pero dentro del ejercicio
       $eje0 = $this->ejercicio->get($factura->codejercicio);

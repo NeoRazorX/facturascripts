@@ -34,6 +34,7 @@ require_model('subcuenta.php');
 class megafacturador extends fs_controller
 {
    private $cliente;
+   private $forma_pago;
    private $ejercicio;
    private $proveedor;
    public $opciones;
@@ -113,6 +114,16 @@ class megafacturador extends fs_controller
       if( $_REQUEST['fecha'] == 'albaran' )
       {
          $factura->fecha = $albaranes[0]->fecha;
+      }
+      
+      /// comprobamos la forma de pago para saber si hay que marcar la factura como pagada
+      $formapago = $this->forma_pago->get($factura->codpago);
+      if($formapago)
+      {
+         if($formapago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
       }
       
       /// obtenemos los datos actuales del cliente, por si ha habido cambios

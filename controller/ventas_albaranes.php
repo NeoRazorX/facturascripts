@@ -30,6 +30,7 @@ class ventas_albaranes extends fs_controller
    public $cliente;
    public $lineas;
    public $offset;
+   public $pendientes;
    public $resultados;
 
    public function __construct()
@@ -46,7 +47,23 @@ class ventas_albaranes extends fs_controller
       
       $this->offset = 0;
       if( isset($_GET['offset']) )
+      {
          $this->offset = intval($_GET['offset']);
+      }
+      
+      /// Usamos una cookie para recordar si el usuario quiere ver los pendientes
+      $this->pendientes = isset($_COOKIE['ventas_alb_ptes']);
+      if( isset($_GET['ptefactura']) )
+      {
+         $this->pendientes = ($_GET['ptefactura'] == 'TRUE');
+         
+         if($this->pendientes)
+         {
+            setcookie('ventas_alb_ptes', 'TRUE', time()+FS_COOKIES_EXPIRE);
+         }
+         else
+            setcookie('ventas_alb_ptes', FALSE, time()-FS_COOKIES_EXPIRE);
+      }
       
       if( isset($_POST['buscar_lineas']) )
       {
@@ -91,7 +108,7 @@ class ventas_albaranes extends fs_controller
          {
             $this->resultados = $albaran->search($this->query, $this->offset);
          }
-         else if( isset($_GET['ptefactura']) )
+         else if($this->pendientes)
          {
             $this->resultados = $albaran->all_ptefactura($this->offset);
          }
@@ -105,7 +122,7 @@ class ventas_albaranes extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptefactura']) )
+      if( isset($this->pendientes) )
       {
          $extra = '&ptefactura=TRUE';
       }
@@ -139,7 +156,7 @@ class ventas_albaranes extends fs_controller
       $url = '';
       $extra = '';
       
-      if( isset($_GET['ptefactura']) )
+      if( isset($this->pendientes) )
       {
          $extra = '&ptefactura=TRUE';
       }

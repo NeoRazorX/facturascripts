@@ -45,7 +45,7 @@ class forma_pago extends fs_model
       {
          $this->codpago = NULL;
          $this->descripcion = '';
-         $this->genrecibos = '';
+         $this->genrecibos = 'Emitidos';
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
       }
@@ -54,8 +54,7 @@ class forma_pago extends fs_model
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            ('CONT','CONTADO','Emitidos',NULL,FALSE);";
+      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES ('CONT','CONTADO','Emitidos',NULL,FALSE);";
    }
    
    public function url()
@@ -82,8 +81,7 @@ class forma_pago extends fs_model
       if( is_null($this->codpago) )
          return FALSE;
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE codpago = ".$this->var2str($this->codpago).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($this->codpago).";");
    }
    
    public function test()

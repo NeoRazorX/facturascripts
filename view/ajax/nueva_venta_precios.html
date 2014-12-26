@@ -145,7 +145,7 @@
       {loop="$fsc->articulo->get_lineas_albaran_prov(0, 10)"}
       <tr>
          <td>{$value->show_fecha()}</td>
-         <td class="text-center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+         <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
          <td class="text-right">
             <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($value->pvpunitario)}
@@ -187,7 +187,7 @@
       {loop="$fsc->articulo->get_lineas_albaran_cli(0, 10)"}
       <tr>
          <td>{$value->show_fecha()}</td>
-         <td class="text-center"><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
+         <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a></td>
          <td class="text-right">
             <a href="#" onclick="add_articulo('{$fsc->articulo->referencia}',Base64.decode('{$fsc->articulo->get_descripcion_64()}'),'{$value->pvpunitario}','{$value->dtopor}','{$fsc->articulo->codimpuesto}')">
                {$fsc->show_precio($value->pvpunitario)}

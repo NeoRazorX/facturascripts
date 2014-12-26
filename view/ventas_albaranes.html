@@ -99,8 +99,12 @@
 {/if}
 
 <ul class="nav nav-tabs" role="tablist">
-   <li{if condition="!isset($_GET['ptefactura'])"} class="active"{/if}><a href="{$fsc->url()}">Todos los {#FS_ALBARANES#}</a></li>
-   <li{if condition="isset($_GET['ptefactura'])"} class="active"{/if}><a href="{$fsc->url()}&ptefactura=TRUE">Pendientes</a></li>
+   <li{if condition="!$fsc->pendientes"} class="active"{/if}>
+      <a href="{$fsc->url()}&ptefactura=FALSE">Todos los {#FS_ALBARANES#}</a>
+   </li>
+   <li{if condition="$fsc->pendientes"} class="active"{/if}>
+      <a href="{$fsc->url()}&ptefactura=TRUE">Pendientes</a>
+   </li>
 </ul>
 
 <div class="table-responsive">
@@ -143,8 +147,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -152,8 +155,7 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}

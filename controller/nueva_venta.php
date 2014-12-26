@@ -547,6 +547,11 @@ class nueva_venta extends fs_controller
          $factura->irpf = $serie->irpf;
          $factura->porcomision = $this->agente->porcomision;
          
+         if($forma_pago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
+         
          foreach($cliente->get_direcciones() as $d)
          {
             if($d->domfacturacion)

@@ -487,6 +487,11 @@ class nueva_compra extends fs_controller
          $factura->observaciones = $_POST['observaciones'];
          $factura->irpf = $serie->irpf;
          
+         if($forma_pago->genrecibos == 'Pagados')
+         {
+            $factura->pagada = TRUE;
+         }
+         
          if( $factura->save() )
          {
             $art0 = new articulo();

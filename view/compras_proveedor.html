@@ -70,7 +70,7 @@
 
 <div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
    <div class="row">
-      <div class="col-md-2">
+      <div class="col-sm-3">
          <a href="{$fsc->url()}" class="btn btn-sm btn-default" title="Recarga la página">
             <span class="glyphicon glyphicon-refresh"></span>
          </a>
@@ -78,10 +78,10 @@
             <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Proveedores
          </a>
       </div>
-      <div class="col-md-8 text-center">
+      <div class="col-sm-7 text-center">
          <h2 style="margin-top: 0px;">Editar proveedor {$fsc->proveedor->codproveedor}</h2>
       </div>
-      <div class="col-md-2 text-right">
+      <div class="col-sm-2 text-right">
          <a href="#" id="b_eliminar" class="btn btn-sm btn-danger">
             <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
          </a>
@@ -329,7 +329,7 @@
                         </select>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
-                        {#FS_PROVINCIA#}:
+                        <span class="text-capitalize">{#FS_PROVINCIA#}</span>:
                         <input class="form-control" type="text" name="provincia" value="{$value->provincia}"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
