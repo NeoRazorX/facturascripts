@@ -1,14 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
-   function delete_impuesto(url)
+   function delete_impuesto(cod)
    {
-      if( confirm("¿Realmente desea eliminar este impuesto?") )
-         window.location.href = url;
+      if( confirm("¿Realmente desea eliminar el impuesto "+cod+"?") )
+         window.location.href = '{$fsc->url()}&delete='+cod;
    }
-   $(document).ready(function() {
-      
-   });
 </script>
 
 <div class="table-responsive">
@@ -40,7 +37,7 @@
             </td>
             <td class="text-right">
                <div class="btn-group">
-                  <button class="btn btn-sm btn-danger" type="button" title="Eliminar" onclick="delete_impuesto('{$fsc->url()}&delete={$value->codimpuesto}')">
+                  <button class="btn btn-sm btn-danger" type="button" title="Eliminar" onclick="delete_impuesto('{$value->codimpuesto}')">
                      <span class="glyphicon glyphicon-trash"></span>
                   </button>
                   <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">

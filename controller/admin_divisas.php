@@ -35,56 +35,40 @@ class admin_divisas extends fs_controller
       if( isset($_POST['coddivisa']) )
       {
          $div0 = $this->divisa->get($_POST['coddivisa']);
-         if($div0)
-         {
-            $this->new_error_msg('La divisa ya existe.');
-         }
-         else
+         if(!$div0)
          {
             $div0 = new divisa();
             $div0->coddivisa = $_POST['coddivisa'];
-            $div0->simbolo = $_POST['simbolo'];
-            $div0->descripcion = $_POST['descripcion'];
-            $div0->codiso = $_POST['codiso'];
-            $div0->tasaconv = floatval($_POST['tasaconv']);
-            if( $div0->save() )
-               $this->new_message('Divisa '.$div0->coddivisa.' guardada correctamente.');
-            else
-               $this->new_error_msg('Error al guardar la divisa.');
          }
-      }
-      else
-      {
-         for($i = 0; isset($_POST['coddivisa_'.$i]); $i++)
+         $div0->simbolo = $_POST['simbolo'];
+         $div0->descripcion = $_POST['descripcion'];
+         $div0->codiso = $_POST['codiso'];
+         $div0->tasaconv = floatval($_POST['tasaconv']);
+         if( $div0->save() )
          {
-            $div0 = $this->divisa->get($_POST['coddivisa_'.$i]);
-            if($div0)
+            $this->new_message('Divisa '.$div0->coddivisa.' guardada correctamente.');
+         }
+         else
+            $this->new_error_msg('Error al guardar la divisa.');
+      }
+      else if( isset($_GET['delete']) )
+      {
+         $div0 = $this->divisa->get($_GET['delete']);
+         if($div0)
+         {
+            if(FS_DEMO)
             {
-               if( isset($_POST['delete_'.$i]) )
-               {
-                  if(FS_DEMO)
-                  {
-                     $this->new_error_msg('En el modo demo no puedes eliminar divisas.
-                        Otro usuario podría necesitarlas.');
-                  }
-                  else if( $div0->delete() )
-                     $this->new_message('Divisa '.$div0->coddivisa.' eliminada correctamente.');
-                  else
-                     $this->new_error_msg('Error al eliminar la divisa '.$div0->coddivisa.'.');
-               }
-               else
-               {
-                  $div0->simbolo = $_POST['simbolo_'.$i];
-                  $div0->descripcion = $_POST['descripcion_'.$i];
-                  $div0->codiso = $_POST['codiso_'.$i];
-                  $div0->tasaconv = floatval($_POST['tasaconv_'.$i]);
-                  if( !$div0->save() )
-                     $this->new_error_msg('Error al guardar la divisa.');
-               }
+               $this->new_error_msg('En el modo demo no puedes eliminar divisas. Otro usuario podría necesitarlas.');
+            }
+            else if( $div0->delete() )
+            {
+               $this->new_message('Divisa '.$div0->coddivisa.' eliminada correctamente.');
             }
             else
-               $this->new_error_msg('Divisa '.$_POST['coddivisa_'.$i].' no encontrada.');
+               $this->new_error_msg('Error al eliminar la divisa '.$div0->coddivisa.'.');
          }
+         else
+            $this->new_error_msg('Divisa no encontrada.');
       }
    }
 }

@@ -1,139 +1,84 @@
 {include="header"}
 
 <script type="text/javascript">
-   function fs_marcar_todo()
+   function eliminar_divisa(cod)
    {
-      var i = 0;
-      while( $("#delete_"+i).length > 0 )
-      {
-         $("#delete_"+i).prop('checked', true);
-         i++;
-      }
+      if( confirm("¿Realmente desea eliminar la divisa "+cod+"?") )
+         window.location.href = '{$fsc->url()}&delete='+cod;
    }
-   function fs_marcar_nada()
-   {
-      var i = 0;
-      while( $("#delete_"+i).length > 0 )
-      {
-         $("#delete_"+i).prop('checked', false);
-         i++;
-      }
-   }
-   $(document).ready(function() {
-      $("#b_nueva_divisa, #b_nueva_divisa2").click(function(event) {
-         event.preventDefault();
-         $('#modal_nueva_divisa').modal('show');
-         document.f_nueva_divisa.coddivisa.focus();
-      });
-   });
 </script>
 
-<div class="modal" id="modal_nueva_divisa">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <form name="f_nueva_divisa" action="{$fsc->url()}" method="post" class="form" role="form">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nueva divisa</h4>
-            </div>
-            <div class="modal-body">
-               <div class="form-group">
-                  Código:
-                  <input class="form-control" type="text" name="coddivisa" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Símbolo:
-                  <input class="form-control" type="text" name="simbolo" value="?" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Descripción:
-                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Código ISO:
-                  <input class="form-control" type="text" name="codiso" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Tasa de conversión:
-                  <input class="form-control" type="text" name="tasaconv" value="1" autocomplete="off"/>
-               </div>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                 <span class="glyphicon glyphicon-floppy-disk"></span>
-                 &nbsp; Guardar
-              </button>
-            </div>
-         </form>
-      </div>
-   </div>
-</div>
-
-<form action="{$fsc->url()}" method="post" class="form">
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th>Eliminar</th>
-               <th class="text-left">Código</th>
-               <th class="text-left">Símbolo</th>
-               <th class="text-left">Descripción</th>
-               <th class="text-left">Código ISO</th>
-               <th class="text-left">Tasa de conversión</th>
-            </tr>
-         </thead>
-         {loop="$fsc->divisa->all()"}
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
          <tr>
-            <td class="text-center">
-               <input type="checkbox" id="delete_{$counter}" name="delete_{$counter}" value="TRUE"/>
+            <th class="text-left">Código</th>
+            <th class="text-left">Símbolo</th>
+            <th class="text-left">Descripción</th>
+            <th class="text-left">Código ISO</th>
+            <th class="text-left">Tasa de conversión</th>
+            <th class="text-right" width="120">Acciones</th>
+         </tr>
+      </thead>
+      {loop="$fsc->divisa->all()"}
+      <form action="{$fsc->url()}" method="post" class="form">
+         <tr>
+            <td>
+               <input type="hidden" name="coddivisa" value="{$value->coddivisa}"/>
+               <div class="form-control">{$value->coddivisa}</div>
             </td>
             <td>
-               <span class="form-control">{$value->coddivisa}</span>
-               <input type="hidden" name="coddivisa_{$counter}" value="{$value->coddivisa}"/>
+               <input class="form-control" type="text" name="simbolo" value="{$value->simbolo}" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control" type="text" name="simbolo_{$counter}" value="{$value->simbolo}" size="5" maxlength="10" autocomplete="off"/>
+               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control" type="text" name="descripcion_{$counter}" value="{$value->descripcion}" size="60" autocomplete="off"/>
+               <input class="form-control" type="text" name="codiso" value="{$value->codiso}" autocomplete="off"/>
             </td>
             <td>
-               <input class="form-control" type="text" name="codiso_{$counter}" value="{$value->codiso}" size="3" maxlength="3" autocomplete="off"/>
+               <input class="form-control" type="text" name="tasaconv" value="{$value->tasaconv}" autocomplete="off"/>
             </td>
-            <td>
-               <input class="form-control" type="text" name="tasaconv_{$counter}" value="{$value->tasaconv}" size="5" autocomplete="off"/>
+            <td class="text-right">
+               <div class="btn-group">
+                  <a href="#" class="btn btn-sm btn-danger" title="Eliminar" onclick="eliminar_divisa('{$value->coddivisa}')">
+                     <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
             </td>
          </tr>
-         {/loop}
-      </table>
-   </div>
-   
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-lg-8 col-md-8 col-sm-8">
-            <div class="btn-group">
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
-                  <span class="glyphicon glyphicon-check"></span>
-               </button>
-               <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
-                  <span class="glyphicon glyphicon-unchecked"></span>
-               </button>
-            </div>
-            
-            <button id="b_nueva_divisa" class="btn btn-sm btn-success" type="button">
-               <span class="glyphicon glyphicon-plus"></span>
-               &nbsp; Nueva divisa
-            </button>
-         </div>
-         
-         <div class="col-lg-4 col-md-4 col-sm-4 text-right">
-            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-               <span class="glyphicon glyphicon-floppy-disk"></span>
-               &nbsp; Guardar
-            </button>
-         </div>
-      </div>
-   </div>
-</form>
+      </form>
+      {/loop}
+      <form action="{$fsc->url()}" method="post" class="form">
+         <tr class="bg-info">
+            <td>
+               <input class="form-control" type="text" name="coddivisa" autocomplete="off" placeholder="Nueva..."/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="simbolo" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="codiso" autocomplete="off"/>
+            </td>
+            <td>
+               <input class="form-control" type="text" name="tasaconv" value="1" autocomplete="off"/>
+            </td>
+            <td class="text-right">
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" title="Guardar">
+                     <span class="glyphicon glyphicon-floppy-disk"></span>
+                  </button>
+               </div>
+            </td>
+         </tr>
+      </form>
+   </table>
+</div>
 
 {include="footer"}

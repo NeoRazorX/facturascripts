@@ -1,14 +1,11 @@
 {include="header"}
 
 <script type="text/javascript">
-   function delete_serie(url)
+   function delete_serie(cod)
    {
-      if( confirm("¿Realmente desea eliminar esta serie?") )
-         window.location.href = url;
+      if( confirm("¿Realmente desea eliminar la serie "+cod+"?") )
+         window.location.href = '{$fsc->url()}&delete='+cod;
    }
-   $(document).ready(function() {
-      
-   });
 </script>
 
 <div class="table-responsive">
@@ -34,7 +31,7 @@
             <td><input class="form-control text-right" type="text" name="irpf" value="{$value->irpf}" autocomplete="off"/></td>
             <td class="text-right">
                <div class="btn-group">
-                  <a class="btn btn-sm btn-danger" title="Eliminar" onclick="delete_serie('{$fsc->url()}&delete={$value->codserie}')">
+                  <a class="btn btn-sm btn-danger" title="Eliminar" onclick="delete_serie('{$value->codserie}')">
                      <span class="glyphicon glyphicon-trash"></span>
                   </a>
                   <button class="btn btn-sm btn-primary" type="submit" title="Guardar" onclick="this.disabled=true;this.form.submit();">
