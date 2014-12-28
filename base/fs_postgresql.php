@@ -250,7 +250,7 @@ class fs_postgresql extends fs_db
             {
                if($col2['column_name'] == $col['nombre'])
                {
-                  if($col2['data_type'] != $col['tipo'] AND !in_array($col['tipo'], array('serial')))
+                  if( $this->compare_data_types($col2['data_type'], $col['tipo']) )
                   {
                      $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" TYPE '.$col['tipo'].';';
                   }
@@ -302,6 +302,26 @@ class fs_postgresql extends fs_db
       }
       
       return $consulta;
+   }
+   
+   private function compare_data_types($v1, $v2)
+   {
+      if( strtolower($v2) == 'serial')
+      {
+         return FALSE;
+      }
+      else if( $v1 == substr($v2, 0, strlen($v1)) )
+      {
+         return FALSE;
+      }
+      else if( substr($v1, 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
+      {
+         return FALSE;
+      }
+      else if($v1 != $v2)
+      {
+         return TRUE;
+      }
    }
    
    /*

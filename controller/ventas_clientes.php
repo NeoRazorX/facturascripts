@@ -26,7 +26,9 @@ require_model('tarifa.php');
 class ventas_clientes extends fs_controller
 {
    public $cliente;
+   public $clientes_grupo;
    public $grupo;
+   public $grupos;
    public $offset;
    public $pais;
    public $resultados;
@@ -40,28 +42,30 @@ class ventas_clientes extends fs_controller
    
    protected function process()
    {
-      $this->custom_search = TRUE;
-      $this->buttons[] = new fs_button_img('b_nuevo_cliente', 'Nuevo', 'add.png', '#nuevo');
+      $this->show_fs_toolbar = FALSE;
       $this->cliente = new cliente();
+      $this->clientes_grupo = FALSE;
       $this->grupo = new grupo_clientes();
       $this->pais = new pais();
       $this->serie = new serie();
       $this->tarifa = new tarifa();
       
-      if( isset($_GET['delete_grupo']) )
+      if( isset($_GET['delete_grupo']) ) /// eliminar un grupo
       {
          $grupo = $this->grupo->get($_GET['delete_grupo']);
          if($grupo)
          {
             if( $grupo->delete() )
+            {
                $this->new_message('Grupo eliminado correctamente.');
+            }
             else
                $this->new_error_msg('Imposible eliminar el grupo.');
          }
          else
             $this->new_error_msg('Grupo no encontrado.');
       }
-      else if( isset($_POST['codgrupo']) )
+      else if( isset($_POST['codgrupo']) ) /// añadir/modificar un grupo
       {
          $grupo = $this->grupo->get($_POST['codgrupo']);
          if(!$grupo)
@@ -72,34 +76,39 @@ class ventas_clientes extends fs_controller
          $grupo->nombre = $_POST['nombre'];
          
          if($_POST['codtarifa'] == '---')
+         {
             $grupo->codtarifa = NULL;
+         }
          else
             $grupo->codtarifa = $_POST['codtarifa'];
          
          if( $grupo->save() )
+         {
             $this->new_message('Grupo guardado correctamente.');
+         }
          else
             $this->new_error_msg('Imposible guardar el grupo.');
       }
-      else if( isset($_GET['delete']) )
+      else if( isset($_GET['delete']) ) /// eliminar un cliente
       {
          $cliente = $this->cliente->get($_GET['delete']);
          if($cliente)
          {
             if(FS_DEMO)
             {
-               $this->new_error_msg('En el modo demo no se pueden eliminar clientes.
-                  Otros usuarios podrían necesitarlos.');
+               $this->new_error_msg('En el modo demo no se pueden eliminar clientes. Otros usuarios podrían necesitarlos.');
             }
             else if( $cliente->delete() )
+            {
                $this->new_message('Cliente eliminado correctamente.');
+            }
             else
                $this->new_error_msg('Ha sido imposible eliminar el cliente.');
          }
          else
             $this->new_error_msg('Cliente no encontrado.');
       }
-      else if( isset($_POST['cifnif']) )
+      else if( isset($_POST['cifnif']) ) /// añadir un nuevo cliente
       {
          $this->save_codpais( $_POST['pais'] );
          $this->save_codserie( $_POST['codserie'] );
@@ -121,7 +130,9 @@ class ventas_clientes extends fs_controller
             $dircliente->direccion = $_POST['direccion'];
             $dircliente->descripcion = 'Principal';
             if( $dircliente->save() )
+            {
                header('location: '.$cliente->url());
+            }
             else
                $this->new_error_msg("¡Imposible guardar la dirección del cliente!");
          }
@@ -139,6 +150,13 @@ class ventas_clientes extends fs_controller
       }
       else
          $this->resultados = $this->cliente->all($this->offset);
+      
+      $this->grupos = $this->grupo->all();
+      
+      if( isset($_GET['grupo']) )
+      {
+         $this->clientes_grupo = $this->clientes_from_grupo($_GET['grupo']);
+      }
    }
    
    public function anterior_url()
@@ -171,5 +189,35 @@ class ventas_clientes extends fs_controller
       }
       
       return $url;
+   }
+   
+   private function clientes_from_grupo($cod)
+   {
+      $clist = array();
+      
+      $data = $this->db->select("SELECT * FROM clientes WHERE codgrupo = ".$this->cliente->var2str($cod).";");
+      if($data)
+      {
+         foreach($data as $d)
+            $clist[] = new cliente($d);
+      }
+      
+      return $clist;
+   }
+   
+   public function nombre_grupo($cod)
+   {
+      $nombre = '-';
+      
+      foreach($this->grupos as $g)
+      {
+         if($g->codgrupo == $cod)
+         {
+            $nombre = $g->nombre;
+            break;
+         }
+      }
+      
+      return $nombre;
    }
 }
