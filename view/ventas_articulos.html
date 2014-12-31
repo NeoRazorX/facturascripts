@@ -112,13 +112,9 @@
             </tr>
          </thead>
          {loop="$fsc->resultados"}
-         <tr{if condition="$value->bloqueado"} class="bg-danger"{elseif condition="$value->stockfis<$value->stockmin"} class="bg-warning"{/if}>
+         <tr class="clickableRow{if="$value->bloqueado"} bg-danger{elseif="$value->stockfis<$value->stockmin"} bg-warning{/if}" href="{$value->url()}">
             <td>{$value->codfamilia}</td>
-            {if condition="$value->bloqueado"}
-               <td class="bg-danger"><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            {else}
-               <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
-            {/if}
+            <td><a href="{$value->url()}">{$value->referencia}</a> {$value->descripcion}</td>
             <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp)}</span></td>
             <td class="text-right"><span title="actualizado el {$value->factualizado}">{$fsc->show_precio($value->pvp_iva())}</span></td>
             <td class="text-right">{$value->stockfis}</td>

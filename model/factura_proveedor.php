@@ -729,12 +729,17 @@ class factura_proveedor extends fs_model
       return $faclist;
    }
    
-   public function all_desde($desde, $hasta)
+   public function all_desde($desde, $hasta, $serie=FALSE)
    {
       $faclist = array();
-      $facturas = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE fecha >= ".$this->var2str($desde)." AND fecha <= ".$this->var2str($hasta).
-         " ORDER BY codigo ASC;");
+      $sql = "SELECT * FROM ".$this->table_name." WHERE fecha >= ".$this->var2str($desde)." AND fecha <= ".$this->var2str($hasta);
+      if($serie)
+      {
+         $sql .= " AND codserie = ".$this->var2str($serie);
+      }
+      $sql .= " ORDER BY codigo ASC;";
+      
+      $facturas = $this->db->select($sql);
       if($facturas)
       {
          foreach($facturas as $f)

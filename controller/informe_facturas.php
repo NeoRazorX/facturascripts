@@ -20,6 +20,7 @@
 require_once 'base/fs_pdf.php';
 require_model('factura_cliente.php');
 require_model('factura_proveedor.php');
+require_model('serie.php');
 
 class informe_facturas extends fs_controller
 {
@@ -27,6 +28,7 @@ class informe_facturas extends fs_controller
    public $factura_cli;
    public $factura_pro;
    public $hasta;
+   public $serie;
    
    public function __construct()
    {
@@ -41,6 +43,7 @@ class informe_facturas extends fs_controller
       $this->factura_cli = new factura_cliente();
       $this->factura_pro = new factura_proveedor();
       $this->hasta = Date('d-m-Y', mktime(0, 0, 0, date("m")+1, date("1")-1, date("Y")));
+      $this->serie = new serie();
       
       if( isset($_POST['listado']) )
       {
@@ -73,7 +76,12 @@ class informe_facturas extends fs_controller
       header("Content-Disposition: attachment; filename=\"facturas_cli.csv\"");
       echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
       
-      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      $serie = FALSE;
+      if($_POST['codserie'] != '---')
+      {
+         $serie = $_POST['codserie'];
+      }
+      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha'], $serie);
       if($facturas)
       {
          foreach($facturas as $fac)
@@ -155,7 +163,12 @@ class informe_facturas extends fs_controller
       header("Content-Disposition: attachment; filename=\"facturas_prov.csv\"");
       echo "serie,factura,asiento,fecha,subcuenta,descripcion,cifnif,base,iva,totaliva,totalrecargo,totalirpf,total\n";
       
-      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      $serie = FALSE;
+      if($_POST['codserie'] != '---')
+      {
+         $serie = $_POST['codserie'];
+      }
+      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha'], $serie);
       if($facturas)
       {
          foreach($facturas as $fac)
@@ -239,7 +252,12 @@ class informe_facturas extends fs_controller
       $pdf_doc->pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
-      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      $serie = FALSE;
+      if($_POST['codserie'] != '---')
+      {
+         $serie = $_POST['codserie'];
+      }
+      $facturas = $this->factura_cli->all_desde($_POST['dfecha'], $_POST['hfecha'], $serie);
       if($facturas)
       {
          $total_lineas = count($facturas);
@@ -433,7 +451,12 @@ class informe_facturas extends fs_controller
       $pdf_doc->pdf->addInfo('Subject', 'Facturas emitidas del '.$_POST['dfecha'].' al '.$_POST['hfecha'] );
       $pdf_doc->pdf->addInfo('Author', $this->empresa->nombre);
       
-      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha']);
+      $serie = FALSE;
+      if($_POST['codserie'] != '---')
+      {
+         $serie = $_POST['codserie'];
+      }
+      $facturas = $this->factura_pro->all_desde($_POST['dfecha'], $_POST['hfecha'], $serie);
       if($facturas)
       {
          $total_lineas = count($facturas);

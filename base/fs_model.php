@@ -409,7 +409,7 @@ abstract class fs_model
     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
     * porque te encontrarás con muchas sorpresas desagradables.
     */
-   protected function no_html($t)
+   public function no_html($t)
    {
       $newt = str_replace('<', '&lt;', $t);
       $newt = str_replace('>', '&gt;', $newt);

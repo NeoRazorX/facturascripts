@@ -16,6 +16,51 @@
    });
 </script>
 
+{if condition="$fsc->query!=''"}
+<h3 class="text-center">Resultados de la búsqueda "{$fsc->query}":</h3>
+{/if}
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left">Código + Nombre</th>
+            <th class="text-left">{#FS_CIFNIF#}</th>
+            <th class="text-left">Observaciones</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr class="clickableRow" href="{$value->url()}">
+         <td><a href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
+         <td>{$value->cifnif}</td>
+         <td>{$value->observaciones_resume()}</td>
+      </tr>
+      {else}
+      <tr class="bg-warning">
+         <td colspan="3">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+
 <div class="modal" id="modal_nuevo_proveedor">
    <div class="modal-dialog">
       <div class="modal-content">
@@ -67,50 +112,5 @@
       </div>
    </div>
 </div>
-
-{if condition="$fsc->query!=''"}
-<h3 class="text-center">Resultados de la búsqueda "{$fsc->query}":</h3>
-{/if}
-
-<div class="table-responsive">
-   <table class="table table-hover">
-      <thead>
-         <tr>
-            <th class="text-left">Código + Nombre</th>
-            <th class="text-left">{#FS_CIFNIF#}</th>
-            <th class="text-left">Observaciones</th>
-         </tr>
-      </thead>
-      {loop="$fsc->resultados"}
-      <tr>
-         <td><a href="{$value->url()}">{$value->codproveedor}</a> {$value->nombre}</td>
-         <td>{$value->cifnif}</td>
-         <td>{$value->observaciones_resume()}</td>
-      </tr>
-      {else}
-      <tr class="bg-warning">
-         <td colspan="3">Ningún proveedor encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
-      </tr>
-      {/loop}
-   </table>
-</div>
-
-<ul class="pager">
-   {if condition="$fsc->anterior_url()!=''"}
-   <li class="previous">
-      <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
-      </a>
-   </li>
-   {/if}
-   
-   {if condition="$fsc->siguiente_url()!=''"}
-   <li class="next">
-      <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
-      </a>
-   </li>
-   {/if}
-</ul>
 
 {include="footer"}

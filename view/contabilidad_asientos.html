@@ -27,14 +27,14 @@
          </tr>
       </thead>
       {loop="$fsc->resultados"}
-      <tr{if condition="$value->importe<=0"} class="bg-warning"{/if}>
+      <tr class="clickableRow{if="$value->importe<=0"} bg-warning{/if}" href="{$value->url()}">
          <td class="text-center">
             {if condition="$value->editable"}
             <span class="glyphicon glyphicon-pencil" title="editable"></span>
             {/if}
          </td>
          <td>{$value->codejercicio} <a href="{$value->url()}">{$value->numero}</a></td>
-         <td><a href="{$value->url()}">{$value->concepto}</a></td>
+         <td>{$value->concepto}</td>
          <td class="text-right">{$fsc->show_precio($value->importe)}</td>
          <td class="text-right">{$value->fecha}</td>
       </tr>
@@ -51,8 +51,7 @@
    {if condition="$fsc->anterior_url()!=''"}
    <li class="previous">
       <a href="{$fsc->anterior_url()}">
-         <span class="glyphicon glyphicon-chevron-left"></span>
-         &nbsp; Anteriores
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
       </a>
    </li>
    {/if}
@@ -60,8 +59,7 @@
    {if condition="$fsc->siguiente_url()!=''"}
    <li class="next">
       <a href="{$fsc->siguiente_url()}">
-         Siguientes &nbsp;
-         <span class="glyphicon glyphicon-chevron-right"></span>
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
    </li>
    {/if}
