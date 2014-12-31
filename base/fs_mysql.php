@@ -84,7 +84,7 @@ class fs_mysql extends fs_db
       {
          $tables = array();
          foreach($aux as $a)
-            $tables[] = array('name' => $a[0]);
+            $tables[] = array('name' => $a['Tables_in_'.FS_DB_NAME]);
          return $tables;
       }
       else
@@ -174,7 +174,7 @@ class fs_mysql extends fs_db
          if($filas)
          {
             $resultado = array();
-            while( $row = $filas->fetch_array() )
+            while( $row = $filas->fetch_array(MYSQLI_ASSOC) )
                $resultado[] = $row;
             $filas->free();;
          }
@@ -201,7 +201,7 @@ class fs_mysql extends fs_db
          if($filas)
          {
             $resultado = array();
-            while($row = $filas->fetch_array() )
+            while($row = $filas->fetch_array(MYSQLI_ASSOC) )
                $resultado[] = $row;
             $filas->free();
          }

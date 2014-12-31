@@ -269,6 +269,14 @@ $system_info = str_replace('"', "'", $system_info);
    </form>
 
    <script type="text/javascript">
+      function change_db_type() {
+         if(document.f_configuracion_inicial.db_type.value == 'POSTGRESQL')
+         {
+            document.f_configuracion_inicial.db_port.value = '5432';
+         }
+         else
+            document.f_configuracion_inicial.db_port.value = '3306';
+      }
       $(document).ready(function() {
          $("#f_configuracion_inicial").validate({
             rules: {
@@ -489,7 +497,7 @@ $system_info = str_replace('"', "'", $system_info);
                   <div class="panel-body">
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Tipo de servidor SQL:
-                        <select name="db_type" class="form-control">
+                        <select name="db_type" class="form-control" onchange="change_db_type()">
                            <option value="MYSQL" selected="selected">MySQL</option>
                            <option value="POSTGRESQL">PostgreSQL</option>
                         </select>
