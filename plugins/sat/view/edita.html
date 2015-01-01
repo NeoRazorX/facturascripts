@@ -10,6 +10,67 @@
    });
 </script>
 
+<script type="text/javascript">
+   function show_tab_datos()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_datos").addClass('active');
+      $("#tabc_datos").show();
+   }
+   function show_tab_detalles()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_detalles").addClass('active');
+      $("#tabc_detalles").show();
+   }
+   function show_tab_observaciones()
+   {
+      $("#tab_datos").removeClass('active');
+      $("#tab_detalles").removeClass('active');
+      $("#tab_observaciones").removeClass('active');
+      $("#tabc_datos").hide();
+      $("#tabc_detalles").hide();
+      $("#tabc_observaciones").hide();
+      
+      $("#tab_observaciones").addClass('active');
+      $("#tabc_observaciones").show();
+   }
+   function pestanyas()
+   {
+      if(window.location.hash.substring(1) == 'detalles')
+      {
+            show_tab_detalles();
+      }
+      else if(window.location.hash.substring(1) == 'observaciones')
+      {
+            show_tab_observaciones();
+      }
+      else
+      {
+            show_tab_datos();
+      }
+   }
+    $(document).ready(function() {
+       pestanyas();
+       window.onpopstate = function() {
+         pestanyas();
+      };
+    });
+    
+</script>    
+
 <form action="{$fsc->resultado->url()}" method="post" class="form">
    <div class="container-fluid hidden-print" style="margin-top: 10px;">
       <div class="row">
@@ -76,19 +137,26 @@
    </div>
 
    <div role="tabpanel" class="hidden-print">
-      <ul class="nav nav-tabs" role="tablist">
-         <li role="presentation" class="active">
-            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Datos generales</a>
-         </li>
-         <li role="presentation">
-            <a href="#detalles" aria-controls="detalles" role="tab" data-toggle="tab">Detalles</a>
-         </li>
-         <li role="presentation">
-            <a href="#observaciones" aria-controls="observaciones" role="tab" data-toggle="tab">Observaciones</a>
-         </li>
-      </ul>
+          <ul id="tabs" class="nav nav-tabs"role="tablist">
+               <li id='tab_datos' class="active">
+                  <a href="#datos">
+                     <span class="glyphicon glyphicon-wrench"></span> Datos del SAT
+                  </a>
+               </li>
+               <li id='tab_detalles'>
+                  <a href="#detalles">
+                     <span class="glyphicon glyphicon-comment"></span>
+                     <span class="badge">{$fsc->resultado->num_detalles()}</span> Detalles
+                  </a>
+               </li>
+               <li id='tab_observaciones'>
+                  <a href="#observaciones">
+                     <span class="glyphicon glyphicon-eye-open"></span> Observaciones
+                  </a>
+               </li>
+            </ul>
       <div class="tab-content">
-         <div role="tabpanel" class="tab-pane active" id="home">
+         <div role="tabpanel" class="tab-pane active" id="tabc_datos">
             <div class="container-fluid">
                <div class="row">
                   <div class="col-md-9">
@@ -166,7 +234,7 @@
                </div>
             </div>
          </div>
-         <div role="tabpanel" class="tab-pane" id="detalles">
+         <div role="tabpanel" class="tab-pane" id="tabc_detalles">
             <div class="table-responsive">
                <table class="table table-hover">
                   <thead>
@@ -193,7 +261,7 @@
                </table>
             </div>
          </div>
-         <div role="tabpanel" class="tab-pane" id="observaciones">
+         <div role="tabpanel" class="tab-pane" id="tabc_observaciones">
             <div class="form-group" style="padding: 10px;">
                Observaciones:
                <textarea class="form-control" name="observaciones" rows="9">{$fsc->resultado->observaciones}</textarea>

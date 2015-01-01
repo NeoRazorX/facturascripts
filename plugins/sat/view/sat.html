@@ -153,19 +153,15 @@
                            Nombre:
                            <input class="form-control" type="text" name="nombre" autocomplete="off"/>
                         </div>
-                        <div class="form-group">
-                           {#FS_CIFNIF#}:
-                           <input class="form-control" type="text" name="cifnif" autocomplete="off"/>
-                        </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            Teléfono:
                            <input class="form-control" type="text" name="telefono1" autocomplete="off"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            Móvil:
                            <input class="form-control" type="text" name="telefono2" autocomplete="off"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            <a href="{$fsc->pais->url()}">País</a>:
                            <select class="form-control" name="pais">
                               {loop="$fsc->pais->all()"}
@@ -173,21 +169,25 @@
                               {/loop}
                            </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            <div class="text-capitalize">{#FS_PROVINCIA#}:</div>
                            <input class="form-control" type="text" name="provincia" autocomplete="off" value="{$fsc->empresa->provincia}"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            Ciudad:
                            <input class="form-control" type="text" name="ciudad" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-lg-6">
                            Código Postal:
                            <input class="form-control" type="text" name="codpostal" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
                         </div>
                         <div class="form-group">
                            Dirección:
                            <input class="form-control" type="text" name="direccion" value="C/ " autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                           {#FS_CIFNIF#}:
+                           <input class="form-control" type="text" name="cifnif" autocomplete="off"/>
                         </div>
                         <div class="text-right">
                            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;
