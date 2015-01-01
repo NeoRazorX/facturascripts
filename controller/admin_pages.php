@@ -49,7 +49,7 @@ class admin_pages extends fs_controller
             {
                if( $p->delete() )
                {
-                  $this->new_message('Se ha eliminado automáticamnte la página '.$p->name.
+                  $this->new_message('Se ha eliminado automáticamente la página '.$p->name.
                           ' ya que no tiene un controlador asociado en la carpeta controller.');
                }
             }
