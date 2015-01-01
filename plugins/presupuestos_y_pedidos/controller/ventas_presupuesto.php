@@ -116,10 +116,41 @@ class ventas_presupuesto extends fs_controller
             {
                $this->new_advice("Fecha validez del ".FS_PRESUPUESTO." vencida.");
             }
+            
+            /// Comprobamos las líneas
+            $this->check_lineas();
          }
       }
       else
          $this->new_error_msg("¡".ucfirst(FS_PRESUPUESTO)." de cliente no encontrado!");
+   }
+   
+   /**
+    * Comprobamos si los artículos han variado su precio.
+    * @return type
+    */
+   private function check_lineas()
+   {
+      if( is_null($this->presupuesto->idpedido) )
+      {
+         foreach($this->presupuesto->get_lineas() as $l)
+         {
+            $data = $this->db->select("SELECT factualizado,pvp FROM articulos WHERE referencia = ".$l->var2str($l->referencia)." ORDER BY referencia ASC;");
+            if( strtotime($data[0]["factualizado"]) > strtotime($this->presupuesto->fecha) )
+            {
+               if( $l->pvpunitario > floatval($data[0]['pvp']) )
+               {
+                  $this->new_advice("El precio del artículo <a href='".$l->articulo_url()."'>".$l->referencia."</a>"
+                          . " ha bajado desde la elaboración del ".FS_PRESUPUESTO.".");
+               }
+               else if( $l->pvpunitario < floatval($data[0]['pvp']) )
+               {
+                  $this->new_advice("El precio del artículo <a href='".$l->articulo_url()."'>".$l->referencia."</a>"
+                          . " ha subido desde la elaboración del ".FS_PRESUPUESTO.".");
+               }
+            }
+         }
+      }
    }
    
    public function url()
@@ -361,7 +392,6 @@ class ventas_presupuesto extends fs_controller
       $pedido->coddir = $this->presupuesto->coddir;
       $pedido->coddivisa = $this->presupuesto->coddivisa;
       $pedido->tasaconv = $this->presupuesto->tasaconv;
-      $pedido->codejercicio = $this->presupuesto->codejercicio;
       $pedido->codpago = $this->presupuesto->codpago;
       $pedido->codpais = $this->presupuesto->codpais;
       $pedido->codpostal = $this->presupuesto->codpostal;
@@ -381,9 +411,12 @@ class ventas_presupuesto extends fs_controller
       $pedido->totalirpf = $this->presupuesto->totalirpf;
       $pedido->totalrecargo = $this->presupuesto->totalrecargo;
       
-      /// asignamos la mejor fecha posible, pero dentro del ejercicio
-      $eje0 = $this->ejercicio->get($pedido->codejercicio);
-      $pedido->fecha = $eje0->get_best_fecha($pedido->fecha);
+      /**
+       * Obtenemos el ejercicio para la fecha de hoy (puede que no sea
+       * el mismo ejercicio que el del presupuesto, por ejemplo si hemos cambiado de año).
+       */
+      $eje0 = $this->ejercicio->get_by_fecha($pedido->fecha);
+      $pedido->codejercicio = $eje0->codejercicio;
       
       $regularizacion = new regularizacion_iva();
       
@@ -393,8 +426,7 @@ class ventas_presupuesto extends fs_controller
       }
       else if( $regularizacion->get_fecha_inside($pedido->fecha) )
       {
-         $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado.
-            No se pueden añadir más ".FS_PEDIDOS." en esa fecha.");
+         $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado. No se pueden añadir más ".FS_PEDIDOS." en esa fecha.");
       }
       else if( $pedido->save() )
       {

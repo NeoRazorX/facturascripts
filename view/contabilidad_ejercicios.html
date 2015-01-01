@@ -55,8 +55,7 @@
             </div>
             <div class="modal-footer">
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                   <span class="glyphicon glyphicon-floppy-disk"></span>
-                   &nbsp; Guardar
+                   <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                 </button>
             </div>         
          </div>
@@ -75,7 +74,7 @@
          </tr>
       </thead>
       {loop="$fsc->ejercicio->all()"}
-      <tr>
+      <tr class="clickableRow{if="!$value->abierto()"} bg-warning{/if}" href="{$value->url()}">
          <td><a href="{$value->url()}">{$value->codejercicio}</a> {$value->nombre}</td>
          <td class="text-center">{$value->fechainicio}</td>
          <td class="text-center">{$value->fechafin}</td>

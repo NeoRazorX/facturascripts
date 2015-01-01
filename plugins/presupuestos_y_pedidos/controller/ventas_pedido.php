@@ -356,7 +356,6 @@ class ventas_pedido extends fs_controller
       $albaran->coddir = $this->pedido->coddir;
       $albaran->coddivisa = $this->pedido->coddivisa;
       $albaran->tasaconv = $this->pedido->tasaconv;
-      $albaran->codejercicio = $this->pedido->codejercicio;
       $albaran->codpago = $this->pedido->codpago;
       $albaran->codpais = $this->pedido->codpais;
       $albaran->codpostal = $this->pedido->codpostal;
@@ -376,9 +375,13 @@ class ventas_pedido extends fs_controller
       $albaran->totalirpf = $this->pedido->totalirpf;
       $albaran->totalrecargo = $this->pedido->totalrecargo;
       
-      /// asignamos la mejor fecha posible, pero dentro del ejercicio
-      $eje0 = $this->ejercicio->get($albaran->codejercicio);
-      $albaran->fecha = $eje0->get_best_fecha($albaran->fecha);
+      /**
+       * Obtenemos el ejercicio para la fecha de hoy (puede que
+       * no sea el mismo ejercicio que el del pedido, por ejemplo
+       * si hemos cambiado de año)
+       */
+      $eje0 = $this->ejercicio->get_by_fecha($albaran->fecha);
+      $albaran->codejercicio = $eje0->codejercicio;
       
       $regularizacion = new regularizacion_iva();
       

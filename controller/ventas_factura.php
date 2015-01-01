@@ -156,6 +156,10 @@ class ventas_factura extends fs_controller
          {
             $this->new_error_msg("Ya hay una factura con el número ".$new_numero);
          }
+         else if(!$this->user->admin)
+         {
+            $this->new_error_msg('Solamente un administrador puede cambiarle el número a una factura.');
+         }
          else
          {
             $asiento = $this->factura->get_asiento();

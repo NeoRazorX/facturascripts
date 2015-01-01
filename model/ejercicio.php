@@ -194,19 +194,35 @@ class ejercicio extends fs_model
       $this->nombre = $this->no_html($this->nombre);
       
       if( !preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio) )
+      {
          $this->new_error_msg("Código de ejercicio no válido.");
+      }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+      {
          $this->new_error_msg("Nombre de cliente no válido.");
+      }
+      else if( strtotime($this->fechainicio) > strtotime($this->fechafin) )
+      {
+         $this->new_error_msg("La fecha de inicio (".$this->fechainicio.") es posterior a la fecha fin (".$this->fechafin.").");
+      }
       else
          $status = TRUE;
       
       $asiento = new asiento();
       if( !$asiento->get( $this->idasientoapertura ) )
+      {
          $this->idasientoapertura = NULL;
+      }
+      
       if( !$asiento->get( $this->idasientocierre ) )
+      {
          $this->idasientocierre = NULL;
+      }
+      
       if( !$asiento->get( $this->idasientopyg ) )
+      {
          $this->idasientopyg = NULL;
+      }
       
       return $status;
    }

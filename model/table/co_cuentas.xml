@@ -51,10 +51,10 @@
       <consulta>PRIMARY KEY (idcuenta)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_co_cuentas_ejercicios2</nombre>
+      <nombre>ca_co_cuentas_ejercicios</nombre>
       <consulta>FOREIGN KEY (codejercicio)
       REFERENCES ejercicios (codejercicio)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
       <nombre>ca_co_cuentas_epigrafes2</nombre>

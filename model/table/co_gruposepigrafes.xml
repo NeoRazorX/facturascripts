@@ -31,9 +31,9 @@
       <consulta>PRIMARY KEY (idgrupo)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_co_gruposepigrafes_ejercicios2</nombre>
+      <nombre>ca_co_gruposepigrafes_ejercicios</nombre>
       <consulta>FOREIGN KEY (codejercicio)
       REFERENCES ejercicios (codejercicio)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>
