@@ -1,0 +1,5 @@
+      {loop="$fsc->cliente->all_full()"}
+      {if condition="$value->codcliente == $fsc->insertadoid"}{* en mi caso es que el 000001 es el cliente de contado y quiero que siempre me salga por defecto *}
+      <option value="{$value->codcliente}">{$value->nombre} tlf {$value->telefono1}</option>
+      {/if}
+      {/loop}

@@ -1,0 +1,460 @@
+<script type="text/javascript" src="plugins/tpv_informatica/view/js/tpv_informatica.js"></script>
+<script type="text/javascript">
+   fs_nf0 = {#FS_NF0#};
+   tpv_url = '{$fsc->url()}';
+   function show_nuevo_cliente()
+   {
+      $("#modal_nuevo_cliente").modal('show');
+      document.f_nuevo_cliente.nombre.focus();
+   }
+</script>
+<script>
+
+function calculo(entrega,total,inputtext){
+   
+   /* Parametros:
+   cantidad - entero con la cantidad
+   precio - entero con el precio
+   inputtotal - nombre del elemento del formulario donde ira el total
+   */
+   
+   // Calculo del subtotal
+   subtotal = entrega-total;
+   inputtext.value=subtotal;
+   
+   //Actualizar el total
+   // Utilizamos el eval. Ya que el valor es un texto y si lo tratamos como tal
+   // es como si estuviesemos manipulando una cadena.
+   //total = eval(totaltext.value);
+   //totaltext.value = total + subtotal;
+}
+</script>
+
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-lg-6">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if condition="$fsc->page->show_on_menu"}
+               {if condition="$fsc->page->is_default()"}
+               <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                  <span class="glyphicon glyphicon-home"></span>
+               </a>
+               {else}
+               <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                  <span class="glyphicon glyphicon-home"></span>
+               </a>
+               {/if}
+            {/if}
+         </div>
+         <div class="btn-group">
+            <a href="index.php?page=ventas_anteriores" class="btn btn-primary btn-sm" role="button"><span class="glyphicon glyphicon-file">
+            </span>&nbsp; Ventas anteriores</a>
+         </div>
+      </div>
+      <div class="col-lg-6 text-right">
+         <div class="btn-group">
+            <a href="{$fsc->url()}&abrir_caja=TRUE" id="b_abrir_caja" class="btn btn-sm btn-default">
+               <span class="glyphicon glyphicon-inbox"></span>
+               &nbsp; Abrir caja
+            </a>
+            <a href="#" id="b_cerrar_caja" class="btn btn-sm btn-danger">
+               <span class="glyphicon glyphicon-lock"></span>
+               &nbsp; Cerrar caja
+            </a>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal" id="modal_articulos">
+   <div class="modal-dialog" style="width: 99%; max-width: 950px;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Buscar artículos</h4>
+         </div>
+         <div class="modal-body">
+            <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
+               <input type="hidden" name="codcliente"/>
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off"/>
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                        <label>
+                           <input type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                           sólo con stock
+                        </label>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                           <option value="">Todas las familias</option>
+                           <option value="">------</option>
+                           {loop="$fsc->familia->all()"}
+                           {if condition="$value->codfamilia==998"}
+                           <option value="{$value->codfamilia}" selected>{$value->descripcion}</option>
+                           {/if}
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div id="search_results"></div>
+      </div>
+   </div>
+</div>
+
+
+
+
+<form id="f_new_albaran" name="f_new_albaran" action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
+   <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-5 col-md-5 col-sm-5">
+            <div class="form-group" id="selectdinamico">
+               Cliente:
+               <select class="form-control chosen-select-no-results"   name="cliente">
+               {loop="$fsc->cliente->all_full()"}
+                  {if condition="$value->codcliente == 000001"}{* en mi caso es que el 000001 es el cliente de contado y quiero que siempre me salga por defecto *}
+                  <option value="{$value->codcliente}" selected="selected">{$value->nombre} tlf {$value->telefono1}</option>
+                  {else}
+                  <option value="{$value->codcliente}">{$value->nombre} tlf {$value->telefono1} </option>
+                  {/if}
+               {else}
+                  <option value="">¡¡¡No tienes clientes!!!</option>
+               {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
+               <br/>
+               <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_nuevo_cliente').modal('show');">
+               <span class="glyphicon glyphicon-plus"></span>
+               &nbsp; Nuevo Cliente
+               </button>
+            </div>
+         </div>
+         <div class="col-lg-2 col-md-2 col-sm-2">
+            <div class="form-group">
+               Fecha:
+               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->today()}"/>
+            </div>
+         </div>
+         <div class="col-lg-3 col-md-3 col-sm-3">
+            <div class="form-group">
+               Atiende:
+               <div class="form-control">
+                  <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <!-- Nav tabs -->
+   <ul class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="#tab_lineas" role="tab" data-toggle="tab">Líneas</a></li>
+      <li><a href="#tab_opciones" role="tab" data-toggle="tab">Más opciones...</a></li>
+   </ul>
+   
+   <!-- Tab panes -->
+   <div class="tab-content">
+      <div class="tab-pane active" id="tab_lineas">
+         <div class="table-responsive">
+            <table class="table table-condensed">
+               <thead>
+                  <tr>
+                     <th class="text-left">Referencia</th>
+                     <th class="text-left">Descripción</th>
+                     <th class="text-right">Cantidad</th>
+                     <th></th>
+                     <th class="text-right">PVP</th>
+                     <th class="text-right">Neto</th>
+                     <th class="text-right">IVA %</th>
+                     <th class="text-right">Total</th>
+                  </tr>
+               </thead>
+               <tbody id="lineas_albaran">
+                  <tr class="bg-info">
+                     <td><input id="i_new_line" class="form-control" size="3"  type="text" placeholder="Buscar..." autocomplete="off"/></td>
+                     <td colspan="4"></td>
+                     <td>
+                        <div id="aneto" class="form-control text-right" size="5" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+                     </td>
+                     <td>
+                        <div id="aiva" class="form-control text-right" size="5"  style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+                     </td>
+                     <td>
+                        <div id="atotal" class="form-control text-right" size="5" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div class="tab-pane" id="tab_opciones">
+         <div class="container-fluid" style="margin-top: 10px; margin-bottom: 20px;">
+            <div class="row">
+               <div class="col-lg-3 col-md-3 col-sm-3">
+                  <div class="form-group">
+                     <a href="{$fsc->almacen->url()}">Almacén</a>:
+                     <select name="almacen" class="form-control">
+                        {loop="$fsc->almacen->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codalmacen}" selected='selected'>{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codalmacen}">{$value->nombre}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                     <div id="recogetexto"></div>
+                  </div>
+               </div>
+               <div class="col-lg-3 col-md-3 col-sm-3">
+                  <div class="form-group">
+                     <a href="{$fsc->serie->url()}">Serie</a>:
+                     <select name="serie" class="form-control">
+                        {loop="$fsc->serie->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codserie}" selected='selected'>{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->codserie}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="col-lg-3 col-md-3 col-sm-3">
+                  <div class="form-group">
+                     <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+                     <select name="forma_pago" class="form-control">
+                        {loop="$fsc->forma_pago->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->codpago}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="col-lg-3 col-md-3 col-sm-3">
+                  <div class="form-group">
+                     <a href="{$fsc->divisa->url()}">Divisa</a>:
+                     <select name="divisa" class="form-control">
+                        {loop="$fsc->divisa->all()"}
+                           {if condition="$value->is_default()"}
+                           <option value="{$value->coddivisa}" selected="selected">{$value->descripcion}</option>
+                           {else}
+                           <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                           {/if}
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+               <div class="col-lg-3 col-md-3 col-sm-3">
+                  <div class="form-group">
+                     Número 2:
+                     <input class="form-control" type="text" name="numero2" autocomplete="off"/>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="tab-pane" id="tab_tickets">
+         <div class="container-fluid" style="margin-top: 10px; margin-bottom: 20px;">
+            <div class="row">
+               <div class="col-lg-2 col-md-2 col-sm-2">
+                  <div class="form-group">
+                     Nº de tickets:
+                     <input class="form-control" type="number" name="num_tickets" value="1"/>
+                  </div>
+               </div>
+               <div class="col-lg-2 col-md-2 col-sm-2">
+                  <div class="checkbox">
+                     <label>
+                        <input type="checkbox" name="imprimir_desc" value="TRUE"{if condition="$fsc->imprimir_descripciones"} checked="checked"{/if}/>
+                        Imprimir descripciones
+                     </label>
+                  </div>
+                  <div class="checkbox">
+                     <label>
+                        <input type="checkbox" name="imprimir_obs" value="TRUE"{if condition="$fsc->imprimir_observaciones"} checked="checked"{/if}/>
+                        Imprimir observaciones
+                     </label>
+                  </div>
+               </div>
+               <div class="col-lg-8">
+                  <p>
+                     <b>Recuarda</b> que para poder imprimir tickets necesitas estar ejecutando la aplicación Remote printer.
+                  </p>
+                  <a target="_blank" href="http://www.facturascripts.com/community/item/imprimir-tickets-desde-windows-llevo-toda-la-tarde-programando-para-poder-618.html" class="btn btn-sm btn-default">
+                     <span class="glyphicon glyphicon-download"></span>
+                     &nbsp; Remote printer
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row" style="margin-bottom: 30px;">
+         <div class="col-lg-6 col-md-6 col-sm-6">
+            <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
+               <span class="glyphicon glyphicon-refresh"></span>
+               &nbsp; Reiniciar...
+            </button>
+         </div>
+         <div class="col-lg-6 col-md-6 col-sm-6 text-right">
+            <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">
+               <span class="glyphicon glyphicon-floppy-disk"></span>
+               &nbsp; Guardar...
+            </button>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones" rows="4"></textarea>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="modal fade" id="modal_guardar">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Guardar como...</h4>
+            </div>
+            <div class="modal-body">
+               <div class="col-lg-6">
+         <div class="form-group col-lg-12">
+               Total
+               <input type="hidden" id="total" value="7"/>7€
+            </div>
+         <div class="form-group col-lg-12">
+               Entregado
+               <div class="input-group">
+               <input class="form-control text-right" type="text" size="3" id="totalentrega" value="0" onChange="calculo(this.value,total.value,totaldevolver);">
+               <span class="input-group-addon">€</span>
+            </div>
+            </div>
+         <div class="form-group col-lg-12">
+               A devolver
+            <div class="input-group">
+               <input type="text" size="8" class="form-control text-right" id="totaldevolver" value="0">
+               <span class="input-group-addon">€</span>
+            </div>
+
+         </div>
+               </div>
+              {loop="$fsc->tipos_a_guardar()"}
+               <div class="radio col-lg-6">
+                  <label>
+                     <input type="radio" name="tipo" value="{$value['tipo']}"{if condition="$value['tipo']==$fsc->tipo"} checked="checked"{/if}/>
+                     {$value['nombre']}
+                  </label>
+               </div>
+               {/loop}
+                              <div class="form-group">
+                  <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
+                  <select name="forma_pago" class="form-control">
+                  {loop="$fsc->forma_pago->all()"}
+                     {if condition="$value->is_default()"}
+                     <option value="{$value->codpago}" selected="selected">{$value->descripcion}</option>
+                     {else}
+                     <option value="{$value->codpago}">{$value->descripcion}</option>
+                     {/if}
+                  {/loop}
+                  </select>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+   
+
+
+<div class="modal fade" id="modal_nuevo_cliente">
+  <div class="modal-dialog">
+    <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nuevo cliente</h4>
+            </div>
+      <div class="modal-body">
+                         <div class="form-group col-md-12">
+                            <label>Nombre:</label>
+                            <input class="form-control" type="text" id="nombreajax" name="nombre" size="30" autocomplete="off"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Telefono:</label>
+                            <input class="form-control " id="telefonoajax" type="text" name="telefono1" size="9" autocomplete="off"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                        <label>{#FS_CIFNIF#}</label>
+                        <input class="form-control" type="text" id="cifnifajax" name="cifnif" autocomplete="off"/>
+                        </div>
+               <div class="form-group col-md-12">
+                  <label>Dirección</label>
+                     <input class="form-control" type="text" name="direccion" id="direccionajax" value="C/ " autocomplete="off"/>
+               </div>
+                  <div class="form-group col-md-6">
+                  <label for="pais"><a href="{$fsc->pais->url()}">País</a></label>
+                     <select class="form-control" name="pais" id="paisajax">
+                     {loop="$fsc->pais->all()"}
+                        <option value="{$value->codpais}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->nombre}</option>
+                     {/loop}
+                     </select>
+               </div>
+               <div class="form-group col-md-6">
+                  <label for="provincia">Provincia</label>
+                     <input class="form-control" type="text" name="provincia" id="provinciaajax" autocomplete="off" value="{$fsc->empresa->provincia}"/>
+               </div>
+               <div class="form-group col-md-6">
+                  <label>Ciudad</label>
+                     <input class="form-control" type="text" name="ciudad" id="ciudadajax" autocomplete="off" value="{$fsc->empresa->ciudad}"/>
+               </div>
+               <div class="form-group col-md-6">
+                  <label>Código Postal</label>
+                     <input class="form-control" type="text" name="codpostal" id="codpostalajax" autocomplete="off" value="{$fsc->empresa->codpostal}"/>
+               </div>
+
+
+
+      </div>
+                  <div class="modal-footer">
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="add_cliente(codpostalajax.value,ciudadajax.value,provinciaajax.value,paisajax.value,direccionajax.value,telefonoajax.value,cifnifajax.value,nombreajax.value)">
+                            <span class="glyphicon glyphicon-play"></span>
+                            &nbsp; Guardar
+                        </button>
+                  </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+                               

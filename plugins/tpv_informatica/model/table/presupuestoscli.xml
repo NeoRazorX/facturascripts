@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : presupuestoscli.xml
+    Description:
+        Estructura de la tabla presupuestoscli.
+-->
+<tabla>
+   <columna>
+      <nombre>apartado</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>cifnif</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>ciudad</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codagente</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codalmacen</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codcliente</nombre>
+      <tipo>character varying(6)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddir</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddivisa</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codejercicio</nombre>
+      <tipo>character varying(4)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codigo</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codoportunidad</nombre>
+      <tipo>character varying(8)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codpago</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codpais</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codpostal</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codserie</nombre>
+      <tipo>character varying(2)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>direccion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>editable</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>estado</nombre>
+      <tipo>character varying(25)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>hora</nombre>
+      <tipo>time without time zone</tipo>
+      <nulo>YES</nulo>
+      <defecto>now()</defecto>
+   </columna>
+   <columna>
+      <nombre>finoferta</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idpresupuesto</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('presupuestoscli_idpresupuesto_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idpedido</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>idprovincia</nombre>
+      <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>irpf</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>neto</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>nombrecliente</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>numero</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>numero2</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>observaciones</nombre>
+      <tipo>text</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>porcomision</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>provincia</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>recfinanciero</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>tasaconv</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>total</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>totaleuros</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>totalirpf</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>totaliva</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>totalrecargo</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>presupuestoscli_pkey</nombre>
+      <consulta>PRIMARY KEY (idpresupuesto)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_presupuestoscli_series</nombre>
+      <consulta>FOREIGN KEY (codserie)
+      REFERENCES series (codserie)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_presupuestoscli_ejercicios</nombre>
+      <consulta>FOREIGN KEY (codejercicio)
+      REFERENCES ejercicios (codejercicio)
+      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>uniq_codigo_presupuestoscli</nombre>
+      <consulta>UNIQUE (codigo)</consulta>
+   </restriccion>
+</tabla>

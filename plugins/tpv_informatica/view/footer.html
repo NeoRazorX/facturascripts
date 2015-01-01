@@ -1,0 +1,61 @@
+   <hr style="margin-top: 50px;"/>
+   
+   {if condition="FS_DEMO"}
+   <div class="container-fluid hidden-print">
+      <div class="row" style="margin-bottom: 30px;">
+         <div class="col-lg-12">
+            {$fsc->get_community_html()}
+         </div>
+      </div>
+   </div>
+   {/if}
+   
+   <div class="container-fluid hidden-print" style="margin-bottom: 10px;">
+      {if condition="FS_DB_HISTORY"}
+      <div class="row">
+         <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="panel panel-default hidden-print">
+               <div class="panel-heading">
+                  <h3 class="panel-title">Consultas SQL:</h3>
+               </div>
+               <div class="panel-body">
+                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+                     {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+                  </ol>
+               </div>
+            </div>
+         </div>
+      </div>
+      {/if}
+      
+      <div class="row">
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+            <small>
+               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
+            </small>
+         </div>
+         <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">
+            <span class="label label-default">Consultas: {$fsc->selects()}</span>
+            <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
+         </div>
+         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 text-right">
+            <span class="label label-default">Procesado en: {$fsc->duration()}</span>
+         </div>
+      </div>
+   </div>
+     <script src="{$fsc->urlplugin}chosen.jquery.js" type="text/javascript"></script>
+  <script src="{$fsc->urlplugin}docsupport/prism.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'No se encuentra cliente'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
+</body>
+</html>
