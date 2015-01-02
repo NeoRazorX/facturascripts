@@ -200,7 +200,10 @@ $(document).ready(function() {
       $("#modal_feedback").modal('show');
       document.f_feedback.feedback_text.focus();
    });
-   $(".clickableRow").click(function() {
-      window.document.location = $(this).attr("href");
+   $('.clickableRow').mousedown(function(event) {
+      if(event.which === 1)
+      {
+         window.document.location = $(this).attr("href");
+      }
    });
 });

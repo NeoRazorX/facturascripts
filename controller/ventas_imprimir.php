@@ -354,6 +354,14 @@ class ventas_imprimir extends fs_controller
                $fila['iva'.$i] = $this->show_precio($value, $this->albaran->coddivisa);
                $opciones['cols']['iva'.$i] = array('justification' => 'right');
             }
+            
+            if($this->albaran->totalirpf != 0)
+            {
+               $titulo['irpf'] = '<b>IRPF</b>';
+               $fila['irpf'] = $this->show_precio(0 - $this->albaran->totalirpf);
+               $opciones['cols']['irpf'] = array('justification' => 'right');
+            }
+            
             $titulo['liquido'] = '<b>Total</b>';
             $fila['liquido'] = $this->show_precio($this->albaran->total, $this->albaran->coddivisa);
             $opciones['cols']['liquido'] = array('justification' => 'right');
@@ -630,6 +638,14 @@ class ventas_imprimir extends fs_controller
                $fila['iva'.$li->iva] = $this->show_precio($li->totaliva, $this->factura->coddivisa);
                $opciones['cols']['iva'.$li->iva] = array('justification' => 'right');
             }
+            
+            if($this->factura->totalirpf != 0)
+            {
+               $titulo['irpf'] = '<b>IRPF</b>';
+               $fila['irpf'] = $this->show_precio(0 - $this->factura->totalirpf);
+               $opciones['cols']['irpf'] = array('justification' => 'right');
+            }
+            
             $titulo['liquido'] = '<b>Total</b>';
             $fila['liquido'] = $this->show_precio($this->factura->total, $this->factura->coddivisa);
             $opciones['cols']['liquido'] = array('justification' => 'right');

@@ -64,7 +64,7 @@
                   </tr>
                </thead>
                {loop="$fsc->user->all()"}
-               <tr>
+               <tr class="clickableRow" href="{$value->url()}">
                   <td><a href="{$value->url()}">{$value->nick}</a></td>
                   <td>{$value->get_agente_fullname()}</td>
                   <td class="text-center">

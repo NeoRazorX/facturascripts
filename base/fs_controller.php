@@ -991,6 +991,8 @@ class fs_controller
       
       $txt .= 'memcache version: '.$this->cache->version()."\n";
       
+      $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+      
       if( isset($_SERVER['REQUEST_URI']) )
          $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
       

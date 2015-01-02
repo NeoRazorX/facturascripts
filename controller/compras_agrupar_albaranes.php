@@ -22,6 +22,7 @@ require_model('asiento.php');
 require_model('asiento_factura.php');
 require_model('ejercicio.php');
 require_model('factura_proveedor.php');
+require_model('forma_pago.php');
 require_model('partida.php');
 require_model('proveedor.php');
 require_model('regularizacion_iva.php');

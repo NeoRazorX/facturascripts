@@ -36,7 +36,7 @@
                      <a href="{$fsc->pais->url()}">País</a>
                      <select name="scodpais" class="form-control">
                         {loop="$fsc->pais->all()"}
-                        <option value="{$value2->codpais}"{if condition="$value1->codpais == $value2->codpais"} selected="selected"{/if}>{$value2->nombre}</option>
+                        <option value="{$value2->codpais}"{if="$value1->codpais==$value2->codpais OR $value2->codpais==$fsc->empresa->codpais"} selected="selected"{/if}>{$value2->nombre}</option>
                         {/loop}
                      </select>
                   </div>

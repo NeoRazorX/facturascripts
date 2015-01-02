@@ -23,6 +23,7 @@ require_model('asiento_factura.php');
 require_model('cliente.php');
 require_model('ejercicio.php');
 require_model('factura_cliente.php');
+require_model('forma_pago.php');
 require_model('partida.php');
 require_model('regularizacion_iva.php');
 require_model('serie.php');
