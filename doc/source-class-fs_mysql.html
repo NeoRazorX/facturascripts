@@ -227,7 +227,7 @@
 </span><span id="84" class="l"><a class="l" href="#84"> 84: </a>      {
 </span><span id="85" class="l"><a class="l" href="#85"> 85: </a>         <span class="php-var">$tables</span> = <span class="php-keyword1">array</span>();
 </span><span id="86" class="l"><a class="l" href="#86"> 86: </a>         <span class="php-keyword1">foreach</span>(<span class="php-var">$aux</span> <span class="php-keyword1">as</span> <span class="php-var">$a</span>)
-</span><span id="87" class="l"><a class="l" href="#87"> 87: </a>            <span class="php-var">$tables</span>[] = <span class="php-keyword1">array</span>(<span class="php-quote">'name'</span> =&gt; <span class="php-var">$a</span>[<span class="php-num">0</span>]);
+</span><span id="87" class="l"><a class="l" href="#87"> 87: </a>            <span class="php-var">$tables</span>[] = <span class="php-keyword1">array</span>(<span class="php-quote">'name'</span> =&gt; <span class="php-var">$a</span>[<span class="php-quote">'Tables_in_'</span>.FS_DB_NAME]);
 </span><span id="88" class="l"><a class="l" href="#88"> 88: </a>         <span class="php-keyword1">return</span> <span class="php-var">$tables</span>;
 </span><span id="89" class="l"><a class="l" href="#89"> 89: </a>      }
 </span><span id="90" class="l"><a class="l" href="#90"> 90: </a>      <span class="php-keyword1">else</span>
@@ -317,7 +317,7 @@
 </span><span id="174" class="l"><a class="l" href="#174">174: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$filas</span>)
 </span><span id="175" class="l"><a class="l" href="#175">175: </a>         {
 </span><span id="176" class="l"><a class="l" href="#176">176: </a>            <span class="php-var">$resultado</span> = <span class="php-keyword1">array</span>();
-</span><span id="177" class="l"><a class="l" href="#177">177: </a>            <span class="php-keyword1">while</span>( <span class="php-var">$row</span> = <span class="php-var">$filas</span>-&gt;fetch_array() )
+</span><span id="177" class="l"><a class="l" href="#177">177: </a>            <span class="php-keyword1">while</span>( <span class="php-var">$row</span> = <span class="php-var">$filas</span>-&gt;fetch_array(MYSQLI_ASSOC) )
 </span><span id="178" class="l"><a class="l" href="#178">178: </a>               <span class="php-var">$resultado</span>[] = <span class="php-var">$row</span>;
 </span><span id="179" class="l"><a class="l" href="#179">179: </a>            <span class="php-var">$filas</span>-&gt;free();;
 </span><span id="180" class="l"><a class="l" href="#180">180: </a>         }
@@ -344,7 +344,7 @@
 </span><span id="201" class="l"><a class="l" href="#201">201: </a>         <span class="php-keyword1">if</span>(<span class="php-var">$filas</span>)
 </span><span id="202" class="l"><a class="l" href="#202">202: </a>         {
 </span><span id="203" class="l"><a class="l" href="#203">203: </a>            <span class="php-var">$resultado</span> = <span class="php-keyword1">array</span>();
-</span><span id="204" class="l"><a class="l" href="#204">204: </a>            <span class="php-keyword1">while</span>(<span class="php-var">$row</span> = <span class="php-var">$filas</span>-&gt;fetch_array() )
+</span><span id="204" class="l"><a class="l" href="#204">204: </a>            <span class="php-keyword1">while</span>(<span class="php-var">$row</span> = <span class="php-var">$filas</span>-&gt;fetch_array(MYSQLI_ASSOC) )
 </span><span id="205" class="l"><a class="l" href="#205">205: </a>               <span class="php-var">$resultado</span>[] = <span class="php-var">$row</span>;
 </span><span id="206" class="l"><a class="l" href="#206">206: </a>            <span class="php-var">$filas</span>-&gt;free();
 </span><span id="207" class="l"><a class="l" href="#207">207: </a>         }

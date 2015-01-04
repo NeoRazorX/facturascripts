@@ -40,9 +40,10 @@ class libro_mayor
    {
       foreach($this->subcuenta->all() as $subc)
       {
-         /// comprobamos si hay que actualizar la subcuenta
          if( $subc->is_outdated() )
+         {
             $subc->save();
+         }
          
          $this->libro_mayor($subc, TRUE);
       }

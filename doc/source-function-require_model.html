@@ -552,7 +552,7 @@
 </span></span><span id="409" class="l"><a class="l" href="#409">409: </a><span class="php-comment">    * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
 </span></span><span id="410" class="l"><a class="l" href="#410">410: </a><span class="php-comment">    * porque te encontrarás con muchas sorpresas desagradables.
 </span></span><span id="411" class="l"><a class="l" href="#411">411: </a><span class="php-comment">    */</span>
-</span><span id="412" class="l"><a class="l" href="#412">412: </a>   <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="_no_html" href="#_no_html">no_html</a>(<span class="php-var">$t</span>)
+</span><span id="412" class="l"><a class="l" href="#412">412: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_no_html" href="#_no_html">no_html</a>(<span class="php-var">$t</span>)
 </span><span id="413" class="l"><a class="l" href="#413">413: </a>   {
 </span><span id="414" class="l"><a class="l" href="#414">414: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&lt;'</span>, <span class="php-quote">'&amp;lt;'</span>, <span class="php-var">$t</span>);
 </span><span id="415" class="l"><a class="l" href="#415">415: </a>      <span class="php-var">$newt</span> = <span class="php-keyword2">str_replace</span>(<span class="php-quote">'&gt;'</span>, <span class="php-quote">'&amp;gt;'</span>, <span class="php-var">$newt</span>);

@@ -41,7 +41,7 @@
       <consulta>PRIMARY KEY (idsec)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_secuencias_secuenciasejercicios2</nombre>
+      <nombre>ca_secuencias_secuenciasejercicios</nombre>
       <consulta>FOREIGN KEY (id)
       REFERENCES secuenciasejercicios (id)
       ON DELETE CASCADE ON UPDATE CASCADE</consulta>

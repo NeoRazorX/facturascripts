@@ -258,9 +258,9 @@ class subcuenta extends fs_model
    
    public function is_outdated()
    {
-      $sql = "SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".
-              $this->var2str($this->idsubcuenta)." AND (
-                 debe != (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
+      $sql = "SELECT * FROM ".$this->table_name." WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).
+              " AND codejercicio IN (SELECT codejercicio FROM ejercicios WHERE estado = 'ABIERTO')".
+              " AND (debe != (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
                    WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).")
                  OR haber != (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
                    WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).")
@@ -294,9 +294,9 @@ class subcuenta extends fs_model
       $this->descripcion = $this->no_html($this->descripcion);
       
       $totales = $this->get_totales();
-      $this->debe = $totales['debe'];
-      $this->haber = $totales['haber'];
-      $this->saldo = $totales['saldo'];
+      $this->debe = round($totales['debe'], FS_NF0+1);
+      $this->haber = round($totales['haber'], FS_NF0+1);
+      $this->saldo = round($totales['saldo'], FS_NF0+1);
       
       if( strlen($this->codsubcuenta)>0 AND strlen($this->descripcion)>0 )
       {
@@ -314,6 +314,7 @@ class subcuenta extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET codsubcuenta = ".$this->var2str($this->codsubcuenta).",
@@ -323,13 +324,8 @@ class subcuenta extends fs_model
                codimpuesto = ".$this->var2str($this->codimpuesto).",
                descripcion = ".$this->var2str($this->descripcion).",
                recargo = ".$this->var2str($this->recargo).", iva = ".$this->var2str($this->iva).",
-               debe = (SELECT COALESCE(SUM(debe),0) as debe FROM co_partidas
-                 WHERE idsubcuenta=".$this->var2str($this->idsubcuenta)."),
-               haber = (SELECT COALESCE(SUM(haber),0) as haber FROM co_partidas
-                 WHERE idsubcuenta=".$this->var2str($this->idsubcuenta)."),
-               saldo = (SELECT COALESCE(SUM(debe),0)-COALESCE(SUM(haber),0) as saldo
-                 FROM co_partidas WHERE idsubcuenta=".$this->var2str($this->idsubcuenta).")
-               WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";";
+               debe = ".$this->var2str($this->debe).", haber = ".$this->var2str($this->haber).",
+               saldo = ".$this->var2str($this->saldo)." WHERE idsubcuenta = ".$this->var2str($this->idsubcuenta).";";
          }
          else
          {
@@ -374,7 +370,7 @@ class subcuenta extends fs_model
    public function all()
    {
       $sublist = array();
-      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      $subcuentas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY idsubcuenta DESC;");
       if($subcuentas)
       {
          foreach($subcuentas as $s)

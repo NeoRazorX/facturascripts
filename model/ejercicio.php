@@ -240,7 +240,7 @@ class ejercicio extends fs_model
          $debe += $sc->debe;
          $haber += $sc->haber;
          
-         if( !$this->abierto() AND !$this->floatcmp($sc->saldo, 0, 5) )
+         if( !$this->abierto() AND !$this->floatcmp($sc->debe, $sc->haber, FS_NF0) )
          {
             $this->new_error_msg('El ejercicio está cerrado pero la subcuenta <a href="'.
                     $sc->url().'">'.$sc->codsubcuenta.'</a> aún tiene saldo ('.$sc->saldo.').');
@@ -248,9 +248,9 @@ class ejercicio extends fs_model
          }
       }
       
-      if( !$this->floatcmp($debe, $haber, 5) )
+      if( !$this->floatcmp($debe, $haber, FS_NF0) )
       {
-         $this->new_error_msg('El ejercicio está descuadrado. La diferencia es '.($debe-$haber));
+         $this->new_error_msg('El ejercicio está descuadrado. Debe: '.$debe.' | Haber: '.$haber);
          $status = FALSE;
       }
       
@@ -303,7 +303,7 @@ class ejercicio extends fs_model
       $listae = $this->cache->get_array('m_ejercicio_all');
       if( !$listae )
       {
-         $ejercicios = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codejercicio DESC;");
+         $ejercicios = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY fechainicio DESC;");
          if($ejercicios)
          {
             foreach($ejercicios as $e)

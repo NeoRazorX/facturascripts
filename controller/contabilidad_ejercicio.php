@@ -45,6 +45,8 @@ class contabilidad_ejercicio extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
+      
       $this->ejercicio = FALSE;
       if( isset($_POST['codejercicio']) )
       {
@@ -80,13 +82,12 @@ class contabilidad_ejercicio extends fs_controller
             $this->ppage = $this->page->get('contabilidad_ejercicios');
             $this->page->title = $this->ejercicio->codejercicio.' ('.$this->ejercicio->nombre.')';
             
-            $this->buttons[] = new fs_button('b_importar', 'Importar');
-            $this->buttons[] = new fs_button('b_exportar', 'Exportar', $this->url().'&export=TRUE');
-            
             if( isset($_GET['cerrar']) AND isset($_GET['petid']) )
             {
                if( $this->duplicated_petition($_GET['petid']) )
+               {
                   $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
+               }
                else
                   $this->cerrar_ejercicio();
             }

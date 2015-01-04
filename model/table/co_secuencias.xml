@@ -41,9 +41,9 @@
       <consulta>PRIMARY KEY (idsecuencia)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_co_secuencias_ejercicios2</nombre>
+      <nombre>ca_co_secuencias_ejercicios</nombre>
       <consulta>FOREIGN KEY (codejercicio)
       REFERENCES ejercicios (codejercicio)
-      ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

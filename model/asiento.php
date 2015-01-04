@@ -266,9 +266,9 @@ class asiento extends fs_model
          $status = FALSE;
       }
       
-      if( !$this->floatcmp($debe, $haber) )
+      if( !$this->floatcmp($debe, $haber, FS_NF0) )
       {
-         $this->new_error_msg( "Asiento descuadrado. Descuadre: ".round($debe-$haber, 2) );
+         $this->new_error_msg( "Asiento descuadrado. Descuadre: ".round($debe-$haber, FS_NF0) );
          $status = FALSE;
       }
       
