@@ -78,7 +78,7 @@ class admin_plugins extends fs_controller
       
       foreach( scandir(getcwd().'/plugins') as $f)
       {
-         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+         if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
          {
             $plugin = array(
                 'name' => $f,

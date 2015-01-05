@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2015  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,9 +31,8 @@ class ventas_familias extends fs_controller
    
    protected function process()
    {
+      $this->show_fs_toolbar = FALSE;
       $this->familia = new familia();
-      $this->buttons[] = new fs_button_img('b_nueva_familia', 'Nueva');
-      $this->custom_search = TRUE;
       
       if( isset($_POST['ncodfamilia']) )
       {
@@ -41,7 +40,9 @@ class ventas_familias extends fs_controller
          $fam->codfamilia = $_POST['ncodfamilia'];
          $fam->descripcion = $_POST['ndescripcion'];
          if( $fam->save() )
+         {
             Header('location: ' . $fam->url());
+         }
          else
             $this->new_error_msg("¡Imposible guardar la familia!");
       }
@@ -50,13 +51,17 @@ class ventas_familias extends fs_controller
          $fam = new familia();
          $fam->codfamilia = $_GET['delete'];
          if( $fam->delete() )
+         {
             $this->new_message("Familia ".$_GET['delete']." eliminada correctamente");
+         }
          else
             $this->new_error_msg("¡Imposible eliminar la familia ".$_GET['delete']."!");
       }
       
       if($this->query != '')
+      {
          $this->resultados = $this->familia->search($this->query);
+      }
       else
          $this->resultados = $this->familia->all();
    }
