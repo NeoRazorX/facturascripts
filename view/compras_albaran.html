@@ -96,7 +96,7 @@
                
                {loop="$fsc->extensions"}
                   {if condition="$value->type=='button'"}
-                  <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">
+                  <a href="index.php?page={$value->from}&id={$fsc->albaran->idalbaran}" class="btn btn-sm btn-default">
                      {$value->text}
                   </a>
                   {/if}
@@ -354,6 +354,13 @@
                {/if}
             </div>
          </div>
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='tab'"}
+            <div role="tabpanel" class="tab-pane" id="ext_{$value->name}">
+               <iframe src="index.php?page={$value->from}{$value->params}&id={$fsc->albaran->idalbaran}" width="100%" height="600" frameborder="0"></iframe>
+            </div>
+            {/if}
+         {/loop}
       </div>
    </div>
    
