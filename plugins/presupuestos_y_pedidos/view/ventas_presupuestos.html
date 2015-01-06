@@ -98,19 +98,19 @@
 
 <ul class="nav nav-tabs" role="tablist">
     <li{if condition="!isset($_GET['pendientes'])"} class="active"{/if}>
-       <a href="{$fsc->url()}">
-           <span class="glyphicon glyphicon-list-alt"></span> &nbsp; Todos los {#FS_PRESUPUESTOS#}
-       </a>
+        <a href="{$fsc->url()}">
+            <span class="glyphicon glyphicon-list-alt"></span> &nbsp; Todos los {#FS_PRESUPUESTOS#}
+        </a>
     </li>
     <li{if condition="isset($_GET['pendientes'])"} class="active"{/if}>
-       <a href="{$fsc->url()}&pendientes=TRUE">
-           <span class="glyphicon glyphicon-time"></span> &nbsp; Pendientes
-       </a>
+        <a href="{$fsc->url()}&pendientes=TRUE">
+            <span class="glyphicon glyphicon-time"></span> &nbsp; Pendientes
+        </a>
     </li>
     <li{if condition="isset($_GET['rechazados'])"} class="active"{/if}>
-       <a href="{$fsc->url()}&rechazados=TRUE">
-           <span class="glyphicon glyphicon-remove"></span> &nbsp; Rechazados
-       </a>
+        <a href="{$fsc->url()}&rechazados=TRUE">
+            <span class="glyphicon glyphicon-remove"></span> &nbsp; Rechazados
+        </a>
     </li>
 </ul>
 
