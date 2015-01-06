@@ -40,7 +40,7 @@ class linea_pedido_proveedor extends fs_model
    
    public function __construct($l = FALSE)
    {
-      parent::__construct('lineaspedidosprov', 'plugins/presupuestos_y_pedidos/');
+      parent::__construct('lineaspedidosprov', 'plugins/presupuestos_y_pedidos_proveedores/');
       
       if( !isset(self::$pedidos) )
          self::$pedidos = array();
