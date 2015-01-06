@@ -1,0 +1,35 @@
+<!--{$fsc->buscar_lineas}-->
+
+{if condition="$fsc->get_errors()"}
+   <div class="alert alert-danger">
+      {loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+{if condition="$fsc->get_messages()"}
+   <div class="alert alert-success">
+      {loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}
+   </div>
+{/if}
+
+<table class="table table-hover">
+   <thead>
+      <tr>
+         <th class="text-left text-capitalize">{#FS_PEDIDO#} + Proveedor</th>
+         <th class="text-right">Cantidad</th>
+         <th class="text-left">Artículo</th>
+         <th class="text-right">Total+IVA</th>
+         <th class="text-right">Fecha</th>
+      </tr>
+   </thead>
+   {loop="$fsc->lineas"}
+   <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if}>
+      <td><a target="_blank" href="{$value->url()}">{$value->show_codigo()}</a> {$value->show_nombre()}</td>
+      <td class="text-right">{$value->cantidad}</td>
+      <td><a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+      <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+      <td class="text-right">{$value->show_fecha()}</td>
+   </tr>
+   {else}
+   <tr class="bg-warning"><td colspan="5" class="text-center">Sin resultados.</td></tr>
+   {/loop}
+</table>

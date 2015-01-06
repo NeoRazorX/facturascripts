@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : pedidoscli.xml
+    Document   : presupuestosprov.xml
     Description:
-        Estructura de la tabla pedidoscli.
+        Estructura de la tabla presupuestosprov.
 -->
 <tabla>
    <columna>
@@ -31,7 +31,7 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codcliente</nombre>
+      <nombre>codproveedor</nombre>
       <tipo>character varying(6)</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -54,6 +54,11 @@
       <nombre>codigo</nombre>
       <tipo>character varying(12)</tipo>
       <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codoportunidad</nombre>
+      <tipo>character varying(8)</tipo>
+      <nulo>YES</nulo>
    </columna>
    <columna>
       <nombre>codpago</nombre>
@@ -86,6 +91,11 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
+      <nombre>estado</nombre>
+      <tipo>character varying(25)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>fecha</nombre>
       <tipo>date</tipo>
       <nulo>NO</nulo>
@@ -97,18 +107,18 @@
       <defecto>now()</defecto>
    </columna>
    <columna>
-      <nombre>fechasalida</nombre>
+      <nombre>finoferta</nombre>
       <tipo>date</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>idpedido</nombre>
+      <nombre>idpresupuesto</nombre>
       <tipo>serial</tipo>
       <nulo>NO</nulo>
-      <defecto>nextval('pedidoscli_idpedido_seq'::regclass)</defecto>
+      <defecto>nextval('presupuestosprov_idpresupuesto_seq'::regclass)</defecto>
    </columna>
    <columna>
-      <nombre>idalbaran</nombre>
+      <nombre>idpedido</nombre>
       <tipo>integer</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -128,7 +138,7 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>nombrecliente</nombre>
+      <nombre>nombre</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -163,11 +173,6 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>servido</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
       <nombre>tasaconv</nombre>
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
@@ -198,23 +203,23 @@
       <nulo>YES</nulo>
    </columna>
    <restriccion>
-      <nombre>pedidoscli_pkey</nombre>
-      <consulta>PRIMARY KEY (idpedido)</consulta>
+      <nombre>presupuestosprov_pkey</nombre>
+      <consulta>PRIMARY KEY (idpresupuesto)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_pedidoscli_series</nombre>
+      <nombre>ca_presupuestosprov_series</nombre>
       <consulta>FOREIGN KEY (codserie)
       REFERENCES series (codserie)
       ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_pedidoscli_ejercicios</nombre>
+      <nombre>ca_presupuestosprov_ejercicios</nombre>
       <consulta>FOREIGN KEY (codejercicio)
       REFERENCES ejercicios (codejercicio)
       ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>uniq_codigo_pedidoscli</nombre>
+      <nombre>uniq_codigo_presupuestosprov</nombre>
       <consulta>UNIQUE (codigo)</consulta>
    </restriccion>
 </tabla>

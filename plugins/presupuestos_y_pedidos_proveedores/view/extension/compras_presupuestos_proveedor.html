@@ -1,0 +1,59 @@
+{include="header"}
+
+<h3 class="text-center"><span class="text-capitalize">{#FS_PRESUPUESTOS#}</span> de <a href="{$fsc->proveedor->url()}">{$fsc->proveedor->nombre}</a></h3>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th class="text-left">Código</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha</th>
+            <th class="text-right">Hora</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr{if condition="$value->total<=0"} class="bg-warning"{/if} class="clickableRow" href="{$value->url()}">
+         <td class="text-center">
+            {if condition="$value->idpedido"}
+            <span class="glyphicon glyphicon-paperclip" title="Hay vinculado un {#FS_PEDIDO#}"></span>
+            {/if}
+         </td>
+         <td>{$value->codigo}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right">{$value->fecha}</td>
+         <td class="text-right">{$value->hora}</td>
+      </tr>
+      {else}
+      <tr class="bg-warning">
+         <td></td>
+         <td colspan="5">Ningún {#FS_PRESUPUESTO#} encontrado.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+
+{include="footer"}

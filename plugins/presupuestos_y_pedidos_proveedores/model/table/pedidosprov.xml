@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : pedidoscli.xml
+    Document   : pedidosprov.xml
     Description:
-        Estructura de la tabla pedidoscli.
+        Estructura de la tabla pedidosprov.
 -->
 <tabla>
    <columna>
@@ -31,7 +31,7 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>codcliente</nombre>
+      <nombre>codproveedor</nombre>
       <tipo>character varying(6)</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -105,7 +105,7 @@
       <nombre>idpedido</nombre>
       <tipo>serial</tipo>
       <nulo>NO</nulo>
-      <defecto>nextval('pedidoscli_idpedido_seq'::regclass)</defecto>
+      <defecto>nextval('pedidosprov_idpedido_seq'::regclass)</defecto>
    </columna>
    <columna>
       <nombre>idalbaran</nombre>
@@ -128,7 +128,7 @@
       <nulo>NO</nulo>
    </columna>
    <columna>
-      <nombre>nombrecliente</nombre>
+      <nombre>nombre</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
    </columna>
@@ -198,23 +198,23 @@
       <nulo>YES</nulo>
    </columna>
    <restriccion>
-      <nombre>pedidoscli_pkey</nombre>
+      <nombre>pedidosprov_pkey</nombre>
       <consulta>PRIMARY KEY (idpedido)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_pedidoscli_series</nombre>
+      <nombre>ca_pedidosprov_series</nombre>
       <consulta>FOREIGN KEY (codserie)
       REFERENCES series (codserie)
       ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_pedidoscli_ejercicios</nombre>
+      <nombre>ca_pedidosprov_ejercicios</nombre>
       <consulta>FOREIGN KEY (codejercicio)
       REFERENCES ejercicios (codejercicio)
       ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
    </restriccion>
    <restriccion>
-      <nombre>uniq_codigo_pedidoscli</nombre>
+      <nombre>uniq_codigo_pedidosprov</nombre>
       <consulta>UNIQUE (codigo)</consulta>
    </restriccion>
 </tabla>

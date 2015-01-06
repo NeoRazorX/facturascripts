@@ -1,0 +1,55 @@
+{include="header"}
+
+<h3 class="text-center">
+   <span class="text-capitalize">{#FS_PEDIDOS#}</span> con el artículo <a href="{$fsc->articulo->url()}">{$fsc->articulo->referencia}</a>
+</h3>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th class="text-left text-capitalize">{#FS_PEDIDO#} + Proveedor</th>
+            <th class="text-right">Cantidad</th>
+            <th class="text-left">Artículo</th>
+            <th class="text-right">Total+IVA</th>
+            <th class="text-right">Fecha</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr{if condition="$value->cantidad<1"} class="bg-warning"{/if} class="clickableRow" href="{$value->url()}">
+         <td>
+            <a href="{$value->url()}">{$value->show_codigo()}</a>
+            {$value->show_nombre()}
+         </td>
+         <td class="text-right">{$value->cantidad}</td>
+         <td>{$value->referencia} {$value->descripcion}</td>
+         <td class="text-right">{$fsc->show_precio($value->total_iva())}</td>
+         <td class="text-right">{$value->show_fecha()}</td>
+      </tr>
+      {else}
+      <tr class="bg-warning"><td colspan="5" class="text-center">Sin resultados.</td></tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span>
+         &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp;
+         <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+
+{include="footer"}

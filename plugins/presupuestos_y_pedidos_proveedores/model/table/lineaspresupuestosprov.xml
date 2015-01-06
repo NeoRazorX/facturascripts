@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineaspresupuestosprov.xml
+    Description:
+        Estructura de la tabla lineaspresupuestosprov.
+-->
+<tabla>
+   <columna>
+      <nombre>cantidad</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codimpuesto</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>dtolineal</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>dtopor</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>idlinea</nombre>
+      <tipo>serial</tipo>
+      <nulo>NO</nulo>
+      <defecto>nextval('lineaspresupuestosprov_idlinea_seq'::regclass)</defecto>
+   </columna>
+   <columna>
+      <nombre>idpresupuesto</nombre>
+      <tipo>integer</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>irpf</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>iva</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>pvpsindto</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>pvptotal</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>pvpunitario</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>recargo</nombre>
+      <tipo>double precision</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>referencia</nombre>
+      <tipo>character varying(18)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <restriccion>
+      <nombre>lineaspresupuestosprov_pkey</nombre>
+      <consulta>PRIMARY KEY (idlinea)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>ca_lineaspresupuestosprov_presupuestosprov</nombre>
+      <consulta>FOREIGN KEY (idpresupuesto)
+      REFERENCES presupuestosprov (idpresupuesto)
+      ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+</tabla>

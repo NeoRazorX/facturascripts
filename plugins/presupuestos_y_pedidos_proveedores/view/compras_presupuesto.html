@@ -1,0 +1,531 @@
+{include="header"}
+
+{if condition="$fsc->presupuesto"}
+{if condition="$fsc->presupuesto->editable"}
+<script type="text/javascript" src="view/js/nueva_compra.js"></script>
+<script type="text/javascript">
+   numlineas = {function="count($fsc->presupuesto->get_lineas())"};
+   fs_nf0 = {#FS_NF0#};
+   all_impuestos = {function="json_encode($fsc->impuesto->all())"};
+   all_series = {function="json_encode($fsc->serie->all())"};
+   proveedor = {function="json_encode($fsc->proveedor_s)"};
+   nueva_compra_url = '{$fsc->nuevo_presupuesto_url}';
+   fs_community_url = '{#FS_COMMUNITY_URL#}';
+   
+   $(document).ready(function() {
+      $("#numlineas").val(numlineas);
+      usar_serie();
+      recalcular();
+      $("#ac_proveedor").autocomplete({
+         serviceUrl: nueva_compra_url,
+         paramName: 'buscar_proveedor',
+         onSelect: function (suggestion) {
+            if(suggestion)
+            {
+               if(document.f_presupuesto.proveedor.value != suggestion.data && suggestion.data != '')
+               {
+                  document.f_presupuesto.proveedor.value = suggestion.data;
+                  usar_proveedor(suggestion.data);
+               }
+            }
+         }
+      });
+   });
+</script>
+{/if}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $("#b_imprimir").click(function(event) {
+         event.preventDefault();
+         $("#modal_imprimir_presupuesto").modal('show');
+      });
+      $("#b_enviar").click(function(event) {
+         event.preventDefault();
+         $("#modal_enviar").modal('show');
+         document.enviar_email.email.select();
+      });
+      $("#b_eliminar").click(function(event) {
+         event.preventDefault();
+         $("#modal_eliminar").modal('show');
+      });
+      {if condition="$fsc->presupuesto->totalrecargo==0"}
+      $(".recargo").hide();
+      {/if}
+      {if condition="$fsc->presupuesto->totalirpf==0"}
+      $(".irpf").hide();
+      {/if}
+   });
+</script>
+
+<form name="f_presupuesto" action="{$fsc->presupuesto->url()}" method="post" class="form">
+   <input type="hidden" name="idpresupuesto" value="{$fsc->presupuesto->idpresupuesto}"/>
+   <input type="hidden" name="proveedor" value="{$fsc->presupuesto->codproveedor}"/>
+   <input type="hidden" id="numlineas" name="numlineas" value="0"/>
+   <div class="container-fluid">
+      <div class="row" style="margin-top: 10px;">
+         <div class="col-md-8 col-sm-8 col-xs-12">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            
+            <div class="btn-group">
+               <a id="b_imprimir" class="btn btn-sm btn-default" href="#">
+                  <span class="glyphicon glyphicon-print"></span> &nbsp; Imprimir
+               </a>
+               {if condition="$fsc->empresa->can_send_mail()"}
+               <a id="b_enviar" class="btn btn-sm btn-default" href="#">
+                  <span class="glyphicon glyphicon-envelope"></span> &nbsp; Enviar
+               </a>
+               {/if}
+               {if condition="$fsc->presupuesto->idpedido"}
+               <a class="btn btn-sm btn-default text-capitalize" href="{$fsc->presupuesto->pedido_url()}">
+                  <span class="glyphicon glyphicon-eye-open"></span> &nbsp; Ver {#FS_PEDIDO#}
+               </a>
+               {else}
+               <a class="btn btn-sm btn-default" href="{$fsc->url()}&pedir=TRUE&petid={$fsc->random_string()}">
+                  <span class="glyphicon glyphicon-paperclip"></span> &nbsp; Aprobar
+               </a>
+               {/if}
+               
+               {loop="$fsc->extensions"}
+                  {if condition="$value->type=='button'"}
+                  <a href="index.php?page={$value->from}&id={$fsc->albaran->idalbaran}" class="btn btn-sm btn-default">
+                     {$value->text}
+                  </a>
+                  {/if}
+               {/loop}
+            </div>
+         </div>
+         <div class="col-md-4 col-sm-4 text-right">
+            <div class="btn-group">
+               <a id="b_eliminar" class="btn btn-sm btn-danger" href="#">
+                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+               </a>
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-lg-12">
+            <h3 class="text-capitalize" style="margin-bottom: 0px;">
+               <a href="{$fsc->ppage->url()}">{#FS_PRESUPUESTOS#}</a> /
+               <a href="{$fsc->presupuesto->proveedor_url()}">{$fsc->presupuesto->nombre}</a> /
+               {$fsc->presupuesto->codigo}
+            </h3>
+            {if condition="$fsc->agente"}
+            <p>
+               <span class="text-capitalize">{#FS_PRESUPUESTO#}</span> creado por
+               <a href="{$fsc->agente->url()}">{$fsc->agente->get_fullname()}</a>.
+            </p>
+            {/if}
+         </div>
+      </div>
+      
+      <div class="row">
+         {if condition="$fsc->presupuesto->editable"}
+         <div class="col-md-4 col-sm-12">
+            <div class="form-group">
+               Proveedor actual:
+               <div class="input-group">
+                  <input class="form-control" type="text" name="ac_proveedor" id="ac_proveedor" value="{$fsc->presupuesto->nombre}" placeholder="Buscar" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-default" type="button" onclick="document.f_presupuesto.ac_proveedor.value=''; document.f_presupuesto.ac_proveedor.focus();">
+                        <span class="glyphicon glyphicon-edit"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+         </div>
+         {/if}
+         <div class="col-md-2 col-sm-2">
+            <div class="form-group">
+               Número 2:
+               <input class="form-control" type="text" name="numero2" value="{$fsc->presupuesto->numero2}"/>
+            </div>
+         </div>
+         <div class="col-md-1 col-sm-2">
+            <div class="form-group">
+               <a href="{$fsc->serie->url()}">Serie</a>:
+               {if condition="$fsc->presupuesto->editable"}
+               <select class="form-control" name="serie" id="codserie" onchange="usar_serie();recalcular();">
+               {loop="$fsc->serie->all()"}
+                  {if condition="$value->codserie==$fsc->presupuesto->codserie"}
+                  <option value="{$value->codserie}" selected="selected">{$value->descripcion}</option>
+                  {else}
+                  <option value="{$value->codserie}">{$value->descripcion}</option>
+                  {/if}
+               {/loop}
+               </select>
+               {else}
+               <div class="form-control">{$fsc->presupuesto->codserie}</div>
+               {/if}
+            </div>
+         </div>
+         <div class="col-md-2 col-sm-2">
+            <div class="form-group">
+               Fecha:
+               <input class="form-control datepicker" type="text" name="fecha" value="{$fsc->presupuesto->fecha}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-md-1 col-sm-2">
+            <div class="form-group">
+               Hora:
+               <input class="form-control" type="text" name="hora" value="{$fsc->presupuesto->hora}" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-md-2 col-sm-2">
+            <div class="form-group">
+               Fecha validez:
+               <input class="form-control datepicker" type="text" name="finoferta" value="{$fsc->presupuesto->finoferta}" autocomplete="off"/>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+   <div role="tabpanel">
+      <ul class="nav nav-tabs" role="tablist">
+         <li role="presentation" class="active">
+            <a href="#lineas_p" aria-controls="lineas_p" role="tab" data-toggle="tab">Líneas</a>
+         </li>
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='tab'"}
+            <li role="presentation">
+               <a href="#ext_{$value->name}" aria-controls="ext_{$value->name}" role="tab" data-toggle="tab">{$value->text}</a>
+            </li>
+            {/if}
+         {/loop}
+      </ul>
+      <div class="tab-content">
+         <div role="tabpanel" class="tab-pane active" id="lineas_p">
+            <div class="table-responsive">
+               {if condition="$fsc->presupuesto->editable"}
+               <table class="table table-condensed">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Referencia</th>
+                        <th class="text-left">Descripción</th>
+                        <th class="text-right" width="90">Cantidad</th>
+                        <th></th>
+                        <th class="text-right">PVP</th>
+                        <th class="text-right" width="90">Dto. %</th>
+                        <th class="text-right">Neto</th>
+                        <th class="text-right" width="115">IVA</th>
+                        <th class="text-right recargo">RE %</th>
+                        <th class="text-right irpf">IRPF %</th>
+                        <th class="text-right">Total</th>
+                     </tr>
+                  </thead>
+                  <tbody id="lineas_albaran">
+                     {loop="$fsc->presupuesto->get_lineas()"}
+                     <tr id="linea_{$counter}">
+                        <td>
+                           <input type="hidden" name="idlinea_{$counter}" value="{$value->idlinea}"/>
+                           <input type="hidden" name="referencia_{$counter}" value="{$value->referencia}"/>
+                           <div class="form-control">
+                              <a target="_blank" href="{$value->articulo_url()}">{$value->referencia}</a>
+                           </div>
+                        </td>
+                        <td><input type="text" class="form-control" name="desc_{$counter}" value="{$value->descripcion}" onclick="this.select()"/></td>
+                        <td>
+                           <input type="number" step="any" id="cantidad_{$counter}" class="form-control text-right" name="cantidad_{$counter}"
+                                  value="{$value->cantidad}" onchange="recalcular()" onkeyup="recalcular()" autocomplete="off" value="1"/>
+                        </td>
+                        <td>
+                           <button class="btn btn-sm btn-danger" type="button" onclick="$('#linea_{$counter}').remove();recalcular();">
+                              <span class="glyphicon glyphicon-trash"></span>
+                           </button>
+                        </td>
+                        <td>
+                           <input type="text" class="form-control text-right" id="pvp_{$counter}" name="pvp_{$counter}" value="{$value->pvpunitario}"
+                                  onkeyup="recalcular()" onclick="this.select()" autocomplete="off"/>
+                        </td>
+                        <td>
+                           <input type="text" id="dto_{$counter}" name="dto_{$counter}" value="{$value->dtopor}" class="form-control text-right"
+                                  onkeyup="recalcular()" onclick="this.select()" autocomplete="off"/>
+                        </td>
+                        <td>
+                           <input type="text" class="form-control text-right" id="neto_{$counter}" name="neto_{$counter}"
+                                  onchange="ajustar_neto()" onclick="this.select()" autocomplete="off"/>
+                        </td>
+                        <td>
+                           <select class="form-control" id="iva_{$counter}" name="iva_{$counter}" onchange="ajustar_iva('{$counter}')">
+                           {loop="$fsc->impuesto->all()"}
+                              {if condition="$value1->codimpuesto==$value2->codimpuesto"}
+                              <option value="{$value2->iva}" selected="selected">{$value2->descripcion}</option>
+                              {else}
+                              <option value="{$value2->iva}">{$value2->descripcion}</option>
+                              {/if}
+                           {/loop}
+                           </select>
+                        </td>
+                        <td class="recargo">
+                           <input type="text" class="form-control text-right" id="recargo_{$counter}" name="recargo_{$counter}" value="{$value->recargo}"
+                                  onchange="recalcular()" onclick="this.select()" autocomplete="off"/>
+                        </td>
+                        <td class="irpf"><div id="irpf_{$counter}" class="form-control text-right">{$fsc->show_numero($value->irpf)}</div></td>
+                        <td>
+                           <input type="text" class="form-control text-right" id="total_{$counter}" name="total_{$counter}"
+                                  onchange="ajustar_total()" onclick="this.select()" autocomplete="off"/>
+                        </td>
+                     </tr>
+                     {/loop}
+                  </tbody>
+                  <tbody>
+                     <tr class="bg-info">
+                        <td><input id="i_new_line" class="form-control" type="text" placeholder="Buscar para añadir..." autocomplete="off"/></td>
+                        <td colspan="5" class="text-right">Totales:</td>
+                        <td><div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div></td>
+                        <td><div id="aiva" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div></td>
+                        <td class="recargo"><div id="are" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div></td>
+                        <td class="irpf"><div id="airpf" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div></td>
+                        <td>
+                           <input type="text" name="atotal" id="atotal" class="form-control text-right" style="font-weight: bold;"
+                                  value="0" onchange="recalcular()" autocomplete="off"/>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td colspan="6"></td>
+                        <td class="text-right">{$fsc->show_precio($fsc->presupuesto->neto)}</td>
+                        <td class="text-right">{$fsc->show_precio($fsc->presupuesto->totaliva)}</td>
+                        <td class="recargo text-right">{$fsc->show_precio($fsc->presupuesto->totalrecargo)}</td>
+                        <td class="irpf text-right">{$fsc->show_precio($fsc->presupuesto->totalirpf)}</td>
+                        <td class="text-right">{$fsc->show_precio($fsc->presupuesto->total)}</td>
+                     </tr>
+                  </tbody>
+               </table>
+               {else}
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Artículo</th>
+                        <th class="text-right">Cantidad</th>
+                        <th class="text-right">PVP</th>
+                        <th class="text-right">Dto</th>
+                        <th class="text-right">Neto</th>
+                        <th class="text-right">IVA</th>
+                        <th class="text-right recargo">RE</th>
+                        <th class="text-right irpf">IRPF</th>
+                        <th class="text-right">Total</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->presupuesto->get_lineas()"}
+                  <tr>
+                     <td><a href="{$value->articulo_url()}">{$value->referencia}</a> {$value->descripcion}</td>
+                     <td class="text-right">{$value->cantidad}</td>
+                     <td class="text-right">{$fsc->show_precio($value->pvpunitario, $fsc->presupuesto->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->dtopor, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->pvptotal, $fsc->presupuesto->coddivisa)}</td>
+                     <td class="text-right">{$fsc->show_numero($value->iva, 2)} %</td>
+                     <td class="text-right recargo">{$fsc->show_numero($value->recargo, 2)} %</td>
+                     <td class="text-right irpf">{$fsc->show_numero($value->irpf, 2)} %</td>
+                     <td class="text-right">{$fsc->show_precio($value->total_iva(), $fsc->presupuesto->coddivisa)}</td>
+                  </tr>
+                  {/loop}
+                  <tr>
+                     <td colspan="4"></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->presupuesto->neto, $fsc->presupuesto->coddivisa)}</b></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->presupuesto->totaliva, $fsc->presupuesto->coddivisa)}</b></td>
+                     <td class="text-right recargo"><b>{$fsc->show_precio($fsc->presupuesto->totalrecargo, $fsc->presupuesto->coddivisa)}</b></td>
+                     <td class="text-right irpf"><b>-{$fsc->show_precio($fsc->presupuesto->totalirpf, $fsc->presupuesto->coddivisa)}</b></td>
+                     <td class="text-right"><b>{$fsc->show_precio($fsc->presupuesto->total, $fsc->presupuesto->coddivisa)}</b></td>
+                  </tr>
+               </table>
+               {/if}
+            </div>
+         </div>
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='tab'"}
+            <div role="tabpanel" class="tab-pane" id="ext_{$value->name}">
+               <iframe src="index.php?page={$value->from}{$value->params}&id={$fsc->presupuesto->idpresupuesto}" width="100%" height="600" frameborder="0"></iframe>
+            </div>
+            {/if}
+         {/loop}
+      </div>
+   </div>
+   
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="form-group">
+               Observaciones:
+               <textarea class="form-control" name="observaciones" rows="3">{$fsc->presupuesto->observaciones}</textarea>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<div class="modal" id="modal_articulos">
+   <div class="modal-dialog" style="width: 99%; max-width: 1000px;">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 class="modal-title">Buscar artículos</h3>
+         </div>
+         <div class="modal-body">
+            <form id="f_buscar_articulos" name="f_buscar_articulos" action="{$fsc->url()}" method="post" class="form">
+               <input type="hidden" name="codproveedor" value="{$fsc->presupuesto->codproveedor}"/>
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" autocomplete="off"/>
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                        <label>
+                           <input type="checkbox" name="con_stock" value="TRUE" onchange="buscar_articulos()"/>
+                           sólo con stock
+                        </label>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="codfamilia" onchange="buscar_articulos()">
+                           <option value="">Todas las familias</option>
+                           <option value="">------</option>
+                           {loop="$fsc->familia->all()"}
+                           <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <ul class="nav nav-tabs" id="nav_articulos" style="display: none;">
+            <li id="li_mis_articulos"><a href="#" id="b_mis_articulos">Mi catálogo</a></li>
+            <li id="li_kiwimaru"><a href="#" id="b_kiwimaru">Internet</a></li>
+            <li id="li_nuevo_articulo"><a href="#" id="b_nuevo_articulo">Nuevo...</a></li>
+         </ul>
+         <div id="search_results"></div>
+         <div id="kiwimaru_results"></div>
+         <div id="nuevo_articulo" class="modal-body" style="display: none;">
+            <form name="f_nuevo_articulo" action="{$fsc->url()}" method="post" class="form">
+               <div class="form-group">
+                  Referencia:
+                  <input class="form-control" type="text" name="referencia" maxlength="18" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Descripción:
+                  <input class="form-control" type="text" name="descripcion" autocomplete="off"/>
+               </div>
+               <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                  <a href="{$fsc->familia->url()}">Familia</a>:
+                  <select name="codfamilia" class="form-control">
+                     {loop="$fsc->familia->all()"}
+                     <option value="{$value->codfamilia}">{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="form-group col-lg-6 col-md-6 col-sm-6">
+                  <a href="{$fsc->impuesto->url()}">IVA</a>:
+                  <select name="codimpuesto" class="form-control">
+                     {loop="$fsc->impuesto->all()"}
+                     <option value="{$value->codimpuesto}"{if condition="$value->is_default()"} selected="selected"{/if}>{$value->descripcion}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="text-right">
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="new_articulo();return false;">
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar y seleccionar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_imprimir_presupuesto">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 class="modal-title">Imprimir {#FS_PRESUPUESTO#}</h3>
+         </div>
+         <div class="modal-body">
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='pdf'"}
+               <a href="index.php?page={$value->from}{$value->params}&id={$fsc->presupuesto->idpresupuesto}" target="_blank" class="btn btn-block btn-default">
+                  <span class="glyphicon glyphicon-print"></span> &nbsp; {$value->text}
+               </a>
+               {/if}
+            {/loop}
+         </div>
+      </div>
+   </div>
+</div>
+
+<form class="form" role="form" name="enviar_email" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_enviar">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h3 class="modal-title">Enviar {#FS_PRESUPUESTO#}</h3>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Email del proveedor:
+                  <input class="form-control" type="text" name="email" value="{$fsc->proveedor_s->email}" autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                  Mensaje:
+                  <textarea class="form-control" name="mensaje" rows="6">Buenos días, le adjunto su {#FS_PRESUPUESTO#} {$fsc->presupuesto->codigo}.
+{$fsc->empresa->email_firma}</textarea>
+               </div>
+            </div>
+            <div class="modal-footer">
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='email'"}
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='index.php?page={$value->from}{$value->params}&id={$fsc->presupuesto->idpresupuesto}';this.form.submit();">
+                  <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar {$value->text}
+               </button>
+               {/if}
+            {/loop}
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<form action="{$fsc->ppage->url()}" method="post">
+   <input type="hidden" name="delete" value="{$fsc->presupuesto->idpresupuesto}"/>
+   <div class="modal fade" id="modal_eliminar">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h3 class="modal-title">¿Realmente desea eliminar este {#FS_PRESUPUESTO#}?</h3>
+            </div>
+            <div class="modal-footer">
+               <div class="pull-left">
+                  <label>
+                     <input type="checkbox" name="stock" value="TRUE" checked="checked"/>
+                     Actualizar el stock
+                  </label>
+               </div>
+               <button class="btn btn-sm btn-danger" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+               </button>
+            </div>
+            {if condition="$fsc->presupuesto->idpedido"}
+            <div class="alert alert-info">
+               Hay un {#FS_PEDIDO#} asociado que será eliminada junto con este {#FS_PRESUPUESTO#}.
+            </div>
+            {/if}
+         </div>
+      </div>
+   </div>
+</form>
+{else}
+<div class="text-center">
+   <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

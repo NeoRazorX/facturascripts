@@ -1,0 +1,184 @@
+{include="header"}
+
+<script type="text/javascript">
+   function buscar_lineas()
+   {
+      if(document.f_buscar_lineas.buscar_lineas.value == '')
+      {
+         $("#search_results").html('');
+      }
+      else
+      {
+         $.ajax({
+            type: 'POST',
+            url: '{$fsc->url()}',
+            dataType: 'html',
+            data: $("form[name=f_buscar_lineas]").serialize(),
+            success: function(datos) {
+               var re = /<!--(.*?)-->/g;
+               var m = re.exec( datos );
+               if( m[1] == document.f_buscar_lineas.buscar_lineas.value )
+               {
+                  $("#search_results").html(datos);
+               }
+            }
+         });
+      }
+   }
+   $(document).ready(function() {
+      document.f_custom_search.query.focus();
+      $("#b_buscar_lineas").click(function(event) {
+         event.preventDefault();
+         $("#modal_buscar_lineas").modal('show');
+         document.f_buscar_lineas.buscar_lineas.focus();
+      });
+      $("#f_buscar_lineas").keyup(function() {
+         buscar_lineas();
+      });
+      $("#f_buscar_lineas").submit(function(event) {
+         event.preventDefault();
+         buscar_lineas();
+      });
+   });
+</script>
+
+<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+   <div class="row">
+      <div class="col-md-8 col-sm-7 col-xs-8">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if condition="$fsc->page->is_default()"}
+            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {else}
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {/if}
+         </div>
+         
+         <a class="btn btn-sm btn-success" href="index.php?page=nueva_compra&tipo=presupuesto">
+            <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
+         </a>
+         
+         <div class="btn-group">
+         {loop="$fsc->extensions"}
+            {if condition="$value->type=='button'"}
+            <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+            {/if}
+         {/loop}
+         </div>
+      </div>
+      <div class="col-md-2 col-sm-2 col-xs-4 text-right">
+         <a id="b_buscar_lineas" class="btn btn-sm btn-info" title="Buscar en líneas">
+            <span class="glyphicon glyphicon-search"></span> &nbsp; Líneas
+         </a>
+      </div>
+      <div class="col-md-2 col-sm-3 col-xs-12">
+         <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
+            <div class="input-group">
+               <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+               <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">
+                     <span class="glyphicon glyphicon-search"></span>
+                  </button>
+               </span>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+{if condition="$fsc->query!=''"}
+<h3 class="text-center">Resultados de "{$fsc->query}":</h3>
+{/if}
+
+<ul class="nav nav-tabs" role="tablist">
+   <li{if condition="!isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}">Todos los {#FS_PRESUPUESTOS#}</a></li>
+   <li{if condition="isset($_GET['pendientes'])"} class="active"{/if}><a href="{$fsc->url()}&pendientes=TRUE">Pendientes</a></li>
+</ul>
+
+<div class="table-responsive">
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th></th>
+            <th class="text-left">Código + Número 2</th>
+            <th class="text-left">Proveedor</th>
+            <th class="text-left">Observaciones</th>
+            <th class="text-right">Total</th>
+            <th class="text-right">Fecha</th>
+            <th class="text-right">Fecha validez</th>
+            <th class="text-right">Hora</th>
+         </tr>
+      </thead>
+      {loop="$fsc->resultados"}
+      <tr class="clickableRow{if condition="$value->total<=0"} bg-warning{elseif condition="$fsc->finoferta($value->finoferta,$value->idpedido)"} bg-danger{/if}" href="{$value->url()}">
+         <td class="text-center">
+            {if condition="$value->idpedido"}
+            <span class="glyphicon glyphicon-paperclip" title="El {#FS_PRESUPUESTO#} tiene vinculado un {#FS_PEDIDO#}"></span>
+            {/if}
+         </td>
+         <td><a href="#">{$value->codigo}</a> {$value->numero2}</td>
+         <td>{$value->nombre}</td>
+         <td>{$value->observaciones_resume()}</td>
+         <td class="text-right">{$fsc->show_precio($value->total, $value->coddivisa)}</td>
+         <td class="text-right">{$value->fecha}</td>
+         <td class="text-right">{$value->finoferta}</td>
+         <td class="text-right">{$value->show_hora()}</td>
+      </tr>
+      {else}
+      <tr class="bg-warning">
+         <td></td>
+         <td colspan="7">Ningún {#FS_PRESUPUESTO#} encontrado. Pulsa el botón <b>Nuevo</b> para crear uno.</td>
+      </tr>
+      {/loop}
+   </table>
+</div>
+
+<ul class="pager">
+   {if condition="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if condition="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+
+<form class="form" role="form" id="f_buscar_lineas" name="f_buscar_lineas" action="{$fsc->url()}" method="post">
+   <div class="modal" id="modal_buscar_lineas">
+      <div class="modal-dialog" style="width: 99%; max-width: 950px;">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Buscar en las líneas</h4>
+            </div>
+            <div class="modal-body">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="buscar_lineas" placeholder="Referencia" autocomplete="off"/>
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+            <div id="search_results" class="table-responsive"></div>
+         </div>
+      </div>
+   </div>
+</form>
+
+{include="footer"}
