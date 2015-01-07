@@ -22,4 +22,4 @@ require_model('presupuesto_cliente.php');
 $pre = new presupuesto_cliente();
 
 /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
-$this->db->exec("UPDATE presupuestoscli SET status = '2' WHERE finoferta < ".$pre->var2str(Date('d-m-Y'))." AND idpedido = NULL;");
+$db->exec("UPDATE presupuestoscli SET status = '2' WHERE finoferta < ".$pre->var2str(Date('d-m-Y'))." AND idpedido = NULL;");
