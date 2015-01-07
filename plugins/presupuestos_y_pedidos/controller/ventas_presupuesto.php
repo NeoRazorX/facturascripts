@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaSctipts
  * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -42,11 +41,13 @@ class ventas_presupuesto extends fs_controller {
    public $presupuesto;
    public $serie;
 
-   public function __construct() {
+   public function __construct()
+   {
       parent::__construct(__CLASS__, ucfirst(FS_PRESUPUESTO), 'ventas', FALSE, FALSE);
    }
 
-   protected function process() {
+   protected function process()
+   {
       $this->ppage = $this->page->get('ventas_presupuestos');
       $this->agente = FALSE;
 
@@ -67,24 +68,30 @@ class ventas_presupuesto extends fs_controller {
        * Comprobamos si el usuario tiene acceso a nueva_venta,
        * necesario para poder añadir líneas.
        */
-      if ($this->user->have_access_to('nueva_venta', FALSE)) {
+      if ($this->user->have_access_to('nueva_venta', FALSE))
+      {
          $nuevoprep = $this->page->get('nueva_venta');
          if ($nuevoprep)
             $this->nuevo_presupuesto_url = $nuevoprep->url();
       }
 
-      if (isset($_POST['idpresupuesto'])) {
+      if (isset($_POST['idpresupuesto']))
+      {
          $this->presupuesto = $presupuesto->get($_POST['idpresupuesto']);
          $this->modificar();
-      } else if (isset($_GET['id'])) {
+      }
+      else if (isset($_GET['id']))
+      {
          $this->presupuesto = $presupuesto->get($_GET['id']);
       }
 
-      if ($this->presupuesto) {
+      if ($this->presupuesto)
+      {
          $this->page->title = $this->presupuesto->codigo;
 
          /// cargamos el agente
-         if (!is_null($this->presupuesto->codagente)) {
+         if (!is_null($this->presupuesto->codagente))
+         {
             $agente = new agente();
             $this->agente = $agente->get($this->presupuesto->codagente);
          }
@@ -93,31 +100,39 @@ class ventas_presupuesto extends fs_controller {
          $this->cliente_s = $this->cliente->get($this->presupuesto->codcliente);
 
          /// comprobamos el presupuesto
-         if ($this->presupuesto->full_test()) {
-            if (isset($_GET['pedir']) AND isset($_GET['petid']) AND is_null($this->presupuesto->idpedido)) {
-               if ($this->duplicated_petition($_GET['petid'])) {
-                  $this->new_error_msg('Petición duplicada. Evita hacer doble clic sobre los botones.');
-               } else
-                  $this->generar_pedido();
-            }
-
-            if (strtotime($this->presupuesto->finoferta) < strtotime(Date('d-m-Y'))) {
+         if ($this->presupuesto->full_test())
+         {
+            if( strtotime($this->presupuesto->finoferta) < strtotime(Date('d-m-Y')) AND $this->presupuesto->status != 2)
+            {
                $this->new_advice("Fecha validez del " . FS_PRESUPUESTO . " vencida.");
+               $this->presupuesto->status = 2; /// rechazado
+               $this->presupuesto->save();
             }
-
-            /// Comprobamos las líneas
-            $this->check_lineas();
-         }
-
-         if (isset($_REQUEST['status'])) {
-            $this->presupuesto->status = $_REQUEST['status'];
-            if ($this->presupuesto->save()) {
-               $this->new_message("Presupuesto modificado correctamente.");
-            } else {
-               $this->new_error_msg("¡Imposible modificar el presupuesto!");
+            else if (isset($_REQUEST['status']))
+            {
+               $this->presupuesto->status = intval($_REQUEST['status']);
+               
+               if($this->presupuesto->status == 1 AND is_null($this->presupuesto->idpedido))
+               {
+                  $this->generar_pedido();
+               }
+               else if ($this->presupuesto->save())
+               {
+                  $this->new_message(ucfirst(FS_PRESUPUESTO)." modificado correctamente.");
+               }
+               else
+               {
+                  $this->new_error_msg("¡Imposible modificar el ".FS_PRESUPUESTO."!");
+               }
+            }
+            else
+            {
+               /// Comprobamos las líneas
+               $this->check_lineas();
             }
          }
-      } else
+      }
+      else
          $this->new_error_msg("¡" . ucfirst(FS_PRESUPUESTO) . " de cliente no encontrado!");
    }
 
@@ -125,15 +140,22 @@ class ventas_presupuesto extends fs_controller {
     * Comprobamos si los artículos han variado su precio.
     * @return type
     */
-   private function check_lineas() {
-      if (is_null($this->presupuesto->idpedido)) {
-         foreach ($this->presupuesto->get_lineas() as $l) {
+   private function check_lineas()
+   {
+      if( is_null($this->presupuesto->idpedido) AND $this->presupuesto->status == 0 )
+      {
+         foreach ($this->presupuesto->get_lineas() as $l)
+         {
             $data = $this->db->select("SELECT factualizado,pvp FROM articulos WHERE referencia = " . $l->var2str($l->referencia) . " ORDER BY referencia ASC;");
-            if (strtotime($data[0]["factualizado"]) > strtotime($this->presupuesto->fecha)) {
-               if ($l->pvpunitario > floatval($data[0]['pvp'])) {
+            if (strtotime($data[0]["factualizado"]) > strtotime($this->presupuesto->fecha))
+            {
+               if ($l->pvpunitario > floatval($data[0]['pvp']))
+               {
                   $this->new_advice("El precio del artículo <a href='" . $l->articulo_url() . "'>" . $l->referencia . "</a>"
                           . " ha bajado desde la elaboración del " . FS_PRESUPUESTO . ".");
-               } else if ($l->pvpunitario < floatval($data[0]['pvp'])) {
+               }
+               else if ($l->pvpunitario < floatval($data[0]['pvp']))
+               {
                   $this->new_advice("El precio del artículo <a href='" . $l->articulo_url() . "'>" . $l->referencia . "</a>"
                           . " ha subido desde la elaboración del " . FS_PRESUPUESTO . ".");
                }
@@ -142,35 +164,48 @@ class ventas_presupuesto extends fs_controller {
       }
    }
 
-   public function url() {
-      if (!isset($this->presupuesto)) {
+   public function url()
+   {
+      if (!isset($this->presupuesto))
+      {
          return parent::url();
-      } else if ($this->presupuesto) {
+      }
+      else if ($this->presupuesto)
+      {
          return $this->presupuesto->url();
-      } else
+      }
+      else
          return $this->page->url();
    }
 
-   private function modificar() {
+   private function modificar()
+   {
       $this->presupuesto->observaciones = $_POST['observaciones'];
       $this->presupuesto->numero2 = $_POST['numero2'];
 
-      if (is_null($this->presupuesto->idpedido)) {
+      if (is_null($this->presupuesto->idpedido))
+      {
          /// obtenemos los datos del ejercicio para acotar la fecha
          $eje0 = $this->ejercicio->get($this->presupuesto->codejercicio);
-         if ($eje0) {
+         if ($eje0)
+         {
             $this->presupuesto->fecha = $eje0->get_best_fecha($_POST['fecha'], TRUE);
             $this->presupuesto->finoferta = $_POST['finoferta'];
             $this->presupuesto->hora = $_POST['hora'];
-         } else
+         }
+         else
             $this->new_error_msg('No se encuentra el ejercicio asociado al ".FS_PRESUPUESTO."');
 
          /// ¿cambiamos el cliente?
-         if ($_POST['cliente'] != $this->presupuesto->codcliente) {
+         if ($_POST['cliente'] != $this->presupuesto->codcliente)
+         {
             $cliente = $this->cliente->get($_POST['cliente']);
-            if ($cliente) {
-               foreach ($cliente->get_direcciones() as $d) {
-                  if ($d->domfacturacion) {
+            if ($cliente)
+            {
+               foreach ($cliente->get_direcciones() as $d)
+               {
+                  if ($d->domfacturacion)
+                  {
                      $this->presupuesto->codcliente = $cliente->codcliente;
                      $this->presupuesto->cifnif = $cliente->cifnif;
                      $this->presupuesto->nombrecliente = $cliente->nombrecomercial;
@@ -184,17 +219,21 @@ class ventas_presupuesto extends fs_controller {
                      break;
                   }
                }
-            } else
+            }
+            else
                die('No se ha encontrado el cliente.');
-         } else
+         }
+         else
             $cliente = $this->cliente->get($this->presupuesto->codcliente);
 
          $serie = $this->serie->get($this->presupuesto->codserie);
 
          /// ¿cambiamos la serie?
-         if ($_POST['serie'] != $this->presupuesto->codserie) {
+         if ($_POST['serie'] != $this->presupuesto->codserie)
+         {
             $serie2 = $this->serie->get($_POST['serie']);
-            if ($serie2) {
+            if ($serie2)
+            {
                $this->presupuesto->codserie = $serie2->codserie;
                $this->presupuesto->irpf = $serie2->irpf;
                $this->presupuesto->new_codigo();
@@ -203,7 +242,8 @@ class ventas_presupuesto extends fs_controller {
             }
          }
 
-         if (isset($_POST['numlineas'])) {
+         if (isset($_POST['numlineas']))
+         {
             $numlineas = intval($_POST['numlineas']);
 
             $this->presupuesto->neto = 0;
@@ -214,29 +254,38 @@ class ventas_presupuesto extends fs_controller {
             $articulo = new articulo();
 
             /// eliminamos las líneas que no encontremos en el $_POST
-            foreach ($lineas as $l) {
+            foreach($lineas as $l)
+            {
                $encontrada = FALSE;
-               for ($num = 0; $num <= $numlineas; $num++) {
-                  if (isset($_POST['idlinea_' . $num])) {
-                     if ($l->idlinea == intval($_POST['idlinea_' . $num])) {
+               for($num = 0; $num <= $numlineas; $num++)
+               {
+                  if( isset($_POST['idlinea_'.$num]) )
+                  {
+                     if($l->idlinea == intval($_POST['idlinea_'.$num]))
+                     {
                         $encontrada = TRUE;
                         break;
                      }
                   }
                }
-               if (!$encontrada) {
+               if (!$encontrada)
+               {
                   if (!$l->delete())
                      $this->new_error_msg("¡Imposible eliminar la línea del artículo " . $l->referencia . "!");
                }
             }
 
             /// modificamos y/o añadimos las demás líneas
-            for ($num = 0; $num <= $numlineas; $num++) {
+            for ($num = 0; $num <= $numlineas; $num++)
+            {
                $encontrada = FALSE;
-               if (isset($_POST['idlinea_' . $num])) {
-                  foreach ($lineas as $k => $value) {
+               if (isset($_POST['idlinea_' . $num]))
+               {
+                  foreach ($lineas as $k => $value)
+                  {
                      /// modificamos la línea
-                     if ($value->idlinea == intval($_POST['idlinea_' . $num])) {
+                     if ($value->idlinea == intval($_POST['idlinea_' . $num]))
+                     {
                         $encontrada = TRUE;
                         $lineas[$k]->cantidad = floatval($_POST['cantidad_' . $num]);
                         $lineas[$k]->pvpunitario = floatval($_POST['pvp_' . $num]);
@@ -250,7 +299,8 @@ class ventas_presupuesto extends fs_controller {
                         $lineas[$k]->iva = 0;
                         $lineas[$k]->recargo = 0;
                         $lineas[$k]->irpf = $this->presupuesto->irpf;
-                        if (!$serie->siniva AND $cliente->regimeniva != 'Exento') {
+                        if (!$serie->siniva AND $cliente->regimeniva != 'Exento')
+                        {
                            $imp0 = $this->impuesto->get_by_iva($_POST['iva_' . $num]);
                            if ($imp0)
                               $lineas[$k]->codimpuesto = $imp0->codimpuesto;
@@ -259,28 +309,33 @@ class ventas_presupuesto extends fs_controller {
                            $lineas[$k]->recargo = floatval($_POST['recargo_' . $num]);
                         }
 
-                        if ($lineas[$k]->save()) {
+                        if ($lineas[$k]->save())
+                        {
                            $this->presupuesto->neto += $value->pvptotal;
                            $this->presupuesto->totaliva += $value->pvptotal * $value->iva / 100;
                            $this->presupuesto->totalirpf += $value->pvptotal * $value->irpf / 100;
                            $this->presupuesto->totalrecargo += $value->pvptotal * $value->recargo / 100;
-                        } else
+                        }
+                        else
                            $this->new_error_msg("¡Imposible modificar la línea del artículo " . $value->referencia . "!");
                         break;
                      }
                   }
 
                   /// añadimos la línea
-                  if (!$encontrada AND intval($_POST['idlinea_' . $num]) == -1 AND isset($_POST['referencia_' . $num])) {
+                  if (!$encontrada AND intval($_POST['idlinea_' . $num]) == -1 AND isset($_POST['referencia_' . $num]))
+                  {
                      $art0 = $articulo->get($_POST['referencia_' . $num]);
-                     if ($art0) {
+                     if ($art0)
+                     {
                         $linea = new linea_presupuesto_cliente();
                         $linea->referencia = $art0->referencia;
                         $linea->descripcion = $_POST['desc_' . $num];
                         $linea->irpf = $this->presupuesto->irpf;
 
-                        if (!$serie->siniva AND $cliente->regimeniva != 'Exento') {
-                           $imp0 = $this->impuesto->get_by_iva($_POST['iva_' . $num]);
+                        if (!$serie->siniva AND $cliente->regimeniva != 'Exento')
+                        {
+                           $imp0 = $this->impuesto->get_by_iva($_POST['iva_'.$num]);
                            if ($imp0)
                               $linea->codimpuesto = $imp0->codimpuesto;
 
@@ -295,14 +350,17 @@ class ventas_presupuesto extends fs_controller {
                         $linea->pvpsindto = ($linea->cantidad * $linea->pvpunitario);
                         $linea->pvptotal = ($linea->cantidad * $linea->pvpunitario * (100 - $linea->dtopor) / 100);
 
-                        if ($linea->save()) {
+                        if( $linea->save() )
+                        {
                            $this->presupuesto->neto += $linea->pvptotal;
                            $this->presupuesto->totaliva += $linea->pvptotal * $linea->iva / 100;
                            $this->presupuesto->totalirpf += $linea->pvptotal * $linea->irpf / 100;
                            $this->presupuesto->totalrecargo += $linea->pvptotal * $linea->recargo / 100;
-                        } else
+                        }
+                        else
                            $this->new_error_msg("¡Imposible guardar la línea del artículo " . $linea->referencia . "!");
-                     } else
+                     }
+                     else
                         $this->new_error_msg("¡Artículo " . $_POST['referencia_' . $num] . " no encontrado!");
                   }
                }
@@ -315,21 +373,25 @@ class ventas_presupuesto extends fs_controller {
             $this->presupuesto->totalrecargo = round($this->presupuesto->totalrecargo, FS_NF0);
             $this->presupuesto->total = $this->presupuesto->neto + $this->presupuesto->totaliva - $this->presupuesto->totalirpf + $this->presupuesto->totalrecargo;
 
-            if (abs(floatval($_POST['atotal']) - $this->presupuesto->total) > .01) {
+            if (abs(floatval($_POST['atotal']) - $this->presupuesto->total) > .01)
+            {
                $this->new_error_msg("El total difiere entre el controlador y la vista (" . $this->presupuesto->total .
                        " frente a " . $_POST['atotal'] . "). Debes informar del error.");
             }
          }
       }
 
-      if ($this->presupuesto->save()) {
+      if ($this->presupuesto->save())
+      {
          $this->new_message(ucfirst(FS_PRESUPUESTO) . " modificado correctamente.");
          $this->new_change(ucfirst(FS_PRESUPUESTO) . ' Cliente ' . $this->presupuesto->codigo, $this->presupuesto->url());
-      } else
+      }
+      else
          $this->new_error_msg("¡Imposible modificar el " . FS_PRESUPUESTO . "!");
    }
 
-   private function generar_pedido() {
+   private function generar_pedido()
+   {
       $pedido = new pedido_cliente();
       $pedido->apartado = $this->presupuesto->apartado;
       $pedido->automatica = TRUE;
@@ -369,13 +431,19 @@ class ventas_presupuesto extends fs_controller {
 
       $regularizacion = new regularizacion_iva();
 
-      if (!$eje0->abierto()) {
+      if (!$eje0->abierto())
+      {
          $this->new_error_msg("El ejercicio está cerrado.");
-      } else if ($regularizacion->get_fecha_inside($pedido->fecha)) {
+      }
+      else if ($regularizacion->get_fecha_inside($pedido->fecha))
+      {
          $this->new_error_msg("El IVA de ese periodo ya ha sido regularizado. No se pueden añadir más " . FS_PEDIDOS . " en esa fecha.");
-      } else if ($pedido->save()) {
+      }
+      else if ($pedido->save())
+      {
          $continuar = TRUE;
-         foreach ($this->presupuesto->get_lineas() as $l) {
+         foreach ($this->presupuesto->get_lineas() as $l)
+         {
             $n = new linea_pedido_cliente();
             $n->idpresupuesto = $l->idpresupuesto;
             $n->idpedido = $pedido->idpedido;
@@ -391,36 +459,45 @@ class ventas_presupuesto extends fs_controller {
             $n->pvpunitario = $l->pvpunitario;
             $n->recargo = $l->recargo;
             $n->referencia = $l->referencia;
-            if (!$n->save()) {
+            if (!$n->save())
+            {
                $continuar = FALSE;
                $this->new_error_msg("¡Imposible guardar la línea el artículo " . $n->referencia . "! ");
                break;
             }
          }
 
-         if ($continuar) {
+         if ($continuar)
+         {
             $this->presupuesto->idpedido = $pedido->idpedido;
-            // Si tenemos pedido, el status es 1 (aprobado)
-            $this->presupuesto->status = 1;
             $this->presupuesto->editable = FALSE;
-            if ($this->presupuesto->save()) {
+            
+            if ($this->presupuesto->save())
+            {
                $this->new_message("<a href='" . $pedido->url() . "'>" . ucfirst(FS_PEDIDO) . '</a> generado correctamente.');
-            } else {
+            }
+            else
+            {
                $this->new_error_msg("¡Imposible vincular el " . FS_PRESUPUESTO . " con el nuevo " . FS_PEDIDO . "!");
-               if ($pedido->delete()) {
+               if ($pedido->delete())
+               {
                   $this->new_error_msg("El " . FS_PEDIDO . " se ha borrado.");
-               } else
+               }
+               else
                   $this->new_error_msg("¡Imposible borrar el " . FS_PEDIDO . "!");
             }
          }
-         else {
-            if ($pedido->delete()) {
+         else
+         {
+            if ($pedido->delete())
+            {
                $this->new_error_msg("El " . FS_PEDIDO . " se ha borrado.");
-            } else
+            }
+            else
                $this->new_error_msg("¡Imposible borrar el " . FS_PEDIDO . "!");
          }
-      } else
+      }
+      else
          $this->new_error_msg("¡Imposible guardar el " . FS_PEDIDO . "!");
    }
-
 }

@@ -4,11 +4,11 @@
 {if condition="$fsc->presupuesto->editable"}
 <script type="text/javascript" src="view/js/nueva_venta.js"></script>
 <script type="text/javascript">
-   numlineas = {function = "count($fsc->presupuesto->get_lineas())"};
+   numlineas = {function="count($fsc->presupuesto->get_lineas())"};
    fs_nf0 = {#FS_NF0#};
-   all_impuestos = {function = "json_encode($fsc->impuesto->all())"};
-   all_series = {function = "json_encode($fsc->serie->all())"};
-   cliente = {function = "json_encode($fsc->cliente_s)"};
+   all_impuestos = {function="json_encode($fsc->impuesto->all())"};
+   all_series = {function="json_encode($fsc->serie->all())"};
+   cliente = {function="json_encode($fsc->cliente_s)"};
    nueva_venta_url = '{$fsc->nuevo_presupuesto_url}';
    fs_community_url = '{#FS_COMMUNITY_URL#}';
    
@@ -83,13 +83,7 @@
                <a class="btn btn-sm btn-default text-capitalize" href="{$fsc->presupuesto->pedido_url()}">
                   <span class="glyphicon glyphicon-eye-open"></span> &nbsp; Ver {#FS_PEDIDO#}
                </a>
-               {elseif="$fsc->presupuesto->status!=2"}
-               <a class="btn btn-sm btn-default" href="{$fsc->url()}&pedir=TRUE&petid={$fsc->random_string()}">
-                  <span class="glyphicon glyphicon-paperclip"></span> &nbsp; Aprobar
-               </a>
-               {/if}
-               
-               {if="!$fsc->presupuesto->idpedido"}
+               {else}
                <div class="btn-group">
                   {if="$fsc->presupuesto->status==0"}
                   <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown">
@@ -97,7 +91,7 @@
                   </button>
                   {elseif="$fsc->presupuesto->status==1"}
                   <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown">
-                     <span class="glyphicon glyphicon-ok"></span> &nbsp; Aceptado <span class="caret"></span>
+                     <span class="glyphicon glyphicon-ok"></span> &nbsp; Aprobado <span class="caret"></span>
                   </button>
                   {elseif="$fsc->presupuesto->status==2"}
                   <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown">
@@ -109,7 +103,7 @@
                      <li><a href="{$fsc->url()}&status=0"><span class="glyphicon glyphicon-time"></span> &nbsp; Pendiente</a></li>
                      {/if}
                      {if="$fsc->presupuesto->status!=1"}
-                     <li><a href="{$fsc->url()}&status=1"><span class="glyphicon glyphicon-ok"></span> &nbsp; Aceptado</a></li>
+                     <li><a href="{$fsc->url()}&status=1"><span class="glyphicon glyphicon-ok"></span> &nbsp; Aprobado</a></li>
                      {/if}
                      {if="$fsc->presupuesto->status!=2"}
                      <li><a href="{$fsc->url()}&status=2"><span class="glyphicon glyphicon-remove"></span> &nbsp; Rechazado</a></li>
