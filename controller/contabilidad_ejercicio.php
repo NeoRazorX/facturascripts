@@ -25,6 +25,7 @@ require_model('ejercicio.php');
 require_model('epigrafe.php');
 require_model('partida.php');
 require_model('proveedor.php');
+require_model('secuencia.php');
 require_model('subcuenta.php');
 
 class contabilidad_ejercicio extends fs_controller
@@ -46,6 +47,14 @@ class contabilidad_ejercicio extends fs_controller
    protected function process()
    {
       $this->show_fs_toolbar = FALSE;
+      
+      
+      /// cargamos las putas secuencias para que se actualicen.
+      /// Abanq/Eneboo, yo te maldigooooo!!!!!!!!!!!!!!!!!!!!!!
+      $sec0 = new secuencia_ejercicio();
+      $sec1 = new secuencia_contabilidad();
+      $sec2 = new secuencia();
+      
       
       $this->ejercicio = FALSE;
       if( isset($_POST['codejercicio']) )
