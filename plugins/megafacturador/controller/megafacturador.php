@@ -28,6 +28,7 @@ require_model('factura_proveedor.php');
 require_model('partida.php');
 require_model('proveedor.php');
 require_model('regularizacion_iva.php');
+require_model('regularizacion_stock.php');
 require_model('serie.php');
 require_model('subcuenta.php');
 
@@ -158,6 +159,9 @@ class megafacturador extends fs_controller
             $factura->totaliva += $l->pvptotal * $l->iva/100;
             $factura->totalirpf += $l->pvptotal * $l->irpf/100;
             $factura->totalrecargo += $l->pvptotal * $l->recargo/100;
+            
+            //actualizamos el stock real del producto
+            $this->calcular_stock_real($l->referencia,$albaranes[0]->codalmacen);
          }
       }
       
@@ -463,5 +467,238 @@ class megafacturador extends fs_controller
       }
       
       return $total;
+   }
+   private function calcular_stock_real($ref,$codalmacen)
+   {
+
+      $articulo = new articulo;
+      $articulo = $articulo->get($ref);
+
+      $almacen = new almacen;
+      $almacen = $almacen->get($codalmacen);
+
+      if($articulo){
+         foreach($almacen->all() as $alm)
+         {
+            $total = 0;
+            foreach($this->get_movimientos($articulo->referencia) as $mov)
+            {
+               if($mov['codalmacen'] == $alm->codalmacen)
+               {
+                  $total = $mov['final'];
+               }
+            }
+            
+            if( !$articulo->set_stock($alm->codalmacen, $total) )
+            {
+               $this->new_error_msg('Error al recarcular el stock del almacén '.$alm->codalmacen.'.');
+            }
+         }
+      }
+   }
+
+   private function get_movimientos($ref, $desde='', $hasta='', $codagente='')
+   {
+      $mlist = array();
+      $regularizacion = new regularizacion_stock();
+      
+      foreach($regularizacion->all_from_articulo($ref) as $reg)
+      {
+         $anyadir = TRUE;
+         if($desde != '')
+         {
+            if( strtotime($desde) > strtotime($reg->fecha) )
+            {
+               $anyadir = FALSE;
+            }
+         }
+         
+         if($hasta != '')
+         {
+            if( strtotime($hasta) < strtotime($reg->fecha) )
+            {
+               $anyadir = FALSE;
+            }
+         }
+         
+         if($anyadir)
+         {
+            $mlist[] = array(
+                'referencia' => $ref,
+                'codalmacen' => $reg->codalmacendest,
+                'origen' => 'Regularización',
+                'url' => 'index.php?page=ventas_articulo&ref='.$ref,
+                'clipro' => '-',
+                'movimiento' => '-',
+                'precio' => 0,
+                'dto' => 0,
+                'final' => $reg->cantidadfin,
+                'fecha' => $reg->fecha,
+                'hora' => $reg->hora
+            );
+         }
+      }
+      
+      /// forzamos la comprobación de las tablas de albaranes
+      $albc = new albaran_cliente();
+      $lin1 = new linea_albaran_cliente();
+      $albp = new albaran_proveedor();
+      $lin2 = new linea_albaran_proveedor();
+      
+      $sql_extra = '';
+      if($desde != '')
+      {
+         $sql_extra .= " AND fecha >= ".$this->empresa->var2str($desde);
+      }
+      
+      if($hasta != '')
+      {
+         $sql_extra .= " AND fecha <= ".$this->empresa->var2str($hasta);
+      }
+      
+      if($codagente != '')
+      {
+         $sql_extra .= " AND codagente = ".$this->empresa->var2str($codagente);
+      }
+      
+      /// buscamos el artículo en albaranes de compra
+      $sql = "SELECT a.codigo,l.cantidad,l.pvpunitario,l.dtopor,a.fecha,a.hora"
+              .",a.codalmacen,a.idalbaran,a.codproveedor,a.nombre"
+              ." FROM albaranesprov a, lineasalbaranesprov l"
+              ." WHERE a.idalbaran = l.idalbaran AND l.referencia = ".$albc->var2str($ref).$sql_extra;
+      
+      $data = $this->db->select_limit($sql, 1000, 0);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $mlist[] = array(
+                'referencia' => $ref,
+                'codalmacen' => $d['codalmacen'],
+                'origen' => 'Albaran compra '.$d['codigo'],
+                'url' => 'index.php?page=compras_albaran&id='.$d['idalbaran'],
+                'clipro' => $d['codproveedor'].' - '.$d['nombre'],
+                'movimiento' => floatval($d['cantidad']),
+                'precio' => floatval($d['pvpunitario']),
+                'dto' => floatval($d['dtopor']),
+                'final' => 0,
+                'fecha' => date('d-m-Y', strtotime($d['fecha'])),
+                'hora' => $d['hora']
+            );
+         }
+      }
+      
+      /// buscamos el artículo en facturas de compra
+      $sql = "SELECT f.codigo,l.cantidad,l.pvpunitario,l.dtopor,f.fecha,f.hora"
+              .",f.codalmacen,f.idfactura,f.codproveedor,f.nombre"
+              ." FROM facturasprov f, lineasfacturasprov l"
+              ." WHERE f.idfactura = l.idfactura AND l.idalbaran IS NULL"
+              ." AND l.referencia = ".$albc->var2str($ref).$sql_extra;
+      
+      $data = $this->db->select_limit($sql, 1000, 0);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $mlist[] = array(
+                'referencia' => $ref,
+                'codalmacen' => $d['codalmacen'],
+                'origen' => 'Factura compra '.$d['codigo'],
+                'url' => 'index.php?page=compras_factura&id='.$d['idfactura'],
+                'clipro' => $d['codproveedor'].' - '.$d['nombre'],
+                'movimiento' => floatval($d['cantidad']),
+                'precio' => floatval($d['pvpunitario']),
+                'dto' => floatval($d['dtopor']),
+                'final' => 0,
+                'fecha' => date('d-m-Y', strtotime($d['fecha'])),
+                'hora' => $d['hora']
+            );
+         }
+      }
+      
+      /// buscamos el artículo en albaranes de venta
+      $sql = "SELECT a.codigo,l.cantidad,l.pvpunitario,l.dtopor,a.fecha,a.hora"
+              .",a.codalmacen,a.idalbaran,a.codcliente,a.nombrecliente"
+              ." FROM albaranescli a, lineasalbaranescli l"
+              ." WHERE a.idalbaran = l.idalbaran AND l.referencia = ".$albc->var2str($ref).$sql_extra;
+      
+      $data = $this->db->select_limit($sql, 1000, 0);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $mlist[] = array(
+                'referencia' => $ref,
+                'codalmacen' => $d['codalmacen'],
+                'origen' => 'Albaran venta '.$d['codigo'],
+                'url' => 'index.php?page=ventas_albaran&id='.$d['idalbaran'],
+                'clipro' => $d['codcliente'].' - '.$d['nombrecliente'],
+                'movimiento' => 0-floatval($d['cantidad']),
+                'precio' => floatval($d['pvpunitario']),
+                'dto' => floatval($d['dtopor']),
+                'final' => 0,
+                'fecha' => date('d-m-Y', strtotime($d['fecha'])),
+                'hora' => $d['hora']
+            );
+         }
+      }
+      
+      /// buscamos el artículo en facturas de venta
+      $sql = "SELECT f.codigo,l.cantidad,l.pvpunitario,l.dtopor,f.fecha,f.hora"
+              .",f.codalmacen,f.idfactura,f.codcliente,f.nombrecliente"
+              ." FROM facturascli f, lineasfacturascli l"
+              ." WHERE f.idfactura = l.idfactura AND l.idalbaran IS NULL"
+              ." AND l.referencia = ".$albc->var2str($ref).$sql_extra;
+      
+      $data = $this->db->select_limit($sql, 1000, 0);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $mlist[] = array(
+                'referencia' => $ref,
+                'codalmacen' => $d['codalmacen'],
+                'origen' => 'Factura venta '.$d['codigo'],
+                'url' => 'index.php?page=ventas_factura&id='.$d['idfactura'],
+                'clipro' => $d['codcliente'].' - '.$d['nombrecliente'],
+                'movimiento' => 0-floatval($d['cantidad']),
+                'precio' => floatval($d['pvpunitario']),
+                'dto' => floatval($d['dtopor']),
+                'final' => 0,
+                'fecha' => date('d-m-Y', strtotime($d['fecha'])),
+                'hora' => $d['hora']
+            );
+         }
+      }
+      
+      /// ordenamos por fecha y hora
+      usort($mlist, function($a,$b) {
+         if( strtotime($a['fecha'].' '.$a['hora']) == strtotime($b['fecha'].' '.$b['hora']) )
+         {
+            return 0;
+         }
+         else if( strtotime($a['fecha'].' '.$a['hora']) < strtotime($b['fecha'].' '.$b['hora']) )
+         {
+            return -1;
+         }
+         else
+            return 1;
+      });
+      
+      /// recalculamos
+      $inicial = 0;
+      foreach($mlist as $i => $value)
+      {
+         if($value['movimiento'] == '-')
+         {
+            $inicial = $value['final'];
+         }
+         else
+            $inicial += $value['movimiento'];
+         
+         $mlist[$i]['final'] = $inicial;
+      }
+      
+      return $mlist;
    }
 }
