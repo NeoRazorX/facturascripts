@@ -18,22 +18,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace FacturaScripts\Base;
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Description of fs_controller
+ * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
 class fs_controller {
 
+    /**
+     * Request sobre la que podemos hacer consultas.
+     * @var Request 
+     */
     public $request;
+    
+    /**
+     * Nombre del archivo html para el motor de plantillas.
+     * @var string nombre_archivo.html
+     */
     public $template;
+    
+    /**
+     * Título de la página.
+     * @var string título de la página.
+     */
     public $title;
+    
+    /**
+     * Nombre de la clase del controlador
+     * @var string __CLASS__
+     */
     private $className;
+    
+    /**
+     * Traductor multi-idioma.
+     * @var fs_i18n 
+     */
     private $i18n;
+    
+    /**
+     * Carpeta de trabajo de FacturaScripts.
+     * @var string 
+     */
     private static $fsFolder;
 
+    /**
+     * Constructor por defecto.
+     * @param string $folder 
+     * @param string $className 
+     */
     public function __construct($folder = '', $className = __CLASS__) {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;

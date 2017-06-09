@@ -18,14 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace FacturaScripts\Base;
+
 /**
- * Description of fs_plugin_manager
+ * Gestor de plugins de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
 class fs_plugin_manager {
 
+    /**
+     * Lista de plugins activos.
+     * @var type 
+     */
     private static $enabledPlugins;
+    
+    /**
+     * Carpeta de trabajo de FacturaScripts.
+     * @var type 
+     */
     private static $fsFolder;
 
     public function __construct($folder = '') {
@@ -44,6 +55,10 @@ class fs_plugin_manager {
         }
     }
     
+    /**
+     * Devuelve la lista de plugins activos.
+     * @return type
+     */
     public function enabledPlugins() {
         return self::$enabledPlugins;
     }

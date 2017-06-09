@@ -23,6 +23,8 @@ require_once __DIR__ . '/base/fs_plugin_manager.php';
 require_once __DIR__ . '/base/fs_i18n.php';
 require_once __DIR__ . '/base/fs_controller.php';
 
+use FacturaScripts\Base\fs_i18n;
+use FacturaScripts\Base\fs_plugin_manager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,7 +49,7 @@ foreach ($pluginList as $pName) {
     }
 }
 
-/// ¿Buscamos en controller?
+/// ¿Buscamos en /controller?
 if (!$controllerPath) {
     if (file_exists(__DIR__ . '/controller/' . $controllerName . '.php')) {
         $controllerPath = __DIR__ . '/controller/' . $controllerName . '.php';
@@ -72,6 +74,7 @@ if ($controllerPath) {
     $fscHTTPstatus = Response::HTTP_NOT_FOUND;
 }
 
+/// Cargamos el motor de plantillas
 if ($template) {
     /// cargamos Twig
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');

@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use FacturaScripts\Base\fs_controller;
+
 /**
  * Description of admin_home
  *

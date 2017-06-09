@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace FacturaScripts\Base;
+
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 
@@ -28,8 +30,22 @@ use Symfony\Component\Translation\Loader\JsonFileLoader;
  */
 class fs_i18n {
 
+    /**
+     * Carpeta de trabajo de FacturaScripts.
+     * @var string 
+     */
     private static $fsFolder;
+    
+    /**
+     * Idioma por defecto.
+     * @var string 
+     */
     private static $fsLang;
+    
+    /**
+     * El traductor de symfony.
+     * @var Translator 
+     */
     private static $translator;
 
     public function __construct($folder = '', $lang = 'es_ES') {
@@ -43,11 +59,20 @@ class fs_i18n {
         }
     }
 
+    /**
+     * Traduce el texto al idioma predeterminado.
+     * @param string $txt
+     * @return string
+     */
     public function trans($txt) {
         return self::$translator->trans($txt);
     }
 
-    public function locateFiles() {
+    /**
+     * Carga los archivos de traducción siguiendo el sistema de prioridades
+     * de FacturaScripts.
+     */
+    private function locateFiles() {
         $pluginManager = new fs_plugin_manager();
         foreach ($pluginManager->enabledPlugins() as $pName) {
             if (file_exists(self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json')) {
