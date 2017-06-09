@@ -1,0 +1,15 @@
+{
+    "name": "vendor/facturascripts",
+    "description": "Description of project facturascripts.",
+    "authors": [
+        {
+            "name": "carlos",
+            "email": "your@email.here"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "v3.3.2",
+        "symfony/translation": "v3.3.2",
+        "twig/twig": "v1.34.3"
+    }
+}
