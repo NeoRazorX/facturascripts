@@ -28,34 +28,34 @@ use Symfony\Component\Translation\Loader\JsonFileLoader;
  */
 class fs_i18n {
 
-    private static $_fsFolder;
-    private static $_fsLang;
-    private static $_translator;
+    private static $fsFolder;
+    private static $fsLang;
+    private static $translator;
 
     public function __construct($folder = '', $lang = 'es_ES') {
-        if (!isset(self::$_fsFolder)) {
-            self::$_fsFolder = $folder;
-            self::$_fsLang = $lang;
+        if (!isset(self::$fsFolder)) {
+            self::$fsFolder = $folder;
+            self::$fsLang = $lang;
 
-            self::$_translator = new Translator(self::$_fsLang);
-            self::$_translator->addLoader('json', new JsonFileLoader());
+            self::$translator = new Translator(self::$fsLang);
+            self::$translator->addLoader('json', new JsonFileLoader());
             $this->locateFiles();
         }
     }
 
     public function trans($txt) {
-        return self::$_translator->trans($txt);
+        return self::$translator->trans($txt);
     }
 
     public function locateFiles() {
         $pluginManager = new fs_plugin_manager();
         foreach ($pluginManager->enabledPlugins() as $pName) {
-            if (file_exists(self::$_fsFolder . '/plugins/' . $pName . '/i18n/' . self::$_fsLang . '.json')) {
-                self::$_translator->addResource('json', self::$_fsFolder . '/plugins/' . $pName . '/i18n/' . self::$_fsLang . '.json', self::$_fsLang);
+            if (file_exists(self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json')) {
+                self::$translator->addResource('json', self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
             }
         }
         
-        self::$_translator->addResource('json', self::$_fsFolder . '/i18n/' . self::$_fsLang . '.json', self::$_fsLang);
+        self::$translator->addResource('json', self::$fsFolder . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
     }
 
 }

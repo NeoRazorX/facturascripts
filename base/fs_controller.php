@@ -30,17 +30,17 @@ class fs_controller {
     public $request;
     public $template;
     public $title;
-    private $_className;
-    private $_i18n;
-    private static $_fsFolder;
+    private $className;
+    private $i18n;
+    private static $fsFolder;
 
     public function __construct($folder = '', $className = __CLASS__) {
-        if (!isset(self::$_fsFolder)) {
-            self::$_fsFolder = $folder;
+        if (!isset(self::$fsFolder)) {
+            self::$fsFolder = $folder;
         }
         
-        $this->_className = $className;
-        $this->_i18n = new fs_i18n();
+        $this->className = $className;
+        $this->i18n = new fs_i18n();
         $this->request = Request::createFromGlobals();
         $this->template = $className.'.html';
         $this->title = $className;

@@ -25,19 +25,19 @@
  */
 class fs_plugin_manager {
 
-    private static $_enabledPlugins;
-    private static $_fsFolder;
+    private static $enabledPlugins;
+    private static $fsFolder;
 
     public function __construct($folder = '') {
-        if (!isset(self::$_fsFolder)) {
-            self::$_fsFolder = $folder;
+        if (!isset(self::$fsFolder)) {
+            self::$fsFolder = $folder;
 
-            self::$_enabledPlugins = [];
-            if (file_exists(self::$_fsFolder . '/plugin.list')) {
-                $list = explode(',', file_get_contents(self::$_fsFolder . '/plugin.list'));
+            self::$enabledPlugins = [];
+            if (file_exists(self::$fsFolder . '/plugin.list')) {
+                $list = explode(',', file_get_contents(self::$fsFolder . '/plugin.list'));
                 if ($list) {
                     foreach ($list as $pName) {
-                        self::$_enabledPlugins[] = $pName;
+                        self::$enabledPlugins[] = $pName;
                     }
                 }
             }
@@ -45,7 +45,7 @@ class fs_plugin_manager {
     }
     
     public function enabledPlugins() {
-        return self::$_enabledPlugins;
+        return self::$enabledPlugins;
     }
 
 }
