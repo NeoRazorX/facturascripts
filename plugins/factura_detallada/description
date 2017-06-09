@@ -1,7 +1,0 @@
-Añade un nuevo formato de impresión de facturas de venta.
-<ul>
-   <li>Se incluyen porcentajes y totales de IRPF y Recargo de Equivalencia por cada grupo de IVA en la impresion de la factura.</li>
-   <li>Solo es posible incluir un máximo de 3 lineas de IVA en la impresion de la factura.</li>
-   <li>El Logo de la empresa debe de ser de un tamaño minimo aconsejado de 800 X 800 pixeles y se utilizará tambien como Marcadeagua en el fondo del documento.</li>
-   <li>El Logo NO debe de incluir los datos de la empresa. Solo la imagen corporativa.</li>
-</ul>
