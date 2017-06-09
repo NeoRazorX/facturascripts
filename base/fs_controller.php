@@ -12,11 +12,14 @@
  * @author carlos
  */
 class fs_controller {
+    public $template;
     private static $_fsPath;
     
     public function __construct($folder = '') {
         if(!isset(self::$_fsPath)) {
             self::$_fsPath = $folder;
         }
+        
+        $this->template = 'template_not_found.html.twig';
     }
 }

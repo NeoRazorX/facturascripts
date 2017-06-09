@@ -20,22 +20,26 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/base/fs_plugin_manager.php';
+require_once __DIR__ . '/base/fs_i18n.php';
+require_once __DIR__ . '/base/fs_controller.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\Loader\ArrayLoader;
 
 /// Obtenemos la lista de plugins activos
 $pluginManager = new fs_plugin_manager(__DIR__);
 $pluginList = $pluginManager->enabledPluggins;
 
+/// Cargamos el traductor
+$i18n = new fs_i18n();
+
 /// Obtenemos el nombre del controlador a cargar
 $request = Request::createFromGlobals();
 $controllerName = $request->get('page', 'admin_home');
+$controllerPath = '';
+$template = 'controller_not_found.html.twig';
 
 /// Buscamos el controlador en los plugins
-$controllerPath = '';
 foreach ($pluginList as $pName) {
     if (file_exists(__DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php')) {
         $controllerPath = __DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php';
@@ -50,34 +54,28 @@ if (!$controllerPath) {
     }
 }
 
-/// Cargamos el traductor
-$translator = new Translator('es_ES');
-$translator->addLoader('array', new ArrayLoader());
-$translator->addResource('array', array(
-    'Código' => 'Codig',
-    'Controlador' => 'Controlador',
-    'Controlador no encontrado' => 'Controlador no encontrat',
-    'Error fatal' => 'Error fatal',
-    'Mensaje' => 'Mesatge'
-), 'es_CA');
-
 /// Si hemos encontrado el controlador, lo cargamos
+$fsc = FALSE;
+$fscException = FALSE;
+$fscHTTPstatus = Response::HTTP_OK;
 if ($controllerPath) {
     require $controllerPath;
 
     try {
         $fsc = new $controllerName(__DIR__);
+        $template = $fsc->template;
     } catch (Exception $ex) {
-        $html = "<h1>".$translator->trans('Error fatal')."</h1>"
-                . "<ul>"
-                . "<li><b>".$translator->trans('Controlador').":</b> " . $controllerPath . "</li>"
-                . "<li><b>".$translator->trans('Código').":</b> " . $e->getCode() . "</li>"
-                . "<li><b>".$translator->trans('Mensage').":</b> " . $e->getMessage() . "</li>"
-                . "</ul>";
-        $response = new Response($html, Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->send();
+        $fscException = $ex;
+        $fscHTTPstatus = Response::HTTP_INTERNAL_SERVER_ERROR;
     }
-} else {
-    $response = new Response('<h1>'.$translator->trans('Controlador no encontrado').' :-(</h1>', Response::HTTP_NOT_FOUND);
+}
+
+if ($template) {
+    /// cargamos Twig
+    $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+    $twig = new Twig_Environment($twigLoader);
+
+    /// renderizamos el html
+    $response = new Response($twig->render($template, array('fsc' => $fsc, 'i18n' => $i18n, 'template' => $template, 'exception' => $fscException)), $fscHTTPstatus);
     $response->send();
 }

@@ -11,6 +11,6 @@
  *
  * @author carlos
  */
-class admin_home {
+class admin_home extends fs_controller {
     //put your code here
 }
