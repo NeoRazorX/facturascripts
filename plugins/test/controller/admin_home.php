@@ -19,29 +19,13 @@
  */
 
 /**
- * Description of fs_plugin_manager
+ * Description of admin_home
  *
  * @author Carlos García Gómez
  */
-class fs_plugin_manager {
-
-    public $enabledPluggins;
-    private static $_fsFolder;
-
-    public function __construct($folder = '') {
-        if (!isset(self::$_fsFolder)) {
-            self::$_fsFolder = $folder;
-        }
-
-        $this->enabledPluggins = [];
-        if (file_exists(self::$_fsFolder . '/plugin.list')) {
-            $list = explode(',', file_get_contents(self::$_fsFolder . '/plugin.list'));
-            if($list) {
-                foreach($list as $pName) {
-                    $this->enabledPluggins[] = $pName;
-                }
-            }
-        }
+class admin_home extends fs_controller {
+    public function __construct($folder = '', $className = __CLASS__) {
+        parent::__construct($folder, $className);
+        $this->title = 'TEST';
     }
-
 }

@@ -41,8 +41,8 @@ $template = 'controller_not_found.html';
 
 /// Buscamos el controlador en los plugins
 foreach ($pluginList as $pName) {
-    if (file_exists(__DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php')) {
-        $controllerPath = __DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php';
+    if (file_exists(__DIR__ . '/plugins/' . $pName . '/controller/' . $controllerName . '.php')) {
+        $controllerPath = __DIR__ . '/plugins/' . $pName . '/controller/' . $controllerName . '.php';
         break;
     }
 }
@@ -75,6 +75,11 @@ if ($controllerPath) {
 if ($template) {
     /// cargamos Twig
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+    foreach($pluginList as $pName) {
+        if(file_exists(__DIR__.'/plugins/'.$pName.'/view')) {
+            $twigLoader->prependPath(__DIR__.'/plugins/'.$pName.'/view');
+        }
+    }
     $twig = new Twig_Environment($twigLoader);
 
     /// renderizamos el html
