@@ -23,6 +23,8 @@ require_once __DIR__ . '/base/fs_plugin_manager.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\ArrayLoader;
 
 /// Obtenemos la lista de plugins activos
 $pluginManager = new fs_plugin_manager(__DIR__);
@@ -33,37 +35,49 @@ $request = Request::createFromGlobals();
 $controllerName = $request->get('page', 'admin_home');
 
 /// Buscamos el controlador en los plugins
-$found = FALSE;
+$controllerPath = '';
 foreach ($pluginList as $pName) {
     if (file_exists(__DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php')) {
-        require __DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php';
-        $found = TRUE;
+        $controllerPath = __DIR__ . '/' . $pName . '/controller/' . $controllerName . '.php';
         break;
     }
 }
 
 /// ¿Buscamos en controller?
-if (!$found) {
+if (!$controllerPath) {
     if (file_exists(__DIR__ . '/controller/' . $controllerName . '.php')) {
-        require __DIR__ . '/controller/' . $controllerName . '.php';
-        $found = TRUE;
+        $controllerPath = __DIR__ . '/controller/' . $controllerName . '.php';
     }
 }
 
+/// Cargamos el traductor
+$translator = new Translator('es_ES');
+$translator->addLoader('array', new ArrayLoader());
+$translator->addResource('array', array(
+    'Código' => 'Codig',
+    'Controlador' => 'Controlador',
+    'Controlador no encontrado' => 'Controlador no encontrat',
+    'Error fatal' => 'Error fatal',
+    'Mensaje' => 'Mesatge'
+), 'es_CA');
+
 /// Si hemos encontrado el controlador, lo cargamos
-if ($found) {
+if ($controllerPath) {
+    require $controllerPath;
+
     try {
         $fsc = new $controllerName(__DIR__);
     } catch (Exception $ex) {
-        $html = "<h1>Error fatal</h1>"
-        . "<ul>"
-        . "<li><b>Código:</b> " . $e->getCode() . "</li>"
-        . "<li><b>Mensage:</b> " . $e->getMessage() . "</li>"
-        . "</ul>";
+        $html = "<h1>".$translator->trans('Error fatal')."</h1>"
+                . "<ul>"
+                . "<li><b>".$translator->trans('Controlador').":</b> " . $controllerPath . "</li>"
+                . "<li><b>".$translator->trans('Código').":</b> " . $e->getCode() . "</li>"
+                . "<li><b>".$translator->trans('Mensage').":</b> " . $e->getMessage() . "</li>"
+                . "</ul>";
         $response = new Response($html, Response::HTTP_INTERNAL_SERVER_ERROR);
         $response->send();
     }
 } else {
-    $response = new Response('Controlador '.$controllerName.' no encontrado :-(', Response::HTTP_NOT_FOUND);
+    $response = new Response('<h1>'.$translator->trans('Controlador no encontrado').' :-(</h1>', Response::HTTP_NOT_FOUND);
     $response->send();
 }
