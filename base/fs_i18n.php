@@ -39,12 +39,23 @@ class fs_i18n {
 
             self::$_translator = new Translator(self::$_fsLang);
             self::$_translator->addLoader('json', new JsonFileLoader());
-            self::$_translator->addResource('json', self::$_fsFolder . '/i18n/' . self::$_fsLang . '.json', self::$_fsLang);
+            $this->locateFiles();
         }
     }
 
     public function trans($txt) {
         return self::$_translator->trans($txt);
+    }
+
+    public function locateFiles() {
+        $pluginManager = new fs_plugin_manager();
+        foreach ($pluginManager->enabledPlugins() as $pName) {
+            if (file_exists(self::$_fsFolder . '/plugins/' . $pName . '/i18n/' . self::$_fsLang . '.json')) {
+                self::$_translator->addResource('json', self::$_fsFolder . '/plugins/' . $pName . '/i18n/' . self::$_fsLang . '.json', self::$_fsLang);
+            }
+        }
+        
+        self::$_translator->addResource('json', self::$_fsFolder . '/i18n/' . self::$_fsLang . '.json', self::$_fsLang);
     }
 
 }

@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /// Obtenemos la lista de plugins activos
 $pluginManager = new fs_plugin_manager(__DIR__);
-$pluginList = $pluginManager->enabledPluggins;
+$pluginList = $pluginManager->enabledPlugins();
 
 /// Cargamos el traductor
 $i18n = new fs_i18n(__DIR__, 'es_ES');

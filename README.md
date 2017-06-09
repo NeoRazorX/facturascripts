@@ -6,9 +6,10 @@ Este es un prototipo con el que estamos experimentando. La versión estable de F
 https://github.com/NeoRazorX/facturascripts_2015
 
 ## Instalación
-git clone https://github.com/NeoRazorX/facturascripts.git
-cd facturascripts
-composer install
+Clonar y desplegar con composer:
+    git clone https://github.com/NeoRazorX/facturascripts.git
+    cd facturascripts
+    composer install
 
 ## Feedback
 Para cualquier duda, problema o sugerencia:

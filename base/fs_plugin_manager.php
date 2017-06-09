@@ -25,23 +25,27 @@
  */
 class fs_plugin_manager {
 
-    public $enabledPluggins;
+    private static $_enabledPlugins;
     private static $_fsFolder;
 
     public function __construct($folder = '') {
         if (!isset(self::$_fsFolder)) {
             self::$_fsFolder = $folder;
-        }
 
-        $this->enabledPluggins = [];
-        if (file_exists(self::$_fsFolder . '/plugin.list')) {
-            $list = explode(',', file_get_contents(self::$_fsFolder . '/plugin.list'));
-            if($list) {
-                foreach($list as $pName) {
-                    $this->enabledPluggins[] = $pName;
+            self::$_enabledPlugins = [];
+            if (file_exists(self::$_fsFolder . '/plugin.list')) {
+                $list = explode(',', file_get_contents(self::$_fsFolder . '/plugin.list'));
+                if ($list) {
+                    foreach ($list as $pName) {
+                        self::$_enabledPlugins[] = $pName;
+                    }
                 }
             }
         }
+    }
+    
+    public function enabledPlugins() {
+        return self::$_enabledPlugins;
     }
 
 }
