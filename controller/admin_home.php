@@ -24,5 +24,7 @@
  * @author Carlos García Gómez
  */
 class admin_home extends fs_controller {
-    //put your code here
+    public function __construct($folder = '', $className = __CLASS__) {
+        parent::__construct($folder, $className);
+    }
 }

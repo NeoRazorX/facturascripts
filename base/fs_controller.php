@@ -29,15 +29,21 @@ class fs_controller {
 
     public $request;
     public $template;
-    private static $_fsPath;
+    public $title;
+    private $_className;
+    private $_i18n;
+    private static $_fsFolder;
 
-    public function __construct($folder = '') {
-        if (!isset(self::$_fsPath)) {
-            self::$_fsPath = $folder;
+    public function __construct($folder = '', $className = __CLASS__) {
+        if (!isset(self::$_fsFolder)) {
+            self::$_fsFolder = $folder;
         }
-
+        
+        $this->_className = $className;
+        $this->_i18n = new fs_i18n();
         $this->request = Request::createFromGlobals();
-        $this->template = 'template_not_found.html.twig';
+        $this->template = $className.'.html';
+        $this->title = $className;
     }
 
 }

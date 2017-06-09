@@ -10,6 +10,9 @@
     "require": {
         "symfony/http-foundation": "v3.3.2",
         "symfony/translation": "v3.3.2",
-        "twig/twig": "v1.34.3"
+        "twig/twig": "v1.34.3",
+        "components/jquery": "dev-master",
+        "twbs/bootstrap": "dev-master",
+        "components/font-awesome": "dev-master"
     }
 }

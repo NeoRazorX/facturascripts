@@ -1,0 +1,6 @@
+{
+    "controller-not-found": "Controlador no encontrado",
+    "hello-world": "Hola mundo",
+    "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los compotentes de symfony.",
+    "template-not-found": "Template no encontrado"
+}

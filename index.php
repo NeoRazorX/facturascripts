@@ -31,13 +31,13 @@ $pluginManager = new fs_plugin_manager(__DIR__);
 $pluginList = $pluginManager->enabledPluggins;
 
 /// Cargamos el traductor
-$i18n = new fs_i18n();
+$i18n = new fs_i18n(__DIR__, 'es_ES');
 
 /// Obtenemos el nombre del controlador a cargar
 $request = Request::createFromGlobals();
 $controllerName = $request->get('page', 'admin_home');
 $controllerPath = '';
-$template = 'controller_not_found.html.twig';
+$template = 'controller_not_found.html';
 
 /// Buscamos el controlador en los plugins
 foreach ($pluginList as $pName) {
@@ -68,6 +68,8 @@ if ($controllerPath) {
         $fscException = $ex;
         $fscHTTPstatus = Response::HTTP_INTERNAL_SERVER_ERROR;
     }
+} else {
+    $fscHTTPstatus = Response::HTTP_NOT_FOUND;
 }
 
 if ($template) {
@@ -76,6 +78,6 @@ if ($template) {
     $twig = new Twig_Environment($twigLoader);
 
     /// renderizamos el html
-    $response = new Response($twig->render($template, array('fsc' => $fsc, 'i18n' => $i18n, 'template' => $template, 'exception' => $fscException)), $fscHTTPstatus);
+    $response = new Response($twig->render($template, array('fsc' => $fsc, 'i18n' => $i18n, 'template' => $template, 'exception' => $fscException, 'controllerName' => $controllerName)), $fscHTTPstatus);
     $response->send();
 }
