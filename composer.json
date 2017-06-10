@@ -15,5 +15,10 @@
         "twbs/bootstrap": "dev-master",
         "components/font-awesome": "dev-master",
         "maximebf/debugbar": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "FacturaScripts\\Base\\": "base/"
+        }
     }
 }
