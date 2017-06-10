@@ -6,8 +6,26 @@
         <div class="col-sm-12">
             <div class="page-header">
                 <h1>{{ i18n.trans('hello-world') }}</h1>
+                <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
             </div>
-            <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/ylji2qliU44" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>
+                <i class="fa fa-file" aria-hidden="true"></i> plugin.list
+            </h2>
+            <p class="help-block">{{ i18n.trans('edit-plugin-list') }}</p>
+            <pre>test</pre>
+        </div>
+        <div class="col-sm-6">
+            <h3>
+                <i class="fa fa-check-square-o" aria-hidden="true"></i> TO-DO
+            </h3>
+            <p class="help-block">{{ i18n.trans('to-do-list') }}</p>
         </div>
     </div>
 </div>

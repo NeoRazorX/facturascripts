@@ -1,3 +1,4 @@
 {
-    "hello-world-2": "Hola mundo 2"
+    "hello-world-2": "Hola mundo 2",
+    "hello-world-text": "Has activado el plugin test. Ahora se está usando tanto el controlador, vista y traducciones de ese plugin."
 }

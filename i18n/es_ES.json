@@ -1,6 +1,8 @@
 {
     "controller-not-found": "Controlador no encontrado",
+    "edit-plugin-list": "Edita el archivo plugin.list y escribe test. Eso hará que FacturaScripts active ese plugin.",
     "hello-world": "Hola mundo",
     "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
-    "template-not-found": "Template no encontrado"
+    "template-not-found": "Template no encontrado",
+    "to-do-list": "Modificar la clase fs_plugin_manager para añadir funciones de activar y desactivar plugins. Nota: activar un plugin supone escribir el nombre de ese plugin en el archivo plugin.list"
 }

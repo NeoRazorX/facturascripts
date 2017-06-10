@@ -70,17 +70,18 @@ class fs_i18n {
 
     /**
      * Carga los archivos de traducción siguiendo el sistema de prioridades
-     * de FacturaScripts.
+     * de FacturaScripts. En esta caso hay que proporcionar al traductor las rutas
+     * en orden inverso.
      */
     private function locateFiles() {
+        self::$translator->addResource('json', self::$fsFolder . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
+        
         $pluginManager = new fs_plugin_manager();
         foreach ($pluginManager->enabledPlugins() as $pName) {
             if (file_exists(self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json')) {
                 self::$translator->addResource('json', self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
             }
         }
-        
-        self::$translator->addResource('json', self::$fsFolder . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
     }
 
 }

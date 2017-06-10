@@ -32,7 +32,7 @@ class fs_plugin_manager {
      * @var type 
      */
     private static $enabledPlugins;
-    
+
     /**
      * Carpeta de trabajo de FacturaScripts.
      * @var type 
@@ -46,7 +46,7 @@ class fs_plugin_manager {
             self::$enabledPlugins = [];
             if (file_exists(self::$fsFolder . '/plugin.list')) {
                 $list = explode(',', file_get_contents(self::$fsFolder . '/plugin.list'));
-                if ($list) {
+                if (!empty($list)) {
                     foreach ($list as $pName) {
                         self::$enabledPlugins[] = $pName;
                     }
@@ -54,7 +54,7 @@ class fs_plugin_manager {
             }
         }
     }
-    
+
     /**
      * Devuelve la lista de plugins activos.
      * @return type
