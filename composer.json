@@ -13,6 +13,7 @@
         "twig/twig": "v1.34.3",
         "components/jquery": "dev-master",
         "twbs/bootstrap": "dev-master",
-        "components/font-awesome": "dev-master"
+        "components/font-awesome": "dev-master",
+        "maximebf/debugbar": "dev-master"
     }
 }

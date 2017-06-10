@@ -27,6 +27,11 @@ use FacturaScripts\Base\fs_i18n;
 use FacturaScripts\Base\fs_plugin_manager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DebugBar\StandardDebugBar;
+
+/// Iniciamos debugbar
+$debugbar = new StandardDebugBar();
+$debugbarRenderer = $debugbar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
 
 /// Obtenemos la lista de plugins activos
 $pluginManager = new fs_plugin_manager(__DIR__);
@@ -74,18 +79,32 @@ if ($controllerPath) {
     $fscHTTPstatus = Response::HTTP_NOT_FOUND;
 }
 
-/// Cargamos el motor de plantillas
-if ($template) {
-    /// cargamos Twig
+if (!is_writable('.')) {
+    $response = new Response($i18n->trans('folder-not-writable'), Response::HTTP_INTERNAL_SERVER_ERROR);
+    $response->send();
+} else if ($template) {
+    /// Cargamos el motor de plantillas
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
-    foreach($pluginList as $pName) {
-        if(file_exists(__DIR__.'/plugins/'.$pName.'/view')) {
-            $twigLoader->prependPath(__DIR__.'/plugins/'.$pName.'/view');
+    foreach ($pluginList as $pName) {
+        if (file_exists(__DIR__ . '/plugins/' . $pName . '/view')) {
+            $twigLoader->prependPath(__DIR__ . '/plugins/' . $pName . '/view');
         }
     }
-    $twig = new Twig_Environment($twigLoader);
+    $twig = new Twig_Environment($twigLoader, array('cache' => 'cache/twig'));
 
     /// renderizamos el html
-    $response = new Response($twig->render($template, array('fsc' => $fsc, 'i18n' => $i18n, 'template' => $template, 'exception' => $fscException, 'controllerName' => $controllerName)), $fscHTTPstatus);
+    $templateVars = array(
+        'fsc' => $fsc,
+        'i18n' => $i18n,
+        'template' => $template,
+        'exception' => $fscException,
+        'controllerName' => $controllerName,
+        'debugbarRender' => $debugbarRenderer
+    );
+    try {
+        $response = new Response($twig->render($template, $templateVars), $fscHTTPstatus);
+    } catch (Exception $ex) {
+        $response = new Response($twig->render('template_not_found.html', $templateVars), Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
     $response->send();
 }

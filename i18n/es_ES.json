@@ -1,6 +1,7 @@
 {
     "controller-not-found": "Controlador no encontrado",
     "edit-plugin-list": "Edita el archivo plugin.list y escribe test. Eso hará que FacturaScripts active ese plugin.",
+    "folder-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts.",
     "hello-world": "Hola mundo",
     "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
     "template-not-found": "Template no encontrado",

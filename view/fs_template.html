@@ -6,16 +6,18 @@
     <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content="FacturaScripts" />
-    {% block css %}
+{% block css %}
     <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="vendor/components/font-awesome/css/font-awesome.min.css" />
-    {% endblock %}
-</head>
-<body>
-    {% block body %}{% endblock %}
-    {% block javascript %}
+{% endblock %}
+{% block javascript %}
     <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
-    {% endblock %}
+{% endblock %}
+{{ debugbarRender.renderHead()|raw }}
+</head>
+<body>
+{% block body %}{% endblock %}
+{{ debugbarRender.render()|raw }}
 </body>
 </html>

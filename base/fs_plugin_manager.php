@@ -29,13 +29,13 @@ class fs_plugin_manager {
 
     /**
      * Lista de plugins activos.
-     * @var type 
+     * @var array 
      */
     private static $enabledPlugins;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
-     * @var type 
+     * @var string 
      */
     private static $fsFolder;
 
@@ -57,7 +57,7 @@ class fs_plugin_manager {
 
     /**
      * Devuelve la lista de plugins activos.
-     * @return type
+     * @return array
      */
     public function enabledPlugins() {
         return self::$enabledPlugins;

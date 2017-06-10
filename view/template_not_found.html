@@ -1,2 +1,14 @@
-<h1>{{ i18n.trans('template-not-found') }}:</h1>
-{{ template }}
+{% extends "fs_template.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1>{{ i18n.trans('template-not-found') }}:</h1>
+            </div>
+            {{ template }}
+        </div>
+    </div>
+</div>
+{% endblock %}

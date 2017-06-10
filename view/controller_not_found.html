@@ -1,2 +1,14 @@
-<h1>{{ i18n.trans('controller-not-found') }}:</h1>
-<b>{{ controllerName }}</b>
+{% extends "fs_template.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1>{{ i18n.trans('controller-not-found') }}:</h1>
+            </div>
+            <b>{{ controllerName }}</b>
+        </div>
+    </div>
+</div>
+{% endblock %}
