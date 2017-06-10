@@ -62,5 +62,30 @@ class fs_plugin_manager {
     public function enabledPlugins() {
         return self::$enabledPlugins;
     }
+    
+    /**
+     * Activa el plugin indicado.
+     * @param string $pluginName
+     */
+    public function enable($pluginName) {
+        if(file_exists(self::$fsFolder.'/plugins/'.$pluginName) ) {
+            self::$enabledPlugins[] = $pluginName;
+            file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+        }
+    }
+    
+    /**
+     * Desactiva el plugin indicado.
+     * @param string $pluginName
+     */
+    public function disable($pluginName) {
+        foreach(self::$enabledPlugins as $i => $value) {
+            if($value == $pluginName) {
+                unset(self::$enabledPlugins[$i]);
+                file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+                break;
+            }
+        }
+    }
 
 }

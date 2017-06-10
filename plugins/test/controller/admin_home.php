@@ -19,6 +19,7 @@
  */
 
 use FacturaScripts\Base\fs_controller;
+use FacturaScripts\Base\fs_plugin_manager;
 
 /**
  * Description of admin_home
@@ -26,8 +27,16 @@ use FacturaScripts\Base\fs_controller;
  * @author Carlos García Gómez
  */
 class admin_home extends fs_controller {
+
     public function __construct($folder = '', $className = __CLASS__) {
         parent::__construct($folder, $className);
         $this->title = 'TEST';
+
+        if ($this->request->get('disable', '') != '') {
+            $pluginManager = new fs_plugin_manager();
+            $pluginManager->disable($this->request->get('disable'));
+            $this->new_message($this->i18n->trans('plugin-disabled'));
+        }
     }
+
 }

@@ -90,7 +90,8 @@ if (!is_writable('.')) {
             $twigLoader->prependPath(__DIR__ . '/plugins/' . $pName . '/view');
         }
     }
-    $twig = new Twig_Environment($twigLoader, array('cache' => 'cache/twig'));
+    ///$twig = new Twig_Environment($twigLoader, array('cache' => 'cache/twig'));
+    $twig = new Twig_Environment($twigLoader);
 
     /// renderizamos el html
     $templateVars = array(

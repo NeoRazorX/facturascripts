@@ -14,5 +14,21 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>
+                <i class="fa fa-puzzle-piece" aria-hidden="true"></i> plugins
+            </h2>
+            <a href="{{ fsc.url() }}&disable=test" class="btn btn-warning">
+                <i class="fa fa-remove" aria-hidden="true"></i> {{ i18n.trans('disable-plugin') }}: test
+            </a>
+        </div>
+        <div class="col-sm-6">
+            <h3>
+                <i class="fa fa-check-square-o" aria-hidden="true"></i> TO-DO
+            </h3>
+            <p class="help-block">{{ i18n.trans('to-do-list') }}</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

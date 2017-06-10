@@ -1,9 +1,12 @@
 {
     "controller-not-found": "Controlador no encontrado",
-    "edit-plugin-list": "Edita el archivo plugin.list y escribe test. Eso hará que FacturaScripts active ese plugin.",
+    "disable-plugin": "desactivar plugin",
+    "enable-plugin": "activar plugin",
     "folder-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts.",
     "hello-world": "Hola mundo",
     "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
+    "plugin-enabled": "Plugin activado correctamente.",
+    "plugin-disabled": "Plugin desactivado correctamente.",
     "template-not-found": "Template no encontrado",
-    "to-do-list": "Modificar la clase fs_plugin_manager para añadir funciones de activar y desactivar plugins. Nota: activar un plugin supone escribir el nombre de ese plugin en el archivo plugin.list"
+    "to-do-list": "Proponer sistema de hooks para los controladores. Un sistema que permita a los plugins añadir funciones a ejecutar antes o después de determinada acción en un controlador."
 }

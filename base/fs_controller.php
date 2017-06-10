@@ -34,31 +34,37 @@ class fs_controller {
      * @var Request 
      */
     public $request;
-    
+
     /**
      * Nombre del archivo html para el motor de plantillas.
      * @var string nombre_archivo.html
      */
     public $template;
-    
+
     /**
      * Título de la página.
      * @var string título de la página.
      */
     public $title;
-    
+
     /**
      * Nombre de la clase del controlador
      * @var string __CLASS__
      */
-    private $className;
-    
+    protected $className;
+
     /**
      * Traductor multi-idioma.
      * @var fs_i18n 
      */
-    private $i18n;
-    
+    protected $i18n;
+
+    /**
+     * Listado de mensajes a mostrar en pantalla.
+     * @var array 
+     */
+    private $messages;
+
     /**
      * Carpeta de trabajo de FacturaScripts.
      * @var string 
@@ -74,12 +80,43 @@ class fs_controller {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;
         }
-        
+
         $this->className = $className;
         $this->i18n = new fs_i18n();
+        $this->messages = [];
         $this->request = Request::createFromGlobals();
-        $this->template = $className.'.html';
+        $this->template = $className . '.html';
         $this->title = $className;
+    }
+
+    /**
+     * Devuelve la url del controlador actual.
+     * @return string
+     */
+    public function url() {
+        return 'index.php?page=' . $this->className;
+    }
+
+    /**
+     * Añade un mensaje a la lista de mensajes a mostrar al usuario.
+     * @param string $msg
+     * @param string $type
+     */
+    public function new_message($msg, $type = 'message') {
+        $this->messages[$type][] = $msg;
+    }
+
+    /**
+     * Devuelve los mensajes a mostrar en pantalla.
+     * @param string $type
+     * @return array
+     */
+    public function get_messages($type = 'message') {
+        if (isset($this->messages[$type])) {
+            return $this->messages[$type];
+        } else {
+            return [];
+        }
     }
 
 }

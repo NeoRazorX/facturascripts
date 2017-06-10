@@ -17,6 +17,15 @@
 {{ debugbarRender.renderHead()|raw }}
 </head>
 <body>
+{% if fsc.get_messages()|length > 0 %}
+<div class="alert alert-warning">
+    <ul>
+        {% for msg in fsc.get_messages() %}
+            <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 {% block body %}{% endblock %}
 {{ debugbarRender.render()|raw }}
 </body>
