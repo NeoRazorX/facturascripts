@@ -1,10 +1,10 @@
 {
-    "name": "vendor/facturascripts",
-    "description": "Description of project facturascripts.",
+    "name": "facturascripts/facturascripts",
+    "description": "ERP open source easy and powerful.",
     "authors": [
         {
-            "name": "carlos",
-            "email": "your@email.here"
+            "name": "Carlos García Gómez",
+            "email": "neorazorx@gmail.com"
         }
     ],
     "require": {

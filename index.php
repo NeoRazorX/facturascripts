@@ -45,14 +45,14 @@ $controller = "";
 
 /// Buscamos el controlador en los plugins
 foreach ($pluginList as $pName) {
-    if ( class_exists("FacturaScripts\\Plugins\\{$pName}\\controller\\{$controllerName}") ) {
+    if (class_exists("FacturaScripts\\Plugins\\{$pName}\\controller\\{$controllerName}")) {
         $controller = "FacturaScripts\\Plugins\\{$pName}\\controller\\{$controllerName}";
         break;
     }
 }
 
 /// ¿Buscamos en /controller?
-if ( $controller == "" && class_exists("FacturaScripts\\controller\\{$controllerName}") ) {
+if ($controller == "" && class_exists("FacturaScripts\\controller\\{$controllerName}")) {
     $controller = "FacturaScripts\\controller\\{$controllerName}";
 }
 
@@ -60,7 +60,7 @@ if ( $controller == "" && class_exists("FacturaScripts\\controller\\{$controller
 $fsc = FALSE;
 $fscException = FALSE;
 $fscHTTPstatus = Response::HTTP_OK;
-if ( $controller ) {
+if ($controller) {
     try {
         $fsc = new $controller(__DIR__, $controllerName);
         $template = $fsc->template;

@@ -1,5 +1,5 @@
 <?php
-namespace FacturaScripts\Plugins\test\controller;
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -17,6 +17,8 @@ namespace FacturaScripts\Plugins\test\controller;
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+namespace FacturaScripts\Plugins\test\controller;
 
 use FacturaScripts\Base\fs_controller;
 use FacturaScripts\Base\fs_plugin_manager;
