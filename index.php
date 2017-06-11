@@ -40,33 +40,29 @@ $i18n = new fs_i18n(__DIR__, 'es_ES');
 /// Obtenemos el nombre del controlador a cargar
 $request = Request::createFromGlobals();
 $controllerName = $request->get('page', 'admin_home');
-$controllerPath = '';
 $template = 'controller_not_found.html';
+$controller = "";
 
 /// Buscamos el controlador en los plugins
 foreach ($pluginList as $pName) {
-    if (file_exists(__DIR__ . '/plugins/' . $pName . '/controller/' . $controllerName . '.php')) {
-        $controllerPath = __DIR__ . '/plugins/' . $pName . '/controller/' . $controllerName . '.php';
+    if ( class_exists("FacturaScripts\\Plugins\\{$pName}\\controller\\{$controllerName}") ) {
+        $controller = "FacturaScripts\\Plugins\\{$pName}\\controller\\{$controllerName}";
         break;
     }
 }
 
 /// ¿Buscamos en /controller?
-if (!$controllerPath) {
-    if (file_exists(__DIR__ . '/controller/' . $controllerName . '.php')) {
-        $controllerPath = __DIR__ . '/controller/' . $controllerName . '.php';
-    }
+if ( $controller == "" && class_exists("FacturaScripts\\controller\\{$controllerName}") ) {
+    $controller = "FacturaScripts\\controller\\{$controllerName}";
 }
 
 /// Si hemos encontrado el controlador, lo cargamos
 $fsc = FALSE;
 $fscException = FALSE;
 $fscHTTPstatus = Response::HTTP_OK;
-if ($controllerPath) {
-    require $controllerPath;
-
+if ( $controller ) {
     try {
-        $fsc = new $controllerName(__DIR__);
+        $fsc = new $controller(__DIR__, $controllerName);
         $template = $fsc->template;
     } catch (Exception $ex) {
         $fscException = $ex;
