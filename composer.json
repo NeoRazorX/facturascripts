@@ -20,9 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "FacturaScripts\\Base\\": "base/",
-            "FacturaScripts\\controller\\": "controller/",
-            "FacturaScripts\\Plugins\\": "plugins/"
+            "FacturaScripts\\": "src/"
         }
     }
 }

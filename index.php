@@ -52,8 +52,8 @@ foreach ($pluginList as $pName) {
 }
 
 /// ¿Buscamos en /controller?
-if ($controller == "" && class_exists("FacturaScripts\\controller\\{$controllerName}")) {
-    $controller = "FacturaScripts\\controller\\{$controllerName}";
+if ($controller == "" && class_exists("FacturaScripts\\Controller\\{$controllerName}")) {
+    $controller = "FacturaScripts\\Controller\\{$controllerName}";
 }
 
 /// Si hemos encontrado el controlador, lo cargamos
@@ -80,8 +80,8 @@ if (!is_writable('.')) {
     /// Cargamos el motor de plantillas
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
     foreach ($pluginList as $pName) {
-        if (file_exists(__DIR__ . '/plugins/' . $pName . '/view')) {
-            $twigLoader->prependPath(__DIR__ . '/plugins/' . $pName . '/view');
+        if (file_exists(__DIR__ . '/src/Plugins/' . $pName . '/view')) {
+            $twigLoader->prependPath(__DIR__ . '/src/Plugins/' . $pName . '/view');
         }
     }
     ///$twig = new Twig_Environment($twigLoader, array('cache' => 'cache/twig'));
