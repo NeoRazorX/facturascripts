@@ -33,6 +33,10 @@ class admin_home extends fs_controller {
     public function __construct($folder = '', $className = __CLASS__) {
         parent::__construct($folder, $className);
         $this->title = 'TEST';
+    }
+
+    public function run() {
+        parent::run();
 
         if ($this->request->get('disable', '') != '') {
             $pluginManager = new fs_plugin_manager();

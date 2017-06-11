@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Base;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -54,6 +55,12 @@ class fs_controller {
     protected $className;
 
     /**
+     * Gestor de eventos.
+     * @var EventDispatcher 
+     */
+    protected $dispatcher;
+    
+    /**
      * Traductor multi-idioma.
      * @var fs_i18n 
      */
@@ -82,11 +89,19 @@ class fs_controller {
         }
 
         $this->className = $className;
+        $this->dispatcher = new EventDispatcher();
         $this->i18n = new fs_i18n();
         $this->messages = [];
         $this->request = Request::createFromGlobals();
         $this->template = $className . '.html';
         $this->title = $className;
+    }
+    
+    /**
+     * Ejecuta la lógica del controlador.
+     */
+    public function run() {
+        $this->dispatcher->dispatch('pre-run');
     }
 
     /**

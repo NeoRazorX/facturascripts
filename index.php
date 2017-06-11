@@ -63,6 +63,7 @@ $fscHTTPstatus = Response::HTTP_OK;
 if ($controller) {
     try {
         $fsc = new $controller(__DIR__, $controllerName);
+        $fsc->run();
         $template = $fsc->template;
     } catch (Exception $ex) {
         $fscException = $ex;

@@ -32,7 +32,11 @@ class admin_home extends fs_controller {
 
     public function __construct($folder = '', $className = __CLASS__) {
         parent::__construct($folder, $className);
-
+    }
+    
+    public function run() {
+        parent::run();
+        
         if ($this->request->get('enable', '') != '') {
             $pluginManager = new fs_plugin_manager();
             $pluginManager->enable($this->request->get('enable'));

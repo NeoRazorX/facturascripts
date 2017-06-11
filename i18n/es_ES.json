@@ -8,5 +8,5 @@
     "plugin-enabled": "Plugin activado correctamente.",
     "plugin-disabled": "Plugin desactivado correctamente.",
     "template-not-found": "Template no encontrado",
-    "to-do-list": "Proponer sistema de hooks para los controladores. Un sistema que permita a los plugins añadir funciones a ejecutar antes o después de determinada acción en un controlador."
+    "to-do-list": ""
 }
