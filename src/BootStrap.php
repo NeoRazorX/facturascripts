@@ -39,10 +39,6 @@ class BootStrap
 {
     /**
      * BootStrap constructor.
-     * TODO Se deberían cambiar las referencias a __DIR__ por $rootPath
-     *  de este modo en index.php podemos indicar:
-     * __DIR__ como ruta absoluta
-     * o '.' como ruta relativa
      */
     public function __construct($rootPath = __DIR__)
     {
@@ -51,11 +47,11 @@ class BootStrap
         $debugbarRenderer = $debugbar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
 
         /// Obtenemos la lista de plugins activos
-        $pluginManager = new fs_plugin_manager(__DIR__);
+        $pluginManager = new fs_plugin_manager($rootPath);
         $pluginList = $pluginManager->enabledPlugins();
 
         /// Cargamos el traductor
-        $i18n = new fs_i18n(__DIR__, 'es_ES');
+        $i18n = new fs_i18n($rootPath, 'es_ES');
 
         /// Obtenemos el nombre del controlador a cargar
         $request = Request::createFromGlobals();
@@ -82,7 +78,7 @@ class BootStrap
         $fscHTTPstatus = Response::HTTP_OK;
         if ($controller) {
             try {
-                $fsc = new $controller(__DIR__, $controllerName);
+                $fsc = new $controller($rootPath, $controllerName);
                 $fsc->run();
                 $template = $fsc->template;
             } catch (Exception $ex) {
@@ -98,14 +94,14 @@ class BootStrap
             $response->send();
         } elseif ($template) {
             /// Cargamos el motor de plantillas
-            $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/../view');
+            $twigLoader = new Twig_Loader_Filesystem($rootPath . '/../view');
             // Permite usar @Facturascripts como path para las plantillas
-            $twigLoader->addPath(__DIR__ . '/../view', 'FacturaScripts');
+            $twigLoader->addPath($rootPath . '/../view', 'FacturaScripts');
             foreach ($pluginList as $pName) {
-                if (file_exists(__DIR__ . '/src/Plugins/' . $pName . '/view')) {
-                    $twigLoader->prependPath(__DIR__ . '/src/Plugins/' . $pName . '/view');
+                if (file_exists($rootPath . '/src/Plugins/' . $pName . '/view')) {
+                    $twigLoader->prependPath($rootPath . '/src/Plugins/' . $pName . '/view');
                     // Permite usar @$pName como path para las plantillas
-                    $twigLoader->addPath(__DIR__ . '/src/Plugins/' . $pName . '/view', $pName);
+                    $twigLoader->addPath($rootPath . '/src/Plugins/' . $pName . '/view', $pName);
                 }
             }
             $twig = new Twig_Environment($twigLoader, array(
