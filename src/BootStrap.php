@@ -94,9 +94,9 @@ class BootStrap
             $response->send();
         } elseif ($template) {
             /// Cargamos el motor de plantillas
-            $twigLoader = new Twig_Loader_Filesystem($rootPath . '/../view');
+            $twigLoader = new Twig_Loader_Filesystem($rootPath . '/view');
             // Permite usar @Facturascripts como path para las plantillas
-            $twigLoader->addPath($rootPath . '/../view', 'FacturaScripts');
+            $twigLoader->addPath($rootPath . '/view', 'FacturaScripts');
             foreach ($pluginList as $pName) {
                 if (file_exists($rootPath . '/src/Plugins/' . $pName . '/view')) {
                     $twigLoader->prependPath($rootPath . '/src/Plugins/' . $pName . '/view');
