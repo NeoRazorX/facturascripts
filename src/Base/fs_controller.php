@@ -27,45 +27,46 @@ use Symfony\Component\HttpFoundation\Request;
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez
+ *
+ * TODO: Not in camel caps formats, for backward compatibility
  */
-class fs_controller {
-
+class fs_controller
+{
+    /**
+     * Carpeta de trabajo de FacturaScripts.
+     * @var string
+     */
+    private static $fsFolder;
     /**
      * Request sobre la que podemos hacer consultas.
      * @var Request
      */
     public $request;
-
     /**
      * Nombre del archivo html para el motor de plantillas.
      * @var string nombre_archivo.html
      */
     public $template;
-
     /**
      * Título de la página.
      * @var string título de la página.
      */
     public $title;
-
     /**
      * Nombre de la clase del controlador
      * @var string __CLASS__
      */
     protected $className;
-
     /**
      * Gestor de eventos.
      * @var EventDispatcher
      */
     protected $dispatcher;
-
     /**
      * Traductor multi-idioma.
      * @var fs_i18n
      */
     protected $i18n;
-
     /**
      * Listado de mensajes a mostrar en pantalla.
      * @var array
@@ -73,17 +74,12 @@ class fs_controller {
     private $messages;
 
     /**
-     * Carpeta de trabajo de FacturaScripts.
-     * @var string
-     */
-    private static $fsFolder;
-
-    /**
      * Constructor por defecto.
      * @param string $folder
      * @param string $className
      */
-    public function __construct($folder = '', $className = __CLASS__) {
+    public function __construct($folder = '', $className = __CLASS__)
+    {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;
         }
@@ -100,7 +96,8 @@ class fs_controller {
     /**
      * Ejecuta la lógica del controlador.
      */
-    public function run() {
+    public function run()
+    {
         $this->dispatcher->dispatch('pre-run');
     }
 
@@ -108,8 +105,24 @@ class fs_controller {
      * Devuelve la url del controlador actual.
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=' . $this->className;
+    }
+
+    /**
+     * Añade un mensaje a la lista de mensajes a mostrar al usuario.
+     * Utilizar newMessage en su lugar, este metodo se ha marcado como obsoleto.
+     *
+     * @deprecated This method has been deprecated in favor of newMessages.
+     * @param string $msg
+     * @param string $type
+     */
+    public function new_message($msg, $type = 'message')
+    {
+        trigger_error('This method has been deprecated in favor of newMessage', E_USER_NOTICE);
+
+        $this->newMessage($msg, $type);
     }
 
     /**
@@ -117,8 +130,24 @@ class fs_controller {
      * @param string $msg
      * @param string $type
      */
-    public function new_message($msg, $type = 'message') {
+    public function newMessage($msg, $type = 'message')
+    {
         $this->messages[$type][] = $msg;
+    }
+
+    /**
+     * Devuelve los mensajes a mostrar en pantalla.
+     * Utilizar getMessages en su lugar, este metodo se ha marcado como obsoleto.
+     *
+     * @deprecated This method has been deprecated in favor of getMessages.
+     * @param string $type
+     * @return array
+     */
+    public function get_messages($type = 'message')
+    {
+        trigger_error('This method has been deprecated in favor of getMessages', E_USER_NOTICE);
+
+        return $this->getMessages($type);
     }
 
     /**
@@ -126,11 +155,12 @@ class fs_controller {
      * @param string $type
      * @return array
      */
-    public function get_messages($type = 'message') {
+    public function getMessages($type = 'message')
+    {
         if (isset($this->messages[$type])) {
             return $this->messages[$type];
-        } else {
-            return [];
         }
+
+        return [];
     }
 }

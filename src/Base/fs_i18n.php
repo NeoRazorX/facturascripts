@@ -27,24 +27,24 @@ use Symfony\Component\Translation\Translator;
  * Description of fs_i18n
  *
  * @author Carlos García Gómez
+ *
+ * TODO: Not in camel caps formats, this is not required for backward compatibility because it's a new feature
  */
-class fs_i18n {
-
+class fs_i18n
+{
     /**
      * Carpeta de trabajo de FacturaScripts.
-     * @var string 
+     * @var string
      */
     private static $fsFolder;
-    
     /**
      * Idioma por defecto.
-     * @var string 
+     * @var string
      */
     private static $fsLang;
-    
     /**
      * El traductor de symfony.
-     * @var Translator 
+     * @var Translator
      */
     private static $translator;
 
@@ -53,7 +53,8 @@ class fs_i18n {
      * @param string $folder
      * @param string $lang
      */
-    public function __construct($folder = '', $lang = 'es_ES') {
+    public function __construct($folder = '', $lang = 'es_ES')
+    {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;
             self::$fsLang = $lang;
@@ -69,7 +70,8 @@ class fs_i18n {
      * @param string $txt
      * @return string
      */
-    public function trans($txt) {
+    public function trans($txt)
+    {
         return self::$translator->trans($txt);
     }
 
@@ -78,16 +80,19 @@ class fs_i18n {
      * de FacturaScripts. En esta caso hay que proporcionar al traductor las rutas
      * en orden inverso.
      */
-    private function locateFiles() {
+    private function locateFiles()
+    {
         self::$translator->addResource('json', self::$fsFolder . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
-        
+
         $pluginManager = new fs_plugin_manager();
         foreach ($pluginManager->enabledPlugins() as $pName) {
             if (file_exists(self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json')) {
-                self::$translator->addResource('json',
-                    self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
+                self::$translator->addResource(
+                    'json',
+                    self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json',
+                    self::$fsLang
+                );
             }
         }
     }
-
 }

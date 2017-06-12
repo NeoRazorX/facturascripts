@@ -27,6 +27,8 @@ use FacturaScripts\Base\fs_plugin_manager;
  * Description of admin_home
  *
  * @author Carlos García Gómez
+ *
+ * TODO Not in camel caps formats, for backward compatibility
  */
 class admin_home extends fs_controller {
 
@@ -41,7 +43,7 @@ class admin_home extends fs_controller {
     }
 
     /**
-     * TODO
+     * TODO PhpDoc
      */
     public function run() {
         parent::run();
@@ -49,7 +51,7 @@ class admin_home extends fs_controller {
         if ($this->request->get('disable', '') !== '') {
             $pluginManager = new fs_plugin_manager();
             $pluginManager->disable($this->request->get('disable'));
-            $this->new_message($this->i18n->trans('plugin-disabled'));
+            $this->newMessage($this->i18n->trans('plugin-disabled'));
         }
     }
 

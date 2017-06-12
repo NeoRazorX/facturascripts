@@ -39,6 +39,7 @@ class BootStrap
 {
     /**
      * BootStrap constructor.
+     * @param string $rootPath
      */
     public function __construct($rootPath = __DIR__)
     {
@@ -73,8 +74,8 @@ class BootStrap
         }
 
         /// Si hemos encontrado el controlador, lo cargamos
-        $fsc = FALSE;
-        $fscException = FALSE;
+        $fsc = false;
+        $fscException = false;
         $fscHTTPstatus = Response::HTTP_OK;
         if ($controller) {
             try {
@@ -90,21 +91,32 @@ class BootStrap
         }
 
         if (!is_writable('.')) {
-            $response = new Response($i18n->trans('folder-not-writable'), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response = new Response(
+                $i18n->trans('folder-not-writable'),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
             $response->send();
         } elseif ($template) {
             /// Cargamos el motor de plantillas
             $twigLoader = new Twig_Loader_Filesystem($rootPath . '/view');
             // Permite usar @Facturascripts como path para las plantillas
-            $twigLoader->addPath($rootPath . '/view', 'FacturaScripts');
+            $twigLoader->addPath(
+                $rootPath . '/view',
+                'FacturaScripts'
+            );
             foreach ($pluginList as $pName) {
                 if (file_exists($rootPath . '/src/Plugins/' . $pName . '/view')) {
                     $twigLoader->prependPath($rootPath . '/src/Plugins/' . $pName . '/view');
                     // Permite usar @$pName como path para las plantillas
-                    $twigLoader->addPath($rootPath . '/src/Plugins/' . $pName . '/view', $pName);
+                    $twigLoader->addPath(
+                        $rootPath . '/src/Plugins/' . $pName . '/view',
+                        $pName
+                    );
                 }
             }
-            $twig = new Twig_Environment($twigLoader, array(
+            $twig = new Twig_Environment(
+                $twigLoader,
+                array(
                     'cache' => 'cache/twig',
                     'debug' => true // Fuerza a regenerar la cache
                 )
@@ -122,8 +134,13 @@ class BootStrap
             try {
                 $response = new Response($twig->render($template, $templateVars), $fscHTTPstatus);
             } catch (Exception $ex) {
-                $response = new Response($twig->render('@FacturaScripts/template_not_found.html', $templateVars),
-                    Response::HTTP_INTERNAL_SERVER_ERROR);
+                $response = new Response(
+                    $twig->render(
+                        '@FacturaScripts/template_not_found.html',
+                        $templateVars
+                    ),
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
             $response->send();
         }
