@@ -20,8 +20,8 @@
 
 namespace FacturaScripts\Base;
 
-use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Description of fs_i18n
@@ -48,6 +48,11 @@ class fs_i18n {
      */
     private static $translator;
 
+    /**
+     * fs_i18n constructor.
+     * @param string $folder
+     * @param string $lang
+     */
     public function __construct($folder = '', $lang = 'es_ES') {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;
@@ -79,7 +84,8 @@ class fs_i18n {
         $pluginManager = new fs_plugin_manager();
         foreach ($pluginManager->enabledPlugins() as $pName) {
             if (file_exists(self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json')) {
-                self::$translator->addResource('json', self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
+                self::$translator->addResource('json',
+                    self::$fsFolder . '/plugins/' . $pName . '/i18n/' . self::$fsLang . '.json', self::$fsLang);
             }
         }
     }

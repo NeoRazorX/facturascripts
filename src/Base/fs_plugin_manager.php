@@ -39,6 +39,10 @@ class fs_plugin_manager {
      */
     private static $fsFolder;
 
+    /**
+     * fs_plugin_manager constructor.
+     * @param string $folder
+     */
     public function __construct($folder = '') {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;

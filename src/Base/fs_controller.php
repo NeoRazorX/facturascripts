@@ -32,7 +32,7 @@ class fs_controller {
 
     /**
      * Request sobre la que podemos hacer consultas.
-     * @var Request 
+     * @var Request
      */
     public $request;
 
@@ -56,32 +56,32 @@ class fs_controller {
 
     /**
      * Gestor de eventos.
-     * @var EventDispatcher 
+     * @var EventDispatcher
      */
     protected $dispatcher;
-    
+
     /**
      * Traductor multi-idioma.
-     * @var fs_i18n 
+     * @var fs_i18n
      */
     protected $i18n;
 
     /**
      * Listado de mensajes a mostrar en pantalla.
-     * @var array 
+     * @var array
      */
     private $messages;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
-     * @var string 
+     * @var string
      */
     private static $fsFolder;
 
     /**
      * Constructor por defecto.
-     * @param string $folder 
-     * @param string $className 
+     * @param string $folder
+     * @param string $className
      */
     public function __construct($folder = '', $className = __CLASS__) {
         if (!isset(self::$fsFolder)) {
@@ -96,7 +96,7 @@ class fs_controller {
         $this->template = $className . '.html';
         $this->title = $className;
     }
-    
+
     /**
      * Ejecuta la lógica del controlador.
      */
@@ -133,5 +133,4 @@ class fs_controller {
             return [];
         }
     }
-
 }
