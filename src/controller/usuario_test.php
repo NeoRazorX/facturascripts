@@ -24,8 +24,9 @@ class usuario_test extends fs_controller {
 
 	    	if ( !$this->usuario->save() ) {
 	    		$this->new_message($this->i18n->trans('user-unsaved'));
+	    	} else {
+	    		$this->new_message($this->i18n->trans('user-saved'));
 	    	}
-	    	$this->new_message($this->i18n->trans('user-saved'));
 	    }
 	}
 
