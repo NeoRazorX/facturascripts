@@ -39,6 +39,10 @@ class BootStrap
 {
     /**
      * BootStrap constructor.
+     * TODO Se deberían cambiar las referencias a __DIR__ por $rootPath
+     *  de este modo en index.php podemos indicar:
+     * __DIR__ como ruta absoluta
+     * o '.' como ruta relativa
      */
     public function __construct($rootPath = __DIR__)
     {
@@ -104,8 +108,11 @@ class BootStrap
                     $twigLoader->addPath(__DIR__ . '/src/Plugins/' . $pName . '/view', $pName);
                 }
             }
-            ///$twig = new Twig_Environment($twigLoader, array('cache' => 'cache/twig','debug' => true));
-            $twig = new Twig_Environment($twigLoader);
+            $twig = new Twig_Environment($twigLoader, array(
+                    'cache' => 'cache/twig',
+                    'debug' => true // Fuerza a regenerar la cache
+                )
+            );
 
             /// renderizamos el html
             $templateVars = array(

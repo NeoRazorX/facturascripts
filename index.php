@@ -20,5 +20,4 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$bs = new FacturaScripts\BootStrap('.');
-//$bs = new FacturaScripts\BootStrap(__DIR__);
+$bs = new FacturaScripts\BootStrap(__DIR__);
