@@ -27,21 +27,32 @@ use FacturaScripts\Base\fs_plugin_manager;
  * Description of admin_home
  *
  * @author Carlos García Gómez
+ *
+ * TODO Not in camel caps formats, for backward compatibility
  */
-class admin_home extends fs_controller {
-
-    public function __construct($folder = '', $className = __CLASS__) {
+class admin_home extends fs_controller
+{
+    /**
+     * admin_home constructor.
+     * @param string $folder
+     * @param string $className
+     */
+    public function __construct($folder = '', $className = __CLASS__)
+    {
         parent::__construct($folder, $className);
     }
 
-    public function run() {
+    /**
+     * TODO PhpDoc
+     */
+    public function run()
+    {
         parent::run();
 
-        if ($this->request->get('enable', '') != '') {
+        if ($this->request->get('enable', '') !== '') {
             $pluginManager = new fs_plugin_manager();
             $pluginManager->enable($this->request->get('enable'));
-            $this->new_message($this->i18n->trans('plugin-enabled'));
+            $this->newMessage($this->i18n->trans('plugin-enabled'));
         }
     }
-
 }

@@ -24,22 +24,28 @@ namespace FacturaScripts\Base;
  * Gestor de plugins de FacturaScripts.
  *
  * @author Carlos García Gómez
+ *
+ * TODO: Not in camel caps formats, this is not required for backward compatibility because it's a new feature
  */
-class fs_plugin_manager {
-
+class fs_plugin_manager
+{
     /**
      * Lista de plugins activos.
-     * @var array 
+     * @var array
      */
     private static $enabledPlugins;
-
     /**
      * Carpeta de trabajo de FacturaScripts.
-     * @var string 
+     * @var string
      */
     private static $fsFolder;
 
-    public function __construct($folder = '') {
+    /**
+     * fs_plugin_manager constructor.
+     * @param string $folder
+     */
+    public function __construct($folder = '')
+    {
         if (!isset(self::$fsFolder)) {
             self::$fsFolder = $folder;
 
@@ -59,33 +65,35 @@ class fs_plugin_manager {
      * Devuelve la lista de plugins activos.
      * @return array
      */
-    public function enabledPlugins() {
+    public function enabledPlugins()
+    {
         return self::$enabledPlugins;
     }
-    
+
     /**
      * Activa el plugin indicado.
      * @param string $pluginName
      */
-    public function enable($pluginName) {
-        if(file_exists(self::$fsFolder.'/plugins/'.$pluginName) ) {
+    public function enable($pluginName)
+    {
+        if (file_exists(self::$fsFolder . '/plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
-            file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+            file_put_contents(self::$fsFolder . '/plugin.list', implode(',', self::$enabledPlugins));
         }
     }
-    
+
     /**
      * Desactiva el plugin indicado.
      * @param string $pluginName
      */
-    public function disable($pluginName) {
-        foreach(self::$enabledPlugins as $i => $value) {
-            if($value == $pluginName) {
+    public function disable($pluginName)
+    {
+        foreach (self::$enabledPlugins as $i => $value) {
+            if ($value == $pluginName) {
                 unset(self::$enabledPlugins[$i]);
-                file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+                file_put_contents(self::$fsFolder . '/plugin.list', implode(',', self::$enabledPlugins));
                 break;
             }
         }
     }
-
 }

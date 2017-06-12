@@ -1,12 +1,12 @@
 {
-    "controller-not-found": "Controlador no encontrado",
-    "disable-plugin": "desactivar plugin",
-    "enable-plugin": "activar plugin",
-    "folder-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts.",
-    "hello-world": "Hola mundo",
-    "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
-    "plugin-enabled": "Plugin activado correctamente.",
-    "plugin-disabled": "Plugin desactivado correctamente.",
-    "template-not-found": "Template no encontrado",
-    "to-do-list": ""
+  "controller-not-found": "Controlador no encontrado",
+  "disable-plugin": "desactivar plugin",
+  "enable-plugin": "activar plugin",
+  "folder-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts.",
+  "hello-world": "Hola mundo",
+  "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
+  "plugin-enabled": "Plugin activado correctamente.",
+  "plugin-disabled": "Plugin desactivado correctamente.",
+  "template-not-found": "Template no encontrado",
+  "to-do-list": ""
 }
