@@ -26,6 +26,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DebugBar\StandardDebugBar;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+//Inicializamos la conexion a la base de datos
+$capsule = new Capsule;
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'facturascripts',
+    'username'  => 'root',
+    'password'  => 'secret',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+$capsule->bootEloquent();
+$capsule->setAsGlobal();
+
 /// Iniciamos debugbar
 $debugbar = new StandardDebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');

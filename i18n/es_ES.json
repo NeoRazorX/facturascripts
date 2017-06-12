@@ -8,5 +8,7 @@
     "plugin-enabled": "Plugin activado correctamente.",
     "plugin-disabled": "Plugin desactivado correctamente.",
     "template-not-found": "Template no encontrado",
-    "to-do-list": ""
+    "to-do-list": "",
+    "user-unsaved": "No se ha podido guardar la informacion dle usuario",
+    "user-saved": "La informacion del usuario se ha guardado correctamente"
 }
