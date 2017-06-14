@@ -16,7 +16,8 @@
         "twbs/bootstrap": "dev-master",
         "components/font-awesome": "dev-master",
         "maximebf/debugbar": "dev-master",
-        "symfony/event-dispatcher": "v3.3.2"
+        "symfony/event-dispatcher": "v3.3.2",
+        "illuminate/database": "~5.4"
     },
     "autoload": {
         "psr-4": {
