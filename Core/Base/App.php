@@ -52,7 +52,9 @@ class App {
     }
 
     public function connect() {
-        $this->connected = FALSE;
+        $this->connected = TRUE;
+        
+        return $this->connected;
     }
 
     public function close() {
@@ -91,7 +93,7 @@ class App {
                 $this->controller->run();
                 $template = $this->controller->template;
                 $this->httpStatus = Response::HTTP_OK;
-            } catch (Exception $exc) {
+            } catch (\Exception $exc) {
                 $controllerException = $exc;
                 $this->httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
             }
@@ -136,7 +138,7 @@ class App {
 
         try {
             $response = new Response($twig->render($template, $templateVars), $this->httpStatus);
-        } catch (Exception $ex) {
+        } catch (\Exception $exc) {
             $response = new Response($twig->render('error/template_not_found.html', $templateVars), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response->send();

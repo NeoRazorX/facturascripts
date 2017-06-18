@@ -35,7 +35,6 @@ if (file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 use FacturaScripts\Core\Base\Translator;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 function searchErrors(&$errors, &$i18n) {
@@ -54,15 +53,15 @@ function searchErrors(&$errors, &$i18n) {
     }
 }
 
-function createFolders(&$errors, &$i18n) {
-    if (mkdir('Plugins') AND mkdir('Dinamic') AND mkdir('Cache')) {
+function createFolders() {
+    if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
         return TRUE;
     }
 
     return FALSE;
 }
 
-function saveInstall(&$errors, &$i18n) {
+function saveInstall() {
     $file = fopen(__DIR__ . '/config.php', "w");
     if ($file) {
         fwrite($file, "<?php\n");
@@ -80,38 +79,41 @@ function saveInstall(&$errors, &$i18n) {
         }
         fwrite($file, "\n");
         fclose($file);
-        header("Location: index.php");
-        exit();
+        return TRUE;
     }
+    
+    return FALSE;
 }
 
-function installerActions() {
+function renderHTML(&$templateVars) {
+    /// cargamos el motor de plantillas
+    $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
+    $twig = new Twig_Environment($twigLoader);
+
+    /// generamos y volcamos el html
+    $response = new Response($twig->render('installer/install.html', $templateVars), Response::HTTP_OK);
+    $response->send();
+}
+
+function installerMain() {
     $errors = [];
     $i18n = new Translator(__DIR__);
     searchErrors($errors, $i18n);
 
-    $request = Request::createFromGlobals();
-
-    if (empty($errors) AND $request->get('db_type', FALSE)) {
-        if (createFolders($errors, $i18n) AND saveInstall($errors, $i18n)) {
-            
+    if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
+        if (createFolders() AND saveInstall()) {
+            header("Location: index.php");
+            return 0;
         }
     }
 
-    return $errors;
+    /// empaquetamos las variables a pasar el motor de plantillas
+    $templateVars = array(
+        'i18n' => $i18n,
+        'license' => file_get_contents(__DIR__ . '/COPYING'),
+        'errors' => $errors
+    );
+    renderHTML($templateVars);
 }
 
-/// cargamos el motor de plantillas
-$twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
-$twig = new Twig_Environment($twigLoader);
-
-/// empaquetamos las variables a pasar el motor de plantillas
-$templateVars = array(
-    'i18n' => new Translator(__DIR__),
-    'license' => file_get_contents(__DIR__ . '/COPYING'),
-    'errors' => installerActions()
-);
-
-/// generamos y volcamos el html
-$response = new Response($twig->render('install.html', $templateVars), Response::HTTP_OK);
-$response->send();
+installerMain();

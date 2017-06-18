@@ -44,7 +44,7 @@ class Translator {
     
     /**
      * El traductor de symfony.
-     * @var Translator 
+     * @var symfonyTranslator 
      */
     private static $translator;
 

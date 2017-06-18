@@ -15,4 +15,4 @@ composer install
 
 ## Feedback
 Para cualquier duda, problema o sugerencia:
-https://www.hipchat.com/gD8DgFXcF
+https://facturascripts.slack.com

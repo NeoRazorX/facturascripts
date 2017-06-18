@@ -62,7 +62,7 @@ class Controller {
 
     /**
      * Traductor multi-idioma.
-     * @var fs_i18n 
+     * @var Translator 
      */
     protected $i18n;
 
@@ -96,7 +96,7 @@ class Controller {
         $this->className = $className;
         
         $this->dispatcher = new EventDispatcher();
-        $this->i18n = new \FacturaScripts\Core\Base\Translator();
+        $this->i18n = new Translator();
         $this->messages = [];
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
