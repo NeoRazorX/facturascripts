@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobaciones previas
-if (!file_exists(__DIR__ . '/config.php')) {
-    /**
-     * Si no hay fichero de configuración significa que no se ha instalado,
-     * así que redirigimos al instalador.
-     */
-    header('Location: install.php');
-    die('');
+namespace FacturaScripts\Core\Controller;
+
+/**
+ * Description of admin_home
+ *
+ * @author Carlos García Gómez
+ */
+class AdminHome extends \FacturaScripts\Core\Base\Controller {
+
+    public function __construct($folder = '', $className = __CLASS__) {
+        parent::__construct($folder, $className);
+    }
+
+    public function run() {
+        parent::run();
+
+        if ($this->request->get('enable', '') != '') {
+            $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
+            $pluginManager->enable($this->request->get('enable'));
+            $this->new_message($this->i18n->trans('plugin-enabled'));
+        }
+    }
+
 }
-
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config.php';
-
-/// iniciamos la aplicación
-$app = new FacturaScripts\Core\Base\App(__DIR__);
-
-/// conectamos a la base de datos, cache, etc
-$app->connect();
-
-/// ejecutamos el controlador que toque
-$app->runController();
-
-/// desconectamos de todo
-$app->close();

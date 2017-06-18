@@ -1,4 +1,9 @@
+/.idea/
+/cache/
 /doc/
 /nbproject/
 /vendor/
+.DS_Store
+.htaccess
+config.php
 plugin.list

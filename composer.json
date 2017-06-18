@@ -1,6 +1,8 @@
 {
     "name": "facturascripts/facturascripts",
     "description": "ERP open source easy and powerful.",
+    "homepage": "https://www.facturascripts.com",
+    "license": "LGPL-3.0",
     "authors": [
         {
             "name": "Carlos García Gómez",
@@ -9,19 +11,20 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/http-foundation": "v3.3.2",
-        "symfony/translation": "v3.3.2",
-        "twig/twig": "v1.34.3",
-        "components/jquery": "dev-master",
-        "twbs/bootstrap": "dev-master",
-        "components/font-awesome": "dev-master",
-        "maximebf/debugbar": "dev-master",
-        "symfony/event-dispatcher": "v3.3.2",
-        "illuminate/database": "~5.4"
+        "symfony/http-foundation": "v3.3.*",
+        "symfony/translation": "v3.3.*",
+        "twig/twig": "v1.*",
+        "components/jquery": "3.*",
+        "twbs/bootstrap": "3.*",
+        "components/font-awesome": "4.*",
+        "maximebf/debugbar": "1.*",
+        "symfony/event-dispatcher": "v3.3.*"
     },
     "autoload": {
         "psr-4": {
-            "FacturaScripts\\": "src/"
+            "FacturaScripts\\Core\\": "Core/",
+            "FacturaScripts\\Dinamic\\": "Dinamic/",
+            "FacturaScripts\\Plugins\\": "Plugins/"
         }
     }
 }

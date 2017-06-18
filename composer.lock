@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1f87e58684cb8af9624c8c88a36f087e",
-    "content-hash": "0095831d1ffc04af05a7584a2c136ba8",
+    "hash": "6626fcc052fbce92d08e46d6bdf77dbd",
+    "content-hash": "acb9fa5f29ac69d0d78e533b23db8e50",
     "packages": [
         {
             "name": "components/font-awesome",
-            "version": "dev-master",
+            "version": "4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/components/font-awesome.git",
-                "reference": "a67733b6a30835cf791986da7d095860b457fbe9"
+                "reference": "885308b939369d147bec93174722786bc2c4eedd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/components/font-awesome/zipball/a67733b6a30835cf791986da7d095860b457fbe9",
-                "reference": "a67733b6a30835cf791986da7d095860b457fbe9",
+                "url": "https://api.github.com/repos/components/font-awesome/zipball/885308b939369d147bec93174722786bc2c4eedd",
+                "reference": "885308b939369d147bec93174722786bc2c4eedd",
                 "shasum": ""
             },
             "type": "component",
@@ -40,11 +40,11 @@
                 "OFL-1.1"
             ],
             "description": "The iconic font designed for use with Twitter Bootstrap.",
-            "time": "2016-12-26 21:37:27"
+            "time": "2016-10-25 10:56:23"
         },
         {
             "name": "components/jquery",
-            "version": "dev-master",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/components/jquery.git",
@@ -86,16 +86,16 @@
         },
         {
             "name": "maximebf/debugbar",
-            "version": "dev-master",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maximebf/php-debugbar.git",
-                "reference": "f8f52221f91fe1706f5ea4472965852c2dc50e31"
+                "reference": "afee79a236348e39a44cb837106b7c5b4897ac2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/f8f52221f91fe1706f5ea4472965852c2dc50e31",
-                "reference": "f8f52221f91fe1706f5ea4472965852c2dc50e31",
+                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/afee79a236348e39a44cb837106b7c5b4897ac2a",
+                "reference": "afee79a236348e39a44cb837106b7c5b4897ac2a",
                 "shasum": ""
             },
             "require": {
@@ -143,7 +143,7 @@
                 "debug",
                 "debugbar"
             ],
-            "time": "2017-06-05 12:44:03"
+            "time": "2017-01-05 08:46:19"
         },
         {
             "name": "psr/log",
@@ -502,16 +502,16 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "dev-master",
+            "version": "v3.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "9b7d1406b922300c5d01e99026e4fffc67445185"
+                "reference": "0b9c4a4007c44201dce9a6cc1a38407005c26c86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/9b7d1406b922300c5d01e99026e4fffc67445185",
-                "reference": "9b7d1406b922300c5d01e99026e4fffc67445185",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/0b9c4a4007c44201dce9a6cc1a38407005c26c86",
+                "reference": "0b9c4a4007c44201dce9a6cc1a38407005c26c86",
                 "shasum": ""
             },
             "replace": {
@@ -549,7 +549,7 @@
                 "responsive",
                 "web"
             ],
-            "time": "2016-09-22 10:06:30"
+            "time": "2016-07-25 15:51:55"
         },
         {
             "name": "twig/twig",
@@ -620,14 +620,11 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "components/jquery": 20,
-        "twbs/bootstrap": 20,
-        "components/font-awesome": 20,
-        "maximebf/debugbar": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.5.9"
+    },
     "platform-dev": []
 }

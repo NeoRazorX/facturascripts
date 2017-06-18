@@ -18,31 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Plugins\test\controller;
-
-use FacturaScripts\Base\fs_controller;
-use FacturaScripts\Base\fs_plugin_manager;
-
-/**
- * Description of admin_home
- *
- * @author Carlos García Gómez
- */
-class admin_home extends fs_controller {
-
-    public function __construct($folder = '', $className = __CLASS__) {
-        parent::__construct($folder, $className);
-        $this->title = 'TEST';
-    }
-
-    public function run() {
-        parent::run();
-
-        if ($this->request->get('disable', '') != '') {
-            $pluginManager = new fs_plugin_manager();
-            $pluginManager->disable($this->request->get('disable'));
-            $this->new_message($this->i18n->trans('plugin-disabled'));
-        }
-    }
-
+/// comprobamos que se haya instalado y haya configuración
+if (!file_exists(__DIR__ . '/config.php')) {
+    die("ERROR - NO_CONFIG -");
 }
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+/// iniciamos la aplicación
+$app = new FacturaScripts\Core\Base\App(__DIR__);
+
+/// conectamos a la base de datos, cache, etc
+if( $app->connect() ) {
+    
+    /**
+     * TODO: todavía pendiente de diseño.
+     */
+}
+
+/// desconectamos de todo
+$app->close();

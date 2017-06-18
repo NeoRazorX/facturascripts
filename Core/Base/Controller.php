@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Base;
+namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Carlos García Gómez
  */
-class fs_controller {
+class Controller {
 
     /**
      * Request sobre la que podemos hacer consultas.
@@ -59,7 +59,7 @@ class fs_controller {
      * @var EventDispatcher 
      */
     protected $dispatcher;
-    
+
     /**
      * Traductor multi-idioma.
      * @var fs_i18n 
@@ -76,7 +76,7 @@ class fs_controller {
      * Carpeta de trabajo de FacturaScripts.
      * @var string 
      */
-    private static $fsFolder;
+    private static $folder;
 
     /**
      * Constructor por defecto.
@@ -84,19 +84,25 @@ class fs_controller {
      * @param string $className 
      */
     public function __construct($folder = '', $className = __CLASS__) {
-        if (!isset(self::$fsFolder)) {
-            self::$fsFolder = $folder;
+        if (!isset(self::$folder)) {
+            self::$folder = $folder;
         }
 
+        /// obtenemos el nombre de la clase sin el namespace
+        $pos = strrpos($className, '\\');
+        if ($pos !== FALSE) {
+            $className = substr($className, $pos + 1);
+        }
         $this->className = $className;
+        
         $this->dispatcher = new EventDispatcher();
-        $this->i18n = new fs_i18n();
+        $this->i18n = new \FacturaScripts\Core\Base\Translator();
         $this->messages = [];
         $this->request = Request::createFromGlobals();
-        $this->template = $className . '.html';
-        $this->title = $className;
+        $this->template = $this->className . '.html';
+        $this->title = $this->className;
     }
-    
+
     /**
      * Ejecuta la lógica del controlador.
      */

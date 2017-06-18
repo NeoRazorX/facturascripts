@@ -18,14 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobaciones previas
+/// comprobamos que se haya instalado y haya configuración
 if (!file_exists(__DIR__ . '/config.php')) {
-    /**
-     * Si no hay fichero de configuración significa que no se ha instalado,
-     * así que redirigimos al instalador.
-     */
-    header('Location: install.php');
-    die('');
+    die("ERROR - NO_CONFIG -");
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -37,8 +32,8 @@ $app = new FacturaScripts\Core\Base\App(__DIR__);
 /// conectamos a la base de datos, cache, etc
 $app->connect();
 
-/// ejecutamos el controlador que toque
-$app->runController();
+/// ejecutamos la API
+$app->runAPI();
 
 /// desconectamos de todo
 $app->close();

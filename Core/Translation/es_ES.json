@@ -1,10 +1,13 @@
 {
     "controller-not-found": "Controlador no encontrado",
+    "db-type": "Tipo de servidor SQL",
     "disable-plugin": "desactivar plugin",
     "enable-plugin": "activar plugin",
     "folder-not-writable": "No se puede escribir sobre la carpeta de FacturaScripts.",
     "hello-world": "Hola mundo",
     "hello-world-text": "Esto es un prototipo de FacturaScripts construido con algunos de los componentes de symfony.",
+    "installer": "Instalador de FacturaScripts 2018 (Alpha)",
+    "installer-p": "Bienvenido al instalador de FacturaScripts. Rellena los campos necesarios para conectar a la base de datos.",
     "plugin-enabled": "Plugin activado correctamente.",
     "plugin-disabled": "Plugin desactivado correctamente.",
     "template-not-found": "Template no encontrado",

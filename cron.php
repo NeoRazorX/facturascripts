@@ -18,30 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Controller;
-
-use FacturaScripts\Base\fs_controller;
-use FacturaScripts\Base\fs_plugin_manager;
-
-/**
- * Description of admin_home
- *
- * @author Carlos García Gómez
- */
-class admin_home extends fs_controller {
-
-    public function __construct($folder = '', $className = __CLASS__) {
-        parent::__construct($folder, $className);
-    }
-
-    public function run() {
-        parent::run();
-
-        if ($this->request->get('enable', '') != '') {
-            $pluginManager = new fs_plugin_manager();
-            $pluginManager->enable($this->request->get('enable'));
-            $this->new_message($this->i18n->trans('plugin-enabled'));
-        }
-    }
-
+/// comprobamos que se haya instalado y haya configuración
+if (!file_exists(__DIR__ . '/config.php')) {
+    die("ERROR - NO_CONFIG -");
 }
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+/// iniciamos la aplicación
+$app = new FacturaScripts\Core\Base\App(__DIR__);
+
+/// conectamos a la base de datos, cache, etc
+$app->connect();
+
+/// ejecutamos el cron
+$app->runCron();
+
+/// desconectamos de todo
+$app->close();

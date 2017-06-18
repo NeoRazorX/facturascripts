@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>INSTALL</title>
+        <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="FacturaScripts" />
+        <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="vendor/components/font-awesome/css/font-awesome.min.css" />
+        <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-header">
+                        <h1>
+                            <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}:
+                        </h1>
+                        <p class="help-block">{{ i18n.trans('installer-p') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    {% if errors|length > 0 %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for msg in errors %}
+                            <li>{{ msg }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">Preferencias</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">Licencia</a>
+                        </li>
+                    </ul>
+                    <br/>
+                </div>
+            </div>
+            <form action="install.php" method="post" class="form">
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="preferencias">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('select-language') }}:
+                                    <select name="fs_lang" class="form-control">
+                                        <option value="es_ES">Español (España)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-type') }}:
+                                    <select name="db_type" class="form-control">
+                                        <option value="mysql">MySQL</option>
+                                        <option value="postgresql">PostgreSQL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-server') }}:
+                                    <input type="text" name="db_server" value="localhost" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-port') }}:
+                                    <input type="number" name="db_port" value="3306" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-name') }}:
+                                    <input type="text" name="db_name" value="facturascripts" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-user') }}:
+                                    <input type="text" name="db_user" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('db-password') }}:
+                                    <input type="password" name="db_pass" class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    {{ i18n.trans('mysql-socket') }}:
+                                    <input type="text" name="mysql_socket" class="form-control"/>
+                                    <p class="help-block">{{ i18n.trans('mysql-socket-p') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="licencia">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <pre>{{ license }}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check" aria-hidden="true"></i>&nbsp; {{ i18n.trans('accept') }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr/>
+                    <small>
+                        &COPY; 2013-2017 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+                    </small>
+                    <br/>
+                    <br/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

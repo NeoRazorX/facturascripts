@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Base;
+namespace FacturaScripts\Core\Base;
 
 /**
  * Gestor de plugins de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
-class fs_plugin_manager {
+class PluginManager {
 
     /**
      * Lista de plugins activos.
@@ -86,6 +86,15 @@ class fs_plugin_manager {
                 break;
             }
         }
+    }
+    
+    /**
+     * Despliega todos los archivos necesarios en la carpeta Dinamic para poder
+     * usar controladores y modelos de plugins con el autoloader, pero siguiendo
+     * el sistema de prioridades de FacturaScripts.
+     */
+    public function deploy() {
+        
     }
 
 }
