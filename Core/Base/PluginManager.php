@@ -37,15 +37,15 @@ class PluginManager {
      * Carpeta de trabajo de FacturaScripts.
      * @var string 
      */
-    private static $fsFolder;
+    private static $folder;
 
     public function __construct($folder = '') {
-        if (!isset(self::$fsFolder)) {
-            self::$fsFolder = $folder;
+        if (!isset(self::$folder)) {
+            self::$folder = $folder;
 
             self::$enabledPlugins = [];
-            if (file_exists(self::$fsFolder . '/plugin.list')) {
-                $list = explode(',', file_get_contents(self::$fsFolder . '/plugin.list'));
+            if (file_exists(self::$folder . '/plugin.list')) {
+                $list = explode(',', file_get_contents(self::$folder . '/plugin.list'));
                 if (!empty($list)) {
                     foreach ($list as $pName) {
                         self::$enabledPlugins[] = $pName;
@@ -62,39 +62,83 @@ class PluginManager {
     public function enabledPlugins() {
         return self::$enabledPlugins;
     }
-    
+
     /**
      * Activa el plugin indicado.
      * @param string $pluginName
      */
     public function enable($pluginName) {
-        if(file_exists(self::$fsFolder.'/plugins/'.$pluginName) ) {
+        if (file_exists(self::$folder . '/plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
-            file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+            file_put_contents(self::$folder . '/plugin.list', join(',', self::$enabledPlugins));
         }
     }
-    
+
     /**
      * Desactiva el plugin indicado.
      * @param string $pluginName
      */
     public function disable($pluginName) {
-        foreach(self::$enabledPlugins as $i => $value) {
-            if($value == $pluginName) {
+        foreach (self::$enabledPlugins as $i => $value) {
+            if ($value == $pluginName) {
                 unset(self::$enabledPlugins[$i]);
-                file_put_contents(self::$fsFolder.'/plugin.list', join(',', self::$enabledPlugins));
+                file_put_contents(self::$folder . '/plugin.list', join(',', self::$enabledPlugins));
                 break;
             }
         }
     }
-    
+
     /**
      * Despliega todos los archivos necesarios en la carpeta Dinamic para poder
      * usar controladores y modelos de plugins con el autoloader, pero siguiendo
      * el sistema de prioridades de FacturaScripts.
      */
     public function deploy() {
-        
+        $folders = ['Controller', 'Model'];
+        foreach ($folders as $folder) {
+            /// ¿Existe la carpeta?
+            if (!file_exists(self::$folder . '/Dinamic/' . $folder)) {
+                mkdir(self::$folder . '/Dinamic/' . $folder, 0755, TRUE);
+            }
+
+            /// examinamos los plugins
+            foreach (self::$enabledPlugins as $pluginName) {
+                if (file_exists(self::$folder . '/Plugins/' . $pluginName . '/' . $folder)) {
+                    foreach (scandir(self::$folder . '/Plugins/' . $pluginName . '/' . $folder) as $fileName) {
+                        if ($fileName != '.' && $fileName != '..' && !is_dir($f) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
+                            $this->linkPluginFile($fileName, $pluginName, $folder);
+                        }
+                    }
+                }
+            }
+
+            /// examinamos el core
+            foreach (scandir(self::$folder . '/Core/' . $folder) as $fileName) {
+                if ($fileName != '.' && $fileName != '..' && !is_dir($f) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
+                    $this->linkCoreFile($fileName, $folder);
+                }
+            }
+        }
+    }
+
+    private function linkPluginFile($fileName, $pluginName, $folder) {
+        if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
+            $className = substr($fileName, 0, -4);
+            $txt = "<?php namespace FacturaScripts\Dinamic\\" . $folder . ";\n\nclass " . $className
+                    . " extends \FacturaScripts\Plugins\\" . $pluginName . "\\" . $folder . "\\" . $className . " {\n\n}";
+
+            file_put_contents(self::$folder . '/Dinamic/' . $folder . '/' . $fileName, $txt);
+        }
+    }
+
+    private function linkCoreFile($fileName, $folder) {
+        if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
+            $className = substr($fileName, 0, -4);
+            $txt = "<?php namespace FacturaScripts\Dinamic\\" . $folder . ";\n\nclass " . $className
+                    . " extends \FacturaScripts\Core\\" . $folder . "\\" . $className . " {\n\n}";
+
+            file_put_contents(self::$folder . '/Dinamic/' . $folder . '/' . $fileName, $txt);
+        }
     }
 
 }

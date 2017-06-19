@@ -34,6 +34,7 @@ if (file_exists(__DIR__ . '/config.php')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,7 +55,7 @@ function searchErrors(&$errors, &$i18n) {
 }
 
 function dbConnect(&$errors, &$i18n) {
-    $ok = FALSE;
+    $done = FALSE;
     $dbHost = filter_input(INPUT_POST, 'db_host');
     $dbPort = filter_input(INPUT_POST, 'db_port');
     $dbUser = filter_input(INPUT_POST, 'db_user');
@@ -64,7 +65,7 @@ function dbConnect(&$errors, &$i18n) {
     switch (filter_input(INPUT_POST, 'db_type')) {
         case 'mysql':
             if (class_exists('mysqli')) {
-                $ok = testMysql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+                $done = testMysql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
             } else {
                 $errors[] = $i18n->trans('mysqli-not-found');
             }
@@ -72,22 +73,22 @@ function dbConnect(&$errors, &$i18n) {
 
         case 'postgresql':
             if (function_exists('pg_connect')) {
-                $ok = testPostgreSql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+                $done = testPostgreSql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
             } else {
                 $errors[] = $i18n->trans('postgresql-not-found');
             }
             break;
     }
 
-    if (!$ok) {
+    if (!$done) {
         $errors[] = $i18n->trans('cant-connect-db');
     }
 
-    return $ok;
+    return $done;
 }
 
 function testMysql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-    $ok = FALSE;
+    $done = FALSE;
 
     if (filter_input(INPUT_POST, 'mysql_socket') != '') {
         ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
@@ -101,40 +102,40 @@ function testMysql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
         // Comprobamos que la BD exista, de lo contrario la creamos
         $dbSelected = mysqli_select_db($connection, $dbName);
         if ($dbSelected) {
-            $ok = TRUE;
+            $done = TRUE;
         } else {
             $sqlCrearBD = "CREATE DATABASE `" . $dbName . "`;";
             if ($connection->query($sqlCrearBD)) {
-                $ok = TRUE;
+                $done = TRUE;
             } else {
                 $errors[] = (string) $connection->connect_error;
             }
         }
     }
 
-    return $ok;
+    return $done;
 }
 
 function testPostgreSql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-    $ok = FALSE;
+    $done = FALSE;
 
     $connection = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' user=' . $dbUser . ' password=' . $dbPass);
     if ($connection) {
         // Comprobamos que la BD exista, de lo contrario la creamos
         $connection2 = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' dbname=' . $dbName . ' user=' . $dbUser . ' password=' . $dbPass);
         if ($connection2) {
-            $ok = TRUE;
+            $done = TRUE;
         } else {
             $sqlCrearBD = 'CREATE DATABASE "' . $dbName . '";';
             if (pg_query($connection, $sqlCrearBD)) {
-                $ok = TRUE;
+                $done = TRUE;
             } else {
                 $errors[] = (string) pg_last_error($connection);
             }
         }
     }
 
-    return $ok;
+    return $done;
 }
 
 function createFolders() {
@@ -169,6 +170,11 @@ function saveInstall() {
     return FALSE;
 }
 
+function deployPlugins() {
+    $pluginManager = new PluginManager(__DIR__);
+    $pluginManager->deploy();
+}
+
 function renderHTML(&$templateVars) {
     /// cargamos el motor de plantillas
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
@@ -186,6 +192,7 @@ function installerMain() {
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
         if (dbConnect($errors, $i18n) && createFolders() && saveInstall()) {
+            deployPlugins();
             header("Location: index.php");
             return 0;
         }

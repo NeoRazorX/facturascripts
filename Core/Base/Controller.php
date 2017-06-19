@@ -65,12 +65,8 @@ class Controller {
      * @var Translator 
      */
     protected $i18n;
-
-    /**
-     * Listado de mensajes a mostrar en pantalla.
-     * @var array 
-     */
-    private $messages;
+    
+    protected $miniLog;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
@@ -97,7 +93,7 @@ class Controller {
         
         $this->dispatcher = new EventDispatcher();
         $this->i18n = new Translator();
-        $this->messages = [];
+        $this->miniLog = new MiniLog();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
         $this->title = $this->className;
@@ -117,27 +113,4 @@ class Controller {
     public function url() {
         return 'index.php?page=' . $this->className;
     }
-
-    /**
-     * Añade un mensaje a la lista de mensajes a mostrar al usuario.
-     * @param string $msg
-     * @param string $type
-     */
-    public function new_message($msg, $type = 'message') {
-        $this->messages[$type][] = $msg;
-    }
-
-    /**
-     * Devuelve los mensajes a mostrar en pantalla.
-     * @param string $type
-     * @return array
-     */
-    public function get_messages($type = 'message') {
-        if (isset($this->messages[$type])) {
-            return $this->messages[$type];
-        } else {
-            return [];
-        }
-    }
-
 }

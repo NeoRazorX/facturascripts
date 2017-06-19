@@ -14,19 +14,19 @@
     <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 {% endblock %}
-{{ debugbarRender.renderHead()|raw }}
+{{ debugBarRender.renderHead()|raw }}
 </head>
 <body>
-{% if fsc.get_messages()|length > 0 %}
+{% if log|length > 0 %}
 <div class="alert alert-warning">
     <ul>
-        {% for msg in fsc.get_messages() %}
-            <li>{{ msg }}</li>
+        {% for msg in log %}
+            <li>{{ msg.message }}</li>
         {% endfor %}
     </ul>
 </div>
 {% endif %}
 {% block body %}{% endblock %}
-{{ debugbarRender.render()|raw }}
+{{ debugBarRender.render()|raw }}
 </body>
 </html>

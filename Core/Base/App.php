@@ -33,34 +33,36 @@ class App {
 
     private $connected;
     private $controller;
+    private $db;
     private $debugBar;
-    private $debugBarRender;
     private $folder;
     private $httpStatus;
     private $i18n;
+    private $miniLog;
     private $pluginManager;
 
     public function __construct($foler = '') {
         $this->connected = FALSE;
         $this->controller = NULL;
+        $this->db = new DataBase();
         $this->debugBar = new StandardDebugBar();
-        $this->debugBarRender = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
         $this->folder = $foler;
         $this->httpStatus = Response::HTTP_OK;
         $this->i18n = new Translator($foler);
+        $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager($foler);
     }
 
     public function connect() {
-        $this->connected = TRUE;
-        
+        $this->connected = $this->db->connect();
         return $this->connected;
     }
 
     public function close() {
+        $this->db->close();
         $this->connected = FALSE;
     }
-
+    
     public function runAPI() {
         
     }
@@ -72,14 +74,13 @@ class App {
             $pageName = $request->get('page', 'AdminHome');
             $this->loadController($pageName);
         } else {
-            $this->renderHtml('error/db_error.html');
+            $this->renderHtml('error/dbError.html');
         }
     }
 
     private function loadController($pageName) {
-        $controllerException = FALSE;
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
-        $template = 'error/controller_not_found.html';
+        $template = 'error/controllerNotFound.html';
         $this->httpStatus = Response::HTTP_NOT_FOUND;
 
         if (!class_exists($controllerName)) {
@@ -88,19 +89,21 @@ class App {
         
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
+            $this->debugBar['messages']->info('Loading controller: '.$controllerName);
+            
             try {
                 $this->controller = new $controllerName(__DIR__);
                 $this->controller->run();
                 $template = $this->controller->template;
                 $this->httpStatus = Response::HTTP_OK;
             } catch (\Exception $exc) {
-                $controllerException = $exc;
+                $this->debugBar['exceptions']->addException($exc);
                 $this->httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
             }
         }
 
         if ($template) {
-            $this->renderHtml($template, $controllerName, $controllerException);
+            $this->renderHtml($template);
         }
     }
 
@@ -108,7 +111,7 @@ class App {
         
     }
 
-    private function renderHtml($template, $controllerName = '', $controllerException = FALSE) {
+    private function renderHtml($template) {
         /// cargamos el motor de plantillas
         $twigLoader = new \Twig_Loader_Filesystem($this->folder . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
@@ -122,24 +125,23 @@ class App {
 
         /// variables para la plantilla HTML
         $templateVars = array(
+            'debugBarRender' => FALSE,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
-            'template' => $template,
-            'exception' => $controllerException,
-            'controllerName' => $controllerName,
-            'debugBarRender' => FALSE
+            'log' => $this->miniLog->read()
         );
 
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
-            $templateVars['debugBarRender'] = $this->debugBarRender;
+            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
         }
         $twig = new \Twig_Environment($twigLoader, $twigOptions);
 
         try {
             $response = new Response($twig->render($template, $templateVars), $this->httpStatus);
         } catch (\Exception $exc) {
-            $response = new Response($twig->render('error/template_not_found.html', $templateVars), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->debugBar['exceptions']->addException($exc);
+            $response = new Response($twig->render('error/templateNotFound.html', $templateVars), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response->send();
     }
