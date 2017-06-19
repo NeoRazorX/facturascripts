@@ -33,7 +33,7 @@ class App {
 
     private $connected;
     private $controller;
-    private $db;
+    private $dataBase;
     private $debugBar;
     private $folder;
     private $httpStatus;
@@ -44,7 +44,7 @@ class App {
     public function __construct($foler = '') {
         $this->connected = FALSE;
         $this->controller = NULL;
-        $this->db = new DataBase();
+        $this->dataBase = new DataBase();
         $this->debugBar = new StandardDebugBar();
         $this->folder = $foler;
         $this->httpStatus = Response::HTTP_OK;
@@ -54,12 +54,12 @@ class App {
     }
 
     public function connect() {
-        $this->connected = $this->db->connect();
+        $this->connected = $this->dataBase->connect();
         return $this->connected;
     }
 
     public function close() {
-        $this->db->close();
+        $this->dataBase->close();
         $this->connected = FALSE;
     }
     

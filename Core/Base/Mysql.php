@@ -31,7 +31,7 @@ class Mysql {
 
     /**
      * El enlace con la base de datos.
-     * @var mysqli
+     * @var \mysqli
      */
     private static $link;
 
@@ -356,15 +356,15 @@ class Mysql {
                 $this->beginTransaction();
             }
 
-            $i = 0;
+            $num = 0;
             if (self::$link->multi_query($sql)) {
                 do {
-                    $i++;
-                } while (self::$link->more_results() AND self::$link->next_result());
+                    $num++;
+                } while (self::$link->more_results() && self::$link->next_result());
             }
 
             if (self::$link->errno) {
-                self::$miniLog->error('Error al ejecutar la consulta ' . $i . ': ' . self::$link->error .
+                self::$miniLog->error('Error al ejecutar la consulta ' . $num . ': ' . self::$link->error .
                         '. La secuencia ocupa la posición ' . count(self::$miniLog->read('sql')));
             } else {
                 $result = TRUE;
@@ -440,14 +440,14 @@ class Mysql {
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param string $s
+     * @param string $str
      * @return string
      */
-    public function escapeString($s) {
+    public function escapeString($str) {
         if (self::$link) {
-            return self::$link->escape_string($s);
+            return self::$link->escape_string($str);
         } else {
-            return $s;
+            return $str;
         }
     }
 
@@ -491,7 +491,7 @@ class Mysql {
 
                 foreach ($dbCols as $db_col) {
                     if ($db_col['name'] == $xml_col['nombre']) {
-                        if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
+                        if (!$this->compareDataTypes($db_col['type'], $xml_col['tipo'])) {
                             $sql .= 'ALTER TABLE ' . $tableName . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ';';
                         }
 
@@ -503,7 +503,7 @@ class Mysql {
                             }
                         }
 
-                        if (!$this->compare_defaults($db_col['default'], $xml_col['defecto'])) {
+                        if (!$this->compareDefaults($db_col['default'], $xml_col['defecto'])) {
                             if (is_null($xml_col['defecto'])) {
                                 $sql .= 'ALTER TABLE ' . $tableName . ' ALTER `' . $xml_col['nombre'] . '` DROP DEFAULT;';
                             } else {
@@ -553,7 +553,7 @@ class Mysql {
             }
         }
 
-        return $this->fix_postgresql($sql);
+        return $this->fixPostgresql($sql);
     }
 
     /**
@@ -570,18 +570,18 @@ class Mysql {
             return TRUE;
         } else if (strtolower($xmlType) == 'serial') {
             return TRUE;
-        } else if ($dbType == 'tinyint(1)' AND $xmlType == 'boolean') {
+        } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
             return TRUE;
-        } else if (substr($dbType, 0, 4) == 'int(' AND $xmlType == 'INTEGER') {
+        } else if (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER') {
             return TRUE;
-        } else if (substr($dbType, 0, 6) == 'double' AND $xmlType == 'double precision') {
+        } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
             return TRUE;
-        } else if (substr($dbType, 0, 4) == 'time' AND substr($xmlType, 0, 4) == 'time') {
+        } else if (substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time') {
             return TRUE;
-        } else if (substr($dbType, 0, 8) == 'varchar(' AND substr($xmlType, 0, 18) == 'character varying(') {
+        } else if (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
             /// comprobamos las longitudes
             return (substr($dbType, 8, -1) == substr($xmlType, 18, -1));
-        } else if (substr($dbType, 0, 5) == 'char(' AND substr($xmlType, 0, 18) == 'character varying(') {
+        } else if (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
             /// comprobamos las longitudes
             return (substr($dbType, 5, -1) == substr($xmlType, 18, -1));
         } else {
@@ -602,11 +602,11 @@ class Mysql {
             return in_array($xmlDefault, array('0', 'false', 'FALSE'));
         } else if (in_array($dbDefault, array('1', 'true', 'TRUE'))) {
             return in_array($xmlDefault, array('1', 'true', 'TRUE'));
-        } else if ($dbDefault == '00:00:00' AND $xmlDefault == 'now()') {
+        } else if ($dbDefault == '00:00:00' && $xmlDefault == 'now()') {
             return TRUE;
-        } else if ($dbDefault == date('Y-m-d') . ' 00:00:00' AND $xmlDefault == 'CURRENT_TIMESTAMP') {
+        } else if ($dbDefault == date('Y-m-d') . ' 00:00:00' && $xmlDefault == 'CURRENT_TIMESTAMP') {
             return TRUE;
-        } else if ($dbDefault == 'CURRENT_DATE' AND $xmlDefault == date("'Y-m-d'")) {
+        } else if ($dbDefault == 'CURRENT_DATE' && $xmlDefault == date("'Y-m-d'")) {
             return TRUE;
         } else if (substr($xmlDefault, 0, 8) == 'nextval(') {
             return TRUE;
@@ -670,7 +670,7 @@ class Mysql {
             }
         }
 
-        if ($xmlCons AND ! $deleteOnly AND FS_FOREIGN_KEYS) {
+        if ($xmlCons && ! $deleteOnly && FS_FOREIGN_KEYS) {
             /// comprobamos una a una las nuevas
             foreach ($xmlCons as $xml_con) {
                 $found = FALSE;
@@ -707,13 +707,13 @@ class Mysql {
     public function generateTable($tableName, $xmlCols, $xmlCons) {
         $sql = "CREATE TABLE " . $tableName . " ( ";
 
-        $i = FALSE;
+        $coma = FALSE;
         foreach ($xmlCols as $col) {
             /// añade la coma al final
-            if ($i) {
+            if ($coma) {
                 $sql .= ", ";
             } else {
-                $i = TRUE;
+                $coma = TRUE;
             }
 
             if ($col['tipo'] == 'serial') {

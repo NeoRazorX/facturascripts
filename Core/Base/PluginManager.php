@@ -105,7 +105,7 @@ class PluginManager {
             foreach (self::$enabledPlugins as $pluginName) {
                 if (file_exists(self::$folder . '/Plugins/' . $pluginName . '/' . $folder)) {
                     foreach (scandir(self::$folder . '/Plugins/' . $pluginName . '/' . $folder) as $fileName) {
-                        if ($fileName != '.' && $fileName != '..' && !is_dir($f) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
+                        if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
                             $this->linkPluginFile($fileName, $pluginName, $folder);
                         }
                     }
@@ -114,7 +114,7 @@ class PluginManager {
 
             /// examinamos el core
             foreach (scandir(self::$folder . '/Core/' . $folder) as $fileName) {
-                if ($fileName != '.' && $fileName != '..' && !is_dir($f) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
+                if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
                     $this->linkCoreFile($fileName, $folder);
                 }
             }

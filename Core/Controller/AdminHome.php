@@ -37,7 +37,7 @@ class AdminHome extends \FacturaScripts\Core\Base\Controller {
         if ($this->request->get('enable', '') != '') {
             $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
             $pluginManager->enable($this->request->get('enable'));
-            $this->new_message($this->i18n->trans('plugin-enabled'));
+            $this->miniLog->info($this->i18n->trans('plugin-enabled'));
         }
     }
 

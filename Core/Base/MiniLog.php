@@ -137,7 +137,7 @@ class MiniLog {
     /**
      * SQL history.
      * 
-     * @param type $message
+     * @param string $message
      * @param array $context
      * @return null
      */

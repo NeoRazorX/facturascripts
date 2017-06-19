@@ -66,6 +66,10 @@ class Controller {
      */
     protected $i18n;
     
+    /**
+     * Gestor de log del sistema.
+     * @var MiniLog
+     */
     protected $miniLog;
 
     /**

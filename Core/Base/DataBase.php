@@ -259,11 +259,11 @@ class DataBase {
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param string $s
+     * @param string $str
      * @return string
      */
-    public function escapeString($s) {
-        return self::$engine->escapeString($s);
+    public function escapeString($str) {
+        return self::$engine->escapeString($str);
     }
 
     /**

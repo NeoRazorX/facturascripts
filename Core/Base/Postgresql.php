@@ -348,7 +348,7 @@ class Postgresql {
             self::$miniLog->sql($sql);
 
             if ($transaction) {
-                $this->begin_transaction();
+                $this->beginTransaction();
             }
 
             $aux = pg_query(self::$link, $sql);
@@ -434,14 +434,14 @@ class Postgresql {
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param string $s
+     * @param string $str
      * @return string
      */
-    public function escapeString($s) {
+    public function escapeString($str) {
         if (self::$link) {
-            return pg_escape_string(self::$link, $s);
+            return pg_escape_string(self::$link, $str);
         } else {
-            return $s;
+            return $str;
         }
     }
 
@@ -465,19 +465,19 @@ class Postgresql {
     /**
      * Compara dos arrays de columnas, devuelve una sentencia SQL en caso de encontrar diferencias.
      * @param string $tableName
-     * @param array $xml_cols
-     * @param array $db_cols
+     * @param array $xmlCols
+     * @param array $dbCols
      * @return string
      */
-    public function compareColumns($tableName, $xml_cols, $db_cols) {
+    public function compareColumns($tableName, $xmlCols, $dbCols) {
         $sql = '';
 
-        foreach ($xml_cols as $xml_col) {
+        foreach ($xmlCols as $xml_col) {
             $encontrada = FALSE;
-            if ($db_cols) {
-                foreach ($db_cols as $db_col) {
+            if ($dbCols) {
+                foreach ($dbCols as $db_col) {
                     if ($db_col['name'] == $xml_col['nombre']) {
-                        if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
+                        if (!$this->compareDataTypes($db_col['type'], $xml_col['tipo'])) {
                             $sql .= 'ALTER TABLE ' . $tableName . ' ALTER COLUMN "' . $xml_col['nombre'] . '" TYPE ' . $xml_col['tipo'] . ';';
                         }
 
@@ -485,7 +485,7 @@ class Postgresql {
                             if (is_null($xml_col['defecto'])) {
                                 $sql .= 'ALTER TABLE ' . $tableName . ' ALTER COLUMN "' . $xml_col['nombre'] . '" DROP DEFAULT;';
                             } else {
-                                $this->default2check_sequence($tableName, $xml_col['defecto'], $xml_col['nombre']);
+                                $this->default2checkSequence($tableName, $xml_col['defecto'], $xml_col['nombre']);
                                 $sql .= 'ALTER TABLE ' . $tableName . ' ALTER COLUMN "' . $xml_col['nombre'] . '" SET DEFAULT ' . $xml_col['defecto'] . ';';
                             }
                         }
@@ -523,19 +523,19 @@ class Postgresql {
 
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
-     * @param string $db_type
-     * @param string $xml_type
+     * @param string $dbType
+     * @param string $xmlType
      * @return boolean
      */
-    private function compareDataTypes($db_type, $xml_type) {
+    private function compareDataTypes($dbType, $xmlType) {
         if (FS_CHECK_DB_TYPES != 1) {
             /// si está desactivada la comprobación de tipos, devolvemos que son iguales.
             return TRUE;
-        } else if ($db_type == $xml_type) {
+        } else if ($dbType == $xmlType) {
             return TRUE;
-        } else if (strtolower($xml_type) == 'serial') {
+        } else if (strtolower($xmlType) == 'serial') {
             return TRUE;
-        } else if (substr($db_type, 0, 4) == 'time' AND substr($xml_type, 0, 4) == 'time') {
+        } else if (substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time') {
             return TRUE;
         } else {
             return FALSE;
@@ -557,7 +557,7 @@ class Postgresql {
             $aux = explode("'", $default);
             if (count($aux) == 3) {
                 /// ¿Existe esa secuencia?
-                if (!$this->sequence_exists($aux[1])) {
+                if (!$this->sequenceExists($aux[1])) {
                     /// ¿En qué número debería empezar esta secuencia?
                     $num = 1;
                     $aux_num = $this->select("SELECT MAX(" . $colname . "::integer) as num FROM " . $tableName . ";");
@@ -574,20 +574,20 @@ class Postgresql {
     /**
      * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
      * @param string $tableName
-     * @param array $xml_cons
-     * @param array $db_cons
-     * @param boolean $delete_only
+     * @param array $xmlCons
+     * @param array $dbCons
+     * @param boolean $deleteOnly
      * @return string
      */
-    public function compareConstraints($tableName, $xml_cons, $db_cons, $delete_only = FALSE) {
+    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
         $sql = '';
 
-        if ($db_cons) {
+        if ($dbCons) {
             /// comprobamos una a una las viejas
-            foreach ($db_cons as $db_con) {
+            foreach ($dbCons as $db_con) {
                 $found = FALSE;
-                if ($xml_cons) {
-                    foreach ($xml_cons as $xml_con) {
+                if ($xmlCons) {
+                    foreach ($xmlCons as $xml_con) {
                         if ($db_con['name'] == $xml_con['nombre']) {
                             $found = TRUE;
                             break;
@@ -602,12 +602,12 @@ class Postgresql {
             }
         }
 
-        if ($xml_cons AND ! $delete_only) {
+        if ($xmlCons && ! $deleteOnly) {
             /// comprobamos una a una las nuevas
-            foreach ($xml_cons as $xml_con) {
+            foreach ($xmlCons as $xml_con) {
                 $found = FALSE;
-                if ($db_cons) {
-                    foreach ($db_cons as $db_con) {
+                if ($dbCons) {
+                    foreach ($dbCons as $db_con) {
                         if ($xml_con['nombre'] == $db_con['name']) {
                             $found = TRUE;
                             break;
@@ -628,20 +628,20 @@ class Postgresql {
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      * @param string $tableName
-     * @param array $xml_cols
-     * @param array $xml_cons
+     * @param array $xmlCols
+     * @param array $xmlCons
      * @return string
      */
-    public function generateTable($tableName, $xml_cols, $xml_cons) {
+    public function generateTable($tableName, $xmlCols, $xmlCons) {
         $sql = 'CREATE TABLE ' . $tableName . ' (';
 
-        $i = FALSE;
-        foreach ($xml_cols as $col) {
+        $coma = FALSE;
+        foreach ($xmlCols as $col) {
             /// añade la coma al final
-            if ($i) {
+            if ($coma) {
                 $sql .= ', ';
             } else {
-                $i = TRUE;
+                $coma = TRUE;
             }
 
             $sql .= '"' . $col['nombre'] . '" ' . $col['tipo'];
@@ -650,12 +650,12 @@ class Postgresql {
                 $sql .= ' NOT NULL';
             }
 
-            if ($col['defecto'] !== NULL AND ! in_array($col['tipo'], array('serial', 'bigserial'))) {
+            if ($col['defecto'] !== NULL && ! in_array($col['tipo'], array('serial', 'bigserial'))) {
                 $sql .= ' DEFAULT ' . $col['defecto'];
             }
         }
 
-        return $sql . ' ); ' . $this->compare_constraints($tableName, $xml_cons, FALSE);
+        return $sql . ' ); ' . $this->compareConstraints($tableName, $xmlCons, FALSE);
     }
 
     /**
