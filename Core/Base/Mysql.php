@@ -670,7 +670,7 @@ class Mysql {
             }
         }
 
-        if ($xmlCons && ! $deleteOnly && FS_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {
             /// comprobamos una a una las nuevas
             foreach ($xmlCons as $xml_con) {
                 $found = FALSE;

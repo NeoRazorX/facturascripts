@@ -474,7 +474,7 @@ class Postgresql {
 
         foreach ($xmlCols as $xml_col) {
             $encontrada = FALSE;
-            if ($dbCols) {
+            if (!empty($dbCols)) {
                 foreach ($dbCols as $db_col) {
                     if ($db_col['name'] == $xml_col['nombre']) {
                         if (!$this->compareDataTypes($db_col['type'], $xml_col['tipo'])) {
@@ -582,11 +582,11 @@ class Postgresql {
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
         $sql = '';
 
-        if ($dbCons) {
+        if (!empty($dbCons)) {
             /// comprobamos una a una las viejas
             foreach ($dbCons as $db_con) {
                 $found = FALSE;
-                if ($xmlCons) {
+                if (!empty($xmlCons)) {
                     foreach ($xmlCons as $xml_con) {
                         if ($db_con['name'] == $xml_con['nombre']) {
                             $found = TRUE;
@@ -602,7 +602,7 @@ class Postgresql {
             }
         }
 
-        if ($xmlCons && ! $deleteOnly) {
+        if (!empty($xmlCons) && !$deleteOnly) {
             /// comprobamos una a una las nuevas
             foreach ($xmlCons as $xml_con) {
                 $found = FALSE;
@@ -650,12 +650,12 @@ class Postgresql {
                 $sql .= ' NOT NULL';
             }
 
-            if ($col['defecto'] !== NULL && ! in_array($col['tipo'], array('serial', 'bigserial'))) {
+            if ($col['defecto'] !== NULL && !in_array($col['tipo'], array('serial', 'bigserial'))) {
                 $sql .= ' DEFAULT ' . $col['defecto'];
             }
         }
 
-        return $sql . ' ); ' . $this->compareConstraints($tableName, $xmlCons, FALSE);
+        return $sql . ' ); ' . $this->compareConstraints($tableName, $xmlCons, array());
     }
 
     /**
