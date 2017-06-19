@@ -17,7 +17,10 @@
                 <div class="col-sm-12">
                     <div class="page-header">
                         <h1>
-                            <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}:
+                            <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
+                            <a href="install.php" class="btn btn-xs btn-default">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </a>
                         </h1>
                         <p class="help-block">{{ i18n.trans('installer-p') }}</p>
                     </div>
@@ -74,8 +77,8 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    {{ i18n.trans('db-server') }}:
-                                    <input type="text" name="db_server" value="localhost" class="form-control"/>
+                                    {{ i18n.trans('db-host') }}:
+                                    <input type="text" name="db_host" value="localhost" class="form-control"/>
                                 </div>
                             </div>
                             <div class="col-sm-3">

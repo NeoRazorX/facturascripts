@@ -53,6 +53,90 @@ function searchErrors(&$errors, &$i18n) {
     }
 }
 
+function dbConnect(&$errors, &$i18n) {
+    $ok = FALSE;
+    $dbHost = filter_input(INPUT_POST, 'db_host');
+    $dbPort = filter_input(INPUT_POST, 'db_port');
+    $dbUser = filter_input(INPUT_POST, 'db_user');
+    $dbPass = filter_input(INPUT_POST, 'db_pass');
+    $dbName = filter_input(INPUT_POST, 'db_name');
+
+    switch (filter_input(INPUT_POST, 'db_type')) {
+        case 'mysql':
+            if (class_exists('mysqli')) {
+                $ok = testMysql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+            } else {
+                $errors[] = $i18n->trans('mysqli-not-found');
+            }
+            break;
+
+        case 'postgresql':
+            if (function_exists('pg_connect')) {
+                $ok = testPostgreSql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+            } else {
+                $errors[] = $i18n->trans('postgresql-not-found');
+            }
+            break;
+    }
+
+    if (!$ok) {
+        $errors[] = $i18n->trans('cant-connect-db');
+    }
+
+    return $ok;
+}
+
+function testMysql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
+    $ok = FALSE;
+
+    if (filter_input(INPUT_POST, 'mysql_socket') != '') {
+        ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
+    }
+
+    // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
+    $connection = new mysqli($dbHost, $dbUser, $dbPass, "", intval($dbPort));
+    if ($connection->connect_error) {
+        $errors[] = (string) $connection->connect_error;
+    } else {
+        // Comprobamos que la BD exista, de lo contrario la creamos
+        $dbSelected = mysqli_select_db($connection, $dbName);
+        if ($dbSelected) {
+            $ok = TRUE;
+        } else {
+            $sqlCrearBD = "CREATE DATABASE `" . $dbName . "`;";
+            if ($connection->query($sqlCrearBD)) {
+                $ok = TRUE;
+            } else {
+                $errors[] = (string) $connection->connect_error;
+            }
+        }
+    }
+
+    return $ok;
+}
+
+function testPostgreSql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
+    $ok = FALSE;
+
+    $connection = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' user=' . $dbUser . ' password=' . $dbPass);
+    if ($connection) {
+        // Comprobamos que la BD exista, de lo contrario la creamos
+        $connection2 = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' dbname=' . $dbName . ' user=' . $dbUser . ' password=' . $dbPass);
+        if ($connection2) {
+            $ok = TRUE;
+        } else {
+            $sqlCrearBD = 'CREATE DATABASE "' . $dbName . '";';
+            if (pg_query($connection, $sqlCrearBD)) {
+                $ok = TRUE;
+            } else {
+                $errors[] = (string) pg_last_error($connection);
+            }
+        }
+    }
+
+    return $ok;
+}
+
 function createFolders() {
     if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
         return TRUE;
@@ -74,14 +158,14 @@ function saveInstall() {
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
-        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' AND filter_input(INPUT_POST, 'mysql_socket') != '') {
+        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') != '') {
             fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
         fclose($file);
         return TRUE;
     }
-    
+
     return FALSE;
 }
 
@@ -101,7 +185,7 @@ function installerMain() {
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
-        if (createFolders() AND saveInstall()) {
+        if (dbConnect($errors, $i18n) && createFolders() && saveInstall()) {
             header("Location: index.php");
             return 0;
         }
