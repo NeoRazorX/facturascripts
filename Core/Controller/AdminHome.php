@@ -27,18 +27,19 @@ namespace FacturaScripts\Core\Controller;
  */
 class AdminHome extends \FacturaScripts\Core\Base\Controller {
 
+    public $empresa;
+    
     public function __construct($folder = '', $className = __CLASS__) {
         parent::__construct($folder, $className);
     }
 
     public function run() {
         parent::run();
+        
+        $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
+        $pluginManager->deploy();
 
-        if ($this->request->get('enable', '') != '') {
-            $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
-            $pluginManager->enable($this->request->get('enable'));
-            $this->miniLog->info($this->i18n->trans('plugin-enabled'));
-        }
+        $this->empresa = new \FacturaScripts\Dinamic\Model\empresa();
     }
 
 }

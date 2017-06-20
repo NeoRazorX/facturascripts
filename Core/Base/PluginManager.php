@@ -55,6 +55,10 @@ class PluginManager {
         }
     }
 
+    public function folder() {
+        return self::$folder;
+    }
+
     /**
      * Devuelve la lista de plugins activos.
      * @return array
@@ -94,7 +98,7 @@ class PluginManager {
      * el sistema de prioridades de FacturaScripts.
      */
     public function deploy() {
-        $folders = ['Controller', 'Model'];
+        $folders = ['Controller', 'Model', 'Table'];
         foreach ($folders as $folder) {
             /// ¿Existe la carpeta?
             if (!file_exists(self::$folder . '/Dinamic/' . $folder)) {
@@ -106,7 +110,9 @@ class PluginManager {
                 if (file_exists(self::$folder . '/Plugins/' . $pluginName . '/' . $folder)) {
                     foreach (scandir(self::$folder . '/Plugins/' . $pluginName . '/' . $folder) as $fileName) {
                         if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
-                            $this->linkPluginFile($fileName, $pluginName, $folder);
+                            $this->linkClassFile($fileName, $folder, "\FacturaScripts\Plugins\\" . $pluginName . "\\");
+                        } else if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.xml') {
+                            $this->linkXmlFile($fileName, $folder, self::$folder . '/Plugins/' . $pluginName . '/' . $folder . '/' . $fileName);
                         }
                     }
                 }
@@ -115,29 +121,27 @@ class PluginManager {
             /// examinamos el core
             foreach (scandir(self::$folder . '/Core/' . $folder) as $fileName) {
                 if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.php') {
-                    $this->linkCoreFile($fileName, $folder);
+                    $this->linkClassFile($fileName, $folder);
+                } else if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && strlen($fileName) > 4 && substr($fileName, -4) == '.xml') {
+                    $this->linkXmlFile($fileName, $folder, self::$folder . '/Core/' . $folder . '/' . $fileName);
                 }
             }
         }
     }
 
-    private function linkPluginFile($fileName, $pluginName, $folder) {
+    private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\") {
         if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
             $className = substr($fileName, 0, -4);
             $txt = "<?php namespace FacturaScripts\Dinamic\\" . $folder . ";\n\nclass " . $className
-                    . " extends \FacturaScripts\Plugins\\" . $pluginName . "\\" . $folder . "\\" . $className . " {\n\n}";
+                    . " extends " . $namespace . $folder . "\\" . $className . " {\n\n}";
 
             file_put_contents(self::$folder . '/Dinamic/' . $folder . '/' . $fileName, $txt);
         }
     }
 
-    private function linkCoreFile($fileName, $folder) {
+    private function linkXmlFile($fileName, $folder, $filePath) {
         if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
-            $className = substr($fileName, 0, -4);
-            $txt = "<?php namespace FacturaScripts\Dinamic\\" . $folder . ";\n\nclass " . $className
-                    . " extends \FacturaScripts\Core\\" . $folder . "\\" . $className . " {\n\n}";
-
-            file_put_contents(self::$folder . '/Dinamic/' . $folder . '/' . $fileName, $txt);
+            copy($filePath, self::$folder . '/Dinamic/' . $folder . '/' . $fileName);
         }
     }
 

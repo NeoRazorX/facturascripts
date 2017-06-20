@@ -21,6 +21,8 @@
 namespace FacturaScripts\Core\Base;
 
 define('FS_FOREIGN_KEYS', '1');
+define('FS_DB_INTEGER', 'INTEGER');
+define('FS_CHECK_DB_TYPES', '0');
 
 /**
  * Clase para conectar a MySQL.
