@@ -193,7 +193,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      */
     protected function install() {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (codagente,nombre,apellidos,dnicif)
+        return "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif)
          VALUES ('1','Paco','Pepe','00000014Z');";
     }
 
@@ -210,8 +210,8 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return int
      */
     public function get_new_codigo() {
-        $sql = "SELECT MAX(" . $this->db->sql_to_int('codagente') . ") as cod FROM " . $this->table_name . ";";
-        $cod = $this->db->select($sql);
+        $sql = "SELECT MAX(" . $this->dataBase->sql_to_int('codagente') . ") as cod FROM " . $this->tableName . ";";
+        $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
         } else
@@ -235,7 +235,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return \agente|boolean
      */
     public function get($cod) {
-        $a = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($cod) . ";");
+        $a = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($cod) . ";");
         if ($a) {
             return new \agente($a[0]);
         } else
@@ -250,7 +250,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codagente)) {
             return FALSE;
         } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
     /**
@@ -288,7 +288,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
             $this->clean_cache();
 
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre) .
+                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre) .
                         ", apellidos = " . $this->var2str($this->apellidos) .
                         ", dnicif = " . $this->var2str($this->dnicif) .
                         ", telefono = " . $this->var2str($this->telefono) .
@@ -310,7 +310,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
                     $this->codagente = $this->get_new_codigo();
                 }
 
-                $sql = "INSERT INTO " . $this->table_name . " (codagente,nombre,apellidos,dnicif,telefono,
+                $sql = "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif,telefono,
                email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,
                banco,porcomision) VALUES (" . $this->var2str($this->codagente) .
                         "," . $this->var2str($this->nombre) .
@@ -331,7 +331,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
                         "," . $this->var2str($this->porcomision) . ");";
             }
 
-            return $this->db->exec($sql);
+            return $this->dataBase->exec($sql);
         } else
             return FALSE;
     }
@@ -342,7 +342,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
     /**
@@ -360,7 +360,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
 
         if ($incluir_debaja) {
             $listagentes = array();
-            $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC, apellidos ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC, apellidos ASC;");
             if ($data) {
                 foreach ($data as $a) {
                     $listagentes[] = new \agente($a);
@@ -372,7 +372,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
 
             if (!$listagentes) {
                 /// si no está en caché, leemos de la base de datos
-                $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
+                $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
                 if ($data) {
                     foreach ($data as $a) {
                         $listagentes[] = new \agente($a);
