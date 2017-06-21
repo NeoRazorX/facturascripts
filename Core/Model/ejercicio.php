@@ -126,7 +126,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     protected function install() {
         $this->clean_cache();
 
-        return "INSERT INTO " . $this->table_name . " (codejercicio,nombre,fechainicio,fechafin,
+        return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
          estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
          VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y')) . ",
          " . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
@@ -152,10 +152,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function get_new_codigo($cod = '0001') {
-        if (!$this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
+        if (!$this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
         } else {
-            $cod = $this->db->select("SELECT MAX(" . $this->db->sql_to_int('codejercicio') . ") as cod FROM " . $this->table_name . ";");
+            $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql_to_int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
             if ($cod) {
                 return sprintf('%04s', (1 + intval($cod[0]['cod'])));
             } else{
@@ -219,7 +219,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return boolean|\ejercicio
      */
     public function get($cod) {
-        $ejercicio = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";");
+        $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
         if ($ejercicio) {
             return new \ejercicio($ejercicio[0]);
         } else{
@@ -236,10 +236,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return boolean|\ejercicio
      */
     public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE fechainicio <= "
+        $sql = "SELECT * FROM " . $this->tableName . " WHERE fechainicio <= "
                 . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
 
-        $data = $this->db->select($sql);
+        $data = $this->dataBase->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
             if ($eje->abierto() || !$solo_abierto) {
@@ -275,7 +275,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codejercicio)) {
             return FALSE;
         } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName
                             . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
         }
     }
@@ -314,11 +314,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $status = TRUE;
 
         /// comprobamos la suma de las subcuentas
-        if ($this->db->table_exists('co_subcuentas')) {
+        if ($this->dataBase->table_exists('co_subcuentas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_subcuentas"
                     . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
 
-            $data = $this->db->select($sql);
+            $data = $this->dataBase->select($sql);
             if ($data) {
                 $debe = floatval($data[0]['debe']);
                 $haber = floatval($data[0]['haber']);
@@ -332,12 +332,12 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         }
 
         /// comprobamos la suma de las partidas de los asientos
-        if ($this->db->table_exists('co_partidas')) {
+        if ($this->dataBase->table_exists('co_partidas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas"
                     . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
                     . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ");";
 
-            $data = $this->db->select($sql);
+            $data = $this->dataBase->select($sql);
             if ($data) {
                 $debe = floatval($data[0]['debe']);
                 $haber = floatval($data[0]['haber']);
@@ -365,7 +365,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $this->clean_cache();
 
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
+                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
                         . ", fechafin = " . $this->var2str($this->fechafin)
                         . ", estado = " . $this->var2str($this->estado)
@@ -376,7 +376,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                         . ", idasientocierre = " . $this->var2str($this->idasientocierre)
                         . "  WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codejercicio,nombre,fechainicio,fechafin,
+                $sql = "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
                estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
                VALUES (" . $this->var2str($this->codejercicio)
                         . "," . $this->var2str($this->nombre)
@@ -390,7 +390,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->idasientocierre) . ");";
             }
 
-            return $this->db->exec($sql);
+            return $this->dataBase->exec($sql);
         } else{
             return FALSE;
         }
@@ -402,7 +402,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
     /**
@@ -422,7 +422,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $listae = $this->cache->get_array('m_ejercicio_all');
         if (!$listae) {
             /// si no está en caché, leemos de la base de datos
-            $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY fechainicio DESC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
             if ($data) {
                 foreach ($data as $e) {
                     $listae[] = new \ejercicio($e);
@@ -445,8 +445,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $listae = $this->cache->get_array('m_ejercicio_all_abiertos');
         if (!$listae) {
             /// si no está en caché, leemos de la base de datos
-            $sql = "SELECT * FROM " . $this->table_name . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
-            $data = $this->db->select($sql);
+            $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
+            $data = $this->dataBase->select($sql);
             if ($data) {
                 foreach ($data as $e) {
                     $listae[] = new \ejercicio($e);
