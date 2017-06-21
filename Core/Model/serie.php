@@ -35,7 +35,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public $codserie;
     
     /**
-     * Descripción d ela serie de facturación
+     * Descripción de la serie de facturación
      * @var string 
      */
     public $descripcion;
