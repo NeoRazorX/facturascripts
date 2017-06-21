@@ -158,8 +158,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $cod = $this->db->select("SELECT MAX(" . $this->db->sql_to_int('codejercicio') . ") as cod FROM " . $this->table_name . ";");
             if ($cod) {
                 return sprintf('%04s', (1 + intval($cod[0]['cod'])));
-            } else
-                return '0001';
+            } else{
+                    return '0001';
+            }
         }
     }
 
@@ -170,16 +171,18 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codejercicio)) {
             return 'index.php?page=contabilidad_ejercicios';
-        } else
-            return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
-    }
+        } else{
+                return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        }
+            
+        }
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
      * @return boolean
      */
     public function is_default() {
-        return ( $this->codejercicio == $this->default_items->codejercicio() );
+        return ($this->codejercicio == $this->default_items->codejercicio());
     }
 
     /**
@@ -219,8 +222,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $ejercicio = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";");
         if ($ejercicio) {
             return new \ejercicio($ejercicio[0]);
-        } else
+        } else{
             return FALSE;
+        }
     }
 
     /**
@@ -238,10 +242,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $data = $this->db->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
-            if ($eje->abierto() || ! $solo_abierto) {
+            if ($eje->abierto() || !$solo_abierto) {
                 return $eje;
-            } else
+            } else{
                 return FALSE;
+            }
         }
         else if ($crear) {
             $eje = new \ejercicio();
@@ -254,10 +259,12 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $this->miniLog->alert("Fecha no válida: " . $fecha);
             } else if ($eje->save()) {
                 return $eje;
-            } else
-                return FALSE;
-        } else
+            } else{
+                        return FALSE;
+            }
+        } else{
             return FALSE;
+        }
     }
 
     /**
@@ -292,8 +299,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                     . "posterior a la fecha fin (" . $this->fechafin . ").");
         } else if (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert("Fecha no válida.");
-        } else
+        } else{
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -383,8 +391,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             }
 
             return $this->db->exec($sql);
-        } else
+        } else{
             return FALSE;
+        }
     }
 
     /**
