@@ -89,7 +89,6 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->table_name . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
@@ -416,8 +415,6 @@ class pais extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->table_name . " SET codiso = " . $this->var2str($this->codiso) .
                         ", nombre = " . $this->var2str($this->nombre) .
@@ -439,15 +436,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
-    }
-
-    /**
-     * Limpia la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_pais_all');
     }
 
     /**
@@ -455,20 +444,13 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return \pais
      */
     public function all() {
-        /// Leemos la lista de la caché
-        $listap = $this->cache->get_array('m_pais_all');
-        if (!$listap) {
-            /// si no encontramos los datos en caché, leemos de la base de datos
+        $listap = array();
             $data = $this->dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
             if ($data) {
                 foreach ($data as $p) {
                     $listap[] = new \pais($p);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_pais_all', $listap);
-        }
 
         return $listap;
     }
