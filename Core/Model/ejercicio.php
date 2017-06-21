@@ -195,14 +195,14 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             return $fecha;
         } else if ($fecha2 > strtotime($this->fechainicio)) {
             if ($show_error) {
-                $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+                $this->miniLog->alert('La fecha seleccionada está fuera del rango del ejercicio.
                Se ha seleccionado una mejor.');
             }
 
             return $this->fechafin;
         } else {
             if ($show_error) {
-                $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+                $this->miniLog->alert('La fecha seleccionada está fuera del rango del ejercicio.
                Se ha seleccionado una mejor.');
             }
 
@@ -251,7 +251,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $eje->fechafin = Date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                $this->new_error_msg("Fecha no válida: " . $fecha);
+                $this->miniLog->alert("Fecha no válida: " . $fecha);
             } else if ($eje->save()) {
                 return $eje;
             } else
@@ -284,14 +284,14 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $this->nombre = $this->no_html($this->nombre);
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
-            $this->new_error_msg("Código de ejercicio no válido.");
+            $this->miniLog->alert("Código de ejercicio no válido.");
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
-            $this->new_error_msg("Nombre del ejercicio no válido.");
+            $this->miniLog->alert("Nombre del ejercicio no válido.");
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $this->new_error_msg("La fecha de inicio (" . $this->fechainicio . ") es "
+            $this->miniLog->alert("La fecha de inicio (" . $this->fechainicio . ") es "
                     . "posterior a la fecha fin (" . $this->fechafin . ").");
         } else if (strtotime($this->fechainicio) < 1) {
-            $this->new_error_msg("Fecha no válida.");
+            $this->miniLog->alert("Fecha no válida.");
         } else
             $status = TRUE;
 
@@ -316,7 +316,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->new_error_msg('El ejercicio está descuadrado a nivel de subcuentas.'
+                    $this->miniLog->warming('El ejercicio está descuadrado a nivel de subcuentas.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 }
@@ -335,11 +335,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->new_error_msg('El ejercicio está descuadrado a nivel de asientos.'
+                    $this->miniLog->warming('El ejercicio está descuadrado a nivel de asientos.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 } else if (!$status) {
-                    $this->new_error_msg('Pero <b>NO</b> está descuadrado a nivel de asientos.'
+                    $this->miniLog->warming('Pero <b>NO</b> está descuadrado a nivel de asientos.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                 }
             }
