@@ -268,7 +268,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
         }
     }
     /**
-     * Crea la consulta necesaria para dotar de datos inicialies sobre la empresa durante la instalación.
+     * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
      * @return string
      */
     protected function install() {
