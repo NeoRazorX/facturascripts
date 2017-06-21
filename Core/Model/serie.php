@@ -147,7 +147,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
         $status = FALSE;
 
         $this->codserie = trim($this->codserie);
-        $this->descripcion = $this->no_html($this->descripcion);
+        $this->descripcion = $this->noHtml($this->descripcion);
 
         if ($this->numfactura < 1) {
             $this->numfactura = 1;
