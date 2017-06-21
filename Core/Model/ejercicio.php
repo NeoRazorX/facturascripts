@@ -154,7 +154,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         if (!$this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
         } else {
-            $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql_to_int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
+            $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
             if ($cod) {
                 return sprintf('%04s', (1 + intval($cod[0]['cod'])));
             } else{
@@ -313,7 +313,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $status = TRUE;
 
         /// comprobamos la suma de las subcuentas
-        if ($this->dataBase->table_exists('co_subcuentas')) {
+        if ($this->dataBase->tableExists('co_subcuentas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_subcuentas"
                     . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
 
@@ -323,7 +323,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warming('El ejercicio está descuadrado a nivel de subcuentas.'
+                    $this->miniLog->warning('El ejercicio está descuadrado a nivel de subcuentas.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 }
@@ -331,7 +331,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         }
 
         /// comprobamos la suma de las partidas de los asientos
-        if ($this->dataBase->table_exists('co_partidas')) {
+        if ($this->dataBase->tableExists('co_partidas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas"
                     . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
                     . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ");";
@@ -342,11 +342,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warming('El ejercicio está descuadrado a nivel de asientos.'
+                    $this->miniLog->warning('El ejercicio está descuadrado a nivel de asientos.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 } else if (!$status) {
-                    $this->miniLog->warming('Pero <b>NO</b> está descuadrado a nivel de asientos.'
+                    $this->miniLog->warning('Pero <b>NO</b> está descuadrado a nivel de asientos.'
                             . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                 }
             }
