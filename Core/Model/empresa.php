@@ -206,8 +206,8 @@ class empresa extends \FacturaScripts\Core\Base\Model {
     
     /**
      * Configuración de email de la empresa.
-     * @var string[]
-     */
+     * @var array de string
+]     */
     public $email_config;
     
     /**
