@@ -398,7 +398,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
         $status = FALSE;
 
         $this->codpais = trim($this->codpais);
-        $this->nombre = $this->no_html($this->nombre);
+        $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
             $this->miniLog->alert("Código del país no válido: " . $this->codpais);
