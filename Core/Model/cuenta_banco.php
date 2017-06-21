@@ -131,7 +131,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return int
      */
     private function get_new_codigo() {
-        $sql = "SELECT MAX(" . $this->dataBase->sql_to_int('codcuenta') . ") as cod FROM " . $this->tableName . ";";
+        $sql = "SELECT MAX(" . $this->dataBase->sql2int('codcuenta') . ") as cod FROM " . $this->tableName . ";";
         $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
