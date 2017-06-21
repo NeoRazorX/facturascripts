@@ -209,7 +209,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string[]
      */
     public $email_config;
-
+    
+    /**
+     * Contructor por defecto
+     */
     public function __construct() {
         parent::__construct('empresa');
 
@@ -265,7 +268,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             }
         }
     }
-
+    /**
+     * Crea una empresa durante la instalación
+     * @return string
+     */
     protected function install() {
         $num = mt_rand(1, 9999);
         return "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
