@@ -29,7 +29,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (6).
-     * @var string 
+     * @var integer 
      */
     public $codcuenta;
     
