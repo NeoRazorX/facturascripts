@@ -154,7 +154,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * Comprueba la validez de los datos de la forma de pago.
      */
     public function test() {
-        $this->descripcion = $this->no_html($this->descripcion);
+        $this->descripcion = $this->noHtml($this->descripcion);
 
         /// comprobamos la validez del vencimiento
         $fecha1 = Date('d-m-Y');
