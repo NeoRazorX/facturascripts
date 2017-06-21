@@ -89,7 +89,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->table_name . " (codpais,codiso,nombre)"
+        return "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
                 . " ('ALB','AL','Albania'),"
