@@ -407,9 +407,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all() {
-        /// leemos la lista de la caché
         $listae = array();
-            /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
             if ($data) {
                 foreach ($data as $e) {
@@ -425,9 +423,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all_abiertos() {
-        /// leemos la lista de la caché
+  
         $listae = array();
-            /// si no está en caché, leemos de la base de datos
             $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
             $data = $this->dataBase->select($sql);
             if ($data) {
