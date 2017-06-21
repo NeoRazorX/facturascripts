@@ -120,7 +120,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     }
     
     /**
-     * Crea la consulta necesaria para dotar de datos inicialies sobre el ejercicio durante la instalación.
+     * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
      * @return string
      */
     protected function install() {
