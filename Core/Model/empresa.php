@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Model;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
- * Solamente se puede manejar una empresa en cada base de datos.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
