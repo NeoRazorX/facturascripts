@@ -132,7 +132,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
+        return "INSERT INTO " . $this->tableName . " (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
          VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
@@ -161,7 +161,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return \almacen|boolean
      */
     public function get($cod) {
-        $almacen = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($cod) . ";");
+        $almacen = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($cod) . ";");
         if ($almacen) {
             return new \almacen($almacen[0]);
         } else
@@ -176,7 +176,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codalmacen)) {
             return FALSE;
         } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
     /**
@@ -214,7 +214,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
         if ($this->test()) {
             $this->clean_cache();
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
+                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", codpais = " . $this->var2str($this->codpais)
                         . ", provincia = " . $this->var2str($this->provincia)
                         . ", poblacion = " . $this->var2str($this->poblacion)
@@ -225,7 +225,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
                         . ", contacto = " . $this->var2str($this->contacto)
                         . "  WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codalmacen,nombre,codpais,provincia,
+                $sql = "INSERT INTO " . $this->tableName . " (codalmacen,nombre,codpais,provincia,
                poblacion,direccion,codpostal,telefono,fax,contacto) VALUES
                       (" . $this->var2str($this->codalmacen)
                         . "," . $this->var2str($this->nombre)
@@ -238,7 +238,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->fax)
                         . "," . $this->var2str($this->contacto) . ");";
             }
-            return $this->db->exec($sql);
+            return $this->dataBase->exec($sql);
         } else
             return FALSE;
     }
@@ -249,7 +249,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
     /**
@@ -268,7 +268,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
         $listaa = $this->cache->get_array('m_almacen_all');
         if (!$listaa) {
             /// si no está en caché, leemos de la base de datos
-            $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY codalmacen ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
             if ($data) {
                 foreach ($data as $a) {
                     $listaa[] = new \almacen($a);
