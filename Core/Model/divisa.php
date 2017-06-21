@@ -63,7 +63,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     public $simbolo;
     
     /**
-     *  Constructor por defecto
+     * Constructor por defecto
      * @param array $d Array con los valores para crear una nueva divisa
      */
     public function __construct($d = FALSE) {
