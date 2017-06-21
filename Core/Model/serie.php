@@ -85,6 +85,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->numfactura = 1;
         }
     }
+    
     /**
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
      * @return string
