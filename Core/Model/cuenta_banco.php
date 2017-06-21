@@ -157,7 +157,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
-        $this->descripcion = $this->no_html($this->descripcion);
+        $this->descripcion = $this->noHtml($this->descripcion);
 
         if ($this->exists()) {
             $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
