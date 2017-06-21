@@ -192,7 +192,6 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif)
          VALUES ('1','Paco','Pepe','00000014Z');";
     }
@@ -285,7 +284,6 @@ class agente extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
 
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre) .
@@ -349,9 +347,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return \agente
      */
     public function all($incluir_debaja = FALSE) {
-
+        $listagentes = array();
         if ($incluir_debaja) {
-            $listagentes = array();
+            
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC, apellidos ASC;");
             if ($data) {
                 foreach ($data as $a) {
@@ -359,21 +357,13 @@ class agente extends \FacturaScripts\Core\Base\Model {
                 }
             }
         } else {
-            /// leemos esta lista de la caché
-            $listagentes = $this->cache->get_array('m_agente_all');
-
-            if (!$listagentes) {
-                /// si no está en caché, leemos de la base de datos
+           
                 $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
                 if ($data) {
                     foreach ($data as $a) {
                         $listagentes[] = new \agente($a);
                     }
-                }
-
-                /// guardamos la lista en caché
-                $this->cache->set('m_agente_all', $listagentes);
-            }
+                }          
         }
 
         return $listagentes;
