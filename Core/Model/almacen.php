@@ -256,7 +256,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     public function all() {
         
         $listaa = array();
-            /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
             if ($data) {
                 foreach ($data as $a) {
