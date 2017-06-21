@@ -288,7 +288,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $status = FALSE;
 
         $this->codejercicio = trim($this->codejercicio);
-        $this->nombre = $this->no_html($this->nombre);
+        $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
             $this->miniLog->alert("Código de ejercicio no válido.");
