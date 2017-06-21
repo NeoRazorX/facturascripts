@@ -164,8 +164,8 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function test() {
         $status = FALSE;
-        $this->descripcion = $this->no_html($this->descripcion);
-        $this->simbolo = $this->no_html($this->simbolo);
+        $this->descripcion = $this->noHtml($this->descripcion);
+        $this->simbolo = $this->noHtml($this->simbolo);
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
             $this->miniLog->alert("Código de divisa no válido.");
