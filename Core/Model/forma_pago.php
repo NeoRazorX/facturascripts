@@ -254,7 +254,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             }
         }
 
-        if ($array_dias) {
+        if ($array_dias!=NULL) {
             foreach ($array_dias as $i => $dia_de_pago) {
                 if ($i == 0) {
                     $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
