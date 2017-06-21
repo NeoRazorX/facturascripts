@@ -102,7 +102,6 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
