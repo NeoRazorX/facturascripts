@@ -100,7 +100,6 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
@@ -171,7 +170,6 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
-        $this->clean_cache();
         $this->test();
 
         if ($this->exists()) {
@@ -202,15 +200,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
-    }
-
-    /**
-     * Limpia la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_forma_pago_all');
     }
 
     /**
@@ -218,20 +208,13 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return \forma_pago
      */
     public function all() {
-        /// Leemos la lista de la caché
-        $listaformas = $this->cache->get_array('m_forma_pago_all');
-        if (!$listaformas) {
-            /// si no está en caché, buscamos en la base de datos
+        $listaformas = array();
             $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
             if ($formas) {
                 foreach ($formas as $f) {
                     $listaformas[] = new \forma_pago($f);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_forma_pago_all', $listaformas);
-        }
 
         return $listaformas;
     }
