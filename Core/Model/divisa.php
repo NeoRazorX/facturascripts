@@ -222,9 +222,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return \divisa
      */
     public function all() {
-        /// leemos la lista de la caché
         $listad = array();
-            /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
             if ($data) {
                 foreach ($data as $d) {
