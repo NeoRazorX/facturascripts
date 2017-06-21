@@ -91,7 +91,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->table . " (codserie,descripcion,siniva,irpf) VALUES "
+        return "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
