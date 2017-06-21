@@ -83,15 +83,65 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codejercicio;
+    
+    /**
+     * URL de la web de la empresa.
+     * @var string 
+     */
     public $web;
+    
+    /**
+     * Dirección de email de la empresa.
+     * @var string 
+     */
     public $email;
+    
+    /**
+     * Número de fax de la empresa.
+     * @var string 
+     */
     public $fax;
+    
+    /**
+     * Número de teléfono de la empresa.
+     * @var string 
+     */
     public $telefono;
+    
+    /**
+     * Código del país predeterminado.
+     * @var string
+     */
     public $codpais;
+    
+    /**
+     * Apartado de correos de la empresa.
+     * @var string
+     */
     public $apartado;
+    
+    /**
+     * Provincia de la empresa.
+     * @var string
+     */
     public $provincia;
+    
+    /**
+     * Ciudad de la empresa.
+     * @var string
+     */
     public $ciudad;
+    
+    /**
+     * Código postal de la empresa.
+     * @var string
+     */
     public $codpostal;
+    
+    /**
+     * Dirección de la empresa.
+     * @var string
+     */
     public $direccion;
 
     /**
@@ -105,7 +155,17 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codedi;
+    
+    /**
+     * Código de identificación fiscal dela empresa.
+     * @var string
+     */
     public $cifnif;
+    
+    /**
+     * Nombre de la empresa.
+     * @var string
+     */
     public $nombre;
 
     /**
@@ -143,6 +203,11 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $regimeniva;
+    
+    /**
+     * Configuración de email de la empresa.
+     * @var string[]
+     */
     public $email_config;
 
     public function __construct() {
@@ -347,7 +412,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
     }
-
+    /**
+     * Borra la empresa
+     * @return boolean
+     */
     public function delete() {
         /// no se puede borrar la empresa
         return FALSE;
