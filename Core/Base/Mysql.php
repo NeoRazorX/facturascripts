@@ -474,7 +474,7 @@ class Mysql {
      * Compara dos arrays de columnas, devuelve una sentencia SQL en caso de encontrar diferencias.
      * @param string $tableName
      * @param array $xmlCols
-     * @param array $dbCols
+     * @param array|false $dbCols
      * @return string
      */
     public function compareColumns($tableName, $xmlCols, $dbCols) {
