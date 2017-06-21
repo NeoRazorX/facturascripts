@@ -187,14 +187,14 @@ class almacen extends \FacturaScripts\Core\Base\Model {
         $status = FALSE;
 
         $this->codalmacen = trim($this->codalmacen);
-        $this->nombre = $this->no_html($this->nombre);
-        $this->provincia = $this->no_html($this->provincia);
-        $this->poblacion = $this->no_html($this->poblacion);
-        $this->direccion = $this->no_html($this->direccion);
-        $this->codpostal = $this->no_html($this->codpostal);
-        $this->telefono = $this->no_html($this->telefono);
-        $this->fax = $this->no_html($this->fax);
-        $this->contacto = $this->no_html($this->contacto);
+        $this->nombre = $this->noHtml($this->nombre);
+        $this->provincia = $this->noHtml($this->provincia);
+        $this->poblacion = $this->noHtml($this->poblacion);
+        $this->direccion = $this->noHtml($this->direccion);
+        $this->codpostal = $this->noHtml($this->codpostal);
+        $this->telefono = $this->noHtml($this->telefono);
+        $this->fax = $this->noHtml($this->fax);
+        $this->contacto = $this->noHtml($this->contacto);
 
         if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen)) {
             $this->miniLog->alert("Código de almacén no válido.");
