@@ -210,7 +210,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return int
      */
     public function get_new_codigo() {
-        $sql = "SELECT MAX(" . $this->dataBase->sql_to_int('codagente') . ") as cod FROM " . $this->tableName . ";";
+        $sql = "SELECT MAX(" . $this->dataBase->sql2int('codagente') . ") as cod FROM " . $this->tableName . ";";
         $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
@@ -258,18 +258,18 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function test() {
-        $this->apellidos = $this->no_html($this->apellidos);
-        $this->banco = $this->no_html($this->banco);
-        $this->cargo = $this->no_html($this->cargo);
-        $this->ciudad = $this->no_html($this->ciudad);
-        $this->codpostal = $this->no_html($this->codpostal);
-        $this->direccion = $this->no_html($this->direccion);
-        $this->dnicif = $this->no_html($this->dnicif);
-        $this->email = $this->no_html($this->email);
-        $this->nombre = $this->no_html($this->nombre);
-        $this->provincia = $this->no_html($this->provincia);
-        $this->seg_social = $this->no_html($this->seg_social);
-        $this->telefono = $this->no_html($this->telefono);
+        $this->apellidos = $this->noHtml($this->apellidos);
+        $this->banco = $this->noHtml($this->banco);
+        $this->cargo = $this->noHtml($this->cargo);
+        $this->ciudad = $this->noHtml($this->ciudad);
+        $this->codpostal = $this->noHtml($this->codpostal);
+        $this->direccion = $this->noHtml($this->direccion);
+        $this->dnicif = $this->noHtml($this->dnicif);
+        $this->email = $this->noHtml($this->email);
+        $this->nombre = $this->noHtml($this->nombre);
+        $this->provincia = $this->noHtml($this->provincia);
+        $this->seg_social = $this->noHtml($this->seg_social);
+        $this->telefono = $this->noHtml($this->telefono);
 
         if (strlen($this->nombre) < 1 || strlen($this->nombre) > 50) {
             $this->miniLog->alert("El nombre del empleado debe tener entre 1 y 50 caracteres.");
@@ -341,15 +341,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
-    }
-
-    /**
-     * Limpiamos la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_agente_all');
     }
 
     /**
