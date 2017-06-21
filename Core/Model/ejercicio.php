@@ -140,7 +140,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     }
     /**
      * Devuelve el valos del año del ejercicio
-     * @return strinf en formato año
+     * @return string en formato año
      */
     public function year() {
         return Date('Y', strtotime($this->fechainicio));
@@ -176,7 +176,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return ( $this->codejercicio == $this->default_items->codejercicio() );
