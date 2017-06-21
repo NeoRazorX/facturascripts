@@ -124,7 +124,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        $this->clean_cache();
 
         return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
          estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
@@ -362,7 +361,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
 
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
@@ -401,16 +399,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
-    }
-
-    /**
-     * Limpiamos la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_ejercicio_all');
-        $this->cache->delete('m_ejercicio_all_abiertos');
     }
 
     /**
@@ -419,8 +408,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         /// leemos la lista de la caché
-        $listae = $this->cache->get_array('m_ejercicio_all');
-        if (!$listae) {
+        $listae = array();
             /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
             if ($data) {
@@ -428,10 +416,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                     $listae[] = new \ejercicio($e);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_ejercicio_all', $listae);
-        }
 
         return $listae;
     }
@@ -442,8 +426,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function all_abiertos() {
         /// leemos la lista de la caché
-        $listae = $this->cache->get_array('m_ejercicio_all_abiertos');
-        if (!$listae) {
+        $listae = array();
             /// si no está en caché, leemos de la base de datos
             $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
             $data = $this->dataBase->select($sql);
@@ -452,10 +435,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                     $listae[] = new \ejercicio($e);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_ejercicio_all_abiertos', $listae);
-        }
 
         return $listae;
     }
