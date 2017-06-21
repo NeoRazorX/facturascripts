@@ -187,7 +187,6 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
 
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
@@ -216,15 +215,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
-    }
-
-    /**
-     * Limpiamos la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_divisa_all');
     }
 
     /**
@@ -233,8 +224,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         /// leemos la lista de la caché
-        $listad = $this->cache->get_array('m_divisa_all');
-        if (!$listad) {
+        $listad = array();
             /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
             if ($data) {
@@ -242,10 +232,6 @@ class divisa extends \FacturaScripts\Core\Base\Model {
                     $listad[] = new \divisa($d);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_divisa_all', $listad);
-        }
 
         return $listad;
     }
