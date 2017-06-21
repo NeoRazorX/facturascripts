@@ -358,7 +358,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return boolean|\FacturaScripts\model\pais
      */
     public function get($cod) {
-        $pais = $this->dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($cod) . ";");
+        $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($cod) . ";");
         if ($pais) {
             return new \pais($pais[0]);
         } else
