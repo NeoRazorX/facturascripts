@@ -109,7 +109,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return ( $this->codserie == $this->default_items->codserie() );
