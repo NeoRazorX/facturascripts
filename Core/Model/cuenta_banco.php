@@ -118,7 +118,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return boolean|\cuenta_banco
      */
     public function get($cod) {
-        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \cuenta_banco($data[0]);
         } else {
@@ -131,8 +131,8 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return int
      */
     private function get_new_codigo() {
-        $sql = "SELECT MAX(" . $this->db->sql_to_int('codcuenta') . ") as cod FROM " . $this->table_name . ";";
-        $cod = $this->db->select($sql);
+        $sql = "SELECT MAX(" . $this->dataBase->sql_to_int('codcuenta') . ") as cod FROM " . $this->tableName . ";";
+        $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
         } else {
@@ -148,7 +148,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codcuenta)) {
             return FALSE;
         } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
         }
     }
 
@@ -160,14 +160,14 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
         $this->descripcion = $this->no_html($this->descripcion);
 
         if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
+            $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                     ", iban = " . $this->var2str($this->iban) .
                     ", swift = " . $this->var2str($this->swift) .
                     ", codsubcuenta = " . $this->var2str($this->codsubcuenta) .
                     "  WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";";
         } else {
             $this->codcuenta = $this->get_new_codigo();
-            $sql = "INSERT INTO " . $this->table_name . " (codcuenta,descripcion,iban,swift,codsubcuenta)
+            $sql = "INSERT INTO " . $this->tableName . " (codcuenta,descripcion,iban,swift,codsubcuenta)
                  VALUES (" . $this->var2str($this->codcuenta) .
                     "," . $this->var2str($this->descripcion) .
                     "," . $this->var2str($this->iban) .
@@ -175,7 +175,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
                     "," . $this->var2str($this->codsubcuenta) . ");";
         }
 
-        return $this->db->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -183,7 +183,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
     /**
@@ -201,7 +201,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
     public function all_from_empresa() {
         $clist = array();
 
-        $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
         if ($data) {
             foreach ($data as $d) {
                 $clist[] = new \cuenta_banco($d);
