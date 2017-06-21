@@ -131,7 +131,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->tableName . " (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
          VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
@@ -212,7 +211,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", codpais = " . $this->var2str($this->codpais)
@@ -248,15 +246,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
-    }
-
-    /**
-     * Limpiamos la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_almacen_all');
     }
 
     /**
@@ -264,9 +254,8 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return \almacen
      */
     public function all() {
-        /// leemos esta lista de la caché
-        $listaa = $this->cache->get_array('m_almacen_all');
-        if (!$listaa) {
+        
+        $listaa = array();
             /// si no está en caché, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
             if ($data) {
@@ -274,10 +263,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
                     $listaa[] = new \almacen($a);
                 }
             }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_almacen_all', $listaa);
-        }
 
         return $listaa;
     }
