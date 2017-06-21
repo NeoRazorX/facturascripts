@@ -419,7 +419,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
         }
     }
     /**
-     * Borra la empresa
+     * Borra la empresa(Actulmente no es posible borar una empresa)
      * @return boolean
      */
     public function delete() {
