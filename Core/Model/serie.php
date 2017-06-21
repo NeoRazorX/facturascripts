@@ -80,7 +80,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->codserie = '';
             $this->descripcion = '';
             $this->siniva = FALSE;
-            $this->irpf = 0;
+            $this->irpf = 0.00;
             $this->codejercicio = NULL;
             $this->numfactura = 1;
         }
