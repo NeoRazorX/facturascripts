@@ -92,7 +92,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (codserie,descripcion,siniva,irpf) VALUES "
+        return "INSERT INTO " . $this->table . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
@@ -121,7 +121,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return \serie|boolean
      */
     public function get($cod) {
-        $serie = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
+        $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($cod) . ";");
         if ($serie) {
             return new \serie($serie[0]);
         } else
@@ -136,7 +136,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codserie)) {
             return FALSE;
         } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -172,14 +172,14 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->clean_cache();
 
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion)
+                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
                         . ", siniva = " . $this->var2str($this->siniva)
                         . ", irpf = " . $this->var2str($this->irpf)
                         . ", codejercicio = " . $this->var2str($this->codejercicio)
                         . ", numfactura = " . $this->var2str($this->numfactura)
                         . "  WHERE codserie = " . $this->var2str($this->codserie) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codserie,descripcion,siniva,irpf,codejercicio,numfactura) VALUES "
+                $sql = "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf,codejercicio,numfactura) VALUES "
                         . "(" . $this->var2str($this->codserie)
                         . "," . $this->var2str($this->descripcion)
                         . "," . $this->var2str($this->siniva)
@@ -188,7 +188,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->numfactura) . ");";
             }
 
-            return $this->db->exec($sql);
+            return $this->dataBase->exec($sql);
         } else
             return FALSE;
     }
@@ -199,7 +199,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -218,7 +218,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
         $serielist = $this->cache->get_array('m_serie_all');
         if (!$serielist) {
             /// si no encontramos los datos en la caché, leemos de la base de datos
-            $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY codserie ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
             if ($data) {
                 foreach ($data as $s) {
                     $serielist[] = new \serie($s);
