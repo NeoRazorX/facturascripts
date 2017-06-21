@@ -103,7 +103,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
+        return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
                 . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
@@ -140,7 +140,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean|\FacturaScripts\model\divisa
      */
     public function get($cod) {
-        $divisa = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($cod) . ";");
+        $divisa = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
         if ($divisa) {
             return new \divisa($divisa[0]);
         } else
@@ -155,7 +155,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->coddivisa)) {
             return FALSE;
         } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -190,14 +190,14 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             $this->clean_cache();
 
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
+                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                         ", tasaconv = " . $this->var2str($this->tasaconv) .
                         ", tasaconv_compra = " . $this->var2str($this->tasaconv_compra) .
                         ", codiso = " . $this->var2str($this->codiso) .
                         ", simbolo = " . $this->var2str($this->simbolo) .
                         "  WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->table_name . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)" .
+                $sql = "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)" .
                         " VALUES (" . $this->var2str($this->coddivisa) .
                         "," . $this->var2str($this->descripcion) .
                         "," . $this->var2str($this->tasaconv) .
@@ -206,7 +206,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
                         "," . $this->var2str($this->simbolo) . ");";
             }
 
-            return $this->db->exec($sql);
+            return $this->dataBase->exec($sql);
         } else
             return FALSE;
     }
@@ -217,7 +217,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -236,7 +236,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
         $listad = $this->cache->get_array('m_divisa_all');
         if (!$listad) {
             /// si no está en caché, leemos de la base de datos
-            $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY coddivisa ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
             if ($data) {
                 foreach ($data as $d) {
                     $listad[] = new \divisa($d);
