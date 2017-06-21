@@ -191,7 +191,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function get_best_fecha($fecha, $show_error = FALSE) {
         $fecha2 = strtotime($fecha);
 
-        if ($fecha2 >= strtotime($this->fechainicio) AND $fecha2 <= strtotime($this->fechafin)) {
+        if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
             return $fecha;
         } else if ($fecha2 > strtotime($this->fechainicio)) {
             if ($show_error) {
@@ -238,7 +238,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $data = $this->db->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
-            if ($eje->abierto() OR ! $solo_abierto) {
+            if ($eje->abierto() || ! $solo_abierto) {
                 return $eje;
             } else
                 return FALSE;
