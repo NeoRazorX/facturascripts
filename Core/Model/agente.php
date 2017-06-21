@@ -31,7 +31,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (10).
-     * @var string
+     * @var integer
      */
     public $codagente;
 
@@ -178,7 +178,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
             $this->provincia = NULL;
             $this->ciudad = NULL;
             $this->direccion = NULL;
-            $this->porcomision = 0;
+            $this->porcomision = 0.00;
             $this->seg_social = NULL;
             $this->banco = NULL;
             $this->cargo = NULL;
