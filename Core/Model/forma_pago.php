@@ -101,7 +101,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+        return "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
                 . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
@@ -130,7 +130,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return \FacturaScripts\model\forma_pago|boolean
      */
     public function get($cod) {
-        $pago = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($cod) . ";");
+        $pago = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($pago) {
             return new \forma_pago($pago[0]);
         } else {
@@ -146,7 +146,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codpago)) {
             return FALSE;
         } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
         }
     }
 
@@ -175,7 +175,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         $this->test();
 
         if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
+            $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                     ", genrecibos = " . $this->var2str($this->genrecibos) .
                     ", codcuenta = " . $this->var2str($this->codcuenta) .
                     ", domiciliado = " . $this->var2str($this->domiciliado) .
@@ -183,7 +183,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
                     ", vencimiento = " . $this->var2str($this->vencimiento) .
                     "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
         } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta
+            $sql = "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta
             ,domiciliado,imprimir,vencimiento) VALUES 
                   (" . $this->var2str($this->codpago) .
                     "," . $this->var2str($this->descripcion) .
@@ -194,7 +194,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
                     "," . $this->var2str($this->vencimiento) . ");";
         }
 
-        return $this->db->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -203,7 +203,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      */
     public function delete() {
         $this->clean_cache();
-        return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
     /**
@@ -222,7 +222,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         $listaformas = $this->cache->get_array('m_forma_pago_all');
         if (!$listaformas) {
             /// si no está en caché, buscamos en la base de datos
-            $formas = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
+            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
             if ($formas) {
                 foreach ($formas as $f) {
                     $listaformas[] = new \forma_pago($f);
