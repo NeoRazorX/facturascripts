@@ -34,7 +34,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     public $codpago;
     
     /**
-     * Descripción de la orma de pago
+     * Descripción de la forma de pago
      * @var string 
      */
     public $descripcion;
@@ -94,6 +94,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $this->vencimiento = '+1day';
         }
     }
+    
     /**
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
