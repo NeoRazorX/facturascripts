@@ -91,8 +91,8 @@ class divisa extends \FacturaScripts\Core\Base\Model {
         else {
             $this->coddivisa = NULL;
             $this->descripcion = '';
-            $this->tasaconv = 1;
-            $this->tasaconv_compra = 1;
+            $this->tasaconv = 1.00;
+            $this->tasaconv_compra = 1.00;
             $this->codiso = NULL;
             $this->simbolo = '?';
         }
