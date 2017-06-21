@@ -91,7 +91,6 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->clean_cache();
         return "INSERT INTO " . $this->table . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
@@ -169,8 +168,6 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->clean_cache();
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
                         . ", siniva = " . $this->var2str($this->siniva)
@@ -198,15 +195,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
-        $this->clean_cache();
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
-    }
-
-    /**
-     * Limpia la caché
-     */
-    private function clean_cache() {
-        $this->cache->delete('m_serie_all');
     }
 
     /**
@@ -214,10 +203,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return \serie
      */
     public function all() {
-        /// leemos la lista de la caché
-        $serielist = $this->cache->get_array('m_serie_all');
-        if (!$serielist) {
-            /// si no encontramos los datos en la caché, leemos de la base de datos
+        $serielist = array();
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
             if ($data) {
                 foreach ($data as $s) {
@@ -225,9 +211,6 @@ class serie extends \FacturaScripts\Core\Base\Model {
                 }
             }
 
-            /// guardamos la lista en caché
-            $this->cache->set('m_serie_all', $serielist);
-        }
 
         return $serielist;
     }
