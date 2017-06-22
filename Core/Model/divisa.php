@@ -32,7 +32,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @var string 
      */
     public $coddivisa;
-    
+
     /**
      * Descripción de la divisa
      * @var string 
@@ -56,12 +56,13 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codiso;
+
     /**
-     *Símbolo que representa a la divisa
+     * Símbolo que representa a la divisa
      * @var string 
      */
     public $simbolo;
-    
+
     /**
      * Constructor por defecto
      * @param array $data Array con los valores para crear una nueva divisa
@@ -85,10 +86,10 @@ class divisa extends \FacturaScripts\Core\Base\Model {
 
                 /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
                 $this->save();
-            } else
+            } else {
                 $this->tasaconv_compra = floatval($data['tasaconv_compra']);
-        }
-        else {
+            }
+        } else {
             $this->coddivisa = NULL;
             $this->descripcion = '';
             $this->tasaconv = 1.00;
@@ -97,6 +98,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             $this->simbolo = '?';
         }
     }
+
     /**
      * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
      * @return string
@@ -130,7 +132,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        return ( $this->coddivisa == $this->default_items->coddivisa() );
+        return ( $this->coddivisa == $this->defaultItems->codDivisa() );
     }
 
     /**
@@ -141,9 +143,10 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $divisa = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
         if ($divisa) {
-            return new \divisa($divisa[0]);
-        } else
-            return FALSE;
+            return new divisa($divisa[0]);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -153,8 +156,9 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->coddivisa)) {
             return FALSE;
-        } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        }
+
+        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -168,14 +172,15 @@ class divisa extends \FacturaScripts\Core\Base\Model {
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
             $this->miniLog->alert("Código de divisa no válido.");
-        } else if (isset($this->codiso) && ! preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
             $this->miniLog->alert("Código ISO no válido.");
         } else if ($this->tasaconv == 0) {
             $this->miniLog->alert('La tasa de conversión no puede ser 0.');
         } else if ($this->tasaconv_compra == 0) {
             $this->miniLog->alert('La tasa de conversión para compras no puede ser 0.');
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -186,7 +191,6 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                         ", tasaconv = " . $this->var2str($this->tasaconv) .
@@ -205,8 +209,9 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             }
 
             return $this->dataBase->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -223,12 +228,13 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $listad = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
-            if ($data) {
-                foreach ($data as $d) {
-                    $listad[] = new \divisa($d);
-                }
+
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
+        if ($data) {
+            foreach ($data as $d) {
+                $listad[] = new divisa($d);
             }
+        }
 
         return $listad;
     }

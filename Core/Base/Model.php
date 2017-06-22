@@ -33,6 +33,19 @@ abstract class Model {
      * @var DataBase
      */
     protected $dataBase;
+    
+    /**
+     * Clase que se utiliza para definir algunos valores por defecto:
+     * codejercicio, codserie, coddivisa, etc...
+     * @var DefaultItems 
+     */
+    protected $defaultItems;
+    
+    /**
+     * Traductor multi-idioma.
+     * @var Translator 
+     */
+    protected $i18n;
 
     /**
      * Nombre de la tabla en la base de datos.
@@ -65,6 +78,8 @@ abstract class Model {
      */
     public function __construct($tableName = '') {
         $this->dataBase = new DataBase();
+        $this->defaultItems = new DefaultItems();
+        $this->i18n = new Translator();
         $this->tableName = $tableName;
 
         if (!isset(self::$checkedTables)) {

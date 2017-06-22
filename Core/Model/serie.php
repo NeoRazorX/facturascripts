@@ -33,7 +33,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @var string 
      */
     public $codserie;
-    
+
     /**
      * Descripción de la serie de facturación
      * @var string 
@@ -63,6 +63,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @var integer
      */
     public $numfactura;
+
     /**
      * Constructor por defecto
      * @param array $data Array con los valores para crear una nueva serie
@@ -85,7 +86,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->numfactura = 1;
         }
     }
-    
+
     /**
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
      * @return string
@@ -111,7 +112,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        return ( $this->codserie == $this->default_items->codserie() );
+        return ( $this->codserie == $this->defaultItems->codSerie() );
     }
 
     /**
@@ -122,9 +123,10 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($cod) . ";");
         if ($serie) {
-            return new \serie($serie[0]);
-        } else
-            return FALSE;
+            return new serie($serie[0]);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -134,8 +136,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codserie)) {
             return FALSE;
-        } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        }
+
+        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -186,8 +189,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
             }
 
             return $this->dataBase->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -204,12 +208,13 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $serielist = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
-            if ($data) {
-                foreach ($data as $s) {
-                    $serielist[] = new \serie($s);
-                }
+
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
+        if ($data) {
+            foreach ($data as $s) {
+                $serielist[] = new serie($s);
             }
+        }
 
 
         return $serielist;

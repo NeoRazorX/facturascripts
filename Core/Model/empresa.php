@@ -214,7 +214,6 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      */
     public function __construct() {
         parent::__construct('empresa');
-
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
         if ($data) {
             $this->cod = $this->intval($data[0]['id']);
@@ -409,14 +408,15 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                 if ($this->dataBase->exec($sql)) {
                     $this->cod = $this->dataBase->lastval();
                     return TRUE;
-                } else {
-                    return FALSE;
                 }
+                
+                return FALSE;
             }
-        } else {
-            return FALSE;
         }
+        
+        return FALSE;
     }
+    
     /**
      * Borra la empresa(Actulmente no es posible borar una empresa)
      * @return boolean
