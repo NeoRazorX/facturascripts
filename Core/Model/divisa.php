@@ -129,11 +129,10 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
      * @return boolean
      */
-    /*
     public function is_default() {
         return ( $this->coddivisa == $this->default_items->coddivisa() );
     }
-    */
+
     /**
      * Devuelve la divisa con coddivsa = $cod
      * @param string $cod

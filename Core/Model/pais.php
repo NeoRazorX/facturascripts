@@ -348,11 +348,10 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si el pais es el predeterminado de la empresa
      * @return boolean
      */
-    /*
     public function is_default() {
         return ( $this->codpais == $this->default_items->codpais() );
     }
-    */
+
     /**
      * Devuelve el pais con codpais = $cod
      * @param string $cod
