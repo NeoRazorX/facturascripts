@@ -90,7 +90,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
                 $this->tasaconv_compra = floatval($data['tasaconv_compra']);
             }
         } else {
-            $this->clear;
+            $this->clear();
         }
     }
     
