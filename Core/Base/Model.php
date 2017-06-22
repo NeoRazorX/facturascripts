@@ -58,12 +58,18 @@ abstract class Model {
      * @var MiniLog
      */
     protected static $miniLog;
-
+    
+     /**
+     * Permite conectar e interactuar con el sistema de caché.
+     * @var CacheItemPoll
+     */
+    protected $cache;
     /**
      * Constructor.
      * @param string $tableName nombre de la tabla de la base de datos.
      */
     public function __construct($tableName = '') {
+        $this->cache = new CacheItemPool();
         $this->dataBase = new DataBase();
         $this->tableName = $tableName;
 
