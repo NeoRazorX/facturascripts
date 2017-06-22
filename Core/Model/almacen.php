@@ -150,10 +150,11 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
      * @return boolean
      */
+    /*
     public function is_default() {
         return ( $this->codalmacen == $this->default_items->codalmacen() );
     }
-
+    */
     /**
      * Devuelve el almacén con codalmacen = $cod
      * @param string $cod
