@@ -9,7 +9,7 @@
     "installer": "FacturaScripts installateur 2018 (Alpha)",
     "installer-p": "Bienvenue à l'installateur de FacturaScripts. Remplissez les champs nécessaires pour se connecter à la base de données.",
     "plugin-enabled": "Plugin activé avec succès.",
-    "plugin-disabled": "Plugin désactivé correctement.",
+    "plugin-disabled": "Plugin désactivé avec succès.",
     "template-not-found": "Modèle non trouvé",
     "to-do-list": "liste de choses à faire",
     "user-unsaved": "Impossible d'enregistrer les informations utilisateur",
