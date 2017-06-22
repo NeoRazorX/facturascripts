@@ -124,6 +124,19 @@ abstract class Model {
     abstract public function delete();
 
     /**
+     * Esta función limpia los campos del registro en curso.
+     * 
+     * Propongo que los campos pasen a ser un array autogenerado según lo 
+     * especificado en la definición de la tabla que en esta clase (no sería 
+     * entonces abstracta) se inicialice a ceros o blancos según sea numérico 
+     * o literal.
+     * El descendiente invocará al ancestro y luego modificará los campos 
+     * específicos que fuesen necesarios. Si no hay expecíficos no tendría que
+     * existir en el descendiente (no sería abstracta.
+     */
+    abstract protected function clear();
+    
+    /**
      * Escapa las comillas de una cadena de texto.
      * @param string $str cadena de texto a escapar
      * @return string cadena de texto resultante

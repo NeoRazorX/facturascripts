@@ -106,6 +106,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $this->plancontable = $data['plancontable'];
             $this->longsubcuenta = $this->intval($data['longsubcuenta']);
         } else {
+            $this->clear();
+        }
+    }
+    
+    protected function clear() {
             $this->codejercicio = NULL;
             $this->nombre = '';
             $this->fechainicio = Date('01-01-Y');
@@ -116,7 +121,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $this->idasientoapertura = NULL;
             $this->plancontable = '08';
             $this->longsubcuenta = 10;
-        }
     }
 
     /**
