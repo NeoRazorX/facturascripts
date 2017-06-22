@@ -64,29 +64,29 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     
     /**
      * Constructor por defecto
-     * @param array $d Array con los valores para crear una nueva divisa
+     * @param array $data Array con los valores para crear una nueva divisa
      */
-    public function __construct($d = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('divisas');
-        if ($d) {
-            $this->coddivisa = $d['coddivisa'];
-            $this->descripcion = $d['descripcion'];
-            $this->tasaconv = floatval($d['tasaconv']);
-            $this->codiso = $d['codiso'];
-            $this->simbolo = $d['simbolo'];
+        if ($data) {
+            $this->coddivisa = $data['coddivisa'];
+            $this->descripcion = $data['descripcion'];
+            $this->tasaconv = floatval($data['tasaconv']);
+            $this->codiso = $data['codiso'];
+            $this->simbolo = $data['simbolo'];
 
             if ($this->simbolo == '' && $this->coddivisa == 'EUR') {
                 $this->simbolo = '€';
                 $this->save();
             }
 
-            if (is_null($d['tasaconv_compra'])) {
-                $this->tasaconv_compra = floatval($d['tasaconv']);
+            if (is_null($data['tasaconv_compra'])) {
+                $this->tasaconv_compra = floatval($data['tasaconv']);
 
                 /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
                 $this->save();
             } else
-                $this->tasaconv_compra = floatval($d['tasaconv_compra']);
+                $this->tasaconv_compra = floatval($data['tasaconv_compra']);
         }
         else {
             $this->coddivisa = NULL;

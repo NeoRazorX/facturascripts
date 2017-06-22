@@ -65,17 +65,17 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public $numfactura;
     /**
      * Constructor por defecto
-     * @param array $s Array con los valores para crear una nueva serie
+     * @param array $data Array con los valores para crear una nueva serie
      */
-    public function __construct($s = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('series');
-        if ($s) {
-            $this->codserie = $s['codserie'];
-            $this->descripcion = $s['descripcion'];
-            $this->siniva = $this->str2bool($s['siniva']);
-            $this->irpf = floatval($s['irpf']);
-            $this->codejercicio = $s['codejercicio'];
-            $this->numfactura = max(array(1, intval($s['numfactura'])));
+        if ($data) {
+            $this->codserie = $data['codserie'];
+            $this->descripcion = $data['descripcion'];
+            $this->siniva = $this->str2bool($data['siniva']);
+            $this->irpf = floatval($data['irpf']);
+            $this->codejercicio = $data['codejercicio'];
+            $this->numfactura = max(array(1, intval($data['numfactura'])));
         } else {
             $this->codserie = '';
             $this->descripcion = '';

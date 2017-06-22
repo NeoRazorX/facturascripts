@@ -92,19 +92,19 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     /**
      * Contructor por defecto
      */
-    public function __construct($e = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('ejercicios');
-        if ($e) {
-            $this->codejercicio = $e['codejercicio'];
-            $this->nombre = $e['nombre'];
-            $this->fechainicio = Date('d-m-Y', strtotime($e['fechainicio']));
-            $this->fechafin = Date('d-m-Y', strtotime($e['fechafin']));
-            $this->estado = $e['estado'];
-            $this->idasientocierre = $this->intval($e['idasientocierre']);
-            $this->idasientopyg = $this->intval($e['idasientopyg']);
-            $this->idasientoapertura = $this->intval($e['idasientoapertura']);
-            $this->plancontable = $e['plancontable'];
-            $this->longsubcuenta = $this->intval($e['longsubcuenta']);
+        if ($data) {
+            $this->codejercicio = $data['codejercicio'];
+            $this->nombre = $data['nombre'];
+            $this->fechainicio = Date('d-m-Y', strtotime($data['fechainicio']));
+            $this->fechafin = Date('d-m-Y', strtotime($data['fechafin']));
+            $this->estado = $data['estado'];
+            $this->idasientocierre = $this->intval($data['idasientocierre']);
+            $this->idasientopyg = $this->intval($data['idasientopyg']);
+            $this->idasientoapertura = $this->intval($data['idasientoapertura']);
+            $this->plancontable = $data['plancontable'];
+            $this->longsubcuenta = $this->intval($data['longsubcuenta']);
         } else {
             $this->codejercicio = NULL;
             $this->nombre = '';

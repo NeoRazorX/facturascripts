@@ -59,16 +59,16 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Constructor por defecto
-     * @param array $c Array con los valores para crear una nueva uenta bancaria
+     * @param array $data Array con los valores para crear una nueva uenta bancaria
      */
-    public function __construct($c = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('cuentasbanco');
-        if ($c) {
-            $this->codcuenta = $c['codcuenta'];
-            $this->descripcion = $c['descripcion'];
-            $this->iban = $c['iban'];
-            $this->swift = $c['swift'];
-            $this->codsubcuenta = $c['codsubcuenta'];
+        if ($data) {
+            $this->codcuenta = $data['codcuenta'];
+            $this->descripcion = $data['descripcion'];
+            $this->iban = $data['iban'];
+            $this->swift = $data['swift'];
+            $this->codsubcuenta = $data['codsubcuenta'];
         } else {
             $this->codcuenta = NULL;
             $this->descripcion = NULL;

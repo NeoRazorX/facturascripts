@@ -95,22 +95,22 @@ class almacen extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Constructor por defecto
-     * @param array $a Array con los valores para crear un nuevo almacen
+     * @param array $data Array con los valores para crear un nuevo almacen
      */
-    public function __construct($a = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('almacenes');
-        if ($a) {
-            $this->codalmacen = $a['codalmacen'];
-            $this->nombre = $a['nombre'];
-            $this->codpais = $a['codpais'];
-            $this->provincia = $a['provincia'];
-            $this->poblacion = $a['poblacion'];
-            $this->codpostal = $a['codpostal'];
-            $this->direccion = $a['direccion'];
-            $this->contacto = $a['contacto'];
-            $this->fax = $a['fax'];
-            $this->telefono = $a['telefono'];
-            $this->observaciones = $a['observaciones'];
+        if ($data) {
+            $this->codalmacen = $data['codalmacen'];
+            $this->nombre = $data['nombre'];
+            $this->codpais = $data['codpais'];
+            $this->provincia = $data['provincia'];
+            $this->poblacion = $data['poblacion'];
+            $this->codpostal = $data['codpostal'];
+            $this->direccion = $data['direccion'];
+            $this->contacto = $data['contacto'];
+            $this->fax = $data['fax'];
+            $this->telefono = $data['telefono'];
+            $this->observaciones = $data['observaciones'];
         } else {
             $this->codalmacen = NULL;
             $this->nombre = '';

@@ -49,15 +49,15 @@ class pais extends \FacturaScripts\Core\Base\Model {
     
     /**
      * Constructor por defecto
-     * @param array $p Array con los valores para crear un nuevo país
+     * @param array $data Array con los valores para crear un nuevo país
      */
-    public function __construct($p = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('paises');
-        if ($p) {
-            $this->codpais = $p['codpais'];
+        if ($data) {
+            $this->codpais = $data['codpais'];
 
-            $this->codiso = $p['codiso'];
-            if ($p['codiso'] == '') {
+            $this->codiso = $data['codiso'];
+            if ($data['codiso'] == '') {
                 /// si no se ha rellenado codiso, intentamos usar esta lista
                 $codigos = array(
                     'ESP' => 'ES',
@@ -76,7 +76,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
                 }
             }
 
-            $this->nombre = $p['nombre'];
+            $this->nombre = $data['nombre'];
         } else {
             $this->codpais = '';
             $this->codiso = NULL;

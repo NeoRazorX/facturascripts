@@ -133,39 +133,39 @@ class agente extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Constructor por defecto
-     * @param array $a Array con los valores para crear un nuevo agente
+     * @param array $data Array con los valores para crear un nuevo agente
      */
-    public function __construct($a = FALSE) {
+    public function __construct($data = FALSE) {
         parent::__construct('agentes');
-        if ($a) {
-            $this->codagente = $a['codagente'];
-            $this->nombre = $a['nombre'];
-            $this->apellidos = $a['apellidos'];
-            $this->dnicif = $a['dnicif'];
-            $this->email = $a['email'];
-            $this->telefono = $a['telefono'];
-            $this->codpostal = $a['codpostal'];
-            $this->provincia = $a['provincia'];
-            $this->ciudad = $a['ciudad'];
-            $this->direccion = $a['direccion'];
-            $this->porcomision = floatval($a['porcomision']);
-            $this->seg_social = $a['seg_social'];
-            $this->banco = $a['banco'];
-            $this->cargo = $a['cargo'];
+        if ($data) {
+            $this->codagente = $data['codagente'];
+            $this->nombre = $data['nombre'];
+            $this->apellidos = $data['apellidos'];
+            $this->dnicif = $data['dnicif'];
+            $this->email = $data['email'];
+            $this->telefono = $data['telefono'];
+            $this->codpostal = $data['codpostal'];
+            $this->provincia = $data['provincia'];
+            $this->ciudad = $data['ciudad'];
+            $this->direccion = $data['direccion'];
+            $this->porcomision = floatval($data['porcomision']);
+            $this->seg_social = $data['seg_social'];
+            $this->banco = $data['banco'];
+            $this->cargo = $data['cargo'];
 
             $this->f_alta = NULL;
-            if ($a['f_alta'] != '') {
-                $this->f_alta = Date('d-m-Y', strtotime($a['f_alta']));
+            if ($data['f_alta'] != '') {
+                $this->f_alta = Date('d-m-Y', strtotime($data['f_alta']));
             }
 
             $this->f_baja = NULL;
-            if ($a['f_baja'] != '') {
-                $this->f_baja = Date('d-m-Y', strtotime($a['f_baja']));
+            if ($data['f_baja'] != '') {
+                $this->f_baja = Date('d-m-Y', strtotime($data['f_baja']));
             }
 
             $this->f_nacimiento = NULL;
-            if ($a['f_nacimiento'] != '') {
-                $this->f_nacimiento = Date('d-m-Y', strtotime($a['f_nacimiento']));
+            if ($data['f_nacimiento'] != '') {
+                $this->f_nacimiento = Date('d-m-Y', strtotime($data['f_nacimiento']));
             }
         } else {
             $this->codagente = NULL;
