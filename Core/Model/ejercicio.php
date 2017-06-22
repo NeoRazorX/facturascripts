@@ -180,10 +180,13 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
      * @return boolean
      */
+    /*
     public function is_default() {
+        $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
+        
         return ($this->codejercicio == $this->default_items->codejercicio());
     }
-
+     */
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      * @param staring $fecha
