@@ -1,0 +1,17 @@
+{
+    "controller-not-found": "Controller not found.",
+    "db-type": "SQL server type",
+    "disable-plugin": "Disable plugin",
+    "enable-plugin": "Activate plugin",
+    "folder-not-writable": "You can not write to the FacturaScripts folder.",
+    "hello-world": "Hello world",
+    "hello-world-text": "This is a prototype of FacturaScripts built with some of the components of symfony.",
+    "installer": "FacturaScripts 2018 (Alpha) installer",
+    "installer-p": "Welcome to the FacturaScripts installer. Fill in the fields required to connect to the database.",
+    "plugin-enabled": "Plugin successfully activated.",
+    "plugin-disabled": "Plugin disabled successfully.",
+    "template-not-found": "Template no encontrado",
+    "to-do-list": "List of things to do",
+    "user-unsaved": "Failed to save user information",
+    "user-saved": "User information saved successfully"
+}

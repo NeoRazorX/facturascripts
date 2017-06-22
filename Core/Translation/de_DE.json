@@ -1,0 +1,17 @@
+{
+    "controller-not-found": "Treiber nicht gefunden",
+    "db-type": "SQL Server-Typ",
+    "disable-plugin": "deaktivieren Plugin",
+    "enable-plugin": "aktivieren Plugin",
+    "folder-not-writable": "Sie können nicht über FacturaScripts Ordner schreiben.",
+    "hello-world": "Hallo Welt",
+    "hello-world-text": "Dies ist ein Prototyp FacturaScripts mit einigen Komponenten von symfony gebaut.",
+    "installer": "FacturaScripts Installateur 2018 (Alpha)",
+    "installer-p": "Willkommen bei FacturaScripts Installer. Füllen Sie die erforderlichen Felder aus, um die Datenbank zu verbinden.",
+    "plugin-enabled": "Plugin erfolgreich aktiviert.",
+    "plugin-disabled": "Plugin korrekt deaktiviert.",
+    "template-not-found": "Vorlage nicht gefunden",
+    "to-do-list": "Liste der Dinge zu tun",
+    "user-unsaved": "Kann nicht Benutzerinformationen speichern",
+    "user-saved": "Benutzerinformationen korrekt gespeichert"
+}
