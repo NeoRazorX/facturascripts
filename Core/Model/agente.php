@@ -234,9 +234,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return \agente|boolean
      */
     public function get($cod) {
-        $a = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($cod) . ";");
-        if ($a) {
-            return new \agente($a[0]);
+        $agente = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($cod) . ";");
+        if ($agente) {
+            return new \agente($agente[0]);
         } else
             return FALSE;
     }
