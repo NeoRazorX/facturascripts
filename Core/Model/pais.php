@@ -371,7 +371,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return \pais|boolean
      */
     public function get_by_iso($cod) {
-        $pais = $this->dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codiso = " . $this->var2str($cod) . ";");
+        $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codiso = " . $this->var2str($cod) . ";");
         if ($pais) {
             return new \pais($pais[0]);
         } else
