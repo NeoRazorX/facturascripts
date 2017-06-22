@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Model;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
- * Solamente se puede manejar una empresa en cada base de datos.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
@@ -32,7 +31,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * Clave primaria. Integer.
      * @var integer 
      */
-    public $id;
+    public $cod;
     public $xid;
 
     /**
@@ -83,15 +82,65 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codejercicio;
+    
+    /**
+     * URL de la web de la empresa.
+     * @var string 
+     */
     public $web;
+    
+    /**
+     * Dirección de email de la empresa.
+     * @var string 
+     */
     public $email;
+    
+    /**
+     * Número de fax de la empresa.
+     * @var string 
+     */
     public $fax;
+    
+    /**
+     * Número de teléfono de la empresa.
+     * @var string 
+     */
     public $telefono;
+    
+    /**
+     * Código del país predeterminado.
+     * @var string
+     */
     public $codpais;
+    
+    /**
+     * Apartado de correos de la empresa.
+     * @var string
+     */
     public $apartado;
+    
+    /**
+     * Provincia de la empresa.
+     * @var string
+     */
     public $provincia;
+    
+    /**
+     * Ciudad de la empresa.
+     * @var string
+     */
     public $ciudad;
+    
+    /**
+     * Código postal de la empresa.
+     * @var string
+     */
     public $codpostal;
+    
+    /**
+     * Dirección de la empresa.
+     * @var string
+     */
     public $direccion;
 
     /**
@@ -105,7 +154,17 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codedi;
+    
+    /**
+     * Código de identificación fiscal dela empresa.
+     * @var string
+     */
     public $cifnif;
+    
+    /**
+     * Nombre de la empresa.
+     * @var string
+     */
     public $nombre;
 
     /**
@@ -143,14 +202,22 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $regimeniva;
+    
+    /**
+     * Configuración de email de la empresa.
+     * @var array de string
+]     */
     public $email_config;
-
+    
+    /**
+     * Contructor por defecto
+     */
     public function __construct() {
         parent::__construct('empresa');
 
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
         if ($data) {
-            $this->id = $this->intval($data[0]['id']);
+            $this->cod = $this->intval($data[0]['id']);
             $this->xid = $data[0]['xid'];
             $this->stockpedidos = $this->str2bool($data[0]['stockpedidos']);
             $this->contintegrada = $this->str2bool($data[0]['contintegrada']);
@@ -200,7 +267,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             }
         }
     }
-
+    /**
+     * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
+     * @return string
+     */
     protected function install() {
         $num = mt_rand(1, 9999);
         return "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
@@ -224,10 +294,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function exists() {
-        if (is_null($this->id)) {
+        if (is_null($this->cod)) {
             return FALSE;
         } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE id = " . $this->var2str($this->id) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE id = " . $this->var2str($this->cod) . ";");
     }
 
     /**
@@ -254,15 +324,15 @@ class empresa extends \FacturaScripts\Core\Base\Model {
         $this->telefono = $this->noHtml($this->telefono);
         $this->web = $this->noHtml($this->web);
 
-        if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
-            $this->new_error_msg("Nombre de empresa no válido.");
+        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+            $this->miniLog->alert("Nombre de empresa no válido.");
         } else if (strlen($this->nombre) < strlen($this->nombrecorto)) {
-            $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");
+            $this->miniLog->alert("El Nombre Corto debe ser más corto que el Nombre.");
         } else {
             $status = TRUE;
         }
 
-        return $status;
+        return $status; 
     }
 
     /**
@@ -301,7 +371,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                         . ", pie_factura = " . $this->var2str($this->pie_factura)
                         . ", inicioact = " . $this->var2str($this->inicio_actividad)
                         . ", regimeniva = " . $this->var2str($this->regimeniva)
-                        . "  WHERE id = " . $this->var2str($this->id) . ";";
+                        . "  WHERE id = " . $this->var2str($this->cod) . ";";
                 return $this->dataBase->exec($sql);
             } else {
                 $sql = "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,
@@ -337,7 +407,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->inicio_actividad)
                         . "," . $this->var2str($this->regimeniva) . ");";
                 if ($this->dataBase->exec($sql)) {
-                    $this->id = $this->dataBase->lastval();
+                    $this->cod = $this->dataBase->lastval();
                     return TRUE;
                 } else {
                     return FALSE;
@@ -347,7 +417,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
     }
-
+    /**
+     * Borra la empresa(Actulmente no es posible borar una empresa)
+     * @return boolean
+     */
     public function delete() {
         /// no se puede borrar la empresa
         return FALSE;

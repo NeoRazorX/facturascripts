@@ -107,7 +107,7 @@ class Postgresql {
 
     /**
      * Devuelve el motor de base de datos y la versión.
-     * @return boolean
+     * @return string|false
      */
     public function version() {
         if (self::$link) {
@@ -373,7 +373,7 @@ class Postgresql {
 
     /**
      * Inicia una transacción SQL.
-     * @return boolean
+     * @return null|false
      */
     public function beginTransaction() {
         if (self::$link) {
@@ -400,7 +400,7 @@ class Postgresql {
 
     /**
      * Deshace los cambios de una transacción SQL.
-     * @return boolean
+     * @return null|false
      */
     public function rollback() {
         if (self::$link) {
