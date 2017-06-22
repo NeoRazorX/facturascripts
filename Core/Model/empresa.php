@@ -31,7 +31,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * Clave primaria. Integer.
      * @var integer 
      */
-    public $id;
+    public $codid;
     public $xid;
 
     /**
@@ -217,7 +217,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
 
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
         if ($data) {
-            $this->id = $this->intval($data[0]['id']);
+            $this->codid = $this->intval($data[0]['id']);
             $this->xid = $data[0]['xid'];
             $this->stockpedidos = $this->str2bool($data[0]['stockpedidos']);
             $this->contintegrada = $this->str2bool($data[0]['contintegrada']);
@@ -294,10 +294,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function exists() {
-        if (is_null($this->id)) {
+        if (is_null($this->codid)) {
             return FALSE;
         } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE id = " . $this->var2str($this->id) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE id = " . $this->var2str($this->codid) . ";");
     }
 
     /**
@@ -371,7 +371,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                         . ", pie_factura = " . $this->var2str($this->pie_factura)
                         . ", inicioact = " . $this->var2str($this->inicio_actividad)
                         . ", regimeniva = " . $this->var2str($this->regimeniva)
-                        . "  WHERE id = " . $this->var2str($this->id) . ";";
+                        . "  WHERE id = " . $this->var2str($this->codid) . ";";
                 return $this->dataBase->exec($sql);
             } else {
                 $sql = "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,
@@ -407,7 +407,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->inicio_actividad)
                         . "," . $this->var2str($this->regimeniva) . ");";
                 if ($this->dataBase->exec($sql)) {
-                    $this->id = $this->dataBase->lastval();
+                    $this->codid = $this->dataBase->lastval();
                     return TRUE;
                 } else {
                     return FALSE;
