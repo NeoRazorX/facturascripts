@@ -386,7 +386,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
         if (is_null($this->codpais)) {
             return FALSE;
         } else
-            return $this->dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
+            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
     /**
@@ -416,11 +416,11 @@ class pais extends \FacturaScripts\Core\Base\Model {
     public function save() {
         if ($this->test()) {
             if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET codiso = " . $this->var2str($this->codiso) .
+                $sql = "UPDATE " . $this->tableName . " SET codiso = " . $this->var2str($this->codiso) .
                         ", nombre = " . $this->var2str($this->nombre) .
                         "  WHERE codpais = " . $this->var2str($this->codpais) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codpais,codiso,nombre) VALUES
+                $sql = "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre) VALUES
                      (" . $this->var2str($this->codpais) .
                         "," . $this->var2str($this->codiso) .
                         "," . $this->var2str($this->nombre) . ");";
@@ -436,7 +436,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
-        return $this->dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
     /**
@@ -445,7 +445,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $listap = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
             if ($data) {
                 foreach ($data as $p) {
                     $listap[] = new \pais($p);
