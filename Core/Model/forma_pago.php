@@ -119,10 +119,11 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
      * @return boolean
      */
+    /*
     public function is_default() {
         return ( $this->codpago == $this->default_items->codpago() );
     }
-
+    */
     /**
      * Devuelve la forma de pago con codpago = $cod
      * @param string $cod
