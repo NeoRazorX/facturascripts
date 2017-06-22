@@ -3,41 +3,46 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * CacheItemInterface defines an interface for interacting with objects inside a cache.
+ * CacheItem define un objeto dentro de la caché.
  */
 class CacheItem
 {
     /**
-     *
+     * Valor de la clave del objeto de la cache
      * @var string 
      */
     private $key;
     
     /**
-     *
+     * Contnido almacenado en el objeto de la cache
      * @var mixed 
      */
     private $value;
     
     /**
-     *
+     * Fecha de expiracion del objeto.
      * @var DateInterval 
      */
     private $expiration;
     
-    public function __construct($key, $value, $expiration) {
+    /**
+     * Constructor por defecto
+     * 
+     * @param type $key Clave del objeto
+     * @param type $value Contenido del objeto
+     * @param type $expiration Fecha de expiración del objeto
+     */
+    public function __construct($key= NULL, $value=NULL, $expiration=NULL) {
+
         $this->key=$key;
         $this->value=$value;
         $this->expiration=$expiration;
     }
     /**
-     * Returns the key for the current cache item.
+     * Devuelve la clave de este objeto de la caché.
      *
-     * The key is loaded by the Implementing Library, but should be available to
-     * the higher level callers when needed.
      *
-     * @return string
-     *   The key string for this cache item.
+     * @return string La clave de este objeto de caché.
      */
     public function getKey(){
         return $this->key;
@@ -45,16 +50,9 @@ class CacheItem
     }
 
     /**
-     * Retrieves the value of the item from the cache associated with this object's key.
-     *
-     * The value returned must be identical to the value originally stored by set().
-     *
-     * If isHit() returns false, this method MUST return null. Note that null
-     * is a legitimate cached value, so the isHit() method SHOULD be used to
-     * differentiate between "null value was found" and "no value was found."
-     *
-     * @return mixed
-     *   The value corresponding to this cache item's key, or null if not found.
+     * Devuelve el valor del objeto asociado a esta clave de caché.
+     *  
+     * @return mixed El valor que corresponde a este objeto de caché o NULL si no se encuentra.
      */
     public function get(){
         return $this->value;
