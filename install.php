@@ -54,6 +54,18 @@ function searchErrors(&$errors, &$i18n) {
     }
 }
 
+function getLanguages() {
+    $languages = [];
+
+    foreach (scandir(__DIR__ . '/Core/Translation') as $fileName) {
+        if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && substr($fileName, -5) == '.json') {
+            $languages[] = substr($fileName, 0, -5);
+        }
+    }
+
+    return $languages;
+}
+
 function dbConnect(&$errors, &$i18n) {
     $done = FALSE;
     $dbHost = filter_input(INPUT_POST, 'db_host');
@@ -200,9 +212,10 @@ function installerMain() {
 
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = array(
+        'errors' => $errors,
         'i18n' => $i18n,
-        'license' => file_get_contents(__DIR__ . '/COPYING'),
-        'errors' => $errors
+        'languages' => getLanguages(),
+        'license' => file_get_contents(__DIR__ . '/COPYING')
     );
     renderHTML($templateVars);
 }
