@@ -124,7 +124,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-
+        $this->cache->deleteItem('m_ejercicio_all');
+        $this->cache->deleteItem('m_ejercicio_all_abiertos');
         return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
          estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
          VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y')) . ",
@@ -359,6 +360,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('m_ejercicio_all');
+            $this->cache->deleteItem('m_ejercicio_all_abiertos');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
@@ -396,6 +399,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
+        $this->cache->deleteItem('m_ejercicio_all');
+        $this->cache->deleteItem('m_ejercicio_all_abiertos');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
@@ -404,15 +409,16 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all() {
-        $listae = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
-        if ($data) {
-            foreach ($data as $e) {
-                $listae[] = new ejercicio($e);
+        $listae = $this->cache->getItem('m_ejercicio_all');
+        if (!$listae) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
+            if ($data) {
+                foreach ($data as $e) {
+                    $listae[] = new ejercicio($e);
+                }
             }
+            $this->cache->save(new CacheItem('m_ejercicio_all', $listae));
         }
-
         return $listae;
     }
 
@@ -421,14 +427,16 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all_abiertos() {
-        $listae = array();
-
-        $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
-        $data = $this->dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $e) {
-                $listae[] = new ejercicio($e);
+        $listae = $this->cache->getItem('m_ejercicio_all_abiertos');
+        if (!$listae) {
+            $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
+            $data = $this->dataBase->select($sql);
+            if ($data) {
+                foreach ($data as $e) {
+                    $listae[] = new ejercicio($e);
+                }
             }
+            $this->cache->save(new CacheItem('m_ejercicio_all_abiertos', $listae));
         }
 
         return $listae;
