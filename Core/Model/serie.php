@@ -157,9 +157,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
         }
 
         if (!preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie)) {
-            $this->miniLog->alert("Código de serie no válido.");
+            $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
         } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
-            $this->miniLog->alert("Descripción de serie no válida.");
+            $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else
             $status = TRUE;
 

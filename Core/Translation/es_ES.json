@@ -23,5 +23,31 @@
     "template-not-found": "Template no encontrado",
     "to-do-list": "lista de cosas por hacer",
     "user-unsaved": "No se ha podido guardar la informacion del usuario",
-    "user-saved": "La informacion del usuario se ha guardado correctamente"
+    "user-saved": "La informacion del usuario se ha guardado correctamente",
+    "agent-name-between-1-50": "El nombre del empleado debe tener entre 1 y 50 caracteres.",
+    "store-cod-invalid": "Código de almacén no válido.",
+    "store-name-invalid": "Nombre de almacén no válido.",
+    "bage-cod-invalid": "Código de divisa no válido.",
+    "iso-cod-invalid" :"Código ISO no válido.",
+    "conversion-rate-not-0": "La tasa de conversión no puede ser 0.",
+    "conversion-rate-pruchases-not-0": "La tasa de conversión para compras no puede ser 0.",
+    "date-out-of-rage-selected-better": "La fecha seleccionada está fuera del rango del ejercicio. Se ha seleccionado una mejor.",
+    "fiscal-year-code-invalid":"Código de ejercicio no válido.",
+    "fiscal-year-name-invalid":"Nombre del ejercicio noválido.",
+    "start-date-later-end-date":"La fecha de inicio %s es posterior a la fecha fin %s.",
+    "date-invalid":"Fecha no válida.",
+    "date-invalid-date": "Fecha no válida: %s",
+    "fiscal-date-notched-level-accounting": "El ejercicio está descuadrado a nivel de subcuentas.  Debe: %f | Haber: %f",
+    "fiscal-date-notched": "El ejercicio está descuadrado a nivel de asientos. Debe: %f | Haber: %f",
+    "fiscal-date-not-notched": "El ejercicio está descuadrado a nivel de asientos. Debe: %f | Haber: %f",
+    "company-name-invalid": "Nombre de empresa no válido.",
+    "company-short-name-smaller-name": "El Nombre Corto debe ser más corto que el Nombre.",
+    "expiration-invalid": "Vencimiento no válido.",
+    "country-cod-invalid": "Código del país no válido: %s",
+    "country-name-invalid": "Nombre del país no válido.",
+    "serie-cod-invalid":"Código de serie no válido.",
+    "serie-desc-invalid":"Descripción de serie no válida."
+    
+    
+    
 }

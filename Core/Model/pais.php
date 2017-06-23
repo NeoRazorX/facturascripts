@@ -382,9 +382,9 @@ class pais extends \FacturaScripts\Core\Base\Model {
         $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
-            $this->miniLog->alert("Código del país no válido: " . $this->codpais);
+            $this->miniLog->alert($this->i18n->trans('country-cod-invalid',$this->codpais));
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
-            $this->miniLog->alert("Nombre del país no válido.");
+            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
             $status = TRUE;
         }

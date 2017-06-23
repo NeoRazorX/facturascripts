@@ -330,9 +330,9 @@ class empresa extends \FacturaScripts\Core\Base\Model {
         $this->web = $this->noHtml($this->web);
 
         if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
-            $this->miniLog->alert("Nombre de empresa no válido.");
+            $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
         } else if (strlen($this->nombre) < strlen($this->nombrecorto)) {
-            $this->miniLog->alert("El Nombre Corto debe ser más corto que el Nombre.");
+            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
         } else {
             $status = TRUE;
         }

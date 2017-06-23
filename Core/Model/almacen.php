@@ -200,9 +200,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
         $this->contacto = $this->noHtml($this->contacto);
 
         if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen)) {
-            $this->miniLog->alert("Código de almacén no válido.");
+            $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
-            $this->miniLog->alert("Nombre de almacén no válido.");
+            $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
         } else {
             $status = TRUE;
         }

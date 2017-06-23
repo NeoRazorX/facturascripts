@@ -277,7 +277,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
         $this->telefono = $this->noHtml($this->telefono);
 
         if (strlen($this->nombre) < 1 || strlen($this->nombre) > 50) {
-            $this->miniLog->alert("El nombre del empleado debe tener entre 1 y 50 caracteres.");
+            $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
             return FALSE;
         }
 

@@ -161,7 +161,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
             /// vencimiento no válido, asignamos el predeterminado
-            $this->miniLog->alert('Vencimiento no válido.');
+            $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
             $this->vencimiento = '+1day';
         }
     }
