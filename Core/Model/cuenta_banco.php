@@ -32,19 +32,19 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @var integer 
      */
     public $codcuenta;
-    
+
     /**
      * Descripción de la cuenta bancaria
      * @var string 
      */
     public $descripcion;
-    
+
     /**
      * Código IBAN de la cuenta bancaria
      * @var string 
      */
     public $iban;
-    
+
     /**
      * Código SWIFT de la entidad a la que pertenece la cuenta bancaria
      * @var string 
@@ -99,9 +99,9 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
             return $txt;
-        } else {
-            return str_replace(' ', '', $this->iban);
         }
+
+        return str_replace(' ', '', $this->iban);
     }
 
     /**
@@ -121,9 +121,9 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \cuenta_banco($data[0]);
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
@@ -135,9 +135,9 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
         $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
-        } else {
-            return 1;
         }
+
+        return 1;
     }
 
     /**
@@ -147,9 +147,9 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codcuenta)) {
             return FALSE;
-        } else {
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
         }
+
+        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
     /**
@@ -188,7 +188,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Devuelve un array con todas las cuentas bancarias de la empresa
-     * @return array
+     * @return cuenta_banco
      */
     public function all() {
         return $this->all_from_empresa();
@@ -196,7 +196,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Devuelve un array con todas las cuentas bancarias de la empresa
-     * @return \cuenta_banco
+     * @return cuenta_banco
      */
     public function all_from_empresa() {
         $clist = array();
@@ -204,7 +204,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
         if ($data) {
             foreach ($data as $d) {
-                $clist[] = new \cuenta_banco($d);
+                $clist[] = new cuenta_banco($d);
             }
         }
 
@@ -217,7 +217,7 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function calcular_iban($ccc) {
-        $codpais = substr($this->default_items->codpais(), 0, 2);
+        $codpais = substr($this->defaultItems->codPais(), 0, 2);
 
         $pesos = array('A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',

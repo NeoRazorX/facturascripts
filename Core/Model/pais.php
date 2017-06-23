@@ -46,7 +46,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @var string 
      */
     public $nombre;
-    
+
     /**
      * Constructor por defecto
      * @param array $data Array con los valores para crear un nuevo país
@@ -55,27 +55,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
         parent::__construct('paises');
         if ($data) {
             $this->codpais = $data['codpais'];
-
             $this->codiso = $data['codiso'];
-            if ($data['codiso'] == '') {
-                /// si no se ha rellenado codiso, intentamos usar esta lista
-                $codigos = array(
-                    'ESP' => 'ES',
-                    'ARG' => 'AR',
-                    'CHL' => 'CL',
-                    'COL' => 'CO',
-                    'ECU' => 'EC',
-                    'MEX' => 'MX',
-                    'PAN' => 'PA',
-                    'PER' => 'PE',
-                    'VEN' => 'VE',
-                );
-
-                if (isset($codigos[$this->codpais])) {
-                    $this->codiso = $codigos[$this->codpais];
-                }
-            }
-
             $this->nombre = $data['nombre'];
         } else {
             $this->codpais = '';
@@ -83,7 +63,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
             $this->nombre = '';
         }
     }
-    
+
     /**
      * Crea la consulta necesaria para crear los paises en la base de datos.
      * @return string
@@ -349,7 +329,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        return ( $this->codpais == $this->default_items->codpais() );
+        return ( $this->codpais == $this->defaultItems->codPais() );
     }
 
     /**
@@ -360,7 +340,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($cod) . ";");
         if ($pais) {
-            return new \pais($pais[0]);
+            return new pais($pais[0]);
         } else
             return FALSE;
     }
@@ -373,9 +353,10 @@ class pais extends \FacturaScripts\Core\Base\Model {
     public function get_by_iso($cod) {
         $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codiso = " . $this->var2str($cod) . ";");
         if ($pais) {
-            return new \pais($pais[0]);
-        } else
+            return new pais($pais[0]);
+        } else {
             return FALSE;
+        }
     }
 
     /**
@@ -403,8 +384,9 @@ class pais extends \FacturaScripts\Core\Base\Model {
             $this->miniLog->alert("Código del país no válido: " . $this->codpais);
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert("Nombre del país no válido.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -427,8 +409,9 @@ class pais extends \FacturaScripts\Core\Base\Model {
             }
 
             return $this->dataBase->exec($sql);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     /**
@@ -445,12 +428,13 @@ class pais extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $listap = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
-            if ($data) {
-                foreach ($data as $p) {
-                    $listap[] = new \pais($p);
-                }
+        
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
+        if ($data) {
+            foreach ($data as $p) {
+                $listap[] = new pais($p);
             }
+        }
 
         return $listap;
     }

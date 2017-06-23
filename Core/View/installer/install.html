@@ -43,10 +43,14 @@
                 <div class="col-sm-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
-                            <a href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">Preferencias</a>
+                            <a href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
+                            </a>
                         </li>
                         <li role="presentation">
-                            <a href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">Licencia</a>
+                            <a href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                                <i class="fa fa-file-text-o"></i>&nbsp; {{ i18n.trans('license') }}
+                            </a>
                         </li>
                     </ul>
                     <br/>
@@ -60,7 +64,13 @@
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
                                     <select name="fs_lang" class="form-control">
-                                        <option value="es_ES">Español (España)</option>
+                                    {% for langCode in languages %}
+                                        {% if langCode == 'es_ES' %}
+                                        <option value="{{ langCode }}" selected="">{{ langCode }}</option>
+                                        {% else %}
+                                        <option value="{{ langCode }}">{{ langCode }}</option>
+                                        {% endif %}
+                                    {% endfor %}
                                     </select>
                                 </div>
                             </div>

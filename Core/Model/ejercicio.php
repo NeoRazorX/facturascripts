@@ -32,19 +32,19 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @var string 
      */
     public $codejercicio;
-    
+
     /**
      * Nombre del ejercicio
      * @var string 
      */
     public $nombre;
-    
+
     /**
      * Fecha de inicio del ejercicio
      * @var string con formato fecha
      */
     public $fechainicio;
-    
+
     /**
      * Fecha de fin del ejercicio
      * @var string con formato fecha
@@ -88,7 +88,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @var integer
      */
     public $longsubcuenta;
-    
+
     /**
      * Contructor por defecto
      */
@@ -118,7 +118,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $this->longsubcuenta = 10;
         }
     }
-    
+
     /**
      * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
      * @return string
@@ -130,6 +130,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
          VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y')) . ",
          " . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
+
     /**
      * Devuelve el estado del ejercicio ABIERTO->true | CERRADO->false
      * @return boolean
@@ -137,6 +138,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function abierto() {
         return ($this->estado == 'ABIERTO');
     }
+
     /**
      * Devuelve el valos del año del ejercicio
      * @return string en formato año
@@ -157,8 +159,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
             if ($cod) {
                 return sprintf('%04s', (1 + intval($cod[0]['cod'])));
-            } else{
-                    return '0001';
+            } else {
+                return '0001';
             }
         }
     }
@@ -170,11 +172,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codejercicio)) {
             return 'index.php?page=contabilidad_ejercicios';
-        } else{
-                return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        } else {
+            return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
         }
-            
-        }
+    }
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
@@ -182,8 +183,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function is_default() {
         $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
-        
-        return ($this->codejercicio == $this->default_items->codejercicio());
+
+        return ($this->codejercicio == $this->defaultItems->codEjercicio());
     }
 
     /**
@@ -222,8 +223,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
         if ($ejercicio) {
-            return new \ejercicio($ejercicio[0]);
-        } else{
+            return new ejercicio($ejercicio[0]);
+        } else {
             return FALSE;
         }
     }
@@ -245,11 +246,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $eje = new \ejercicio($data[0]);
             if ($eje->abierto() || !$solo_abierto) {
                 return $eje;
-            } else{
-                return FALSE;
             }
-        }
-        else if ($crear) {
+        } else if ($crear) {
             $eje = new \ejercicio();
             $eje->codejercicio = $eje->get_new_codigo(Date('Y', strtotime($fecha)));
             $eje->nombre = Date('Y', strtotime($fecha));
@@ -260,12 +258,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $this->miniLog->alert("Fecha no válida: " . $fecha);
             } else if ($eje->save()) {
                 return $eje;
-            } else{
-                        return FALSE;
             }
-        } else{
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
@@ -300,7 +296,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                     . "posterior a la fecha fin (" . $this->fechafin . ").");
         } else if (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert("Fecha no válida.");
-        } else{
+        } else {
             $status = TRUE;
         }
 
@@ -363,7 +359,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
@@ -391,9 +386,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             }
 
             return $this->dataBase->exec($sql);
-        } else{
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
@@ -410,12 +405,13 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $listae = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
-            if ($data) {
-                foreach ($data as $e) {
-                    $listae[] = new \ejercicio($e);
-                }
+
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
+        if ($data) {
+            foreach ($data as $e) {
+                $listae[] = new ejercicio($e);
             }
+        }
 
         return $listae;
     }
@@ -425,15 +421,15 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all_abiertos() {
-  
         $listae = array();
-            $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
-            $data = $this->dataBase->select($sql);
-            if ($data) {
-                foreach ($data as $e) {
-                    $listae[] = new \ejercicio($e);
-                }
+
+        $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
+        $data = $this->dataBase->select($sql);
+        if ($data) {
+            foreach ($data as $e) {
+                $listae[] = new ejercicio($e);
             }
+        }
 
         return $listae;
     }
