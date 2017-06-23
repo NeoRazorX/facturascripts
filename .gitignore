@@ -1,7 +1,10 @@
 /.idea/
 /cache/
+/Cache/
+/Dinamic/
 /doc/
 /nbproject/
+/Plugins/
 /vendor/
 .DS_Store
 .htaccess
