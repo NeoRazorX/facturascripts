@@ -92,6 +92,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
+        $this->cache->deleteItem('m_serie_all');
         return "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
@@ -171,6 +172,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('m_serie_all');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
                         . ", siniva = " . $this->var2str($this->siniva)
@@ -199,6 +201,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
+        $this->cache->deleteItem('m_serie_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
@@ -207,13 +210,15 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return \serie
      */
     public function all() {
-        $serielist = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
-        if ($data) {
-            foreach ($data as $s) {
-                $serielist[] = new serie($s);
+        $serielist = $this->cache->getItem('m_serie_all');
+        if (!$serielist) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
+            if ($data) {
+                foreach ($data as $s) {
+                    $serielist[] = new serie($s);
+                }
             }
+            $this->cache->save(new CacheItem('m_serie_all', $serielist));
         }
 
 
