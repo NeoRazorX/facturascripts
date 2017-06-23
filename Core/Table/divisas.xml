@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : divisas.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla divisas.
+-->
+<tabla>
+   <columna>
+      <nombre>bandera</nombre>
+      <tipo>text</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>coddivisa</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>codiso</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>fecha</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>simbolo</nombre>
+      <tipo>character varying(10)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>tasaconv</nombre>
+      <tipo>double precision</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>tasaconv_compra</nombre>
+      <tipo>double precision</tipo>
+   </columna>
+   <restriccion>
+      <nombre>divisas_pkey</nombre>
+      <consulta>PRIMARY KEY (coddivisa)</consulta>
+   </restriccion>
+</tabla>
