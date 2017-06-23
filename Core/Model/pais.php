@@ -69,6 +69,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
+        $this->cache->deleteItem('m_pais_all');
         return "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
@@ -397,6 +398,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('m_pais_all');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET codiso = " . $this->var2str($this->codiso) .
                         ", nombre = " . $this->var2str($this->nombre) .
@@ -419,6 +421,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
+        $this->cache->deleteItem('m_pais_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
@@ -427,15 +430,17 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return \pais
      */
     public function all() {
-        $listap = array();
+        $listap = $this->cache->getItem('m_pais_all');
+        if (!$listap) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
         
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
-        if ($data) {
-            foreach ($data as $p) {
-                $listap[] = new pais($p);
+            if ($data) {
+                foreach ($data as $p) {
+                    $listap[] = new pais($p);
+                }
             }
+            $this->cache->save(new CacheItem('m_pais_all', $listap));
         }
-
         return $listap;
     }
 
