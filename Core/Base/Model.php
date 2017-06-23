@@ -69,7 +69,7 @@ abstract class Model {
      * @param string $tableName nombre de la tabla de la base de datos.
      */
     public function __construct($tableName = '') {
-        $this->cache = new CacheItemPool();
+        $this->cache = new Cache();
         $this->dataBase = new DataBase();
         $this->tableName = $tableName;
 
