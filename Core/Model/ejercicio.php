@@ -124,7 +124,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-
+        $this->cache->deleteItem('m_ejercicio_all');
+        $this->cache->deleteItem('m_ejercicio_all_abiertos');
         return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
          estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
          VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y')) . ",
@@ -200,15 +201,13 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             return $fecha;
         } else if ($fecha2 > strtotime($this->fechainicio)) {
             if ($show_error) {
-                $this->miniLog->alert('La fecha seleccionada está fuera del rango del ejercicio.
-               Se ha seleccionado una mejor.');
+                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
             }
 
             return $this->fechafin;
         } else {
             if ($show_error) {
-                $this->miniLog->alert('La fecha seleccionada está fuera del rango del ejercicio.
-               Se ha seleccionado una mejor.');
+                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
             }
 
             return $this->fechainicio;
@@ -255,7 +254,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $eje->fechafin = Date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                $this->miniLog->alert("Fecha no válida: " . $fecha);
+                $this->miniLog->alert($this->i18n->trans('date-invalid-date', $fecha));
             } else if ($eje->save()) {
                 return $eje;
             }
@@ -288,14 +287,13 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
-            $this->miniLog->alert("Código de ejercicio no válido.");
+            $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
-            $this->miniLog->alert("Nombre del ejercicio no válido.");
+            $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $this->miniLog->alert("La fecha de inicio (" . $this->fechainicio . ") es "
-                    . "posterior a la fecha fin (" . $this->fechafin . ").");
+            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date',$this->fechainicio,$this->fechafin));
         } else if (strtotime($this->fechainicio) < 1) {
-            $this->miniLog->alert("Fecha no válida.");
+            $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
             $status = TRUE;
         }
@@ -321,8 +319,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warning('El ejercicio está descuadrado a nivel de subcuentas.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                    $this->miniLog->warning($this->i18n->trans('fiscal-date-notched-level-accounting', $debe, $haber));
                     $status = FALSE;
                 }
             }
@@ -340,12 +337,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                 $haber = floatval($data[0]['haber']);
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warning('El ejercicio está descuadrado a nivel de asientos.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                    $this->miniLog->warning($this->i18n->trans('fiscal-date-notched', $debe, $haber));
                     $status = FALSE;
                 } else if (!$status) {
-                    $this->miniLog->warning('Pero <b>NO</b> está descuadrado a nivel de asientos.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                    $this->miniLog->warning($this->i18n->trans('fiscal-date-not-notched', $debe ,$haber));
                 }
             }
         }
@@ -359,6 +354,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('m_ejercicio_all');
+            $this->cache->deleteItem('m_ejercicio_all_abiertos');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
@@ -396,6 +393,8 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
+        $this->cache->deleteItem('m_ejercicio_all');
+        $this->cache->deleteItem('m_ejercicio_all_abiertos');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
@@ -404,15 +403,16 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all() {
-        $listae = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
-        if ($data) {
-            foreach ($data as $e) {
-                $listae[] = new ejercicio($e);
+        $listae = $this->cache->getItem('m_ejercicio_all');
+        if (!$listae) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
+            if ($data) {
+                foreach ($data as $e) {
+                    $listae[] = new ejercicio($e);
+                }
             }
+            $this->cache->save(new CacheItem('m_ejercicio_all', $listae));
         }
-
         return $listae;
     }
 
@@ -421,14 +421,16 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return \ejercicio
      */
     public function all_abiertos() {
-        $listae = array();
-
-        $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
-        $data = $this->dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $e) {
-                $listae[] = new ejercicio($e);
+        $listae = $this->cache->getItem('m_ejercicio_all_abiertos');
+        if (!$listae) {
+            $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
+            $data = $this->dataBase->select($sql);
+            if ($data) {
+                foreach ($data as $e) {
+                    $listae[] = new ejercicio($e);
+                }
             }
+            $this->cache->save(new CacheItem('m_ejercicio_all_abiertos', $listae));
         }
 
         return $listae;

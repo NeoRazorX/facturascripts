@@ -193,6 +193,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
+        $this->cache->deleteItem('m_agente_all');
         return "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif)
          VALUES ('1','Paco','Pepe','00000014Z');";
     }
@@ -276,7 +277,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
         $this->telefono = $this->noHtml($this->telefono);
 
         if (strlen($this->nombre) < 1 || strlen($this->nombre) > 50) {
-            $this->miniLog->alert("El nombre del empleado debe tener entre 1 y 50 caracteres.");
+            $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
             return FALSE;
         }
 
@@ -288,7 +289,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
+        
         if ($this->test()) {
+            $this->cache->deleteItem('m_agente_all');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre) .
                         ", apellidos = " . $this->var2str($this->apellidos) .
@@ -344,6 +347,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
+        $this->cache->deleteItem('m_agente_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
@@ -352,8 +356,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return \agente
      */
     public function all($incluir_debaja = FALSE) {
-        $listagentes = array();
+
         if ($incluir_debaja) {
+            $listagentes = array();
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC, apellidos ASC;");
             if ($data) {
                 foreach ($data as $a) {
@@ -361,11 +366,15 @@ class agente extends \FacturaScripts\Core\Base\Model {
                 }
             }
         } else {
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
-            if ($data) {
-                foreach ($data as $a) {
-                    $listagentes[] = new agente($a);
+            if (!$listagentes) {
+                $listagentes = $this->cache->getItem('m_agente_all');
+                $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
+                if ($data) {
+                    foreach ($data as $a) {
+                        $listagentes[] = new agente($a);
+                    }
                 }
+                $this->cache->set('m_agente_all', $listagentes);
             }
         }
 
