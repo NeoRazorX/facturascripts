@@ -104,6 +104,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
+        $this->cache->deleteItem('m_divisa_all');
         return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
@@ -191,6 +192,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('m_divisa_all');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                         ", tasaconv = " . $this->var2str($this->tasaconv) .
@@ -219,6 +221,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
+        $this->cache->deleteItem('m_divisa_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
@@ -227,13 +230,15 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return \divisa
      */
     public function all() {
-        $listad = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
-        if ($data) {
-            foreach ($data as $d) {
-                $listad[] = new divisa($d);
+        $listad = $this->cache->getItem('m_divisa_all');
+        if (!$listad) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
+            if ($data) {
+                foreach ($data as $d) {
+                    $listad[] = new divisa($d);
+                }
             }
+            $this->cache->save(new CacheItem('m_divisa_all',$listad));
         }
 
         return $listad;
