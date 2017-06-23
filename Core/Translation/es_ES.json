@@ -1,6 +1,6 @@
 {
     "controller-not-found": "Controlador no encontrado",
-    "db-host": "Servidor de base de dades",
+    "db-host": "Servidor de base de datos",
     "db-name": "Nombre de la base de datos",
     "db-port": "Puerto de la base de datos",
     "db-password": "Contraseña de la base de datos",

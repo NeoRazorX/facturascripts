@@ -1,6 +1,6 @@
 {
     "controller-not-found": "Controlador no trobat",
-    "db-host": "Base de datos do servidor",
+    "db-host": "Servidor de base de dades",
     "db-name": "Nom de la base de dades",
     "db-port": "Port de la base de dades",
     "db-password": "Contrasenya de la base de dades",
