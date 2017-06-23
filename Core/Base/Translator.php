@@ -62,10 +62,11 @@ class Translator {
     /**
      * Traduce el texto al idioma predeterminado.
      * @param string $txt
+     * @param array $parameters
      * @return string
      */
-    public function trans($txt) {
-        return self::$translator->trans($txt);
+    public function trans($txt, array $parameters = array()) {
+        return self::$translator->trans($txt, $parameters);
     }
 
     /**

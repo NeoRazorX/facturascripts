@@ -214,12 +214,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      */
     public function __construct() {
         parent::__construct('empresa');
-        $data = $this->cache->getItem('empresa');
-        if (!$data) {
-            $data = $this->db->select("SELECT * FROM " . $this->tableName . ";");
-            $this->cache->save(new CacheItem('empresa', $data));
-        }
-        
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
         if ($data) {
             $this->cod = $this->intval($data[0]['id']);
             $this->xid = $data[0]['xid'];

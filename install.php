@@ -199,7 +199,13 @@ function renderHTML(&$templateVars) {
 
 function installerMain() {
     $errors = [];
-    $i18n = new Translator(__DIR__);
+    
+    if(filter_input(INPUT_POST, 'fs_lang')) {
+        $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
+    } else {
+        $i18n = new Translator(__DIR__);
+    }
+    
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
