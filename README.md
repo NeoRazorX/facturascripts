@@ -14,6 +14,5 @@ composer install
 ```
 
 ## Feedback
-Para cualquier duda, problema o sugerencia:
-https://facturascripts.slack.com
-¿Necesitas invitación para entrar? https://join.slack.com/facturascripts/shared_invite/MTk5ODU4MzIzMzc4LTE0OTc4Nzk5NjItNWJlMGQ0Y2RhOA
+Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
+https://www.facturascripts.com/foro/quieres-colaborar-en-el-desarrollo-de-facturascripts-964.html
