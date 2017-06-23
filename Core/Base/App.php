@@ -31,6 +31,7 @@ use DebugBar\StandardDebugBar;
  */
 class App {
 
+    private $cache;
     private $connected;
     private $controller;
     private $dataBase;
@@ -42,6 +43,7 @@ class App {
     private $pluginManager;
 
     public function __construct($foler = '') {
+        $this->cache = new Cache($foler);
         $this->connected = FALSE;
         $this->controller = NULL;
         $this->dataBase = new DataBase();

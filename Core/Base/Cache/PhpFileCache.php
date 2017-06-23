@@ -1,34 +1,36 @@
 <?php
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\Cache;
 
 /**
- * CacheItemPoolInterface generates CacheItemInterface objects.
+ * PhpFileCache generates CacheItemInterface objects.
  */
-class CacheItemPool {
+class PhpFileCache {
+
     /**
      * Configuration
      *
      * @access private
      */
     private static $config;
-    
+
     /**
      * Constructor por defecto
      */
-    public function __construct() {
+    public function __construct($folder) {
         self::$config = array(
-            'cache_path' => 'tmp/' . FS_TMP_NAME . 'cache',
+            'cache_path' => $folder . '/Cache/FileCache',
             'expires' => 180,
         );
 
         if (!file_exists(self::$config['cache_path'])) {
             mkdir(self::$config['cache_path']);
         }
-        if (!file_exists(self::$config['cache_path'].'/deferred')) {
-            mkdir(self::$config['cache_path'].'/deferred');
+        if (!file_exists(self::$config['cache_path'] . '/deferred')) {
+            mkdir(self::$config['cache_path'] . '/deferred');
         }
     }
+
     /**
      * Returns a Cache Item representing the specified key.
      *
@@ -45,8 +47,8 @@ class CacheItemPool {
      * @return CacheItemInterface
      *   The corresponding Cache Item.
      */
-    public function getItem($key, $raw = false, $custom_time = NULL){
-         if (!$this->file_expired($file = self::$config['cache_path'] . '/' . md5($key) . '.php', $custom_time)) {
+    public function getItem($key, $raw = false, $customTime = NULL) {
+        if (!$this->file_expired($file = self::$config['cache_path'] . '/' . md5($key) . '.php', $customTime)) {
             $content = file_get_contents($file);
             return $raw ? $content : unserialize($content);
         }
@@ -70,12 +72,12 @@ class CacheItemPool {
      *   key is not found. However, if no keys are specified then an empty
      *   traversable MUST be returned instead.
      */
-    public function getItems(array $keys = array()){
-        $items=array();
-        foreach($keys as $key){
-            $items['$key']=$this->getItem($key);
-        }  
-        return $items[];
+    public function getItems(array $keys = array()) {
+        $items = array();
+        foreach ($keys as $key) {
+            $items['$key'] = $this->getItem($key);
+        }
+        return $items;
     }
 
     /**
@@ -95,13 +97,13 @@ class CacheItemPool {
      * @return bool
      *   True if item exists in the cache, false otherwise.
      */
-    public function hasItem($key){
-        $file=self::$config['cache_path'] . '/' . md5($key) . '.php';
+    public function hasItem($key) {
+        $file = self::$config['cache_path'] . '/' . md5($key) . '.php';
         $done = TRUE;
         if (file_exists($file)) {
             $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
         }
-        
+
         return $done;
     }
 
@@ -111,7 +113,7 @@ class CacheItemPool {
      * @return bool
      *   True if the pool was successfully cleared. False if there was an error.
      */
-    public function clear(){
+    public function clear() {
         $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
         foreach ($cache_files as $file) {
             unlink($file);
@@ -132,13 +134,13 @@ class CacheItemPool {
      * @return bool
      *   True if the item was successfully removed. False if there was an error.
      */
-    public function deleteItem($key){
+    public function deleteItem($key) {
         $done = TRUE;
         $ruta = self::$config['cache_path'] . '/' . md5($key) . '.php';
         if (file_exists($ruta)) {
             $done = unlink($ruta);
         }
-        
+
         return $done;
     }
 
@@ -155,10 +157,10 @@ class CacheItemPool {
      * @return bool
      *   True if the items were successfully removed. False if there was an error.
      */
-    public function deleteItems(array $keys){
-        foreach($keys as $key){
+    public function deleteItems(array $keys) {
+        foreach ($keys as $key) {
             $this->deleteItem($key);
-        }  
+        }
     }
 
     /**
@@ -170,8 +172,8 @@ class CacheItemPool {
      * @return bool
      *   True if the item was successfully persisted. False if there was an error.
      */
-    public function save(CacheItem $item){
-        $dest_file_name=self::$config['cache_path'] . '/' . md5($item->getKey()) . '.php';
+    public function save(CacheItem $item) {
+        $dest_file_name = self::$config['cache_path'] . '/' . md5($item->getKey()) . '.php';
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
         $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
@@ -191,8 +193,8 @@ class CacheItemPool {
      * @return bool
      *   False if the item could not be queued or if a commit was attempted and failed. True otherwise.
      */
-    public function saveDeferred(CacheItem $item){
-        $dest_file_name=self::$config['cache_path'] . '/deferred/' . md5($item->getKey()) . '.php';
+    public function saveDeferred(CacheItem $item) {
+        $dest_file_name = self::$config['cache_path'] . '/deferred/' . md5($item->getKey()) . '.php';
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
         $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
@@ -209,14 +211,14 @@ class CacheItemPool {
      * @return bool
      *   True if all not-yet-saved items were successfully saved or there were none. False otherwise.
      */
-    public function commit(){
+    public function commit() {
         $deferred_files = glob(self::$config['cache_path'] . '/deferred/*.php', GLOB_NOSORT);
         $cache_path = self::$config['cache_path'] . '/';
- 
+
         foreach ($deferred_files as $file) {
-            copy($file,$cache_path);
+            copy($file, $cache_path);
             unlink($file);
         }
-        
     }
+
 }

@@ -33,14 +33,20 @@ abstract class Model {
      * @var DataBase
      */
     protected $dataBase;
-    
+
+    /**
+     * Permite conectar e interactuar con el sistema de caché.
+     * @var Cache
+     */
+    protected $cache;
+
     /**
      * Clase que se utiliza para definir algunos valores por defecto:
      * codejercicio, codserie, coddivisa, etc...
      * @var DefaultItems 
      */
     protected $defaultItems;
-    
+
     /**
      * Traductor multi-idioma.
      * @var Translator 
@@ -71,18 +77,13 @@ abstract class Model {
      * @var MiniLog
      */
     protected static $miniLog;
-    
-     /**
-     * Permite conectar e interactuar con el sistema de caché.
-     * @var CacheItemPoll
-     */
-    protected $cache;
+
     /**
      * Constructor.
      * @param string $tableName nombre de la tabla de la base de datos.
      */
     public function __construct($tableName = '') {
-        $this->cache = new CacheItemPool();
+        $this->cache = new Cache();
         $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
@@ -150,16 +151,15 @@ abstract class Model {
         } else if (is_bool($val)) {
             if ($val) {
                 return 'TRUE';
-            } else {
-                return 'FALSE';
             }
+            return 'FALSE';
         } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) {
             return "'" . Date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
         } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) {
             return "'" . Date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
-        } else {
-            return "'" . $this->dataBase->escapeString($val) . "'";
         }
+
+        return "'" . $this->dataBase->escapeString($val) . "'";
     }
 
     /**
@@ -171,9 +171,9 @@ abstract class Model {
     protected function bin2str($val) {
         if (is_null($val)) {
             return 'NULL';
-        } else {
-            return "'" . base64_encode($val) . "'";
         }
+
+        return "'" . base64_encode($val) . "'";
     }
 
     /**
@@ -185,9 +185,9 @@ abstract class Model {
     protected function str2bin($val) {
         if (is_null($val)) {
             return NULL;
-        } else {
-            return base64_decode($val);
         }
+
+        return base64_decode($val);
     }
 
     /**
@@ -198,7 +198,7 @@ abstract class Model {
      * @return boolean
      */
     public function str2bool($val) {
-        return ($val == 't' OR $val == '1');
+        return ($val == 't' || $val == '1');
     }
 
     /**
@@ -210,9 +210,9 @@ abstract class Model {
     public function intval($str) {
         if (is_null($str)) {
             return NULL;
-        } else {
-            return intval($str);
         }
+
+        return intval($str);
     }
 
     /**
@@ -227,9 +227,9 @@ abstract class Model {
     public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
         if ($round OR ! function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
-        } else {
-            return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
         }
+
+        return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
     }
 
     /**

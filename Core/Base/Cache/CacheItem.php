@@ -1,6 +1,6 @@
 <?php
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\Cache;
 
 /**
  * CacheItem define un objeto dentro de la caché.

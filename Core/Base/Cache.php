@@ -6,28 +6,20 @@ namespace FacturaScripts\Core\Base;
  * CacheItemPoolInterface generates CacheItemInterface objects.
  */
 class Cache {
-
+    
     /**
-     * Configuration
-     *
-     * @access private
+     * El motor utilizado para la cache.
+     * @var PhpFileCache 
      */
-    private static $config;
-
+    private static $engine;
+    
     /**
-     * Constructor por defecto
+     * Constructor por defecto.
+     * @param string $folder carpeta de trabajo
      */
-    public function __construct() {
-        self::$config = array(
-            'cache_path' => 'tmp/' . FS_TMP_NAME . 'cache',
-            'expires' => 180,
-        );
-
-        if (!file_exists(self::$config['cache_path'])) {
-            mkdir(self::$config['cache_path']);
-        }
-        if (!file_exists(self::$config['cache_path'] . '/deferred')) {
-            mkdir(self::$config['cache_path'] . '/deferred');
+    public function __construct($folder = '') {
+        if(!isset(self::$engine)) {
+            self::$engine = new Cache\PhpFileCache($folder);
         }
     }
 
@@ -47,13 +39,8 @@ class Cache {
      * @return CacheItemInterface
      *   The corresponding Cache Item.
      */
-    public function getItem($key, $raw = false, $custom_time = NULL) {
-        if (!$this->file_expired($file = self::$config['cache_path'] . '/' . md5($key) . '.php', $custom_time)) {
-            $content = file_get_contents($file);
-            return $raw ? $content : unserialize($content);
-        }
-
-        return NULL;
+    public function getItem($key, $raw = false, $customTime = NULL) {
+        return self::$engine->getItem($key, $raw, $customTime);
     }
 
     /**
@@ -73,11 +60,7 @@ class Cache {
      *   traversable MUST be returned instead.
      */
     public function getItems(array $keys = array()) {
-        $items = array();
-        foreach ($keys as $key) {
-            $items['$key'] = $this->getItem($key);
-        }
-        return $items[];
+        return self::$engine->getItems($keys);
     }
 
     /**
@@ -98,13 +81,7 @@ class Cache {
      *   True if item exists in the cache, false otherwise.
      */
     public function hasItem($key) {
-        $file = self::$config['cache_path'] . '/' . md5($key) . '.php';
-        $done = TRUE;
-        if (file_exists($file)) {
-            $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
-        }
-
-        return $done;
+        return self::$engine->hasItem($key);
     }
 
     /**
@@ -114,11 +91,7 @@ class Cache {
      *   True if the pool was successfully cleared. False if there was an error.
      */
     public function clear() {
-        $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
-        foreach ($cache_files as $file) {
-            unlink($file);
-        }
-        return TRUE;
+        return self::$engine->clear();
     }
 
     /**
@@ -135,13 +108,7 @@ class Cache {
      *   True if the item was successfully removed. False if there was an error.
      */
     public function deleteItem($key) {
-        $done = TRUE;
-        $ruta = self::$config['cache_path'] . '/' . md5($key) . '.php';
-        if (file_exists($ruta)) {
-            $done = unlink($ruta);
-        }
-
-        return $done;
+        return self::$engine->deleteItem($key);
     }
 
     /**
@@ -158,9 +125,7 @@ class Cache {
      *   True if the items were successfully removed. False if there was an error.
      */
     public function deleteItems(array $keys) {
-        foreach ($keys as $key) {
-            $this->deleteItem($key);
-        }
+        return self::$engine->deleteItems($keys);
     }
 
     /**
@@ -173,15 +138,7 @@ class Cache {
      *   True if the item was successfully persisted. False if there was an error.
      */
     public function save(CacheItem $item) {
-        $dest_file_name = self::$config['cache_path'] . '/' . md5($item->getKey()) . '.php';
-        /** Use a unique temporary filename to make writes atomic with rewrite */
-        $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
-        $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
-        if ($ret !== FALSE) {
-            return @rename($temp_file_name, $dest_file_name);
-        }
-        unlink($temp_file_name);
-        return false;
+        return self::$engine->save($item);
     }
 
     /**
@@ -194,15 +151,7 @@ class Cache {
      *   False if the item could not be queued or if a commit was attempted and failed. True otherwise.
      */
     public function saveDeferred(CacheItem $item) {
-        $dest_file_name = self::$config['cache_path'] . '/deferred/' . md5($item->getKey()) . '.php';
-        /** Use a unique temporary filename to make writes atomic with rewrite */
-        $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
-        $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
-        if ($ret !== FALSE) {
-            return @rename($temp_file_name, $dest_file_name);
-        }
-        unlink($temp_file_name);
-        return false;
+        return self::$engine->saveDeferred($item);
     }
 
     /**
@@ -212,21 +161,7 @@ class Cache {
      *   True if all not-yet-saved items were successfully saved or there were none. False otherwise.
      */
     public function commit() {
-        $deferred_files = self::$config['cache_path'] . '/deferred';
-        $cache_path = self::$config['cache_path'];
-
-        $dir = opendir($deferred_files);
-        while (false !== ( $file = readdir($dir))) {
-            if (( $file != '.' ) && ( $file != '..' )) {
-                if (is_dir($deferred_files . '/' . $file)) {
-                    recurse_copy($deferred_files . '/' . $file, $cache_path . '/' . $file);
-                } else {
-                    copy($deferred_files . '/' . $file, $cache_path . '/' . $file);
-                    unlink($deferred_files . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
+        return self::$engine->commit();
     }
 
 }
