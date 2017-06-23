@@ -173,6 +173,7 @@ class Cache {
      *   True if the item was successfully persisted. False if there was an error.
      */
     public function save(CacheItem $item) {
+        
         $dest_file_name = self::$config['cache_path'] . '/' . md5($item->getKey()) . '.php';
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);

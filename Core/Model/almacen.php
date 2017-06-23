@@ -131,6 +131,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
+        $this->cache->deleteItem('m_almacen_all');
         return "INSERT INTO " . $this->tableName . " (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
          VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
@@ -215,6 +216,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->delete('m_almacen_all');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", codpais = " . $this->var2str($this->codpais)
@@ -251,6 +253,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return type
      */
     public function delete() {
+        $this->cache->delete('m_almacen_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
@@ -259,15 +262,17 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return \almacen
      */
     public function all() {
-        $listaa = array();
+        $listaa = $this->cache->getItem('m_almacen_all');
+        if (!$listaa) {
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
         
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
-        if ($data) {
-            foreach ($data as $a) {
-                $listaa[] = new almacen($a);
-            }
+            if ($data) {
+                foreach ($data as $a) {
+                    $listaa[] = new almacen($a);
+                }
         }
-
+        $this->cache->save(new CacheItem('m_almacen_all', $listaa));
+        }
         return $listaa;
     }
 

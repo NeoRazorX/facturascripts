@@ -24,7 +24,7 @@ class CacheItem
      * @var DateInterval 
      */
     private $expiration;
-    
+
     /**
      * Constructor por defecto
      * 
@@ -32,8 +32,8 @@ class CacheItem
      * @param type $value Contenido del objeto
      * @param type $expiration Fecha de expiración del objeto
      */
-    public function __construct($key= NULL, $value=NULL, $expiration=NULL) {
-
+    public function __construct($key= NULL, $value=NULL, $expiration=180) {
+        
         $this->key=$key;
         $this->value=$value;
         $this->expiration=$expiration;
