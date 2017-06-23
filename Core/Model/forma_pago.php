@@ -32,7 +32,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @var string 
      */
     public $codpago;
-    
+
     /**
      * Descripción de la forma de pago
      * @var string 
@@ -94,7 +94,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $this->vencimiento = '+1day';
         }
     }
-    
+
     /**
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
@@ -120,7 +120,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        return ( $this->codpago == $this->default_items->codpago() );
+        return ( $this->codpago == $this->defaultItems->codPago() );
     }
 
     /**
@@ -131,7 +131,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $pago = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($pago) {
-            return new \forma_pago($pago[0]);
+            return new forma_pago($pago[0]);
         } else {
             return FALSE;
         }
@@ -209,12 +209,13 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      */
     public function all() {
         $listaformas = array();
-            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
-            if ($formas) {
-                foreach ($formas as $f) {
-                    $listaformas[] = new \forma_pago($f);
-                }
+
+        $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
+        if ($formas) {
+            foreach ($formas as $f) {
+                $listaformas[] = new forma_pago($f);
             }
+        }
 
         return $listaformas;
     }
@@ -237,7 +238,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             }
         }
 
-        if ($array_dias!=NULL) {
+        if ($array_dias != NULL) {
             foreach ($array_dias as $i => $dia_de_pago) {
                 if ($i == 0) {
                     $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);

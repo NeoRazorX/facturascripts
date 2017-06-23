@@ -48,7 +48,7 @@ class App {
         $this->debugBar = new StandardDebugBar();
         $this->folder = $foler;
         $this->httpStatus = Response::HTTP_OK;
-        $this->i18n = new Translator($foler);
+        $this->i18n = new Translator($foler, FS_LANG);
         $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager($foler);
     }

@@ -32,55 +32,55 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codalmacen;
-    
+
     /**
      * Nombre del almacen.
      * @var string 
      */
     public $nombre;
-        
+
     /**
      * Código que representa al páis donde está ubicado el almacen.
      * @var string 
      */
     public $codpais;
-        
+
     /**
      * Nombre de la provincia donde está ubicado el almacen.
      * @var string 
      */
     public $provincia;
-        
+
     /**
      * Nombre de la población donde está ubicado el almacen.
      * @var string 
      */
     public $poblacion;
-        
+
     /**
      * Código postal donde está ubicado el almacen.
      * @var string 
      */
     public $codpostal;
-        
+
     /**
      * Dirección donde está ubicado el almacen.
      * @var string 
      */
     public $direccion;
-        
+
     /**
      * Persona de contacto del almacen.
      * @var string 
      */
     public $contacto;
-        
+
     /**
      * Número de fax del almacen.
      * @var string 
      */
     public $fax;
-        
+
     /**
      * Número de teléfono del almacen.
      * @var string 
@@ -125,7 +125,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
             $this->observaciones = '';
         }
     }
-    
+
     /**
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
      * @return string
@@ -142,8 +142,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codalmacen)) {
             return 'index.php?page=admin_almacenes';
-        } else
-            return 'index.php?page=admin_almacenes#' . $this->codalmacen;
+        }
+
+        return 'index.php?page=admin_almacenes#' . $this->codalmacen;
     }
 
     /**
@@ -151,9 +152,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        return ( $this->codalmacen == $this->default_items->codalmacen() );
+        return ( $this->codalmacen == $this->defaultItems->codAlmacen() );
     }
- 
+
     /**
      * Devuelve el almacén con codalmacen = $cod
      * @param string $cod
@@ -162,9 +163,10 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $almacen = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($cod) . ";");
         if ($almacen) {
-            return new \almacen($almacen[0]);
-        } else
-            return FALSE;
+            return new almacen($almacen[0]);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -174,8 +176,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codalmacen)) {
             return FALSE;
-        } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
+        }
+
+        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
     /**
@@ -199,8 +202,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
             $this->miniLog->alert("Código de almacén no válido.");
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert("Nombre de almacén no válido.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -237,8 +241,9 @@ class almacen extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->contacto) . ");";
             }
             return $this->dataBase->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -254,14 +259,14 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return \almacen
      */
     public function all() {
-        
         $listaa = array();
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
-            if ($data) {
-                foreach ($data as $a) {
-                    $listaa[] = new \almacen($a);
-                }
+        
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
+        if ($data) {
+            foreach ($data as $a) {
+                $listaa[] = new almacen($a);
             }
+        }
 
         return $listaa;
     }
