@@ -9,7 +9,7 @@ class Cache {
     
     /**
      * El motor utilizado para la cache.
-     * @var PhpFileCache 
+     * @var Cache\PhpFileCache 
      */
     private static $engine;
     

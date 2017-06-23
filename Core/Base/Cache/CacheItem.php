@@ -5,48 +5,48 @@ namespace FacturaScripts\Core\Base\Cache;
 /**
  * CacheItem define un objeto dentro de la caché.
  */
-class CacheItem
-{
+class CacheItem {
+
     /**
      * Valor de la clave del objeto de la cache
      * @var string 
      */
     private $key;
-    
+
     /**
      * Contnido almacenado en el objeto de la cache
      * @var mixed 
      */
     private $value;
-    
+
     /**
      * Fecha de expiracion del objeto.
      * @var DateInterval 
      */
     private $expiration;
-    
+
     /**
      * Constructor por defecto
      * 
-     * @param type $key Clave del objeto
-     * @param type $value Contenido del objeto
-     * @param type $expiration Fecha de expiración del objeto
+     * @param string $key Clave del objeto
+     * @param mixed $value Contenido del objeto
+     * @param integer $expiration Fecha de expiración del objeto
      */
-    public function __construct($key= NULL, $value=NULL, $expiration=NULL) {
+    public function __construct($key = NULL, $value = NULL, $expiration = NULL) {
 
-        $this->key=$key;
-        $this->value=$value;
-        $this->expiration=$expiration;
+        $this->key = $key;
+        $this->value = $value;
+        $this->expiration = $expiration;
     }
+
     /**
      * Devuelve la clave de este objeto de la caché.
      *
      *
      * @return string La clave de este objeto de caché.
      */
-    public function getKey(){
+    public function getKey() {
         return $this->key;
-
     }
 
     /**
@@ -54,7 +54,7 @@ class CacheItem
      *  
      * @return mixed El valor que corresponde a este objeto de caché o NULL si no se encuentra.
      */
-    public function get(){
+    public function get() {
         return $this->value;
     }
 
@@ -67,11 +67,11 @@ class CacheItem
      * @return bool
      *   True if the request resulted in a cache hit. False otherwise.
      */
-    public function isHit(){
-        if($time>$this->expiration){
+    public function isHit() {
+        if (time() > $this->expiration) {
             return false;
         }
-        if ($this->value==NULL){
+        if ($this->value == NULL) {
             return false;
         }
         return true;
@@ -90,8 +90,8 @@ class CacheItem
      * @return static
      *   The invoked object.
      */
-    public function set($value){
-        $this->value=$value;
+    public function set($value) {
+        $this->value = $value;
     }
 
     /**
@@ -106,8 +106,8 @@ class CacheItem
      * @return static
      *   The called object.
      */
-    public function expiresAt($expiration){
-        $this->expiration= $expiration;
+    public function expiresAt($expiration) {
+        $this->expiration = $expiration;
     }
 
     /**
@@ -123,8 +123,9 @@ class CacheItem
      * @return static
      *   The called object.
      */
-    public function expiresAfter($time){
-        $this->expiration= time() + $time;
+    public function expiresAfter($time) {
+        $this->expiration = time() + $time;
         return $this;
     }
+
 }

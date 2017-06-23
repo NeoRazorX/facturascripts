@@ -57,6 +57,23 @@ class PhpFileCache {
     }
 
     /**
+     * Check if a file has expired or not.
+     *
+     * @access public
+     * @param $file the rout to the file
+     * @param int $time the number of minutes it was set to expire
+     * @return bool if the file has expired or not
+     */
+    public function file_expired($file, $time = NULL) {
+        $done = TRUE;
+        if (file_exists($file)) {
+            $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
+        }
+
+        return $done;
+    }
+
+    /**
      * Returns a traversable set of cache items.
      *
      * @param string[] $keys
@@ -98,6 +115,7 @@ class PhpFileCache {
      *   True if item exists in the cache, false otherwise.
      */
     public function hasItem($key) {
+        $time = time(); /// añadido para inicializar la variable, aunque hay que revisar la clase entera.
         $file = self::$config['cache_path'] . '/' . md5($key) . '.php';
         $done = TRUE;
         if (file_exists($file)) {
