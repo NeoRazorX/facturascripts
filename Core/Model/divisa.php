@@ -90,13 +90,18 @@ class divisa extends \FacturaScripts\Core\Base\Model {
                 $this->tasaconv_compra = floatval($data['tasaconv_compra']);
             }
         } else {
+            $this->clear();
+        }
+    }
+    
+    protected function clear() {
             $this->coddivisa = NULL;
             $this->descripcion = '';
             $this->tasaconv = 1.00;
             $this->tasaconv_compra = 1.00;
             $this->codiso = NULL;
             $this->simbolo = '?';
-        }
+        
     }
 
     /**

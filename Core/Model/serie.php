@@ -78,13 +78,17 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->codejercicio = $data['codejercicio'];
             $this->numfactura = max(array(1, intval($data['numfactura'])));
         } else {
+            $this->clear();
+        }
+    }
+    
+    protected function clear() {
             $this->codserie = '';
             $this->descripcion = '';
             $this->siniva = FALSE;
             $this->irpf = 0.00;
             $this->codejercicio = NULL;
             $this->numfactura = 1;
-        }
     }
 
     /**

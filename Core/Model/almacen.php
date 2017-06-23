@@ -112,6 +112,14 @@ class almacen extends \FacturaScripts\Core\Base\Model {
             $this->telefono = $data['telefono'];
             $this->observaciones = $data['observaciones'];
         } else {
+            $this->clear();
+        }
+    }
+
+    /**
+     * Inicializa los campos. Ver comentario en Model.php clear()
+     */
+    protected function clear() {
             $this->codalmacen = NULL;
             $this->nombre = '';
             $this->codpais = NULL;
@@ -123,9 +131,8 @@ class almacen extends \FacturaScripts\Core\Base\Model {
             $this->fax = '';
             $this->telefono = '';
             $this->observaciones = '';
-        }
     }
-
+    
     /**
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
      * @return string

@@ -58,10 +58,14 @@ class pais extends \FacturaScripts\Core\Base\Model {
             $this->codiso = $data['codiso'];
             $this->nombre = $data['nombre'];
         } else {
+            $this->clear();
+        }
+    }
+    
+    protected function clear() {
             $this->codpais = '';
             $this->codiso = NULL;
             $this->nombre = '';
-        }
     }
 
     /**

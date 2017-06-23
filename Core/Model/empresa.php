@@ -266,6 +266,11 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             }
         }
     }
+    
+    protected function clear() {
+        
+    }
+    
     /**
      * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
      * @return string

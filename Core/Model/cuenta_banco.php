@@ -70,12 +70,16 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
             $this->swift = $data['swift'];
             $this->codsubcuenta = $data['codsubcuenta'];
         } else {
+            $this->clear();
+        }
+    }
+    
+    protected function clear() {
             $this->codcuenta = NULL;
             $this->descripcion = NULL;
             $this->iban = NULL;
             $this->swift = NULL;
             $this->codsubcuenta = NULL;
-        }
     }
 
     /**

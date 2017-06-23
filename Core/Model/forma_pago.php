@@ -85,6 +85,11 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $this->imprimir = $this->str2bool($data['imprimir']);
             $this->vencimiento = $data['vencimiento'];
         } else {
+            $this->clear();
+        }
+    }
+
+    protected function clear() {
             $this->codpago = NULL;
             $this->descripcion = '';
             $this->genrecibos = 'Emitidos';
@@ -92,9 +97,8 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $this->domiciliado = FALSE;
             $this->imprimir = TRUE;
             $this->vencimiento = '+1day';
-        }
     }
-
+    
     /**
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string

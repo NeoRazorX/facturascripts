@@ -168,6 +168,14 @@ class agente extends \FacturaScripts\Core\Base\Model {
                 $this->f_nacimiento = Date('d-m-Y', strtotime($data['f_nacimiento']));
             }
         } else {
+            $this->clear();
+        }
+    }
+    
+    /**
+     * Inicializa los campos. Ver comentario en Model.php clear()
+     */
+    protected function clear() {
             $this->codagente = NULL;
             $this->nombre = '';
             $this->apellidos = '';
@@ -185,7 +193,6 @@ class agente extends \FacturaScripts\Core\Base\Model {
             $this->f_alta = Date('d-m-Y');
             $this->f_baja = NULL;
             $this->f_nacimiento = Date('d-m-Y');
-        }
     }
 
     /**
