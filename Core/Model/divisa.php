@@ -172,13 +172,13 @@ class divisa extends \FacturaScripts\Core\Base\Model {
         $this->simbolo = $this->noHtml($this->simbolo);
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
-            $this->miniLog->alert("Código de divisa no válido.");
+            $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
         } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
-            $this->miniLog->alert("Código ISO no válido.");
+            $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
         } else if ($this->tasaconv == 0) {
-            $this->miniLog->alert('La tasa de conversión no puede ser 0.');
+            $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
         } else if ($this->tasaconv_compra == 0) {
-            $this->miniLog->alert('La tasa de conversión para compras no puede ser 0.');
+            $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $status = TRUE;
         }
