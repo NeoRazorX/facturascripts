@@ -214,7 +214,12 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      */
     public function __construct() {
         parent::__construct('empresa');
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
+        $data = $this->cache->getItem('empresa');
+        if (!$data) {
+            $data = $this->db->select("SELECT * FROM " . $this->tableName . ";");
+            $this->cache->save(new CacheItem('empresa', $data));
+        }
+        
         if ($data) {
             $this->cod = $this->intval($data[0]['id']);
             $this->xid = $data[0]['xid'];
@@ -271,6 +276,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
+        $this->cache->deleteItem('empresa');
         $num = mt_rand(1, 9999);
         return "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
                 . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
@@ -340,6 +346,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
+            $this->cache->deleteItem('empresa');
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", nombrecorto = " . $this->var2str($this->nombrecorto)
