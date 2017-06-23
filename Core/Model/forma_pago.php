@@ -100,6 +100,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
+        $this->cache->deleteItem('m_forma_pago_all');
         return "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
@@ -170,6 +171,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
+        $this->cache->deleteItem('m_forma_pago_all');
         $this->test();
 
         if ($this->exists()) {
@@ -200,6 +202,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
+        $this->cache->deleteItem('m_forma_pago_all');
         return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
@@ -208,13 +211,15 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return \forma_pago
      */
     public function all() {
-        $listaformas = array();
-
-        $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
-        if ($formas) {
-            foreach ($formas as $f) {
-                $listaformas[] = new forma_pago($f);
+        $listaformas = $this->cache->getItem('m_forma_pago_all');
+        if (!$listaformas) {
+            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
+            if ($formas) {
+                foreach ($formas as $f) {
+                    $listaformas[] = new forma_pago($f);
+                }
             }
+            $this->cache->save(new CacheItem('m_forma_pago_all', $listaformas));
         }
 
         return $listaformas;
