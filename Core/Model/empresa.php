@@ -82,61 +82,61 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codejercicio;
-    
+
     /**
      * URL de la web de la empresa.
      * @var string 
      */
     public $web;
-    
+
     /**
      * Dirección de email de la empresa.
      * @var string 
      */
     public $email;
-    
+
     /**
      * Número de fax de la empresa.
      * @var string 
      */
     public $fax;
-    
+
     /**
      * Número de teléfono de la empresa.
      * @var string 
      */
     public $telefono;
-    
+
     /**
      * Código del país predeterminado.
      * @var string
      */
     public $codpais;
-    
+
     /**
      * Apartado de correos de la empresa.
      * @var string
      */
     public $apartado;
-    
+
     /**
      * Provincia de la empresa.
      * @var string
      */
     public $provincia;
-    
+
     /**
      * Ciudad de la empresa.
      * @var string
      */
     public $ciudad;
-    
+
     /**
      * Código postal de la empresa.
      * @var string
      */
     public $codpostal;
-    
+
     /**
      * Dirección de la empresa.
      * @var string
@@ -154,13 +154,13 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $codedi;
-    
+
     /**
      * Código de identificación fiscal dela empresa.
      * @var string
      */
     public $cifnif;
-    
+
     /**
      * Nombre de la empresa.
      * @var string
@@ -202,13 +202,13 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      * @var string
      */
     public $regimeniva;
-    
+
     /**
      * Configuración de email de la empresa.
      * @var array de string
-]     */
+      ] */
     public $email_config;
-    
+
     /**
      * Contructor por defecto
      */
@@ -266,12 +266,17 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             }
         }
     }
+    
+    public function clear() {
+        
+    }
+
     /**
      * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
      * @return string
      */
     protected function install() {
-        $this->cache->deleteItem('empresa');
+        $this->cache->delete('empresa');
         $num = mt_rand(1, 9999);
         return "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
                 . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
@@ -296,8 +301,10 @@ class empresa extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->cod)) {
             return FALSE;
-        } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE id = " . $this->var2str($this->cod) . ";");
+        }
+
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE id = " . $this->var2str($this->cod) . ";");
     }
 
     /**
@@ -332,7 +339,7 @@ class empresa extends \FacturaScripts\Core\Base\Model {
             $status = TRUE;
         }
 
-        return $status; 
+        return $status;
     }
 
     /**
@@ -341,7 +348,8 @@ class empresa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->deleteItem('empresa');
+            $this->cache->delete('empresa');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", nombrecorto = " . $this->var2str($this->nombrecorto)
@@ -373,58 +381,59 @@ class empresa extends \FacturaScripts\Core\Base\Model {
                         . ", inicioact = " . $this->var2str($this->inicio_actividad)
                         . ", regimeniva = " . $this->var2str($this->regimeniva)
                         . "  WHERE id = " . $this->var2str($this->cod) . ";";
+
                 return $this->dataBase->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,
-               codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,
-               codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,
-               nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES 
-                      (" . $this->var2str($this->stockpedidos)
-                        . "," . $this->var2str($this->contintegrada)
-                        . "," . $this->var2str($this->recequivalencia)
-                        . "," . $this->var2str($this->codserie)
-                        . "," . $this->var2str($this->codalmacen)
-                        . "," . $this->var2str($this->codpago)
-                        . "," . $this->var2str($this->coddivisa)
-                        . "," . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->web)
-                        . "," . $this->var2str($this->email)
-                        . "," . $this->var2str($this->fax)
-                        . "," . $this->var2str($this->telefono)
-                        . "," . $this->var2str($this->codpais)
-                        . "," . $this->var2str($this->apartado)
-                        . "," . $this->var2str($this->provincia)
-                        . "," . $this->var2str($this->ciudad)
-                        . "," . $this->var2str($this->codpostal)
-                        . "," . $this->var2str($this->direccion)
-                        . "," . $this->var2str($this->administrador)
-                        . "," . $this->var2str($this->codedi)
-                        . "," . $this->var2str($this->cifnif)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->nombrecorto)
-                        . "," . $this->var2str($this->lema)
-                        . "," . $this->var2str($this->horario)
-                        . "," . $this->var2str($this->pie_factura)
-                        . "," . $this->var2str($this->inicio_actividad)
-                        . "," . $this->var2str($this->regimeniva) . ");";
-                if ($this->dataBase->exec($sql)) {
-                    $this->cod = $this->dataBase->lastval();
-                    return TRUE;
-                }
-                
-                return FALSE;
             }
+
+            $sql = "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
+                    . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,"
+                    . "codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,"
+                    . "nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES "
+                    . "(" . $this->var2str($this->stockpedidos)
+                    . "," . $this->var2str($this->contintegrada)
+                    . "," . $this->var2str($this->recequivalencia)
+                    . "," . $this->var2str($this->codserie)
+                    . "," . $this->var2str($this->codalmacen)
+                    . "," . $this->var2str($this->codpago)
+                    . "," . $this->var2str($this->coddivisa)
+                    . "," . $this->var2str($this->codejercicio)
+                    . "," . $this->var2str($this->web)
+                    . "," . $this->var2str($this->email)
+                    . "," . $this->var2str($this->fax)
+                    . "," . $this->var2str($this->telefono)
+                    . "," . $this->var2str($this->codpais)
+                    . "," . $this->var2str($this->apartado)
+                    . "," . $this->var2str($this->provincia)
+                    . "," . $this->var2str($this->ciudad)
+                    . "," . $this->var2str($this->codpostal)
+                    . "," . $this->var2str($this->direccion)
+                    . "," . $this->var2str($this->administrador)
+                    . "," . $this->var2str($this->codedi)
+                    . "," . $this->var2str($this->cifnif)
+                    . "," . $this->var2str($this->nombre)
+                    . "," . $this->var2str($this->nombrecorto)
+                    . "," . $this->var2str($this->lema)
+                    . "," . $this->var2str($this->horario)
+                    . "," . $this->var2str($this->pie_factura)
+                    . "," . $this->var2str($this->inicio_actividad)
+                    . "," . $this->var2str($this->regimeniva) . ");";
+            if ($this->dataBase->exec($sql)) {
+                $this->cod = $this->dataBase->lastval();
+                return TRUE;
+            }
+
+            return FALSE;
         }
-        
+
         return FALSE;
     }
-    
+
     /**
-     * Borra la empresa(Actulmente no es posible borar una empresa)
+     * Borra la empresa de la base de datos
      * @return boolean
      */
     public function delete() {
-        /// no se puede borrar la empresa
+        /// TODO: completar
         return FALSE;
     }
 

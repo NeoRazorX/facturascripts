@@ -16,5 +16,53 @@
             <h2>Empresa: {{ fsc.empresa.nombre }}</h2>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Agentes:</h3>
+            <ul>
+                {% for agente in fsc.agente.all() %}
+                <li>{{ agente.get_fullname() }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Almacenes:</h3>
+            <ul>
+                {% for almacen in fsc.almacen.all() %}
+                <li>{{ almacen.nombre }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Divisas:</h3>
+            <ul>
+                {% for divisa in fsc.divisa.all() %}
+                <li>{{ divisa.descripcion }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Ejercicios:</h3>
+            <ul>
+                {% for ejercicio in fsc.ejercicio.all() %}
+                <li>{{ ejercicio.nombre }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Formas de pago:</h3>
+            <ul>
+                {% for formaPago in fsc.formaPago.all() %}
+                <li>{{ formaPago.descripcion }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Series:</h3>
+            <ul>
+                {% for serie in fsc.serie.all() %}
+                <li>{{ serie.descripcion }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <h3>Paises:</h3>
+            <ul>
+                {% for pais in fsc.pais.all() %}
+                <li>{{ pais.nombre }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -70,12 +70,16 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
             $this->swift = $data['swift'];
             $this->codsubcuenta = $data['codsubcuenta'];
         } else {
-            $this->codcuenta = NULL;
-            $this->descripcion = NULL;
-            $this->iban = NULL;
-            $this->swift = NULL;
-            $this->codsubcuenta = NULL;
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codcuenta = NULL;
+        $this->descripcion = NULL;
+        $this->iban = NULL;
+        $this->swift = NULL;
+        $this->codsubcuenta = NULL;
     }
 
     /**
@@ -115,12 +119,12 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve la cuenta bancaria con codcuenta = $cod
      * @param string $cod
-     * @return boolean|\cuenta_banco
+     * @return boolean|cuenta_banco
      */
     public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
-            return new \cuenta_banco($data[0]);
+            return new cuenta_banco($data[0]);
         }
 
         return FALSE;
@@ -149,7 +153,8 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
-        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
     /**
@@ -167,12 +172,12 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
                     "  WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";";
         } else {
             $this->codcuenta = $this->get_new_codigo();
-            $sql = "INSERT INTO " . $this->tableName . " (codcuenta,descripcion,iban,swift,codsubcuenta)
-                 VALUES (" . $this->var2str($this->codcuenta) .
-                    "," . $this->var2str($this->descripcion) .
-                    "," . $this->var2str($this->iban) .
-                    "," . $this->var2str($this->swift) .
-                    "," . $this->var2str($this->codsubcuenta) . ");";
+            $sql = "INSERT INTO " . $this->tableName . " (codcuenta,descripcion,iban,swift,codsubcuenta) "
+                    . "VALUES (" . $this->var2str($this->codcuenta)
+                    . "," . $this->var2str($this->descripcion)
+                    . "," . $this->var2str($this->iban)
+                    . "," . $this->var2str($this->swift)
+                    . "," . $this->var2str($this->codsubcuenta) . ");";
         }
 
         return $this->dataBase->exec($sql);
@@ -183,7 +188,8 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
     /**
@@ -191,14 +197,6 @@ class cuenta_banco extends \FacturaScripts\Core\Base\Model {
      * @return cuenta_banco
      */
     public function all() {
-        return $this->all_from_empresa();
-    }
-
-    /**
-     * Devuelve un array con todas las cuentas bancarias de la empresa
-     * @return cuenta_banco
-     */
-    public function all_from_empresa() {
         $clist = array();
 
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");

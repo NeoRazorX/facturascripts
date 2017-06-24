@@ -106,17 +106,21 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
             $this->plancontable = $data['plancontable'];
             $this->longsubcuenta = $this->intval($data['longsubcuenta']);
         } else {
-            $this->codejercicio = NULL;
-            $this->nombre = '';
-            $this->fechainicio = Date('01-01-Y');
-            $this->fechafin = Date('31-12-Y');
-            $this->estado = 'ABIERTO';
-            $this->idasientocierre = NULL;
-            $this->idasientopyg = NULL;
-            $this->idasientoapertura = NULL;
-            $this->plancontable = '08';
-            $this->longsubcuenta = 10;
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codejercicio = NULL;
+        $this->nombre = '';
+        $this->fechainicio = Date('01-01-Y');
+        $this->fechafin = Date('31-12-Y');
+        $this->estado = 'ABIERTO';
+        $this->idasientocierre = NULL;
+        $this->idasientopyg = NULL;
+        $this->idasientoapertura = NULL;
+        $this->plancontable = '08';
+        $this->longsubcuenta = 10;
     }
 
     /**
@@ -124,12 +128,12 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        $this->cache->deleteItem('m_ejercicio_all');
-        $this->cache->deleteItem('m_ejercicio_all_abiertos');
-        return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
-         estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
-         VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y')) . ",
-         " . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
+        $this->cache->delete('m_ejercicio_all');
+        $this->cache->delete('m_ejercicio_all_abiertos');
+        return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,"
+                . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
+                . "VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y'))
+                . "," . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 
     /**
@@ -156,14 +160,14 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function get_new_codigo($cod = '0001') {
         if (!$this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
-        } else {
-            $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
-            if ($cod) {
-                return sprintf('%04s', (1 + intval($cod[0]['cod'])));
-            } else {
-                return '0001';
-            }
         }
+
+        $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
+        if ($cod) {
+            return sprintf('%04s', (1 + intval($cod[0]['cod'])));
+        }
+
+        return '0001';
     }
 
     /**
@@ -173,9 +177,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codejercicio)) {
             return 'index.php?page=contabilidad_ejercicios';
-        } else {
-            return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
         }
+
+        return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
     }
 
     /**
@@ -183,14 +187,12 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function is_default() {
-        $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
-
         return ($this->codejercicio == $this->defaultItems->codEjercicio());
     }
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
-     * @param staring $fecha
+     * @param string $fecha
      * @param boolean $show_error
      * @return string
      */
@@ -199,33 +201,33 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
 
         if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
             return $fecha;
-        } else if ($fecha2 > strtotime($this->fechainicio)) {
-            if ($show_error) {
-                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
-            }
-
-            return $this->fechafin;
-        } else {
-            if ($show_error) {
-                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
-            }
-
-            return $this->fechainicio;
         }
+
+        if ($fecha2 > strtotime($this->fechainicio)) {
+            if ($show_error) {
+                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+            }
+            return $this->fechafin;
+        }
+
+        if ($show_error) {
+            $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+        }
+        return $this->fechainicio;
     }
 
     /**
      * Devuelve el ejercicio con codejercicio = $cod
-     * @param type $cod
-     * @return boolean|\ejercicio
+     * @param string $cod
+     * @return boolean|ejercicio
      */
     public function get($cod) {
-        $ejercicio = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
-        if ($ejercicio) {
-            return new ejercicio($ejercicio[0]);
-        } else {
-            return FALSE;
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new ejercicio($data[0]);
         }
+
+        return FALSE;
     }
 
     /**
@@ -234,7 +236,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @param string $fecha
      * @param boolean $solo_abierto
      * @param boolean $crear
-     * @return boolean|\ejercicio
+     * @return boolean|ejercicio
      */
     public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE) {
         $sql = "SELECT * FROM " . $this->tableName . " WHERE fechainicio <= "
@@ -242,12 +244,12 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
 
         $data = $this->dataBase->select($sql);
         if ($data) {
-            $eje = new \ejercicio($data[0]);
+            $eje = new ejercicio($data[0]);
             if ($eje->abierto() || !$solo_abierto) {
                 return $eje;
             }
         } else if ($crear) {
-            $eje = new \ejercicio();
+            $eje = new ejercicio();
             $eje->codejercicio = $eje->get_new_codigo(Date('Y', strtotime($fecha)));
             $eje->nombre = Date('Y', strtotime($fecha));
             $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
@@ -270,10 +272,10 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codejercicio)) {
             return FALSE;
-        } else {
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName
-                            . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
         }
+
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
     /**
@@ -291,58 +293,11 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date',$this->fechainicio,$this->fechafin));
+            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $this->fechainicio, $this->fechafin));
         } else if (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
             $status = TRUE;
-        }
-
-        return $status;
-    }
-
-    /**
-     * Comprueba más datos del ejercicio, devuelve TRUE si está todo correcto
-     * @return boolean
-     */
-    public function full_test() {
-        $status = TRUE;
-
-        /// comprobamos la suma de las subcuentas
-        if ($this->dataBase->tableExists('co_subcuentas')) {
-            $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_subcuentas"
-                    . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
-
-            $data = $this->dataBase->select($sql);
-            if ($data) {
-                $debe = floatval($data[0]['debe']);
-                $haber = floatval($data[0]['haber']);
-
-                if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warning($this->i18n->trans('fiscal-date-notched-level-accounting', $debe, $haber));
-                    $status = FALSE;
-                }
-            }
-        }
-
-        /// comprobamos la suma de las partidas de los asientos
-        if ($this->dataBase->tableExists('co_partidas')) {
-            $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas"
-                    . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
-                    . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ");";
-
-            $data = $this->dataBase->select($sql);
-            if ($data) {
-                $debe = floatval($data[0]['debe']);
-                $haber = floatval($data[0]['haber']);
-
-                if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-                    $this->miniLog->warning($this->i18n->trans('fiscal-date-notched', $debe, $haber));
-                    $status = FALSE;
-                } else if (!$status) {
-                    $this->miniLog->warning($this->i18n->trans('fiscal-date-not-notched', $debe ,$haber));
-                }
-            }
         }
 
         return $status;
@@ -354,8 +309,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->deleteItem('m_ejercicio_all');
-            $this->cache->deleteItem('m_ejercicio_all_abiertos');
+            $this->cache->delete('m_ejercicio_all');
+            $this->cache->delete('m_ejercicio_all_abiertos');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
@@ -368,9 +324,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                         . ", idasientocierre = " . $this->var2str($this->idasientocierre)
                         . "  WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,
-               estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
-               VALUES (" . $this->var2str($this->codejercicio)
+                $sql = "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,"
+                        . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
+                        . "VALUES (" . $this->var2str($this->codejercicio)
                         . "," . $this->var2str($this->nombre)
                         . "," . $this->var2str($this->fechainicio)
                         . "," . $this->var2str($this->fechafin)
@@ -390,39 +346,47 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Elimina el ejercicio
-     * @return type
+     * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_ejercicio_all');
-        $this->cache->deleteItem('m_ejercicio_all_abiertos');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
+        $this->cache->delete('m_ejercicio_all');
+        $this->cache->delete('m_ejercicio_all_abiertos');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
     /**
      * Devuelve un array con todos los ejercicios
-     * @return \ejercicio
+     * @return ejercicio
      */
     public function all() {
-        $listae = $this->cache->getItem('m_ejercicio_all');
+        /// leemos de la cache
+        $listae = $this->cache->get('m_ejercicio_all');
         if (!$listae) {
+            /// si no está en cache, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
             if ($data) {
                 foreach ($data as $e) {
                     $listae[] = new ejercicio($e);
                 }
             }
-            $this->cache->save(new CacheItem('m_ejercicio_all', $listae));
+
+            /// guardamos en la cache
+            $this->cache->set('m_ejercicio_all', $listae);
         }
+
         return $listae;
     }
 
     /**
      * Devuelve un array con todos los ejercicio abiertos
-     * @return \ejercicio
+     * @return ejercicio
      */
     public function all_abiertos() {
-        $listae = $this->cache->getItem('m_ejercicio_all_abiertos');
+        /// leemos de la cache
+        $listae = $this->cache->get('m_ejercicio_all_abiertos');
         if (!$listae) {
+            /// si no está en cache, leemos de la base de datos
             $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
             $data = $this->dataBase->select($sql);
             if ($data) {
@@ -430,7 +394,9 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
                     $listae[] = new ejercicio($e);
                 }
             }
-            $this->cache->save(new CacheItem('m_ejercicio_all_abiertos', $listae));
+
+            /// guardamos en la cache
+            $this->cache->set('m_ejercicio_all_abiertos', $listae);
         }
 
         return $listae;

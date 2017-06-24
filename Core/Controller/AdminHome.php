@@ -27,7 +27,14 @@ namespace FacturaScripts\Core\Controller;
  */
 class AdminHome extends \FacturaScripts\Core\Base\Controller {
 
+    public $agente;
+    public $almacen;
+    public $divisa;
+    public $ejercicio;
     public $empresa;
+    public $formaPago;
+    public $pais;
+    public $serie;
     
     public function __construct($folder = '', $className = __CLASS__) {
         parent::__construct($folder, $className);
@@ -36,10 +43,18 @@ class AdminHome extends \FacturaScripts\Core\Base\Controller {
     public function run() {
         parent::run();
         
+        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
         $pluginManager->deploy();
 
+        $this->agente = new \FacturaScripts\Dinamic\Model\agente();
+        $this->almacen = new \FacturaScripts\Dinamic\Model\almacen();
+        $this->divisa = new \FacturaScripts\Dinamic\Model\divisa();
+        $this->ejercicio = new \FacturaScripts\Dinamic\Model\ejercicio();
         $this->empresa = new \FacturaScripts\Dinamic\Model\empresa();
+        $this->formaPago = new \FacturaScripts\Dinamic\Model\forma_pago();
+        $this->pais = new \FacturaScripts\Dinamic\Model\pais();
+        $this->serie = new \FacturaScripts\Dinamic\Model\serie();
     }
 
 }

@@ -106,6 +106,11 @@ abstract class Model {
     public function tableName() {
         return $this->tableName;
     }
+    
+    /**
+     * Esta función permite resetear los valores del modelo.
+     */
+    abstract public function clear();
 
     /**
      * Esta función es llamada al crear una tabla.

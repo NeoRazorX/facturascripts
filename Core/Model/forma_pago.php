@@ -85,14 +85,18 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $this->imprimir = $this->str2bool($data['imprimir']);
             $this->vencimiento = $data['vencimiento'];
         } else {
-            $this->codpago = NULL;
-            $this->descripcion = '';
-            $this->genrecibos = 'Emitidos';
-            $this->codcuenta = '';
-            $this->domiciliado = FALSE;
-            $this->imprimir = TRUE;
-            $this->vencimiento = '+1day';
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codpago = NULL;
+        $this->descripcion = '';
+        $this->genrecibos = 'Emitidos';
+        $this->codcuenta = '';
+        $this->domiciliado = FALSE;
+        $this->imprimir = TRUE;
+        $this->vencimiento = '+1day';
     }
 
     /**
@@ -100,7 +104,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->cache->deleteItem('m_forma_pago_all');
+        $this->cache->delete('m_forma_pago_all');
         return "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
@@ -127,15 +131,15 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve la forma de pago con codpago = $cod
      * @param string $cod
-     * @return \FacturaScripts\model\forma_pago|boolean
+     * @return forma_pago|boolean
      */
     public function get($cod) {
-        $pago = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
-        if ($pago) {
-            return new forma_pago($pago[0]);
-        } else {
-            return FALSE;
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new forma_pago($data[0]);
         }
+
+        return FALSE;
     }
 
     /**
@@ -145,13 +149,15 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codpago)) {
             return FALSE;
-        } else {
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
         }
+
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
     /**
      * Comprueba la validez de los datos de la forma de pago.
+     * @return boolean
      */
     public function test() {
         $this->descripcion = $this->noHtml($this->descripcion);
@@ -160,10 +166,11 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         $fecha1 = Date('d-m-Y');
         $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
-            /// vencimiento no válido, asignamos el predeterminado
             $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
-            $this->vencimiento = '+1day';
+            return FALSE;
         }
+
+        return TRUE;
     }
 
     /**
@@ -171,30 +178,33 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
-        $this->cache->deleteItem('m_forma_pago_all');
-        $this->test();
+        if ($this->test()) {
+            $this->cache->delete('m_forma_pago_all');
 
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
-                    ", genrecibos = " . $this->var2str($this->genrecibos) .
-                    ", codcuenta = " . $this->var2str($this->codcuenta) .
-                    ", domiciliado = " . $this->var2str($this->domiciliado) .
-                    ", imprimir = " . $this->var2str($this->imprimir) .
-                    ", vencimiento = " . $this->var2str($this->vencimiento) .
-                    "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
-        } else {
-            $sql = "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta
-            ,domiciliado,imprimir,vencimiento) VALUES 
-                  (" . $this->var2str($this->codpago) .
-                    "," . $this->var2str($this->descripcion) .
-                    "," . $this->var2str($this->genrecibos) .
-                    "," . $this->var2str($this->codcuenta) .
-                    "," . $this->var2str($this->domiciliado) .
-                    "," . $this->var2str($this->imprimir) .
-                    "," . $this->var2str($this->vencimiento) . ");";
+            if ($this->exists()) {
+                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
+                        ", genrecibos = " . $this->var2str($this->genrecibos) .
+                        ", codcuenta = " . $this->var2str($this->codcuenta) .
+                        ", domiciliado = " . $this->var2str($this->domiciliado) .
+                        ", imprimir = " . $this->var2str($this->imprimir) .
+                        ", vencimiento = " . $this->var2str($this->vencimiento) .
+                        "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
+            } else {
+                $sql = "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta"
+                        . ",domiciliado,imprimir,vencimiento) VALUES "
+                        . "(" . $this->var2str($this->codpago)
+                        . "," . $this->var2str($this->descripcion)
+                        . "," . $this->var2str($this->genrecibos)
+                        . "," . $this->var2str($this->codcuenta)
+                        . "," . $this->var2str($this->domiciliado)
+                        . "," . $this->var2str($this->imprimir)
+                        . "," . $this->var2str($this->vencimiento) . ");";
+            }
+
+            return $this->dataBase->exec($sql);
         }
 
-        return $this->dataBase->exec($sql);
+        return FALSE;
     }
 
     /**
@@ -202,24 +212,29 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_forma_pago_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
+        $this->cache->delete('m_forma_pago_all');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
     /**
      * Devuelve un array con todas las formas de pago
-     * @return \forma_pago
+     * @return forma_pago
      */
     public function all() {
-        $listaformas = $this->cache->getItem('m_forma_pago_all');
+        /// leemos de la cache
+        $listaformas = $this->cache->get('m_forma_pago_all');
         if (!$listaformas) {
+            /// si no está en cache, leemos de la base de datos
             $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
             if ($formas) {
                 foreach ($formas as $f) {
                     $listaformas[] = new forma_pago($f);
                 }
             }
-            $this->cache->save(new CacheItem('m_forma_pago_all', $listaformas));
+
+            /// guardamos en la cache
+            $this->cache->set('m_forma_pago_all', $listaformas);
         }
 
         return $listaformas;
@@ -263,29 +278,31 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     /**
      * Función recursiva auxiliar para calcular_vencimiento()
      * @param string $fecha_inicio
+     * @param string|integer $dia_de_pago
+     * @return string
      */
     private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
         if ($dia_de_pago == 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-        } else {
-            $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-            $tmp_dia = date('d', strtotime($fecha));
+        }
+
+        $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
+        $tmp_dia = date('d', strtotime($fecha));
+        $tmp_mes = date('m', strtotime($fecha));
+        $tmp_anyo = date('Y', strtotime($fecha));
+
+        if ($tmp_dia > $dia_de_pago) {
+            /// calculamos el dia de cobro para el mes siguiente
+            $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
             $tmp_mes = date('m', strtotime($fecha));
             $tmp_anyo = date('Y', strtotime($fecha));
-
-            if ($tmp_dia > $dia_de_pago) {
-                /// calculamos el dia de cobro para el mes siguiente
-                $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
-                $tmp_mes = date('m', strtotime($fecha));
-                $tmp_anyo = date('Y', strtotime($fecha));
-            }
-
-            /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-            $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
-
-            /// y por último generamos la fecha
-            return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
         }
+
+        /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
+        $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
+
+        /// y por último generamos la fecha
+        return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
     }
 
 }

@@ -1,15 +1,30 @@
 <?php
 
+/*
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 namespace FacturaScripts\Core\Base;
 
-/**
- * CacheItemPoolInterface generates CacheItemInterface objects.
- */
 class Cache {
     
     /**
      * El motor utilizado para la cache.
-     * @var Cache\PhpFileCache 
+     * @var Cache\FileCache 
      */
     private static $engine;
     
@@ -19,149 +34,44 @@ class Cache {
      */
     public function __construct($folder = '') {
         if(!isset(self::$engine)) {
-            self::$engine = new Cache\PhpFileCache($folder);
+            self::$engine = new Cache\FileCache($folder);
         }
     }
-
+    
     /**
-     * Returns a Cache Item representing the specified key.
-     *
-     * This method must always return a CacheItemInterface object, even in case of
-     * a cache miss. It MUST NOT return null.
-     *
+     * Devuelve el contenido asociado a esa $key que hay en la cache.
      * @param string $key
-     *   The key for which to return the corresponding Cache Item.
-     *
-     * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
-     *
-     * @return CacheItemInterface
-     *   The corresponding Cache Item.
+     * @return mixed
      */
-    public function getItem($key, $raw = false, $customTime = NULL) {
-        return self::$engine->getItem($key, $raw, $customTime);
+    public function get($key) {
+        return self::$engine->get($key);
     }
-
+    
     /**
-     * Returns a traversable set of cache items.
-     *
-     * @param string[] $keys
-     *   An indexed array of keys of items to retrieve.
-     *
-     * @throws InvalidArgumentException
-     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
-     *
-     * @return array|\Traversable
-     *   A traversable collection of Cache Items keyed by the cache keys of
-     *   each item. A Cache item will be returned for each key, even if that
-     *   key is not found. However, if no keys are specified then an empty
-     *   traversable MUST be returned instead.
-     */
-    public function getItems(array $keys = array()) {
-        return self::$engine->getItems($keys);
-    }
-
-    /**
-     * Confirms if the cache contains specified cache item.
-     *
-     * Note: This method MAY avoid retrieving the cached value for performance reasons.
-     * This could result in a race condition with CacheItemInterface::get(). To avoid
-     * such situation use CacheItemInterface::isHit() instead.
-     *
+     * Guarda en la cache el contenido y lo asocia a $key
      * @param string $key
-     *   The key for which to check existence.
-     *
-     * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
-     *
+     * @param mixed $content
      * @return bool
-     *   True if item exists in the cache, false otherwise.
      */
-    public function hasItem($key) {
-        return self::$engine->hasItem($key);
+    public function set($key, $content) {
+        return self::$engine->set($key, $content);
     }
-
+    
     /**
-     * Deletes all items in the pool.
-     *
+     * Elimina de la cache el contenido asociado a la $key
+     * @param string $key
      * @return bool
-     *   True if the pool was successfully cleared. False if there was an error.
+     */
+    public function delete($key) {
+        return self::$engine->delete($key);
+    }
+    
+    /**
+     * Limpia todo el contenido de la cache.
+     * @return bool
      */
     public function clear() {
         return self::$engine->clear();
-    }
-
-    /**
-     * Removes the item from the pool.
-     *
-     * @param string $key
-     *   The key to delete.
-     *
-     * @throws InvalidArgumentException
-     *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
-     *
-     * @return bool
-     *   True if the item was successfully removed. False if there was an error.
-     */
-    public function deleteItem($key) {
-        return self::$engine->deleteItem($key);
-    }
-
-    /**
-     * Removes multiple items from the pool.
-     *
-     * @param string[] $keys
-     *   An array of keys that should be removed from the pool.
-
-     * @throws InvalidArgumentException
-     *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
-     *   MUST be thrown.
-     *
-     * @return bool
-     *   True if the items were successfully removed. False if there was an error.
-     */
-    public function deleteItems(array $keys) {
-        return self::$engine->deleteItems($keys);
-    }
-
-    /**
-     * Persists a cache item immediately.
-     *
-     * @param CacheItemInterface $item
-     *   The cache item to save.
-     *
-     * @return bool
-     *   True if the item was successfully persisted. False if there was an error.
-     */
-    public function save(CacheItem $item) {
-        return self::$engine->save($item);
-    }
-
-    /**
-     * Sets a cache item to be persisted later.
-     *
-     * @param CacheItemInterface $item
-     *   The cache item to save.
-     *
-     * @return bool
-     *   False if the item could not be queued or if a commit was attempted and failed. True otherwise.
-     */
-    public function saveDeferred(CacheItem $item) {
-        return self::$engine->saveDeferred($item);
-    }
-
-    /**
-     * Persists any deferred cache items.
-     *
-     * @return bool
-     *   True if all not-yet-saved items were successfully saved or there were none. False otherwise.
-     */
-    public function commit() {
-        return self::$engine->commit();
     }
 
 }

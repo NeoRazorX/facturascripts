@@ -135,6 +135,7 @@ class App {
 
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
+            $twigOptions['debug'] = TRUE;
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
         }
         $twig = new \Twig_Environment($twigLoader, $twigOptions);

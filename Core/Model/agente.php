@@ -152,40 +152,32 @@ class agente extends \FacturaScripts\Core\Base\Model {
             $this->seg_social = $data['seg_social'];
             $this->banco = $data['banco'];
             $this->cargo = $data['cargo'];
-
-            $this->f_alta = NULL;
-            if ($data['f_alta'] != '') {
-                $this->f_alta = Date('d-m-Y', strtotime($data['f_alta']));
-            }
-
-            $this->f_baja = NULL;
-            if ($data['f_baja'] != '') {
-                $this->f_baja = Date('d-m-Y', strtotime($data['f_baja']));
-            }
-
-            $this->f_nacimiento = NULL;
-            if ($data['f_nacimiento'] != '') {
-                $this->f_nacimiento = Date('d-m-Y', strtotime($data['f_nacimiento']));
-            }
+            $this->f_alta = Date('d-m-Y', strtotime($data['f_alta']));
+            $this->f_baja = Date('d-m-Y', strtotime($data['f_baja']));
+            $this->f_nacimiento = Date('d-m-Y', strtotime($data['f_nacimiento']));
         } else {
-            $this->codagente = NULL;
-            $this->nombre = '';
-            $this->apellidos = '';
-            $this->dnicif = '';
-            $this->email = NULL;
-            $this->telefono = NULL;
-            $this->codpostal = NULL;
-            $this->provincia = NULL;
-            $this->ciudad = NULL;
-            $this->direccion = NULL;
-            $this->porcomision = 0.00;
-            $this->seg_social = NULL;
-            $this->banco = NULL;
-            $this->cargo = NULL;
-            $this->f_alta = Date('d-m-Y');
-            $this->f_baja = NULL;
-            $this->f_nacimiento = Date('d-m-Y');
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codagente = NULL;
+        $this->nombre = '';
+        $this->apellidos = '';
+        $this->dnicif = '';
+        $this->email = NULL;
+        $this->telefono = NULL;
+        $this->codpostal = NULL;
+        $this->provincia = NULL;
+        $this->ciudad = NULL;
+        $this->direccion = NULL;
+        $this->porcomision = 0.00;
+        $this->seg_social = NULL;
+        $this->banco = NULL;
+        $this->cargo = NULL;
+        $this->f_alta = Date('d-m-Y');
+        $this->f_baja = NULL;
+        $this->f_nacimiento = Date('d-m-Y');
     }
 
     /**
@@ -193,9 +185,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        $this->cache->deleteItem('m_agente_all');
-        return "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif)
-         VALUES ('1','Paco','Pepe','00000014Z');";
+        $this->cache->delete('m_agente_all');
+        return "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif)"
+                . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 
     /**
@@ -235,7 +227,7 @@ class agente extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve el empleado/agente con codagente = $cod
      * @param string $cod
-     * @return \agente|boolean
+     * @return agente|boolean
      */
     public function get($cod) {
         $agente = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($cod) . ";");
@@ -255,7 +247,8 @@ class agente extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
-        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
     /**
@@ -289,9 +282,9 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function save() {
-        
         if ($this->test()) {
-            $this->cache->deleteItem('m_agente_all');
+            $this->cache->delete('m_agente_all');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre) .
                         ", apellidos = " . $this->var2str($this->apellidos) .
@@ -315,25 +308,25 @@ class agente extends \FacturaScripts\Core\Base\Model {
                     $this->codagente = $this->get_new_codigo();
                 }
 
-                $sql = "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif,telefono,
-               email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,
-               banco,porcomision) VALUES (" . $this->var2str($this->codagente) .
-                        "," . $this->var2str($this->nombre) .
-                        "," . $this->var2str($this->apellidos) .
-                        "," . $this->var2str($this->dnicif) .
-                        "," . $this->var2str($this->telefono) .
-                        "," . $this->var2str($this->email) .
-                        "," . $this->var2str($this->cargo) .
-                        "," . $this->var2str($this->provincia) .
-                        "," . $this->var2str($this->ciudad) .
-                        "," . $this->var2str($this->direccion) .
-                        "," . $this->var2str($this->codpostal) .
-                        "," . $this->var2str($this->f_nacimiento) .
-                        "," . $this->var2str($this->f_alta) .
-                        "," . $this->var2str($this->f_baja) .
-                        "," . $this->var2str($this->seg_social) .
-                        "," . $this->var2str($this->banco) .
-                        "," . $this->var2str($this->porcomision) . ");";
+                $sql = "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif,telefono,"
+                        . "email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,"
+                        . "banco,porcomision) VALUES (" . $this->var2str($this->codagente)
+                        . "," . $this->var2str($this->nombre)
+                        . "," . $this->var2str($this->apellidos)
+                        . "," . $this->var2str($this->dnicif)
+                        . "," . $this->var2str($this->telefono)
+                        . "," . $this->var2str($this->email)
+                        . "," . $this->var2str($this->cargo)
+                        . "," . $this->var2str($this->provincia)
+                        . "," . $this->var2str($this->ciudad)
+                        . "," . $this->var2str($this->direccion)
+                        . "," . $this->var2str($this->codpostal)
+                        . "," . $this->var2str($this->f_nacimiento)
+                        . "," . $this->var2str($this->f_alta)
+                        . "," . $this->var2str($this->f_baja)
+                        . "," . $this->var2str($this->seg_social)
+                        . "," . $this->var2str($this->banco)
+                        . "," . $this->var2str($this->porcomision) . ");";
             }
 
             return $this->dataBase->exec($sql);
@@ -347,18 +340,19 @@ class agente extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_agente_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
+        $this->cache->delete('m_agente_all');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
     /**
      * Devuelve un array con todos los agentes/empleados.
-     * @return \agente
+     * @return agente
      */
     public function all($incluir_debaja = FALSE) {
+        $listagentes = array();
 
         if ($incluir_debaja) {
-            $listagentes = array();
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC, apellidos ASC;");
             if ($data) {
                 foreach ($data as $a) {
@@ -366,14 +360,18 @@ class agente extends \FacturaScripts\Core\Base\Model {
                 }
             }
         } else {
+            /// consultamos primero la cache
+            $listagentes = $this->cache->get('m_agente_all');
             if (!$listagentes) {
-                $listagentes = $this->cache->getItem('m_agente_all');
+                /// si no está en la cache, consultamos la base de datos
                 $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
                 if ($data) {
                     foreach ($data as $a) {
                         $listagentes[] = new agente($a);
                     }
                 }
+
+                /// guardamos en la cache
                 $this->cache->set('m_agente_all', $listagentes);
             }
         }

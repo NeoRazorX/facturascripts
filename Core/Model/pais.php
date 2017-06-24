@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,10 +58,14 @@ class pais extends \FacturaScripts\Core\Base\Model {
             $this->codiso = $data['codiso'];
             $this->nombre = $data['nombre'];
         } else {
-            $this->codpais = '';
-            $this->codiso = NULL;
-            $this->nombre = '';
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codpais = '';
+        $this->codiso = NULL;
+        $this->nombre = '';
     }
 
     /**
@@ -69,7 +73,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->cache->deleteItem('m_pais_all');
+        $this->cache->delete('m_pais_all');
         return "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
@@ -321,8 +325,9 @@ class pais extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codpais)) {
             return 'index.php?page=admin_paises';
-        } else
-            return 'index.php?page=admin_paises#' . $this->codpais;
+        }
+
+        return 'index.php?page=admin_paises#' . $this->codpais;
     }
 
     /**
@@ -336,28 +341,29 @@ class pais extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve el pais con codpais = $cod
      * @param string $cod
-     * @return boolean|\FacturaScripts\model\pais
+     * @return boolean|pais
      */
     public function get($cod) {
-        $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($cod) . ";");
-        if ($pais) {
-            return new pais($pais[0]);
-        } else
-            return FALSE;
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new pais($data[0]);
+        }
+
+        return FALSE;
     }
 
     /**
      * Devuelve el pais con codido = $cod
      * @param string $cod
-     * @return \pais|boolean
+     * @return pais|boolean
      */
     public function get_by_iso($cod) {
-        $pais = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codiso = " . $this->var2str($cod) . ";");
-        if ($pais) {
-            return new pais($pais[0]);
-        } else {
-            return FALSE;
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codiso = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new pais($data[0]);
         }
+
+        return FALSE;
     }
 
     /**
@@ -367,8 +373,10 @@ class pais extends \FacturaScripts\Core\Base\Model {
     public function exists() {
         if (is_null($this->codpais)) {
             return FALSE;
-        } else
-            return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
+        }
+
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
     /**
@@ -382,7 +390,7 @@ class pais extends \FacturaScripts\Core\Base\Model {
         $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
-            $this->miniLog->alert($this->i18n->trans('country-cod-invalid',$this->codpais));
+            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', $this->codpais));
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
@@ -398,7 +406,8 @@ class pais extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->deleteItem('m_pais_all');
+            $this->cache->delete('m_pais_all');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET codiso = " . $this->var2str($this->codiso) .
                         ", nombre = " . $this->var2str($this->nombre) .
@@ -412,35 +421,40 @@ class pais extends \FacturaScripts\Core\Base\Model {
 
             return $this->dataBase->exec($sql);
         }
-        
+
         return FALSE;
     }
 
     /**
      * Elimina el pais (de la base de datos ... por ahora)
-     * @return type
+     * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_pais_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
+        $this->cache->delete('m_pais_all');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
     /**
      * Devuelve un array con todos los paises
-     * @return \pais
+     * @return pais
      */
     public function all() {
-        $listap = $this->cache->getItem('m_pais_all');
+        /// Leemos de la cache
+        $listap = $this->cache->get('m_pais_all');
         if (!$listap) {
+            /// si no está en cache, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
-        
             if ($data) {
                 foreach ($data as $p) {
                     $listap[] = new pais($p);
                 }
             }
-            $this->cache->save(new CacheItem('m_pais_all', $listap));
+
+            /// guardamos en la cache
+            $this->cache->set('m_pais_all', $listap);
         }
+
         return $listap;
     }
 

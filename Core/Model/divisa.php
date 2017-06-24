@@ -73,30 +73,21 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             $this->coddivisa = $data['coddivisa'];
             $this->descripcion = $data['descripcion'];
             $this->tasaconv = floatval($data['tasaconv']);
+            $this->tasaconv_compra = floatval($data['tasaconv_compra']);
             $this->codiso = $data['codiso'];
             $this->simbolo = $data['simbolo'];
-
-            if ($this->simbolo == '' && $this->coddivisa == 'EUR') {
-                $this->simbolo = '€';
-                $this->save();
-            }
-
-            if (is_null($data['tasaconv_compra'])) {
-                $this->tasaconv_compra = floatval($data['tasaconv']);
-
-                /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
-                $this->save();
-            } else {
-                $this->tasaconv_compra = floatval($data['tasaconv_compra']);
-            }
         } else {
-            $this->coddivisa = NULL;
-            $this->descripcion = '';
-            $this->tasaconv = 1.00;
-            $this->tasaconv_compra = 1.00;
-            $this->codiso = NULL;
-            $this->simbolo = '?';
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->coddivisa = NULL;
+        $this->descripcion = '';
+        $this->tasaconv = 1.00;
+        $this->tasaconv_compra = 1.00;
+        $this->codiso = NULL;
+        $this->simbolo = '?';
     }
 
     /**
@@ -104,7 +95,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->cache->deleteItem('m_divisa_all');
+        $this->cache->delete('m_divisa_all');
         return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
@@ -139,12 +130,12 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve la divisa con coddivsa = $cod
      * @param string $cod
-     * @return boolean|\FacturaScripts\model\divisa
+     * @return boolean|divisa
      */
     public function get($cod) {
-        $divisa = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
-        if ($divisa) {
-            return new divisa($divisa[0]);
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new divisa($data[0]);
         }
 
         return FALSE;
@@ -159,7 +150,8 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
-        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
+                        . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -192,7 +184,8 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->deleteItem('m_divisa_all');
+            $this->cache->delete('m_divisa_all');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                         ", tasaconv = " . $this->var2str($this->tasaconv) .
@@ -221,24 +214,29 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_divisa_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        $this->cache->delete('m_divisa_all');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
      * Devuelve un array con todas las divisas.
-     * @return \divisa
+     * @return divisa
      */
     public function all() {
-        $listad = $this->cache->getItem('m_divisa_all');
+        /// leemos de la cache
+        $listad = $this->cache->get('m_divisa_all');
         if (!$listad) {
+            /// si no está en cache, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
             if ($data) {
                 foreach ($data as $d) {
                     $listad[] = new divisa($d);
                 }
             }
-            $this->cache->save(new CacheItem('m_divisa_all',$listad));
+
+            /// guardamos en cache
+            $this->cache->set('m_divisa_all', $listad);
         }
 
         return $listad;

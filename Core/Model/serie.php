@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -78,13 +78,17 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->codejercicio = $data['codejercicio'];
             $this->numfactura = max(array(1, intval($data['numfactura'])));
         } else {
-            $this->codserie = '';
-            $this->descripcion = '';
-            $this->siniva = FALSE;
-            $this->irpf = 0.00;
-            $this->codejercicio = NULL;
-            $this->numfactura = 1;
+            $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codserie = '';
+        $this->descripcion = '';
+        $this->siniva = FALSE;
+        $this->irpf = 0.00;
+        $this->codejercicio = NULL;
+        $this->numfactura = 1;
     }
 
     /**
@@ -92,7 +96,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->cache->deleteItem('m_serie_all');
+        $this->cache->delete('m_serie_all');
         return "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
@@ -104,8 +108,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public function url() {
         if (is_null($this->codserie)) {
             return 'index.php?page=contabilidad_series';
-        } else
-            return 'index.php?page=contabilidad_series#' . $this->codserie;
+        }
+
+        return 'index.php?page=contabilidad_series#' . $this->codserie;
     }
 
     /**
@@ -119,7 +124,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
     /**
      * Devuelve la serie solicitada o false si no la encuentra.
      * @param string $cod
-     * @return \serie|boolean
+     * @return serie|boolean
      */
     public function get($cod) {
         $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($cod) . ";");
@@ -139,7 +144,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
-        return $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -160,8 +165,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
         } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -172,7 +178,8 @@ class serie extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->deleteItem('m_serie_all');
+            $this->cache->delete('m_serie_all');
+
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
                         . ", siniva = " . $this->var2str($this->siniva)
@@ -198,31 +205,35 @@ class serie extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Elimina la serie
-     * @return type
+     * @return boolean
      */
     public function delete() {
-        $this->cache->deleteItem('m_serie_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        $this->cache->delete('m_serie_all');
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
      * Devuelve un array con todas las series
-     * @return \serie
+     * @return serie
      */
     public function all() {
-        $serielist = $this->cache->getItem('m_serie_all');
-        if (!$serielist) {
+        /// Leemos de la cache
+        $serieList = $this->cache->get('m_serie_all');
+        if (!$serieList) {
+            /// si no está en la cache, leemos de la base de datos
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
             if ($data) {
                 foreach ($data as $s) {
-                    $serielist[] = new serie($s);
+                    $serieList[] = new serie($s);
                 }
             }
-            $this->cache->save(new CacheItem('m_serie_all', $serielist));
+
+            /// guardamos en la cache
+            $this->cache->set('m_serie_all', $serieList);
         }
 
-
-        return $serielist;
+        return $serieList;
     }
 
 }
