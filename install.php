@@ -26,10 +26,11 @@ if (file_exists(__DIR__ . '/config.php')) {
      */
     header('Location: index.php');
     die('');
-} else if (!file_exists(__DIR__ . '/vendor')) {
-    die("<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>"
-            . "----------------------------------------"
-            . "<p>Debes ejecutar: composer install</p>");
+}
+if (!file_exists(__DIR__ . '/vendor')) {
+    die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>'
+            . '----------------------------------------'
+            . '<p>Debes ejecutar: composer install</p>');
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -38,46 +39,77 @@ use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
-function searchErrors(&$errors, &$i18n) {
-    if (floatval('3,1') >= floatval('3.1')) {
+/**
+ * Devuelve un array de errores con las situaciones conocidas
+ *
+ * @param $errors
+ * @param $i18n
+ */
+function searchErrors(&$errors, &$i18n)
+{
+    if ((float)'3,1' >= (float)'3.1') {
         $errors[] = $i18n->trans('wrong-decimal-separator');
-    } else if (!function_exists('mb_substr')) {
+    } elseif (!function_exists('mb_substr')) {
         $errors[] = $i18n->trans('mb-string-not-fount');
-    } else if (!extension_loaded('simplexml')) {
+    } elseif (!extension_loaded('simplexml')) {
         $errors[] = $i18n->trans('simplexml-not-found');
-    } else if (!extension_loaded('openssl')) {
+    } elseif (!extension_loaded('openssl')) {
         $errors[] = $i18n->trans('openssl-not-found');
-    } else if (!extension_loaded('zip')) {
+    } elseif (!extension_loaded('zip')) {
         $errors[] = $i18n->trans('ziparchive-not-found');
-    } else if (!is_writable(__DIR__)) {
+    } elseif (!is_writable(__DIR__)) {
         $errors[] = $i18n->trans('folder-not-writable');
     }
 }
 
-function getLanguages() {
+/**
+ * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
+ * el value es su correspondiente traducción.
+ *
+ * @param $i18n
+ *
+ * @return array
+ */
+function getLanguages($i18n)
+{
     $languages = [];
 
     foreach (scandir(__DIR__ . '/Core/Translation') as $fileName) {
-        if ($fileName != '.' && $fileName != '..' && !is_dir($fileName) && substr($fileName, -5) == '.json') {
-            $languages[] = substr($fileName, 0, -5);
+        if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+            $key = substr($fileName, 0, -5);
+            $value = $i18n->trans('languages-'.substr($fileName, 0, -5));
+            $languages[$key] = $value;
         }
     }
 
     return $languages;
 }
 
-function dbConnect(&$errors, &$i18n) {
-    $done = FALSE;
-    $dbHost = filter_input(INPUT_POST, 'db_host');
-    $dbPort = filter_input(INPUT_POST, 'db_port');
-    $dbUser = filter_input(INPUT_POST, 'db_user');
-    $dbPass = filter_input(INPUT_POST, 'db_pass');
-    $dbName = filter_input(INPUT_POST, 'db_name');
+/**
+ * Se intenta realizar la conexión a la base de datos,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
+ *
+ * @param $errors
+ * @param $i18n
+ *
+ * @return bool
+ */
+function dbConnect(&$errors, &$i18n)
+{
+    $done = false;
+    $dbData = [
+        'host' => filter_input(INPUT_POST, 'db_host'),
+        'port' => filter_input(INPUT_POST, 'db_port'),
+        'user' => filter_input(INPUT_POST, 'db_user'),
+        'pass' => filter_input(INPUT_POST, 'db_pass'),
+        'name' => filter_input(INPUT_POST, 'db_name')
+    ];
 
     switch (filter_input(INPUT_POST, 'db_type')) {
         case 'mysql':
             if (class_exists('mysqli')) {
-                $done = testMysql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+                $done = testMysql($errors, $dbData);
             } else {
                 $errors[] = $i18n->trans('mysqli-not-found');
             }
@@ -85,7 +117,7 @@ function dbConnect(&$errors, &$i18n) {
 
         case 'postgresql':
             if (function_exists('pg_connect')) {
-                $done = testPostgreSql($errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+                $done = testPostgreSql($errors, $dbData);
             } else {
                 $errors[] = $i18n->trans('postgresql-not-found');
             }
@@ -99,26 +131,37 @@ function dbConnect(&$errors, &$i18n) {
     return $done;
 }
 
-function testMysql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-    $done = FALSE;
+/**
+ * Se intenta realizar la conexión a la base de datos MySQL,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
+ *
+ * @param $errors
+ * @param $dbData
+ *
+ * @return bool
+ */
+function testMysql(&$errors, $dbData)
+{
+    $done = false;
 
-    if (filter_input(INPUT_POST, 'mysql_socket') != '') {
+    if (filter_input(INPUT_POST, 'mysql_socket') !== '') {
         ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
     }
 
     // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
-    $connection = new mysqli($dbHost, $dbUser, $dbPass, "", intval($dbPort));
+    $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
     if ($connection->connect_error) {
         $errors[] = (string) $connection->connect_error;
     } else {
         // Comprobamos que la BD exista, de lo contrario la creamos
-        $dbSelected = mysqli_select_db($connection, $dbName);
+        $dbSelected = mysqli_select_db($connection, $dbData['name']);
         if ($dbSelected) {
-            $done = TRUE;
+            $done = true;
         } else {
-            $sqlCrearBD = "CREATE DATABASE `" . $dbName . "`;";
+            $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
             if ($connection->query($sqlCrearBD)) {
-                $done = TRUE;
+                $done = true;
             } else {
                 $errors[] = (string) $connection->connect_error;
             }
@@ -128,19 +171,30 @@ function testMysql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
     return $done;
 }
 
-function testPostgreSql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-    $done = FALSE;
+/**
+ * Se intenta realizar la conexión a la base de datos PostgreSQL,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
+ *
+ * @param $errors
+ * @param $dbData
+ *
+ * @return bool
+ */
+function testPostgreSql(&$errors, $dbData)
+{
+    $done = false;
 
-    $connection = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' user=' . $dbUser . ' password=' . $dbPass);
+    $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
     if ($connection) {
         // Comprobamos que la BD exista, de lo contrario la creamos
-        $connection2 = pg_connect('host=' . $dbHost . ' port=' . $dbPort . ' dbname=' . $dbName . ' user=' . $dbUser . ' password=' . $dbPass);
+        $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if ($connection2) {
-            $done = TRUE;
+            $done = true;
         } else {
-            $sqlCrearBD = 'CREATE DATABASE "' . $dbName . '";';
+            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
             if (pg_query($connection, $sqlCrearBD)) {
-                $done = TRUE;
+                $done = true;
             } else {
                 $errors[] = (string) pg_last_error($connection);
             }
@@ -150,20 +204,38 @@ function testPostgreSql(&$errors, $dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
     return $done;
 }
 
-function createFolders() {
+/**
+ * Si se han creado las carpetas necesarias, o ya existen
+ * se devuelve true, sino false
+ *
+ * @return bool
+ */
+function createFolders()
+{
+    // En caso que ya existan previamente, podemos devolver true
+    if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
+        return true;
+    }
     if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
-        return TRUE;
+        return true;
     }
 
-    return FALSE;
+    return false;
 }
 
-function saveInstall() {
-    $file = fopen(__DIR__ . '/config.php', "w");
+/**
+ * Guarda la configuración en config.php,
+ * devuelve true en caso afirmativo, y sino false.
+ *
+ * @return bool
+ */
+function saveInstall()
+{
+    $file = fopen(__DIR__ . '/config.php', 'wb');
     if ($file) {
         fwrite($file, "<?php\n");
         fwrite($file, "define('FS_COOKIES_EXPIRE', 604800);\n");
-        fwrite($file, "define('FS_DEBUG', TRUE);\n");
+        fwrite($file, "define('FS_DEBUG', true);\n");
         fwrite($file, "define('FS_LANG', '" . filter_input(INPUT_POST, 'fs_lang') . "');\n");
         fwrite($file, "define('FS_DB_TYPE', '" . filter_input(INPUT_POST, 'db_type') . "');\n");
         fwrite($file, "define('FS_DB_HOST', '" . filter_input(INPUT_POST, 'db_host') . "');\n");
@@ -176,18 +248,28 @@ function saveInstall() {
         }
         fwrite($file, "\n");
         fclose($file);
-        return TRUE;
+        return true;
     }
 
-    return FALSE;
+    return false;
 }
 
-function deployPlugins() {
+/**
+ * Prepara todos los plugins
+ */
+function deployPlugins()
+{
     $pluginManager = new PluginManager(__DIR__);
     $pluginManager->deploy();
 }
 
-function renderHTML(&$templateVars) {
+/**
+ * Renderiza la vista y devuelve la respuesta
+ *
+ * @param $templateVars
+ */
+function renderHTML(&$templateVars)
+{
     /// cargamos el motor de plantillas
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
     $twig = new Twig_Environment($twigLoader);
@@ -197,10 +279,16 @@ function renderHTML(&$templateVars) {
     $response->send();
 }
 
-function installerMain() {
+/**
+ * Función principal del instalador
+ *
+ * @return int
+ */
+function installerMain()
+{
     $errors = [];
     
-    if(filter_input(INPUT_POST, 'fs_lang')) {
+    if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } else {
         $i18n = new Translator(__DIR__);
@@ -211,7 +299,7 @@ function installerMain() {
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
         if (dbConnect($errors, $i18n) && createFolders() && saveInstall()) {
             deployPlugins();
-            header("Location: index.php");
+            header('Location: index.php');
             return 0;
         }
     }
@@ -220,7 +308,7 @@ function installerMain() {
     $templateVars = array(
         'errors' => $errors,
         'i18n' => $i18n,
-        'languages' => getLanguages(),
+        'languages' => getLanguages($i18n),
         'license' => file_get_contents(__DIR__ . '/COPYING')
     );
     renderHTML($templateVars);
