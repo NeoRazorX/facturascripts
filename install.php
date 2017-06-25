@@ -27,6 +27,7 @@ if (file_exists(__DIR__ . '/config.php')) {
     header('Location: index.php');
     die('');
 }
+
 if (!file_exists(__DIR__ . '/vendor')) {
     die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>'
             . '----------------------------------------'
@@ -70,15 +71,14 @@ function searchErrors(&$errors, &$i18n)
  *
  * @return array
  */
-function getLanguages($i18n)
+function getLanguages(&$i18n)
 {
     $languages = [];
 
     foreach (scandir(__DIR__ . '/Core/Translation') as $fileName) {
         if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
             $key = substr($fileName, 0, -5);
-            $value = $i18n->trans('languages-'.substr($fileName, 0, -5));
-            $languages[$key] = $value;
+            $languages[$key] = $i18n->trans('languages-'.substr($fileName, 0, -5));
         }
     }
 
