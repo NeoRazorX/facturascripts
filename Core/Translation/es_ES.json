@@ -33,7 +33,7 @@
     "conversion-rate-pruchases-not-0": "La tasa de conversión para compras no puede ser 0.",
     "date-out-of-rage-selected-better": "La fecha seleccionada está fuera del rango del ejercicio. Se ha seleccionado una mejor.",
     "fiscal-year-code-invalid":"Código de ejercicio no válido.",
-    "fiscal-year-name-invalid":"Nombre del ejercicio noválido.",
+    "fiscal-year-name-invalid":"Nombre del ejercicio no válido.",
     "start-date-later-end-date":"La fecha de inicio %s es posterior a la fecha fin %s.",
     "date-invalid":"Fecha no válida.",
     "date-invalid-date": "Fecha no válida: %s",
@@ -46,8 +46,15 @@
     "country-cod-invalid": "Código del país no válido: %s",
     "country-name-invalid": "Nombre del país no válido.",
     "serie-cod-invalid":"Código de serie no válido.",
-    "serie-desc-invalid":"Descripción de serie no válida."
-    
-    
-    
+    "serie-desc-invalid":"Descripción de serie no válida.",
+    "languages-ar_ES": "Español (Argentina)",
+    "languages-ba_ES": "Vasco (España)",
+    "languages-ca_ES": "Catalán (España)",
+    "languages-de_DE": "Alemán (Alemania)",
+    "languages-en_EN": "Inglés (Estados Unidos de América)",
+    "languages-es_ES": "Español (España)",
+    "languages-eu_ES": "Euskera (España)",
+    "languages-fr_FR": "Francés (Francia)",
+    "languages-gl_ES": "Gallego (España)",
+    "languages-it_IT": "Italiano (Italia)"
 }

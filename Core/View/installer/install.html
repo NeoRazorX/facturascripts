@@ -10,6 +10,21 @@
         <link rel="stylesheet" href="vendor/components/font-awesome/css/font-awesome.min.css" />
         <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                $('#db_type').on('change', function () {
+                    $('#db_type option:selected').each(function() {
+                        str = $(this).val();
+                    });
+                    if (str === 'mysql') {
+                        port = 3306;
+                    } else if (str === 'postgresql') {
+                        port = 5432;
+                    }
+                    $('#db_port').val( port );
+                });
+            });
+        </script>
     </head>
     <body>
         <div class="container">
@@ -64,11 +79,11 @@
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
                                     <select name="fs_lang" class="form-control">
-                                    {% for langCode in languages %}
+                                    {% for langCode, langName in languages %}
                                         {% if langCode == 'es_ES' %}
-                                        <option value="{{ langCode }}" selected="">{{ langCode }}</option>
+                                        <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                         {% else %}
-                                        <option value="{{ langCode }}">{{ langCode }}</option>
+                                        <option value="{{ langCode }}">{{ langName }}</option>
                                         {% endif %}
                                     {% endfor %}
                                     </select>
@@ -79,7 +94,7 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('db-type') }}:
-                                    <select name="db_type" class="form-control">
+                                    <select id="db_type" name="db_type" class="form-control">
                                         <option value="mysql">MySQL</option>
                                         <option value="postgresql">PostgreSQL</option>
                                     </select>
@@ -94,7 +109,7 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('db-port') }}:
-                                    <input type="number" name="db_port" value="3306" class="form-control" required=""/>
+                                    <input type="number" id="db_port" name="db_port" value="3306" class="form-control" required=""/>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -148,7 +163,7 @@
                 <div class="col-sm-12">
                     <hr/>
                     <small>
-                        &COPY; 2013-2017 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+                        &COPY; 2013-{{ 'now'|date('Y')}} <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
                     </small>
                     <br/>
                     <br/>
