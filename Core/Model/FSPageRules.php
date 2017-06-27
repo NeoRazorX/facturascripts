@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FSPageRules extends \FacturaScripts\Core\Base\Model {
+class FSPageRules {
+
+    use \FacturaScripts\Core\Base\Model;
 
     public $id;
 
@@ -50,58 +52,18 @@ class FSPageRules extends \FacturaScripts\Core\Base\Model {
     public $allowupdate;
 
     public function __construct($data = FALSE) {
-        parent::__construct('fs_access', 'id');
+        $this->init('fs_access', 'id');
         if ($data) {
-            $this->id = (int) $data['id'];
-            $this->nick = $data['nick'];
-            $this->pagename = $data['pagename'];
-            $this->allowdelete = $this->str2bool($data['allowdelete']);
-            $this->allowupdate = $this->str2bool($data['allowupdate']);
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
 
-    public function clear() {
-        $this->id = NULL;
-        $this->nick = NULL;
-        $this->pagename = NULL;
-        $this->allowdelete = NULL;
-        $this->allowupdate = NULL;
-    }
-
-    protected function install() {
-        return '';
-    }
-
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->tableName . " SET allowdelete = " . $this->var2str($this->allowdelete)
-                    . ", allowupdate = " . $this->var2str($this->allowupdate)
-                    . ", nick = " . $this->var2str($this->nick)
-                    . ", pagename = " . $this->var2str($this->pagename)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-            return $this->dataBase->exec($sql);
-        }
-
-        $sql = "INSERT INTO " . $this->tableName . " (nick,pagename,allowdelete,allowupdate) VALUES "
-                . "(" . $this->var2str($this->nick)
-                . "," . $this->var2str($this->pagename)
-                . "," . $this->var2str($this->allowdelete)
-                . "," . $this->var2str($this->allowupdate) . ");";
-
-        if ($this->dataBase->exec($sql)) {
-            $this->id = $this->dataBase->lastval();
-            return TRUE;
-        }
-        
-        return FALSE;
-    }
-
     public function all() {
         $accesslist = array();
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
         if ($data) {
             foreach ($data as $a) {
                 $accesslist[] = new FSPageRules($a);

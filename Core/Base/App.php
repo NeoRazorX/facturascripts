@@ -142,6 +142,7 @@ class App {
             foreach($this->miniLog->read(['debug','sql']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
+            $this->debugBar['messages']->info('END');
         }
         $twig = new \Twig_Environment($twigLoader, $twigOptions);
 

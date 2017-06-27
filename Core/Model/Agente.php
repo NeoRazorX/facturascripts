@@ -27,7 +27,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Agente extends \FacturaScripts\Core\Base\Model {
+class Agente {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (10).
@@ -136,25 +138,9 @@ class Agente extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear un nuevo agente
      */
     public function __construct($data = FALSE) {
-        parent::__construct('agentes', 'codagente');
+        $this->init('agentes', 'codagente');
         if ($data) {
-            $this->codagente = $data['codagente'];
-            $this->nombre = $data['nombre'];
-            $this->apellidos = $data['apellidos'];
-            $this->dnicif = $data['dnicif'];
-            $this->email = $data['email'];
-            $this->telefono = $data['telefono'];
-            $this->codpostal = $data['codpostal'];
-            $this->provincia = $data['provincia'];
-            $this->ciudad = $data['ciudad'];
-            $this->direccion = $data['direccion'];
-            $this->porcomision = floatval($data['porcomision']);
-            $this->seg_social = $data['seg_social'];
-            $this->banco = $data['banco'];
-            $this->cargo = $data['cargo'];
-            $this->f_alta = Date('d-m-Y', strtotime($data['f_alta']));
-            $this->f_baja = Date('d-m-Y', strtotime($data['f_baja']));
-            $this->f_nacimiento = Date('d-m-Y', strtotime($data['f_nacimiento']));
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -181,6 +167,15 @@ class Agente extends \FacturaScripts\Core\Base\Model {
     }
 
     /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * @return string
+     */
+    protected function install() {
+        return "INSERT INTO " . $this->tableName() . " (codagente,nombre,apellidos,dnicif)"
+                . " VALUES ('1','Paco','Pepe','00000014Z');";
+    }
+
+    /**
      * Devuelve nombre + apellidos del agente.
      * @return string
      */
@@ -193,7 +188,7 @@ class Agente extends \FacturaScripts\Core\Base\Model {
      * @return int
      */
     public function newCodigo() {
-        $sql = "SELECT MAX(" . $this->dataBase->sql2int('codagente') . ") as cod FROM " . $this->tableName . ";";
+        $sql = "SELECT MAX(" . $this->dataBase->sql2int('codagente') . ") as cod FROM " . $this->tableName() . ";";
         $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
@@ -220,7 +215,7 @@ class Agente extends \FacturaScripts\Core\Base\Model {
      * @return Agente|boolean
      */
     public function get($cod) {
-        $agente = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codagente = " . $this->var2str($cod) . ";");
+        $agente = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codagente = " . $this->var2str($cod) . ";");
         if ($agente) {
             return new Agente($agente[0]);
         }
@@ -251,63 +246,11 @@ class Agente extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
-        return TRUE;
-    }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre) .
-                        ", apellidos = " . $this->var2str($this->apellidos) .
-                        ", dnicif = " . $this->var2str($this->dnicif) .
-                        ", telefono = " . $this->var2str($this->telefono) .
-                        ", email = " . $this->var2str($this->email) .
-                        ", cargo = " . $this->var2str($this->cargo) .
-                        ", provincia = " . $this->var2str($this->provincia) .
-                        ", ciudad = " . $this->var2str($this->ciudad) .
-                        ", direccion = " . $this->var2str($this->direccion) .
-                        ", codpostal = " . $this->var2str($this->codpostal) .
-                        ", f_nacimiento = " . $this->var2str($this->f_nacimiento) .
-                        ", f_alta = " . $this->var2str($this->f_alta) .
-                        ", f_baja = " . $this->var2str($this->f_baja) .
-                        ", seg_social = " . $this->var2str($this->seg_social) .
-                        ", banco = " . $this->var2str($this->banco) .
-                        ", porcomision = " . $this->var2str($this->porcomision) .
-                        "  WHERE codagente = " . $this->var2str($this->codagente) . ";";
-            } else {
-                if ($this->codagente === NULL) {
-                    $this->codagente = $this->newCodigo();
-                }
-
-                $sql = "INSERT INTO " . $this->tableName . " (codagente,nombre,apellidos,dnicif,telefono,"
-                        . "email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,"
-                        . "banco,porcomision) VALUES (" . $this->var2str($this->codagente)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->apellidos)
-                        . "," . $this->var2str($this->dnicif)
-                        . "," . $this->var2str($this->telefono)
-                        . "," . $this->var2str($this->email)
-                        . "," . $this->var2str($this->cargo)
-                        . "," . $this->var2str($this->provincia)
-                        . "," . $this->var2str($this->ciudad)
-                        . "," . $this->var2str($this->direccion)
-                        . "," . $this->var2str($this->codpostal)
-                        . "," . $this->var2str($this->f_nacimiento)
-                        . "," . $this->var2str($this->f_alta)
-                        . "," . $this->var2str($this->f_baja)
-                        . "," . $this->var2str($this->seg_social)
-                        . "," . $this->var2str($this->banco)
-                        . "," . $this->var2str($this->porcomision) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
+        if ($this->codagente === NULL) {
+            $this->codagente = $this->newCodigo();
         }
 
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -317,7 +260,7 @@ class Agente extends \FacturaScripts\Core\Base\Model {
     public function all() {
         $listagentes = array();
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC, apellidos ASC;");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY nombre ASC, apellidos ASC;");
         if ($data) {
             foreach ($data as $a) {
                 $listagentes[] = new Agente($a);

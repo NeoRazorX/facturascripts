@@ -21,16 +21,6 @@
         <nulo>NO</nulo>
     </columna>
     <columna>
-        <nombre>coddepartamento</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpais</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
         <nombre>codpostal</nombre>
         <tipo>character varying(10)</tipo>
         <nulo>YES</nulo>
@@ -51,34 +41,9 @@
         <nulo>YES</nulo>
     </columna>
     <columna>
-        <nombre>fax</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idprovincia</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idusuario</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
         <nombre>nombre</nombre>
         <tipo>character varying(50)</tipo>
         <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nombreap</nombre>
-        <tipo>character varying(150)</tipo>
-        <nulo>YES</nulo>
     </columna>
     <columna>
         <nombre>porcomision</nombre>

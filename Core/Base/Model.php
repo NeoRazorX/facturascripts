@@ -26,7 +26,7 @@ namespace FacturaScripts\Core\Base;
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-abstract class Model {
+trait Model {
 
     /**
      * Proporciona acceso directo a la base de datos.
@@ -48,6 +48,12 @@ abstract class Model {
     protected $defaultItems;
 
     /**
+     * Lista de campos de la tabla.
+     * @var type 
+     */
+    protected static $fields;
+
+    /**
      * Traductor multi-idioma.
      * @var Translator 
      */
@@ -63,13 +69,13 @@ abstract class Model {
      * Nombre de la columna que es clave primaria.
      * @var string 
      */
-    protected $primaryColumn;
+    protected static $primaryColumn;
 
     /**
      * Nombre de la tabla en la base de datos.
      * @var string 
      */
-    protected $tableName;
+    protected static $tableName;
 
     /**
      * Directorio donde se encuentra el directorio table con
@@ -88,17 +94,18 @@ abstract class Model {
      * Constructor.
      * @param string $tableName nombre de la tabla de la base de datos.
      */
-    public function __construct($tableName = '', $primaryColumn = '') {
+    private function init($tableName = '', $primaryColumn = '') {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
-        $this->primaryColumn = $primaryColumn;
-        $this->tableName = $tableName;
 
-        if (!isset(self::$checkedTables)) {
+        if (self::$checkedTables === NULL) {
             self::$checkedTables = [];
+            self::$fields = $this->dataBase->getColumns($tableName);
+            self::$primaryColumn = $primaryColumn;
+            self::$tableName = $tableName;
 
             $pluginManager = new PluginManager();
             /// directorio donde se encuentra el archivo xml que define la estructura de la tabla
@@ -111,17 +118,53 @@ abstract class Model {
     }
 
     public function tableName() {
-        return $this->tableName;
+        return self::$tableName;
     }
 
     public function primaryColumn() {
-        return $this->primaryColumn;
+        return self::$primaryColumn;
+    }
+
+    public function loadFromData($data = []) {
+        foreach ($data as $key => $value) {
+            $this->{$key} = $value;
+
+            foreach (self::$fields as $field) {
+                if ($field['name'] == $key) {
+                    $type = strstr($field['type'], '(');
+                    switch ($type) {
+                        case 'tinyint':
+                        case 'boolean':
+                            $this->{$key} = $this->str2bool($value);
+                            break;
+
+                        case 'integer':
+                        case 'int':
+                            $this->{$key} = (int) $value;
+                            break;
+
+                        case 'double':
+                        case 'float':
+                            $this->{$key} = (float) $value;
+                            break;
+
+                        case 'date':
+                            $this->{$key} = Date('d-m-Y', strtotime($value));
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     /**
-     * Esta función permite resetear los valores del modelo.
+     * Esta función permite resetear los valores de todas las propiedades modelo.
      */
-    abstract public function clear();
+    public function clear() {
+        foreach (self::$fields as $field) {
+            $this->{$field['name']} = NULL;
+        }
+    }
 
     /**
      * Esta función es llamada al crear una tabla.
@@ -136,26 +179,81 @@ abstract class Model {
      * en la base de datos.
      */
     public function exists() {
-        if ($this->{$this->primaryColumn} === NULL) {
+        if ($this->{$this->primaryColumn()} === NULL) {
             return FALSE;
         }
 
-        return (bool) $this->dataBase->select("SELECT 1 FROM " . $this->tableName
-                        . " WHERE " . $this->primaryColumn . " = " . $this->var2str($this->{$this->primaryColumn}) . ";");
+        return (bool) $this->dataBase->select("SELECT 1 FROM " . $this->tableName()
+                        . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
+    }
+
+    public function test() {
+        return TRUE;
     }
 
     /**
      * Esta función sirve tanto para insertar como para actualizar
      * los datos del objeto en la base de datos.
      */
-    abstract public function save();
+    public function save() {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
+    protected function saveUpdate() {
+        $sql = "UPDATE " . $this->tableName();
+        $coma = ' SET';
+
+        foreach (self::$fields as $field) {
+            if ($field['name'] !== $this->primaryColumn()) {
+                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->var2str($this->{$field['name']});
+
+                if ($coma === ' SET') {
+                    $coma = ', ';
+                }
+            }
+        }
+
+        $sql .= " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";";
+
+        return $this->dataBase->exec($sql);
+    }
+
+    protected function saveInsert() {
+        $insertFields = [];
+        $insertValues = [];
+        foreach (self::$fields as $field) {
+            if ($this->{$field['name']} !== NULL) {
+                $insertFields[] = $field['name'];
+                $insertValues[] = $this->var2str($this->{$field['name']});
+            }
+        }
+
+        $sql = "INSERT INTO " . $this->tableName() . " (" . implode(',', $insertFields) . ") VALUES (" . implode(',', $insertValues) . ");";
+        if ($this->dataBase->exec($sql)) {
+            if ($this->{$this->primaryColumn()} === NULL) {
+                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
+            }
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
 
     /**
      * Esta función sirve para eliminar los datos del objeto de la base de datos
      */
     public function delete() {
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE " . $this->primaryColumn . " = " . $this->var2str($this->{$this->primaryColumn}) . ";");
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName()
+                        . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
     }
 
     /**

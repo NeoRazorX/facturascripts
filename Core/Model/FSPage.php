@@ -25,7 +25,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FSPage extends \FacturaScripts\Core\Base\Model {
+class FSPage {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (30).
@@ -50,14 +52,9 @@ class FSPage extends \FacturaScripts\Core\Base\Model {
     public $orden;
 
     public function __construct($data = FALSE) {
-        parent::__construct('fs_pages', 'name');
+        $this->init('fs_pages', 'name');
         if ($data) {
-            $this->name = $data['name'];
-            $this->title = $data['title'];
-            $this->menu = $data['menu'];
-            $this->submenu = $data['submenu'];
-            $this->showonmenu = $this->str2bool($data['showonmenu']);
-            $this->orden = $this->intval($data['orden']);
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -73,7 +70,7 @@ class FSPage extends \FacturaScripts\Core\Base\Model {
     }
 
     protected function install() {
-        return "INSERT INTO " . $this->tableName . " (name,title,menu,submenu,showonmenu)"
+        return "INSERT INTO " . $this->tableName() . " (name,title,menu,submenu,showonmenu)"
                 . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
     }
 
@@ -94,7 +91,7 @@ class FSPage extends \FacturaScripts\Core\Base\Model {
     }
 
     public function get($name) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE name = " . $this->var2str($name) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE name = " . $this->var2str($name) . ";");
         if ($data) {
             return new FSPage($data[0]);
         }
@@ -102,30 +99,9 @@ class FSPage extends \FacturaScripts\Core\Base\Model {
         return FALSE;
     }
 
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->tableName . " SET title = " . $this->var2str($this->title)
-                    . ", menu = " . $this->var2str($this->menu)
-                    . ", submenu = " . $this->var2str($this->submenu)
-                    . ", showonmenu = " . $this->var2str($this->showonmenu)
-                    . ", orden = " . $this->var2str($this->orden)
-                    . "  WHERE name = " . $this->var2str($this->name) . ";";
-        } else {
-            $sql = "INSERT INTO " . $this->tableName . " (name,title,menu,submenu,showonmenu,orden) VALUES "
-                    . "(" . $this->var2str($this->name)
-                    . "," . $this->var2str($this->title)
-                    . "," . $this->var2str($this->menu)
-                    . "," . $this->var2str($this->submenu)
-                    . "," . $this->var2str($this->showonmenu)
-                    . "," . $this->var2str($this->orden) . ");";
-        }
-
-        return $this->dataBase->exec($sql);
-    }
-
     public function all() {
         $pagelist = [];
-        $sql = "SELECT * FROM " . $this->tableName . " ORDER BY lower(menu) ASC, orden ASC, lower(title) ASC;";
+        $sql = "SELECT * FROM " . $this->tableName() . " ORDER BY lower(menu) ASC, orden ASC, lower(title) ASC;";
 
         $data = $this->dataBase->select($sql);
         if ($data) {

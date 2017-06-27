@@ -25,7 +25,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Almacen extends \FacturaScripts\Core\Base\Model {
+class Almacen {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (4).
@@ -98,36 +100,12 @@ class Almacen extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear un nuevo almacen
      */
     public function __construct($data = FALSE) {
-        parent::__construct('almacenes', 'codalmacen');
+        $this->init('almacenes', 'codalmacen');
         if ($data) {
-            $this->codalmacen = $data['codalmacen'];
-            $this->nombre = $data['nombre'];
-            $this->codpais = $data['codpais'];
-            $this->provincia = $data['provincia'];
-            $this->poblacion = $data['poblacion'];
-            $this->codpostal = $data['codpostal'];
-            $this->direccion = $data['direccion'];
-            $this->contacto = $data['contacto'];
-            $this->fax = $data['fax'];
-            $this->telefono = $data['telefono'];
-            $this->observaciones = $data['observaciones'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
-    }
-
-    public function clear() {
-        $this->codalmacen = NULL;
-        $this->nombre = '';
-        $this->codpais = NULL;
-        $this->provincia = NULL;
-        $this->poblacion = NULL;
-        $this->codpostal = '';
-        $this->direccion = '';
-        $this->contacto = '';
-        $this->fax = '';
-        $this->telefono = '';
-        $this->observaciones = '';
     }
 
     /**
@@ -135,7 +113,7 @@ class Almacen extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName . " (codalmacen,nombre,poblacion,"
+        return "INSERT INTO " . $this->tableName() . " (codalmacen,nombre,poblacion,"
                 . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
@@ -165,7 +143,7 @@ class Almacen extends \FacturaScripts\Core\Base\Model {
      * @return almacen|boolean
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codalmacen = " . $this->var2str($cod) . ";");
         if ($data) {
             return new Almacen($data[0]);
         }
@@ -202,51 +180,13 @@ class Almacen extends \FacturaScripts\Core\Base\Model {
     }
 
     /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", codpais = " . $this->var2str($this->codpais)
-                        . ", provincia = " . $this->var2str($this->provincia)
-                        . ", poblacion = " . $this->var2str($this->poblacion)
-                        . ", direccion = " . $this->var2str($this->direccion)
-                        . ", codpostal = " . $this->var2str($this->codpostal)
-                        . ", telefono = " . $this->var2str($this->telefono)
-                        . ", fax = " . $this->var2str($this->fax)
-                        . ", contacto = " . $this->var2str($this->contacto)
-                        . "  WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codalmacen,nombre,codpais,provincia,"
-                        . "poblacion,direccion,codpostal,telefono,fax,contacto) VALUES "
-                        . "(" . $this->var2str($this->codalmacen)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->codpais)
-                        . "," . $this->var2str($this->provincia)
-                        . "," . $this->var2str($this->poblacion)
-                        . "," . $this->var2str($this->direccion)
-                        . "," . $this->var2str($this->codpostal)
-                        . "," . $this->var2str($this->telefono)
-                        . "," . $this->var2str($this->fax)
-                        . "," . $this->var2str($this->contacto) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Devuelve un array con todos los almacenes
      * @return almacen
      */
     public function all() {
         $listaa = [];
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY codalmacen ASC;");
         if ($data) {
             foreach ($data as $a) {
                 $listaa[] = new Almacen($a);

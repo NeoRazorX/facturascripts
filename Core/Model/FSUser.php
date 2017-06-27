@@ -25,7 +25,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FSUser extends \FacturaScripts\Core\Base\Model {
+class FSUser {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (50).
@@ -91,18 +93,9 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
     public $lastip;
 
     public function __construct($data = FALSE) {
-        parent::__construct('fs_users', 'nick');
+        $this->init('fs_users', 'nick');
         if ($data) {
-            $this->nick = $data['nick'];
-            $this->password = $data['password'];
-            $this->email = $data['email'];
-            $this->logkey = $data['logkey'];
-            $this->admin = $this->str2bool($data['admin']);
-            $this->enabled = $this->str2bool($data['enabled']);
-            $this->langcode = $data['langcode'];
-            $this->homepage = $data['homepage'];
-            $this->lastactivity = Date('d-m-Y H:i:s', strtotime($data['lastactivity']));
-            $this->lastip = $data['lastip'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -130,7 +123,7 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
      */
     protected function install() {
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
-        return "INSERT INTO " . $this->tableName . " (nick,password,admin,enabled) VALUES ('admin','"
+        return "INSERT INTO " . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
                 . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
 
@@ -145,20 +138,20 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
 
         return 'index.php?page=AdminUser&id=' . $this->nick;
     }
-    
+
     public function setPassword($value) {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
-    
+
     public function verifyPassword($value) {
         return password_verify($value, $this->password);
     }
-    
+
     public function newLogkey() {
         $this->logkey = $this->randomString(99);
         return $this->logkey;
     }
-    
+
     public function verifyLogkey($value) {
         return ($this->logkey === $value);
     }
@@ -169,7 +162,7 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
      * @return boolean|FSUser
      */
     public function get($nick = '') {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE nick = " . $this->var2str($nick) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE nick = " . $this->var2str($nick) . ";");
         if ($data) {
             return new FSUser($data[0]);
         }
@@ -188,40 +181,6 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
         return TRUE;
     }
 
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET password = " . $this->var2str($this->password)
-                        . ", email = " . $this->var2str($this->email)
-                        . ", logkey = " . $this->var2str($this->logkey)
-                        . ", admin = " . $this->var2str($this->admin)
-                        . ", enabled = " . $this->var2str($this->enabled)
-                        . ", langcode = " . $this->var2str($this->langcode)
-                        . ", homepage = " . $this->var2str($this->homepage)
-                        . ", lastactivity = " . $this->var2str($this->lastactivity)
-                        . ", lastip = " . $this->var2str($this->lastip)
-                        . "  WHERE nick = " . $this->var2str($this->nick) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (nick,password,email,logkey,admin,enabled"
-                        . ",langcode,homepage,lastactivity,last_ip) VALUES "
-                        . "(" . $this->var2str($this->nick)
-                        . "," . $this->var2str($this->password)
-                        . "," . $this->var2str($this->email)
-                        . "," . $this->var2str($this->logkey)
-                        . "," . $this->var2str($this->admin)
-                        . "," . $this->var2str($this->enabled)
-                        . "," . $this->var2str($this->langcode)
-                        . "," . $this->var2str($this->homepage)
-                        . "," . $this->var2str($this->lastactivity)
-                        . "," . $this->var2str($this->lastip) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
     /**
      * Devuelve la lista completa de usuarios de FacturaScripts.
      * @return FSUser
@@ -229,7 +188,7 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
     public function all() {
         $userlist = [];
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY lower(nick) ASC;");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY lower(nick) ASC;");
         if ($data) {
             foreach ($data as $u) {
                 $userlist[] = new FSUser($u);

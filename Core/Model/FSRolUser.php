@@ -27,50 +27,27 @@ namespace FacturaScripts\Core\Model;
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class FSRolUser extends \FacturaScripts\Core\Base\Model {
+class FSRolUser {
+
+    use \FacturaScripts\Core\Base\Model;
 
     public $id;
     public $codrol;
     public $nick;
 
     public function __construct($data = FALSE) {
-        parent::__construct('fs_roles_users', 'id');
+        $this->init('fs_roles_users', 'id');
         if ($data) {
-            $this->id = $data['id'];
-            $this->codrol = $data['codrol'];
-            $this->nick = $data['nick'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
 
-    public function clear() {
-        $this->id = NULL;
-        $this->codrol = NULL;
-        $this->nick = NULL;
-    }
-
-    public function save() {
-        if ($this->exists()) {
-            return TRUE;
-        }
-
-        $sql = "INSERT INTO " . $this->tableName . " (codrol,nick) VALUES "
-                . "(" . $this->var2str($this->codrol)
-                . "," . $this->var2str($this->nick) . ");";
-
-        if ($this->dataBase->exec($sql)) {
-            $this->id = $this->dataBase->lastval();
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
     public function all() {
         $accesslist = array();
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
         if ($data) {
             foreach ($data as $a) {
                 $accesslist[] = new FSRolUser($a);

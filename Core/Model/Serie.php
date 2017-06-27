@@ -26,7 +26,11 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Serie extends \FacturaScripts\Core\Base\Model {
+class Serie {
+
+    use \FacturaScripts\Core\Base\Model {
+        delete as private modelDelete;
+    }
 
     /**
      * Clave primaria. Varchar (2).
@@ -69,14 +73,9 @@ class Serie extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva serie
      */
     public function __construct($data = FALSE) {
-        parent::__construct('series', 'codserie');
+        $this->init('series', 'codserie');
         if ($data) {
-            $this->codserie = $data['codserie'];
-            $this->descripcion = $data['descripcion'];
-            $this->siniva = $this->str2bool($data['siniva']);
-            $this->irpf = floatval($data['irpf']);
-            $this->codejercicio = $data['codejercicio'];
-            $this->numfactura = max(array(1, intval($data['numfactura'])));
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -97,7 +96,7 @@ class Serie extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->cache->delete('m_serie_all');
-        return "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf) VALUES "
+        return "INSERT INTO " . $this->tableName() . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
@@ -127,7 +126,7 @@ class Serie extends \FacturaScripts\Core\Base\Model {
      * @return serie|boolean
      */
     public function get($cod) {
-        $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($cod) . ";");
+        $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codserie = " . $this->var2str($cod) . ";");
         if ($serie) {
             return new Serie($serie[0]);
         }
@@ -154,46 +153,16 @@ class Serie extends \FacturaScripts\Core\Base\Model {
         } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else {
+            $this->cache->delete('m_serie_all');
             $status = TRUE;
         }
 
         return $status;
     }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            $this->cache->delete('m_serie_all');
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
-                        . ", siniva = " . $this->var2str($this->siniva)
-                        . ", irpf = " . $this->var2str($this->irpf)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . ", numfactura = " . $this->var2str($this->numfactura)
-                        . "  WHERE codserie = " . $this->var2str($this->codserie) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codserie,descripcion,siniva,irpf,codejercicio,numfactura) VALUES "
-                        . "(" . $this->var2str($this->codserie)
-                        . "," . $this->var2str($this->descripcion)
-                        . "," . $this->var2str($this->siniva)
-                        . "," . $this->var2str($this->irpf)
-                        . "," . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->numfactura) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
+    
     public function delete() {
         $this->cache->delete('m_serie_all');
-        return parent::delete();
+        return $this->modelDelete();
     }
 
     /**
@@ -205,7 +174,7 @@ class Serie extends \FacturaScripts\Core\Base\Model {
         $serieList = $this->cache->get('m_serie_all');
         if (!$serieList) {
             /// si no está en la cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY codserie ASC;");
             if ($data) {
                 foreach ($data as $s) {
                     $serieList[] = new Serie($s);

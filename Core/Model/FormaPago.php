@@ -25,7 +25,11 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FormaPago extends \FacturaScripts\Core\Base\Model {
+class FormaPago {
+
+    use \FacturaScripts\Core\Base\Model {
+        delete as private modelDelete;
+    }
 
     /**
      * Clave primaria. Varchar (10).
@@ -75,15 +79,9 @@ class FormaPago extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva forma de pago
      */
     public function __construct($data = FALSE) {
-        parent::__construct('formaspago', 'codpago');
+        $this->init('formaspago', 'codpago');
         if ($data) {
-            $this->codpago = $data['codpago'];
-            $this->descripcion = $data['descripcion'];
-            $this->genrecibos = $data['genrecibos'];
-            $this->codcuenta = $data['codcuenta'];
-            $this->domiciliado = $this->str2bool($data['domiciliado']);
-            $this->imprimir = $this->str2bool($data['imprimir']);
-            $this->vencimiento = $data['vencimiento'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -105,7 +103,7 @@ class FormaPago extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->cache->delete('m_forma_pago_all');
-        return "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+        return "INSERT INTO " . $this->tableName() . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
                 . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
@@ -134,7 +132,7 @@ class FormaPago extends \FacturaScripts\Core\Base\Model {
      * @return forma_pago|boolean
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($data) {
             return new FormaPago($data[0]);
         }
@@ -157,46 +155,13 @@ class FormaPago extends \FacturaScripts\Core\Base\Model {
             return FALSE;
         }
 
+        $this->cache->delete('m_forma_pago_all');
         return TRUE;
     }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            $this->cache->delete('m_forma_pago_all');
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
-                        ", genrecibos = " . $this->var2str($this->genrecibos) .
-                        ", codcuenta = " . $this->var2str($this->codcuenta) .
-                        ", domiciliado = " . $this->var2str($this->domiciliado) .
-                        ", imprimir = " . $this->var2str($this->imprimir) .
-                        ", vencimiento = " . $this->var2str($this->vencimiento) .
-                        "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codpago,descripcion,genrecibos,codcuenta"
-                        . ",domiciliado,imprimir,vencimiento) VALUES "
-                        . "(" . $this->var2str($this->codpago)
-                        . "," . $this->var2str($this->descripcion)
-                        . "," . $this->var2str($this->genrecibos)
-                        . "," . $this->var2str($this->codcuenta)
-                        . "," . $this->var2str($this->domiciliado)
-                        . "," . $this->var2str($this->imprimir)
-                        . "," . $this->var2str($this->vencimiento) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
+    
     public function delete() {
         $this->cache->delete('m_forma_pago_all');
-        return parent::delete();
+        return $this->modelDelete();
     }
 
     /**
@@ -208,7 +173,7 @@ class FormaPago extends \FacturaScripts\Core\Base\Model {
         $listaformas = $this->cache->get('m_forma_pago_all');
         if (!$listaformas) {
             /// si no está en cache, leemos de la base de datos
-            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
+            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY descripcion ASC;");
             if ($formas) {
                 foreach ($formas as $f) {
                     $listaformas[] = new FormaPago($f);

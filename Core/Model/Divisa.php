@@ -25,7 +25,11 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Divisa extends \FacturaScripts\Core\Base\Model {
+class Divisa {
+
+    use \FacturaScripts\Core\Base\Model {
+        delete as private modelDelete;
+    }
 
     /**
      * Clave primaria. Varchar (3).
@@ -68,14 +72,9 @@ class Divisa extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva divisa
      */
     public function __construct($data = FALSE) {
-        parent::__construct('divisas', 'coddivisa');
+        $this->init('divisas', 'coddivisa');
         if ($data) {
-            $this->coddivisa = $data['coddivisa'];
-            $this->descripcion = $data['descripcion'];
-            $this->tasaconv = floatval($data['tasaconv']);
-            $this->tasaconvcompra = floatval($data['tasaconvcompra']);
-            $this->codiso = $data['codiso'];
-            $this->simbolo = $data['simbolo'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -96,7 +95,7 @@ class Divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->cache->delete('m_divisa_all');
-        return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
+        return "INSERT INTO " . $this->tableName() . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
                 . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
@@ -133,7 +132,7 @@ class Divisa extends \FacturaScripts\Core\Base\Model {
      * @return boolean|divisa
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE coddivisa = " . $this->var2str($cod) . ";");
         if ($data) {
             return new Divisa($data[0]);
         }
@@ -159,46 +158,16 @@ class Divisa extends \FacturaScripts\Core\Base\Model {
         } else if ($this->tasaconvcompra == 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
+            $this->cache->delete('m_divisa_all');
             $status = TRUE;
         }
 
         return $status;
     }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            $this->cache->delete('m_divisa_all');
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
-                        ", tasaconv = " . $this->var2str($this->tasaconv) .
-                        ", tasaconvcompra = " . $this->var2str($this->tasaconvcompra) .
-                        ", codiso = " . $this->var2str($this->codiso) .
-                        ", simbolo = " . $this->var2str($this->simbolo) .
-                        "  WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)" .
-                        " VALUES (" . $this->var2str($this->coddivisa) .
-                        "," . $this->var2str($this->descripcion) .
-                        "," . $this->var2str($this->tasaconv) .
-                        "," . $this->var2str($this->tasaconvcompra) .
-                        "," . $this->var2str($this->codiso) .
-                        "," . $this->var2str($this->simbolo) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
     
     public function delete() {
         $this->cache->delete('m_divisa_all');
-        return parent::delete();
+        return $this->modelDelete();
     }
 
     /**
@@ -210,7 +179,7 @@ class Divisa extends \FacturaScripts\Core\Base\Model {
         $listad = $this->cache->get('m_divisa_all');
         if (!$listad) {
             /// si no está en cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY coddivisa ASC;");
             if ($data) {
                 foreach ($data as $d) {
                     $listad[] = new Divisa($d);

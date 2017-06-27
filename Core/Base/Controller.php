@@ -47,6 +47,8 @@ class Controller {
      * @var string título de la página.
      */
     public $title;
+    
+    protected $cache;
 
     /**
      * Nombre de la clase del controlador
@@ -95,6 +97,7 @@ class Controller {
         }
         $this->className = $className;
         
+        $this->cache = new Cache();
         $this->dispatcher = new EventDispatcher();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();

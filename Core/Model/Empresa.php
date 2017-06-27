@@ -25,7 +25,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Empresa extends \FacturaScripts\Core\Base\Model {
+class Empresa {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Integer.
@@ -213,8 +215,8 @@ class Empresa extends \FacturaScripts\Core\Base\Model {
      * Contructor por defecto
      */
     public function __construct() {
-        parent::__construct('empresa', 'id');
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
+        $this->init('empresa', 'id');
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
         if ($data) {
             $this->id = (int) $data[0]['id'];
             $this->xid = $data[0]['xid'];
@@ -277,7 +279,7 @@ class Empresa extends \FacturaScripts\Core\Base\Model {
      */
     protected function install() {
         $num = mt_rand(1, 9999);
-        return "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
+        return "INSERT INTO " . $this->tableName() . " (stockpedidos,contintegrada,recequivalencia,codserie,"
                 . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
                 . "ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)"
                 . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
@@ -326,90 +328,6 @@ class Empresa extends \FacturaScripts\Core\Base\Model {
         }
 
         return $status;
-    }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", nombrecorto = " . $this->var2str($this->nombrecorto)
-                        . ", cifnif = " . $this->var2str($this->cifnif)
-                        . ", codedi = " . $this->var2str($this->codedi)
-                        . ", administrador = " . $this->var2str($this->administrador)
-                        . ", direccion = " . $this->var2str($this->direccion)
-                        . ", codpostal = " . $this->var2str($this->codpostal)
-                        . ", ciudad = " . $this->var2str($this->ciudad)
-                        . ", provincia = " . $this->var2str($this->provincia)
-                        . ", apartado = " . $this->var2str($this->apartado)
-                        . ", codpais = " . $this->var2str($this->codpais)
-                        . ", telefono = " . $this->var2str($this->telefono)
-                        . ", fax = " . $this->var2str($this->fax)
-                        . ", email = " . $this->var2str($this->email)
-                        . ", web = " . $this->var2str($this->web)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . ", coddivisa = " . $this->var2str($this->coddivisa)
-                        . ", codpago = " . $this->var2str($this->codpago)
-                        . ", codalmacen = " . $this->var2str($this->codalmacen)
-                        . ", codserie = " . $this->var2str($this->codserie)
-                        . ", recequivalencia = " . $this->var2str($this->recequivalencia)
-                        . ", contintegrada = " . $this->var2str($this->contintegrada)
-                        . ", stockpedidos = " . $this->var2str($this->stockpedidos)
-                        . ", xid = " . $this->var2str($this->xid)
-                        . ", lema = " . $this->var2str($this->lema)
-                        . ", horario = " . $this->var2str($this->horario)
-                        . ", pie_factura = " . $this->var2str($this->pie_factura)
-                        . ", inicioact = " . $this->var2str($this->inicio_actividad)
-                        . ", regimeniva = " . $this->var2str($this->regimeniva)
-                        . "  WHERE id = " . $this->var2str($this->id) . ";";
-
-                return $this->dataBase->exec($sql);
-            }
-
-            $sql = "INSERT INTO " . $this->tableName . " (stockpedidos,contintegrada,recequivalencia,codserie,"
-                    . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,"
-                    . "codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,"
-                    . "nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES "
-                    . "(" . $this->var2str($this->stockpedidos)
-                    . "," . $this->var2str($this->contintegrada)
-                    . "," . $this->var2str($this->recequivalencia)
-                    . "," . $this->var2str($this->codserie)
-                    . "," . $this->var2str($this->codalmacen)
-                    . "," . $this->var2str($this->codpago)
-                    . "," . $this->var2str($this->coddivisa)
-                    . "," . $this->var2str($this->codejercicio)
-                    . "," . $this->var2str($this->web)
-                    . "," . $this->var2str($this->email)
-                    . "," . $this->var2str($this->fax)
-                    . "," . $this->var2str($this->telefono)
-                    . "," . $this->var2str($this->codpais)
-                    . "," . $this->var2str($this->apartado)
-                    . "," . $this->var2str($this->provincia)
-                    . "," . $this->var2str($this->ciudad)
-                    . "," . $this->var2str($this->codpostal)
-                    . "," . $this->var2str($this->direccion)
-                    . "," . $this->var2str($this->administrador)
-                    . "," . $this->var2str($this->codedi)
-                    . "," . $this->var2str($this->cifnif)
-                    . "," . $this->var2str($this->nombre)
-                    . "," . $this->var2str($this->nombrecorto)
-                    . "," . $this->var2str($this->lema)
-                    . "," . $this->var2str($this->horario)
-                    . "," . $this->var2str($this->pie_factura)
-                    . "," . $this->var2str($this->inicio_actividad)
-                    . "," . $this->var2str($this->regimeniva) . ");";
-            if ($this->dataBase->exec($sql)) {
-                $this->id = $this->dataBase->lastval();
-                return TRUE;
-            }
-
-            return FALSE;
-        }
-
-        return FALSE;
     }
 
 }

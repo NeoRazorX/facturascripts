@@ -25,7 +25,11 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Pais extends \FacturaScripts\Core\Base\Model {
+class Pais {
+
+    use \FacturaScripts\Core\Base\Model {
+        delete as private modelDelete;
+    }
 
     /**
      * Clave primaria. Varchar(3).
@@ -52,20 +56,12 @@ class Pais extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear un nuevo país
      */
     public function __construct($data = FALSE) {
-        parent::__construct('paises', 'codpais');
+        $this->init('paises', 'codpais');
         if ($data) {
-            $this->codpais = $data['codpais'];
-            $this->codiso = $data['codiso'];
-            $this->nombre = $data['nombre'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
-    }
-
-    public function clear() {
-        $this->codpais = '';
-        $this->codiso = NULL;
-        $this->nombre = '';
     }
 
     /**
@@ -74,7 +70,7 @@ class Pais extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->cache->delete('m_pais_all');
-        return "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre)"
+        return "INSERT INTO " . $this->tableName() . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
                 . " ('ALB','AL','Albania'),"
@@ -344,7 +340,7 @@ class Pais extends \FacturaScripts\Core\Base\Model {
      * @return boolean|pais
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpais = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codpais = " . $this->var2str($cod) . ";");
         if ($data) {
             return new Pais($data[0]);
         }
@@ -358,7 +354,7 @@ class Pais extends \FacturaScripts\Core\Base\Model {
      * @return pais|boolean
      */
     public function getByIso($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codiso = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codiso = " . $this->var2str($cod) . ";");
         if ($data) {
             return new Pais($data[0]);
         }
@@ -381,42 +377,18 @@ class Pais extends \FacturaScripts\Core\Base\Model {
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
+            $this->cache->delete('m_pais_all');
             $status = TRUE;
         }
 
         return $status;
     }
-
-    /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            $this->cache->delete('m_pais_all');
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET codiso = " . $this->var2str($this->codiso) .
-                        ", nombre = " . $this->var2str($this->nombre) .
-                        "  WHERE codpais = " . $this->var2str($this->codpais) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codpais,codiso,nombre) VALUES
-                     (" . $this->var2str($this->codpais) .
-                        "," . $this->var2str($this->codiso) .
-                        "," . $this->var2str($this->nombre) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
+    
     public function delete() {
         $this->cache->delete('m_pais_all');
-        return parent::delete();
+        return $this->modelDelete();
     }
-    
+
     /**
      * Devuelve un array con todos los paises
      * @return pais
@@ -426,7 +398,7 @@ class Pais extends \FacturaScripts\Core\Base\Model {
         $listap = $this->cache->get('m_pais_all');
         if (!$listap) {
             /// si no está en cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY nombre ASC;");
+            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY nombre ASC;");
             if ($data) {
                 foreach ($data as $p) {
                     $listap[] = new Pais($p);

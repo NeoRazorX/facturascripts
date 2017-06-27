@@ -27,13 +27,15 @@ namespace FacturaScripts\Core\Model;
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class FSRol extends \FacturaScripts\Core\Base\Model {
+class FSRol {
+
+    use \FacturaScripts\Core\Base\Model;
 
     public $codrol;
     public $descripcion;
 
     public function __construct($data = FALSE) {
-        parent::__construct('fs_roles', 'codrol');
+        $this->init('fs_roles', 'codrol');
         if ($data) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
@@ -60,33 +62,23 @@ class FSRol extends \FacturaScripts\Core\Base\Model {
     }
 
     public function get($codrol) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codrol = " . $this->var2str($codrol) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codrol = " . $this->var2str($codrol) . ";");
         if ($data) {
             return new FsRol($data[0]);
         }
 
         return FALSE;
     }
-
-    public function save() {
+    
+    public function test() {
         $this->descripcion = $this->noHtml($this->descripcion);
-
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion)
-                    . " WHERE codrol = " . $this->var2str($this->codrol) . ";";
-        } else {
-            $sql = "INSERT INTO " . $this->tableName . " (codrol,descripcion) VALUES "
-                    . "(" . $this->var2str($this->codrol)
-                    . "," . $this->var2str($this->descripcion) . ");";
-        }
-
-        return $this->dataBase->exec($sql);
+        return TRUE;
     }
 
     public function all() {
         $lista = array();
 
-        $sql = "SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;";
+        $sql = "SELECT * FROM " . $this->tableName() . " ORDER BY descripcion ASC;";
         $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

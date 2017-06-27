@@ -25,7 +25,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Ejercicio extends \FacturaScripts\Core\Base\Model {
+class Ejercicio {
+
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar(4).
@@ -93,18 +95,9 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
      * Contructor por defecto
      */
     public function __construct($data = FALSE) {
-        parent::__construct('ejercicios', 'codejercicio');
+        $this->init('ejercicios', 'codejercicio');
         if ($data) {
-            $this->codejercicio = $data['codejercicio'];
-            $this->nombre = $data['nombre'];
-            $this->fechainicio = Date('d-m-Y', strtotime($data['fechainicio']));
-            $this->fechafin = Date('d-m-Y', strtotime($data['fechafin']));
-            $this->estado = $data['estado'];
-            $this->idasientocierre = $this->intval($data['idasientocierre']);
-            $this->idasientopyg = $this->intval($data['idasientopyg']);
-            $this->idasientoapertura = $this->intval($data['idasientoapertura']);
-            $this->plancontable = $data['plancontable'];
-            $this->longsubcuenta = $this->intval($data['longsubcuenta']);
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
@@ -128,7 +121,7 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,"
+        return "INSERT INTO " . $this->tableName() . " (codejercicio,nombre,fechainicio,fechafin,"
                 . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
                 . "VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y'))
                 . "," . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
@@ -156,11 +149,11 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function newCodigo($cod = '0001') {
-        if (!$this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
+        if (!$this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
         }
 
-        $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName . ";");
+        $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName() . ";");
         if ($cod) {
             return sprintf('%04s', (1 + intval($cod[0]['cod'])));
         }
@@ -220,7 +213,7 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return boolean|ejercicio
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codejercicio = " . $this->var2str($cod) . ";");
         if ($data) {
             return new Ejercicio($data[0]);
         }
@@ -237,7 +230,7 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return boolean|ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = TRUE, $crear = TRUE) {
-        $sql = "SELECT * FROM " . $this->tableName . " WHERE fechainicio <= "
+        $sql = "SELECT * FROM " . $this->tableName() . " WHERE fechainicio <= "
                 . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
 
         $data = $this->dataBase->select($sql);
@@ -289,51 +282,13 @@ class Ejercicio extends \FacturaScripts\Core\Base\Model {
     }
 
     /**
-     * Guarda los datos en la base de datos
-     * @return boolean
-     */
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", fechainicio = " . $this->var2str($this->fechainicio)
-                        . ", fechafin = " . $this->var2str($this->fechafin)
-                        . ", estado = " . $this->var2str($this->estado)
-                        . ", longsubcuenta = " . $this->var2str($this->longsubcuenta)
-                        . ", plancontable = " . $this->var2str($this->plancontable)
-                        . ", idasientoapertura = " . $this->var2str($this->idasientoapertura)
-                        . ", idasientopyg = " . $this->var2str($this->idasientopyg)
-                        . ", idasientocierre = " . $this->var2str($this->idasientocierre)
-                        . "  WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,"
-                        . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
-                        . "VALUES (" . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->fechainicio)
-                        . "," . $this->var2str($this->fechafin)
-                        . "," . $this->var2str($this->estado)
-                        . "," . $this->var2str($this->longsubcuenta)
-                        . "," . $this->var2str($this->plancontable)
-                        . "," . $this->var2str($this->idasientoapertura)
-                        . "," . $this->var2str($this->idasientopyg)
-                        . "," . $this->var2str($this->idasientocierre) . ");";
-            }
-
-            return $this->dataBase->exec($sql);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Devuelve un array con todos los ejercicios
      * @return ejercicio
      */
     public function all() {
         $listae = [];
 
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY fechainicio DESC;");
         if ($data) {
             foreach ($data as $e) {
                 $listae[] = new Ejercicio($e);
