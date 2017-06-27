@@ -13,7 +13,6 @@
                 </h1>
                 <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
             </div>
-            <h2>Empresa: {{ fsc.empresa.nombre }}</h2>
         </div>
     </div>
     <div class="row">
@@ -40,6 +39,12 @@
             <ul>
                 {% for ejercicio in fsc.ejercicio.all() %}
                 <li>{{ ejercicio.nombre }}</li>
+                {% endfor %}
+            </ul>
+            <h3>Empresas:</h3>
+            <ul>
+                {% for empresa in fsc.empresa.all() %}
+                <li>{{ empresa.nombre }}</li>
                 {% endfor %}
             </ul>
             <h3>Formas de pago:</h3>

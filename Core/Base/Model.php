@@ -203,16 +203,44 @@ trait Model {
         return '';
     }
 
-    public function get($cod = '') {
-        if ($cod === '') {
-            return FALSE;
-        }
-
+    /**
+     * Devuelve el modelo cuya columna primaria corresponda al valor $cod
+     * @param mixed $cod
+     * @return mixed
+     */
+    public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($cod) . ";");
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
+        
+        return FALSE;
+    }
+    
+    /**
+     * Devuelve el primer modelo que coincide con los filtros establecidos.
+     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
+     * @return mixed
+     */
+    public function getBy($fields = []) {
+        $sql = "SELECT * FROM ".$this->tableName();
+        $coma = " WHERE ";
+        
+        foreach($fields as $key => $value) {
+            $sql .= $coma.$key." = ".$this->var2str($value);
+            if($coma === " WHERE ") {
+                $coma = ", ";
+            }
+        }
+        
+        $data = $this->dataBase->selectLimit($sql, 1);
+        if ($data) {
+            $class = $this->modelName();
+            return new $class($data[0]);
+        }
+        
+        return FALSE;
     }
 
     /**
@@ -310,6 +338,14 @@ trait Model {
                         . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
     }
     
+    /**
+     * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
+     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
+     * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
+     * @param integer $offset
+     * @param integer $limit
+     * @return mixed
+     */
     public function all($fields = [], $order = [], $offset = 0, $limit = 50) {
         $modelList = [];
         $sql = "SELECT * FROM ".$this->tableName();

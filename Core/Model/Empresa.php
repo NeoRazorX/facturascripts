@@ -211,40 +211,10 @@ class Empresa {
       ] */
     public $email_config;
 
-    public function __construct() {
+    public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'empresa', 'id');
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
         if ($data) {
-            $this->id = (int) $data[0]['id'];
-            $this->xid = $data[0]['xid'];
-            $this->stockpedidos = $this->str2bool($data[0]['stockpedidos']);
-            $this->contintegrada = $this->str2bool($data[0]['contintegrada']);
-            $this->recequivalencia = $this->str2bool($data[0]['recequivalencia']);
-            $this->codserie = $data[0]['codserie'];
-            $this->codalmacen = $data[0]['codalmacen'];
-            $this->codpago = $data[0]['codpago'];
-            $this->coddivisa = $data[0]['coddivisa'];
-            $this->codejercicio = $data[0]['codejercicio'];
-            $this->web = $data[0]['web'];
-            $this->email = $data[0]['email'];
-            $this->fax = $data[0]['fax'];
-            $this->telefono = $data[0]['telefono'];
-            $this->codpais = $data[0]['codpais'];
-            $this->apartado = $data[0]['apartado'];
-            $this->provincia = $data[0]['provincia'];
-            $this->ciudad = $data[0]['ciudad'];
-            $this->codpostal = $data[0]['codpostal'];
-            $this->direccion = $data[0]['direccion'];
-            $this->administrador = $data[0]['administrador'];
-            $this->codedi = $data[0]['codedi'];
-            $this->cifnif = $data[0]['cifnif'];
-            $this->nombre = $data[0]['nombre'];
-            $this->nombrecorto = $data[0]['nombrecorto'];
-            $this->lema = $data[0]['lema'];
-            $this->horario = $data[0]['horario'];
-            $this->pie_factura = $data[0]['pie_factura'];
-            $this->inicio_actividad = date('d-m-Y', strtotime($data[0]['inicioact']));
-            $this->regimeniva = $data[0]['regimeniva'];
+            $this->loadFromData($data);
 
             /// cargamos las opciones de email por defecto
             $this->email_config = array(
@@ -263,6 +233,8 @@ class Empresa {
                 $this->xid = $this->randomString(30);
                 $this->save();
             }
+        } else {
+            $this->clear();
         }
     }
 
