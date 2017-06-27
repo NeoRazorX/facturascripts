@@ -148,7 +148,8 @@ class FSUser {
     }
 
     public function newLogkey() {
-        $this->logkey = $this->randomString(99);
+        $utils = new \FacturaScripts\Core\Base\Utils();
+        $this->logkey = $utils->randomString(99);
         return $this->logkey;
     }
 
