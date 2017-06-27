@@ -240,7 +240,7 @@ abstract class Model {
             return NULL;
         }
 
-        return intval($str);
+        return (int) $str;
     }
 
     /**

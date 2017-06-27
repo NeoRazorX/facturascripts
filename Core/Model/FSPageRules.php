@@ -81,7 +81,7 @@ class FSPageRules extends \FacturaScripts\Core\Base\Model {
                     . ", nick = " . $this->var2str($this->nick)
                     . ", pagename = " . $this->var2str($this->pagename)
                     . "  WHERE id = " . $this->var2str($this->id) . ";";
-            return $this->dabaBase->exec($sql);
+            return $this->dataBase->exec($sql);
         }
 
         $sql = "INSERT INTO " . $this->tableName . " (nick,pagename,allowdelete,allowupdate) VALUES "

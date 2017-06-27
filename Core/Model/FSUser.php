@@ -181,7 +181,7 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            $this->miniLog->alert($this->i18n->trans('invalid-user-nick', $this->nick));
+            $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
             return FALSE;
         }
 
@@ -213,7 +213,7 @@ class FSUser extends \FacturaScripts\Core\Base\Model {
                         . "," . $this->var2str($this->langcode)
                         . "," . $this->var2str($this->homepage)
                         . "," . $this->var2str($this->lastactivity)
-                        . "," . $this->var2str($this->last_ip) . ");";
+                        . "," . $this->var2str($this->lastip) . ");";
             }
 
             return $this->dataBase->exec($sql);
