@@ -35,7 +35,7 @@ class FSRol {
     public $descripcion;
 
     public function __construct($data = FALSE) {
-        $this->init('fs_roles', 'codrol');
+        $this->init(__CLASS__, 'fs_roles', 'codrol');
         if ($data) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
@@ -49,10 +49,6 @@ class FSRol {
         $this->descripcion = NULL;
     }
 
-    protected function install() {
-        return '';
-    }
-
     public function url() {
         if (is_null($this->codrol)) {
             return 'index.php?page=AdminRol';
@@ -60,33 +56,10 @@ class FSRol {
 
         return 'index.php?page=AdminRol&codrol=' . $this->codrol;
     }
-
-    public function get($codrol) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codrol = " . $this->var2str($codrol) . ";");
-        if ($data) {
-            return new FsRol($data[0]);
-        }
-
-        return FALSE;
-    }
     
     public function test() {
         $this->descripcion = $this->noHtml($this->descripcion);
         return TRUE;
-    }
-
-    public function all() {
-        $lista = array();
-
-        $sql = "SELECT * FROM " . $this->tableName() . " ORDER BY descripcion ASC;";
-        $data = $this->dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $d) {
-                $lista[] = new FSRol($d);
-            }
-        }
-
-        return $lista;
     }
 
 }

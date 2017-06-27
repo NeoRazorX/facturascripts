@@ -52,7 +52,7 @@ class FSPage {
     public $orden;
 
     public function __construct($data = FALSE) {
-        $this->init('fs_pages', 'name');
+        $this->init(__CLASS__, 'fs_pages', 'name');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -88,29 +88,6 @@ class FSPage {
 
     public function showing() {
         return ( $this->name == $this->defaultItems->showingPage() );
-    }
-
-    public function get($name) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE name = " . $this->var2str($name) . ";");
-        if ($data) {
-            return new FSPage($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    public function all() {
-        $pagelist = [];
-        $sql = "SELECT * FROM " . $this->tableName() . " ORDER BY lower(menu) ASC, orden ASC, lower(title) ASC;";
-
-        $data = $this->dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $p) {
-                $pagelist[] = new FSPage($p);
-            }
-        }
-
-        return $pagelist;
     }
 
 }

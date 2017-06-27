@@ -38,25 +38,12 @@ class FsRolAccess {
     public $allowupdate;
 
     public function __construct($data = FALSE) {
-        $this->init('fs_roles_access', 'id');
+        $this->init(__CLASS__, 'fs_roles_access', 'id');
         if ($data) {
             $this->loadFromData($data);
         } else {
             $this->clear();
         }
-    }
-
-    public function all() {
-        $accesslist = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
-        if ($data) {
-            foreach ($data as $a) {
-                $accesslist[] = new FSRolAccess($a);
-            }
-        }
-
-        return $accesslist;
     }
 
 }

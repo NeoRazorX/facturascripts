@@ -134,7 +134,7 @@ class Agente {
     public $porcomision;
 
     public function __construct($data = FALSE) {
-        $this->init('agentes', 'codagente');
+        $this->init(__CLASS__, 'agentes', 'codagente');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -206,20 +206,6 @@ class Agente {
     }
 
     /**
-     * Devuelve el empleado/agente con codagente = $cod
-     * @param string $cod
-     * @return Agente|boolean
-     */
-    public function get($cod) {
-        $agente = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codagente = " . $this->var2str($cod) . ";");
-        if ($agente) {
-            return new Agente($agente[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
      * @return boolean
      */
@@ -247,23 +233,6 @@ class Agente {
         }
 
         return TRUE;
-    }
-
-    /**
-     * Devuelve un array con todos los agentes/empleados.
-     * @return Agente
-     */
-    public function all() {
-        $listagentes = array();
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY nombre ASC, apellidos ASC;");
-        if ($data) {
-            foreach ($data as $a) {
-                $listagentes[] = new Agente($a);
-            }
-        }
-
-        return $listagentes;
     }
 
 }

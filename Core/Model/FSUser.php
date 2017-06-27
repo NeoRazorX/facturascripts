@@ -93,7 +93,7 @@ class FSUser {
     public $lastip;
 
     public function __construct($data = FALSE) {
-        $this->init('fs_users', 'nick');
+        $this->init(__CLASS__, 'fs_users', 'nick');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -156,20 +156,6 @@ class FSUser {
         return ($this->logkey === $value);
     }
 
-    /**
-     * Devuelve el usuario con el nick solicitado.
-     * @param string $nick
-     * @return boolean|FSUser
-     */
-    public function get($nick = '') {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE nick = " . $this->var2str($nick) . ";");
-        if ($data) {
-            return new FSUser($data[0]);
-        }
-
-        return FALSE;
-    }
-
     public function test() {
         $this->nick = trim($this->nick);
 
@@ -179,23 +165,6 @@ class FSUser {
         }
 
         return TRUE;
-    }
-
-    /**
-     * Devuelve la lista completa de usuarios de FacturaScripts.
-     * @return FSUser
-     */
-    public function all() {
-        $userlist = [];
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY lower(nick) ASC;");
-        if ($data) {
-            foreach ($data as $u) {
-                $userlist[] = new FSUser($u);
-            }
-        }
-
-        return $userlist;
     }
 
 }

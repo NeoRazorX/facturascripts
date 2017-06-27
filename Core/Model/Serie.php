@@ -27,10 +27,8 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Serie {
-
-    use \FacturaScripts\Core\Base\Model {
-        delete as private modelDelete;
-    }
+    
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (2).
@@ -69,7 +67,7 @@ class Serie {
     public $numfactura;
 
     public function __construct($data = FALSE) {
-        $this->init('series', 'codserie');
+        $this->init(__CLASS__, 'series', 'codserie');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -91,7 +89,6 @@ class Serie {
      * @return string
      */
     public function install() {
-        $this->cache->delete('m_serie_all');
         return "INSERT INTO " . $this->tableName() . " (codserie,descripcion,siniva,irpf) VALUES "
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
@@ -117,20 +114,6 @@ class Serie {
     }
 
     /**
-     * Devuelve la serie solicitada o false si no la encuentra.
-     * @param string $cod
-     * @return serie|boolean
-     */
-    public function get($cod) {
-        $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codserie = " . $this->var2str($cod) . ";");
-        if ($serie) {
-            return new Serie($serie[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
      * @return boolean
      */
@@ -149,39 +132,10 @@ class Serie {
         } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else {
-            $this->cache->delete('m_serie_all');
             $status = TRUE;
         }
 
         return $status;
-    }
-    
-    public function delete() {
-        $this->cache->delete('m_serie_all');
-        return $this->modelDelete();
-    }
-
-    /**
-     * Devuelve un array con todas las series
-     * @return serie
-     */
-    public function all() {
-        /// Leemos de la cache
-        $serieList = $this->cache->get('m_serie_all');
-        if (!$serieList) {
-            /// si no está en la cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY codserie ASC;");
-            if ($data) {
-                foreach ($data as $s) {
-                    $serieList[] = new Serie($s);
-                }
-            }
-
-            /// guardamos en la cache
-            $this->cache->set('m_serie_all', $serieList);
-        }
-
-        return $serieList;
     }
 
 }

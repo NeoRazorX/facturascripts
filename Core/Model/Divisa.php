@@ -26,10 +26,8 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Divisa {
-
-    use \FacturaScripts\Core\Base\Model {
-        delete as private modelDelete;
-    }
+    
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (3).
@@ -68,7 +66,7 @@ class Divisa {
     public $simbolo;
 
     public function __construct($data = FALSE) {
-        $this->init('divisas', 'coddivisa');
+        $this->init(__CLASS__, 'divisas', 'coddivisa');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -90,7 +88,6 @@ class Divisa {
      * @return string
      */
     public function install() {
-        $this->cache->delete('m_divisa_all');
         return "INSERT INTO " . $this->tableName() . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
@@ -123,20 +120,6 @@ class Divisa {
     }
 
     /**
-     * Devuelve la divisa con coddivsa = $cod
-     * @param string $cod
-     * @return boolean|divisa
-     */
-    public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE coddivisa = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new Divisa($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
      * @return boolean
      */
@@ -159,34 +142,6 @@ class Divisa {
         }
 
         return $status;
-    }
-    
-    public function delete() {
-        $this->cache->delete('m_divisa_all');
-        return $this->modelDelete();
-    }
-
-    /**
-     * Devuelve un array con todas las divisas.
-     * @return divisa
-     */
-    public function all() {
-        /// leemos de la cache
-        $listad = $this->cache->get('m_divisa_all');
-        if (!$listad) {
-            /// si no está en cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY coddivisa ASC;");
-            if ($data) {
-                foreach ($data as $d) {
-                    $listad[] = new Divisa($d);
-                }
-            }
-
-            /// guardamos en cache
-            $this->cache->set('m_divisa_all', $listad);
-        }
-
-        return $listad;
     }
 
 }

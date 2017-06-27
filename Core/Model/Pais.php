@@ -26,10 +26,8 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Pais {
-
-    use \FacturaScripts\Core\Base\Model {
-        delete as private modelDelete;
-    }
+    
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar(3).
@@ -52,7 +50,7 @@ class Pais {
     public $nombre;
 
     public function __construct($data = FALSE) {
-        $this->init('paises', 'codpais');
+        $this->init(__CLASS__, 'paises', 'codpais');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -65,7 +63,6 @@ class Pais {
      * @return string
      */
     public function install() {
-        $this->cache->delete('m_pais_all');
         return "INSERT INTO " . $this->tableName() . " (codpais,codiso,nombre)"
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
@@ -331,20 +328,6 @@ class Pais {
     }
 
     /**
-     * Devuelve el pais con codpais = $cod
-     * @param string $cod
-     * @return boolean|pais
-     */
-    public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codpais = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new Pais($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Devuelve el pais con codido = $cod
      * @param string $cod
      * @return pais|boolean
@@ -373,39 +356,10 @@ class Pais {
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
-            $this->cache->delete('m_pais_all');
             $status = TRUE;
         }
 
         return $status;
-    }
-    
-    public function delete() {
-        $this->cache->delete('m_pais_all');
-        return $this->modelDelete();
-    }
-
-    /**
-     * Devuelve un array con todos los paises
-     * @return pais
-     */
-    public function all() {
-        /// Leemos de la cache
-        $listap = $this->cache->get('m_pais_all');
-        if (!$listap) {
-            /// si no está en cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY nombre ASC;");
-            if ($data) {
-                foreach ($data as $p) {
-                    $listap[] = new Pais($p);
-                }
-            }
-
-            /// guardamos en la cache
-            $this->cache->set('m_pais_all', $listap);
-        }
-
-        return $listap;
     }
 
 }

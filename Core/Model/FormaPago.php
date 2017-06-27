@@ -27,9 +27,7 @@ namespace FacturaScripts\Core\Model;
  */
 class FormaPago {
 
-    use \FacturaScripts\Core\Base\Model {
-        delete as private modelDelete;
-    }
+    use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (10).
@@ -75,7 +73,7 @@ class FormaPago {
     public $vencimiento;
 
     public function __construct($data = FALSE) {
-        $this->init('formaspago', 'codpago');
+        $this->init(__CLASS__, 'formaspago', 'codpago');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -98,7 +96,6 @@ class FormaPago {
      * @return string
      */
     public function install() {
-        $this->cache->delete('m_forma_pago_all');
         return "INSERT INTO " . $this->tableName() . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
@@ -123,20 +120,6 @@ class FormaPago {
     }
 
     /**
-     * Devuelve la forma de pago con codpago = $cod
-     * @param string $cod
-     * @return forma_pago|boolean
-     */
-    public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codpago = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new FormaPago($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Comprueba la validez de los datos de la forma de pago.
      * @return boolean
      */
@@ -151,36 +134,7 @@ class FormaPago {
             return FALSE;
         }
 
-        $this->cache->delete('m_forma_pago_all');
         return TRUE;
-    }
-    
-    public function delete() {
-        $this->cache->delete('m_forma_pago_all');
-        return $this->modelDelete();
-    }
-
-    /**
-     * Devuelve un array con todas las formas de pago
-     * @return forma_pago
-     */
-    public function all() {
-        /// leemos de la cache
-        $listaformas = $this->cache->get('m_forma_pago_all');
-        if (!$listaformas) {
-            /// si no está en cache, leemos de la base de datos
-            $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY descripcion ASC;");
-            if ($formas) {
-                foreach ($formas as $f) {
-                    $listaformas[] = new FormaPago($f);
-                }
-            }
-
-            /// guardamos en la cache
-            $this->cache->set('m_forma_pago_all', $listaformas);
-        }
-
-        return $listaformas;
     }
 
     /**

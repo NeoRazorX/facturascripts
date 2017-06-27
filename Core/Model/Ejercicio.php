@@ -92,7 +92,7 @@ class Ejercicio {
     public $longsubcuenta;
 
     public function __construct($data = FALSE) {
-        $this->init('ejercicios', 'codejercicio');
+        $this->init(__CLASS__, 'ejercicios', 'codejercicio');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -208,20 +208,6 @@ class Ejercicio {
     }
 
     /**
-     * Devuelve el ejercicio con codejercicio = $cod
-     * @param string $cod
-     * @return boolean|ejercicio
-     */
-    public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codejercicio = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new Ejercicio($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
      * @param string $fecha
@@ -279,23 +265,6 @@ class Ejercicio {
         }
 
         return $status;
-    }
-
-    /**
-     * Devuelve un array con todos los ejercicios
-     * @return ejercicio
-     */
-    public function all() {
-        $listae = [];
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY fechainicio DESC;");
-        if ($data) {
-            foreach ($data as $e) {
-                $listae[] = new Ejercicio($e);
-            }
-        }
-
-        return $listae;
     }
 
 }

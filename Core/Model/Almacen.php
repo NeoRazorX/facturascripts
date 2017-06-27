@@ -96,7 +96,7 @@ class Almacen {
     public $observaciones;
 
     public function __construct($data = FALSE) {
-        $this->init('almacenes', 'codalmacen');
+        $this->init(__CLASS__, 'almacenes', 'codalmacen');
         if ($data) {
             $this->loadFromData($data);
         } else {
@@ -134,20 +134,6 @@ class Almacen {
     }
 
     /**
-     * Devuelve el almacén con codalmacen = $cod
-     * @param string $cod
-     * @return almacen|boolean
-     */
-    public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codalmacen = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new Almacen($data[0]);
-        }
-
-        return FALSE;
-    }
-
-    /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
      * @return boolean
      */
@@ -173,23 +159,6 @@ class Almacen {
         }
 
         return $status;
-    }
-
-    /**
-     * Devuelve un array con todos los almacenes
-     * @return almacen
-     */
-    public function all() {
-        $listaa = [];
-
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY codalmacen ASC;");
-        if ($data) {
-            foreach ($data as $a) {
-                $listaa[] = new Almacen($a);
-            }
-        }
-
-        return $listaa;
     }
 
 }

@@ -212,7 +212,7 @@ class Empresa {
     public $email_config;
 
     public function __construct() {
-        $this->init('empresa', 'id');
+        $this->init(__CLASS__, 'empresa', 'id');
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");
         if ($data) {
             $this->id = (int) $data[0]['id'];
@@ -264,10 +264,6 @@ class Empresa {
                 $this->save();
             }
         }
-    }
-
-    public function clear() {
-        
     }
 
     /**

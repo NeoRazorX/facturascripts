@@ -66,16 +66,22 @@ trait Model {
     protected $miniLog;
 
     /**
+     * Nombre del modelo. De la clase que inicia este trait.
+     * @var string 
+     */
+    private static $modelName;
+
+    /**
      * Nombre de la columna que es clave primaria.
      * @var string 
      */
-    protected static $primaryColumn;
+    private static $primaryColumn;
 
     /**
      * Nombre de la tabla en la base de datos.
      * @var string 
      */
-    protected static $tableName;
+    private static $tableName;
 
     /**
      * Directorio donde se encuentra el directorio table con
@@ -94,7 +100,7 @@ trait Model {
      * Constructor.
      * @param string $tableName nombre de la tabla de la base de datos.
      */
-    private function init($tableName = '', $primaryColumn = '') {
+    private function init($modelName = '', $tableName = '', $primaryColumn = '') {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
@@ -104,6 +110,7 @@ trait Model {
         if (self::$checkedTables === NULL) {
             self::$checkedTables = [];
             self::$fields = $this->dataBase->getColumns($tableName);
+            self::$modelName = $modelName;
             self::$primaryColumn = $primaryColumn;
             self::$tableName = $tableName;
 
@@ -118,11 +125,11 @@ trait Model {
     }
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre del modelo.
      * @return string
      */
-    public function tableName() {
-        return self::$tableName;
+    public function modelName() {
+        return self::$modelName;
     }
 
     /**
@@ -131,6 +138,14 @@ trait Model {
      */
     public function primaryColumn() {
         return self::$primaryColumn;
+    }
+
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     * @return string
+     */
+    public function tableName() {
+        return self::$tableName;
     }
 
     /**
@@ -188,6 +203,18 @@ trait Model {
         return '';
     }
 
+    public function get($cod = '') {
+        if ($cod === '') {
+            return FALSE;
+        }
+
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($cod) . ";");
+        if ($data) {
+            $class = $this->modelName();
+            return new $class($data[0]);
+        }
+    }
+
     /**
      * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
      * @return boolean
@@ -237,7 +264,6 @@ trait Model {
         foreach (self::$fields as $field) {
             if ($field['name'] !== $this->primaryColumn()) {
                 $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->var2str($this->{$field['name']});
-
                 if ($coma === ' SET') {
                     $coma = ', ';
                 }
@@ -282,6 +308,37 @@ trait Model {
     public function delete() {
         return $this->dataBase->exec("DELETE FROM " . $this->tableName()
                         . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
+    }
+    
+    public function all($fields = [], $order = [], $offset = 0, $limit = 50) {
+        $modelList = [];
+        $sql = "SELECT * FROM ".$this->tableName();
+        $coma = " WHERE ";
+        
+        foreach($fields as $key => $value) {
+            $sql .= $coma.$key." = ".$this->var2str($value);
+            if($coma === " WHERE ") {
+                $coma = ", ";
+            }
+        }
+        
+        $coma2 = " ORDER BY ";
+        foreach($order as $key => $value) {
+            $sql .= $coma2.$key." ".$this->var2str($value);
+            if($coma2 === " WHERE ") {
+                $coma2 = ", ";
+            }
+        }
+        
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
+        if($data) {
+            $class = $this->modelName();
+            foreach($data as $d) {
+                $modelList[] = new $class($d);
+            }
+        }
+        
+        return $modelList;
     }
 
     /**
