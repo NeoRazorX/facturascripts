@@ -228,14 +228,14 @@ class Empresa {
                 'mail_user' => '',
                 'mail_low_security' => FALSE,
             );
+
+            if ($this->xid === NULL) {
+                $utils = new \FacturaScripts\Core\Base\Utils();
+                $this->xid = $utils->randomString(30);
+                $this->save();
+            }
         } else {
             $this->clear();
-        }
-
-        if ($this->xid === NULL) {
-            $utils = new \FacturaScripts\Core\Base\Utils();
-            $this->xid = $utils->randomString(30);
-            $this->save();
         }
     }
 
