@@ -101,7 +101,7 @@ class FSPageRules extends \FacturaScripts\Core\Base\Model {
     public function all() {
         $accesslist = array();
 
-        $data = $this->dabaBase->select("SELECT * FROM " . $this->tableName . ";");
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . ";");
         if ($data) {
             foreach ($data as $a) {
                 $accesslist[] = new FSPageRules($a);
