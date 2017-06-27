@@ -214,32 +214,32 @@ trait Model {
             $class = $this->modelName();
             return new $class($data[0]);
         }
-        
+
         return FALSE;
     }
-    
+
     /**
      * Devuelve el primer modelo que coincide con los filtros establecidos.
      * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
      * @return mixed
      */
     public function getBy($fields = []) {
-        $sql = "SELECT * FROM ".$this->tableName();
+        $sql = "SELECT * FROM " . $this->tableName();
         $coma = " WHERE ";
-        
-        foreach($fields as $key => $value) {
-            $sql .= $coma.$key." = ".$this->var2str($value);
-            if($coma === " WHERE ") {
+
+        foreach ($fields as $key => $value) {
+            $sql .= $coma . $key . " = " . $this->var2str($value);
+            if ($coma === " WHERE ") {
                 $coma = ", ";
             }
         }
-        
+
         $data = $this->dataBase->selectLimit($sql, 1);
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
-        
+
         return FALSE;
     }
 
@@ -337,7 +337,7 @@ trait Model {
         return $this->dataBase->exec("DELETE FROM " . $this->tableName()
                         . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
     }
-    
+
     /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
      * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
@@ -348,32 +348,32 @@ trait Model {
      */
     public function all($fields = [], $order = [], $offset = 0, $limit = 50) {
         $modelList = [];
-        $sql = "SELECT * FROM ".$this->tableName();
+        $sql = "SELECT * FROM " . $this->tableName();
         $coma = " WHERE ";
-        
-        foreach($fields as $key => $value) {
-            $sql .= $coma.$key." = ".$this->var2str($value);
-            if($coma === " WHERE ") {
+
+        foreach ($fields as $key => $value) {
+            $sql .= $coma . $key . " = " . $this->var2str($value);
+            if ($coma === " WHERE ") {
                 $coma = ", ";
             }
         }
-        
+
         $coma2 = " ORDER BY ";
-        foreach($order as $key => $value) {
-            $sql .= $coma2.$key." ".$this->var2str($value);
-            if($coma2 === " WHERE ") {
+        foreach ($order as $key => $value) {
+            $sql .= $coma2 . $key . " " . $this->var2str($value);
+            if ($coma2 === " WHERE ") {
                 $coma2 = ", ";
             }
         }
-        
+
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if($data) {
+        if ($data) {
             $class = $this->modelName();
-            foreach($data as $d) {
+            foreach ($data as $d) {
                 $modelList[] = new $class($d);
             }
         }
-        
+
         return $modelList;
     }
 
@@ -410,34 +410,6 @@ trait Model {
     }
 
     /**
-     * Convierte una variable con contenido binario a texto.
-     * Lo hace en base64.
-     * @param mixed $val
-     * @return string
-     */
-    protected function bin2str($val) {
-        if ($val === NULL) {
-            return 'NULL';
-        }
-
-        return "'" . base64_encode($val) . "'";
-    }
-
-    /**
-     * Convierte un texto a binario.
-     * Lo hace con base64.
-     * @param string $val
-     * @return null|string
-     */
-    protected function str2bin($val) {
-        if ($val === NULL) {
-            return NULL;
-        }
-
-        return base64_decode($val);
-    }
-
-    /**
      * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
      * Esta función devuelve TRUE si el valor se corresponde con
      * alguno de los anteriores.
@@ -446,58 +418,6 @@ trait Model {
      */
     public function str2bool($val) {
         return ($val == 't' || $val == '1');
-    }
-
-    /**
-     * Devuelve el valor entero de la variable $s,
-     * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
-     * @param string $str
-     * @return integer
-     */
-    public function intval($str) {
-        if ($str === NULL) {
-            return NULL;
-        }
-
-        return (int) $str;
-    }
-
-    /**
-     * Compara dos números en coma flotante con una precisión de $precision,
-     * devuelve TRUE si son iguales, FALSE en caso contrario.
-     * @param double $f1
-     * @param double $f2
-     * @param integer $precision
-     * @param boolean $round
-     * @return boolean
-     */
-    public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
-        if ($round || !function_exists('bccomp')) {
-            return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
-        }
-
-        return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
-    }
-
-    /**
-     * Devuelve un array con todas las fechas entre $first y $last.
-     * @param string $first
-     * @param string $last
-     * @param string $step
-     * @param string $format
-     * @return mixed
-     */
-    protected function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y') {
-        $dates = array();
-        $current = strtotime($first);
-        $last = strtotime($last);
-
-        while ($current <= $last) {
-            $dates[] = date($format, $current);
-            $current = strtotime($step, $current);
-        }
-
-        return $dates;
     }
 
     /**
@@ -512,21 +432,12 @@ trait Model {
      * @param string $txt
      * @return string
      */
-    public function noHtml($txt) {
+    public static function noHtml($txt) {
         $newt = str_replace(
                 array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
         );
 
         return trim($newt);
-    }
-
-    /**
-     * Devuelve una cadena de texto aleatorio de longitud $length
-     * @param integer $length
-     * @return string
-     */
-    protected function randomString($length = 10) {
-        return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
     /**
