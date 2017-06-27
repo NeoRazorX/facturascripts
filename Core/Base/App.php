@@ -91,7 +91,7 @@ class App {
         
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
-            $this->debugBar['messages']->info('Loading controller: '.$controllerName);
+            $this->miniLog->debug('Loading controller: '.$controllerName);
             
             try {
                 $this->controller = new $controllerName(__DIR__);
@@ -137,6 +137,11 @@ class App {
             unset($twigOptions['cache']);
             $twigOptions['debug'] = TRUE;
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
+            
+            /// añadimos del log a debugBar
+            foreach($this->miniLog->read(['debug','sql']) as $msg) {
+                $this->debugBar['messages']->info($msg['message']);
+            }
         }
         $twig = new \Twig_Environment($twigLoader, $twigOptions);
 

@@ -6,49 +6,49 @@
         Estructura de la tabla series.
 -->
 <tabla>
-   <columna>
-      <nombre>irpf</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idcuenta</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codserie</nombre>
-      <tipo>character varying(2)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>descripcion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>siniva</nombre>
-      <tipo>boolean</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codcuenta</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codejercicio</nombre>
-      <tipo>character varying(4)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>numfactura</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-      <defecto>1</defecto>
-   </columna>
-   <restriccion>
-      <nombre>series_pkey</nombre>
-      <consulta>PRIMARY KEY (codserie)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>irpf</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codserie</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>siniva</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codcuenta</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>numfactura</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>1</defecto>
+    </columna>
+    <restriccion>
+        <nombre>series_pkey</nombre>
+        <consulta>PRIMARY KEY (codserie)</consulta>
+    </restriccion>
 </tabla>

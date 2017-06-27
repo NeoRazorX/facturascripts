@@ -21,9 +21,7 @@
 <div class="alert alert-warning">
     <ul>
         {% for msg in log %}
-            {% if msg.level != 'sql' > 0 %}
             <li>{{ msg.message }}</li>
-            {% endif %}
         {% endfor %}
     </ul>
 </div>

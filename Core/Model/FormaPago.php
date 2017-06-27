@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class forma_pago extends \FacturaScripts\Core\Base\Model {
+class FormaPago extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (10).
@@ -75,7 +75,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva forma de pago
      */
     public function __construct($data = FALSE) {
-        parent::__construct('formaspago');
+        parent::__construct('formaspago', 'codpago');
         if ($data) {
             $this->codpago = $data['codpago'];
             $this->descripcion = $data['descripcion'];
@@ -124,7 +124,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
      * @return boolean
      */
-    public function is_default() {
+    public function isDefault() {
         return ( $this->codpago == $this->defaultItems->codPago() );
     }
 
@@ -136,23 +136,10 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($data) {
-            return new forma_pago($data[0]);
+            return new FormaPago($data[0]);
         }
 
         return FALSE;
-    }
-
-    /**
-     * Devuelve TRUE si la forma de pago existe
-     * @return boolean
-     */
-    public function exists() {
-        if (is_null($this->codpago)) {
-            return FALSE;
-        }
-
-        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
-                        . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
     /**
@@ -207,14 +194,9 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         return FALSE;
     }
 
-    /**
-     * Elimina la forma de pago
-     * @return boolean
-     */
     public function delete() {
         $this->cache->delete('m_forma_pago_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
+        return parent::delete();
     }
 
     /**
@@ -229,7 +211,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
             $formas = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY descripcion ASC;");
             if ($formas) {
                 foreach ($formas as $f) {
-                    $listaformas[] = new forma_pago($f);
+                    $listaformas[] = new FormaPago($f);
                 }
             }
 
@@ -247,8 +229,8 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
      * @return string
      */
-    public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '') {
-        $fecha = $this->calcular_vencimiento2($fecha_inicio);
+    public function calcularVencimiento($fecha_inicio, $dias_de_pago = '') {
+        $fecha = $this->calcularVencimiento2($fecha_inicio);
 
         /// validamos los días de pago
         $array_dias = array();
@@ -261,10 +243,10 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
         if ($array_dias != NULL) {
             foreach ($array_dias as $i => $dia_de_pago) {
                 if ($i == 0) {
-                    $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
+                    $fecha = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
                 } else {
                     /// si hay varios dias de pago, elegimos la fecha más cercana
-                    $fecha_temp = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
+                    $fecha_temp = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
                     if (strtotime($fecha_temp) < strtotime($fecha)) {
                         $fecha = $fecha_temp;
                     }
@@ -281,7 +263,7 @@ class forma_pago extends \FacturaScripts\Core\Base\Model {
      * @param string|integer $dia_de_pago
      * @return string
      */
-    private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
+    private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0) {
         if ($dia_de_pago == 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
         }

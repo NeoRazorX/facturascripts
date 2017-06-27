@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_roles_access.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla fs_roles_access.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('fs_roles_access_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>codrol</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>pagename</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>allowdelete</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <columna>
+        <nombre>allowupdate</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <restriccion>
+        <nombre>fs_roles_access_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_roles_access_roles</nombre>
+        <consulta>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_roles_access_page</nombre>
+        <consulta>FOREIGN KEY (pagename) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>unique_fs_roles_access</nombre>
+        <consulta>UNIQUE (codrol,pagename)</consulta>
+    </restriccion>
+</tabla>

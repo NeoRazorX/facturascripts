@@ -356,7 +356,7 @@ class Postgresql {
                 pg_free_result($aux);
                 $result = TRUE;
             } else {
-                self::$miniLog->error(pg_last_error(self::$link) . '. La secuencia ocupa la posición ' . count(self::$miniLog->read('sql')));
+                self::$miniLog->error(pg_last_error(self::$link) . '. La secuencia ocupa la posición ' . count(self::$miniLog->read(['sql'])));
             }
 
             if ($transaction) {

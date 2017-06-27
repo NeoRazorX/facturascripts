@@ -6,58 +6,58 @@
         Estructura de la tabla ejercicios.
 -->
 <tabla>
-   <columna>
-      <nombre>idasientocierre</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idasientopyg</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idasientoapertura</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>plancontable</nombre>
-      <tipo>character varying(2)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>longsubcuenta</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>estado</nombre>
-      <tipo>character varying(15)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>fechafin</nombre>
-      <tipo>date</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>fechainicio</nombre>
-      <tipo>date</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>nombre</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>codejercicio</nombre>
-      <tipo>character varying(4)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <restriccion>
-      <nombre>ejercicios_pkey</nombre>
-      <consulta>PRIMARY KEY (codejercicio)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>idasientocierre</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idasientopyg</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idasientoapertura</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>plancontable</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>longsubcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>estado</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fechafin</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fechainicio</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>ejercicios_pkey</nombre>
+        <consulta>PRIMARY KEY (codejercicio)</consulta>
+    </restriccion>
 </tabla>

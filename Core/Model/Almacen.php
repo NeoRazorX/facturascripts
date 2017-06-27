@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class almacen extends \FacturaScripts\Core\Base\Model {
+class Almacen extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (4).
@@ -98,7 +98,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear un nuevo almacen
      */
     public function __construct($data = FALSE) {
-        parent::__construct('almacenes');
+        parent::__construct('almacenes', 'codalmacen');
         if ($data) {
             $this->codalmacen = $data['codalmacen'];
             $this->nombre = $data['nombre'];
@@ -135,7 +135,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     public function install() {
-        $this->cache->delete('m_almacen_all');
         return "INSERT INTO " . $this->tableName . " (codalmacen,nombre,poblacion,"
                 . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
@@ -156,7 +155,7 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
      * @return boolean
      */
-    public function is_default() {
+    public function isDefault() {
         return ( $this->codalmacen == $this->defaultItems->codAlmacen() );
     }
 
@@ -168,23 +167,10 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codalmacen = " . $this->var2str($cod) . ";");
         if ($data) {
-            return new almacen($data[0]);
+            return new Almacen($data[0]);
         }
 
         return FALSE;
-    }
-
-    /**
-     * Devuelve TRUE si el almacén existe
-     * @return boolean
-     */
-    public function exists() {
-        if (is_null($this->codalmacen)) {
-            return FALSE;
-        }
-
-        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
-                        . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
     /**
@@ -221,8 +207,6 @@ class almacen extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->delete('m_almacen_all');
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", codpais = " . $this->var2str($this->codpais)
@@ -256,33 +240,17 @@ class almacen extends \FacturaScripts\Core\Base\Model {
     }
 
     /**
-     * Elimina el almacén
-     * @return boolean
-     */
-    public function delete() {
-        $this->cache->delete('m_almacen_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
-    }
-
-    /**
      * Devuelve un array con todos los almacenes
      * @return almacen
      */
     public function all() {
-        /// Leemos de la cache
-        $listaa = $this->cache->get('m_almacen_all');
-        if (!$listaa) {
-            /// si no está en la cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
-            if ($data) {
-                foreach ($data as $a) {
-                    $listaa[] = new almacen($a);
-                }
-            }
+        $listaa = [];
 
-            /// guardamos en la cache
-            $this->cache->set('m_almacen_all', $listaa);
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codalmacen ASC;");
+        if ($data) {
+            foreach ($data as $a) {
+                $listaa[] = new Almacen($a);
+            }
         }
 
         return $listaa;

@@ -26,7 +26,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class serie extends \FacturaScripts\Core\Base\Model {
+class Serie extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (2).
@@ -69,7 +69,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva serie
      */
     public function __construct($data = FALSE) {
-        parent::__construct('series');
+        parent::__construct('series', 'codserie');
         if ($data) {
             $this->codserie = $data['codserie'];
             $this->descripcion = $data['descripcion'];
@@ -117,7 +117,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si la serie es la predeterminada de la empresa
      * @return boolean
      */
-    public function is_default() {
+    public function isDefault() {
         return ( $this->codserie == $this->defaultItems->codSerie() );
     }
 
@@ -129,22 +129,10 @@ class serie extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $serie = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($cod) . ";");
         if ($serie) {
-            return new serie($serie[0]);
+            return new Serie($serie[0]);
         }
 
         return FALSE;
-    }
-
-    /**
-     * Devuelve TRUE si la serie existe
-     * @return boolean
-     */
-    public function exists() {
-        if (is_null($this->codserie)) {
-            return FALSE;
-        }
-
-        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -203,14 +191,9 @@ class serie extends \FacturaScripts\Core\Base\Model {
         return FALSE;
     }
 
-    /**
-     * Elimina la serie
-     * @return boolean
-     */
     public function delete() {
         $this->cache->delete('m_serie_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        return parent::delete();
     }
 
     /**
@@ -225,7 +208,7 @@ class serie extends \FacturaScripts\Core\Base\Model {
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY codserie ASC;");
             if ($data) {
                 foreach ($data as $s) {
-                    $serieList[] = new serie($s);
+                    $serieList[] = new Serie($s);
                 }
             }
 

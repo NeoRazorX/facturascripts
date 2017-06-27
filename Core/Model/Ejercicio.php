@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class ejercicio extends \FacturaScripts\Core\Base\Model {
+class Ejercicio extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar(4).
@@ -93,7 +93,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * Contructor por defecto
      */
     public function __construct($data = FALSE) {
-        parent::__construct('ejercicios');
+        parent::__construct('ejercicios', 'codejercicio');
         if ($data) {
             $this->codejercicio = $data['codejercicio'];
             $this->nombre = $data['nombre'];
@@ -128,8 +128,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @return string
      */
     protected function install() {
-        $this->cache->delete('m_ejercicio_all');
-        $this->cache->delete('m_ejercicio_all_abiertos');
         return "INSERT INTO " . $this->tableName . " (codejercicio,nombre,fechainicio,fechafin,"
                 . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
                 . "VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y'))
@@ -157,7 +155,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * @param string $cod
      * @return string
      */
-    public function get_new_codigo($cod = '0001') {
+    public function newCodigo($cod = '0001') {
         if (!$this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
         }
@@ -186,17 +184,17 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
      * @return boolean
      */
-    public function is_default() {
+    public function isDefault() {
         return ($this->codejercicio == $this->defaultItems->codEjercicio());
     }
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      * @param string $fecha
-     * @param boolean $show_error
+     * @param boolean $showError
      * @return string
      */
-    public function get_best_fecha($fecha, $show_error = FALSE) {
+    public function getBestFecha($fecha, $showError = FALSE) {
         $fecha2 = strtotime($fecha);
 
         if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
@@ -204,13 +202,13 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         }
 
         if ($fecha2 > strtotime($this->fechainicio)) {
-            if ($show_error) {
+            if ($showError) {
                 $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
             }
             return $this->fechafin;
         }
 
-        if ($show_error) {
+        if ($showError) {
             $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
         }
         return $this->fechainicio;
@@ -224,7 +222,7 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE codejercicio = " . $this->var2str($cod) . ";");
         if ($data) {
-            return new ejercicio($data[0]);
+            return new Ejercicio($data[0]);
         }
 
         return FALSE;
@@ -234,23 +232,23 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
      * @param string $fecha
-     * @param boolean $solo_abierto
+     * @param boolean $soloAbierto
      * @param boolean $crear
      * @return boolean|ejercicio
      */
-    public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE) {
+    public function getByFecha($fecha, $soloAbierto = TRUE, $crear = TRUE) {
         $sql = "SELECT * FROM " . $this->tableName . " WHERE fechainicio <= "
                 . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
 
         $data = $this->dataBase->select($sql);
         if ($data) {
-            $eje = new ejercicio($data[0]);
-            if ($eje->abierto() || !$solo_abierto) {
+            $eje = new Ejercicio($data[0]);
+            if ($eje->abierto() || !$soloAbierto) {
                 return $eje;
             }
         } else if ($crear) {
-            $eje = new ejercicio();
-            $eje->codejercicio = $eje->get_new_codigo(Date('Y', strtotime($fecha)));
+            $eje = new Ejercicio();
+            $eje->codejercicio = $eje->newCodigo(Date('Y', strtotime($fecha)));
             $eje->nombre = Date('Y', strtotime($fecha));
             $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
             $eje->fechafin = Date('31-12-Y', strtotime($fecha));
@@ -263,19 +261,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
         }
 
         return FALSE;
-    }
-
-    /**
-     * Devuelve TRUE si el ejercico existe
-     * @return boolean
-     */
-    public function exists() {
-        if (is_null($this->codejercicio)) {
-            return FALSE;
-        }
-
-        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
-                        . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
     /**
@@ -309,9 +294,6 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
      */
     public function save() {
         if ($this->test()) {
-            $this->cache->delete('m_ejercicio_all');
-            $this->cache->delete('m_ejercicio_all_abiertos');
-
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET nombre = " . $this->var2str($this->nombre)
                         . ", fechainicio = " . $this->var2str($this->fechainicio)
@@ -345,58 +327,17 @@ class ejercicio extends \FacturaScripts\Core\Base\Model {
     }
 
     /**
-     * Elimina el ejercicio
-     * @return boolean
-     */
-    public function delete() {
-        $this->cache->delete('m_ejercicio_all');
-        $this->cache->delete('m_ejercicio_all_abiertos');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
-    }
-
-    /**
      * Devuelve un array con todos los ejercicios
      * @return ejercicio
      */
     public function all() {
-        /// leemos de la cache
-        $listae = $this->cache->get('m_ejercicio_all');
-        if (!$listae) {
-            /// si no está en cache, leemos de la base de datos
-            $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
-            if ($data) {
-                foreach ($data as $e) {
-                    $listae[] = new ejercicio($e);
-                }
+        $listae = [];
+
+        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY fechainicio DESC;");
+        if ($data) {
+            foreach ($data as $e) {
+                $listae[] = new Ejercicio($e);
             }
-
-            /// guardamos en la cache
-            $this->cache->set('m_ejercicio_all', $listae);
-        }
-
-        return $listae;
-    }
-
-    /**
-     * Devuelve un array con todos los ejercicio abiertos
-     * @return ejercicio
-     */
-    public function all_abiertos() {
-        /// leemos de la cache
-        $listae = $this->cache->get('m_ejercicio_all_abiertos');
-        if (!$listae) {
-            /// si no está en cache, leemos de la base de datos
-            $sql = "SELECT * FROM " . $this->tableName . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
-            $data = $this->dataBase->select($sql);
-            if ($data) {
-                foreach ($data as $e) {
-                    $listae[] = new ejercicio($e);
-                }
-            }
-
-            /// guardamos en la cache
-            $this->cache->set('m_ejercicio_all_abiertos', $listae);
         }
 
         return $listae;

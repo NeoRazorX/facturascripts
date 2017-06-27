@@ -6,126 +6,126 @@
         Estructura de la tabla agentes.
 -->
 <tabla>
-   <columna>
-      <nombre>apellidos</nombre>
-      <tipo>character varying(200)</tipo>
-   </columna>
-   <columna>
-      <nombre>ciudad</nombre>
-      <tipo>character varying(50)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codagente</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>coddepartamento</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codpais</nombre>
-      <tipo>character varying(20)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codpostal</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>direccion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>dnicif</nombre>
-      <tipo>character varying(15)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>email</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>fax</nombre>
-      <tipo>character varying(15)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idprovincia</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idusuario</nombre>
-      <tipo>character varying(30)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>irpf</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>nombre</nombre>
-      <tipo>character varying(50)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>nombreap</nombre>
-      <tipo>character varying(150)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>porcomision</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>provincia</nombre>
-      <tipo>character varying(50)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>telefono</nombre>
-      <tipo>character varying(15)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>seg_social</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>cargo</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>banco</nombre>
-      <tipo>character varying(34)</tipo>
-   </columna>
-   <columna>
-      <nombre>f_alta</nombre>
-      <tipo>date</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>f_baja</nombre>
-      <tipo>date</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>f_nacimiento</nombre>
-      <tipo>date</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <restriccion>
-      <nombre>agentes_pkey</nombre>
-      <consulta>PRIMARY KEY (codagente)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>apellidos</nombre>
+        <tipo>character varying(200)</tipo>
+    </columna>
+    <columna>
+        <nombre>ciudad</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codagente</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>coddepartamento</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpais</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpostal</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>direccion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>dnicif</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>email</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fax</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idprovincia</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idusuario</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>irpf</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombreap</nombre>
+        <tipo>character varying(150)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>porcomision</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>provincia</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>seg_social</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>cargo</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>banco</nombre>
+        <tipo>character varying(34)</tipo>
+    </columna>
+    <columna>
+        <nombre>f_alta</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>f_baja</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>f_nacimiento</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>agentes_pkey</nombre>
+        <consulta>PRIMARY KEY (codagente)</consulta>
+    </restriccion>
 </tabla>

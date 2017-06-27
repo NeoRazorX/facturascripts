@@ -6,45 +6,45 @@
         Estructura de la tabla formaspago.
 -->
 <tabla>
-   <columna>
-      <nombre>codpago</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>descripcion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>genrecibos</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>codcuenta</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>domiciliado</nombre>
-      <tipo>boolean</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>imprimir</nombre>
-      <tipo>boolean</tipo>
-      <nulo>YES</nulo>
-      <defecto>true</defecto>
-   </columna>
-   <columna>
-      <nombre>vencimiento</nombre>
-      <tipo>character varying(20)</tipo>
-      <nulo>YES</nulo>
-      <defecto>'+1month'::character varying</defecto>
-   </columna>
-   <restriccion>
-      <nombre>formaspago_pkey</nombre>
-      <consulta>PRIMARY KEY (codpago)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>codpago</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>genrecibos</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codcuenta</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>domiciliado</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>imprimir</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <columna>
+        <nombre>vencimiento</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+        <defecto>'+1month'::character varying</defecto>
+    </columna>
+    <restriccion>
+        <nombre>formaspago_pkey</nombre>
+        <consulta>PRIMARY KEY (codpago)</consulta>
+    </restriccion>
 </tabla>

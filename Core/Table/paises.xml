@@ -6,33 +6,33 @@
         Estructura de la tabla paises.
 -->
 <tabla>
-   <columna>
-      <nombre>validarprov</nombre>
-      <tipo>boolean</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codiso</nombre>
-      <tipo>character varying(2)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>bandera</nombre>
-      <tipo>text</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>nombre</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codpais</nombre>
-      <tipo>character varying(20)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <restriccion>
-      <nombre>paises_pkey</nombre>
-      <consulta>PRIMARY KEY (codpais)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>validarprov</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codiso</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>bandera</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpais</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>paises_pkey</nombre>
+        <consulta>PRIMARY KEY (codpais)</consulta>
+    </restriccion>
 </tabla>

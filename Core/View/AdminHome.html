@@ -21,7 +21,7 @@
             <h3>Agentes:</h3>
             <ul>
                 {% for agente in fsc.agente.all() %}
-                <li>{{ agente.get_fullname() }}</li>
+                <li>{{ agente.fullName() }}</li>
                 {% endfor %}
             </ul>
             <h3>Almacenes:</h3>

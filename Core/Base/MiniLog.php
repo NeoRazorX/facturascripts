@@ -133,7 +133,7 @@ class MiniLog {
     public function debug($message, array $context = array()) {
         $this->log('debug', $message, $context);
     }
-    
+
     /**
      * SQL history.
      * 
@@ -161,22 +161,23 @@ class MiniLog {
             'context' => $context
         ];
     }
-    
+
     /**
      * Returns specified level messages or all.
      * 
-     * @param string $level
-     * @return mixed
+     * @param array $levels
+     * @return array
      */
-    public function read($level = '') {
+    public function read($levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency']) {
         $messages = [];
-        
-        foreach(self::$dataLog as $data) {
-            if($data['level'] === $level || $level === '') {
+
+        foreach (self::$dataLog as $data) {
+            if (in_array($data['level'], $levels)) {
                 $messages[] = $data;
             }
         }
-        
+
         return $messages;
     }
+
 }

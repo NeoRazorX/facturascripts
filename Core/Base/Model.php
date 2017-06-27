@@ -54,6 +54,18 @@ abstract class Model {
     protected $i18n;
 
     /**
+     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    /**
+     * Nombre de la columna que es clave primaria.
+     * @var string 
+     */
+    protected $primaryColumn;
+
+    /**
      * Nombre de la tabla en la base de datos.
      * @var string 
      */
@@ -73,24 +85,19 @@ abstract class Model {
     private static $checkedTables;
 
     /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
-     * @var MiniLog
-     */
-    protected static $miniLog;
-
-    /**
      * Constructor.
      * @param string $tableName nombre de la tabla de la base de datos.
      */
-    public function __construct($tableName = '') {
+    public function __construct($tableName = '', $primaryColumn = '') {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
+        $this->miniLog = new MiniLog();
+        $this->primaryColumn = $primaryColumn;
         $this->tableName = $tableName;
 
         if (!isset(self::$checkedTables)) {
-            self::$miniLog = new MiniLog();
             self::$checkedTables = [];
 
             $pluginManager = new PluginManager();
@@ -106,7 +113,11 @@ abstract class Model {
     public function tableName() {
         return $this->tableName;
     }
-    
+
+    public function primaryColumn() {
+        return $this->primaryColumn;
+    }
+
     /**
      * Esta función permite resetear los valores del modelo.
      */
@@ -116,13 +127,22 @@ abstract class Model {
      * Esta función es llamada al crear una tabla.
      * Permite insertar valores en la tabla.
      */
-    abstract protected function install();
+    protected function install() {
+        return '';
+    }
 
     /**
      * Esta función devuelve TRUE si los datos del objeto se encuentran
      * en la base de datos.
      */
-    abstract public function exists();
+    public function exists() {
+        if ($this->{$this->primaryColumn} === NULL) {
+            return FALSE;
+        }
+
+        return (bool) $this->dataBase->select("SELECT 1 FROM " . $this->tableName
+                        . " WHERE " . $this->primaryColumn . " = " . $this->var2str($this->{$this->primaryColumn}) . ";");
+    }
 
     /**
      * Esta función sirve tanto para insertar como para actualizar
@@ -133,7 +153,10 @@ abstract class Model {
     /**
      * Esta función sirve para eliminar los datos del objeto de la base de datos
      */
-    abstract public function delete();
+    public function delete() {
+        return $this->dataBase->exec("DELETE FROM " . $this->tableName
+                        . " WHERE " . $this->primaryColumn . " = " . $this->var2str($this->{$this->primaryColumn}) . ";");
+    }
 
     /**
      * Escapa las comillas de una cadena de texto.
@@ -151,7 +174,7 @@ abstract class Model {
      * @return string
      */
     public function var2str($val) {
-        if (is_null($val)) {
+        if ($val === NULL) {
             return 'NULL';
         } else if (is_bool($val)) {
             if ($val) {
@@ -174,7 +197,7 @@ abstract class Model {
      * @return string
      */
     protected function bin2str($val) {
-        if (is_null($val)) {
+        if ($val === NULL) {
             return 'NULL';
         }
 
@@ -188,7 +211,7 @@ abstract class Model {
      * @return null|string
      */
     protected function str2bin($val) {
-        if (is_null($val)) {
+        if ($val === NULL) {
             return NULL;
         }
 
@@ -213,7 +236,7 @@ abstract class Model {
      * @return integer
      */
     public function intval($str) {
-        if (is_null($str)) {
+        if ($str === NULL) {
             return NULL;
         }
 
@@ -230,7 +253,7 @@ abstract class Model {
      * @return boolean
      */
     public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
-        if ($round || ! function_exists('bccomp')) {
+        if ($round || !function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
 
@@ -301,7 +324,7 @@ abstract class Model {
         if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
             if ($this->dataBase->tableExists($tableName)) {
                 if (!$this->dataBase->checkTableAux($tableName)) {
-                    self::$miniLog->critical('Error al convertir la tabla a InnoDB.');
+                    $this->miniLog->critical('Error al convertir la tabla a InnoDB.');
                 }
 
                 /**
@@ -312,7 +335,7 @@ abstract class Model {
                 $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, TRUE);
                 if ($sql2 != '') {
                     if (!$this->dataBase->exec($sql2)) {
-                        self::$miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                        $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     }
 
                     /// leemos de nuevo las restricciones
@@ -333,12 +356,12 @@ abstract class Model {
 
             if ($sql != '') {
                 if (!$this->dataBase->exec($sql)) {
-                    self::$miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                    $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     $done = FALSE;
                 }
             }
         } else {
-            self::$miniLog->critical('Error con el xml.');
+            $this->miniLog->critical('Error con el xml.');
             $done = FALSE;
         }
 
@@ -394,10 +417,10 @@ abstract class Model {
                     }
                 }
             } else {
-                self::$miniLog->critical('Error al leer el archivo ' . $filename);
+                $this->miniLog->critical('Error al leer el archivo ' . $filename);
             }
         } else {
-            self::$miniLog->critical('Archivo ' . $filename . ' no encontrado.');
+            $this->miniLog->critical('Archivo ' . $filename . ' no encontrado.');
         }
 
         return $return;

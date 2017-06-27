@@ -47,14 +47,14 @@ class AdminHome extends \FacturaScripts\Core\Base\Controller {
         $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
         $pluginManager->deploy();
 
-        $this->agente = new \FacturaScripts\Dinamic\Model\agente();
-        $this->almacen = new \FacturaScripts\Dinamic\Model\almacen();
-        $this->divisa = new \FacturaScripts\Dinamic\Model\divisa();
-        $this->ejercicio = new \FacturaScripts\Dinamic\Model\ejercicio();
-        $this->empresa = new \FacturaScripts\Dinamic\Model\empresa();
-        $this->formaPago = new \FacturaScripts\Dinamic\Model\forma_pago();
-        $this->pais = new \FacturaScripts\Dinamic\Model\pais();
-        $this->serie = new \FacturaScripts\Dinamic\Model\serie();
+        $this->agente = new \FacturaScripts\Dinamic\Model\Agente();
+        $this->almacen = new \FacturaScripts\Dinamic\Model\Almacen();
+        $this->divisa = new \FacturaScripts\Dinamic\Model\Divisa();
+        $this->ejercicio = new \FacturaScripts\Dinamic\Model\Ejercicio();
+        $this->empresa = new \FacturaScripts\Dinamic\Model\Empresa();
+        $this->formaPago = new \FacturaScripts\Dinamic\Model\FormaPago();
+        $this->pais = new \FacturaScripts\Dinamic\Model\Pais();
+        $this->serie = new \FacturaScripts\Dinamic\Model\Serie();
     }
 
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_roles.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla fs_roles.
+-->
+<tabla>
+    <columna>
+        <nombre>codrol</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(200)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>fs_roles_pkey</nombre>
+        <consulta>PRIMARY KEY (codrol)</consulta>
+    </restriccion>
+</tabla>

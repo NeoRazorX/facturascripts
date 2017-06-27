@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class divisa extends \FacturaScripts\Core\Base\Model {
+class Divisa extends \FacturaScripts\Core\Base\Model {
 
     /**
      * Clave primaria. Varchar (3).
@@ -49,7 +49,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * Tasa de conversión respecto al euro (para compras).
      * @var float
      */
-    public $tasaconv_compra;
+    public $tasaconvcompra;
 
     /**
      * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
@@ -68,12 +68,12 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * @param array $data Array con los valores para crear una nueva divisa
      */
     public function __construct($data = FALSE) {
-        parent::__construct('divisas');
+        parent::__construct('divisas', 'coddivisa');
         if ($data) {
             $this->coddivisa = $data['coddivisa'];
             $this->descripcion = $data['descripcion'];
             $this->tasaconv = floatval($data['tasaconv']);
-            $this->tasaconv_compra = floatval($data['tasaconv_compra']);
+            $this->tasaconvcompra = floatval($data['tasaconvcompra']);
             $this->codiso = $data['codiso'];
             $this->simbolo = $data['simbolo'];
         } else {
@@ -85,7 +85,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
         $this->coddivisa = NULL;
         $this->descripcion = '';
         $this->tasaconv = 1.00;
-        $this->tasaconv_compra = 1.00;
+        $this->tasaconvcompra = 1.00;
         $this->codiso = NULL;
         $this->simbolo = '?';
     }
@@ -96,7 +96,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      */
     public function install() {
         $this->cache->delete('m_divisa_all');
-        return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
+        return "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
                 . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
@@ -123,7 +123,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
      * @return boolean
      */
-    public function is_default() {
+    public function isDefault() {
         return ( $this->coddivisa == $this->defaultItems->codDivisa() );
     }
 
@@ -135,23 +135,10 @@ class divisa extends \FacturaScripts\Core\Base\Model {
     public function get($cod) {
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " WHERE coddivisa = " . $this->var2str($cod) . ";");
         if ($data) {
-            return new divisa($data[0]);
+            return new Divisa($data[0]);
         }
 
         return FALSE;
-    }
-
-    /**
-     * Devuelve TRUE si la divisa existe
-     * @return boolean
-     */
-    public function exists() {
-        if (is_null($this->coddivisa)) {
-            return FALSE;
-        }
-
-        return (bool) $this->dataBase->select("SELECT * FROM " . $this->tableName
-                        . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -169,7 +156,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
         } else if ($this->tasaconv == 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
-        } else if ($this->tasaconv_compra == 0) {
+        } else if ($this->tasaconvcompra == 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $status = TRUE;
@@ -189,16 +176,16 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->tableName . " SET descripcion = " . $this->var2str($this->descripcion) .
                         ", tasaconv = " . $this->var2str($this->tasaconv) .
-                        ", tasaconv_compra = " . $this->var2str($this->tasaconv_compra) .
+                        ", tasaconvcompra = " . $this->var2str($this->tasaconvcompra) .
                         ", codiso = " . $this->var2str($this->codiso) .
                         ", simbolo = " . $this->var2str($this->simbolo) .
                         "  WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";";
             } else {
-                $sql = "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)" .
+                $sql = "INSERT INTO " . $this->tableName . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)" .
                         " VALUES (" . $this->var2str($this->coddivisa) .
                         "," . $this->var2str($this->descripcion) .
                         "," . $this->var2str($this->tasaconv) .
-                        "," . $this->var2str($this->tasaconv_compra) .
+                        "," . $this->var2str($this->tasaconvcompra) .
                         "," . $this->var2str($this->codiso) .
                         "," . $this->var2str($this->simbolo) . ");";
             }
@@ -208,15 +195,10 @@ class divisa extends \FacturaScripts\Core\Base\Model {
 
         return FALSE;
     }
-
-    /**
-     * Elimina esta divisa
-     * @return boolean
-     */
+    
     public function delete() {
         $this->cache->delete('m_divisa_all');
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName
-                        . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        return parent::delete();
     }
 
     /**
@@ -231,7 +213,7 @@ class divisa extends \FacturaScripts\Core\Base\Model {
             $data = $this->dataBase->select("SELECT * FROM " . $this->tableName . " ORDER BY coddivisa ASC;");
             if ($data) {
                 foreach ($data as $d) {
-                    $listad[] = new divisa($d);
+                    $listad[] = new Divisa($d);
                 }
             }
 

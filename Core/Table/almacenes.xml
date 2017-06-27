@@ -6,83 +6,83 @@
         Estructura de la tabla almacenes.
 -->
 <tabla>
-   <columna>
-      <nombre>apartado</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codalmacen</nombre>
-      <tipo>character varying(4)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>codpais</nombre>
-      <tipo>character varying(20)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>codpostal</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>contacto</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>direccion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>fax</nombre>
-      <tipo>character varying(50)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>idprovincia</nombre>
-      <tipo>integer</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>nombre</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>observaciones</nombre>
-      <tipo>text</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>poblacion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>porpvp</nombre>
-      <tipo>double precision</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>provincia</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>telefono</nombre>
-      <tipo>character varying(50)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>tipovaloracion</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <restriccion>
-      <nombre>almacenes_pkey</nombre>
-      <consulta>PRIMARY KEY (codalmacen)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>apartado</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codalmacen</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codpais</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpostal</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>contacto</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>direccion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fax</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idprovincia</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>observaciones</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>poblacion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>porpvp</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>provincia</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>tipovaloracion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>almacenes_pkey</nombre>
+        <consulta>PRIMARY KEY (codalmacen)</consulta>
+    </restriccion>
 </tabla>

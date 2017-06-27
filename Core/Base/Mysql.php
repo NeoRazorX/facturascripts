@@ -367,7 +367,7 @@ class Mysql {
 
             if (self::$link->errno) {
                 self::$miniLog->error('Error al ejecutar la consulta ' . $num . ': ' . self::$link->error .
-                        '. La secuencia ocupa la posición ' . count(self::$miniLog->read('sql')));
+                        '. La secuencia ocupa la posición ' . count(self::$miniLog->read(['sql'])));
             } else {
                 $result = TRUE;
             }
