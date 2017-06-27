@@ -67,10 +67,6 @@ class Divisa {
      */
     public $simbolo;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear una nueva divisa
-     */
     public function __construct($data = FALSE) {
         $this->init('divisas', 'coddivisa');
         if ($data) {

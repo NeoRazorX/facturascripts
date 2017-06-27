@@ -133,10 +133,6 @@ class Agente {
      */
     public $porcomision;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear un nuevo agente
-     */
     public function __construct($data = FALSE) {
         $this->init('agentes', 'codagente');
         if ($data) {

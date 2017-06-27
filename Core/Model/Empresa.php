@@ -211,9 +211,6 @@ class Empresa {
       ] */
     public $email_config;
 
-    /**
-     * Contructor por defecto
-     */
     public function __construct() {
         $this->init('empresa', 'id');
         $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . ";");

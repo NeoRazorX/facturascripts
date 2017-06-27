@@ -51,10 +51,6 @@ class Pais {
      */
     public $nombre;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear un nuevo país
-     */
     public function __construct($data = FALSE) {
         $this->init('paises', 'codpais');
         if ($data) {

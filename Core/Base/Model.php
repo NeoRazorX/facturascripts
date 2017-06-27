@@ -49,7 +49,7 @@ trait Model {
 
     /**
      * Lista de campos de la tabla.
-     * @var type 
+     * @var mixed 
      */
     protected static $fields;
 
@@ -117,14 +117,26 @@ trait Model {
         }
     }
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     * @return string
+     */
     public function tableName() {
         return self::$tableName;
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * @return type
+     */
     public function primaryColumn() {
         return self::$primaryColumn;
     }
 
+    /**
+     * Asigna a las propiedades del modelo los valores del array $data
+     * @param mixed $data
+     */
     public function loadFromData($data = []) {
         foreach ($data as $key => $value) {
             $this->{$key} = $value;
@@ -158,7 +170,7 @@ trait Model {
     }
 
     /**
-     * Esta función permite resetear los valores de todas las propiedades modelo.
+     * Resetea los valores de todas las propiedades modelo.
      */
     public function clear() {
         foreach (self::$fields as $field) {
@@ -167,16 +179,18 @@ trait Model {
     }
 
     /**
-     * Esta función es llamada al crear una tabla.
-     * Permite insertar valores en la tabla.
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. ütil para insertar valores
+     * por defecto.
+     * @return string
      */
-    protected function install() {
+    private function install() {
         return '';
     }
 
     /**
-     * Esta función devuelve TRUE si los datos del objeto se encuentran
-     * en la base de datos.
+     * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
+     * @return boolean
      */
     public function exists() {
         if ($this->{$this->primaryColumn()} === NULL) {
@@ -187,13 +201,18 @@ trait Model {
                         . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Se ejecuta dentro del método save.
+     * @return boolean
+     */
     public function test() {
         return TRUE;
     }
 
     /**
-     * Esta función sirve tanto para insertar como para actualizar
-     * los datos del objeto en la base de datos.
+     * Almacena los datos del modelo en la base de datos.
+     * @return boolean
      */
     public function save() {
         if ($this->test()) {
@@ -207,7 +226,11 @@ trait Model {
         return FALSE;
     }
 
-    protected function saveUpdate() {
+    /**
+     * Actualiza los datos del modelo en la base de datos.
+     * @return boolean
+     */
+    private function saveUpdate() {
         $sql = "UPDATE " . $this->tableName();
         $coma = ' SET';
 
@@ -226,7 +249,11 @@ trait Model {
         return $this->dataBase->exec($sql);
     }
 
-    protected function saveInsert() {
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return boolean
+     */
+    private function saveInsert() {
         $insertFields = [];
         $insertValues = [];
         foreach (self::$fields as $field) {
@@ -249,7 +276,8 @@ trait Model {
     }
 
     /**
-     * Esta función sirve para eliminar los datos del objeto de la base de datos
+     * Elimina los datos del modelo de la base de datos.
+     * @return boolean
      */
     public function delete() {
         return $this->dataBase->exec("DELETE FROM " . $this->tableName()

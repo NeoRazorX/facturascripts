@@ -95,10 +95,6 @@ class Almacen {
      */
     public $observaciones;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear un nuevo almacen
-     */
     public function __construct($data = FALSE) {
         $this->init('almacenes', 'codalmacen');
         if ($data) {

@@ -74,10 +74,6 @@ class FormaPago {
      */
     public $vencimiento;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear una nueva forma de pago
-     */
     public function __construct($data = FALSE) {
         $this->init('formaspago', 'codpago');
         if ($data) {

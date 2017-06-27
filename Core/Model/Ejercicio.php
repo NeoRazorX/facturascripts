@@ -91,9 +91,6 @@ class Ejercicio {
      */
     public $longsubcuenta;
 
-    /**
-     * Contructor por defecto
-     */
     public function __construct($data = FALSE) {
         $this->init('ejercicios', 'codejercicio');
         if ($data) {
@@ -103,6 +100,9 @@ class Ejercicio {
         }
     }
 
+    /**
+     * Resetea los valores de las propiedades del modelo.
+     */
     public function clear() {
         $this->codejercicio = NULL;
         $this->nombre = '';

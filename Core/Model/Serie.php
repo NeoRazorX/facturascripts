@@ -68,10 +68,6 @@ class Serie {
      */
     public $numfactura;
 
-    /**
-     * Constructor por defecto
-     * @param array $data Array con los valores para crear una nueva serie
-     */
     public function __construct($data = FALSE) {
         $this->init('series', 'codserie');
         if ($data) {
