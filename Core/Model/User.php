@@ -25,9 +25,10 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FSUser {
+class User {
 
     use \FacturaScripts\Core\Base\Model;
+    use \FacturaScripts\Core\Base\Utils;
 
     /**
      * Clave primaria. Varchar (50).
@@ -148,8 +149,7 @@ class FSUser {
     }
 
     public function newLogkey() {
-        $utils = new \FacturaScripts\Core\Base\Utils();
-        $this->logkey = $utils->randomString(99);
+        $this->logkey = $this->randomString(99);
         return $this->logkey;
     }
 

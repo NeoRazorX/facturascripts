@@ -18,23 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobamos que se haya instalado y haya configuración
-if (!file_exists(__DIR__ . '/config.php')) {
-    die("ERROR - NO_CONFIG -");
+namespace FacturaScripts\Core\App;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use DebugBar\StandardDebugBar;
+
+/**
+ * Description of App
+ *
+ * @author Carlos García Gómez
+ */
+class AppCron extends App {
+
+    /**
+     * Ejecuta el cron.
+     */
+    public function run() {
+        $this->response->headers->set('Content-Type', 'text/plain');
+        if ($this->dataBase->connected()) {
+            /// implementar
+        } else {
+            $this->response->setContent('DB-ERROR');
+        }
+    }
+
 }
-
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config.php';
-
-/// iniciamos la aplicación
-$app = new FacturaScripts\Core\App\AppCron(__DIR__);
-
-/// conectamos a la base de datos, cache, etc
-$app->connect();
-
-/// ejecutamos el cron
-$app->run();
-$app->render();
-
-/// desconectamos de todo
-$app->close();

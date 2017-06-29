@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class FSPage {
+class Page {
 
     use \FacturaScripts\Core\Base\Model;
 

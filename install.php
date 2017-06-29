@@ -275,7 +275,7 @@ function renderHTML(&$templateVars)
     $twig = new Twig_Environment($twigLoader);
 
     /// generamos y volcamos el html
-    $response = new Response($twig->render('installer/install.html', $templateVars), Response::HTTP_OK);
+    $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
     $response->send();
 }
 

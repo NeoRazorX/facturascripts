@@ -1,12 +1,13 @@
-{% extends "master/microTemplate.html" %}
+{% extends "Master/MicroTemplate.html" %}
 
 {% block body %}
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
             <div class="page-header">
-                <h1>{{ i18n.trans('db-error') }}:</h1>
+                <h1>{{ i18n.trans('controller-not-found') }}:</h1>
             </div>
+            <b>{{ controllerName }}</b>
         </div>
     </div>
 </div>

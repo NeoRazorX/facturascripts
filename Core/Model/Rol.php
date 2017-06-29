@@ -22,28 +22,44 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Define los permisos individuales para cada página dentro de un rol de usuarios.
+ * Define un paquete de permisos para asignar rápidamente a usuarios.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class FsRolAccess {
+class Rol {
 
     use \FacturaScripts\Core\Base\Model;
 
-    public $id;
     public $codrol;
-    public $pagename;
-    public $allowdelete;
-    public $allowupdate;
+    public $descripcion;
 
     public function __construct($data = FALSE) {
-        $this->init(__CLASS__, 'fs_roles_access', 'id');
+        $this->init(__CLASS__, 'fs_roles', 'codrol');
         if ($data) {
-            $this->loadFromData($data);
+            $this->codrol = $data['codrol'];
+            $this->descripcion = $data['descripcion'];
         } else {
             $this->clear();
         }
+    }
+
+    public function clear() {
+        $this->codrol = NULL;
+        $this->descripcion = NULL;
+    }
+
+    public function url() {
+        if (is_null($this->codrol)) {
+            return 'index.php?page=AdminRol';
+        }
+
+        return 'index.php?page=AdminRol&codrol=' . $this->codrol;
+    }
+    
+    public function test() {
+        $this->descripcion = $this->noHtml($this->descripcion);
+        return TRUE;
     }
 
 }

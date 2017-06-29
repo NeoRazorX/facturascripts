@@ -20,12 +20,15 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
+
 /**
  * Description of admin_home
  *
  * @author Carlos García Gómez
  */
-class AdminHome extends \FacturaScripts\Core\Base\Controller {
+class AdminHome extends Base\Controller {
 
     public $agente;
     public $almacen;
@@ -35,30 +38,28 @@ class AdminHome extends \FacturaScripts\Core\Base\Controller {
     public $formaPago;
     public $pais;
     public $serie;
-    
-    public function __construct($folder = '', $className = __CLASS__) {
-        parent::__construct($folder, $className);
+
+    public function __construct(&$cache, &$i18n, &$miniLog, &$request, $className) {
+        parent::__construct($cache, $i18n, $miniLog, $request, $className);
+
+        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
+        $pluginManager = new Base\PluginManager();
+        $pluginManager->deploy();
+
+        $this->agente = new Model\Agente();
+        $this->almacen = new Model\Almacen();
+        $this->divisa = new Model\Divisa();
+        $this->ejercicio = new Model\Ejercicio();
+        $this->empresa = new Model\Empresa();
+        $this->formaPago = new Model\FormaPago();
+        $this->pais = new Model\Pais();
+        $this->serie = new Model\Serie();
     }
 
     public function run() {
         parent::run();
-        
-        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
-        $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
-        $pluginManager->deploy();
 
-        $this->cache->clear();
-        
-        $this->agente = new \FacturaScripts\Core\Model\Agente();
-        $this->almacen = new \FacturaScripts\Core\Model\Almacen();
-        $this->divisa = new \FacturaScripts\Core\Model\Divisa();
-        $this->ejercicio = new \FacturaScripts\Core\Model\Ejercicio();
-        $this->empresa = new \FacturaScripts\Core\Model\Empresa();
-        $this->formaPago = new \FacturaScripts\Core\Model\FormaPago();
-        $this->pais = new \FacturaScripts\Core\Model\Pais();
-        $this->serie = new \FacturaScripts\Core\Model\Serie();
-        
-        foreach($this->agente->all() as $age) {
+        foreach ($this->agente->all() as $age) {
             $age->save();
         }
     }

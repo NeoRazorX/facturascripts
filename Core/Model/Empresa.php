@@ -28,6 +28,7 @@ namespace FacturaScripts\Core\Model;
 class Empresa {
 
     use \FacturaScripts\Core\Base\Model;
+    use \FacturaScripts\Core\Base\Utils;
 
     /**
      * Clave primaria. Integer.
@@ -230,8 +231,7 @@ class Empresa {
             );
 
             if ($this->xid === NULL) {
-                $utils = new \FacturaScripts\Core\Base\Utils();
-                $this->xid = $utils->randomString(30);
+                $this->xid = $this->randomString(30);
                 $this->save();
             }
         } else {
