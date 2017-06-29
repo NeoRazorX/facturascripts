@@ -83,7 +83,7 @@ class AppController extends App {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $this->request, $pageName);
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 $this->controller->run();
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;

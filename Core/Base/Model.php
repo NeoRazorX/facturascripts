@@ -85,7 +85,7 @@ trait Model {
 
     /**
      * Lista de tablas ya comprobadas.
-     * @var array 
+     * @var mixed 
      */
     private static $checkedTables;
 

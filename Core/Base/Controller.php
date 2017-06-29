@@ -84,16 +84,15 @@ class Controller {
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
-     * @param Request $request
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$request, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
-        $this->request = $request;
+        $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
         $this->title = $this->className;
     }

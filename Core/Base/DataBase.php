@@ -40,13 +40,13 @@ class DataBase {
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine 
+     * @var DataBase\DatabaseEngine 
      */
     private static $engine;
 
     /**
      * El enlace con las utilidades de base de datos.
-     * @var DataBaseUtils
+     * @var DataBase\DataBaseUtils
      */
     private static $utils;
 
@@ -99,7 +99,9 @@ class DataBase {
                     break;
             }
 
-            self::$utils = new DataBase\DataBaseUtils(self::$engine);
+            if (self::$engine != NULL) {
+                self::$utils = new DataBase\DataBaseUtils(self::$engine);
+            }
         }
     }
 

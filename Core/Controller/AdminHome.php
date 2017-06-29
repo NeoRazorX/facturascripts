@@ -38,10 +38,10 @@ class AdminHome extends Base\Controller {
     public $formaPago;
     public $pais;
     public $serie;
-
-    public function __construct(&$cache, &$i18n, &$miniLog, &$request, $className) {
-        parent::__construct($cache, $i18n, $miniLog, $request, $className);
-
+    
+    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy();
