@@ -578,13 +578,14 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData) {
+        $start = 'ALTER TABLE ' . $tableName . ' DROP';
         switch ($colData['type']) {
             case 'FOREIGN KEY':
-                $sql = 'ALTER TABLE ' . $tableName . ' DROP FOREIGN KEY ' . $colData['name'] . ';';
+                $sql = $start . ' FOREIGN KEY ' . $colData['name'] . ';';
                 break;
 
             case 'UNIQUE':
-                $sql = 'ALTER TABLE ' . $tableName . ' DROP INDEX ' . $colData['name'] . ';';
+                $sql = $start . ' INDEX ' . $colData['name'] . ';';
                 break;
 
             default:
