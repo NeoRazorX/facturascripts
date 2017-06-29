@@ -20,437 +20,216 @@
 
 namespace FacturaScripts\Core\Base;
 
-define('FS_FOREIGN_KEYS', '1');
-define('FS_DB_INTEGER', 'INTEGER');
-define('FS_CHECK_DB_TYPES', '0');
 
 /**
  * Clase para conectar a MySQL.
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Mysql {
+class Mysql implements DatabaseEngine {
 
     /**
-     * El enlace con la base de datos.
-     * @var \mysqli
+     * Relacion de Transacciones abiertas.
+     * @var array
      */
-    private static $link;
+    private $transactions;
 
     /**
-     * Nº de selects ejecutados.
-     * @var integer 
+     * Deshace todas las transacciones activas
      */
-    private static $totalSelects;
-
-    /**
-     * Nº de transacciones ejecutadas.
-     * @var integer 
-     */
-    private static $totalTransactions;
-
-    /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
-     * @var MiniLog
-     */
-    private static $miniLog;
-
-    public function __construct() {
-        if (!isset(self::$link)) {
-            self::$totalSelects = 0;
-            self::$totalTransactions = 0;
-            self::$miniLog = new MiniLog();
+    private function rollbackTransactions() {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
         }
     }
-
+    
     /**
-     * Conecta a la base de datos.
-     * @return boolean
+     * Borra de la lista la transaccion indicada
+     * @param \mysqli $link
      */
-    public function connect() {
-        $connected = FALSE;
-
-        if (self::$link) {
-            $connected = TRUE;
-        } else if (class_exists('mysqli')) {
-            self::$link = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT));
-
-            if (self::$link->connect_error) {
-                self::$miniLog->critical(self::$link->connect_error);
-                self::$link = NULL;
-            } else {
-                self::$link->set_charset('utf8');
-                $connected = TRUE;
-
-                if (!FS_FOREIGN_KEYS) {
-                    /// desactivamos las claves ajenas
-                    $this->exec("SET foreign_key_checks = 0;");
-                }
-
-                /// desactivamos el autocommit
-                self::$link->autocommit(FALSE);
+    private function unsetTransaction($link) {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
             }
-        } else {
-            self::$miniLog->critical('No tienes instalada la extensión de PHP para MySQL.');
-        }
-
-        return $connected;
+            $count++;
+        }           
     }
 
     /**
-     * Devuelve TRUE si se está conectado a la base de datos.
-     * @return boolean
+     * Contructor e inicializador de la clase
      */
-    public function connected() {
-        return (bool) self::$link;
+    public function __construct() {
+        $this->transactions = [];
     }
 
     /**
-     * Desconecta de la base de datos.
-     * @return boolean
+     * Destructor de la clase
      */
-    public function close() {
-        if (self::$link) {
-            $return = self::$link->close();
-            self::$link = NULL;
-            return $return;
-        } else {
-            return TRUE;
-        }
+    public function __destruct() {
+        $this->rollbackTransactions();
     }
 
     /**
      * Devuelve el motor de base de datos y la versión.
+     * @param \mysqli $link
      * @return string
      */
-    public function version() {
-        if (self::$link) {
-            return 'MYSQL ' . self::$link->server_version;
-        } else {
-            return FALSE;
-        }
+    public function version($link) {
+        return 'MYSQL ' . $link->server_version;
     }
-
+    
     /**
-     * Devuelve el número de selects ejecutados.
-     * @return integer
+     * Conecta a la base de datos.
+     * @param string $error
+     * @return null|\mysqli
      */
-    public function getTotalSelects() {
-        return self::$totalSelects;
-    }
-
-    /**
-     * Devuele le número de transacciones realizadas.
-     * @return integer
-     */
-    public function getTotalTransactions() {
-        return self::$totalTransactions;
-    }
-
-    /**
-     * Devuelve un array con las columnas de una tabla dada.
-     * @param string $tableName
-     * @return mixed
-     */
-    public function getColumns($tableName) {
-        $columns = array();
-
-        $aux = $this->select("SHOW COLUMNS FROM `" . $tableName . "`;");
-        if ($aux) {
-            foreach ($aux as $a) {
-                $columns[] = array(
-                    'name' => $a['Field'],
-                    'type' => $a['Type'],
-                    'default' => $a['Default'],
-                    'is_nullable' => $a['Null'],
-                    'extra' => $a['Extra']
-                );
-            }
+    public function connect(&$error) {
+        if (!class_exists('mysqli')) {
+            $error = 'No tienes instalada la extensión de PHP para MySQL.';
+            return NULL;
         }
 
-        return $columns;
+        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT));
+        if ($result->connect_error) {
+            $error = $result->connect_error;
+            return NULL;
+        }    
+
+        $result->set_charset('utf8');
+        $result->autocommit(FALSE);
+
+        /// desactivamos las claves ajenas
+        if (!FS_FOREIGN_KEYS) {
+            $this->exec($result, "SET foreign_key_checks = 0;");
+        }
+        
+        return $result;
     }
 
     /**
-     * Devuelve una array con las restricciones de una tabla dada:
-     * clave primaria, claves ajenas, etc.
-     * @param string $tableName
-     * @return mixed
+     * Desconecta de la base de datos.
+     * @param \mysqli $link
+     * @return boolean
      */
-    public function getConstraints($tableName) {
-        $constraints = array();
-        $sql = "SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type FROM information_schema.table_constraints "
-                . "WHERE table_schema = schema() AND table_name = '" . $tableName . "';";
-
-        $aux = $this->select($sql);
-        if ($aux) {
-            foreach ($aux as $a) {
-                $constraints[] = $a;
-            }
-        }
-
-        return $constraints;
+    public function close($link) {
+        $this->rollbackTransactions();
+        return $link->close();
     }
 
     /**
-     * Devuelve una array con las restricciones de una tabla dada, pero aportando muchos más detalles.
-     * @param string $tableName
-     * @return mixed
+     * Devuelve el error de la ultima sentencia ejecutada
+     * @param \mysqli $link
+     * @return string
      */
-    public function getConstraintsExtended($tableName) {
-        $constraints = array();
-        $sql = "SELECT t1.constraint_name as name,
-            t1.constraint_type as type,
-            t2.column_name,
-            t2.referenced_table_name AS foreign_table_name,
-            t2.referenced_column_name AS foreign_column_name,
-            t3.update_rule AS on_update,
-            t3.delete_rule AS on_delete
-         FROM information_schema.table_constraints t1
-         LEFT JOIN information_schema.key_column_usage t2
-            ON t1.table_schema = t2.table_schema
-            AND t1.table_name = t2.table_name
-            AND t1.constraint_name = t2.constraint_name
-         LEFT JOIN information_schema.referential_constraints t3
-            ON t3.constraint_schema = t1.table_schema
-            AND t3.constraint_name = t1.constraint_name
-         WHERE t1.table_schema = SCHEMA() AND t1.table_name = '" . $tableName . "'
-         ORDER BY type DESC, name ASC;";
-
-        $aux = $this->select($sql);
-        if ($aux) {
-            foreach ($aux as $a) {
-                $constraints[] = $a;
-            }
+    public function errorMessage($link) {
+        return $link->error;
+    }
+    
+    /**
+     * Inicia una transacción SQL.
+     * @param \mysqli $link
+     * @return boolean
+     */
+    public function beginTransaction($link) {
+        $result = $this->exec($link, 'START TRANSACTION;');
+        if ($result) {
+            $this->transactions[] = $link;
         }
-
-        return $constraints;
+        return $result;
+    }    
+    
+    /**
+     * Guarda los cambios de una transacción SQL.
+     * @param \mysqli $link
+     * @return boolean
+     */
+    public function commit($link) {
+        $result = $this->exec($link, 'COMMIT;');
+        if ($result && in_array($link, $this->transactions)) {
+            $this->unsetTransaction($link);
+        }            
+        return $result;
     }
 
     /**
-     * Devuelve una array con los indices de una tabla dada.
-     * @param string $tableName
-     * @return mixed
+     * 
+     * @param \mysqli $link
+     * @return boolean
      */
-    public function getIndexes($tableName) {
-        $indexes = array();
-
-        $aux = $this->select("SHOW INDEXES FROM " . $tableName . ";");
-        if ($aux) {
-            foreach ($aux as $a) {
-                $indexes[] = array('name' => $a['Key_name']);
-            }
+    public function rollback($link) {
+        $result = $this->exec($link, 'ROLLBACK;');
+        if (in_array($link, $this->transactions)) {
+            $this->unsetTransaction($link);
         }
-
-        return $indexes;
+        return $result;
     }
-
+    
     /**
-     * Devuelve un array con los nombres de las tablas de la base de datos.
-     * @return mixed
+     * Indica si la conexión está en transacción
+     * @param \mysqli $link
+     * @return boolean
      */
-    public function listTables() {
-        $tables = array();
-
-        $aux = $this->select("SHOW TABLES;");
-        if ($aux) {
-            foreach ($aux as $a) {
-                if (isset($a['Tables_in_' . FS_DB_NAME])) {
-                    $tables[] = array('name' => $a['Tables_in_' . FS_DB_NAME]);
-                }
-            }
-        }
-
-        return $tables;
+    public function inTransaction($link) {
+        return in_array($link, $this->transactions);
     }
-
+    
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
+     * @param \mysqli $link
      * @param string $sql
-     * @return mixed
+     * @return resource|FALSE
      */
-    public function select($sql) {
+    public function select($link, $sql) {
         $result = FALSE;
-
-        if (self::$link) {
-            /// añadimos la consulta sql al historial
-            self::$miniLog->sql($sql);
-
-            $aux = self::$link->query($sql);
+        try {
+            $aux = $link->query($sql);
             if ($aux) {
-                $result = array();
+                $result = [];
                 while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
                     $result[] = $row;
                 }
                 $aux->free();
-            } else {
-                /// añadimos el error a la lista de errores
-                self::$miniLog->error(self::$link->error);
             }
-
-            /// aumentamos el contador de selects realizados
-            self::$totalSelects++;
+        } catch (\Exception $e) {
+            $result = FALSE;
         }
 
         return $result;
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select, pero con paginación,
-     * y devuelve un array con los resultados,
-     * o false en caso de fallo.
-     * Limit es el número de elementos que quieres que devuelve.
-     * Offset es el número de resultado desde el que quieres que empiece.
+     * Ejecuta sentencias SQL sobre la base de datos 
+     * (inserts, updates o deletes)
+     * @param \mysqli $link
      * @param string $sql
-     * @param integer $limit
-     * @param integer $offset
-     * @return mixed
+     * @return boolean
      */
-    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
-        $result = FALSE;
-
-        if (self::$link) {
-            /// añadimos limit y offset a la consulta sql
-            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
-
-            /// añadimos la consulta sql al historial
-            self::$miniLog->sql($sql);
-
-            $aux = self::$link->query($sql);
-            if ($aux) {
-                $result = array();
-                while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
-                    $result[] = $row;
-                }
-                $aux->free();
-            } else {
-                /// añadimos el error a la lista de errores
-                self::$miniLog->error(self::$link->error);
+    public function exec($link, $sql) {
+        try {
+            if ($link->multi_query($sql)) {
+                while ($link->more_results() && $link->next_result()) {}
             }
-
-            /// aumentamos el contador de selects realizados
-            self::$totalSelects++;
-        }
+            $result = (!$link->errno);
+        } catch (\Exception $e) {
+            $result = FALSE;
+        }    
 
         return $result;
-    }
-
-    /**
-     * Ejecuta sentencias SQL sobre la base de datos (inserts, updates y deletes).
-     * Para selects, mejor usar las funciones select() o selectLimit().
-     * Por defecto se inicia una transacción, se ejecutan las consultas, y si todo
-     * sale bien, se guarda, sino se deshace.
-     * Se puede evitar este modo de transacción si se pone false
-     * en el parametro transaction.
-     * @param string $sql
-     * @param boolean $transaction
-     * @return boolean
-     */
-    public function exec($sql, $transaction = TRUE) {
-        $result = FALSE;
-
-        if (self::$link) {
-            /// añadimos la consulta sql al historial
-            self::$miniLog->sql($sql);
-
-            if ($transaction) {
-                $this->beginTransaction();
-            }
-
-            $num = 0;
-            if (self::$link->multi_query($sql)) {
-                do {
-                    $num++;
-                } while (self::$link->more_results() && self::$link->next_result());
-            }
-
-            if (self::$link->errno) {
-                self::$miniLog->error('Error al ejecutar la consulta ' . $num . ': ' . self::$link->error .
-                        '. La secuencia ocupa la posición ' . count(self::$miniLog->read(['sql'])));
-            } else {
-                $result = TRUE;
-            }
-
-            if ($transaction) {
-                if ($result) {
-                    $this->commit();
-                } else {
-                    $this->rollback();
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Inicia una transacción SQL.
-     * @return boolean
-     */
-    public function beginTransaction() {
-        if (self::$link) {
-            /**
-             * Ejecutamos START TRANSACTION en lugar de begin_transaction()
-             * para mayor compatibilidad.
-             */
-            return self::$link->query("START TRANSACTION;");
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Guarda los cambios de una transacción SQL.
-     * @return boolean
-     */
-    public function commit() {
-        if (self::$link) {
-            /// aumentamos el contador de selects realizados
-            self::$totalTransactions++;
-
-            return self::$link->commit();
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Deshace los cambios de una transacción SQL.
-     * @return boolean
-     */
-    public function rollback() {
-        if (self::$link) {
-            return self::$link->rollback();
-        } else {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
-     * @return integer|false
-     */
-    public function lastval() {
-        $aux = $this->select('SELECT LAST_INSERT_ID() as num;');
-        if ($aux) {
-            return $aux[0]['num'];
-        } else {
-            return FALSE;
-        }
     }
 
     /**
      * Escapa las comillas de la cadena de texto.
+     * @param \mysqli $link
      * @param string $str
      * @return string
      */
-    public function escapeString($str) {
-        if (self::$link) {
-            return self::$link->escape_string($str);
-        } else {
-            return $str;
-        }
+    public function escapeString($link, $str) {
+        return $link->escape_string($str);
     }
 
     /**
@@ -463,335 +242,115 @@ class Mysql {
 
     /**
      * Devuelve el SQL necesario para convertir la columna a entero.
-     * @param string $col_name
+     * @param string $colName
      * @return string
      */
-    public function sql2int($col_name) {
-        return 'CAST(' . $col_name . ' as UNSIGNED)';
+    public function sql2int($colName) {
+        return 'CAST(' . $colName . ' as UNSIGNED)';
     }
 
     /**
-     * Compara dos arrays de columnas, devuelve una sentencia SQL en caso de encontrar diferencias.
-     * @param string $tableName
-     * @param array $xmlCols
-     * @param array|false $dbCols
-     * @return string
+     * Compara los tipos de datos de una columna numerica.
+     * @param string $dbType
+     * @param string $xmlType
+     * @return boolean
      */
-    public function compareColumns($tableName, $xmlCols, $dbCols) {
-        $sql = '';
-
-        foreach ($xmlCols as $xml_col) {
-            $encontrada = FALSE;
-            if ($dbCols) {
-                if (strtolower($xml_col['tipo']) == 'integer') {
-                    /**
-                     * Desde la pestaña avanzado el panel de control se puede cambiar
-                     * el tipo de entero a usar en las columnas.
-                     */
-                    $xml_col['tipo'] = FS_DB_INTEGER;
-                }
-
-                foreach ($dbCols as $db_col) {
-                    if ($db_col['name'] == $xml_col['nombre']) {
-                        if (!$this->compareDataTypes($db_col['type'], $xml_col['tipo'])) {
-                            $sql .= 'ALTER TABLE ' . $tableName . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ';';
-                        }
-
-                        if ($db_col['is_nullable'] != $xml_col['nulo']) {
-                            if ($xml_col['nulo'] == 'YES') {
-                                $sql .= 'ALTER TABLE ' . $tableName . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NULL;';
-                            } else {
-                                $sql .= 'ALTER TABLE ' . $tableName . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NOT NULL;';
-                            }
-                        }
-
-                        if (!$this->compareDefaults($db_col['default'], $xml_col['defecto'])) {
-                            if (is_null($xml_col['defecto'])) {
-                                $sql .= 'ALTER TABLE ' . $tableName . ' ALTER `' . $xml_col['nombre'] . '` DROP DEFAULT;';
-                            } else {
-                                if (strtolower(substr($xml_col['defecto'], 0, 9)) == "nextval('") { /// nextval es para postgresql
-                                    if ($db_col['extra'] != 'auto_increment') {
-                                        $sql .= 'ALTER TABLE ' . $tableName . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'];
-
-                                        if ($xml_col['nulo'] == 'YES') {
-                                            $sql .= ' NULL AUTO_INCREMENT;';
-                                        } else {
-                                            $sql .= ' NOT NULL AUTO_INCREMENT;';
-                                        }
-                                    }
-                                } else {
-                                    $sql .= 'ALTER TABLE ' . $tableName . ' ALTER `' . $xml_col['nombre'] . '` SET DEFAULT ' . $xml_col['defecto'] . ";";
-                                }
-                            }
-                        }
-
-                        $encontrada = TRUE;
-                        break;
-                    }
-                }
-            }
-            if (!$encontrada) {
-                $sql .= 'ALTER TABLE ' . $tableName . ' ADD `' . $xml_col['nombre'] . '` ';
-
-                if ($xml_col['tipo'] == 'serial') {
-                    $sql .= '`' . $xml_col['nombre'] . '` ' . FS_DB_INTEGER . ' NOT NULL AUTO_INCREMENT;';
-                } else {
-                    $sql .= $xml_col['tipo'];
-
-                    if ($xml_col['nulo'] == 'NO') {
-                        $sql .= " NOT NULL";
-                    } else {
-                        $sql .= " NULL";
-                    }
-
-                    if ($xml_col['defecto'] !== NULL) {
-                        $sql .= " DEFAULT " . $xml_col['defecto'] . ";";
-                    } else if ($xml_col['nulo'] == 'YES') {
-                        $sql .= " DEFAULT NULL;";
-                    } else {
-                        $sql .= ';';
-                    }
-                }
-            }
-        }
-
-        return $this->fixPostgresql($sql);
+    private function compareDataTypeNumeric($dbType, $xmlType) {
+        return (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER')
+            || (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision');        
     }
 
+    /**
+     * Compara los tipos de datos de una columna alfanumerica.
+     * @param string $dbType
+     * @param string $xmlType
+     * @return boolean
+     */
+    private function compareDataTypeChar($dbType, $xmlType) {
+        $result = (substr($xmlType, 0, 18) == 'character varying(');
+        if ($result) {
+            $result = (substr($dbType, 0, 8) == 'varchar(')
+                || (substr($dbType, 0, 5) == 'char(');
+        }
+        return $result;
+    }
+    
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
      * @return boolean
      */
-    private function compareDataTypes($dbType, $xmlType) {
-        if (FS_CHECK_DB_TYPES != 1) {
-            /// si está desactivada la comprobación de tipos, devolvemos que son iguales.
-            return TRUE;
-        } else if ($dbType == $xmlType) {
-            return TRUE;
-        } else if (strtolower($xmlType) == 'serial') {
-            return TRUE;
-        } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
-            return TRUE;
-        } else if (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER') {
-            return TRUE;
-        } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
-            return TRUE;
-        } else if (substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time') {
-            return TRUE;
-        } else if (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
-            /// comprobamos las longitudes
-            return (substr($dbType, 8, -1) == substr($xmlType, 18, -1));
-        } else if (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
-            /// comprobamos las longitudes
-            return (substr($dbType, 5, -1) == substr($xmlType, 18, -1));
-        } else {
-            return FALSE;
+    public function compareDataTypes($dbType, $xmlType) {
+        $result = (($dbType == $xmlType)
+                || ($dbType == 'tinyint(1)' && $xmlType == 'boolean')
+                || (substr($dbType, 8, -1) == substr($xmlType, 18, -1))
+                || (substr($dbType, 5, -1) == substr($xmlType, 18, -1)));
+        
+        if (!$result) {
+            $result = $this->compareDataTypeNumeric($dbType, $xmlType);
         }
+
+        if (!$result) {
+            $result = $this->compareDataTypeChar($dbType, $xmlType);
+        }
+
+        return $result;
     }
 
     /**
-     * Compara los tipos por defecto. Devuelve TRUE si son equivalentes.
-     * @param string $dbDefault
-     * @param string $xmlDefault
-     * @return boolean
+     * Devuelve un array con los nombres de las tablas de la base de datos.
+     * @param \mysqli $link
+     * @return mixed
      */
-    private function compareDefaults($dbDefault, $xmlDefault) {
-        if ($dbDefault == $xmlDefault) {
-            return TRUE;
-        } else if (in_array($dbDefault, array('0', 'false', 'FALSE'))) {
-            return in_array($xmlDefault, array('0', 'false', 'FALSE'));
-        } else if (in_array($dbDefault, array('1', 'true', 'TRUE'))) {
-            return in_array($xmlDefault, array('1', 'true', 'TRUE'));
-        } else if ($dbDefault == '00:00:00' && $xmlDefault == 'now()') {
-            return TRUE;
-        } else if ($dbDefault == date('Y-m-d') . ' 00:00:00' && $xmlDefault == 'CURRENT_TIMESTAMP') {
-            return TRUE;
-        } else if ($dbDefault == 'CURRENT_DATE' && $xmlDefault == date("'Y-m-d'")) {
-            return TRUE;
-        } else if (substr($xmlDefault, 0, 8) == 'nextval(') {
-            return TRUE;
-        } else {
-            $dbDefault = str_replace(array('::character varying', "'"), array('', ''), $dbDefault);
-            $xmlDefault = str_replace(array('::character varying', "'"), array('', ''), $xmlDefault);
-            return ($dbDefault == $xmlDefault);
-        }
+    public function listTables($link) {
+        $tables = [];
+        $aux = $this->select($link, "SHOW TABLES;");
+        if ($aux) {
+            foreach ($aux as $a) {
+                if (isset($a['Tables_in_' . FS_DB_NAME])) {
+                    $tables[] = $a['Tables_in_' . FS_DB_NAME];
+                }
+            }
+        }        
+        return $tables;
     }
-
+    
     /**
-     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
+     * A partir del campo default de una tabla
+     * comprueba si se refiere a una secuencia, y si es así
+     * comprueba la existencia de la secuencia. Si no la encuentra
+     * la crea.
+     * @param \mysqli $link
      * @param string $tableName
-     * @param array $xmlCons
-     * @param array $dbCons
-     * @param boolean $deleteOnly
-     * @return string
+     * @param string $default
+     * @param string $colname
      */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
-        $sql = '';
-
-        if ($dbCons) {
-            /**
-             * comprobamos una a una las restricciones de la base de datos, si hay que eliminar una,
-             * tendremos que eliminar todas para evitar problemas.
-             */
-            $delete = FALSE;
-            foreach ($dbCons as $db_con) {
-                $found = FALSE;
-                if ($xmlCons) {
-                    foreach ($xmlCons as $xml_con) {
-                        if ($db_con['name'] == 'PRIMARY' OR $db_con['name'] == $xml_con['nombre']) {
-                            $found = TRUE;
-                            break;
-                        }
-                    }
-                }
-
-                if (!$found) {
-                    $delete = TRUE;
-                    break;
-                }
-            }
-
-            /// eliminamos todas las restricciones
-            if ($delete) {
-                /// eliminamos antes las claves ajenas y luego los unique, evita problemas
-                foreach ($dbCons as $db_con) {
-                    if ($db_con['type'] == 'FOREIGN KEY') {
-                        $sql .= 'ALTER TABLE ' . $tableName . ' DROP FOREIGN KEY ' . $db_con['name'] . ';';
-                    }
-                }
-
-                foreach ($dbCons as $db_con) {
-                    if ($db_con['type'] == 'UNIQUE') {
-                        $sql .= 'ALTER TABLE ' . $tableName . ' DROP INDEX ' . $db_con['name'] . ';';
-                    }
-                }
-
-                $dbCons = array();
-            }
-        }
-
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {
-            /// comprobamos una a una las nuevas
-            foreach ($xmlCons as $xml_con) {
-                $found = FALSE;
-                if ($dbCons) {
-                    foreach ($dbCons as $db_con) {
-                        if ($xml_con['nombre'] == $db_con['name']) {
-                            $found = TRUE;
-                            break;
-                        }
-                    }
-                }
-
-                if (!$found) {
-                    /// añadimos la restriccion
-                    if (substr($xml_con['consulta'], 0, 11) == 'FOREIGN KEY') {
-                        $sql .= 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
-                    } else if (substr($xml_con['consulta'], 0, 6) == 'UNIQUE') {
-                        $sql .= 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
-                    }
-                }
-            }
-        }
-
-        return $this->fixPostgresql($sql);
+    public function checkSequence($link, $tableName, $default, $colname) {
+        return TRUE;
     }
-
-    /**
-     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
-     * @param string $tableName
-     * @param array $xmlCols
-     * @param array $xmlCons
-     * @return string
-     */
-    public function generateTable($tableName, $xmlCols, $xmlCons) {
-        $sql = "CREATE TABLE " . $tableName . " ( ";
-
-        $coma = FALSE;
-        foreach ($xmlCols as $col) {
-            /// añade la coma al final
-            if ($coma) {
-                $sql .= ", ";
-            } else {
-                $coma = TRUE;
-            }
-
-            if ($col['tipo'] == 'serial') {
-                $sql .= '`' . $col['nombre'] . '` ' . FS_DB_INTEGER . ' NOT NULL AUTO_INCREMENT';
-            } else {
-                if (strtolower($col['tipo']) == 'integer') {
-                    /**
-                     * Desde la pestaña avanzado el panel de control se puede cambiar
-                     * el tipo de entero a usar en las columnas.
-                     */
-                    $col['tipo'] = FS_DB_INTEGER;
-                }
-
-                $sql .= '`' . $col['nombre'] . '` ' . $col['tipo'];
-
-                if ($col['nulo'] == 'NO') {
-                    $sql .= " NOT NULL";
-                } else {
-                    /// es muy importante especificar que la columna permite NULL
-                    $sql .= " NULL";
-                }
-
-                if ($col['defecto'] !== NULL) {
-                    $sql .= " DEFAULT " . $col['defecto'];
-                }
-            }
-        }
-
-        return $this->fixPostgresql($sql) . ' ' . $this->generateTableConstraints($xmlCons) . ' ) '
-                . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
-    }
-
-    /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
-     * @param array $xmlCons
-     * @return string
-     */
-    private function generateTableConstraints($xmlCons) {
-        $sql = '';
-
-        if ($xmlCons) {
-            foreach ($xmlCons as $res) {
-                if (strstr(strtolower($res['consulta']), 'primary key')) {
-                    $sql .= ', ' . $res['consulta'];
-                } else if (FS_FOREIGN_KEYS OR substr($res['consulta'], 0, 11) != 'FOREIGN KEY') {
-                    $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
-                }
-            }
-        }
-
-        return $this->fixPostgresql($sql);
-    }
-
+    
     /**
      * Realiza comprobaciones extra a la tabla.
      * @param string $tableName
      * @return boolean
      */
-    public function checkTableAux($tableName) {
-        $return = TRUE;
+    public function checkTableAux($link, $tableName, &$error) {
+        $result = TRUE;
 
         /// ¿La tabla no usa InnoDB?
-        $data = $this->select("SHOW TABLE STATUS FROM `" . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if ($data) {
-            if ($data[0]['Engine'] != 'InnoDB') {
-                if (!$this->exec("ALTER TABLE " . $tableName . " ENGINE=InnoDB;")) {
-                    self::$miniLog->critical('Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
-                            . ' Imprescindible para FacturaScripts.');
-                    $return = FALSE;
-                }
+        $data = $this->select($link, "SHOW TABLE STATUS FROM `" . FS_DB_NAME . "` LIKE '" . $tableName . "';");
+        if ($data && $data[0]['Engine'] != 'InnoDB') {
+            $result = $this->exec($link, "ALTER TABLE " . $tableName . " ENGINE=InnoDB;");
+            if (!$result) {
+                $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
+                        . ' Imprescindible para FacturaScripts.';
             }
         }
 
-        return $return;
+        return $result;
     }
-
+    
     /**
      * Elimina código problemático de postgresql.
      * @param string $sql
@@ -799,8 +358,261 @@ class Mysql {
      */
     private function fixPostgresql($sql) {
         return str_replace(
-                array('::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'), array('', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")), $sql
-        );
+                ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'],
+                ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")],
+                $sql);
     }
 
+    /**
+     * Genera el SQL para establecer las restricciones proporcionadas.
+     * @param array $xmlCons
+     * @return string
+     */
+    public function generateTableConstraints($xmlCons) {
+        $sql = '';
+        foreach ($xmlCons as $res) {            
+            $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+        }
+
+        return $this->fixPostgresql($sql);
+    }
+
+    /**
+     * 
+     * @param array $colData
+     * @return string
+     */
+    private function getConstraints($colData) {
+        $notNull = ($colData['nulo'] == 'NO');
+        $result = ' NULL';
+        if ($notNull) {
+            $result = ' NOT' . $result;
+        }
+                
+        $defaultNull = ($colData['defecto'] == NULL);
+        if ($defaultNull && !$notNull) {
+            $result .= ' DEFAULT NULL';
+        } else {
+            if ($colData['defecto'] != '') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * @param array $colData
+     * @return string
+     */
+    private function getTypeAndConstraints($colData) {
+        $type = strtolower($colData['tipo']) == 'integer'
+                    ? FS_DB_INTEGER
+                    : strtolower($colData['tipo']);
+        
+        $contraints = ($type == 'serial') 
+                    ? ' NOT NULL AUTO_INCREMENT'
+                    : $this->getConstraints($colData);
+        
+        return ' ' . $type . $contraints;
+    }
+    
+    /**
+     * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     * @param array $colData
+     * @return array
+     */
+    public function columnFromData($colData) {
+        $result = array_change_key_case($colData);
+        $result['is_nullable'] = $result['null'];
+        $result['name'] = $result['field'];
+
+        unset($result['null']);
+        unset($result['field']);
+
+        return $result;  
+    }
+        
+    /**
+     * Devuleve el SQL para averiguar
+     * el último ID asignado al hacer un INSERT 
+     * en la base de datos.
+     * @return string
+     */
+    public function sqlLastValue() {
+        return 'SELECT LAST_INSERT_ID() as num;';
+    }
+
+    /**
+     * Devuelve el SQL para averiguar 
+     * la lista de las columnas de una tabla.
+     * @param string $tableName
+     * @return string
+     */
+    public function sqlColumns($tableName) {
+        return "SHOW COLUMNS FROM `" . $tableName . "`;";
+    }
+
+    /**
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones de una tabla.
+     * @param string $tableName
+     * @return string
+     */
+    public function sqlConstraints($tableName) {
+        $sql = "SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type"
+                .  " FROM information_schema.table_constraints "
+                . " WHERE table_schema = schema()"
+                .   " AND table_name = '" . $tableName . "';";           
+        return $sql;
+    }
+
+    /**
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones avanzadas de una tabla.
+     * @param string $tableName
+     * @return string
+     */
+    public function sqlConstraintsExtended($tableName) {
+        $sql = "SELECT t1.constraint_name as name,"
+                .       " t1.constraint_type as type,"
+                .       " t2.column_name,"
+                .       " t2.referenced_table_name AS foreign_table_name,"
+                .       " t2.referenced_column_name AS foreign_column_name,"
+                .       " t3.update_rule AS on_update,"
+                .       " t3.delete_rule AS on_delete"
+                .  " FROM information_schema.table_constraints t1"
+                .  " LEFT JOIN information_schema.key_column_usage t2"
+                .          " ON t1.table_schema = t2.table_schema"
+                .         " AND t1.table_name = t2.table_name"
+                .         " AND t1.constraint_name = t2.constraint_name"
+                .  " LEFT JOIN information_schema.referential_constraints t3"
+                .          " ON t3.constraint_schema = t1.table_schema"
+                .         " AND t3.constraint_name = t1.constraint_name"
+                .  " WHERE t1.table_schema = SCHEMA()"
+                .    " AND t1.table_name = '" . $tableName . "'"
+                .  " ORDER BY type DESC, name ASC;";
+        return $sql;
+    }
+    
+    /**
+     * Devuelve el SQL para averiguar
+     * la lista de indices de una tabla.
+     * @param string $tableName
+     * @return string
+     */
+    public function sqlIndexes($tableName) {
+        return "SHOW INDEXES FROM " . $tableName . ";";
+    }
+    
+    /**
+     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     * @param string $tableName
+     * @param array $columns
+     * @return string
+     */    
+    public function sqlCreateTable($tableName, $columns, $constraints) {
+        $fields = '';
+        foreach ($columns as $col) {
+            $fields .= ', `' . $col['nombre'] . '` ' . $this->getTypeAndConstraints($col);
+        }
+
+        $sql = $this->fixPostgresql(substr($fields, 2));
+        return 'CREATE TABLE ' . $tableName . ' (' . $sql
+                . $this->generateTableConstraints($constraints) . ') '
+                . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+    }   
+    
+    /**
+     * Sentencia SQL para añadir una columna a una tabla
+     * @param string $tableName
+     * @param array $colData
+     * @return string
+     */
+    public function sqlAlterAddColumn($tableName, $colData) {
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . "` "
+                . $this->getTypeAndConstraints($colData) . ';';
+                
+        return $sql;
+    }
+    
+    /**
+     * Sentencia SQL para modificar una columna de una tabla
+     * @param string $tableName
+     * @param array $colData
+     * @return string
+     */
+    public function sqlAlterModifyColumn($tableName, $colData) {
+        $sql = 'ALTER TABLE ' . $tableName 
+                .     ' MODIFY `' . $colData['nombre'] . '` '
+                .  $this->getTypeAndConstraints($colData) . ";";
+        
+        return $this->fixPostgresql($sql);
+    }
+    
+    /**
+     * Sentencia SQL para modificar una constraint de una tabla
+     * @param string $tableName
+     * @param array $colData
+     * @return string
+     */
+    public function sqlAlterConstraintDefault($tableName, $colData) {        
+        return $this->sqlAlterModifyColumn($tableName, $colData);
+    }
+    
+    /**
+     * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
+     * @param string $tableName
+     * @param array $colData
+     * @return string
+     */
+    public function sqlAlterConstraintNull($tableName, $colData) {
+        return $this->sqlAlterModifyColumn($tableName, $colData);
+    }
+
+    /**
+     * Sentencia SQL para eliminar una constraint de una tabla
+     * @param string $tableName
+     * @param array $colData
+     * @return string
+     */
+    public function sqlDropConstraint($tableName, $colData) {
+        $start = 'ALTER TABLE ' . $tableName . ' DROP';
+        switch ($colData['type']) {
+            case 'FOREIGN KEY':
+                $sql = $start . ' FOREIGN KEY ' . $colData['name'] . ';';
+                break;
+
+            case 'UNIQUE':
+                $sql = $start . ' INDEX ' . $colData['name'] . ';';
+                break;
+
+            default:
+                $sql = '';
+        }
+        return $sql;
+    }
+
+    /**
+     * Sentencia SQL para añadir una constraint a una tabla
+     * @param string $tableName
+     * @param string $constraintName
+     * @param string $sql
+     * @return string
+     */
+    public function sqlAddConstraint($tableName, $constraintName, $sql) {
+        return "ALTER TABLE " . $tableName 
+                . " ADD CONSTRAINT " . $constraintName . " " 
+                . $this->fixPostgresql($sql) . ";";
+    }
+
+    /**
+     * Sentencia SQL para comprobar una secuencia
+     * @param string $seqName
+     * @return string
+     */
+    public function sqlSequenceExists($seqName) {
+        return '';
+    }
 }
