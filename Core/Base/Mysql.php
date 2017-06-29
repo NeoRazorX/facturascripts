@@ -51,8 +51,8 @@ class Mysql implements DatabaseEngine {
     private function unsetTransaction($link) {
         $count = 0;
         foreach ($this->transactions as $trans) {
-            if ($trans == $link) {
-                unset($this->transactions[$count]);
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
                 break;
             }
             $count++;
@@ -210,15 +210,11 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     public function exec($link, $sql) {
-        $result = FALSE;
-        $num = 0;
         try {
             if ($link->multi_query($sql)) {
-                do {
-                    $num++;
-                } while ($link->more_results() && $link->next_result());
-                $result = TRUE;
+                while ($link->more_results() && $link->next_result()) {}
             }
+            $result = (!$link->errno);
         } catch (\Exception $e) {
             $result = FALSE;
         }    
@@ -552,7 +548,7 @@ class Mysql implements DatabaseEngine {
                 .     ' MODIFY `' . $colData['nombre'] . '` '
                 .  $this->getTypeAndConstraints($colData) . ";";
         
-        return $sql;
+        return $this->fixPostgresql($sql);
     }
     
     /**
@@ -578,11 +574,23 @@ class Mysql implements DatabaseEngine {
     /**
      * Sentencia SQL para eliminar una constraint de una tabla
      * @param string $tableName
-     * @param string $constraintName
+     * @param array $colData
      * @return string
      */
-    public function sqlDropConstraint($tableName, $constraintName) {
-        return "ALTER TABLE " . $tableName . " DROP CONSTRAINT " . $constraintName . ";";
+    public function sqlDropConstraint($tableName, $colData) {
+        switch ($colData['type']) {
+            case 'FOREIGN KEY':
+                $sql = 'ALTER TABLE ' . $tableName . ' DROP FOREIGN KEY ' . $colData['name'] . ';';
+                break;
+
+            case 'UNIQUE':
+                $sql = 'ALTER TABLE ' . $tableName . ' DROP INDEX ' . $colData['name'] . ';';
+                break;
+
+            default:
+                $sql = '';
+        }
+        return $sql;
     }
 
     /**
@@ -593,7 +601,9 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql) {
-        return "ALTER TABLE " . $tableName . " ADD CONSTRAINT " . $constraintName . " " . $sql . ";";
+        return "ALTER TABLE " . $tableName 
+                . " ADD CONSTRAINT " . $constraintName . " " 
+                . $this->fixPostgresql($sql) . ";";
     }
 
     /**

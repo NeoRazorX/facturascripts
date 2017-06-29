@@ -219,9 +219,9 @@ interface DatabaseEngine {
     /**
      * Sentencia SQL para eliminar una constraint de una tabla
      * @param string $tableName
-     * @param string $constraintName
+     * @param array $colData
      */
-    public function sqlDropConstraint($tableName, $constraintName);
+    public function sqlDropConstraint($tableName, $colData);
 
     /**
      * Sentencia SQL para añadir una constraint de una tabla

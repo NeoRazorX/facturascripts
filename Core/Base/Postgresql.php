@@ -47,8 +47,8 @@ class Postgresql implements DatabaseEngine {
      */
     public function columnFromData($colData) {
         $colData['extra'] = NULL;
-
-        if (array_key_exists('character_maximum_length', $colData)) {
+        
+        if ($colData['character_maximum_length'] != NULL) {
             $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
         }
 
@@ -475,11 +475,11 @@ class Postgresql implements DatabaseEngine {
     /**
      * Sentencia SQL para eliminar una constraint a una tabla
      * @param string $tableName
-     * @param string $constraintName
+     * @param array $colData
      * @return string
      */
-    public function sqlDropConstraint($tableName, $constraintName) {
-        return "ALTER TABLE " . $tableName . " DROP CONSTRAINT " . $constraintName . ";";
+    public function sqlDropConstraint($tableName, $colData) {
+        return "ALTER TABLE " . $tableName . " DROP CONSTRAINT " . $colData['name'] . ";";
     }
     
     /**

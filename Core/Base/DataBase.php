@@ -218,11 +218,8 @@ class DataBase {
             return TRUE;
         }
 
-        $inTransaction = self::$engine->inTransaction(self::$link);
-        if ($inTransaction) {
-            if (!$this->rollback()) {
-                return FALSE;
-            }
+        if (self::$engine->inTransaction(self::$link) && !$this->rollback()) {
+            return FALSE;
         }
 
         if (self::$engine->close(self::$link)) {
@@ -233,13 +230,20 @@ class DataBase {
     }
 
     /**
+     * Indica hay una transacción abierta
+     * @return boolean
+     */
+    public function inTransaction() {
+        return self::$engine->inTransaction(self::$link);
+    }
+    
+    /**
      * Inicia una transaccion en la base de datos
      * @return boolean
      */
     public function beginTransaction() {
-        $result = TRUE;
-        $inTransaction = self::$engine->inTransaction(self::$link);
-        if (!$inTransaction) {
+        $result = $this->inTransaction();
+        if (!$result) {
             self::$miniLog->sql('Begin Transaction');
             $result = self::$engine->beginTransaction(self::$link);
         }
@@ -266,6 +270,7 @@ class DataBase {
      * @return boolean
      */
     public function rollback() {        
+        self::$miniLog->error(self::$engine->errorMessage(self::$link));
         self::$miniLog->sql('Rollback Transaction');
         return self::$engine->rollback(self::$link);
     }
@@ -326,25 +331,18 @@ class DataBase {
 
         self::$tables = []; /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
 
-        $inTransaction = self::$engine->inTransaction(self::$link);
+        $inTransaction = $this->inTransaction();
         if (!$inTransaction) {
             $this->beginTransaction();
         }
                
         self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
         $result = self::$engine->exec(self::$link, $sql);
-        if ($result) {
-            if (!$inTransaction) {
-                $result = self::$engine->commit(self::$link);
-            }
+        if ($result && !$inTransaction) {
+            $result = $this->commit();
         } else {
             if (!$inTransaction) {
-                $error = self::$engine->errorMessage(self::$link)
-                        . '. La secuencia ocupa la posición ' 
-                        . count(self::$miniLog->read('sql'));
-
-                self::$miniLog->error($error); 
-                self::$engine->rollback(self::$link);
+                $this->rollback();
             } 
         }
 

@@ -109,7 +109,6 @@ trait Model {
 
         if (self::$checkedTables === NULL) {
             self::$checkedTables = [];
-            self::$fields = $this->dataBase->getColumns($tableName);
             self::$modelName = $modelName;
             self::$primaryColumn = $primaryColumn;
             self::$tableName = $tableName;
@@ -117,6 +116,11 @@ trait Model {
             $pluginManager = new PluginManager();
             /// directorio donde se encuentra el archivo xml que define la estructura de la tabla
             self::$baseDir = $pluginManager->folder() . '/Dinamic/Table/';
+
+            /// Comprobamos si existe de tabla y recogemos la lista de campos
+            $this->checkTable($tableName);
+            self::$fields = $this->dataBase->getColumns($tableName);
+            self::$checkedTables[] = $tableName;
         }
 
         if ($tableName != '' && !in_array($tableName, self::$checkedTables) && $this->checkTable($tableName)) {

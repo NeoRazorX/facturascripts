@@ -48,12 +48,13 @@ class DataBaseUtils {
      * @param array $items
      * @param string $index
      * @param string $value
-     * @return FALSE|array
+     * @return array
      */
     private function searchInArray($items, $index, $value) {
-        $result = FALSE;
-        foreach ($items as $result) {
-            if ($result[$index] == $value) {
+        $result = [];
+        foreach ($items as $column) {
+            if ($column[$index] == $value) {
+                $result = $column;
                 break;
             }
         }
@@ -69,10 +70,13 @@ class DataBaseUtils {
      * @return boolean
      */
     public function compareDataTypes($dbType, $xmlType) {
+        $db = strtolower($dbType);
+        $xml = strtolower($xmlType);
+        
         $result = ((FS_CHECK_DB_TYPES != 1)
-                || self::$engine->compareDataTypes($dbType, $xmlType)
-                || (strtolower($xmlType) == 'serial')
-                || (substr($dbType, 0, 4) == 'time' && substr($xmlType, 0, 4) == 'time'));
+                || self::$engine->compareDataTypes($db, $xml)
+                || ($xml == 'serial')
+                || (substr($db, 0, 4) == 'time' && substr($xml, 0, 4) == 'time'));
         
         return $result;
     }
@@ -96,7 +100,7 @@ class DataBaseUtils {
             }
             
             $column = $this->searchInArray($dbCols, 'name', $xml_col['nombre']);
-            if (!$column) {
+            if (empty($column)) {
                 $result .= self::$engine->sqlAlterAddColumn($tableName, $xml_col);
                 continue;
             }
@@ -129,16 +133,20 @@ class DataBaseUtils {
         $result = '';
         
         foreach ($dbCons as $db_con) {
-            $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
-            if (!$column) {
-                $result .= self::$engine->sqlDropConstraint($tableName, $db_con['name']);
+            $column = (strpos('PRIMARY;UNIQUE', $db_con['name']) === FALSE )
+                        ? $this->searchInArray($xmlCons, 'nombre', $db_con['name'])
+                        : $db_con;
+            if (empty($column)) {
+                $result .= self::$engine->sqlDropConstraint($tableName, $db_con);
             }
         }
         
-        if (!empty($xmlCons) && !$deleteOnly) {            
-            foreach ($xmlCons as $xml_con) {
-                $column = $this->searchInArray($dbCons, 'name', $xml_con['nombre']);
-                if (!$column) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {            
+            foreach ($xmlCons as $xml_con) {                
+                $column = (substr($xml_con['consulta'], 0, 7) == 'PRIMARY') 
+                            ? $xml_con
+                            : $this->searchInArray($dbCons, 'name', $xml_con['nombre']);
+                if (empty($column)) {
                     $result .= self::$engine->sqlAddConstraint($tableName, $xml_con['nombre'], $xml_con['consulta']);
                 }
             }
