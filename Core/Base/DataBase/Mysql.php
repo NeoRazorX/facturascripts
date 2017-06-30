@@ -18,8 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
-
+namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Clase para conectar a MySQL.
@@ -36,30 +35,6 @@ class Mysql implements DatabaseEngine {
     private $transactions;
 
     /**
-     * Deshace todas las transacciones activas
-     */
-    private function rollbackTransactions() {
-        foreach ($this->transactions as $link) {
-            $this->rollback($link);
-        }
-    }
-    
-    /**
-     * Borra de la lista la transaccion indicada
-     * @param \mysqli $link
-     */
-    private function unsetTransaction($link) {
-        $count = 0;
-        foreach ($this->transactions as $trans) {
-            if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
-                break;
-            }
-            $count++;
-        }           
-    }
-
-    /**
      * Contructor e inicializador de la clase
      */
     public function __construct() {
@@ -74,6 +49,30 @@ class Mysql implements DatabaseEngine {
     }
 
     /**
+     * Deshace todas las transacciones activas
+     */
+    private function rollbackTransactions() {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
+        }
+    }
+
+    /**
+     * Borra de la lista la transaccion indicada
+     * @param \mysqli $link
+     */
+    private function unsetTransaction($link) {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
+            }
+            $count++;
+        }
+    }
+
+    /**
      * Devuelve el motor de base de datos y la versión.
      * @param \mysqli $link
      * @return string
@@ -81,7 +80,7 @@ class Mysql implements DatabaseEngine {
     public function version($link) {
         return 'MYSQL ' . $link->server_version;
     }
-    
+
     /**
      * Conecta a la base de datos.
      * @param string $error
@@ -97,7 +96,7 @@ class Mysql implements DatabaseEngine {
         if ($result->connect_error) {
             $error = $result->connect_error;
             return NULL;
-        }    
+        }
 
         $result->set_charset('utf8');
         $result->autocommit(FALSE);
@@ -106,7 +105,7 @@ class Mysql implements DatabaseEngine {
         if (!FS_FOREIGN_KEYS) {
             $this->exec($result, "SET foreign_key_checks = 0;");
         }
-        
+
         return $result;
     }
 
@@ -128,7 +127,7 @@ class Mysql implements DatabaseEngine {
     public function errorMessage($link) {
         return $link->error;
     }
-    
+
     /**
      * Inicia una transacción SQL.
      * @param \mysqli $link
@@ -140,8 +139,8 @@ class Mysql implements DatabaseEngine {
             $this->transactions[] = $link;
         }
         return $result;
-    }    
-    
+    }
+
     /**
      * Guarda los cambios de una transacción SQL.
      * @param \mysqli $link
@@ -151,7 +150,7 @@ class Mysql implements DatabaseEngine {
         $result = $this->exec($link, 'COMMIT;');
         if ($result && in_array($link, $this->transactions)) {
             $this->unsetTransaction($link);
-        }            
+        }
         return $result;
     }
 
@@ -167,7 +166,7 @@ class Mysql implements DatabaseEngine {
         }
         return $result;
     }
-    
+
     /**
      * Indica si la conexión está en transacción
      * @param \mysqli $link
@@ -176,7 +175,7 @@ class Mysql implements DatabaseEngine {
     public function inTransaction($link) {
         return in_array($link, $this->transactions);
     }
-    
+
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
@@ -219,7 +218,7 @@ class Mysql implements DatabaseEngine {
             $result = (!$link->errno);
         } catch (\Exception $e) {
             $result = FALSE;
-        }    
+        }
 
         return $result;
     }
@@ -258,8 +257,7 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     private function compareDataTypeNumeric($dbType, $xmlType) {
-        return (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER')
-            || (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision');        
+        return (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER') || (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision');
     }
 
     /**
@@ -271,12 +269,11 @@ class Mysql implements DatabaseEngine {
     private function compareDataTypeChar($dbType, $xmlType) {
         $result = (substr($xmlType, 0, 18) == 'character varying(');
         if ($result) {
-            $result = (substr($dbType, 0, 8) == 'varchar(')
-                || (substr($dbType, 0, 5) == 'char(');
+            $result = (substr($dbType, 0, 8) == 'varchar(') || (substr($dbType, 0, 5) == 'char(');
         }
         return $result;
     }
-    
+
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
      * @param string $dbType
@@ -284,11 +281,8 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     public function compareDataTypes($dbType, $xmlType) {
-        $result = (($dbType == $xmlType)
-                || ($dbType == 'tinyint(1)' && $xmlType == 'boolean')
-                || (substr($dbType, 8, -1) == substr($xmlType, 18, -1))
-                || (substr($dbType, 5, -1) == substr($xmlType, 18, -1)));
-        
+        $result = (($dbType == $xmlType) || ($dbType == 'tinyint(1)' && $xmlType == 'boolean') || (substr($dbType, 8, -1) == substr($xmlType, 18, -1)) || (substr($dbType, 5, -1) == substr($xmlType, 18, -1)));
+
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);
         }
@@ -314,10 +308,10 @@ class Mysql implements DatabaseEngine {
                     $tables[] = $a['Tables_in_' . FS_DB_NAME];
                 }
             }
-        }        
+        }
         return $tables;
     }
-    
+
     /**
      * A partir del campo default de una tabla
      * comprueba si se refiere a una secuencia, y si es así
@@ -331,7 +325,7 @@ class Mysql implements DatabaseEngine {
     public function checkSequence($link, $tableName, $default, $colname) {
         return TRUE;
     }
-    
+
     /**
      * Realiza comprobaciones extra a la tabla.
      * @param string $tableName
@@ -352,7 +346,7 @@ class Mysql implements DatabaseEngine {
 
         return $result;
     }
-    
+
     /**
      * Elimina código problemático de postgresql.
      * @param string $sql
@@ -360,9 +354,7 @@ class Mysql implements DatabaseEngine {
      */
     private function fixPostgresql($sql) {
         return str_replace(
-                ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'],
-                ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")],
-                $sql);
+                ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'], ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")], $sql);
     }
 
     /**
@@ -372,7 +364,7 @@ class Mysql implements DatabaseEngine {
      */
     public function generateTableConstraints($xmlCons) {
         $sql = '';
-        foreach ($xmlCons as $res) {            
+        foreach ($xmlCons as $res) {
             $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
         }
 
@@ -390,7 +382,7 @@ class Mysql implements DatabaseEngine {
         if ($notNull) {
             $result = ' NOT' . $result;
         }
-                
+
         $defaultNull = ($colData['defecto'] == NULL);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
@@ -399,27 +391,23 @@ class Mysql implements DatabaseEngine {
                 $result .= ' DEFAULT ' . $colData['defecto'];
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
      * @param array $colData
      * @return string
      */
     private function getTypeAndConstraints($colData) {
-        $type = strtolower($colData['tipo']) == 'integer'
-                    ? FS_DB_INTEGER
-                    : strtolower($colData['tipo']);
-        
-        $contraints = ($type == 'serial') 
-                    ? ' NOT NULL AUTO_INCREMENT'
-                    : $this->getConstraints($colData);
-        
+        $type = strtolower($colData['tipo']) == 'integer' ? FS_DB_INTEGER : strtolower($colData['tipo']);
+
+        $contraints = ($type == 'serial') ? ' NOT NULL AUTO_INCREMENT' : $this->getConstraints($colData);
+
         return ' ' . $type . $contraints;
     }
-    
+
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
      * @param array $colData
@@ -433,9 +421,9 @@ class Mysql implements DatabaseEngine {
         unset($result['null']);
         unset($result['field']);
 
-        return $result;  
+        return $result;
     }
-        
+
     /**
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT 
@@ -464,9 +452,9 @@ class Mysql implements DatabaseEngine {
      */
     public function sqlConstraints($tableName) {
         $sql = "SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type"
-                .  " FROM information_schema.table_constraints "
+                . " FROM information_schema.table_constraints "
                 . " WHERE table_schema = schema()"
-                .   " AND table_name = '" . $tableName . "';";           
+                . " AND table_name = '" . $tableName . "';";
         return $sql;
     }
 
@@ -478,26 +466,26 @@ class Mysql implements DatabaseEngine {
      */
     public function sqlConstraintsExtended($tableName) {
         $sql = "SELECT t1.constraint_name as name,"
-                .       " t1.constraint_type as type,"
-                .       " t2.column_name,"
-                .       " t2.referenced_table_name AS foreign_table_name,"
-                .       " t2.referenced_column_name AS foreign_column_name,"
-                .       " t3.update_rule AS on_update,"
-                .       " t3.delete_rule AS on_delete"
-                .  " FROM information_schema.table_constraints t1"
-                .  " LEFT JOIN information_schema.key_column_usage t2"
-                .          " ON t1.table_schema = t2.table_schema"
-                .         " AND t1.table_name = t2.table_name"
-                .         " AND t1.constraint_name = t2.constraint_name"
-                .  " LEFT JOIN information_schema.referential_constraints t3"
-                .          " ON t3.constraint_schema = t1.table_schema"
-                .         " AND t3.constraint_name = t1.constraint_name"
-                .  " WHERE t1.table_schema = SCHEMA()"
-                .    " AND t1.table_name = '" . $tableName . "'"
-                .  " ORDER BY type DESC, name ASC;";
+                . " t1.constraint_type as type,"
+                . " t2.column_name,"
+                . " t2.referenced_table_name AS foreign_table_name,"
+                . " t2.referenced_column_name AS foreign_column_name,"
+                . " t3.update_rule AS on_update,"
+                . " t3.delete_rule AS on_delete"
+                . " FROM information_schema.table_constraints t1"
+                . " LEFT JOIN information_schema.key_column_usage t2"
+                . " ON t1.table_schema = t2.table_schema"
+                . " AND t1.table_name = t2.table_name"
+                . " AND t1.constraint_name = t2.constraint_name"
+                . " LEFT JOIN information_schema.referential_constraints t3"
+                . " ON t3.constraint_schema = t1.table_schema"
+                . " AND t3.constraint_name = t1.constraint_name"
+                . " WHERE t1.table_schema = SCHEMA()"
+                . " AND t1.table_name = '" . $tableName . "'"
+                . " ORDER BY type DESC, name ASC;";
         return $sql;
     }
-    
+
     /**
      * Devuelve el SQL para averiguar
      * la lista de indices de una tabla.
@@ -507,13 +495,13 @@ class Mysql implements DatabaseEngine {
     public function sqlIndexes($tableName) {
         return "SHOW INDEXES FROM " . $tableName . ";";
     }
-    
+
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      * @param string $tableName
      * @param array $columns
      * @return string
-     */    
+     */
     public function sqlCreateTable($tableName, $columns, $constraints) {
         $fields = '';
         foreach ($columns as $col) {
@@ -524,8 +512,8 @@ class Mysql implements DatabaseEngine {
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
                 . $this->generateTableConstraints($constraints) . ') '
                 . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
-    }   
-    
+    }
+
     /**
      * Sentencia SQL para añadir una columna a una tabla
      * @param string $tableName
@@ -535,10 +523,10 @@ class Mysql implements DatabaseEngine {
     public function sqlAlterAddColumn($tableName, $colData) {
         $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . "` "
                 . $this->getTypeAndConstraints($colData) . ';';
-                
+
         return $sql;
     }
-    
+
     /**
      * Sentencia SQL para modificar una columna de una tabla
      * @param string $tableName
@@ -546,23 +534,23 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData) {
-        $sql = 'ALTER TABLE ' . $tableName 
-                .     ' MODIFY `' . $colData['nombre'] . '` '
-                .  $this->getTypeAndConstraints($colData) . ";";
-        
+        $sql = 'ALTER TABLE ' . $tableName
+                . ' MODIFY `' . $colData['nombre'] . '` '
+                . $this->getTypeAndConstraints($colData) . ";";
+
         return $this->fixPostgresql($sql);
     }
-    
+
     /**
      * Sentencia SQL para modificar una constraint de una tabla
      * @param string $tableName
      * @param array $colData
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData) {        
+    public function sqlAlterConstraintDefault($tableName, $colData) {
         return $this->sqlAlterModifyColumn($tableName, $colData);
     }
-    
+
     /**
      * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
      * @param string $tableName
@@ -604,8 +592,8 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql) {
-        return "ALTER TABLE " . $tableName 
-                . " ADD CONSTRAINT " . $constraintName . " " 
+        return "ALTER TABLE " . $tableName
+                . " ADD CONSTRAINT " . $constraintName . " "
                 . $this->fixPostgresql($sql) . ";";
     }
 
@@ -617,4 +605,5 @@ class Mysql implements DatabaseEngine {
     public function sqlSequenceExists($seqName) {
         return '';
     }
+
 }

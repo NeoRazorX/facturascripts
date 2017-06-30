@@ -27,13 +27,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
 /// iniciamos la aplicación
-$app = new FacturaScripts\Core\Base\App(__DIR__);
+$app = new FacturaScripts\Core\App\AppAPI(__DIR__);
 
 /// conectamos a la base de datos, cache, etc
 $app->connect();
 
 /// ejecutamos la API
-$app->runAPI();
+$app->run();
+$app->render();
 
 /// desconectamos de todo
 $app->close();

@@ -84,15 +84,8 @@ trait Model {
     private static $tableName;
 
     /**
-     * Directorio donde se encuentra el directorio table con
-     * el XML con la estructura de la tabla.
-     * @var string 
-     */
-    private static $baseDir;
-
-    /**
      * Lista de tablas ya comprobadas.
-     * @var array 
+     * @var mixed 
      */
     private static $checkedTables;
 
@@ -108,23 +101,24 @@ trait Model {
         $this->miniLog = new MiniLog();
 
         if (self::$checkedTables === NULL) {
-            self::$checkedTables = [];
+            self::$checkedTables = $this->cache->get('fs_checked_tables');
+            if (self::$checkedTables === NULL) {
+                self::$checkedTables = [];
+            }
+
             self::$modelName = $modelName;
             self::$primaryColumn = $primaryColumn;
             self::$tableName = $tableName;
-
-            $pluginManager = new PluginManager();
-            /// directorio donde se encuentra el archivo xml que define la estructura de la tabla
-            self::$baseDir = $pluginManager->folder() . '/Dinamic/Table/';
-
-            /// Comprobamos si existe de tabla y recogemos la lista de campos
-            $this->checkTable($tableName);
-            self::$fields = $this->dataBase->getColumns($tableName);
-            self::$checkedTables[] = $tableName;
         }
 
         if ($tableName != '' && !in_array($tableName, self::$checkedTables) && $this->checkTable($tableName)) {
+            $this->miniLog->debug('Table ' . $tableName . ' checked.');
             self::$checkedTables[] = $tableName;
+            $this->cache->set('fs_checked_tables', self::$checkedTables);
+        }
+
+        if (self::$fields === NULL) {
+            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
         }
     }
 
@@ -159,6 +153,9 @@ trait Model {
     public function loadFromData($data = []) {
         foreach ($data as $key => $value) {
             $this->{$key} = $value;
+            if ($value === NULL) {
+                continue;
+            }
 
             foreach (self::$fields as $field) {
                 if ($field['name'] == $key) {
@@ -181,6 +178,7 @@ trait Model {
 
                         case 'date':
                             $this->{$key} = Date('d-m-Y', strtotime($value));
+                            break;
                     }
                     break;
                 }
@@ -303,7 +301,6 @@ trait Model {
         }
 
         $sql .= " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";";
-
         return $this->dataBase->exec($sql);
     }
 
@@ -399,14 +396,20 @@ trait Model {
     public function var2str($val) {
         if ($val === NULL) {
             return 'NULL';
-        } else if (is_bool($val)) {
+        }
+
+        if (is_bool($val)) {
             if ($val) {
                 return 'TRUE';
             }
             return 'FALSE';
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) {
+        }
+
+        if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) {
             return "'" . Date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) {
+        }
+
+        if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) {
             return "'" . Date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
         }
 
@@ -488,11 +491,9 @@ trait Model {
                 $sql .= $this->install();
             }
 
-            if ($sql != '') {
-                if (!$this->dataBase->exec($sql)) {
-                    $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
-                    $done = FALSE;
-                }
+            if ($sql != '' && !$this->dataBase->exec($sql)) {
+                $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                $done = FALSE;
             }
         } else {
             $this->miniLog->critical('Error con el xml.');
@@ -511,8 +512,11 @@ trait Model {
      */
     protected function getXmlTable($tableName, &$columns, &$constraints) {
         $return = FALSE;
-        $filename = self::$baseDir . $tableName . '.xml';
 
+        /// necesitamos el plugin manager para obtener la carpeta de trabajo de FacturaScripts
+        $pluginManager = new PluginManager();
+
+        $filename = $pluginManager->folder() . '/Dinamic/Table/' . $tableName . '.xml';
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {
@@ -523,10 +527,8 @@ trait Model {
                         $columns[$key]['tipo'] = (string) $col->tipo;
 
                         $columns[$key]['nulo'] = 'YES';
-                        if ($col->nulo) {
-                            if (strtolower($col->nulo) == 'no') {
-                                $columns[$key]['nulo'] = 'NO';
-                            }
+                        if ($col->nulo && strtolower($col->nulo) == 'no') {
+                            $columns[$key]['nulo'] = 'NO';
                         }
 
                         if ($col->defecto == '') {

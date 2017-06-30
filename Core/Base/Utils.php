@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez
  */
-class Utils {
+trait Utils {
 
     /**
      * Convierte una variable con contenido binario a texto.

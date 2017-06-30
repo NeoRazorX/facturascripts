@@ -18,101 +18,92 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\App;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use DebugBar\StandardDebugBar;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-class App {
+class AppController extends App {
 
-    private $cache;
-    private $connected;
+    /**
+     * Controlador cargado.
+     * @var Controller 
+     */
     private $controller;
-    private $dataBase;
+
+    /**
+     * PHDebugBar.
+     * @var StandardDebugBar
+     */
     private $debugBar;
-    private $folder;
-    private $httpStatus;
-    private $i18n;
-    private $miniLog;
-    private $pluginManager;
 
-    public function __construct($foler = '') {
-        $this->cache = new Cache($foler);
-        $this->connected = FALSE;
+    public function __construct($folder = '') {
+        parent::__construct($folder);
         $this->controller = NULL;
-        $this->dataBase = new DataBase();
         $this->debugBar = new StandardDebugBar();
-        $this->folder = $foler;
-        $this->httpStatus = Response::HTTP_OK;
-        $this->i18n = new Translator($foler, FS_LANG);
-        $this->miniLog = new MiniLog();
-        $this->pluginManager = new PluginManager($foler);
     }
 
-    public function connect() {
-        $this->connected = $this->dataBase->connect();
-        return $this->connected;
-    }
-
-    public function close() {
-        $this->dataBase->close();
-        $this->connected = FALSE;
-    }
-    
-    public function runAPI() {
-        
-    }
-
-    public function runController() {
-        if ($this->connected) {
-            /// Obtenemos el nombre del controlador a cargar
-            $request = Request::createFromGlobals();
-            $pageName = $request->get('page', 'AdminHome');
-            $this->loadController($pageName);
+    /**
+     * Selecciona y ejecuta el controlador pertinente.
+     */
+    public function run() {
+        if (!$this->dataBase->connected()) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->renderHtml('Error/DbError.html');
+        } elseif ($this->isIPBanned()) {
+            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $this->response->setContent('IP-BANNED');
         } else {
-            $this->renderHtml('error/dbError.html');
+            /// Obtenemos el nombre del controlador a cargar
+            $pageName = $this->request->query->get('page', 'AdminHome');
+            $this->loadController($pageName);
         }
     }
 
+    /**
+     * Carga y procesa el controlador $pageName.
+     * @param string $pageName nombre del controlador
+     */
     private function loadController($pageName) {
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
-        $template = 'error/controllerNotFound.html';
-        $this->httpStatus = Response::HTTP_NOT_FOUND;
+        $template = 'Error/ControllerNotFound.html';
+        $httpStatus = Response::HTTP_NOT_FOUND;
 
         if (!class_exists($controllerName)) {
             $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
         }
-        
+
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
-            $this->miniLog->debug('Loading controller: '.$controllerName);
-            
+            $this->miniLog->debug('Loading controller: ' . $controllerName);
+
             try {
-                $this->controller = new $controllerName(__DIR__);
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 $this->controller->run();
-                $template = $this->controller->template;
-                $this->httpStatus = Response::HTTP_OK;
+                $template = $this->controller->getTemplate();
+                $httpStatus = Response::HTTP_OK;
             } catch (\Exception $exc) {
                 $this->debugBar['exceptions']->addException($exc);
-                $this->httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
+                $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
             }
         }
 
+        $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
         }
     }
 
-    public function runCron() {
-        
-    }
-
+    /**
+     * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
+     * hasta ejecutar render()
+     * @param string $template archivo html a utilizar
+     */
     private function renderHtml($template) {
         /// cargamos el motor de plantillas
         $twigLoader = new \Twig_Loader_Filesystem($this->folder . '/Core/View');
@@ -123,23 +114,24 @@ class App {
         }
 
         /// opciones de twig
-        $twigOptions = array('cache' => $this->folder . '/Cache/twig');
+        $twigOptions = array('cache' => $this->folder . '/Cache/Twig');
 
         /// variables para la plantilla HTML
         $templateVars = array(
             'debugBarRender' => FALSE,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
-            'log' => $this->miniLog->read()
+            'log' => $this->miniLog->read(),
+            'sql' => $this->miniLog->read(['sql']),
         );
 
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
             $twigOptions['debug'] = TRUE;
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
-            
+
             /// añadimos del log a debugBar
-            foreach($this->miniLog->read(['debug','sql']) as $msg) {
+            foreach ($this->miniLog->read(['debug']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
             $this->debugBar['messages']->info('END');
@@ -147,12 +139,12 @@ class App {
         $twig = new \Twig_Environment($twigLoader, $twigOptions);
 
         try {
-            $response = new Response($twig->render($template, $templateVars), $this->httpStatus);
+            $this->response->setContent($twig->render($template, $templateVars));
         } catch (\Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $response = new Response($twig->render('error/templateNotFound.html', $templateVars), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $response->send();
     }
 
 }

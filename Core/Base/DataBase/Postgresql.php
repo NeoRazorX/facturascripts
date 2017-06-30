@@ -18,18 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Clase para conectar a PostgreSQL.
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Postgresql implements DatabaseEngine {
-
-    public function __construct() {
-        
-    }
 
     /**
      * Devuelve el motor de base de datos y la versión.
@@ -47,14 +44,14 @@ class Postgresql implements DatabaseEngine {
      */
     public function columnFromData($colData) {
         $colData['extra'] = NULL;
-        
+
         if ($colData['character_maximum_length'] != NULL) {
             $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
         }
 
-        return $colData;  
+        return $colData;
     }
-    
+
     /**
      * Conecta a la base de datos.
      * @param string $error
@@ -120,8 +117,8 @@ class Postgresql implements DatabaseEngine {
      */
     public function rollback($link) {
         return $this->exec($link, 'ROLLBACK;');
-    }  
-    
+    }
+
     /**
      * Indica si la conexión está en transacción
      * @param resource $link
@@ -197,7 +194,7 @@ class Postgresql implements DatabaseEngine {
     public function escapeString($link, $str) {
         return pg_escape_string($link, $str);
     }
-    
+
     /**
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
@@ -205,7 +202,7 @@ class Postgresql implements DatabaseEngine {
     public function dateStyle() {
         return 'd-m-Y';
     }
-    
+
     /**
      * Devuelve el SQL necesario para convertir
      * la columna a entero.
@@ -215,7 +212,7 @@ class Postgresql implements DatabaseEngine {
     public function sql2int($colName) {
         return 'CAST(' . $colName . ' as INTEGER)';
     }
-    
+
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
      * @param string $dbType
@@ -234,7 +231,7 @@ class Postgresql implements DatabaseEngine {
     public function listTables($link) {
         $tables = [];
         $sql = "SELECT tablename"
-                .  " FROM pg_catalog.pg_tables"
+                . " FROM pg_catalog.pg_tables"
                 . " WHERE schemaname NOT IN ('pg_catalog','information_schema')"
                 . " ORDER BY tablename ASC;";
 
@@ -246,8 +243,8 @@ class Postgresql implements DatabaseEngine {
         }
 
         return $tables;
-    }    
-    
+    }
+
     /**
      * A partir del campo default de una tabla
      * comprueba si se refiere a una secuencia, y si es así
@@ -268,7 +265,7 @@ class Postgresql implements DatabaseEngine {
             }
         }
     }
-    
+
     /**
      * Realiza comprobaciones extra a la tabla.
      * @param string $tableName
@@ -277,7 +274,7 @@ class Postgresql implements DatabaseEngine {
     public function checkTableAux($link, $tableName, &$error) {
         return TRUE;
     }
-    
+
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
      * @param array $xmlCons
@@ -292,15 +289,15 @@ class Postgresql implements DatabaseEngine {
                 $sql .= ', ' . $res['consulta'];
                 continue;
             }
-            
-            if (FS_FOREIGN_KEYS || substr($res['consulta'], 0, 11) != 'FOREIGN KEY') { 
+
+            if (FS_FOREIGN_KEYS || substr($res['consulta'], 0, 11) != 'FOREIGN KEY') {
                 $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
             }
         }
 
         return $sql;
     }
-    
+
     /**
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT 
@@ -310,7 +307,7 @@ class Postgresql implements DatabaseEngine {
     public function sqlLastValue() {
         return 'SELECT lastval() as num;';
     }
-    
+
     /**
      * Devuelve el SQL para averiguar 
      * la lista de las columnas de una tabla.
@@ -319,16 +316,16 @@ class Postgresql implements DatabaseEngine {
      */
     public function sqlColumns($tableName) {
         $sql = "SELECT column_name as name, data_type as type,"
-                .        "character_maximum_length, column_default as default,"
-                .        "is_nullable"
-                .  " FROM information_schema.columns"
+                . "character_maximum_length, column_default as default,"
+                . "is_nullable"
+                . " FROM information_schema.columns"
                 . " WHERE table_catalog = '" . FS_DB_NAME . "'"
-                .   " AND table_name = '" . $tableName . "'"
+                . " AND table_name = '" . $tableName . "'"
                 . " ORDER BY 1 ASC;";
 
-        return $sql;        
+        return $sql;
     }
-    
+
     /**
      * Devuelve el SQL para averiguar
      * la lista de restricciones de una tabla.
@@ -337,9 +334,9 @@ class Postgresql implements DatabaseEngine {
      */
     public function sqlConstraints($tableName) {
         $sql = "SELECT tc.constraint_type as type, tc.constraint_name as name"
-                .  " FROM information_schema.table_constraints AS tc"
+                . " FROM information_schema.table_constraints AS tc"
                 . " WHERE tc.table_name = '" . $tableName . "'"
-                .   " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+                . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
                 . " ORDER BY 1 DESC, 2 ASC;";
         return $sql;
     }
@@ -352,30 +349,30 @@ class Postgresql implements DatabaseEngine {
      */
     public function sqlConstraintsExtended($tableName) {
         $sql = "SELECT tc.constraint_type as type, tc.constraint_name as name,"
-                .        "kcu.column_name,"
-                .        "ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,"
-                .        "rc.update_rule AS on_update, rc.delete_rule AS on_delete"
-                .  " FROM information_schema.table_constraints AS tc"
-                .  " LEFT JOIN information_schema.key_column_usage AS kcu"
-                .              " ON kcu.constraint_schema = tc.constraint_schema"
-                .             " AND kcu.constraint_catalog = tc.constraint_catalog"
-                .             " AND kcu.constraint_name = tc.constraint_name"
-                .  " LEFT JOIN information_schema.constraint_column_usage AS ccu"
-                .              " ON ccu.constraint_schema = tc.constraint_schema"
-                .             " AND ccu.constraint_catalog = tc.constraint_catalog"
-                .             " AND ccu.constraint_name = tc.constraint_name"
-                .             " AND ccu.column_name = kcu.column_name"
-                .  " LEFT JOIN information_schema.referential_constraints rc"
-                .              " ON rc.constraint_schema = tc.constraint_schema"
-                .             " AND rc.constraint_catalog = tc.constraint_catalog"
-                .             " AND rc.constraint_name = tc.constraint_name"
+                . "kcu.column_name,"
+                . "ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,"
+                . "rc.update_rule AS on_update, rc.delete_rule AS on_delete"
+                . " FROM information_schema.table_constraints AS tc"
+                . " LEFT JOIN information_schema.key_column_usage AS kcu"
+                . " ON kcu.constraint_schema = tc.constraint_schema"
+                . " AND kcu.constraint_catalog = tc.constraint_catalog"
+                . " AND kcu.constraint_name = tc.constraint_name"
+                . " LEFT JOIN information_schema.constraint_column_usage AS ccu"
+                . " ON ccu.constraint_schema = tc.constraint_schema"
+                . " AND ccu.constraint_catalog = tc.constraint_catalog"
+                . " AND ccu.constraint_name = tc.constraint_name"
+                . " AND ccu.column_name = kcu.column_name"
+                . " LEFT JOIN information_schema.referential_constraints rc"
+                . " ON rc.constraint_schema = tc.constraint_schema"
+                . " AND rc.constraint_catalog = tc.constraint_catalog"
+                . " AND rc.constraint_name = tc.constraint_name"
                 . " WHERE tc.table_name = '" . $tableName . "'"
-                .   " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+                . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
                 . " ORDER BY 1 DESC, 2 ASC;";
 
         return $sql;
     }
-    
+
     /**
      * Devuelve el SQL para averiguar
      * la lista de indices de una tabla.
@@ -384,7 +381,7 @@ class Postgresql implements DatabaseEngine {
      */
     public function sqlIndexes($tableName) {
         return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
-    }   
+    }
 
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
@@ -405,7 +402,7 @@ class Postgresql implements DatabaseEngine {
             if (in_array($col['tipo'], $serials)) {
                 continue;
             }
-            
+
             if ($col['defecto'] !== NULL) {
                 $fields .= ' DEFAULT ' . $col['defecto'];
             }
@@ -414,8 +411,8 @@ class Postgresql implements DatabaseEngine {
         $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
                 . $this->generateTableConstraints($constraints) . ');';
         return $sql;
-    }    
-    
+    }
+
     /**
      * Sentencia SQL para añadir una columna a una tabla
      * @param string $tableName
@@ -423,8 +420,8 @@ class Postgresql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData) {
-        $sql = 'ALTER TABLE ' . $tableName 
-                .  ' ADD COLUMN ' . $colData['nombre'] . " " . $colData['tipo'];
+        $sql = 'ALTER TABLE ' . $tableName
+                . ' ADD COLUMN ' . $colData['nombre'] . " " . $colData['tipo'];
 
         if ($colData['defecto'] !== NULL) {
             $sql .= ' DEFAULT ' . $colData['defecto'];
@@ -436,7 +433,7 @@ class Postgresql implements DatabaseEngine {
 
         return $sql . ';';
     }
-    
+
     /**
      * Sentencia SQL para modificar una columna a una tabla
      * @param string $tableName
@@ -444,11 +441,11 @@ class Postgresql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData) {
-        $sql = 'ALTER TABLE ' . $tableName 
-                .   ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+        $sql = 'ALTER TABLE ' . $tableName
+                . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
         return $sql . ";";
     }
-    
+
     /**
      * Sentencia SQL para modificar un valor por defecto de un campo de una tabla
      * @param string $tableName
@@ -456,13 +453,11 @@ class Postgresql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData) {
-        $action = ($colData['defecto'] !== NULL) 
-                        ? " SET DEFAULT " . $colData['defecto'] 
-                        : " DROP DEFAULT";
-        
+        $action = ($colData['defecto'] !== NULL) ? " SET DEFAULT " . $colData['defecto'] : " DROP DEFAULT";
+
         return "ALTER TABLE " . $tableName . " ALTER COLUMN " . $colData['nombre'] . $action;
     }
-    
+
     /**
      * Sentencia SQL para modificar una constraint null de un campo de una tabla
      * @param string $tableName
@@ -483,7 +478,7 @@ class Postgresql implements DatabaseEngine {
     public function sqlDropConstraint($tableName, $colData) {
         return "ALTER TABLE " . $tableName . " DROP CONSTRAINT " . $colData['name'] . ";";
     }
-    
+
     /**
      * Sentencia SQL para añadir una constraint a una tabla
      * @param string $tableName
@@ -502,4 +497,5 @@ class Postgresql implements DatabaseEngine {
     public function sqlSequenceExists($seqName) {
         return "SELECT * FROM pg_class where relname = '" . $seqName . "';";
     }
+
 }

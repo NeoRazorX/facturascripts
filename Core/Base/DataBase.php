@@ -31,7 +31,7 @@ define('FS_CHECK_DB_TYPES', '1');
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class DataBase {
-    
+
     /**
      * El enlace con la base de datos.
      * @var resource
@@ -40,22 +40,22 @@ class DataBase {
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine 
+     * @var DataBase\DatabaseEngine 
      */
     private static $engine;
 
     /**
      * El enlace con las utilidades de base de datos.
-     * @var DataBaseUtils
+     * @var DataBase\DataBaseUtils
      */
     private static $utils;
-    
+
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
      * @var MiniLog
      */
     private static $miniLog;
-    
+
     /**
      * Nº de selects ejecutados.
      * @var integer 
@@ -67,12 +67,43 @@ class DataBase {
      * @var integer 
      */
     private static $totalTransactions;
-        
+
     /**
      * Lista de tablas de la base de datos
      * @var array
      */
     private static $tables;
+
+    /**
+     * Construye y prepara la clase para su uso
+     */
+    public function __construct() {
+        if (self::$link === NULL) {
+            self::$miniLog = new MiniLog();
+            self::$totalSelects = 0;
+            self::$totalTransactions = 0;
+            self::$tables = [];
+
+            switch (strtolower(FS_DB_TYPE)) {
+                case 'mysql':
+                    self::$engine = new DataBase\Mysql();
+                    break;
+
+                case 'postgresql':
+                    self::$engine = new DataBase\Postgresql();
+                    break;
+
+                default:
+                    self::$engine = NULL;
+                    self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
+                    break;
+            }
+
+            if (self::$engine != NULL) {
+                self::$utils = new DataBase\DataBaseUtils(self::$engine);
+            }
+        }
+    }
 
     /**
      * Devuelve el número de selects ejecutados
@@ -98,10 +129,10 @@ class DataBase {
         if (count(self::$tables) == 0) {
             self::$tables = self::$engine->listTables(self::$link);
         }
-        
+
         return self::$tables;
     }
-    
+
     /**
      * Devuelve un array con las columnas de una tabla dada.
      * @param string $tableName
@@ -117,7 +148,7 @@ class DataBase {
         }
         return $result;
     }
-    
+
     /**
      * Devuelve una array con las restricciones de una tabla.
      * @param string $tableName
@@ -130,56 +161,25 @@ class DataBase {
         } else {
             $sql = self::$engine->sqlConstraints($tableName);
         }
-        
+
         $data = $this->select($sql);
-        $result = $data ? array_values($data) : [];        
-        return $result;
+        return $data ? array_values($data) : [];
     }
-    
+
     /**
      * Devuelve una array con los indices de una tabla dada.
      * @param string $tableName
      * @return array
      */
-    public function getIndexes($tableName) {        
+    public function getIndexes($tableName) {
         $result = [];
         $data = $this->select(self::$engine->sqlIndexes($tableName));
         if ($data) {
             foreach ($data as $row) {
                 $result[] = ['name' => $row['Key_name']];
             }
-            
         }
-        return $result;        
-    }
-    
-    /**
-     * Construye y prepara la clase para su uso
-     */
-    public function __construct() {
-        if (!isset(self::$link)) {
-            self::$miniLog = new MiniLog();
-            self::$totalSelects = 0;
-            self::$totalTransactions = 0;
-            self::$tables = [];
-
-            switch (strtolower(FS_DB_TYPE)) {
-                case 'mysql':
-                        self::$engine = new Mysql();
-                        break;
-
-                case 'postgresql':
-                        self::$engine = new Postgresql();
-                        break;
-
-                default:
-                        self::$engine = NULL;
-                        self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
-                        break;
-            }
-            
-            self::$utils = new DataBaseUtils(self::$engine);
-        }
+        return $result;
     }
 
     /**
@@ -236,7 +236,7 @@ class DataBase {
     public function inTransaction() {
         return self::$engine->inTransaction(self::$link);
     }
-    
+
     /**
      * Inicia una transaccion en la base de datos
      * @return boolean
@@ -250,7 +250,7 @@ class DataBase {
 
         return $result;
     }
-    
+
     /**
      * Graba las sentencias ejecutadas en la base de datos
      * @return boolean
@@ -261,20 +261,20 @@ class DataBase {
             self::$miniLog->sql('Commit Transaction');
             self::$totalTransactions++;
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Deshace las sentencias ejecutadas en la base de datos
      * @return boolean
      */
-    public function rollback() {        
+    public function rollback() {
         self::$miniLog->error(self::$engine->errorMessage(self::$link));
         self::$miniLog->sql('Rollback Transaction');
         return self::$engine->rollback(self::$link);
     }
-    
+
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
@@ -342,7 +342,8 @@ class DataBase {
                 }
             }
         }
-        return $result;
+
+        return (bool) $result;
     }
 
     /**
@@ -365,8 +366,8 @@ class DataBase {
         }
 
         return self::$engine->version(self::$link);
-    }    
-    
+    }
+
     /**
      * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
      * @param string $tableName
@@ -377,10 +378,10 @@ class DataBase {
         if ($list === FALSE) {
             $list = $this->getTables();
         }
-        
+
         return in_array($tableName, $list);
     }
-    
+
     /**
      * Realiza comprobaciones extra a la tabla.
      * @param string $tableName
@@ -392,10 +393,10 @@ class DataBase {
         if (!$result) {
             self::$miniLog->critical($error);
         }
-        
+
         return $result;
-    }   
-    
+    }
+
     /**
      * Crea la tabla con la estructura indicada.
      * @param string $tableName
@@ -406,7 +407,7 @@ class DataBase {
     public function generateTable($tableName, $xmlCols, $xmlCons) {
         return self::$utils->generateTable($tableName, $xmlCols, $xmlCons);
     }
-    
+
     /**
      * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
      * @param string $tableName
@@ -418,7 +419,7 @@ class DataBase {
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
         return self::$utils->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
     }
-    
+
     /**
      * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
      * @param string $tableName
@@ -442,7 +443,7 @@ class DataBase {
 
         return $str;
     }
-    
+
     /**
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
@@ -458,5 +459,6 @@ class DataBase {
      */
     public function sql2int($colName) {
         return self::$engine->sql2int($colName);
-    } 
+    }
+
 }
