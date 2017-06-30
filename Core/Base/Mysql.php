@@ -212,7 +212,9 @@ class Mysql implements DatabaseEngine {
     public function exec($link, $sql) {
         try {
             if ($link->multi_query($sql)) {
-                while ($link->more_results() && $link->next_result()) {}
+                do {
+                    $more = ($link->more_results() && $link->next_result());
+                } while ($more); 
             }
             $result = (!$link->errno);
         } catch (\Exception $e) {

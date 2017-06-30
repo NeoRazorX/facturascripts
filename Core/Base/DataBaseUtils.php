@@ -133,7 +133,7 @@ class DataBaseUtils {
         $result = '';
         
         foreach ($dbCons as $db_con) {
-            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === FALSE ) {
+            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === FALSE) {
                 $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
                 if (empty($column)) {
                     $result .= self::$engine->sqlDropConstraint($tableName, $db_con);

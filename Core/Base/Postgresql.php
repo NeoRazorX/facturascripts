@@ -143,25 +143,38 @@ class Postgresql implements DatabaseEngine {
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
-     * o false en caso de fallo.
+     * Ejecuta una sentencia SQL y devuelve un array con los resultados en
+     * caso de $selectRows = TRUE, o false en caso de fallo.
      * @param resource $link
      * @param string $sql
+     * @param type $selectRows
      * @return resource|FALSE
      */
-    public function select($link, $sql) {
+    private function runSql($link, $sql, $selectRows = TRUE) {
         $result = FALSE;
         try {
             $aux = pg_query($link, $sql);
             if ($aux) {
-                $result = pg_fetch_all($aux);
+                if ($selectRows) {
+                    $result = pg_fetch_all($aux);
+                }
                 pg_free_result($aux);
             }
         } catch (\Exception $e) {
             $result = FALSE;
         }
 
-        return $result;
+        return $result;        
+    }
+    
+    /**
+     * Ejecuta una sentencia SQL de tipo select
+     * @param resource $link
+     * @param string $sql
+     * @return resource|FALSE
+     */
+    public function select($link, $sql) {
+        return $this->runSql($link, $sql);
     }
 
     /**
@@ -172,18 +185,7 @@ class Postgresql implements DatabaseEngine {
      * @return boolean
      */
     public function exec($link, $sql) {
-        $result = FALSE;
-        try {
-            $aux = pg_query($link, $sql);
-            if ($aux) {
-                pg_free_result($aux);
-                $result = TRUE;
-            }        
-        } catch (\Exception $e) {
-            $result = FALSE;
-        }       
-
-        return $result;
+        return $this->runSql($link, $sql, FALSE);
     }
 
     /**
