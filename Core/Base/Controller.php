@@ -31,6 +31,37 @@ use Symfony\Component\HttpFoundation\Request;
 class Controller {
 
     /**
+     * Gestor de acceso a cache.
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
+     * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
+     * de la clase final lo tendremos aquí).
+     * @var string __CLASS__
+     */
+    private $className;
+
+    /**
+     * Gestor de eventos.
+     * @var EventDispatcher 
+     */
+    protected $dispatcher;
+
+    /**
+     * Motor de traducción.
+     * @var Translator 
+     */
+    protected $i18n;
+
+    /**
+     * Gestor de log de la app.
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    /**
      * Request sobre la que podemos hacer consultas.
      * @var Request 
      */
@@ -40,77 +71,46 @@ class Controller {
      * Nombre del archivo html para el motor de plantillas.
      * @var string nombre_archivo.html
      */
-    public $template;
+    private $template;
 
     /**
      * Título de la página.
      * @var string título de la página.
      */
     public $title;
-    
-    protected $cache;
 
     /**
-     * Nombre de la clase del controlador
-     * @var string __CLASS__
+     * Inicia todos los objetos y propiedades.
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
+     * @param string $className
      */
-    protected $className;
-
-    /**
-     * Gestor de eventos.
-     * @var EventDispatcher 
-     */
-    protected $dispatcher;
-
-    /**
-     * Traductor multi-idioma.
-     * @var Translator 
-     */
-    protected $i18n;
-    
-    /**
-     * Gestor de log del sistema.
-     * @var MiniLog
-     */
-    protected $miniLog;
-
-    /**
-     * Carpeta de trabajo de FacturaScripts.
-     * @var string 
-     */
-    private static $folder;
-
-    /**
-     * Constructor por defecto.
-     * @param string $folder 
-     * @param string $className 
-     */
-    public function __construct($folder = '', $className = __CLASS__) {
-        if (!isset(self::$folder)) {
-            self::$folder = $folder;
-        }
-
-        /// obtenemos el nombre de la clase sin el namespace
-        $pos = strrpos($className, '\\');
-        if ($pos !== FALSE) {
-            $className = substr($className, $pos + 1);
-        }
+    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+        $this->cache = $cache;
         $this->className = $className;
-        
-        $this->cache = new Cache();
         $this->dispatcher = new EventDispatcher();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
+        $this->i18n = $i18n;
+        $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
         $this->title = $this->className;
     }
-
+    
     /**
-     * Ejecuta la lógica del controlador.
+     * Devuelve el template HTML a utilizar para este controlador.
+     * @return type
      */
-    public function run() {
-        $this->dispatcher->dispatch('pre-run');
+    public function getTemplate() {
+        return $this->template;
+    }
+    
+    /**
+     * Establece el template HTML a utilizar para este controlador.
+     * @param string $template
+     */
+    public function setTemplate($template) {
+        $this->template = $template;
     }
 
     /**
@@ -120,4 +120,12 @@ class Controller {
     public function url() {
         return 'index.php?page=' . $this->className;
     }
+
+    /**
+     * Ejecuta la lógica del controlador.
+     */
+    public function run() {
+        $this->dispatcher->dispatch('pre-run');
+    }
+
 }

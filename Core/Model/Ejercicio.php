@@ -85,8 +85,7 @@ class Ejercicio {
     public $plancontable;
 
     /**
-     * Longitud de caracteres de las subcuentas asignadas. Esto solamente es necesario
-     * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
+     * Longitud de caracteres de las subcuentas asignadas.
      * @var integer
      */
     public $longsubcuenta;

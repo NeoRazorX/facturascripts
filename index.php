@@ -32,13 +32,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
 /// iniciamos la aplicación
-$app = new FacturaScripts\Core\Base\App(__DIR__);
+$app = new FacturaScripts\Core\App\AppController(__DIR__);
 
 /// conectamos a la base de datos, cache, etc
 $app->connect();
 
 /// ejecutamos el controlador que toque
-$app->runController();
+$app->run();
+$app->render();
 
 /// desconectamos de todo
 $app->close();

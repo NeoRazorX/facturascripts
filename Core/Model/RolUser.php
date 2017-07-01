@@ -22,44 +22,26 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Define un paquete de permisos para asignar rápidamente a usuarios.
+ * Define la relación entre un usuario y un rol.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class FSRol {
+class RolUser {
 
     use \FacturaScripts\Core\Base\Model;
 
+    public $id;
     public $codrol;
-    public $descripcion;
+    public $nick;
 
     public function __construct($data = FALSE) {
-        $this->init(__CLASS__, 'fs_roles', 'codrol');
+        $this->init(__CLASS__, 'fs_roles_users', 'id');
         if ($data) {
-            $this->codrol = $data['codrol'];
-            $this->descripcion = $data['descripcion'];
+            $this->loadFromData($data);
         } else {
             $this->clear();
         }
-    }
-
-    public function clear() {
-        $this->codrol = NULL;
-        $this->descripcion = NULL;
-    }
-
-    public function url() {
-        if (is_null($this->codrol)) {
-            return 'index.php?page=AdminRol';
-        }
-
-        return 'index.php?page=AdminRol&codrol=' . $this->codrol;
-    }
-    
-    public function test() {
-        $this->descripcion = $this->noHtml($this->descripcion);
-        return TRUE;
     }
 
 }
