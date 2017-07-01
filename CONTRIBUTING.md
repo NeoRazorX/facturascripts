@@ -98,8 +98,8 @@ en cuestión.
 Como puedo generarme la documentación?
 
 Hay varias formas/alternativas aunque termina siendo lo mismo:
-- Con (ApiGen)[https://netbeans.org/kb/docs/php/screencast-apigen.html]:
-- Con (phpDocumentor)[https://netbeans.org/kb/docs/php/screencast-phpdoc.html]: 
+- Con [ApiGen](https://netbeans.org/kb/docs/php/screencast-apigen.html):
+- Con [phpDocumentor](https://netbeans.org/kb/docs/php/screencast-phpdoc.html): 
 
 
 
