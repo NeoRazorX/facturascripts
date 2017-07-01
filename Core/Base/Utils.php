@@ -83,7 +83,7 @@ trait Utils {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
 
-        return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
+        return( bccomp((string) $f1, (string) $f2, $precision) === 0 );
     }
 
     /**

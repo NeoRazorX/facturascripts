@@ -92,7 +92,7 @@ class Mysql implements DatabaseEngine {
             return NULL;
         }
 
-        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT));
+        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
         if ($result->connect_error) {
             $error = $result->connect_error;
             return NULL;
@@ -257,7 +257,7 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     private function compareDataTypeNumeric($dbType, $xmlType) {
-        return (substr($dbType, 0, 4) == 'int(' && $xmlType == 'INTEGER') || (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision');
+        return (substr($dbType, 0, 4) === 'int(' && $xmlType === 'INTEGER') || (substr($dbType, 0, 6) === 'double' && $xmlType === 'double precision');
     }
 
     /**
@@ -267,9 +267,9 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     private function compareDataTypeChar($dbType, $xmlType) {
-        $result = (substr($xmlType, 0, 18) == 'character varying(');
+        $result = (substr($xmlType, 0, 18) === 'character varying(');
         if ($result) {
-            $result = (substr($dbType, 0, 8) == 'varchar(') || (substr($dbType, 0, 5) == 'char(');
+            $result = (substr($dbType, 0, 8) === 'varchar(') || (substr($dbType, 0, 5) === 'char(');
         }
         return $result;
     }
@@ -281,7 +281,7 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     public function compareDataTypes($dbType, $xmlType) {
-        $result = (($dbType == $xmlType) || ($dbType == 'tinyint(1)' && $xmlType == 'boolean') || (substr($dbType, 8, -1) == substr($xmlType, 18, -1)) || (substr($dbType, 5, -1) == substr($xmlType, 18, -1)));
+        $result = (($dbType === $xmlType) || ($dbType === 'tinyint(1)' && $xmlType === 'boolean') || (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) || (substr($dbType, 5, -1) === substr($xmlType, 18, -1)));
 
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);
@@ -336,7 +336,7 @@ class Mysql implements DatabaseEngine {
 
         /// ¿La tabla no usa InnoDB?
         $data = $this->select($link, "SHOW TABLE STATUS FROM `" . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if ($data && $data[0]['Engine'] != 'InnoDB') {
+        if ($data && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, "ALTER TABLE " . $tableName . " ENGINE=InnoDB;");
             if (!$result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
@@ -377,17 +377,17 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     private function getConstraints($colData) {
-        $notNull = ($colData['nulo'] == 'NO');
+        $notNull = ($colData['nulo'] === 'NO');
         $result = ' NULL';
         if ($notNull) {
             $result = ' NOT' . $result;
         }
 
-        $defaultNull = ($colData['defecto'] == NULL);
+        $defaultNull = ($colData['defecto'] === NULL);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
         } else {
-            if ($colData['defecto'] != '') {
+            if ($colData['defecto'] !== '') {
                 $result .= ' DEFAULT ' . $colData['defecto'];
             }
         }
@@ -401,9 +401,9 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     private function getTypeAndConstraints($colData) {
-        $type = strtolower($colData['tipo']) == 'integer' ? FS_DB_INTEGER : strtolower($colData['tipo']);
+        $type = strtolower($colData['tipo']) === 'integer' ? FS_DB_INTEGER : strtolower($colData['tipo']);
 
-        $contraints = ($type == 'serial') ? ' NOT NULL AUTO_INCREMENT' : $this->getConstraints($colData);
+        $contraints = ($type === 'serial') ? ' NOT NULL AUTO_INCREMENT' : $this->getConstraints($colData);
 
         return ' ' . $type . $contraints;
     }

@@ -116,7 +116,7 @@ class Divisa {
      * @return boolean
      */
     public function isDefault() {
-        return ( $this->coddivisa == $this->defaultItems->codDivisa() );
+        return ( $this->coddivisa === $this->defaultItems->codDivisa() );
     }
 
     /**
@@ -132,9 +132,9 @@ class Divisa {
             $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
         } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
             $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
-        } else if ($this->tasaconv == 0) {
+        } else if ($this->tasaconv === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
-        } else if ($this->tasaconvcompra == 0) {
+        } else if ($this->tasaconvcompra === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $this->cache->delete('m_divisa_all');

@@ -111,7 +111,7 @@ trait Model {
             self::$tableName = $tableName;
         }
 
-        if ($tableName != '' && !in_array($tableName, self::$checkedTables) && $this->checkTable($tableName)) {
+        if ($tableName !== '' && !in_array($tableName, self::$checkedTables) && $this->checkTable($tableName)) {
             $this->miniLog->debug('Table ' . $tableName . ' checked.');
             self::$checkedTables[] = $tableName;
             $this->cache->set('fs_checked_tables', self::$checkedTables);
@@ -158,7 +158,7 @@ trait Model {
             }
 
             foreach (self::$fields as $field) {
-                if ($field['name'] == $key) {
+                if ($field['name'] === $key) {
                     $type = strstr($field['type'], '(');
                     switch ($type) {
                         case 'tinyint':
@@ -424,7 +424,7 @@ trait Model {
      * @return boolean
      */
     public function str2bool($val) {
-        return ($val == 't' || $val == '1');
+        return ($val === 't' || $val === '1');
     }
 
     /**
@@ -470,7 +470,7 @@ trait Model {
                  */
                 $dbCons = $this->dataBase->getConstraints($tableName);
                 $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, TRUE);
-                if ($sql2 != '') {
+                if ($sql2 !== '') {
                     if (!$this->dataBase->exec($sql2)) {
                         $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     }
@@ -491,7 +491,7 @@ trait Model {
                 $sql .= $this->install();
             }
 
-            if ($sql != '' && !$this->dataBase->exec($sql)) {
+            if ($sql !== '' && !$this->dataBase->exec($sql)) {
                 $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                 $done = FALSE;
             }
@@ -527,11 +527,11 @@ trait Model {
                         $columns[$key]['tipo'] = (string) $col->tipo;
 
                         $columns[$key]['nulo'] = 'YES';
-                        if ($col->nulo && strtolower($col->nulo) == 'no') {
+                        if ($col->nulo && strtolower($col->nulo) === 'no') {
                             $columns[$key]['nulo'] = 'NO';
                         }
 
-                        if ($col->defecto == '') {
+                        if ($col->defecto === '') {
                             $columns[$key]['defecto'] = NULL;
                         } else {
                             $columns[$key]['defecto'] = (string) $col->defecto;

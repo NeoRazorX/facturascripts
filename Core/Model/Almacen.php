@@ -130,7 +130,7 @@ class Almacen {
      * @return boolean
      */
     public function isDefault() {
-        return ( $this->codalmacen == $this->defaultItems->codAlmacen() );
+        return ( $this->codalmacen === $this->defaultItems->codAlmacen() );
     }
 
     /**

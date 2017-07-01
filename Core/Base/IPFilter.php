@@ -41,7 +41,7 @@ class IPFilter {
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
-                    if (count($line) == 3 && intval($line[2]) > time()) { /// if not expired
+                    if (count($line) === 3 && (int)$line[2] > time()) { /// if not expired
                         $this->ipList[] = ['ip' => $line[0], 'count' => (int) $line[1], 'expire' => (int) $line[2]];
                     }
                 }
@@ -55,7 +55,7 @@ class IPFilter {
         $banned = FALSE;
 
         foreach ($this->ipList as $line) {
-            if ($line['ip'] == $ip && $line['count'] > self::MAX_ATTEMPTS) {
+            if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
                 $banned = TRUE;
                 break;
             }
@@ -67,7 +67,7 @@ class IPFilter {
     public function setAttempt($ip) {
         $found = FALSE;
         foreach ($this->ipList as $key => $line) {
-            if ($line['ip'] == $ip) {
+            if ($line['ip'] === $ip) {
                 $this->ipList[$key]['count'] ++;
                 $this->ipList[$key]['expire'] = $line['expire'] + self::BAN_SECONDS;
                 break;
