@@ -290,7 +290,7 @@ class Postgresql implements DatabaseEngine {
                 continue;
             }
 
-            if (FS_FOREIGN_KEYS || substr($res['consulta'], 0, 11) !== 'FOREIGN KEY') {
+            if (FS_FOREIGN_KEYS === '1' || substr($res['consulta'], 0, 11) !== 'FOREIGN KEY') {
                 $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
             }
         }

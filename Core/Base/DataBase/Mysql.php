@@ -102,7 +102,7 @@ class Mysql implements DatabaseEngine {
         $result->autocommit(FALSE);
 
         /// desactivamos las claves ajenas
-        if (!FS_FOREIGN_KEYS) {
+        if (FS_FOREIGN_KEYS !== '1') {
             $this->exec($result, "SET foreign_key_checks = 0;");
         }
 
