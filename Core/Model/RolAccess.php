@@ -37,6 +37,14 @@ class RolAccess {
     public $allowdelete;
     public $allowupdate;
 
+    /**
+     * RolAccess constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'fs_roles_access', 'id');
         if ($data) {
@@ -45,5 +53,4 @@ class RolAccess {
             $this->clear();
         }
     }
-
 }

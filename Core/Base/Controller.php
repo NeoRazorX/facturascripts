@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,13 +45,13 @@ class Controller {
 
     /**
      * Gestor de eventos.
-     * @var EventDispatcher 
+     * @var EventDispatcher
      */
     protected $dispatcher;
 
     /**
      * Motor de traducción.
-     * @var Translator 
+     * @var Translator
      */
     protected $i18n;
 
@@ -63,7 +63,7 @@ class Controller {
 
     /**
      * Request sobre la que podemos hacer consultas.
-     * @var Request 
+     * @var Request
      */
     public $request;
 
@@ -96,15 +96,15 @@ class Controller {
         $this->template = $this->className . '.html';
         $this->title = $this->className;
     }
-    
+
     /**
      * Devuelve el template HTML a utilizar para este controlador.
-     * @return type
+     * @return string
      */
     public function getTemplate() {
         return $this->template;
     }
-    
+
     /**
      * Establece el template HTML a utilizar para este controlador.
      * @param string $template
@@ -127,5 +127,4 @@ class Controller {
     public function run() {
         $this->dispatcher->dispatch('pre-run');
     }
-
 }

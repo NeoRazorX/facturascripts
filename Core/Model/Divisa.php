@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,18 +26,18 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Divisa {
-    
+
     use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (3).
-     * @var string 
+     * @var string
      */
     public $coddivisa;
 
     /**
      * Descripción de la divisa
-     * @var string 
+     * @var string
      */
     public $descripcion;
 
@@ -61,10 +61,18 @@ class Divisa {
 
     /**
      * Símbolo que representa a la divisa
-     * @var string 
+     * @var string
      */
     public $simbolo;
 
+    /**
+     * Divisa constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'divisas', 'coddivisa');
         if ($data) {
@@ -74,6 +82,9 @@ class Divisa {
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear() {
         $this->coddivisa = NULL;
         $this->descripcion = '';
@@ -88,7 +99,7 @@ class Divisa {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName() . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
+        return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
                 . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
@@ -122,19 +133,20 @@ class Divisa {
     /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
         $status = FALSE;
-        $this->descripcion = $this->noHtml($this->descripcion);
-        $this->simbolo = $this->noHtml($this->simbolo);
+        $this->descripcion = static::noHtml($this->descripcion);
+        $this->simbolo = static::noHtml($this->simbolo);
 
-        if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
+        if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
-        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
             $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
-        } else if ($this->tasaconv === 0) {
+        } elseif ($this->tasaconv === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
-        } else if ($this->tasaconvcompra === 0) {
+        } elseif ($this->tasaconvcompra === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $this->cache->delete('m_divisa_all');
@@ -143,5 +155,4 @@ class Divisa {
 
         return $status;
     }
-
 }

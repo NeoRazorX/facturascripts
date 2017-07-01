@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,7 +34,7 @@ class PageRule {
 
     /**
      * Nick del usuario.
-     * @var string 
+     * @var string
      */
     public $nick;
 
@@ -46,11 +46,19 @@ class PageRule {
 
     /**
      * Otorga permisos al usuario a eliminar elementos en la página.
-     * @var boolean 
+     * @var boolean
      */
     public $allowdelete;
     public $allowupdate;
 
+    /**
+     * PageRule constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'fs_access', 'id');
         if ($data) {
@@ -59,5 +67,4 @@ class PageRule {
             $this->clear();
         }
     }
-
 }

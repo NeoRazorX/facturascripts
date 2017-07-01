@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,13 +32,13 @@ class Page {
     /**
      * Clave primaria. Varchar (30).
      * Nombre de la página (controlador).
-     * @var string 
+     * @var string
      */
     public $name;
 
     /**
      * Título de la página.
-     * @var string 
+     * @var string
      */
     public $title;
     public $menu;
@@ -51,6 +51,14 @@ class Page {
     public $showonmenu;
     public $orden;
 
+    /**
+     * Page constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'fs_pages', 'name');
         if ($data) {
@@ -60,6 +68,9 @@ class Page {
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear() {
         $this->name = NULL;
         $this->title = NULL;
@@ -69,25 +80,36 @@ class Page {
         $this->orden = 100;
     }
 
+    /**
+     * @return string
+     */
     protected function install() {
-        return "INSERT INTO " . $this->tableName() . " (name,title,menu,submenu,showonmenu)"
+        return 'INSERT INTO ' . $this->tableName() . ' (name,title,menu,submenu,showonmenu)'
                 . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
     }
 
+    /**
+     * @return string
+     */
     public function url() {
-        if (is_null($this->name)) {
+        if ($this->name === NULL) {
             return 'index.php?page=AdminHome';
         }
 
         return 'index.php?page=' . $this->name;
     }
 
+    /**
+     * @return bool
+     */
     public function isDefault() {
         return ( $this->name === $this->defaultItems->defaultPage() );
     }
 
+    /**
+     * @return bool
+     */
     public function showing() {
         return ( $this->name === $this->defaultItems->showingPage() );
     }
-
 }

@@ -20,10 +20,6 @@
 
 namespace FacturaScripts\Core\App;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use DebugBar\StandardDebugBar;
-
 /**
  * Description of App
  *
@@ -33,6 +29,7 @@ class AppCron extends App {
 
     /**
      * Ejecuta el cron.
+     * @throws \UnexpectedValueException
      */
     public function run() {
         $this->response->headers->set('Content-Type', 'text/plain');
@@ -42,5 +39,4 @@ class AppCron extends App {
             $this->response->setContent('DB-ERROR');
         }
     }
-
 }

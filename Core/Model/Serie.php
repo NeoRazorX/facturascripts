@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,18 +27,18 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Serie {
-    
+
     use \FacturaScripts\Core\Base\Model;
 
     /**
      * Clave primaria. Varchar (2).
-     * @var string 
+     * @var string
      */
     public $codserie;
 
     /**
      * Descripción de la serie de facturación
-     * @var string 
+     * @var string
      */
     public $descripcion;
 
@@ -66,6 +66,14 @@ class Serie {
      */
     public $numfactura;
 
+    /**
+     * Serie constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'series', 'codserie');
         if ($data) {
@@ -75,6 +83,9 @@ class Serie {
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear() {
         $this->codserie = '';
         $this->descripcion = '';
@@ -89,7 +100,7 @@ class Serie {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codserie,descripcion,siniva,irpf) VALUES "
+        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
@@ -98,7 +109,7 @@ class Serie {
      * @return string
      */
     public function url() {
-        if (is_null($this->codserie)) {
+        if ($this->codserie === NULL) {
             return 'index.php?page=contabilidad_series';
         }
 
@@ -116,20 +127,21 @@ class Serie {
     /**
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
         $status = FALSE;
 
         $this->codserie = trim($this->codserie);
-        $this->descripcion = $this->noHtml($this->descripcion);
+        $this->descripcion = static::noHtml($this->descripcion);
 
         if ($this->numfactura < 1) {
             $this->numfactura = 1;
         }
 
-        if (!preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie)) {
+        if (!preg_match('/^[A-Z0-9]{1,2}$/i', $this->codserie)) {
             $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
-        } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
+        } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else {
             $status = TRUE;
@@ -137,5 +149,4 @@ class Serie {
 
         return $status;
     }
-
 }

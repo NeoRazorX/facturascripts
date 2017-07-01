@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,25 +31,25 @@ class FormaPago {
 
     /**
      * Clave primaria. Varchar (10).
-     * @var string 
+     * @var string
      */
     public $codpago;
 
     /**
      * Descripción de la forma de pago
-     * @var string 
+     * @var string
      */
     public $descripcion;
 
     /**
      * Pagados -> marca las facturas generadas como pagadas.
-     * @var string 
+     * @var string
      */
     public $genrecibos;
 
     /**
      * Código de la cuenta bancaria asociada.
-     * @var string 
+     * @var string
      */
     public $codcuenta;
 
@@ -72,6 +72,14 @@ class FormaPago {
      */
     public $vencimiento;
 
+    /**
+     * FormaPago constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'formaspago', 'codpago');
         if ($data) {
@@ -96,7 +104,7 @@ class FormaPago {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+        return 'INSERT INTO ' . $this->tableName() . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
                 . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
                 . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
                 . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
@@ -122,13 +130,14 @@ class FormaPago {
     /**
      * Comprueba la validez de los datos de la forma de pago.
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
-        $this->descripcion = $this->noHtml($this->descripcion);
+        $this->descripcion = static::noHtml($this->descripcion);
 
         /// comprobamos la validez del vencimiento
-        $fecha1 = Date('d-m-Y');
-        $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
+        $fecha1 = date('d-m-Y');
+        $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
             $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
             return FALSE;
@@ -201,5 +210,4 @@ class FormaPago {
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
     }
-
 }

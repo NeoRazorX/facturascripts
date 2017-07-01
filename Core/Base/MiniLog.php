@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,10 +27,17 @@ namespace FacturaScripts\Core\Base;
  */
 class MiniLog {
 
+    /**
+     * TODO
+     * @var array
+     */
     private static $dataLog;
 
+    /**
+     * MiniLog constructor.
+     */
     public function __construct() {
-        if (!isset(self::$dataLog)) {
+        if (self::$dataLog === null) {
             self::$dataLog = [];
         }
     }
@@ -40,7 +47,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function emergency($message, array $context = array()) {
         $this->log('emergency', $message, $context);
@@ -54,7 +60,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function alert($message, array $context = array()) {
         $this->log('alert', $message, $context);
@@ -67,7 +72,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function critical($message, array $context = array()) {
         $this->log('critical', $message, $context);
@@ -79,7 +83,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function error($message, array $context = array()) {
         $this->log('error', $message, $context);
@@ -93,7 +96,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function warning($message, array $context = array()) {
         $this->log('warning', $message, $context);
@@ -104,7 +106,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function notice($message, array $context = array()) {
         $this->log('notice', $message, $context);
@@ -117,7 +118,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function info($message, array $context = array()) {
         $this->log('info', $message, $context);
@@ -128,7 +128,6 @@ class MiniLog {
      *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function debug($message, array $context = array()) {
         $this->log('debug', $message, $context);
@@ -136,10 +135,9 @@ class MiniLog {
 
     /**
      * SQL history.
-     * 
+     *
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function sql($message, array $context = array()) {
         $this->log('sql', $message, $context);
@@ -151,7 +149,6 @@ class MiniLog {
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @return null
      */
     public function log($level, $message, array $context = array()) {
         self::$dataLog[] = [
@@ -164,7 +161,7 @@ class MiniLog {
 
     /**
      * Returns specified level messages or all.
-     * 
+     *
      * @param array $levels
      * @return array
      */
@@ -172,12 +169,11 @@ class MiniLog {
         $messages = [];
 
         foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels)) {
+            if (in_array($data['level'], $levels, FALSE)) {
                 $messages[] = $data;
             }
         }
 
         return $messages;
     }
-
 }

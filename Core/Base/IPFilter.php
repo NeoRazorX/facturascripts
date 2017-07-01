@@ -32,12 +32,17 @@ class IPFilter {
 
     private $ipList;
 
+    /**
+     * IPFilter constructor.
+     *
+     * @param string $folder
+     */
     public function __construct($folder = '') {
         $this->ipList = [];
 
         if (file_exists($folder . '/Cache/ip.list')) {
             /// Read IP list file
-            $file = fopen($folder . '/Cache/ip.list', 'r');
+            $file = fopen($folder . '/Cache/ip.list', 'rb');
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
@@ -51,6 +56,11 @@ class IPFilter {
         }
     }
 
+    /**
+     * @param $ip
+     *
+     * @return bool
+     */
     public function isBanned($ip) {
         $banned = FALSE;
 
@@ -64,6 +74,9 @@ class IPFilter {
         return $banned;
     }
 
+    /**
+     * @param $ip
+     */
     public function setAttempt($ip) {
         $found = FALSE;
         foreach ($this->ipList as $key => $line) {
@@ -78,5 +91,4 @@ class IPFilter {
             $this->ipList[] = ['ip' => $ip, 'count' => 1, 'expire' => time() + self::BAN_SECONDS];
         }
     }
-
 }

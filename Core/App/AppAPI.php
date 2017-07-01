@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Core\App;
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Description of App
  *
@@ -29,6 +31,8 @@ class AppAPI extends App {
 
     /**
      * Ejecuta la API.
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      */
     public function run() {
         $this->response->headers->set('Content-Type', 'text/plain');
@@ -42,5 +46,4 @@ class AppAPI extends App {
             /// implementar
         }
     }
-
 }

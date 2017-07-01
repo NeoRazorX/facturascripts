@@ -33,7 +33,7 @@ abstract class App {
 
     /**
      * Gestor de acceso a cache.
-     * @var Base\Cache 
+     * @var Base\Cache
      */
     protected $cache;
 
@@ -81,7 +81,12 @@ abstract class App {
 
     /**
      * Inicializa la app.
+     *
      * @param string $folder Carpeta de trabajo de FacturaScripts
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function __construct($folder = '') {
         $this->cache = new Base\Cache($folder);
@@ -126,5 +131,4 @@ abstract class App {
         $ipFilter = new Base\IPFilter($this->folder);
         return $ipFilter->isBanned($this->request->getClientIp());
     }
-
 }

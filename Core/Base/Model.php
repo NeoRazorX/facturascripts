@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base;
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
  * comprueba la estructura de la tabla y de ser necesario la crea o adapta.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 trait Model {
@@ -43,19 +43,19 @@ trait Model {
     /**
      * Clase que se utiliza para definir algunos valores por defecto:
      * codejercicio, codserie, coddivisa, etc...
-     * @var DefaultItems 
+     * @var DefaultItems
      */
     protected $defaultItems;
 
     /**
      * Lista de campos de la tabla.
-     * @var mixed 
+     * @var array|bool
      */
     protected static $fields;
 
     /**
      * Traductor multi-idioma.
-     * @var Translator 
+     * @var Translator
      */
     protected $i18n;
 
@@ -67,31 +67,35 @@ trait Model {
 
     /**
      * Nombre del modelo. De la clase que inicia este trait.
-     * @var string 
+     * @var string
      */
     private static $modelName;
 
     /**
      * Nombre de la columna que es clave primaria.
-     * @var string 
+     * @var string
      */
     private static $primaryColumn;
 
     /**
      * Nombre de la tabla en la base de datos.
-     * @var string 
+     * @var string
      */
     private static $tableName;
 
     /**
      * Lista de tablas ya comprobadas.
-     * @var mixed 
+     * @var mixed
      */
     private static $checkedTables;
 
     /**
      * Constructor.
+     *
      * @param string $tableName nombre de la tabla de la base de datos.
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     private function init($modelName = '', $tableName = '', $primaryColumn = '') {
         $this->cache = new Cache();
@@ -111,7 +115,7 @@ trait Model {
             self::$tableName = $tableName;
         }
 
-        if ($tableName !== '' && !in_array($tableName, self::$checkedTables) && $this->checkTable($tableName)) {
+        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, FALSE) && $this->checkTable($tableName)) {
             $this->miniLog->debug('Table ' . $tableName . ' checked.');
             self::$checkedTables[] = $tableName;
             $this->cache->set('fs_checked_tables', self::$checkedTables);
@@ -132,7 +136,7 @@ trait Model {
 
     /**
      * Devuelve el nombre de la columna que es clave primaria del modelo.
-     * @return type
+     * @return string
      */
     public function primaryColumn() {
         return self::$primaryColumn;
@@ -148,7 +152,7 @@ trait Model {
 
     /**
      * Asigna a las propiedades del modelo los valores del array $data
-     * @param mixed $data
+     * @param array $data
      */
     public function loadFromData($data = []) {
         foreach ($data as $key => $value) {
@@ -177,7 +181,7 @@ trait Model {
                             break;
 
                         case 'date':
-                            $this->{$key} = Date('d-m-Y', strtotime($value));
+                            $this->{$key} = date('d-m-Y', strtotime($value));
                             break;
                     }
                     break;
@@ -207,11 +211,11 @@ trait Model {
 
     /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
-     * @param mixed $cod
-     * @return mixed
+     * @param $cod
+     * @return bool|mixed
      */
     public function get($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select('SELECT * FROM ' . $this->tableName() . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';');
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
@@ -223,16 +227,16 @@ trait Model {
     /**
      * Devuelve el primer modelo que coincide con los filtros establecidos.
      * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
-     * @return mixed
+     * @return bool|mixed
      */
     public function getBy($fields = []) {
-        $sql = "SELECT * FROM " . $this->tableName();
-        $coma = " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->tableName();
+        $coma = ' WHERE ';
 
         foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . " = " . $this->var2str($value);
-            if ($coma === " WHERE ") {
-                $coma = ", ";
+            $sql .= $coma . $key . ' = ' . $this->var2str($value);
+            if ($coma === ' WHERE ') {
+                $coma = ', ';
             }
         }
 
@@ -254,8 +258,9 @@ trait Model {
             return FALSE;
         }
 
-        return (bool) $this->dataBase->select("SELECT 1 FROM " . $this->tableName()
-                        . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
+        $sql = 'SELECT 1 FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+        return (bool) $this->dataBase->select($sql);
     }
 
     /**
@@ -288,7 +293,7 @@ trait Model {
      * @return boolean
      */
     private function saveUpdate() {
-        $sql = "UPDATE " . $this->tableName();
+        $sql = 'UPDATE ' . $this->tableName();
         $coma = ' SET';
 
         foreach (self::$fields as $field) {
@@ -300,7 +305,7 @@ trait Model {
             }
         }
 
-        $sql .= " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";";
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
         return $this->dataBase->exec($sql);
     }
 
@@ -318,7 +323,8 @@ trait Model {
             }
         }
 
-        $sql = "INSERT INTO " . $this->tableName() . " (" . implode(',', $insertFields) . ") VALUES (" . implode(',', $insertValues) . ");";
+        $sql = 'INSERT INTO ' . $this->tableName()
+            . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if ($this->dataBase->exec($sql)) {
             if ($this->{$this->primaryColumn()} === NULL) {
                 $this->{$this->primaryColumn()} = $this->dataBase->lastval();
@@ -335,8 +341,9 @@ trait Model {
      * @return boolean
      */
     public function delete() {
-        return $this->dataBase->exec("DELETE FROM " . $this->tableName()
-                        . " WHERE " . $this->primaryColumn() . " = " . $this->var2str($this->{$this->primaryColumn()}) . ";");
+        $sql = 'DELETE FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -345,25 +352,25 @@ trait Model {
      * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
-     * @return mixed
+     * @return array
      */
     public function all($fields = [], $order = [], $offset = 0, $limit = 50) {
         $modelList = [];
-        $sql = "SELECT * FROM " . $this->tableName();
-        $coma = " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->tableName();
+        $coma = ' WHERE ';
 
         foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . " = " . $this->var2str($value);
-            if ($coma === " WHERE ") {
-                $coma = ", ";
+            $sql .= $coma . $key . ' = ' . $this->var2str($value);
+            if ($coma === ' WHERE ') {
+                $coma = ', ';
             }
         }
 
-        $coma2 = " ORDER BY ";
+        $coma2 = ' ORDER BY ';
         foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . " " . $this->var2str($value);
-            if ($coma2 === " WHERE ") {
-                $coma2 = ", ";
+            $sql .= $coma2 . $key . ' ' . $this->var2str($value);
+            if ($coma2 === ' WHERE ') {
+                $coma2 = ', ';
             }
         }
 
@@ -405,12 +412,12 @@ trait Model {
             return 'FALSE';
         }
 
-        if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) {
-            return "'" . Date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+        if (preg_match('/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i', $val)) {
+            return "'" . date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
         }
 
-        if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) {
-            return "'" . Date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+        if (preg_match('/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i', $val)) {
+            return "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
         }
 
         return "'" . $this->dataBase->escapeString($val) . "'";
@@ -433,7 +440,7 @@ trait Model {
      * > en &gt;
      * " en &quot;
      * ' en &#39;
-     * 
+     *
      * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
      * porque te encontrarás con muchas sorpresas desagradables.
      * @param string $txt
@@ -490,7 +497,6 @@ trait Model {
                 $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
                 $sql .= $this->install();
             }
-
             if ($sql !== '' && !$this->dataBase->exec($sql)) {
                 $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                 $done = FALSE;

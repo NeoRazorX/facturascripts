@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,7 @@ namespace FacturaScripts\Core\Model;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Pais {
-    
+
     use \FacturaScripts\Core\Base\Model;
 
     /**
@@ -39,16 +39,24 @@ class Pais {
     /**
      * Código alfa-2 del país.
      * http://es.wikipedia.org/wiki/ISO_3166-1
-     * @var string 
+     * @var string
      */
     public $codiso;
 
     /**
      * Nombre del pais.
-     * @var string 
+     * @var string
      */
     public $nombre;
 
+    /**
+     * Pais constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'paises', 'codpais');
         if ($data) {
@@ -63,7 +71,7 @@ class Pais {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codpais,codiso,nombre)"
+        return 'INSERT INTO ' . $this->tableName() . ' (codpais,codiso,nombre)'
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
                 . " ('ALB','AL','Albania'),"
@@ -312,7 +320,7 @@ class Pais {
      * @return string
      */
     public function url() {
-        if (is_null($this->codpais)) {
+        if ($this->codpais === NULL) {
             return 'index.php?page=admin_paises';
         }
 
@@ -333,7 +341,7 @@ class Pais {
      * @return pais|boolean
      */
     public function getByIso($cod) {
-        $data = $this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codiso = " . $this->var2str($cod) . ";");
+        $data = $this->dataBase->select('SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';');
         if ($data) {
             return new Pais($data[0]);
         }
@@ -344,16 +352,17 @@ class Pais {
     /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
         $status = FALSE;
 
         $this->codpais = trim($this->codpais);
-        $this->nombre = $this->noHtml($this->nombre);
+        $this->nombre = static::noHtml($this->nombre);
 
-        if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
+        if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
-        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
             $status = TRUE;
@@ -361,5 +370,4 @@ class Pais {
 
         return $status;
     }
-
 }

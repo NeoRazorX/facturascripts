@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,7 @@ class Empresa {
 
     /**
      * Clave primaria. Integer.
-     * @var integer 
+     * @var integer
      */
     public $id;
     public $xid;
@@ -88,25 +88,25 @@ class Empresa {
 
     /**
      * URL de la web de la empresa.
-     * @var string 
+     * @var string
      */
     public $web;
 
     /**
      * Dirección de email de la empresa.
-     * @var string 
+     * @var string
      */
     public $email;
 
     /**
      * Número de fax de la empresa.
-     * @var string 
+     * @var string
      */
     public $fax;
 
     /**
      * Número de teléfono de la empresa.
-     * @var string 
+     * @var string
      */
     public $telefono;
 
@@ -212,6 +212,14 @@ class Empresa {
       ] */
     public $email_config;
 
+    /**
+     * Empresa constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'empresa', 'id');
         if ($data) {
@@ -231,7 +239,7 @@ class Empresa {
             );
 
             if ($this->xid === NULL) {
-                $this->xid = $this->randomString(30);
+                $this->xid = statis::randomString(30);
                 $this->save();
             }
         } else {
@@ -268,26 +276,26 @@ class Empresa {
     public function test() {
         $status = FALSE;
 
-        $this->nombre = $this->noHtml($this->nombre);
-        $this->nombrecorto = $this->noHtml($this->nombrecorto);
-        $this->administrador = $this->noHtml($this->administrador);
-        $this->apartado = $this->noHtml($this->apartado);
-        $this->cifnif = $this->noHtml($this->cifnif);
-        $this->ciudad = $this->noHtml($this->ciudad);
-        $this->codpostal = $this->noHtml($this->codpostal);
-        $this->direccion = $this->noHtml($this->direccion);
-        $this->email = $this->noHtml($this->email);
-        $this->fax = $this->noHtml($this->fax);
-        $this->horario = $this->noHtml($this->horario);
-        $this->lema = $this->noHtml($this->lema);
-        $this->pie_factura = $this->noHtml($this->pie_factura);
-        $this->provincia = $this->noHtml($this->provincia);
-        $this->telefono = $this->noHtml($this->telefono);
-        $this->web = $this->noHtml($this->web);
+        $this->nombre = static::noHtml($this->nombre);
+        $this->nombrecorto = static::noHtml($this->nombrecorto);
+        $this->administrador = static::noHtml($this->administrador);
+        $this->apartado = static::noHtml($this->apartado);
+        $this->cifnif = static::noHtml($this->cifnif);
+        $this->ciudad = static::noHtml($this->ciudad);
+        $this->codpostal = static::noHtml($this->codpostal);
+        $this->direccion = static::noHtml($this->direccion);
+        $this->email = static::noHtml($this->email);
+        $this->fax = static::noHtml($this->fax);
+        $this->horario = static::noHtml($this->horario);
+        $this->lema = static::noHtml($this->lema);
+        $this->pie_factura = static::noHtml($this->pie_factura);
+        $this->provincia = static::noHtml($this->provincia);
+        $this->telefono = static::noHtml($this->telefono);
+        $this->web = static::noHtml($this->web);
 
-        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
-        } else if (strlen($this->nombre) < strlen($this->nombrecorto)) {
+        } elseif (strlen($this->nombre) < strlen($this->nombrecorto)) {
             $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
         } else {
             $status = TRUE;

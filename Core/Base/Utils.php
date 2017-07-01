@@ -92,7 +92,7 @@ trait Utils {
      * @param string $last
      * @param string $step
      * @param string $format
-     * @return mixed
+     * @return array
      */
     public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y') {
         $dates = [];
@@ -113,7 +113,6 @@ trait Utils {
      * @return string
      */
     public static function randomString($length = 10) {
-        return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
-
 }

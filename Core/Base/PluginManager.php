@@ -122,7 +122,7 @@ class PluginManager {
                 /// ¿Existe la carpeta?
                 $dir = self::$folder . '/Dinamic/' . $folder;
                 if (!file_exists($dir)) {
-                    if (!@mkdir($dir, 0755, true) && !is_dir($dir)) {
+                    if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
                         throw new \RuntimeException(sprintf('Unable to create the %s directory', $dir));
                     }
                 } else {

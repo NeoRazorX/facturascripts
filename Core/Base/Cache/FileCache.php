@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,18 +34,28 @@ class FileCache {
 
     /**
      * Configuración de la cache.
-     * @var array 
+     * @var array
      */
     private static $config;
 
+    /**
+     * FileCache constructor.
+     *
+     * @param string $folder
+     *
+     * @throws \RuntimeException
+     */
     public function __construct($folder = '') {
         self::$config = array(
             'cache_path' => $folder. '/Cache/FileCache',
             'expires' => 180,
         );
 
-        if (!file_exists(self::$config['cache_path'])) {
-            mkdir(self::$config['cache_path']);
+        $dir = self::$config['cache_path'];
+        if (!file_exists($dir)) {
+            if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
+                throw new \RuntimeException(sprintf('Unable to create the %s directory', $dir));
+            }
         }
     }
 
@@ -61,6 +71,8 @@ class FileCache {
     /**
      * Get the data associated with a key.
      * @param string $key
+     * @param bool $raw
+     * @param null $custom_time
      * @return mixed the content you put in, or null if expired or not found
      */
     public function get($key, $raw = false, $custom_time = NULL) {
@@ -81,7 +93,7 @@ class FileCache {
     public function set($key, $content, $raw = FALSE) {
         $dest_file_name = $this->get_route($key);
         /** Use a unique temporary filename to make writes atomic with rewrite */
-        $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
+        $temp_file_name = str_replace('.php', uniqid('-', true) . '.php', $dest_file_name);
         $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
         if ($ret !== FALSE) {
             return @rename($temp_file_name, $dest_file_name);
@@ -118,16 +130,15 @@ class FileCache {
 
     /**
      * Check if a file has expired or not.
-     * @param $file the rout to the file
+     * @param string $file the rout to the file
      * @param int $time the number of minutes it was set to expire
      * @return bool if the file has expired or not
      */
     private function file_expired($file, $time = NULL) {
         $done = TRUE;
         if (file_exists($file)) {
-            $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
+            $done = (time() > (filemtime($file) + 60 * ($time ?: self::$config['expires'])));
         }
         return $done;
     }
-
 }

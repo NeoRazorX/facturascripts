@@ -21,6 +21,7 @@
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
+use FacturaScripts\Core\Base\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,7 +33,7 @@ class AppController extends App {
 
     /**
      * Controlador cargado.
-     * @var Controller 
+     * @var Controller
      */
     private $controller;
 
@@ -42,6 +43,13 @@ class AppController extends App {
      */
     private $debugBar;
 
+    /**
+     * AppController constructor.
+     * @param string $folder
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($folder = '') {
         parent::__construct($folder);
         $this->controller = NULL;
@@ -50,6 +58,11 @@ class AppController extends App {
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
+     * @throws \InvalidArgumentException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \UnexpectedValueException
      */
     public function run() {
         if (!$this->dataBase->connected()) {
@@ -67,7 +80,14 @@ class AppController extends App {
 
     /**
      * Carga y procesa el controlador $pageName.
+     *
      * @param string $pageName nombre del controlador
+     *
+     * @throws \InvalidArgumentException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \UnexpectedValueException
      */
     private function loadController($pageName) {
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
@@ -102,7 +122,14 @@ class AppController extends App {
     /**
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
+     *
      * @param string $template archivo html a utilizar
+     *
+     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     private function renderHtml($template) {
         /// cargamos el motor de plantillas
@@ -128,7 +155,8 @@ class AppController extends App {
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
             $twigOptions['debug'] = TRUE;
-            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
+            $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
+            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// añadimos del log a debugBar
             foreach ($this->miniLog->read(['debug']) as $msg) {
@@ -146,5 +174,4 @@ class AppController extends App {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 }

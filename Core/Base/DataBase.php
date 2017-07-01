@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -40,7 +40,7 @@ class DataBase {
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DataBase\DatabaseEngine 
+     * @var DataBase\DatabaseEngine
      */
     private static $engine;
 
@@ -58,13 +58,13 @@ class DataBase {
 
     /**
      * Nº de selects ejecutados.
-     * @var integer 
+     * @var integer
      */
     private static $totalSelects;
 
     /**
      * Nº de transacciones ejecutadas.
-     * @var integer 
+     * @var integer
      */
     private static $totalTransactions;
 
@@ -279,7 +279,7 @@ class DataBase {
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
      * @param string $sql
-     * @return mixed
+     * @return array|bool
      */
     public function select($sql) {
         return $this->selectLimit($sql, 0, 0);
@@ -293,7 +293,7 @@ class DataBase {
      * @param string $sql
      * @param integer $limit
      * @param integer $offset
-     * @return mixed
+     * @return bool|array
      */
     public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
         if (!$this->connected()) {
@@ -320,7 +320,7 @@ class DataBase {
      * Para hacer selects, mejor usar select() o selecLimit().
      * Si no hay transacción abierta se inicia una, se ejecutan las consultas
      * Si la transaccion la ha abierto en la llamada la cierra confirmando o descartando
-     * según haya ido todo bien o haya dado algún error
+     * según haya ido bien o haya dado algún error
      * @param string $sql
      * @return boolean
      */
@@ -338,7 +338,7 @@ class DataBase {
                 if ($result) {
                     $result = $this->commit();
                 } else {
-                    $this->rollback();                    
+                    $this->rollback();
                 }
             }
         }
@@ -358,7 +358,7 @@ class DataBase {
 
     /**
      * Devuelve el motor de base de datos usado y la versión.
-     * @return mixed
+     * @return string|bool
      */
     public function version() {
         if (!$this->connected()) {
@@ -371,7 +371,7 @@ class DataBase {
     /**
      * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
      * @param string $tableName
-     * @param mixed $list
+     * @param bool|array $list
      * @return boolean
      */
     public function tableExists($tableName, $list = FALSE) {
@@ -379,7 +379,7 @@ class DataBase {
             $list = $this->getTables();
         }
 
-        return in_array($tableName, $list);
+        return in_array($tableName, $list, FALSE);
     }
 
     /**
@@ -460,5 +460,4 @@ class DataBase {
     public function sql2int($colName) {
         return self::$engine->sql2int($colName);
     }
-
 }

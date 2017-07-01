@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,7 @@ class DataBaseUtils {
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine 
+     * @var DatabaseEngine
      */
     private static $engine;
 
@@ -74,7 +74,15 @@ class DataBaseUtils {
         $db = strtolower($dbType);
         $xml = strtolower($xmlType);
 
-        $result = ((FS_CHECK_DB_TYPES !== '1') || self::$engine->compareDataTypes($db, $xml) || ($xml === 'serial') || (substr($db, 0, 4) === 'time' && substr($xml, 0, 4) === 'time'));
+        $result = (
+            (FS_CHECK_DB_TYPES !== '1') ||
+            self::$engine->compareDataTypes($db, $xml) ||
+            ($xml === 'serial') ||
+            (
+                strpos($db, 'time') === 0 &&
+                strpos($xml, 'time') === 0
+            )
+        );
 
         return $result;
     }
@@ -107,7 +115,7 @@ class DataBaseUtils {
                 $result .= self::$engine->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] !== $xml_col['defecto']) {
+            if ($column['default'] === NULL && $xml_col['defecto'] === '') {
                 $result .= self::$engine->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
@@ -141,7 +149,7 @@ class DataBaseUtils {
 
         if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
-                if (substr($xml_con['consulta'], 0, 7) === 'PRIMARY') {
+                if (strpos($xml_con['consulta'], 'PRIMARY') === 0) {
                     continue;
                 }
 
@@ -165,5 +173,4 @@ class DataBaseUtils {
     public function generateTable($tableName, $xmlCols, $xmlCons) {
         return self::$engine->sqlCreateTable($tableName, $xmlCols, $xmlCons);
     }
-
 }

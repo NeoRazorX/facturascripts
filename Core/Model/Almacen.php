@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,64 +37,72 @@ class Almacen {
 
     /**
      * Nombre del almacen.
-     * @var string 
+     * @var string
      */
     public $nombre;
 
     /**
      * Código que representa al páis donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $codpais;
 
     /**
      * Nombre de la provincia donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $provincia;
 
     /**
      * Nombre de la población donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $poblacion;
 
     /**
      * Código postal donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $codpostal;
 
     /**
      * Dirección donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $direccion;
 
     /**
      * Persona de contacto del almacen.
-     * @var string 
+     * @var string
      */
     public $contacto;
 
     /**
      * Número de fax del almacen.
-     * @var string 
+     * @var string
      */
     public $fax;
 
     /**
      * Número de teléfono del almacen.
-     * @var string 
+     * @var string
      */
     public $telefono;
 
     /**
      * Todavía sin uso.
-     * @var string 
+     * @var string
      */
     public $observaciones;
 
+    /**
+     * Almacen constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
         if ($data) {
@@ -109,7 +117,7 @@ class Almacen {
      * @return string
      */
     public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codalmacen,nombre,poblacion,"
+        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
                 . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
@@ -118,7 +126,7 @@ class Almacen {
      * @return string
      */
     public function url() {
-        if (is_null($this->codalmacen)) {
+        if ($this->codalmacen === null) {
             return 'index.php?page=admin_almacenes';
         }
 
@@ -136,23 +144,24 @@ class Almacen {
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
         $status = FALSE;
 
         $this->codalmacen = trim($this->codalmacen);
-        $this->nombre = $this->noHtml($this->nombre);
-        $this->provincia = $this->noHtml($this->provincia);
-        $this->poblacion = $this->noHtml($this->poblacion);
-        $this->direccion = $this->noHtml($this->direccion);
-        $this->codpostal = $this->noHtml($this->codpostal);
-        $this->telefono = $this->noHtml($this->telefono);
-        $this->fax = $this->noHtml($this->fax);
-        $this->contacto = $this->noHtml($this->contacto);
+        $this->nombre = static::noHtml($this->nombre);
+        $this->provincia = static::noHtml($this->provincia);
+        $this->poblacion = static::noHtml($this->poblacion);
+        $this->direccion = static::noHtml($this->direccion);
+        $this->codpostal = static::noHtml($this->codpostal);
+        $this->telefono = static::noHtml($this->telefono);
+        $this->fax = static::noHtml($this->fax);
+        $this->contacto = static::noHtml($this->contacto);
 
-        if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen)) {
+        if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codalmacen)) {
             $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));
-        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
         } else {
             $status = TRUE;
@@ -160,5 +169,4 @@ class Almacen {
 
         return $status;
     }
-
 }

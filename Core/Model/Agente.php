@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,49 +45,49 @@ class Agente {
 
     /**
      * Nombre del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $nombre;
 
     /**
      * Apellidos del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $apellidos;
 
     /**
      * Email del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $email;
 
     /**
      * Teléfono del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $telefono;
 
     /**
      * Código postal del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $codpostal;
 
     /**
      * Provincia del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $provincia;
 
     /**
      * Ciudad del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $ciudad;
 
     /**
      * Dirección del agente o empleado.
-     * @var string 
+     * @var string
      */
     public $direccion;
 
@@ -133,6 +133,14 @@ class Agente {
      */
     public $porcomision;
 
+    /**
+     * Agente constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'agentes', 'codagente');
         if ($data) {
@@ -157,9 +165,9 @@ class Agente {
         $this->seg_social = NULL;
         $this->banco = NULL;
         $this->cargo = NULL;
-        $this->f_alta = Date('d-m-Y');
+        $this->f_alta = date('d-m-Y');
         $this->f_baja = NULL;
-        $this->f_nacimiento = Date('d-m-Y');
+        $this->f_nacimiento = date('d-m-Y');
     }
 
     /**
@@ -167,7 +175,7 @@ class Agente {
      * @return string
      */
     protected function install() {
-        return "INSERT INTO " . $this->tableName() . " (codagente,nombre,apellidos,dnicif)"
+        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
                 . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 
@@ -176,7 +184,7 @@ class Agente {
      * @return string
      */
     public function fullName() {
-        return $this->nombre . " " . $this->apellidos;
+        return $this->nombre . ' ' . $this->apellidos;
     }
 
     /**
@@ -184,7 +192,7 @@ class Agente {
      * @return int
      */
     public function newCodigo() {
-        $sql = "SELECT MAX(" . $this->dataBase->sql2int('codagente') . ") as cod FROM " . $this->tableName() . ";";
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if ($cod) {
             return 1 + (int)$cod[0]['cod'];
@@ -199,31 +207,32 @@ class Agente {
      */
     public function url() {
         if ($this->codagente === NULL) {
-            return "index.php?page=admin_agentes";
+            return 'index.php?page=admin_agentes';
         }
 
-        return "index.php?page=admin_agente&cod=" . $this->codagente;
+        return 'index.php?page=admin_agente&cod=' . $this->codagente;
     }
 
     /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
      * @return boolean
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function test() {
-        $this->apellidos = $this->noHtml($this->apellidos);
-        $this->banco = $this->noHtml($this->banco);
-        $this->cargo = $this->noHtml($this->cargo);
-        $this->ciudad = $this->noHtml($this->ciudad);
-        $this->codpostal = $this->noHtml($this->codpostal);
-        $this->direccion = $this->noHtml($this->direccion);
-        $this->dnicif = $this->noHtml($this->dnicif);
-        $this->email = $this->noHtml($this->email);
-        $this->nombre = $this->noHtml($this->nombre);
-        $this->provincia = $this->noHtml($this->provincia);
-        $this->seg_social = $this->noHtml($this->seg_social);
-        $this->telefono = $this->noHtml($this->telefono);
+        $this->apellidos = static::noHtml($this->apellidos);
+        $this->banco = static::noHtml($this->banco);
+        $this->cargo = static::noHtml($this->cargo);
+        $this->ciudad = static::noHtml($this->ciudad);
+        $this->codpostal = static::noHtml($this->codpostal);
+        $this->direccion = static::noHtml($this->direccion);
+        $this->dnicif = static::noHtml($this->dnicif);
+        $this->email = static::noHtml($this->email);
+        $this->nombre = static::noHtml($this->nombre);
+        $this->provincia = static::noHtml($this->provincia);
+        $this->seg_social = static::noHtml($this->seg_social);
+        $this->telefono = static::noHtml($this->telefono);
 
-        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 50) {
+        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
             $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
             return FALSE;
         }
@@ -234,5 +243,4 @@ class Agente {
 
         return TRUE;
     }
-
 }

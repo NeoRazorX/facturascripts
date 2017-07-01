@@ -38,10 +38,20 @@ class AdminHome extends Base\Controller {
     public $formaPago;
     public $pais;
     public $serie;
-    
+
+    /**
+     * AdminHome constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     *
+     * @throws \RuntimeException
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className) {
         parent::__construct($cache, $i18n, $miniLog, $className);
-        
+
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy();
@@ -56,6 +66,9 @@ class AdminHome extends Base\Controller {
         $this->serie = new Model\Serie();
     }
 
+    /**
+     * TODO
+     */
     public function run() {
         parent::run();
 
@@ -63,5 +76,4 @@ class AdminHome extends Base\Controller {
             $age->save();
         }
     }
-
 }

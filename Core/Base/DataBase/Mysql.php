@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Clase para conectar a MySQL.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -103,7 +103,7 @@ class Mysql implements DatabaseEngine {
 
         /// desactivamos las claves ajenas
         if (FS_FOREIGN_KEYS !== '1') {
-            $this->exec($result, "SET foreign_key_checks = 0;");
+            $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
         return $result;
@@ -148,20 +148,20 @@ class Mysql implements DatabaseEngine {
      */
     public function commit($link) {
         $result = $this->exec($link, 'COMMIT;');
-        if ($result && in_array($link, $this->transactions)) {
+        if ($result && in_array($link, $this->transactions, FALSE)) {
             $this->unsetTransaction($link);
         }
         return $result;
     }
 
     /**
-     * 
+     * TODO
      * @param \mysqli $link
      * @return boolean
      */
     public function rollback($link) {
         $result = $this->exec($link, 'ROLLBACK;');
-        if (in_array($link, $this->transactions)) {
+        if (in_array($link, $this->transactions, FALSE)) {
             $this->unsetTransaction($link);
         }
         return $result;
@@ -173,7 +173,7 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     public function inTransaction($link) {
-        return in_array($link, $this->transactions);
+        return in_array($link, $this->transactions, FALSE);
     }
 
     /**
@@ -181,7 +181,7 @@ class Mysql implements DatabaseEngine {
      * o false en caso de fallo.
      * @param \mysqli $link
      * @param string $sql
-     * @return resource|FALSE
+     * @return array|bool
      */
     public function select($link, $sql) {
         $result = FALSE;
@@ -202,7 +202,7 @@ class Mysql implements DatabaseEngine {
     }
 
     /**
-     * Ejecuta sentencias SQL sobre la base de datos 
+     * Ejecuta sentencias SQL sobre la base de datos
      * (inserts, updates o deletes)
      * @param \mysqli $link
      * @param string $sql
@@ -213,7 +213,7 @@ class Mysql implements DatabaseEngine {
             if ($link->multi_query($sql)) {
                 do {
                     $more = ($link->more_results() && $link->next_result());
-                } while ($more); 
+                } while ($more);
             }
             $result = (!$link->errno);
         } catch (\Exception $e) {
@@ -257,7 +257,8 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     private function compareDataTypeNumeric($dbType, $xmlType) {
-        return (substr($dbType, 0, 4) === 'int(' && $xmlType === 'INTEGER') || (substr($dbType, 0, 6) === 'double' && $xmlType === 'double precision');
+        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
+            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
     }
 
     /**
@@ -267,9 +268,9 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     private function compareDataTypeChar($dbType, $xmlType) {
-        $result = (substr($xmlType, 0, 18) === 'character varying(');
+        $result = 0 === strpos($xmlType, 'character varying(');
         if ($result) {
-            $result = (substr($dbType, 0, 8) === 'varchar(') || (substr($dbType, 0, 5) === 'char(');
+            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
         }
         return $result;
     }
@@ -281,7 +282,12 @@ class Mysql implements DatabaseEngine {
      * @return boolean
      */
     public function compareDataTypes($dbType, $xmlType) {
-        $result = (($dbType === $xmlType) || ($dbType === 'tinyint(1)' && $xmlType === 'boolean') || (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) || (substr($dbType, 5, -1) === substr($xmlType, 18, -1)));
+        $result = (
+            ($dbType === $xmlType) ||
+            ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
+            (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
+            (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
+        );
 
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);
@@ -297,15 +303,16 @@ class Mysql implements DatabaseEngine {
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
      * @param \mysqli $link
-     * @return mixed
+     * @return array
      */
     public function listTables($link) {
         $tables = [];
-        $aux = $this->select($link, "SHOW TABLES;");
+        $aux = $this->select($link, 'SHOW TABLES;');
         if ($aux) {
             foreach ($aux as $a) {
-                if (isset($a['Tables_in_' . FS_DB_NAME])) {
-                    $tables[] = $a['Tables_in_' . FS_DB_NAME];
+                $key = 'Tables_in_' . FS_DB_NAME;
+                if (isset($a[$key])) {
+                    $tables[] = $a[$key];
                 }
             }
         }
@@ -321,6 +328,7 @@ class Mysql implements DatabaseEngine {
      * @param string $tableName
      * @param string $default
      * @param string $colname
+     * @return bool
      */
     public function checkSequence($link, $tableName, $default, $colname) {
         return TRUE;
@@ -328,16 +336,18 @@ class Mysql implements DatabaseEngine {
 
     /**
      * Realiza comprobaciones extra a la tabla.
+     * @param mixed $link
      * @param string $tableName
-     * @return boolean
+     * @param string $error
+     * @return bool
      */
     public function checkTableAux($link, $tableName, &$error) {
         $result = TRUE;
 
         /// ¿La tabla no usa InnoDB?
-        $data = $this->select($link, "SHOW TABLE STATUS FROM `" . FS_DB_NAME . "` LIKE '" . $tableName . "';");
+        $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
         if ($data && $data[0]['Engine'] !== 'InnoDB') {
-            $result = $this->exec($link, "ALTER TABLE " . $tableName . " ENGINE=InnoDB;");
+            $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if (!$result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
                         . ' Imprescindible para FacturaScripts.';
@@ -353,8 +363,9 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     private function fixPostgresql($sql) {
-        return str_replace(
-                ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'], ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")], $sql);
+        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
+        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
+        return str_replace($search, $replace, $sql);
     }
 
     /**
@@ -372,7 +383,7 @@ class Mysql implements DatabaseEngine {
     }
 
     /**
-     * 
+     * TODO
      * @param array $colData
      * @return string
      */
@@ -418,15 +429,14 @@ class Mysql implements DatabaseEngine {
         $result['is_nullable'] = $result['null'];
         $result['name'] = $result['field'];
 
-        unset($result['null']);
-        unset($result['field']);
+        unset($result['null'], $result['field']);
 
         return $result;
     }
 
     /**
      * Devuleve el SQL para averiguar
-     * el último ID asignado al hacer un INSERT 
+     * el último ID asignado al hacer un INSERT
      * en la base de datos.
      * @return string
      */
@@ -435,13 +445,13 @@ class Mysql implements DatabaseEngine {
     }
 
     /**
-     * Devuelve el SQL para averiguar 
+     * Devuelve el SQL para averiguar
      * la lista de las columnas de una tabla.
      * @param string $tableName
      * @return string
      */
     public function sqlColumns($tableName) {
-        return "SHOW COLUMNS FROM `" . $tableName . "`;";
+        return 'SHOW COLUMNS FROM `' . $tableName . '`;';
     }
 
     /**
@@ -451,9 +461,9 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlConstraints($tableName) {
-        $sql = "SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type"
-                . " FROM information_schema.table_constraints "
-                . " WHERE table_schema = schema()"
+        $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
+                . ' FROM information_schema.table_constraints '
+                . ' WHERE table_schema = schema()'
                 . " AND table_name = '" . $tableName . "';";
         return $sql;
     }
@@ -465,24 +475,24 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlConstraintsExtended($tableName) {
-        $sql = "SELECT t1.constraint_name as name,"
-                . " t1.constraint_type as type,"
-                . " t2.column_name,"
-                . " t2.referenced_table_name AS foreign_table_name,"
-                . " t2.referenced_column_name AS foreign_column_name,"
-                . " t3.update_rule AS on_update,"
-                . " t3.delete_rule AS on_delete"
-                . " FROM information_schema.table_constraints t1"
-                . " LEFT JOIN information_schema.key_column_usage t2"
-                . " ON t1.table_schema = t2.table_schema"
-                . " AND t1.table_name = t2.table_name"
-                . " AND t1.constraint_name = t2.constraint_name"
-                . " LEFT JOIN information_schema.referential_constraints t3"
-                . " ON t3.constraint_schema = t1.table_schema"
-                . " AND t3.constraint_name = t1.constraint_name"
-                . " WHERE t1.table_schema = SCHEMA()"
+        $sql = 'SELECT t1.constraint_name as name,'
+                . ' t1.constraint_type as type,'
+                . ' t2.column_name,'
+                . ' t2.referenced_table_name AS foreign_table_name,'
+                . ' t2.referenced_column_name AS foreign_column_name,'
+                . ' t3.update_rule AS on_update,'
+                . ' t3.delete_rule AS on_delete'
+                . ' FROM information_schema.table_constraints t1'
+                . ' LEFT JOIN information_schema.key_column_usage t2'
+                . ' ON t1.table_schema = t2.table_schema'
+                . ' AND t1.table_name = t2.table_name'
+                . ' AND t1.constraint_name = t2.constraint_name'
+                . ' LEFT JOIN information_schema.referential_constraints t3'
+                . ' ON t3.constraint_schema = t1.table_schema'
+                . ' AND t3.constraint_name = t1.constraint_name'
+                . ' WHERE t1.table_schema = SCHEMA()'
                 . " AND t1.table_name = '" . $tableName . "'"
-                . " ORDER BY type DESC, name ASC;";
+                . ' ORDER BY type DESC, name ASC;';
         return $sql;
     }
 
@@ -493,13 +503,14 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlIndexes($tableName) {
-        return "SHOW INDEXES FROM " . $tableName . ";";
+        return 'SHOW INDEXES FROM ' . $tableName . ';';
     }
 
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      * @param string $tableName
      * @param array $columns
+     * @param array $constraints
      * @return string
      */
     public function sqlCreateTable($tableName, $columns, $constraints) {
@@ -521,7 +532,7 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData) {
-        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . "` "
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . '` '
                 . $this->getTypeAndConstraints($colData) . ';';
 
         return $sql;
@@ -536,7 +547,7 @@ class Mysql implements DatabaseEngine {
     public function sqlAlterModifyColumn($tableName, $colData) {
         $sql = 'ALTER TABLE ' . $tableName
                 . ' MODIFY `' . $colData['nombre'] . '` '
-                . $this->getTypeAndConstraints($colData) . ";";
+                . $this->getTypeAndConstraints($colData) . ';';
 
         return $this->fixPostgresql($sql);
     }
@@ -592,9 +603,9 @@ class Mysql implements DatabaseEngine {
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql) {
-        return "ALTER TABLE " . $tableName
-                . " ADD CONSTRAINT " . $constraintName . " "
-                . $this->fixPostgresql($sql) . ";";
+        return 'ALTER TABLE ' . $tableName
+                . ' ADD CONSTRAINT ' . $constraintName . ' '
+                . $this->fixPostgresql($sql) . ';';
     }
 
     /**
@@ -605,5 +616,4 @@ class Mysql implements DatabaseEngine {
     public function sqlSequenceExists($seqName) {
         return '';
     }
-
 }

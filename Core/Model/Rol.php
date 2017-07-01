@@ -34,6 +34,14 @@ class Rol {
     public $codrol;
     public $descripcion;
 
+    /**
+     * Rol constructor.
+     *
+     * @param bool $data
+     *
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     */
     public function __construct($data = FALSE) {
         $this->init(__CLASS__, 'fs_roles', 'codrol');
         if ($data) {
@@ -44,22 +52,30 @@ class Rol {
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear() {
         $this->codrol = NULL;
         $this->descripcion = NULL;
     }
 
+    /**
+     * @return string
+     */
     public function url() {
-        if (is_null($this->codrol)) {
+        if ($this->codrol === NULL) {
             return 'index.php?page=AdminRol';
         }
 
         return 'index.php?page=AdminRol&codrol=' . $this->codrol;
     }
-    
+
+    /**
+     * @return bool
+     */
     public function test() {
-        $this->descripcion = $this->noHtml($this->descripcion);
+        $this->descripcion = static::noHtml($this->descripcion);
         return TRUE;
     }
-
 }
