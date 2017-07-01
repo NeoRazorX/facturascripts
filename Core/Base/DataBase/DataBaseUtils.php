@@ -74,7 +74,7 @@ class DataBaseUtils {
         $db = strtolower($dbType);
         $xml = strtolower($xmlType);
 
-        $result = ((FS_CHECK_DB_TYPES !== 1) || self::$engine->compareDataTypes($db, $xml) || ($xml === 'serial') || (substr($db, 0, 4) === 'time' && substr($xml, 0, 4) === 'time'));
+        $result = ((FS_CHECK_DB_TYPES !== '1') || self::$engine->compareDataTypes($db, $xml) || ($xml === 'serial') || (substr($db, 0, 4) === 'time' && substr($xml, 0, 4) === 'time'));
 
         return $result;
     }
@@ -139,7 +139,7 @@ class DataBaseUtils {
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
                 if (substr($xml_con['consulta'], 0, 7) === 'PRIMARY') {
                     continue;
