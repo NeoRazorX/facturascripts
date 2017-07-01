@@ -131,7 +131,7 @@ class Ejercicio {
      * @return boolean
      */
     public function abierto() {
-        return ($this->estado == 'ABIERTO');
+        return ($this->estado === 'ABIERTO');
     }
 
     /**
@@ -154,7 +154,7 @@ class Ejercicio {
 
         $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName() . ";");
         if ($cod) {
-            return sprintf('%04s', (1 + intval($cod[0]['cod'])));
+            return sprintf('%04s', (1 + (int)$cod[0]['cod']));
         }
 
         return '0001';
@@ -177,7 +177,7 @@ class Ejercicio {
      * @return boolean
      */
     public function isDefault() {
-        return ($this->codejercicio == $this->defaultItems->codEjercicio());
+        return ($this->codejercicio === $this->defaultItems->codEjercicio());
     }
 
     /**

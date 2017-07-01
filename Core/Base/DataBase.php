@@ -99,7 +99,7 @@ class DataBase {
                     break;
             }
 
-            if (self::$engine != NULL) {
+            if (self::$engine !== NULL) {
                 self::$utils = new DataBase\DataBaseUtils(self::$engine);
             }
         }
@@ -126,7 +126,7 @@ class DataBase {
      * @return array
      */
     public function getTables() {
-        if (count(self::$tables) == 0) {
+        if (count(self::$tables) === 0) {
             self::$tables = self::$engine->listTables(self::$link);
         }
 
@@ -202,7 +202,7 @@ class DataBase {
         $error = '';
         self::$link = self::$engine->connect($error);
 
-        if ($error != '') {
+        if ($error !== '') {
             self::$miniLog->critical($error);
         }
 
