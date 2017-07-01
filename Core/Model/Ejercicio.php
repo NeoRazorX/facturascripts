@@ -232,7 +232,7 @@ class Ejercicio {
             $eje->fechafin = Date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                $this->miniLog->alert($this->i18n->trans('date-invalid-date', $fecha));
+                $this->miniLog->alert($this->i18n->trans('date-invalid-date', [$fecha]));
             } else if ($eje->save()) {
                 return $eje;
             }
@@ -253,10 +253,10 @@ class Ejercicio {
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $this->fechainicio, $this->fechafin));
+            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', [$this->fechainicio, $this->fechafin]));
         } else if (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
