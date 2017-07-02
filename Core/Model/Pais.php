@@ -20,14 +20,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Un país, por ejemplo España.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Pais {
-
-    use \FacturaScripts\Core\Base\Model;
+class Pais
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar(3).
@@ -52,14 +56,15 @@ class Pais {
     /**
      * Pais constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'paises', 'codpais');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -70,7 +75,8 @@ class Pais {
      * Crea la consulta necesaria para crear los paises en la base de datos.
      * @return string
      */
-    public function install() {
+    public function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codpais,codiso,nombre)'
                 . " VALUES ('ESP','ES','España'),"
                 . " ('AFG','AF','Afganistán'),"
@@ -319,8 +325,9 @@ class Pais {
      * Devuelve la URL donde ver/modificar los datos
      * @return string
      */
-    public function url() {
-        if ($this->codpais === NULL) {
+    public function url()
+    {
+        if ($this->codpais === null) {
             return 'index.php?page=admin_paises';
         }
 
@@ -329,33 +336,41 @@ class Pais {
 
     /**
      * Devuelve TRUE si el pais es el predeterminado de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->codpais === $this->defaultItems->codPais() );
     }
 
     /**
      * Devuelve el pais con codido = $cod
+     *
      * @param string $cod
-     * @return pais|boolean
+     *
+     * @return pais|bool
+     * @throws TranslationInvalidArgumentException
+     * @throws RuntimeException
      */
-    public function getByIso($cod) {
-        $data = $this->dataBase->select('SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';');
+    public function getByIso($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
+        $data = $this->dataBase->select($sql);
         if ($data) {
             return new Pais($data[0]);
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codpais = trim($this->codpais);
         $this->nombre = static::noHtml($this->nombre);
@@ -365,7 +380,7 @@ class Pais {
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

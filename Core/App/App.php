@@ -21,16 +21,19 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-abstract class App {
-
+abstract class App
+{
     /**
      * Gestor de acceso a cache.
      * @var Base\Cache
@@ -84,11 +87,12 @@ abstract class App {
      *
      * @param string $folder Carpeta de trabajo de FacturaScripts
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($folder = '') {
+    public function __construct($folder = '')
+    {
         $this->cache = new Base\Cache($folder);
         $this->dataBase = new Base\DataBase();
         $this->folder = $folder;
@@ -103,14 +107,16 @@ abstract class App {
      * Conecta a la base de datos.
      * @return bool
      */
-    public function connect() {
+    public function connect()
+    {
         return $this->dataBase->connect();
     }
 
     /**
      * Cierra la conexión a la base de datos.
      */
-    public function close() {
+    public function close()
+    {
         $this->dataBase->close();
     }
 
@@ -119,15 +125,17 @@ abstract class App {
     /**
      * Vuelca los datos en la salida estándar.
      */
-    public function render() {
+    public function render()
+    {
         $this->response->send();
     }
 
     /**
      * Devuelve TRUE si la IP del cliente ha sido baneada.
-     * @return boolean
+     * @return bool
      */
-    protected function isIPBanned() {
+    protected function isIPBanned()
+    {
         $ipFilter = new Base\IPFilter($this->folder);
         return $ipFilter->isBanned($this->request->getClientIp());
     }

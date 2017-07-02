@@ -25,11 +25,19 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez
  */
-class IPFilter {
-
+class IPFilter
+{
+    /**
+     * TODO
+     */
     const MAX_ATTEMPTS = 5;
+    /**
+     * TODO
+     */
     const BAN_SECONDS = 600;
-
+    /**
+     * TODO
+     */
     private $ipList;
 
     /**
@@ -37,7 +45,8 @@ class IPFilter {
      *
      * @param string $folder
      */
-    public function __construct($folder = '') {
+    public function __construct($folder = '')
+    {
         $this->ipList = [];
 
         if (file_exists($folder . '/Cache/ip.list')) {
@@ -57,16 +66,18 @@ class IPFilter {
     }
 
     /**
+     * TODO
      * @param $ip
      *
      * @return bool
      */
-    public function isBanned($ip) {
-        $banned = FALSE;
+    public function isBanned($ip)
+    {
+        $banned = false;
 
         foreach ($this->ipList as $line) {
             if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
-                $banned = TRUE;
+                $banned = true;
                 break;
             }
         }
@@ -75,10 +86,12 @@ class IPFilter {
     }
 
     /**
+     * TODO
      * @param $ip
      */
-    public function setAttempt($ip) {
-        $found = FALSE;
+    public function setAttempt($ip)
+    {
+        $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
                 $this->ipList[$key]['count'] ++;

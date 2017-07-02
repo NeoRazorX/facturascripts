@@ -20,15 +20,20 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use FacturaScripts\Core\Base\Utils;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Esta clase almacena los principales datos de la empresa.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Empresa {
-
-    use \FacturaScripts\Core\Base\Model;
-    use \FacturaScripts\Core\Base\Utils;
+class Empresa
+{
+    use Model;
+    use Utils;
 
     /**
      * Clave primaria. Integer.
@@ -39,7 +44,7 @@ class Empresa {
 
     /**
      * Todavía sin uso.
-     * @var boolean
+     * @var bool
      */
     public $stockpedidos;
 
@@ -215,14 +220,15 @@ class Empresa {
     /**
      * Empresa constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'empresa', 'id');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
 
             /// cargamos las opciones de email por defecto
@@ -235,11 +241,11 @@ class Empresa {
                 'mail_port' => '465',
                 'mail_enc' => 'ssl',
                 'mail_user' => '',
-                'mail_low_security' => FALSE,
+                'mail_low_security' => false,
             );
 
-            if ($this->xid === NULL) {
-                $this->xid = statis::randomString(30);
+            if ($this->xid === null) {
+                $this->xid = static::randomString(30);
                 $this->save();
             }
         } else {
@@ -251,30 +257,34 @@ class Empresa {
      * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
      * @return string
      */
-    protected function install() {
+    protected function install()
+    {
         $num = mt_rand(1, 9999);
-        return "INSERT INTO " . $this->tableName() . " (stockpedidos,contintegrada,recequivalencia,codserie,"
-                . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
-                . "ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)"
+        return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
+                . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
+                . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
                 . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
-                . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa " . $num . " S.L.',"
-                . "'E-" . $num . "','','');";
+                . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
+                . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
     }
 
     /**
      * Devuelve la url donde ver/modificar los datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=admin_empresa';
     }
 
     /**
-     * Comprueba los datos de la empresa, devuelve TRUE si está todo correcto
+     * Comprueba los datos de la empresa, devuelve TRUE si es correcto
      * @return boolean
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->nombre = static::noHtml($this->nombre);
         $this->nombrecorto = static::noHtml($this->nombrecorto);
@@ -298,10 +308,9 @@ class Empresa {
         } elseif (strlen($this->nombre) < strlen($this->nombrecorto)) {
             $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
-
 }

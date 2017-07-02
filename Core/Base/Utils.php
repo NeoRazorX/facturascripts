@@ -25,16 +25,17 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez
  */
-trait Utils {
-
+trait Utils
+{
     /**
      * Convierte una variable con contenido binario a texto.
      * Lo hace en base64.
      * @param mixed $val
      * @return string
      */
-    public static function bin2str($val) {
-        if ($val === NULL) {
+    public static function bin2str($val)
+    {
+        if ($val === null) {
             return 'NULL';
         }
 
@@ -47,9 +48,10 @@ trait Utils {
      * @param string $val
      * @return null|string
      */
-    public static function str2bin($val) {
-        if ($val === NULL) {
-            return NULL;
+    public static function str2bin($val)
+    {
+        if ($val === null) {
+            return null;
         }
 
         return base64_decode($val);
@@ -61,9 +63,10 @@ trait Utils {
      * @param string $str
      * @return integer
      */
-    public static function intval($str) {
-        if ($str === NULL) {
-            return NULL;
+    public static function intval($str)
+    {
+        if ($str === null) {
+            return null;
         }
 
         return (int) $str;
@@ -74,11 +77,12 @@ trait Utils {
      * devuelve TRUE si son iguales, FALSE en caso contrario.
      * @param double $f1
      * @param double $f2
-     * @param integer $precision
-     * @param boolean $round
-     * @return boolean
+     * @param int $precision
+     * @param bool $round
+     * @return bool
      */
-    public static function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
+    public static function floatcmp($f1, $f2, $precision = 10, $round = false)
+    {
         if ($round || !function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
@@ -94,7 +98,8 @@ trait Utils {
      * @param string $format
      * @return array
      */
-    public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y') {
+    public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
+    {
         $dates = [];
         $current = strtotime($first);
         $last = strtotime($last);
@@ -112,7 +117,8 @@ trait Utils {
      * @param integer $length
      * @return string
      */
-    public static function randomString($length = 10) {
+    public static function randomString($length = 10)
+    {
         return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 }

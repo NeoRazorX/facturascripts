@@ -28,8 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Carlos García Gómez
  */
-class Controller {
-
+class Controller
+{
     /**
      * Gestor de acceso a cache.
      * @var Cache
@@ -86,7 +86,8 @@ class Controller {
      * @param MiniLog $miniLog
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
@@ -101,7 +102,8 @@ class Controller {
      * Devuelve el template HTML a utilizar para este controlador.
      * @return string
      */
-    public function getTemplate() {
+    public function getTemplate()
+    {
         return $this->template;
     }
 
@@ -109,7 +111,8 @@ class Controller {
      * Establece el template HTML a utilizar para este controlador.
      * @param string $template
      */
-    public function setTemplate($template) {
+    public function setTemplate($template)
+    {
         $this->template = $template;
     }
 
@@ -117,14 +120,16 @@ class Controller {
      * Devuelve la url del controlador actual.
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=' . $this->className;
     }
 
     /**
      * Ejecuta la lógica del controlador.
      */
-    public function run() {
+    public function run()
+    {
         $this->dispatcher->dispatch('pre-run');
     }
 }

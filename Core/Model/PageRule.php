@@ -20,16 +20,24 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Define que un usuario tiene acceso a una página concreta
  * y si tiene permisos de eliminación en esa página.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class PageRule {
+class PageRule
+{
+    use Model;
 
-    use \FacturaScripts\Core\Base\Model;
-
+    /**
+     * TODO
+     * @var
+     */
     public $id;
 
     /**
@@ -49,19 +57,25 @@ class PageRule {
      * @var boolean
      */
     public $allowdelete;
+
+    /**
+     * TODO
+     * @var
+     */
     public $allowupdate;
 
     /**
      * PageRule constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_access', 'id');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();

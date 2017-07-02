@@ -20,14 +20,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Divisa {
-
-    use \FacturaScripts\Core\Base\Model;
+class Divisa
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (3).
@@ -68,14 +72,15 @@ class Divisa {
     /**
      * Divisa constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'divisas', 'coddivisa');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -85,12 +90,13 @@ class Divisa {
     /**
      * TODO
      */
-    public function clear() {
-        $this->coddivisa = NULL;
+    public function clear()
+    {
+        $this->coddivisa = null;
         $this->descripcion = '';
         $this->tasaconv = 1.00;
         $this->tasaconvcompra = 1.00;
-        $this->codiso = NULL;
+        $this->codiso = null;
         $this->simbolo = '?';
     }
 
@@ -98,7 +104,8 @@ class Divisa {
      * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
      * @return string
      */
-    public function install() {
+    public function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
@@ -118,25 +125,28 @@ class Divisa {
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=admin_divisas';
     }
 
     /**
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->coddivisa === $this->defaultItems->codDivisa() );
     }
 
     /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
         $this->descripcion = static::noHtml($this->descripcion);
         $this->simbolo = static::noHtml($this->simbolo);
 
@@ -150,7 +160,7 @@ class Divisa {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $this->cache->delete('m_divisa_all');
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

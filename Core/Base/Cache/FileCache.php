@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Core\Base\Cache;
 
+use RuntimeException;
+
 /**
  * Simple file cache
  * This class is great for those who can't use apc or memcached in their proyects.
@@ -30,8 +32,8 @@ namespace FacturaScripts\Core\Base\Cache;
  * @link http://emiliocobos.net/php-cache/
  *
  */
-class FileCache {
-
+class FileCache
+{
     /**
      * Configuración de la cache.
      * @var array
@@ -43,9 +45,10 @@ class FileCache {
      *
      * @param string $folder
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function __construct($folder = '') {
+    public function __construct($folder = '')
+    {
         self::$config = array(
             'cache_path' => $folder. '/Cache/FileCache',
             'expires' => 180,
@@ -54,7 +57,7 @@ class FileCache {
         $dir = self::$config['cache_path'];
         if (!file_exists($dir)) {
             if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                throw new \RuntimeException(sprintf('Unable to create the %s directory', $dir));
+                throw new RuntimeException(sprintf('Unable to create the %s directory', $dir));
             }
         }
     }
@@ -64,7 +67,8 @@ class FileCache {
      * @param string $key
      * @return string the filename of the php file
      */
-    private function get_route($key) {
+    private function getRoute($key)
+    {
         return self::$config['cache_path'] . '/' . md5($key) . '.php';
     }
 
@@ -75,12 +79,18 @@ class FileCache {
      * @param null $custom_time
      * @return mixed the content you put in, or null if expired or not found
      */
-    public function get($key, $raw = false, $custom_time = NULL) {
-        if (!$this->file_expired($file = $this->get_route($key), $custom_time)) {
+    public function get($key, $raw = false, $custom_time = null)
+    {
+        if (!$this->fileExpired($file = $this->getRoute($key), $custom_time)) {
             $content = file_get_contents($file);
+            /**
+             * Perhaps it's possible to exploit the unserialize via: file_get_contents(...).
+             * Documentation can be found here:
+             * https://github.com/kalessil/phpinspectionsea/blob/master/docs/security.md#exploiting-unserialize
+             */
             return $raw ? $content : unserialize($content);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -90,12 +100,13 @@ class FileCache {
      * @param bool $raw whether if you want to store raw data or not. If it is true, $content *must* be a string
      * @return bool whether if the operation was successful or not
      */
-    public function set($key, $content, $raw = FALSE) {
-        $dest_file_name = $this->get_route($key);
+    public function set($key, $content, $raw = false)
+    {
+        $dest_file_name = $this->getRoute($key);
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace('.php', uniqid('-', true) . '.php', $dest_file_name);
         $ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
-        if ($ret !== FALSE) {
+        if ($ret !== false) {
             return @rename($temp_file_name, $dest_file_name);
         }
         unlink($temp_file_name);
@@ -107,9 +118,10 @@ class FileCache {
      * @param string $key
      * @return bool true if the data was removed successfully
      */
-    public function delete($key) {
-        $done = TRUE;
-        $ruta = $this->get_route($key);
+    public function delete($key)
+    {
+        $done = true;
+        $ruta = $this->getRoute($key);
         if (file_exists($ruta)) {
             $done = unlink($ruta);
         }
@@ -120,12 +132,13 @@ class FileCache {
      * Flush all cache.
      * @return bool always true
      */
-    public function clear() {
+    public function clear()
+    {
         $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
         foreach ($cache_files as $file) {
             unlink($file);
         }
-        return TRUE;
+        return true;
     }
 
     /**
@@ -134,8 +147,9 @@ class FileCache {
      * @param int $time the number of minutes it was set to expire
      * @return bool if the file has expired or not
      */
-    private function file_expired($file, $time = NULL) {
-        $done = TRUE;
+    private function fileExpired($file, $time = null)
+    {
+        $done = true;
         if (file_exists($file)) {
             $done = (time() > (filemtime($file) + 60 * ($time ?: self::$config['expires'])));
         }

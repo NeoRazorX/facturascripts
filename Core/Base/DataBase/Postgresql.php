@@ -20,20 +20,23 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use Exception;
+
 /**
  * Clase para conectar a PostgreSQL.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Postgresql implements DatabaseEngine {
-
+class Postgresql implements DatabaseEngine
+{
     /**
      * Devuelve el motor de base de datos y la versión.
      * @param resource $link
      * @return string
      */
-    public function version($link) {
+    public function version($link)
+    {
         return 'POSTGRESQL ' . pg_version($link)['server'];
     }
 
@@ -42,10 +45,11 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return array
      */
-    public function columnFromData($colData) {
-        $colData['extra'] = NULL;
+    public function columnFromData($colData)
+    {
+        $colData['extra'] = null;
 
-        if ($colData['character_maximum_length'] !== NULL) {
+        if ($colData['character_maximum_length'] !== null) {
             $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
         }
 
@@ -55,18 +59,21 @@ class Postgresql implements DatabaseEngine {
     /**
      * Conecta a la base de datos.
      * @param string $error
-     * @return boolean|null
+     * @return bool|null
      */
-    public function connect(&$error) {
+    public function connect(&$error)
+    {
         if (!function_exists('pg_connect')) {
             $error = 'No tienes instalada la extensión de PHP para PostgreSQL.';
-            return NULL;
+            return null;
         }
 
-        $result = pg_connect('host=' . FS_DB_HOST . ' dbname=' . FS_DB_NAME . ' port=' . FS_DB_PORT . ' user=' . FS_DB_USER . ' password=' . FS_DB_PASS);
+        $string = 'host=' . FS_DB_HOST . ' dbname=' . FS_DB_NAME . ' port=' . FS_DB_PORT
+            . ' user=' . FS_DB_USER . ' password=' . FS_DB_PASS;
+        $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
-            return NULL;
+            return null;
         }
 
         $this->exec($result, 'SET DATESTYLE TO ISO, DMY;'); /// establecemos el formato de fecha para la conexión
@@ -77,9 +84,10 @@ class Postgresql implements DatabaseEngine {
     /**
      * Desconecta de la base de datos.
      * @param resource $link
-     * @return boolean
+     * @return bool
      */
-    public function close($link) {
+    public function close($link)
+    {
         return pg_close($link);
     }
 
@@ -88,34 +96,38 @@ class Postgresql implements DatabaseEngine {
      * @param resource $link
      * @return string
      */
-    public function errorMessage($link) {
+    public function errorMessage($link)
+    {
         return pg_last_error($link);
     }
 
     /**
      * Inicia una transacción SQL.
      * @param resource $link
-     * @return boolean
+     * @return bool
      */
-    public function beginTransaction($link) {
+    public function beginTransaction($link)
+    {
         return $this->exec($link, 'BEGIN TRANSACTION;');
     }
 
     /**
      * Guarda los cambios de una transacción SQL.
      * @param resource $link
-     * @return boolean
+     * @return bool
      */
-    public function commit($link) {
+    public function commit($link)
+    {
         return $this->exec($link, 'COMMIT;');
     }
 
     /**
      * Deshace los cambios de una transacción SQL.
      * @param resource $link
-     * @return boolean
+     * @return bool
      */
-    public function rollback($link) {
+    public function rollback($link)
+    {
         return $this->exec($link, 'ROLLBACK;');
     }
 
@@ -124,17 +136,18 @@ class Postgresql implements DatabaseEngine {
      * @param resource $link
      * @return bool
      */
-    public function inTransaction($link) {
+    public function inTransaction($link)
+    {
         $status = pg_transaction_status($link);
         switch ($status) {
             case PGSQL_TRANSACTION_ACTIVE:
             case PGSQL_TRANSACTION_INTRANS:
             case PGSQL_TRANSACTION_INERROR:
-                $result = TRUE;
+                $result = true;
                 break;
 
             default:
-                $result = FALSE;
+                $result = false;
                 break;
         }
         return $result;
@@ -142,14 +155,15 @@ class Postgresql implements DatabaseEngine {
 
     /**
      * Ejecuta una sentencia SQL y devuelve un array con los resultados en
-     * caso de $selectRows = TRUE, o false en caso de fallo.
+     * caso de $selectRows = true, o array vacío en caso de fallo.
      * @param resource $link
      * @param string $sql
      * @param bool $selectRows
-     * @return array|bool
+     * @return array
      */
-    private function runSql($link, $sql, $selectRows = TRUE) {
-        $result = FALSE;
+    private function runSql($link, $sql, $selectRows = true)
+    {
+        $result = [];
         try {
             $aux = pg_query($link, $sql);
             if ($aux) {
@@ -158,8 +172,8 @@ class Postgresql implements DatabaseEngine {
                 }
                 pg_free_result($aux);
             }
-        } catch (\Exception $e) {
-            $result = FALSE;
+        } catch (Exception $e) {
+            $result = [];
         }
 
         return $result;
@@ -169,9 +183,10 @@ class Postgresql implements DatabaseEngine {
      * Ejecuta una sentencia SQL de tipo select
      * @param resource $link
      * @param string $sql
-     * @return resource|FALSE
+     * @return array
      */
-    public function select($link, $sql) {
+    public function select($link, $sql)
+    {
         return $this->runSql($link, $sql);
     }
 
@@ -180,10 +195,11 @@ class Postgresql implements DatabaseEngine {
      * (inserts, updates o deletes).
      * @param resource $link
      * @param string $sql
-     * @return boolean
+     * @return bool
      */
-    public function exec($link, $sql) {
-        return $this->runSql($link, $sql, FALSE);
+    public function exec($link, $sql)
+    {
+        return (bool)$this->runSql($link, $sql, false);
     }
 
     /**
@@ -192,7 +208,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $str
      * @return string
      */
-    public function escapeString($link, $str) {
+    public function escapeString($link, $str)
+    {
         return pg_escape_string($link, $str);
     }
 
@@ -200,7 +217,8 @@ class Postgresql implements DatabaseEngine {
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
      */
-    public function dateStyle() {
+    public function dateStyle()
+    {
         return 'd-m-Y';
     }
 
@@ -210,7 +228,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $colName
      * @return string
      */
-    public function sql2int($colName) {
+    public function sql2int($colName)
+    {
         return 'CAST(' . $colName . ' as INTEGER)';
     }
 
@@ -218,9 +237,10 @@ class Postgresql implements DatabaseEngine {
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
-     * @return boolean
+     * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType) {
+    public function compareDataTypes($dbType, $xmlType)
+    {
         return ($dbType === $xmlType);
     }
 
@@ -229,7 +249,8 @@ class Postgresql implements DatabaseEngine {
      * @param resource $link
      * @return array
      */
-    public function listTables($link) {
+    public function listTables($link)
+    {
         $tables = [];
         $sql = 'SELECT tablename'
                 . ' FROM pg_catalog.pg_tables'
@@ -256,7 +277,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $default
      * @param string $colname
      */
-    public function checkSequence($link, $tableName, $default, $colname) {
+    public function checkSequence($link, $tableName, $default, $colname)
+    {
         $aux = explode("'", $default);
         if (count($aux) === 3) {
             $data = $this->select($link, $this->sqlSequenceExists($aux[1]));
@@ -269,13 +291,14 @@ class Postgresql implements DatabaseEngine {
 
     /**
      * Realiza comprobaciones extra a la tabla.
-     * @param mixed $link
+     * @param resource $link
      * @param string $tableName
      * @param string $error
      * @return bool
      */
-    public function checkTableAux($link, $tableName, &$error) {
-        return TRUE;
+    public function checkTableAux($link, $tableName, &$error)
+    {
+        return true;
     }
 
     /**
@@ -283,7 +306,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $xmlCons
      * @return string
      */
-    public function generateTableConstraints($xmlCons) {
+    public function generateTableConstraints($xmlCons)
+    {
         $sql = '';
 
         foreach ($xmlCons as $res) {
@@ -307,7 +331,8 @@ class Postgresql implements DatabaseEngine {
      * en la base de datos.
      * @return string
      */
-    public function sqlLastValue() {
+    public function sqlLastValue()
+    {
         return 'SELECT lastval() as num;';
     }
 
@@ -317,7 +342,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $tableName
      * @return string
      */
-    public function sqlColumns($tableName) {
+    public function sqlColumns($tableName)
+    {
         $sql = 'SELECT column_name as name, data_type as type,'
                 . 'character_maximum_length, column_default as default,'
                 . 'is_nullable'
@@ -335,7 +361,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $tableName
      * @return string
      */
-    public function sqlConstraints($tableName) {
+    public function sqlConstraints($tableName)
+    {
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
                 . ' FROM information_schema.table_constraints AS tc'
                 . " WHERE tc.table_name = '" . $tableName . "'"
@@ -350,7 +377,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $tableName
      * @return string
      */
-    public function sqlConstraintsExtended($tableName) {
+    public function sqlConstraintsExtended($tableName)
+    {
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
                 . 'kcu.column_name,'
                 . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
@@ -382,7 +410,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $tableName
      * @return string
      */
-    public function sqlIndexes($tableName) {
+    public function sqlIndexes($tableName)
+    {
         return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
     }
 
@@ -393,7 +422,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $constraints
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints) {
+    public function sqlCreateTable($tableName, $columns, $constraints)
+    {
         $serials = ['serial', 'bigserial'];
         $fields = '';
         foreach ($columns as $col) {
@@ -403,7 +433,7 @@ class Postgresql implements DatabaseEngine {
                 $fields .= ' NOT NULL';
             }
 
-            if (in_array($col['tipo'], $serials, FALSE)) {
+            if (in_array($col['tipo'], $serials, false)) {
                 continue;
             }
 
@@ -423,7 +453,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return string
      */
-    public function sqlAlterAddColumn($tableName, $colData) {
+    public function sqlAlterAddColumn($tableName, $colData)
+    {
         $sql = 'ALTER TABLE ' . $tableName
                 . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
 
@@ -444,7 +475,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return string
      */
-    public function sqlAlterModifyColumn($tableName, $colData) {
+    public function sqlAlterModifyColumn($tableName, $colData)
+    {
         $sql = 'ALTER TABLE ' . $tableName
                 . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
         return $sql . ';';
@@ -456,7 +488,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData) {
+    public function sqlAlterConstraintDefault($tableName, $colData)
+    {
         $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
 
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
@@ -468,7 +501,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData) {
+    public function sqlAlterConstraintNull($tableName, $colData)
+    {
         $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
@@ -479,7 +513,8 @@ class Postgresql implements DatabaseEngine {
      * @param array $colData
      * @return string
      */
-    public function sqlDropConstraint($tableName, $colData) {
+    public function sqlDropConstraint($tableName, $colData)
+    {
         return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
     }
 
@@ -490,7 +525,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $sql
      * @return string
      */
-    public function sqlAddConstraint($tableName, $constraintName, $sql) {
+    public function sqlAddConstraint($tableName, $constraintName, $sql)
+    {
         return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
     }
 
@@ -499,7 +535,8 @@ class Postgresql implements DatabaseEngine {
      * @param string $seqName
      * @return string
      */
-    public function sqlSequenceExists($seqName) {
+    public function sqlSequenceExists($seqName)
+    {
         return "SELECT * FROM pg_class where relname = '" . $seqName . "';";
     }
 }

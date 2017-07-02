@@ -20,6 +20,10 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.
  * Cada usuario puede estar asociado a un agente, y un agente puede
@@ -27,9 +31,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Agente {
-
-    use \FacturaScripts\Core\Base\Model;
+class Agente
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (10).
@@ -136,37 +140,39 @@ class Agente {
     /**
      * Agente constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'agentes', 'codagente');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
 
-    public function clear() {
-        $this->codagente = NULL;
+    public function clear()
+    {
+        $this->codagente = null;
         $this->nombre = '';
         $this->apellidos = '';
         $this->dnicif = '';
-        $this->email = NULL;
-        $this->telefono = NULL;
-        $this->codpostal = NULL;
-        $this->provincia = NULL;
-        $this->ciudad = NULL;
-        $this->direccion = NULL;
+        $this->email = null;
+        $this->telefono = null;
+        $this->codpostal = null;
+        $this->provincia = null;
+        $this->ciudad = null;
+        $this->direccion = null;
         $this->porcomision = 0.00;
-        $this->seg_social = NULL;
-        $this->banco = NULL;
-        $this->cargo = NULL;
+        $this->seg_social = null;
+        $this->banco = null;
+        $this->cargo = null;
         $this->f_alta = date('d-m-Y');
-        $this->f_baja = NULL;
+        $this->f_baja = null;
         $this->f_nacimiento = date('d-m-Y');
     }
 
@@ -174,7 +180,8 @@ class Agente {
      * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
      * @return string
      */
-    protected function install() {
+    protected function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
                 . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
@@ -183,7 +190,8 @@ class Agente {
      * Devuelve nombre + apellidos del agente.
      * @return string
      */
-    public function fullName() {
+    public function fullName()
+    {
         return $this->nombre . ' ' . $this->apellidos;
     }
 
@@ -191,7 +199,8 @@ class Agente {
      * Genera un nuevo código de agente
      * @return int
      */
-    public function newCodigo() {
+    public function newCodigo()
+    {
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if ($cod) {
@@ -205,8 +214,9 @@ class Agente {
      * Devuelve la url donde se pueden ver/modificar estos datos
      * @return string
      */
-    public function url() {
-        if ($this->codagente === NULL) {
+    public function url()
+    {
+        if ($this->codagente === null) {
             return 'index.php?page=admin_agentes';
         }
 
@@ -215,10 +225,11 @@ class Agente {
 
     /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
+    public function test()
+    {
         $this->apellidos = static::noHtml($this->apellidos);
         $this->banco = static::noHtml($this->banco);
         $this->cargo = static::noHtml($this->cargo);
@@ -234,13 +245,13 @@ class Agente {
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
             $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
-            return FALSE;
+            return false;
         }
 
-        if ($this->codagente === NULL) {
+        if ($this->codagente === null) {
             $this->codagente = $this->newCodigo();
         }
 
-        return TRUE;
+        return true;
     }
 }

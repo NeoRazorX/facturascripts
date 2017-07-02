@@ -20,14 +20,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * El almacén donde están físicamente los artículos.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Almacen {
-
-    use \FacturaScripts\Core\Base\Model;
+class Almacen
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (4).
@@ -98,14 +102,15 @@ class Almacen {
     /**
      * Almacen constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -116,7 +121,8 @@ class Almacen {
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
      * @return string
      */
-    public function install() {
+    public function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
                 . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
@@ -125,7 +131,8 @@ class Almacen {
      * Devuelve la URL para ver/modificar los datos de este almacén
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         if ($this->codalmacen === null) {
             return 'index.php?page=admin_almacenes';
         }
@@ -135,19 +142,21 @@ class Almacen {
 
     /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->codalmacen === $this->defaultItems->codAlmacen() );
     }
 
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codalmacen = trim($this->codalmacen);
         $this->nombre = static::noHtml($this->nombre);
@@ -164,7 +173,7 @@ class Almacen {
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

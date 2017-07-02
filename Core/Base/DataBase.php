@@ -20,6 +20,11 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
+use FacturaScripts\Core\Base\DataBase\DataBaseUtils;
+use FacturaScripts\Core\Base\DataBase\Mysql;
+use FacturaScripts\Core\Base\DataBase\Postgresql;
+
 define('FS_FOREIGN_KEYS', '1');
 define('FS_DB_INTEGER', 'INTEGER');
 define('FS_CHECK_DB_TYPES', '1');
@@ -30,8 +35,8 @@ define('FS_CHECK_DB_TYPES', '1');
  * @author Carlos García Gómez <neorazorx@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DataBase {
-
+class DataBase
+{
     /**
      * El enlace con la base de datos.
      * @var resource
@@ -40,13 +45,13 @@ class DataBase {
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DataBase\DatabaseEngine
+     * @var DatabaseEngine
      */
     private static $engine;
 
     /**
      * El enlace con las utilidades de base de datos.
-     * @var DataBase\DataBaseUtils
+     * @var DataBaseUtils
      */
     private static $utils;
 
@@ -77,8 +82,9 @@ class DataBase {
     /**
      * Construye y prepara la clase para su uso
      */
-    public function __construct() {
-        if (self::$link === NULL) {
+    public function __construct()
+    {
+        if (self::$link === null) {
             self::$miniLog = new MiniLog();
             self::$totalSelects = 0;
             self::$totalTransactions = 0;
@@ -86,21 +92,21 @@ class DataBase {
 
             switch (strtolower(FS_DB_TYPE)) {
                 case 'mysql':
-                    self::$engine = new DataBase\Mysql();
+                    self::$engine = new Mysql();
                     break;
 
                 case 'postgresql':
-                    self::$engine = new DataBase\Postgresql();
+                    self::$engine = new Postgresql();
                     break;
 
                 default:
-                    self::$engine = NULL;
+                    self::$engine = null;
                     self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
                     break;
             }
 
-            if (self::$engine !== NULL) {
-                self::$utils = new DataBase\DataBaseUtils(self::$engine);
+            if (self::$engine !== null) {
+                self::$utils = new DataBaseUtils(self::$engine);
             }
         }
     }
@@ -109,7 +115,8 @@ class DataBase {
      * Devuelve el número de selects ejecutados
      * @return integer
      */
-    public function getTotalSelects() {
+    public function getTotalSelects()
+    {
         return self::$totalSelects;
     }
 
@@ -117,7 +124,8 @@ class DataBase {
      * Devuele le número de transacciones realizadas
      * @return integer
      */
-    public function getTotalTransactions() {
+    public function getTotalTransactions()
+    {
         return self::$totalTransactions;
     }
 
@@ -125,7 +133,8 @@ class DataBase {
      * Devuelve un array con los nombres de las tablas de la base de datos.
      * @return array
      */
-    public function getTables() {
+    public function getTables()
+    {
         if (count(self::$tables) === 0) {
             self::$tables = self::$engine->listTables(self::$link);
         }
@@ -138,10 +147,11 @@ class DataBase {
      * @param string $tableName
      * @return array
      */
-    public function getColumns($tableName) {
+    public function getColumns($tableName)
+    {
         $result = [];
         $aux = $this->select(self::$engine->sqlColumns($tableName));
-        if ($aux) {
+        if (is_array($aux) && !empty($aux)) {
             foreach ($aux as $data) {
                 $result[] = self::$engine->columnFromData($data);
             }
@@ -155,7 +165,8 @@ class DataBase {
      * @param boolean $extended
      * @return array
      */
-    public function getConstraints($tableName, $extended = FALSE) {
+    public function getConstraints($tableName, $extended = false)
+    {
         if ($extended) {
             $sql = self::$engine->sqlConstraintsExtended($tableName);
         } else {
@@ -171,10 +182,11 @@ class DataBase {
      * @param string $tableName
      * @return array
      */
-    public function getIndexes($tableName) {
+    public function getIndexes($tableName)
+    {
         $result = [];
         $data = $this->select(self::$engine->sqlIndexes($tableName));
-        if ($data) {
+        if (is_array($data) && !empty($data)) {
             foreach ($data as $row) {
                 $result[] = ['name' => $row['Key_name']];
             }
@@ -186,7 +198,8 @@ class DataBase {
      * Devuelve TRUE si se está conestado a la base de datos.
      * @return boolean
      */
-    public function connected() {
+    public function connected()
+    {
         return (bool) self::$link;
     }
 
@@ -194,9 +207,10 @@ class DataBase {
      * Conecta a la base de datos.
      * @return boolean
      */
-    public function connect() {
+    public function connect()
+    {
         if ($this->connected()) {
-            return TRUE;
+            return true;
         }
 
         $error = '';
@@ -213,17 +227,18 @@ class DataBase {
      * Desconecta de la base de datos.
      * @return boolean
      */
-    public function close() {
+    public function close()
+    {
         if (!$this->connected()) {
-            return TRUE;
+            return true;
         }
 
         if (self::$engine->inTransaction(self::$link) && !$this->rollback()) {
-            return FALSE;
+            return false;
         }
 
         if (self::$engine->close(self::$link)) {
-            self::$link = NULL;
+            self::$link = null;
         }
 
         return !$this->connected();
@@ -233,7 +248,8 @@ class DataBase {
      * Indica hay una transacción abierta
      * @return boolean
      */
-    public function inTransaction() {
+    public function inTransaction()
+    {
         return self::$engine->inTransaction(self::$link);
     }
 
@@ -241,7 +257,8 @@ class DataBase {
      * Inicia una transaccion en la base de datos
      * @return boolean
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         $result = $this->inTransaction();
         if (!$result) {
             self::$miniLog->sql('Begin Transaction');
@@ -255,7 +272,8 @@ class DataBase {
      * Graba las sentencias ejecutadas en la base de datos
      * @return boolean
      */
-    public function commit() {
+    public function commit()
+    {
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
@@ -269,7 +287,8 @@ class DataBase {
      * Deshace las sentencias ejecutadas en la base de datos
      * @return boolean
      */
-    public function rollback() {
+    public function rollback()
+    {
         self::$miniLog->error(self::$engine->errorMessage(self::$link));
         self::$miniLog->sql('Rollback Transaction');
         return self::$engine->rollback(self::$link);
@@ -279,25 +298,27 @@ class DataBase {
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
      * @param string $sql
-     * @return array|bool
+     * @return array
      */
-    public function select($sql) {
+    public function select($sql)
+    {
         return $this->selectLimit($sql, 0, 0);
     }
 
     /**
      * Ejecuta una sentencia SQL de tipo select, pero con paginación,
-     * y devuelve un array con los resultados o false en caso de fallo.
+     * y devuelve un array con los resultados o array vació en caso de fallo.
      * Limit es el número de elementos que quieres que devuelva.
      * Offset es el número de resultado desde el que quieres que empiece.
      * @param string $sql
      * @param integer $limit
      * @param integer $offset
-     * @return bool|array
+     * @return array
      */
-    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
+    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    {
         if (!$this->connected()) {
-            return FALSE;
+            return [];
         }
 
         if ($limit > 0) {
@@ -308,7 +329,7 @@ class DataBase {
         $result = self::$engine->select(self::$link, $sql);
         if (!$result) {
             self::$miniLog->sql(self::$engine->errorMessage(self::$link));
-            return FALSE;
+            return [];
         }
 
         self::$totalSelects++;
@@ -324,7 +345,8 @@ class DataBase {
      * @param string $sql
      * @return boolean
      */
-    public function exec($sql) {
+    public function exec($sql)
+    {
         $result = $this->connected();
         if ($result) {
             self::$tables = []; /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
@@ -347,22 +369,24 @@ class DataBase {
     }
 
     /**
-     * Devuleve el último ID asignado al hacer un INSERT
+     * Devuelve el último ID asignado al hacer un INSERT
      * en la base de datos.
-     * @return integer|boolean
+     * @return integer|bool
      */
-    public function lastval() {
+    public function lastval()
+    {
         $aux = $this->select(self::$engine->sqlLastValue());
-        return $aux ? $aux[0]['num'] : FALSE;
+        return $aux ? $aux[0]['num'] : false;
     }
 
     /**
      * Devuelve el motor de base de datos usado y la versión.
-     * @return string|bool
+     * @return string
      */
-    public function version() {
+    public function version()
+    {
         if (!$this->connected()) {
-            return FALSE;
+            return '';
         }
 
         return self::$engine->version(self::$link);
@@ -371,15 +395,16 @@ class DataBase {
     /**
      * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
      * @param string $tableName
-     * @param bool|array $list
-     * @return boolean
+     * @param array $list
+     * @return bool
      */
-    public function tableExists($tableName, $list = FALSE) {
-        if ($list === FALSE) {
+    public function tableExists($tableName, array $list = [])
+    {
+        if (empty($list)) {
             $list = $this->getTables();
         }
 
-        return in_array($tableName, $list, FALSE);
+        return in_array($tableName, $list, false);
     }
 
     /**
@@ -387,7 +412,8 @@ class DataBase {
      * @param string $tableName
      * @return boolean
      */
-    public function checkTableAux($tableName) {
+    public function checkTableAux($tableName)
+    {
         $error = '';
         $result = self::$engine->checkTableAux(self::$link, $tableName, $error);
         if (!$result) {
@@ -404,7 +430,8 @@ class DataBase {
      * @param array $xmlCons
      * @return boolean
      */
-    public function generateTable($tableName, $xmlCols, $xmlCons) {
+    public function generateTable($tableName, $xmlCols, $xmlCons)
+    {
         return self::$utils->generateTable($tableName, $xmlCols, $xmlCons);
     }
 
@@ -416,7 +443,8 @@ class DataBase {
      * @param boolean $deleteOnly
      * @return boolean
      */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
+    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    {
         return self::$utils->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
     }
 
@@ -427,7 +455,8 @@ class DataBase {
      * @param array $dbCols
      * @return string
      */
-    public function compareColumns($tableName, $xmlCols, $dbCols) {
+    public function compareColumns($tableName, $xmlCols, $dbCols)
+    {
         return self::$utils->compareColumns($tableName, $xmlCols, $dbCols);
     }
 
@@ -436,7 +465,8 @@ class DataBase {
      * @param string $str
      * @return string
      */
-    public function escapeString($str) {
+    public function escapeString($str)
+    {
         if (self::$engine) {
             $str = self::$engine->escapeString(self::$link, $str);
         }
@@ -448,7 +478,8 @@ class DataBase {
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
      */
-    public function dateStyle() {
+    public function dateStyle()
+    {
         return self::$engine->dateStyle();
     }
 
@@ -457,7 +488,8 @@ class DataBase {
      * @param string $colName
      * @return string
      */
-    public function sql2int($colName) {
+    public function sql2int($colName)
+    {
         return self::$engine->sql2int($colName);
     }
 }

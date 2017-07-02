@@ -20,14 +20,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Page {
-
-    use \FacturaScripts\Core\Base\Model;
+class Page
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (30).
@@ -41,27 +45,40 @@ class Page {
      * @var string
      */
     public $title;
+    /**
+     * TODO
+     * @var
+     */
     public $menu;
+    /**
+     * TODO
+     * @var
+     */
     public $submenu;
 
     /**
      * FALSE -> ocultar en el menú.
-     * @var boolean
+     * @var bool
      */
     public $showonmenu;
+    /**
+     * TODO
+     * @var
+     */
     public $orden;
 
     /**
      * Page constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_pages', 'name');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -71,28 +88,33 @@ class Page {
     /**
      * TODO
      */
-    public function clear() {
-        $this->name = NULL;
-        $this->title = NULL;
-        $this->menu = NULL;
-        $this->submenu = NULL;
-        $this->showonmenu = TRUE;
+    public function clear()
+    {
+        $this->name = null;
+        $this->title = null;
+        $this->menu = null;
+        $this->submenu = null;
+        $this->showonmenu = true;
         $this->orden = 100;
     }
 
     /**
+     * TODO
      * @return string
      */
-    protected function install() {
+    protected function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (name,title,menu,submenu,showonmenu)'
                 . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
     }
 
     /**
+     * TODO
      * @return string
      */
-    public function url() {
-        if ($this->name === NULL) {
+    public function url()
+    {
+        if ($this->name === null) {
             return 'index.php?page=AdminHome';
         }
 
@@ -100,16 +122,20 @@ class Page {
     }
 
     /**
+     * TODO
      * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->name === $this->defaultItems->defaultPage() );
     }
 
     /**
+     * TODO
      * @return bool
      */
-    public function showing() {
+    public function showing()
+    {
         return ( $this->name === $this->defaultItems->showingPage() );
     }
 }

@@ -36,8 +36,8 @@ use FacturaScripts\Core\Model\Serie;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class DefaultItems {
-
+class DefaultItems
+{
     /**
      * Página por defecto
      * @var Page
@@ -87,17 +87,18 @@ class DefaultItems {
     /**
      * DefaultItems constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         if (self::$defaultPage === null) {
-            self::$defaultPage = NULL;
-            self::$showingPage = NULL;
-            self::$codEjercicio = NULL;
-            self::$codAlmacen = NULL;
-            self::$codDivisa = NULL;
-            self::$codPago = NULL;
-            self::$codImpuesto = NULL;
-            self::$codPais = NULL;
-            self::$codSerie = NULL;
+            self::$defaultPage = null;
+            self::$showingPage = null;
+            self::$codEjercicio = null;
+            self::$codAlmacen = null;
+            self::$codDivisa = null;
+            self::$codPago = null;
+            self::$codImpuesto = null;
+            self::$codPais = null;
+            self::$codSerie = null;
         }
     }
 
@@ -105,7 +106,8 @@ class DefaultItems {
      * Devuelve el código de ejercicio por defecto
      * @return Ejercicio|null
      */
-    public function codEjercicio() {
+    public function codEjercicio()
+    {
         return self::$codEjercicio;
     }
 
@@ -113,7 +115,8 @@ class DefaultItems {
      * Asigna el código de ejercicio por defecto
      * @param $cod
      */
-    public function setCodEjercicio($cod) {
+    public function setCodEjercicio($cod)
+    {
         self::$codEjercicio = $cod;
     }
 
@@ -121,7 +124,8 @@ class DefaultItems {
      * Devuelve el código de almacén por defecto
      * @return Almacen|null
      */
-    public function codAlmacen() {
+    public function codAlmacen()
+    {
         return self::$codAlmacen;
     }
 
@@ -129,7 +133,8 @@ class DefaultItems {
      * Asigna el código de almacén por defecto
      * @param $cod
      */
-    public function setCodAlmacen($cod) {
+    public function setCodAlmacen($cod)
+    {
         self::$codAlmacen = $cod;
     }
 
@@ -137,7 +142,8 @@ class DefaultItems {
      * Devuelve el código de la divisa por defecto
      * @return Divisa|null
      */
-    public function codDivisa() {
+    public function codDivisa()
+    {
         return self::$codDivisa;
     }
 
@@ -145,7 +151,8 @@ class DefaultItems {
      * Asigna el código de la divisa por defecto
      * @param $cod
      */
-    public function setCodDivisa($cod) {
+    public function setCodDivisa($cod)
+    {
         self::$codDivisa = $cod;
     }
 
@@ -153,7 +160,8 @@ class DefaultItems {
      * Devuelve el código de la forma de pago por defecto
      * @return FormaPago|null
      */
-    public function codPago() {
+    public function codPago()
+    {
         return self::$codPago;
     }
 
@@ -161,7 +169,8 @@ class DefaultItems {
      * Asigna el código de la forma de pago por defecto
      * @param $cod
      */
-    public function setCodPago($cod) {
+    public function setCodPago($cod)
+    {
         self::$codPago = $cod;
     }
 
@@ -169,7 +178,8 @@ class DefaultItems {
      * Devuelve el código del impuesto por defecto
      * @return Impuesto|null
      */
-    public function codImpuesto() {
+    public function codImpuesto()
+    {
         return self::$codImpuesto;
     }
 
@@ -177,7 +187,8 @@ class DefaultItems {
      * Asigna el código del impuesto por defecto
      * @param $cod
      */
-    public function setCodImpuesto($cod) {
+    public function setCodImpuesto($cod)
+    {
         self::$codImpuesto = $cod;
     }
 
@@ -185,7 +196,8 @@ class DefaultItems {
      * Devuelve el código de país por defecto
      * @return Pais|null
      */
-    public function codPais() {
+    public function codPais()
+    {
         return self::$codPais;
     }
 
@@ -193,7 +205,8 @@ class DefaultItems {
      * Asigna el código de país por defecto
      * @param $cod
      */
-    public function setCodPais($cod) {
+    public function setCodPais($cod)
+    {
         self::$codPais = $cod;
     }
 
@@ -201,7 +214,8 @@ class DefaultItems {
      * Devuelve el código de la serie por defecto
      * @return Serie|null
      */
-    public function codSerie() {
+    public function codSerie()
+    {
         return self::$codSerie;
     }
 
@@ -209,7 +223,8 @@ class DefaultItems {
      * Asigna el código de la serie por defecto
      * @param $cod
      */
-    public function setCodSerie($cod) {
+    public function setCodSerie($cod)
+    {
         self::$codSerie = $cod;
     }
 
@@ -217,7 +232,8 @@ class DefaultItems {
      * Devuelve la página por defecto
      * @return Page|null
      */
-    public function defaultPage() {
+    public function defaultPage()
+    {
         return self::$defaultPage;
     }
 
@@ -225,7 +241,8 @@ class DefaultItems {
      * Asigna la página por defecto
      * @param $name
      */
-    public function setDefaultPage($name) {
+    public function setDefaultPage($name)
+    {
         self::$defaultPage = $name;
     }
 
@@ -233,7 +250,8 @@ class DefaultItems {
      * Devuelve la página que se está mostrando
      * @return Page|null
      */
-    public function showingPage() {
+    public function showingPage()
+    {
         return self::$showingPage;
     }
 
@@ -241,7 +259,8 @@ class DefaultItems {
      * Asigna la página que se está mostrando
      * @param $name
      */
-    public function setShowingPage($name) {
+    public function setShowingPage($name)
+    {
         self::$showingPage = $name;
     }
 }

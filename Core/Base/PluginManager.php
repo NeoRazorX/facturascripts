@@ -20,13 +20,16 @@
 
 namespace FacturaScripts\Core\Base;
 
+use RuntimeException;
+
 /**
  * Gestor de plugins de FacturaScripts.
  *
  * @package FacturaScripts\Core\Base
  * @author Carlos García Gómez
  */
-class PluginManager {
+class PluginManager
+{
     /**
      * Lista de plugins activos.
      * @var array
@@ -44,7 +47,8 @@ class PluginManager {
      *
      * @param string $folder
      */
-    public function __construct($folder = '') {
+    public function __construct($folder = '')
+    {
         if (self::$folder === null) {
             self::$folder = $folder;
 
@@ -65,7 +69,8 @@ class PluginManager {
      *
      * @return string
      */
-    public function folder() {
+    public function folder()
+    {
         return self::$folder;
     }
 
@@ -74,7 +79,8 @@ class PluginManager {
      *
      * @return array
      */
-    public function enabledPlugins() {
+    public function enabledPlugins()
+    {
         return self::$enabledPlugins;
     }
 
@@ -83,7 +89,8 @@ class PluginManager {
      *
      * @param string $pluginName
      */
-    public function enable($pluginName) {
+    public function enable($pluginName)
+    {
         if (file_exists(self::$folder . '/plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
             file_put_contents(self::$folder . '/plugin.list', implode(',', self::$enabledPlugins));
@@ -95,7 +102,8 @@ class PluginManager {
      *
      * @param string $pluginName
      */
-    public function disable($pluginName) {
+    public function disable($pluginName)
+    {
         foreach (self::$enabledPlugins as $i => $value) {
             if ($value === $pluginName) {
                 unset(self::$enabledPlugins[$i]);
@@ -112,9 +120,10 @@ class PluginManager {
      *
      * @param bool $clean
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function deploy($clean = true) {
+    public function deploy($clean = true)
+    {
         $folders = ['Controller', 'Model', 'Table'];
         if ($clean) {
             // Limpiamos Dinamic
@@ -123,7 +132,7 @@ class PluginManager {
                 $dir = self::$folder . '/Dinamic/' . $folder;
                 if (!file_exists($dir)) {
                     if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                        throw new \RuntimeException(sprintf('Unable to create the %s directory', $dir));
+                        throw new RuntimeException(sprintf('Unable to create the %s directory', $dir));
                     }
                 } else {
                     $this->cleanDinamic(self::$folder . '/Dinamic/');
@@ -151,7 +160,8 @@ class PluginManager {
      *
      * @param string $folder Carpeta a eliminar sus archivos
      */
-    private function cleanDinamic($folder) {
+    private function cleanDinamic($folder)
+    {
         // Añadimos los archivos que no son '.' ni '..'
         $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
         // Ahora recorremos solo archivos o carpetas
@@ -171,7 +181,8 @@ class PluginManager {
      * @param string $place
      * @param string $pluginName
      */
-    private function linkFiles($folder, $place = 'Core', $pluginName = '') {
+    private function linkFiles($folder, $place = 'Core', $pluginName = '')
+    {
         if (empty($pluginName)) {
             $path = self::$folder . '/' . $place . '/' . $folder;
             $namespace = "\FacturaScripts\Core\\";
@@ -203,7 +214,8 @@ class PluginManager {
      * @param $folder
      * @param string $namespace
      */
-    private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\") {
+    private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
+    {
         if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
             $className = substr($fileName, 0, -4);
             $txt = '<?php namespace FacturaScripts\Dinamic\\' . $folder . ";\n\n"
@@ -225,7 +237,8 @@ class PluginManager {
      * @param $folder
      * @param $filePath
      */
-    private function linkXmlFile($fileName, $folder, $filePath) {
+    private function linkXmlFile($fileName, $folder, $filePath)
+    {
         if (!file_exists(self::$folder . '/Dinamic/' . $folder . '/' . $fileName)) {
             copy($filePath, self::$folder . '/Dinamic/' . $folder . '/' . $fileName);
         }

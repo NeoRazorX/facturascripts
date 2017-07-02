@@ -28,8 +28,8 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <neorazorx@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DataBaseUtils {
-
+class DataBaseUtils
+{
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
      * @var DatabaseEngine
@@ -40,7 +40,8 @@ class DataBaseUtils {
      * Construye y prepara la clase para su uso
      * @param DatabaseEngine $engine
      */
-    public function __construct($engine) {
+    public function __construct($engine)
+    {
         self::$engine = $engine;
     }
 
@@ -51,7 +52,8 @@ class DataBaseUtils {
      * @param string $value
      * @return array
      */
-    private function searchInArray($items, $index, $value) {
+    private function searchInArray($items, $index, $value)
+    {
         $result = [];
         foreach ($items as $column) {
             if ($column[$index] === $value) {
@@ -68,9 +70,10 @@ class DataBaseUtils {
      * Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
-     * @return boolean
+     * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType) {
+    public function compareDataTypes($dbType, $xmlType)
+    {
         $db = strtolower($dbType);
         $xml = strtolower($xmlType);
 
@@ -94,7 +97,8 @@ class DataBaseUtils {
      * @param array $dbCols
      * @return string
      */
-    public function compareColumns($tableName, $xmlCols, $dbCols) {
+    public function compareColumns($tableName, $xmlCols, $dbCols)
+    {
         $result = '';
         foreach ($xmlCols as $xml_col) {
             if (strtolower($xml_col['tipo']) === 'integer') {
@@ -115,7 +119,7 @@ class DataBaseUtils {
                 $result .= self::$engine->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] === NULL && $xml_col['defecto'] === '') {
+            if ($column['default'] === null && $xml_col['defecto'] !== '') {
                 $result .= self::$engine->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
@@ -132,14 +136,15 @@ class DataBaseUtils {
      * @param string $tableName
      * @param array $xmlCons
      * @param array $dbCons
-     * @param boolean $deleteOnly
+     * @param bool $deleteOnly
      * @return string
      */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
+    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    {
         $result = '';
 
         foreach ($dbCons as $db_con) {
-            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === FALSE) {
+            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
                 $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
                 if (empty($column)) {
                     $result .= self::$engine->sqlDropConstraint($tableName, $db_con);
@@ -170,7 +175,8 @@ class DataBaseUtils {
      * @param array $xmlCons
      * @return string
      */
-    public function generateTable($tableName, $xmlCols, $xmlCons) {
+    public function generateTable($tableName, $xmlCols, $xmlCons)
+    {
         return self::$engine->sqlCreateTable($tableName, $xmlCols, $xmlCons);
     }
 }

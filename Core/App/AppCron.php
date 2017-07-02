@@ -20,18 +20,21 @@
 
 namespace FacturaScripts\Core\App;
 
+use UnexpectedValueException;
+
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-class AppCron extends App {
-
+class AppCron extends App
+{
     /**
      * Ejecuta el cron.
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
-    public function run() {
+    public function run()
+    {
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             /// implementar

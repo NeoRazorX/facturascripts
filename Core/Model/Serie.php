@@ -20,15 +20,19 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Una serie de facturación o contabilidad, para tener distinta numeración
  * en cada serie.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Serie {
-
-    use \FacturaScripts\Core\Base\Model;
+class Serie
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (2).
@@ -44,7 +48,7 @@ class Serie {
 
     /**
      * TRUE -> las facturas asociadas no encluyen IVA.
-     * @var boolean
+     * @var bool
      */
     public $siniva;
 
@@ -69,14 +73,15 @@ class Serie {
     /**
      * Serie constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'series', 'codserie');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -86,12 +91,13 @@ class Serie {
     /**
      * TODO
      */
-    public function clear() {
+    public function clear()
+    {
         $this->codserie = '';
         $this->descripcion = '';
-        $this->siniva = FALSE;
+        $this->siniva = false;
         $this->irpf = 0.00;
-        $this->codejercicio = NULL;
+        $this->codejercicio = null;
         $this->numfactura = 1;
     }
 
@@ -99,7 +105,8 @@ class Serie {
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
      * @return string
      */
-    public function install() {
+    public function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
                 . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
@@ -108,8 +115,9 @@ class Serie {
      * Devuelve la url donde ver/modificar la serie
      * @return string
      */
-    public function url() {
-        if ($this->codserie === NULL) {
+    public function url()
+    {
+        if ($this->codserie === null) {
             return 'index.php?page=contabilidad_series';
         }
 
@@ -118,19 +126,21 @@ class Serie {
 
     /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->codserie === $this->defaultItems->codSerie() );
     }
 
     /**
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codserie = trim($this->codserie);
         $this->descripcion = static::noHtml($this->descripcion);
@@ -144,7 +154,7 @@ class Serie {
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

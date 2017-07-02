@@ -21,30 +21,44 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Define un paquete de permisos para asignar rápidamente a usuarios.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class Rol {
+class Rol
+{
+    use Model;
 
-    use \FacturaScripts\Core\Base\Model;
-
+    /**
+     * TODO
+     * @var mixed
+     */
     public $codrol;
+
+    /**
+     * TODO
+     * @var mixed
+     */
     public $descripcion;
 
     /**
      * Rol constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_roles', 'codrol');
-        if ($data) {
+        if (!empty($data)) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
         } else {
@@ -55,16 +69,19 @@ class Rol {
     /**
      * TODO
      */
-    public function clear() {
-        $this->codrol = NULL;
-        $this->descripcion = NULL;
+    public function clear()
+    {
+        $this->codrol = null;
+        $this->descripcion = null;
     }
 
     /**
+     * TODO
      * @return string
      */
-    public function url() {
-        if ($this->codrol === NULL) {
+    public function url()
+    {
+        if ($this->codrol === null) {
             return 'index.php?page=AdminRol';
         }
 
@@ -72,10 +89,12 @@ class Rol {
     }
 
     /**
+     * TODO
      * @return bool
      */
-    public function test() {
+    public function test()
+    {
         $this->descripcion = static::noHtml($this->descripcion);
-        return TRUE;
+        return true;
     }
 }

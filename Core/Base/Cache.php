@@ -20,15 +20,18 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\Cache\FileCache;
+use RuntimeException;
+
 /**
  * Class Cache
  * @package FacturaScripts\Core\Base
  */
-class Cache {
-
+class Cache
+{
     /**
      * El motor utilizado para la cache.
-     * @var Cache\FileCache
+     * @var FileCache
      */
     private static $engine;
 
@@ -37,11 +40,12 @@ class Cache {
      *
      * @param string $folder carpeta de trabajo
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function __construct($folder = '') {
-        if (self::$engine === NULL) {
-            self::$engine = new Cache\FileCache($folder);
+    public function __construct($folder = '')
+    {
+        if (self::$engine === null) {
+            self::$engine = new FileCache($folder);
         }
     }
 
@@ -50,7 +54,8 @@ class Cache {
      * @param string $key
      * @return mixed
      */
-    public function get($key) {
+    public function get($key)
+    {
         return self::$engine->get($key);
     }
 
@@ -60,7 +65,8 @@ class Cache {
      * @param mixed $content
      * @return bool
      */
-    public function set($key, $content) {
+    public function set($key, $content)
+    {
         return self::$engine->set($key, $content);
     }
 
@@ -69,7 +75,8 @@ class Cache {
      * @param string $key
      * @return bool
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         return self::$engine->delete($key);
     }
 
@@ -77,7 +84,8 @@ class Cache {
      * Limpia el contenido de la cache al completo.
      * @return bool
      */
-    public function clear() {
+    public function clear()
+    {
         return self::$engine->clear();
     }
 }

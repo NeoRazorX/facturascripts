@@ -22,21 +22,55 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of admin_home
  *
  * @author Carlos García Gómez
  */
-class AdminHome extends Base\Controller {
-
+class AdminHome extends Base\Controller
+{
+    /**
+     * TODO
+     * @var Model\Agente
+     */
     public $agente;
+    /**
+     * TODO
+     * @var Model\Almacen
+     */
     public $almacen;
+    /**
+     * TODO
+     * @var Model\Divisa
+     */
     public $divisa;
+    /**
+     * TODO
+     * @var Model\Ejercicio
+     */
     public $ejercicio;
+    /**
+     * TODO
+     * @var Model\Empresa
+     */
     public $empresa;
+    /**
+     * TODO
+     * @var Model\FormaPago
+     */
     public $formaPago;
+    /**
+     * TODO
+     * @var Model\Pais
+     */
     public $pais;
+    /**
+     * TODO
+     * @var Model\Serie
+     */
     public $serie;
 
     /**
@@ -47,9 +81,11 @@ class AdminHome extends Base\Controller {
      * @param Base\MiniLog $miniLog
      * @param string $className
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
@@ -69,7 +105,8 @@ class AdminHome extends Base\Controller {
     /**
      * TODO
      */
-    public function run() {
+    public function run()
+    {
         parent::run();
 
         foreach ($this->agente->all() as $age) {

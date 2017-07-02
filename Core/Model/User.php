@@ -20,15 +20,20 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use FacturaScripts\Core\Base\Utils;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Usuario de FacturaScripts.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class User {
-
-    use \FacturaScripts\Core\Base\Model;
-    use \FacturaScripts\Core\Base\Utils;
+class User
+{
+    use Model;
+    use Utils;
 
     /**
      * Clave primaria. Varchar (50).
@@ -59,13 +64,13 @@ class User {
 
     /**
      * TRUE -> el usuario es un administrador.
-     * @var boolean
+     * @var bool
      */
     public $admin;
 
     /**
      * TRUE -> el usuario esta activo.
-     * @var boolean
+     * @var bool
      */
     public $enabled;
 
@@ -96,14 +101,15 @@ class User {
     /**
      * User constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_users', 'nick');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -113,25 +119,27 @@ class User {
     /**
      * Reseta los valores de este objeto.
      */
-    public function clear() {
-        $this->nick = NULL;
-        $this->password = NULL;
-        $this->email = NULL;
-        $this->logkey = NULL;
-        $this->admin = FALSE;
-        $this->enabled = TRUE;
+    public function clear()
+    {
+        $this->nick = null;
+        $this->password = null;
+        $this->email = null;
+        $this->logkey = null;
+        $this->admin = false;
+        $this->enabled = true;
         $this->langcode = FS_LANG;
-        $this->homepage = NULL;
-        $this->lastactivity = NULL;
-        $this->lastip = NULL;
+        $this->homepage = null;
+        $this->lastactivity = null;
+        $this->lastip = null;
     }
 
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
      * @return string
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    protected function install() {
+    protected function install()
+    {
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
                 . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
@@ -141,8 +149,9 @@ class User {
      * Devuelve la url desde donde editar este usuario.
      * @return string
      */
-    public function url() {
-        if ($this->nick === NULL) {
+    public function url()
+    {
+        if ($this->nick === null) {
             return 'index.php?page=AdminUsers';
         }
 
@@ -150,50 +159,60 @@ class User {
     }
 
     /**
+     * TODO
      * @param $value
      */
-    public function setPassword($value) {
+    public function setPassword($value)
+    {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
 
     /**
+     * TODO
      * @param $value
      *
      * @return bool
      */
-    public function verifyPassword($value) {
+    public function verifyPassword($value)
+    {
         return password_verify($value, $this->password);
     }
 
     /**
+     * TODO
      * @return string
      */
-    public function newLogkey() {
+    public function newLogkey()
+    {
         $this->logkey = static::randomString(99);
         return $this->logkey;
     }
 
     /**
+     * TODO
      * @param $value
      *
      * @return bool
      */
-    public function verifyLogkey($value) {
+    public function verifyLogkey($value)
+    {
         return ($this->logkey === $value);
     }
 
     /**
+     * TODO
      * @return bool
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
+    public function test()
+    {
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
             $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 }

@@ -20,14 +20,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class Ejercicio {
-
-    use \FacturaScripts\Core\Base\Model;
+class Ejercicio
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar(4).
@@ -93,14 +97,15 @@ class Ejercicio {
     /**
      * Ejercicio constructor.
      *
-     * @param bool $data
+     * @param array $data
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($data = FALSE) {
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'ejercicios', 'codejercicio');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -110,15 +115,16 @@ class Ejercicio {
     /**
      * Resetea los valores de las propiedades del modelo.
      */
-    public function clear() {
-        $this->codejercicio = NULL;
+    public function clear()
+    {
+        $this->codejercicio = null;
         $this->nombre = '';
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
         $this->estado = 'ABIERTO';
-        $this->idasientocierre = NULL;
-        $this->idasientopyg = NULL;
-        $this->idasientoapertura = NULL;
+        $this->idasientocierre = null;
+        $this->idasientopyg = null;
+        $this->idasientoapertura = null;
         $this->plancontable = '08';
         $this->longsubcuenta = 10;
     }
@@ -127,7 +133,8 @@ class Ejercicio {
      * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
      * @return string
      */
-    protected function install() {
+    protected function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
                 . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
                 . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
@@ -136,9 +143,10 @@ class Ejercicio {
 
     /**
      * Devuelve el estado del ejercicio ABIERTO->true | CERRADO->false
-     * @return boolean
+     * @return bool
      */
-    public function abierto() {
+    public function abierto()
+    {
         return ($this->estado === 'ABIERTO');
     }
 
@@ -146,7 +154,8 @@ class Ejercicio {
      * Devuelve el valos del año del ejercicio
      * @return string en formato año
      */
-    public function year() {
+    public function year()
+    {
         return date('Y', strtotime($this->fechainicio));
     }
 
@@ -155,7 +164,8 @@ class Ejercicio {
      * @param string $cod
      * @return string
      */
-    public function newCodigo($cod = '0001') {
+    public function newCodigo($cod = '0001')
+    {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
         if (!$this->dataBase->select($sql)) {
             return $cod;
@@ -163,7 +173,7 @@ class Ejercicio {
 
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return sprintf('%04s', 1 + (int)$cod[0]['cod']);
         }
 
@@ -174,7 +184,8 @@ class Ejercicio {
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         if ($this->codejercicio === null) {
             return 'index.php?page=contabilidad_ejercicios';
         }
@@ -184,9 +195,10 @@ class Ejercicio {
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ($this->codejercicio === $this->defaultItems->codEjercicio());
     }
 
@@ -194,12 +206,13 @@ class Ejercicio {
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      *
      * @param string $fecha
-     * @param boolean $showError
+     * @param bool $showError
      *
      * @return string
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    public function getBestFecha($fecha, $showError = FALSE) {
+    public function getBestFecha($fecha, $showError = false)
+    {
         $fecha2 = strtotime($fecha);
 
         if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
@@ -224,14 +237,15 @@ class Ejercicio {
      * Si no existe, lo crea.
      *
      * @param string $fecha
-     * @param boolean $soloAbierto
-     * @param boolean $crear
+     * @param bool $soloAbierto
+     * @param bool $crear
      *
-     * @return boolean|ejercicio
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool|ejercicio
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function getByFecha($fecha, $soloAbierto = TRUE, $crear = TRUE) {
+    public function getByFecha($fecha, $soloAbierto = true, $crear = true)
+    {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
                 . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
@@ -255,16 +269,17 @@ class Ejercicio {
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
-     * @return boolean
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
         $this->nombre = static::noHtml($this->nombre);
@@ -279,7 +294,7 @@ class Ejercicio {
         } elseif (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

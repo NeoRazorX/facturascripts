@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 use Symfony\Component\Translation\Translator as symfonyTranslator;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 
@@ -28,8 +29,8 @@ use Symfony\Component\Translation\Loader\JsonFileLoader;
  *
  * @author Carlos García Gómez
  */
-class Translator {
-
+class Translator
+{
     /**
      * Carpeta de trabajo de FacturaScripts.
      * @var string
@@ -54,9 +55,10 @@ class Translator {
      * @param string $folder
      * @param string $lang
      *
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($folder = '', $lang = 'es_ES') {
+    public function __construct($folder = '', $lang = 'es_ES')
+    {
         if (self::$folder === null) {
             self::$folder = $folder;
             self::$lang = $lang;
@@ -74,9 +76,10 @@ class Translator {
      * @param array $parameters
      *
      * @return string
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    public function trans($txt, array $parameters = array()) {
+    public function trans($txt, array $parameters = [])
+    {
         return self::$translator->trans($txt, $parameters);
     }
 
@@ -84,9 +87,10 @@ class Translator {
      * Carga los archivos de traducción siguiendo el sistema de prioridades
      * de FacturaScripts. En esta caso hay que proporcionar al traductor las rutas
      * en orden inverso.
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws TranslationInvalidArgumentException
      */
-    private function locateFiles() {
+    private function locateFiles()
+    {
         $file = self::$folder . '/Core/Translation/' . self::$lang . '.json';
         self::$translator->addResource('json', $file, self::$lang);
 
