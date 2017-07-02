@@ -327,7 +327,7 @@ class DataBase
 
         self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
         $result = self::$engine->select(self::$link, $sql);
-        if (!$result) {
+        if (empty($result)) {
             self::$miniLog->sql(self::$engine->errorMessage(self::$link));
             return [];
         }

@@ -250,7 +250,7 @@ class Ejercicio
                 . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
                 return $eje;

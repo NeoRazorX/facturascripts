@@ -334,7 +334,7 @@ class Mysql implements DatabaseEngine
     {
         $tables = [];
         $aux = $this->select($link, 'SHOW TABLES;');
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $a) {
                 $key = 'Tables_in_' . FS_DB_NAME;
                 if (isset($a[$key])) {
@@ -376,7 +376,7 @@ class Mysql implements DatabaseEngine
         $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
         if ($data && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
-            if (!$result) {
+            if (empty($result)) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
                         . ' Imprescindible para FacturaScripts.';
             }

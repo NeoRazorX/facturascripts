@@ -356,7 +356,7 @@ class Pais
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Pais($data[0]);
         }
 

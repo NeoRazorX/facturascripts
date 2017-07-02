@@ -258,7 +258,7 @@ class Postgresql implements DatabaseEngine
                 . ' ORDER BY tablename ASC;';
 
         $aux = $this->select($link, $sql);
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $a) {
                 $tables[] = $a['tablename'];
             }
@@ -282,7 +282,7 @@ class Postgresql implements DatabaseEngine
         $aux = explode("'", $default);
         if (count($aux) === 3) {
             $data = $this->select($link, $this->sqlSequenceExists($aux[1]));
-            if (!$data) {             /// ¿Existe esa secuencia?
+            if (empty($data)) {             /// ¿Existe esa secuencia?
                 $data = $this->select($link, 'SELECT MAX(' . $colname . ')+1 as num FROM ' . $tableName . ';');
                 $this->exec($link, 'CREATE SEQUENCE ' . $aux[1] . ' START ' . $data[0]['num'] . ';');
             }
