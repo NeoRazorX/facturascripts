@@ -374,9 +374,9 @@ class Mysql implements DatabaseEngine
 
         /// ¿La tabla no usa InnoDB?
         $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if ($data && $data[0]['Engine'] !== 'InnoDB') {
+        if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
-            if (empty($result)) {
+            if ($result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
                         . ' Imprescindible para FacturaScripts.';
             }
