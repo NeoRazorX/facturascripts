@@ -22,6 +22,8 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Interface para cada uno de los motores de base de datos compatibles
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 interface DatabaseEngine {

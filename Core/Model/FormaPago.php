@@ -116,7 +116,7 @@ class FormaPago {
      * @return boolean
      */
     public function isDefault() {
-        return ( $this->codpago == $this->defaultItems->codPago() );
+        return ( $this->codpago === $this->defaultItems->codPago() );
     }
 
     /**
@@ -150,14 +150,14 @@ class FormaPago {
         /// validamos los días de pago
         $array_dias = array();
         foreach (str_getcsv($dias_de_pago) as $d) {
-            if (intval($d) >= 1 && intval($d) <= 31) {
-                $array_dias[] = intval($d);
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $array_dias[] = (int)$d;
             }
         }
 
-        if ($array_dias != NULL) {
+        if ($array_dias !== NULL) {
             foreach ($array_dias as $i => $dia_de_pago) {
-                if ($i == 0) {
+                if ($i === 0) {
                     $fecha = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
                 } else {
                     /// si hay varios dias de pago, elegimos la fecha más cercana
@@ -179,7 +179,7 @@ class FormaPago {
      * @return string
      */
     private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0) {
-        if ($dia_de_pago == 0) {
+        if ($dia_de_pago === 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
         }
 
@@ -196,7 +196,7 @@ class FormaPago {
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
+        $tmp_dia = min(array($dia_de_pago, (int)date('t', strtotime($fecha))));
 
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));

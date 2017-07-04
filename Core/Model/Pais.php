@@ -324,7 +324,7 @@ class Pais {
      * @return boolean
      */
     public function isDefault() {
-        return ( $this->codpais == $this->defaultItems->codPais() );
+        return ( $this->codpais === $this->defaultItems->codPais() );
     }
 
     /**
@@ -352,7 +352,7 @@ class Pais {
         $this->nombre = $this->noHtml($this->nombre);
 
         if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
-            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', $this->codpais));
+            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
         } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {

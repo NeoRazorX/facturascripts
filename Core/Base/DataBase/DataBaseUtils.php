@@ -54,7 +54,7 @@ class DataBaseUtils {
     private function searchInArray($items, $index, $value) {
         $result = [];
         foreach ($items as $column) {
-            if ($column[$index] == $value) {
+            if ($column[$index] === $value) {
                 $result = $column;
                 break;
             }
@@ -74,7 +74,7 @@ class DataBaseUtils {
         $db = strtolower($dbType);
         $xml = strtolower($xmlType);
 
-        $result = ((FS_CHECK_DB_TYPES != 1) || self::$engine->compareDataTypes($db, $xml) || ($xml == 'serial') || (substr($db, 0, 4) == 'time' && substr($xml, 0, 4) == 'time'));
+        $result = ((FS_CHECK_DB_TYPES !== '1') || self::$engine->compareDataTypes($db, $xml) || ($xml === 'serial') || (substr($db, 0, 4) === 'time' && substr($xml, 0, 4) === 'time'));
 
         return $result;
     }
@@ -89,7 +89,7 @@ class DataBaseUtils {
     public function compareColumns($tableName, $xmlCols, $dbCols) {
         $result = '';
         foreach ($xmlCols as $xml_col) {
-            if (strtolower($xml_col['tipo']) == 'integer') {
+            if (strtolower($xml_col['tipo']) === 'integer') {
                 /**
                  * Desde la pestaña avanzado el panel de control se puede cambiar
                  * el tipo de entero a usar en las columnas.
@@ -107,11 +107,11 @@ class DataBaseUtils {
                 $result .= self::$engine->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] != $xml_col['defecto']) {
+            if ($column['default'] !== $xml_col['defecto']) {
                 $result .= self::$engine->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
-            if ($column['is_nullable'] != $xml_col['nulo']) {
+            if ($column['is_nullable'] !== $xml_col['nulo']) {
                 $result .= self::$engine->sqlAlterConstraintNull($tableName, $xml_col);
             }
         }
@@ -139,9 +139,9 @@ class DataBaseUtils {
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
-                if (substr($xml_con['consulta'], 0, 7) == 'PRIMARY') {
+                if (substr($xml_con['consulta'], 0, 7) === 'PRIMARY') {
                     continue;
                 }
 

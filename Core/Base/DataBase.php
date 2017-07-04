@@ -99,7 +99,7 @@ class DataBase {
                     break;
             }
 
-            if (self::$engine != NULL) {
+            if (self::$engine !== NULL) {
                 self::$utils = new DataBase\DataBaseUtils(self::$engine);
             }
         }
@@ -126,7 +126,7 @@ class DataBase {
      * @return array
      */
     public function getTables() {
-        if (count(self::$tables) == 0) {
+        if (count(self::$tables) === 0) {
             self::$tables = self::$engine->listTables(self::$link);
         }
 
@@ -202,7 +202,7 @@ class DataBase {
         $error = '';
         self::$link = self::$engine->connect($error);
 
-        if ($error != '') {
+        if ($error !== '') {
             self::$miniLog->critical($error);
         }
 
@@ -325,24 +325,21 @@ class DataBase {
      * @return boolean
      */
     public function exec($sql) {
-        if (!$this->connected()) {
-            return FALSE;
-        }
+        $result = $this->connected();
+        if ($result) {
+            self::$tables = []; /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
 
-        self::$tables = []; /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
-
-        $inTransaction = $this->inTransaction();
-        if (!$inTransaction) {
+            $inTransaction = $this->inTransaction();
             $this->beginTransaction();
-        }
 
-        self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
-        $result = self::$engine->exec(self::$link, $sql);
-        if ($result && !$inTransaction) {
-            $result = $this->commit();
-        } else {
-            if (!$inTransaction) {
-                $this->rollback();
+            self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
+            $result = self::$engine->exec(self::$link, $sql);
+            if (!$inTransaction) { /// Sólo operamos si la transacción la hemos iniciado en esta llamada
+                if ($result) {
+                    $result = $this->commit();
+                } else {
+                    $this->rollback();                    
+                }
             }
         }
 

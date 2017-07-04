@@ -24,6 +24,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  * Clase para conectar a PostgreSQL.
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Postgresql implements DatabaseEngine {
 
@@ -44,7 +45,7 @@ class Postgresql implements DatabaseEngine {
     public function columnFromData($colData) {
         $colData['extra'] = NULL;
 
-        if ($colData['character_maximum_length'] != NULL) {
+        if ($colData['character_maximum_length'] !== NULL) {
             $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
         }
 
@@ -139,25 +140,38 @@ class Postgresql implements DatabaseEngine {
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
-     * o false en caso de fallo.
+     * Ejecuta una sentencia SQL y devuelve un array con los resultados en
+     * caso de $selectRows = TRUE, o false en caso de fallo.
      * @param resource $link
      * @param string $sql
+     * @param type $selectRows
      * @return resource|FALSE
      */
-    public function select($link, $sql) {
+    private function runSql($link, $sql, $selectRows = TRUE) {
         $result = FALSE;
         try {
             $aux = pg_query($link, $sql);
             if ($aux) {
-                $result = pg_fetch_all($aux);
+                if ($selectRows) {
+                    $result = pg_fetch_all($aux);
+                }
                 pg_free_result($aux);
             }
         } catch (\Exception $e) {
             $result = FALSE;
         }
 
-        return $result;
+        return $result;        
+    }
+    
+    /**
+     * Ejecuta una sentencia SQL de tipo select
+     * @param resource $link
+     * @param string $sql
+     * @return resource|FALSE
+     */
+    public function select($link, $sql) {
+        return $this->runSql($link, $sql);
     }
 
     /**
@@ -168,18 +182,7 @@ class Postgresql implements DatabaseEngine {
      * @return boolean
      */
     public function exec($link, $sql) {
-        $result = FALSE;
-        try {
-            $aux = pg_query($link, $sql);
-            if ($aux) {
-                pg_free_result($aux);
-                $result = TRUE;
-            }
-        } catch (\Exception $e) {
-            $result = FALSE;
-        }
-
-        return $result;
+        return $this->runSql($link, $sql, FALSE);
     }
 
     /**
@@ -217,7 +220,7 @@ class Postgresql implements DatabaseEngine {
      * @return boolean
      */
     public function compareDataTypes($dbType, $xmlType) {
-        return ($dbType == $xmlType);
+        return ($dbType === $xmlType);
     }
 
     /**
@@ -254,7 +257,7 @@ class Postgresql implements DatabaseEngine {
      */
     public function checkSequence($link, $tableName, $default, $colname) {
         $aux = explode("'", $default);
-        if (count($aux) == 3) {
+        if (count($aux) === 3) {
             $data = $this->select($link, $this->sqlSequenceExists($aux[1]));
             if (!$data) {             /// ¿Existe esa secuencia?
                 $data = $this->select($link, "SELECT MAX(" . $colname . ")+1 as num FROM " . $tableName . ";");
@@ -287,7 +290,7 @@ class Postgresql implements DatabaseEngine {
                 continue;
             }
 
-            if (FS_FOREIGN_KEYS || substr($res['consulta'], 0, 11) != 'FOREIGN KEY') {
+            if (FS_FOREIGN_KEYS === '1' || substr($res['consulta'], 0, 11) !== 'FOREIGN KEY') {
                 $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
             }
         }
@@ -392,7 +395,7 @@ class Postgresql implements DatabaseEngine {
         foreach ($columns as $col) {
             $fields .= ', ' . $col['nombre'] . ' ' . $col['tipo'];
 
-            if ($col['nulo'] == 'NO') {
+            if ($col['nulo'] === 'NO') {
                 $fields .= ' NOT NULL';
             }
 
@@ -424,7 +427,7 @@ class Postgresql implements DatabaseEngine {
             $sql .= ' DEFAULT ' . $colData['defecto'];
         }
 
-        if ($colData['nulo'] == 'NO') {
+        if ($colData['nulo'] === 'NO') {
             $sql .= ' NOT NULL';
         }
 
@@ -462,7 +465,7 @@ class Postgresql implements DatabaseEngine {
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData) {
-        $action = ($colData['nulo'] == 'YES') ? " DROP " : " SET ";
+        $action = ($colData['nulo'] === 'YES') ? " DROP " : " SET ";
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . "NOT NULL;";
     }
 
