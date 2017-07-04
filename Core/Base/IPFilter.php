@@ -30,14 +30,16 @@ class IPFilter {
     const MAX_ATTEMPTS = 5;
     const BAN_SECONDS = 600;
 
+    private $filePath;
     private $ipList;
 
     public function __construct($folder = '') {
+        $this->filePath = $folder . '/Cache/ip.list';
         $this->ipList = [];
 
-        if (file_exists($folder . '/Cache/ip.list')) {
+        if (file_exists($this->filePath)) {
             /// Read IP list file
-            $file = fopen($folder . '/Cache/ip.list', 'r');
+            $file = fopen($this->filePath, 'r');
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
@@ -69,13 +71,27 @@ class IPFilter {
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] == $ip) {
                 $this->ipList[$key]['count'] ++;
-                $this->ipList[$key]['expire'] = $line['expire'] + self::BAN_SECONDS;
+                $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
+                $found = TRUE;
                 break;
             }
         }
 
         if (!$found) {
             $this->ipList[] = ['ip' => $ip, 'count' => 1, 'expire' => time() + self::BAN_SECONDS];
+        }
+        
+        $this->save();
+    }
+
+    private function save() {
+        $file = fopen($this->filePath, 'w');
+        if ($file) {
+            foreach ($this->ipList as $line) {
+                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire']."\n");
+            }
+
+            fclose($file);
         }
     }
 

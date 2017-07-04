@@ -39,20 +39,6 @@ class DefaultItems {
     private static $codPais;
     private static $codSerie;
 
-    public function __construct() {
-        if (!isset(self::$defaultPage)) {
-            self::$defaultPage = NULL;
-            self::$showingPage = NULL;
-            self::$codEjercicio = NULL;
-            self::$codAlmacen = NULL;
-            self::$codDivisa = NULL;
-            self::$codPago = NULL;
-            self::$codImpuesto = NULL;
-            self::$codPais = NULL;
-            self::$codSerie = NULL;
-        }
-    }
-
     public function codEjercicio() {
         return self::$codEjercicio;
     }
