@@ -92,8 +92,8 @@ class Mysql implements DatabaseEngine {
             return NULL;
         }
 
-        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
-        if ($result->connect_error) {
+        $result = @new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
+        if ($result->connect_errno) {
             $error = $result->connect_error;
             return NULL;
         }
