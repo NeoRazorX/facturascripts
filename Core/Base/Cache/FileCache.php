@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ use RuntimeException;
  * This class is great for those who can't use apc or memcached in their proyects.
  *
  * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @version 1.0.1
  * @link http://emiliocobos.net/php-cache/
  *

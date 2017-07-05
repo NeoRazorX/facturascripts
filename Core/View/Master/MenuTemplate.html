@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>{{ fsc.title }}</title>
+        <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="FacturaScripts" />
+        {% block css %}
+        <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="vendor/components/font-awesome/css/font-awesome.min.css" />
+        {% endblock %}
+        {% block javascript %}
+        <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+        {% endblock %}
+        {{ debugBarRender.renderHead()|raw }}
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">{{ fsc.empresa.nombrecorto }}</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                        <li><a href="#">Link</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">One more separated link</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="navbar-form navbar-right">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="query" class="form-control"/>
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{{ fsc.user.nick }}">
+                                <i class="fa fa-user-circle hidden-xs" aria-hidden="true"></i>
+                                <span class="hidden-sm">&nbsp;{{ fsc.user.nick }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{{ fsc.user.url() }}">
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="index.php?logout=TRUE">
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <br/><br/><br/>
+        {% if log|length > 0 %}
+        <div class="alert alert-warning">
+            <ul>
+                {% for msg in log %}
+                <li>{{ msg.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% block body %}{% endblock %}
+        {% if sql|length > 0 %}
+        <div class="alert alert-warning">
+            <h3>SQL:</h3>
+            <ol>
+                {% for msg in sql %}
+                <li>{{ msg.message }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+        {% endif %}
+        {{ debugBarRender.render()|raw }}
+    </body>
+</html>

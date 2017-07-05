@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use mysqli;
 /**
  * Clase para conectar a MySQL.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Mysql implements DatabaseEngine
@@ -91,9 +91,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Conecta a la base de datos.
-     *
      * @param string $error
-     *
      * @return null|mysqli
      */
     public function connect(&$error)
@@ -103,8 +101,8 @@ class Mysql implements DatabaseEngine
             return null;
         }
 
-        $result = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
-        if ($result->connect_error) {
+        $result = @new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
+        if ($result->connect_errno) {
             $error = $result->connect_error;
             return null;
         }

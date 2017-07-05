@@ -28,7 +28,7 @@
     </columna>
     <columna>
         <nombre>lastactivity</nombre>
-        <tipo>datetime</tipo>
+        <tipo>timestamp</tipo>
         <nulo>YES</nulo>
     </columna>
     <columna>

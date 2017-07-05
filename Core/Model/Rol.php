@@ -65,7 +65,7 @@ class Rol
     }
 
     /**
-     * TODO
+     * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
     {
@@ -87,7 +87,8 @@ class Rol
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Se ejecuta dentro del método save.
      * @return bool
      */
     public function test()

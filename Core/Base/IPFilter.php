@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,6 +40,11 @@ class IPFilter
     /**
      * TODO
      */
+    private $filePath;
+
+    /**
+     * TODO
+     */
     private $ipList;
 
     /**
@@ -48,11 +53,12 @@ class IPFilter
      */
     public function __construct($folder = '')
     {
+        $this->filePath = $folder . '/Cache/ip.list';
         $this->ipList = [];
 
-        if (file_exists($folder . '/Cache/ip.list')) {
+        if (file_exists($this->filePath)) {
             /// Read IP list file
-            $file = fopen($folder . '/Cache/ip.list', 'rb');
+            $file = fopen($this->filePath, 'rb');
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
@@ -95,13 +101,31 @@ class IPFilter
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
                 $this->ipList[$key]['count'] ++;
-                $this->ipList[$key]['expire'] = $line['expire'] + self::BAN_SECONDS;
+                $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
+                $found = true;
                 break;
             }
         }
 
         if (!$found) {
             $this->ipList[] = ['ip' => $ip, 'count' => 1, 'expire' => time() + self::BAN_SECONDS];
+        }
+        
+        $this->save();
+    }
+
+    /**
+     * TODO
+     */
+    private function save()
+    {
+        $file = fopen($this->filePath, 'wb');
+        if ($file) {
+            foreach ($this->ipList as $line) {
+                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire']."\n");
+            }
+
+            fclose($file);
         }
     }
 }

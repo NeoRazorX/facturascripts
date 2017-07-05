@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
 /**
  * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Page
 {
@@ -84,7 +84,7 @@ class Page
     }
 
     /**
-     * TODO
+     * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
     {
@@ -97,7 +97,9 @@ class Page
     }
 
     /**
-     * TODO
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
      * @return string
      */
     protected function install()

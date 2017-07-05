@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,99 +20,74 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Divisa;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\FormaPago;
-use FacturaScripts\Core\Model\Impuesto;
-use FacturaScripts\Core\Model\Page;
-use FacturaScripts\Core\Model\Pais;
-use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Core\Model;
 
 /**
  * Esta clase sólo sirve para que los modelos sepan que elementos son los
  * predeterminados para la sesión. Pero para guardar los valores hay que usar
  * las funciones fs_controller::save_lo_que_sea()
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class DefaultItems
 {
     /**
      * Página por defecto
-     * @var Page
+     * @var Model\Page
      */
     private static $defaultPage;
 
     /**
      * Página que se está mostrando
-     * @var Page
+     * @var Model\Page
      */
     private static $showingPage;
 
     /**
      * Código de ejercicio
-     * @var Ejercicio
+     * @var Model\Ejercicio
      */
     private static $codEjercicio;
 
     /**
      * Código de almacén
-     * @var Almacen
+     * @var Model\Almacen
      */
     private static $codAlmacen;
 
     /**
      * Código de divisa
-     * @var Divisa
+     * @var Model\Divisa
      */
     private static $codDivisa;
 
     /**
      * Código de forma de pago
-     * @var FormaPago
+     * @var Model\FormaPago
      */
     private static $codPago;
 
     /**
      * Código de impuesto
-     * @var Impuesto
+     * @var Model\Impuesto
      */
     private static $codImpuesto;
 
     /**
      * Código de país
-     * @var Pais
+     * @var Model\Pais
      */
     private static $codPais;
 
     /**
      * Código de serie
-     * @var Serie
+     * @var Model\Serie
      */
     private static $codSerie;
 
     /**
-     * DefaultItems constructor.
-     */
-    public function __construct()
-    {
-        if (self::$defaultPage === null) {
-            self::$defaultPage = null;
-            self::$showingPage = null;
-            self::$codEjercicio = null;
-            self::$codAlmacen = null;
-            self::$codDivisa = null;
-            self::$codPago = null;
-            self::$codImpuesto = null;
-            self::$codPais = null;
-            self::$codSerie = null;
-        }
-    }
-
-    /**
      * Devuelve el código de ejercicio por defecto
-     * @return Ejercicio|null
+     * @return Model\Ejercicio|null
      */
     public function codEjercicio()
     {
@@ -130,7 +105,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de almacén por defecto
-     * @return Almacen|null
+     * @return Model\Almacen|null
      */
     public function codAlmacen()
     {
@@ -148,7 +123,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la divisa por defecto
-     * @return Divisa|null
+     * @return Model\Divisa|null
      */
     public function codDivisa()
     {
@@ -166,7 +141,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la forma de pago por defecto
-     * @return FormaPago|null
+     * @return Model\FormaPago|null
      */
     public function codPago()
     {
@@ -184,7 +159,7 @@ class DefaultItems
 
     /**
      * Devuelve el código del impuesto por defecto
-     * @return Impuesto|null
+     * @return Model\Impuesto|null
      */
     public function codImpuesto()
     {
@@ -202,7 +177,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de país por defecto
-     * @return Pais|null
+     * @return Model\Pais|null
      */
     public function codPais()
     {
@@ -220,7 +195,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la serie por defecto
-     * @return Serie|null
+     * @return Model\Serie|null
      */
     public function codSerie()
     {
@@ -238,7 +213,7 @@ class DefaultItems
 
     /**
      * Devuelve la página por defecto
-     * @return Page|null
+     * @return Model\Page|null
      */
     public function defaultPage()
     {
@@ -256,7 +231,7 @@ class DefaultItems
 
     /**
      * Devuelve la página que se está mostrando
-     * @return Page|null
+     * @return Model\Page|null
      */
     public function showingPage()
     {

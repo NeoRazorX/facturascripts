@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
 /**
  * Esta clase almacena los principales datos de la empresa.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Empresa
 {
@@ -266,6 +266,19 @@ class Empresa
                 . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
                 . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
                 . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
+    }
+    
+    /**
+     * Devuelve la empresa predeterminada (la primera, por ahora).
+     * @return Empresa
+     */
+    public function getDefault()
+    {
+        foreach($this->all() as $emp) {
+            return $emp;
+        }
+        
+        return null;
     }
 
     /**

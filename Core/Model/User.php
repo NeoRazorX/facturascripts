@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,11 +28,13 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
 /**
  * Usuario de FacturaScripts.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class User
 {
-    use Model;
+    use Model {
+        get as private getTrait;
+    }
     use Utils;
 
     /**
@@ -136,13 +138,27 @@ class User
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
      * @return string
+     * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
     protected function install()
     {
+        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
+        new Page();
+
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
                 . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+    }
+    
+    /**
+     * Devuelve el usuario con el nick solicitado
+     * @param string $nick
+     * @return User
+     */
+    public function get($nick)
+    {
+        return $this->getTrait($nick);
     }
 
     /**
@@ -180,10 +196,13 @@ class User
 
     /**
      * TODO
+     * @param $ip
      * @return string
      */
-    public function newLogkey()
+    public function newLogkey($ip)
     {
+        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastip = $ip;
         $this->logkey = static::randomString(99);
         return $this->logkey;
     }
@@ -200,7 +219,8 @@ class User
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Se ejecuta dentro del método save.
      * @return bool
      * @throws TranslationInvalidArgumentException
      */
