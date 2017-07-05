@@ -154,7 +154,7 @@ class User
     /**
      * Devuelve el usuario con el nick solicitado
      * @param string $nick
-     * @return User
+     * @return User|bool
      */
     public function get($nick)
     {
