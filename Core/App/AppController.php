@@ -100,9 +100,7 @@ class AppController extends App
 
     /**
      * Carga y procesa el controlador $pageName.
-     *
      * @param string $pageName nombre del controlador
-     *
      * @throws InvalidArgumentException
      * @throws Twig_Error_Loader
      * @throws Twig_Error_Runtime
