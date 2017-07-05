@@ -31,10 +31,12 @@ class IPFilter
      * TODO
      */
     const MAX_ATTEMPTS = 5;
+
     /**
      * TODO
      */
     const BAN_SECONDS = 600;
+
     /**
      * TODO
      */
@@ -42,7 +44,6 @@ class IPFilter
 
     /**
      * IPFilter constructor.
-     *
      * @param string $folder
      */
     public function __construct($folder = '')
@@ -68,7 +69,6 @@ class IPFilter
     /**
      * TODO
      * @param $ip
-     *
      * @return bool
      */
     public function isBanned($ip)

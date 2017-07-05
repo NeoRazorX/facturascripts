@@ -55,9 +55,7 @@ class RolUser
 
     /**
      * RolUser constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

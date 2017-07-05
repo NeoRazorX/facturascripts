@@ -78,9 +78,7 @@ class FormaPago
 
     /**
      * FormaPago constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
@@ -94,6 +92,9 @@ class FormaPago
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear()
     {
         $this->codpago = null;

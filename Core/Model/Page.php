@@ -69,9 +69,7 @@ class Page
 
     /**
      * Page constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

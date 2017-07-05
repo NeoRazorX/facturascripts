@@ -96,9 +96,7 @@ class Ejercicio
 
     /**
      * Ejercicio constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
@@ -204,10 +202,8 @@ class Ejercicio
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
-     *
      * @param string $fecha
      * @param bool $showError
-     *
      * @return string
      * @throws TranslationInvalidArgumentException
      */
@@ -235,11 +231,9 @@ class Ejercicio
     /**
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
-     *
      * @param string $fecha
      * @param bool $soloAbierto
      * @param bool $crear
-     *
      * @return bool|ejercicio
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException

@@ -49,9 +49,7 @@ class Rol
 
     /**
      * Rol constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

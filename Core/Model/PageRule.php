@@ -54,7 +54,7 @@ class PageRule
 
     /**
      * Otorga permisos al usuario a eliminar elementos en la página.
-     * @var boolean
+     * @var bool
      */
     public $allowdelete;
 
@@ -66,9 +66,7 @@ class PageRule
 
     /**
      * PageRule constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

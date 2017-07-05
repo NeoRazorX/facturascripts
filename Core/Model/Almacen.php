@@ -101,9 +101,7 @@ class Almacen
 
     /**
      * Almacen constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

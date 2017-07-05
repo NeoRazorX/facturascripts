@@ -75,12 +75,10 @@ class AdminHome extends Base\Controller
 
     /**
      * AdminHome constructor.
-     *
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog $miniLog
      * @param string $className
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

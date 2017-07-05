@@ -44,7 +44,6 @@ class PluginManager
 
     /**
      * PluginManager constructor.
-     *
      * @param string $folder
      */
     public function __construct($folder = '')
@@ -66,7 +65,6 @@ class PluginManager
 
     /**
      * Devuelve la carpeta
-     *
      * @return string
      */
     public function folder()
@@ -76,7 +74,6 @@ class PluginManager
 
     /**
      * Devuelve la lista de plugins activos.
-     *
      * @return array
      */
     public function enabledPlugins()
@@ -86,7 +83,6 @@ class PluginManager
 
     /**
      * Activa el plugin indicado.
-     *
      * @param string $pluginName
      */
     public function enable($pluginName)
@@ -99,7 +95,6 @@ class PluginManager
 
     /**
      * Desactiva el plugin indicado.
-     *
      * @param string $pluginName
      */
     public function disable($pluginName)
@@ -117,9 +112,7 @@ class PluginManager
      * Despliega todos los archivos necesarios en la carpeta Dinamic para poder
      * usar controladores y modelos de plugins con el autoloader, pero siguiendo
      * el sistema de prioridades de FacturaScripts.
-     *
      * @param bool $clean
-     *
      * @throws RuntimeException
      */
     public function deploy($clean = true)
@@ -157,7 +150,6 @@ class PluginManager
     /**
      * Eliminamos cada archivo de la carpeta Dinamic,
      * si es una carpeta, se llamará así misma
-     *
      * @param string $folder Carpeta a eliminar sus archivos
      */
     private function cleanDinamic($folder)
@@ -176,7 +168,6 @@ class PluginManager
 
     /**
      * Enlazamos los archivos
-     *
      * @param $folder
      * @param string $place
      * @param string $pluginName
@@ -209,7 +200,6 @@ class PluginManager
 
     /**
      * Enlaza las classes de forma dinamica
-     *
      * @param $fileName
      * @param $folder
      * @param string $namespace
@@ -232,7 +222,6 @@ class PluginManager
 
     /**
      * Enlaza los XML de forma dinamica
-     *
      * @param $fileName
      * @param $folder
      * @param $filePath

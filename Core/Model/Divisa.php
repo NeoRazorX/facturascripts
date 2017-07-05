@@ -71,9 +71,7 @@ class Divisa
 
     /**
      * Divisa constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

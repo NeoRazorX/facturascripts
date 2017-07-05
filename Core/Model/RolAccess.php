@@ -67,9 +67,7 @@ class RolAccess
 
     /**
      * RolAccess constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

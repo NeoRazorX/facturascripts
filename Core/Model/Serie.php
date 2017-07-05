@@ -72,9 +72,7 @@ class Serie
 
     /**
      * Serie constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

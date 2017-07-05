@@ -51,10 +51,8 @@ class Translator
 
     /**
      * Translator constructor.
-     *
      * @param string $folder
      * @param string $lang
-     *
      * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '', $lang = 'es_ES')
@@ -71,10 +69,8 @@ class Translator
 
     /**
      * Traduce el texto al idioma predeterminado.
-     *
      * @param string $txt
      * @param array $parameters
-     *
      * @return string
      * @throws TranslationInvalidArgumentException
      */

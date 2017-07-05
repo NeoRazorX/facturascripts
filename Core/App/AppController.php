@@ -55,9 +55,7 @@ class AppController extends App
 
     /**
      * AppController constructor.
-     *
      * @param string $folder
-     *
      * @throws InvalidArgumentException
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
@@ -95,9 +93,7 @@ class AppController extends App
 
     /**
      * Carga y procesa el controlador $pageName.
-     *
      * @param string $pageName nombre del controlador
-     *
      * @throws InvalidArgumentException
      * @throws Twig_Error_Loader
      * @throws Twig_Error_Runtime
@@ -138,9 +134,7 @@ class AppController extends App
     /**
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
-     *
      * @param string $template archivo html a utilizar
-     *
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      * @throws Twig_Error_Loader

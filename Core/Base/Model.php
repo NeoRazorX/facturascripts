@@ -94,11 +94,9 @@ trait Model
 
     /**
      * Constructor.
-     *
      * @param string $modelName
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */

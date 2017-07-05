@@ -51,13 +51,13 @@ class Empresa
     /**
      * TRUE -> activa la contabilidad integrada. Se genera el asiento correspondiente
      * cada vez que se crea/modifica una factura.
-     * @var boolean
+     * @var bool
      */
     public $contintegrada;
 
     /**
      * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
-     * @var boolean
+     * @var bool
      */
     public $recequivalencia;
 
@@ -279,7 +279,7 @@ class Empresa
 
     /**
      * Comprueba los datos de la empresa, devuelve TRUE si es correcto
-     * @return boolean
+     * @return bool
      * @throws TranslationInvalidArgumentException
      */
     public function test()

@@ -162,7 +162,7 @@ class DataBase
     /**
      * Devuelve una array con las restricciones de una tabla.
      * @param string $tableName
-     * @param boolean $extended
+     * @param bool $extended
      * @return array
      */
     public function getConstraints($tableName, $extended = false)
@@ -196,7 +196,7 @@ class DataBase
 
     /**
      * Devuelve TRUE si se está conestado a la base de datos.
-     * @return boolean
+     * @return bool
      */
     public function connected()
     {
@@ -205,7 +205,7 @@ class DataBase
 
     /**
      * Conecta a la base de datos.
-     * @return boolean
+     * @return bool
      */
     public function connect()
     {
@@ -225,7 +225,7 @@ class DataBase
 
     /**
      * Desconecta de la base de datos.
-     * @return boolean
+     * @return bool
      */
     public function close()
     {
@@ -246,7 +246,7 @@ class DataBase
 
     /**
      * Indica hay una transacción abierta
-     * @return boolean
+     * @return bool
      */
     public function inTransaction()
     {
@@ -255,7 +255,7 @@ class DataBase
 
     /**
      * Inicia una transaccion en la base de datos
-     * @return boolean
+     * @return bool
      */
     public function beginTransaction()
     {
@@ -270,7 +270,7 @@ class DataBase
 
     /**
      * Graba las sentencias ejecutadas en la base de datos
-     * @return boolean
+     * @return bool
      */
     public function commit()
     {
@@ -285,7 +285,7 @@ class DataBase
 
     /**
      * Deshace las sentencias ejecutadas en la base de datos
-     * @return boolean
+     * @return bool
      */
     public function rollback()
     {
@@ -343,7 +343,7 @@ class DataBase
      * Si la transaccion la ha abierto en la llamada la cierra confirmando o descartando
      * según haya ido bien o haya dado algún error
      * @param string $sql
-     * @return boolean
+     * @return bool
      */
     public function exec($sql)
     {
@@ -410,7 +410,7 @@ class DataBase
     /**
      * Realiza comprobaciones extra a la tabla.
      * @param string $tableName
-     * @return boolean
+     * @return bool
      */
     public function checkTableAux($tableName)
     {
@@ -428,7 +428,7 @@ class DataBase
      * @param string $tableName
      * @param array $xmlCols
      * @param array $xmlCons
-     * @return boolean
+     * @return bool
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
     {
@@ -440,8 +440,8 @@ class DataBase
      * @param string $tableName
      * @param array $xmlCons
      * @param array $dbCons
-     * @param boolean $deleteOnly
-     * @return boolean
+     * @param bool $deleteOnly
+     * @return bool
      */
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
     {

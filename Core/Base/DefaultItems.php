@@ -43,41 +43,49 @@ class DefaultItems
      * @var Page
      */
     private static $defaultPage;
+
     /**
      * Página que se está mostrando
      * @var Page
      */
     private static $showingPage;
+
     /**
      * Código de ejercicio
      * @var Ejercicio
      */
     private static $codEjercicio;
+
     /**
      * Código de almacén
      * @var Almacen
      */
     private static $codAlmacen;
+
     /**
      * Código de divisa
      * @var Divisa
      */
     private static $codDivisa;
+
     /**
      * Código de forma de pago
      * @var FormaPago
      */
     private static $codPago;
+
     /**
      * Código de impuesto
      * @var Impuesto
      */
     private static $codImpuesto;
+
     /**
      * Código de país
      * @var Pais
      */
     private static $codPais;
+
     /**
      * Código de serie
      * @var Serie

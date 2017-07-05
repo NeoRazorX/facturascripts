@@ -139,9 +139,7 @@ class Agente
 
     /**
      * Agente constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
@@ -155,6 +153,9 @@ class Agente
         }
     }
 
+    /**
+     * TODO
+     */
     public function clear()
     {
         $this->codagente = null;

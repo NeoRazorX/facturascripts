@@ -42,9 +42,7 @@ class FileCache
 
     /**
      * FileCache constructor.
-     *
      * @param string $folder
-     *
      * @throws RuntimeException
      */
     public function __construct($folder = '')

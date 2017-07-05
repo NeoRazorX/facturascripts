@@ -55,9 +55,7 @@ class Pais
 
     /**
      * Pais constructor.
-     *
      * @param array $data
-     *
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
@@ -345,9 +343,7 @@ class Pais
 
     /**
      * Devuelve el pais con codido = $cod
-     *
      * @param string $cod
-     *
      * @return pais|bool
      * @throws TranslationInvalidArgumentException
      * @throws RuntimeException

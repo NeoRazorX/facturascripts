@@ -84,9 +84,7 @@ abstract class App
 
     /**
      * Inicializa la app.
-     *
      * @param string $folder Carpeta de trabajo de FacturaScripts
-     *
      * @throws InvalidArgumentException
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
