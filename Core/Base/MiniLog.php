@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *

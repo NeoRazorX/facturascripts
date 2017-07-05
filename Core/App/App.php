@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -118,6 +117,10 @@ abstract class App
         $this->dataBase->close();
     }
 
+    /**
+     * TODO
+     * @return mixed
+     */
     abstract public function run();
 
     /**
