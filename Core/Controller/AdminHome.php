@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,13 +34,12 @@ class AdminHome extends Base\Controller {
     public $almacen;
     public $divisa;
     public $ejercicio;
-    public $empresa;
     public $formaPago;
     public $pais;
     public $serie;
     
-    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className) {
+        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
         
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
@@ -50,18 +49,17 @@ class AdminHome extends Base\Controller {
         $this->almacen = new Model\Almacen();
         $this->divisa = new Model\Divisa();
         $this->ejercicio = new Model\Ejercicio();
-        $this->empresa = new Model\Empresa();
         $this->formaPago = new Model\FormaPago();
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
     }
-
-    public function run() {
-        parent::run();
-
-        foreach ($this->agente->all() as $age) {
-            $age->save();
-        }
+    
+    public function publicCore() {
+        parent::publicCore();
+    }
+    
+    public function privateCore() {
+        parent::privateCore();
     }
 
 }

@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,11 +23,13 @@ namespace FacturaScripts\Core\Model;
 /**
  * Usuario de FacturaScripts.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class User {
 
-    use \FacturaScripts\Core\Base\Model;
+    use \FacturaScripts\Core\Base\Model {
+        get as private getTrait;
+    }
     use \FacturaScripts\Core\Base\Utils;
 
     /**
@@ -123,9 +125,21 @@ class User {
      * @return string
      */
     protected function install() {
+        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
+        new Page();
+
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return "INSERT INTO " . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
                 . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+    }
+    
+    /**
+     * Devuelve el usuario con el nick solicitado
+     * @param string $nick
+     * @return User
+     */
+    public function get($nick) {
+        return $this->getTrait($nick);
     }
 
     /**
@@ -148,7 +162,9 @@ class User {
         return password_verify($value, $this->password);
     }
 
-    public function newLogkey() {
+    public function newLogkey($ip) {
+        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastip = $ip;
         $this->logkey = $this->randomString(99);
         return $this->logkey;
     }

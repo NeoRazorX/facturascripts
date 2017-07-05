@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,9 @@
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -58,6 +61,9 @@ class AppController extends App {
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
+        } elseif ($this->request->query->get('logout')) {
+            $this->userLogout();
+            $this->renderHtml('Login/Login.html');
         } else {
             /// Obtenemos el nombre del controlador a cargar
             $pageName = $this->request->query->get('page', 'AdminHome');
@@ -81,10 +87,15 @@ class AppController extends App {
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
+            $user = $this->userAuth();
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
-                $this->controller->run();
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName);
+                if ($user) {
+                    $this->controller->privateCore();
+                } else {
+                    $this->controller->publicCore();
+                }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
             } catch (\Exception $exc) {
@@ -145,6 +156,56 @@ class AppController extends App {
             $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function userAuth() {
+        $user0 = new User();
+        $nick = $this->request->request->get('fsNick', '');
+
+        if ($nick !== '') {
+            $user = $user0->get($nick);
+            if ($user) {
+                if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
+                    $logKey = $user->newLogkey($this->request->getClientIp());
+                    $user->save();
+                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    $this->miniLog->debug('Login OK. User: ' . $nick);
+                    return $user;
+                }
+
+                $this->miniLog->alert('login-password-fail');
+                return NULL;
+            }
+
+            $this->miniLog->alert('login-user-not-found');
+            return NULL;
+        }
+
+        $cookieNick = $this->request->cookies->get('fsNick', '');
+        if ($cookieNick !== '') {
+            $cookieUser = $user0->get($cookieNick);
+            if ($cookieUser) {
+                if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
+                    $this->miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
+                    return $cookieUser;
+                }
+
+                $this->miniLog->alert('login-cookie-fail');
+                return NULL;
+            }
+
+            $this->miniLog->alert('login-user-not-found');
+            return NULL;
+        }
+
+        return NULL;
+    }
+
+    private function userLogout() {
+        $this->response->headers->clearCookie('fsNick');
+        $this->response->headers->clearCookie('fsLogkey');
+        $this->miniLog->debug('Logout OK.');
     }
 
 }

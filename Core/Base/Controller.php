@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Model;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -48,6 +49,12 @@ class Controller {
      * @var EventDispatcher 
      */
     protected $dispatcher;
+    
+    /**
+     * Empresa seleccionada.
+     * @var Model\Empresa
+     */
+    public $empresa;
 
     /**
      * Motor de traducción.
@@ -66,6 +73,12 @@ class Controller {
      * @var Request 
      */
     public $request;
+    
+    /**
+     * Objeto respuesta HTTP.
+     * @var Response
+     */
+    protected $response;
 
     /**
      * Nombre del archivo html para el motor de plantillas.
@@ -78,6 +91,12 @@ class Controller {
      * @var string título de la página.
      */
     public $title;
+    
+    /**
+     * Usuario que ha iniciado sesión.
+     * @var Model\User
+     */
+    public $user;
 
     /**
      * Inicia todos los objetos y propiedades.
@@ -86,15 +105,21 @@ class Controller {
      * @param MiniLog $miniLog
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className) {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
+        
+        $empresa = new Model\Empresa();
+        $this->empresa = $empresa->getDefault();
+        
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
+        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
+        $this->user = $user;
     }
     
     /**
@@ -120,12 +145,14 @@ class Controller {
     public function url() {
         return 'index.php?page=' . $this->className;
     }
-
-    /**
-     * Ejecuta la lógica del controlador.
-     */
-    public function run() {
-        $this->dispatcher->dispatch('pre-run');
+    
+    public function publicCore() {
+        $this->template = 'Login/Login.html';
+        $this->dispatcher->dispatch('pre-publicCore');
+    }
+    
+    public function privateCore() {
+        $this->dispatcher->dispatch('pre-privateCore');
     }
 
 }
