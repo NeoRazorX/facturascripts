@@ -20,7 +20,8 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\User;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +56,7 @@ class Controller
     
     /**
      * Empresa seleccionada.
-     * @var Model\Empresa
+     * @var Empresa
      */
     public $empresa;
 
@@ -97,7 +98,7 @@ class Controller
     
     /**
      * Usuario que ha iniciado sesión.
-     * @var Model\User
+     * @var User
      */
     public $user;
 
@@ -120,7 +121,7 @@ class Controller
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
         
-        $empresa = new Model\Empresa();
+        $empresa = new Empresa();
         $this->empresa = $empresa->getDefault();
         
         $this->i18n = $i18n;

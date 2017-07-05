@@ -20,7 +20,14 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\FormaPago;
+use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\Page;
+use FacturaScripts\Core\Model\Pais;
+use FacturaScripts\Core\Model\Serie;
 
 /**
  * Esta clase sólo sirve para que los modelos sepan que elementos son los
@@ -33,61 +40,61 @@ class DefaultItems
 {
     /**
      * Página por defecto
-     * @var Model\Page
+     * @var Page
      */
     private static $defaultPage;
 
     /**
      * Página que se está mostrando
-     * @var Model\Page
+     * @var Page
      */
     private static $showingPage;
 
     /**
      * Código de ejercicio
-     * @var Model\Ejercicio
+     * @var Ejercicio
      */
     private static $codEjercicio;
 
     /**
      * Código de almacén
-     * @var Model\Almacen
+     * @var Almacen
      */
     private static $codAlmacen;
 
     /**
      * Código de divisa
-     * @var Model\Divisa
+     * @var Divisa
      */
     private static $codDivisa;
 
     /**
      * Código de forma de pago
-     * @var Model\FormaPago
+     * @var FormaPago
      */
     private static $codPago;
 
     /**
      * Código de impuesto
-     * @var Model\Impuesto
+     * @var Impuesto
      */
     private static $codImpuesto;
 
     /**
      * Código de país
-     * @var Model\Pais
+     * @var Pais
      */
     private static $codPais;
 
     /**
      * Código de serie
-     * @var Model\Serie
+     * @var Serie
      */
     private static $codSerie;
 
     /**
      * Devuelve el código de ejercicio por defecto
-     * @return Model\Ejercicio|null
+     * @return Ejercicio|null
      */
     public function codEjercicio()
     {
@@ -105,7 +112,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de almacén por defecto
-     * @return Model\Almacen|null
+     * @return Almacen|null
      */
     public function codAlmacen()
     {
@@ -123,7 +130,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la divisa por defecto
-     * @return Model\Divisa|null
+     * @return Divisa|null
      */
     public function codDivisa()
     {
@@ -141,7 +148,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la forma de pago por defecto
-     * @return Model\FormaPago|null
+     * @return FormaPago|null
      */
     public function codPago()
     {
@@ -159,7 +166,7 @@ class DefaultItems
 
     /**
      * Devuelve el código del impuesto por defecto
-     * @return Model\Impuesto|null
+     * @return Impuesto|null
      */
     public function codImpuesto()
     {
@@ -177,7 +184,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de país por defecto
-     * @return Model\Pais|null
+     * @return Pais|null
      */
     public function codPais()
     {
@@ -195,7 +202,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la serie por defecto
-     * @return Model\Serie|null
+     * @return Serie|null
      */
     public function codSerie()
     {
@@ -213,7 +220,7 @@ class DefaultItems
 
     /**
      * Devuelve la página por defecto
-     * @return Model\Page|null
+     * @return Page|null
      */
     public function defaultPage()
     {
@@ -231,7 +238,7 @@ class DefaultItems
 
     /**
      * Devuelve la página que se está mostrando
-     * @return Model\Page|null
+     * @return Page|null
      */
     public function showingPage()
     {
