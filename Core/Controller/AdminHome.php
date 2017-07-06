@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -22,25 +21,67 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of admin_home
  *
  * @author Carlos García Gómez
  */
-class AdminHome extends Base\Controller {
-
+class AdminHome extends Base\Controller
+{
+    /**
+     * TODO
+     * @var Model\Agente
+     */
     public $agente;
+    /**
+     * TODO
+     * @var Model\Almacen
+     */
     public $almacen;
+    /**
+     * TODO
+     * @var Model\Divisa
+     */
     public $divisa;
+    /**
+     * TODO
+     * @var Model\Ejercicio
+     */
     public $ejercicio;
+    /**
+     * TODO
+     * @var Model\FormaPago
+     */
     public $formaPago;
+    /**
+     * TODO
+     * @var Model\Pais
+     */
     public $pais;
+    /**
+     * TODO
+     * @var Model\Serie
+     */
     public $serie;
-    
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className) {
+
+    /**
+     * AdminHome constructor.
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param $response
+     * @param Model\User $user
+     * @param string $className
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    {
         parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
-        
+
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy();
@@ -53,13 +94,20 @@ class AdminHome extends Base\Controller {
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
     }
-    
-    public function publicCore() {
+
+    /**
+     * TODO
+     */
+    public function publicCore()
+    {
         parent::publicCore();
     }
-    
-    public function privateCore() {
+
+    /**
+     * TODO
+     */
+    public function privateCore()
+    {
         parent::privateCore();
     }
-
 }

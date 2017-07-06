@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,17 +20,20 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model as Models;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 /**
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
-class Controller {
-
+class Controller
+{
     /**
      * Gestor de acceso a cache.
      * @var Cache
@@ -47,7 +49,7 @@ class Controller {
 
     /**
      * Gestor de eventos.
-     * @var EventDispatcher 
+     * @var EventDispatcher
      */
     protected $dispatcher;
 
@@ -59,7 +61,7 @@ class Controller {
 
     /**
      * Motor de traducción.
-     * @var Translator 
+     * @var Translator
      */
     protected $i18n;
 
@@ -71,7 +73,7 @@ class Controller {
 
     /**
      * Request sobre la que podemos hacer consultas.
-     * @var Request 
+     * @var Request
      */
     public $request;
 
@@ -101,14 +103,19 @@ class Controller {
 
     /**
      * Inicia todos los objetos y propiedades.
+     *
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
      * @param Response $response
      * @param Models\User $user
      * @param string $className
+     *
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
@@ -127,9 +134,10 @@ class Controller {
 
     /**
      * Devuelve el template HTML a utilizar para este controlador.
-     * @return type
+     * @return string
      */
-    public function getTemplate() {
+    public function getTemplate()
+    {
         return $this->template;
     }
 
@@ -137,7 +145,8 @@ class Controller {
      * Establece el template HTML a utilizar para este controlador.
      * @param string $template
      */
-    public function setTemplate($template) {
+    public function setTemplate($template)
+    {
         $this->template = $template;
     }
 
@@ -156,23 +165,25 @@ class Controller {
      * Devuelve la url del controlador actual.
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=' . $this->className;
     }
 
     /**
-     * Se ejecuta cuando el usuario no está autenticado.
+     * Ejecuta la lógica pública del controlador.
      */
-    public function publicCore() {
+    public function publicCore()
+    {
         $this->template = 'Login/Login.html';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
-     * Se ejecuta cuando el usuario está autenticado.
+     * Ejecuta la lógica privada del controlador.
      */
-    public function privateCore() {
+    public function privateCore()
+    {
         $this->dispatcher->dispatch('pre-privateCore');
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,31 +12,35 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Divisa {
-    
-    use \FacturaScripts\Core\Base\Model;
+class Divisa
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (3).
-     * @var string 
+     * @var string
      */
     public $coddivisa;
 
     /**
      * Descripción de la divisa
-     * @var string 
+     * @var string
      */
     public $descripcion;
 
@@ -61,25 +64,36 @@ class Divisa {
 
     /**
      * Símbolo que representa a la divisa
-     * @var string 
+     * @var string
      */
     public $simbolo;
 
-    public function __construct($data = FALSE) {
+    /**
+     * Divisa constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'divisas', 'coddivisa');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
 
-    public function clear() {
-        $this->coddivisa = NULL;
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->coddivisa = null;
         $this->descripcion = '';
         $this->tasaconv = 1.00;
         $this->tasaconvcompra = 1.00;
-        $this->codiso = NULL;
+        $this->codiso = null;
         $this->simbolo = '?';
     }
 
@@ -87,8 +101,9 @@ class Divisa {
      * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
      * @return string
      */
-    public function install() {
-        return "INSERT INTO " . $this->tableName() . " (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)"
+    public function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
                 . " VALUES ('EUR','EUROS','1','1','978','€')"
                 . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
                 . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
@@ -107,41 +122,44 @@ class Divisa {
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=admin_divisas';
     }
 
     /**
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->coddivisa === $this->defaultItems->codDivisa() );
     }
 
     /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
-     * @return boolean
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
-        $this->descripcion = $this->noHtml($this->descripcion);
-        $this->simbolo = $this->noHtml($this->simbolo);
+    public function test()
+    {
+        $status = false;
+        $this->descripcion = static::noHtml($this->descripcion);
+        $this->simbolo = static::noHtml($this->simbolo);
 
-        if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
+        if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
-        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
             $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
-        } else if ($this->tasaconv === 0) {
+        } elseif ($this->tasaconv === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
-        } else if ($this->tasaconvcompra === 0) {
+        } elseif ($this->tasaconvcompra === 0) {
             $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
             $this->cache->delete('m_divisa_all');
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
-
 }

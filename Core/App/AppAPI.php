@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -20,17 +19,24 @@
 
 namespace FacturaScripts\Core\App;
 
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Response;
+use UnexpectedValueException;
+
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-class AppAPI extends App {
-
+class AppAPI extends App
+{
     /**
      * Ejecuta la API.
+     * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
      */
-    public function run() {
+    public function run()
+    {
         $this->response->headers->set('Content-Type', 'text/plain');
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -42,5 +48,4 @@ class AppAPI extends App {
             /// implementar
         }
     }
-
 }

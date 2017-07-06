@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -25,21 +24,40 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez
  */
-class IPFilter {
-
+class IPFilter
+{
+    /**
+     * TODO
+     */
     const MAX_ATTEMPTS = 5;
+
+    /**
+     * TODO
+     */
     const BAN_SECONDS = 600;
 
+    /**
+     * TODO
+     */
     private $filePath;
+
+    /**
+     * TODO
+     */
     private $ipList;
 
-    public function __construct($folder = '') {
+    /**
+     * IPFilter constructor.
+     * @param string $folder
+     */
+    public function __construct($folder = '')
+    {
         $this->filePath = $folder . '/Cache/ip.list';
         $this->ipList = [];
 
         if (file_exists($this->filePath)) {
             /// Read IP list file
-            $file = fopen($this->filePath, 'r');
+            $file = fopen($this->filePath, 'rb');
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
@@ -53,12 +71,18 @@ class IPFilter {
         }
     }
 
-    public function isBanned($ip) {
-        $banned = FALSE;
+    /**
+     * TODO
+     * @param $ip
+     * @return bool
+     */
+    public function isBanned($ip)
+    {
+        $banned = false;
 
         foreach ($this->ipList as $line) {
             if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
-                $banned = TRUE;
+                $banned = true;
                 break;
             }
         }
@@ -66,13 +90,18 @@ class IPFilter {
         return $banned;
     }
 
-    public function setAttempt($ip) {
-        $found = FALSE;
+    /**
+     * TODO
+     * @param $ip
+     */
+    public function setAttempt($ip)
+    {
+        $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
                 $this->ipList[$key]['count'] ++;
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
-                $found = TRUE;
+                $found = true;
                 break;
             }
         }
@@ -84,8 +113,12 @@ class IPFilter {
         $this->save();
     }
 
-    private function save() {
-        $file = fopen($this->filePath, 'w');
+    /**
+     * TODO
+     */
+    private function save()
+    {
+        $file = fopen($this->filePath, 'wb');
         if ($file) {
             foreach ($this->ipList as $line) {
                 fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire']."\n");
@@ -94,5 +127,4 @@ class IPFilter {
             fclose($file);
         }
     }
-
 }

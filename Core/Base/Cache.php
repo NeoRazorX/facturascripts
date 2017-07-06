@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -20,58 +19,72 @@
 
 namespace FacturaScripts\Core\Base;
 
-class Cache {
-    
+use FacturaScripts\Core\Base\Cache\FileCache;
+use RuntimeException;
+
+/**
+ * Class Cache
+ * @package FacturaScripts\Core\Base
+ */
+class Cache
+{
     /**
      * El motor utilizado para la cache.
-     * @var Cache\FileCache 
+     * @var FileCache
      */
     private static $engine;
-    
+
     /**
      * Constructor por defecto.
+     *
      * @param string $folder carpeta de trabajo
+     *
+     * @throws RuntimeException
      */
-    public function __construct($folder = '') {
-        if(!isset(self::$engine)) {
-            self::$engine = new Cache\FileCache($folder);
+    public function __construct($folder = '')
+    {
+        if (self::$engine === null) {
+            self::$engine = new FileCache($folder);
         }
     }
-    
+
     /**
      * Devuelve el contenido asociado a esa $key que hay en la cache.
      * @param string $key
      * @return mixed
      */
-    public function get($key) {
+    public function get($key)
+    {
         return self::$engine->get($key);
     }
-    
+
     /**
      * Guarda en la cache el contenido y lo asocia a $key
      * @param string $key
      * @param mixed $content
      * @return bool
      */
-    public function set($key, $content) {
+    public function set($key, $content)
+    {
         return self::$engine->set($key, $content);
     }
-    
+
     /**
      * Elimina de la cache el contenido asociado a la $key
      * @param string $key
      * @return bool
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         return self::$engine->delete($key);
     }
-    
+
     /**
-     * Limpia todo el contenido de la cache.
+     * Limpia el contenido de la cache al completo.
      * @return bool
      */
-    public function clear() {
+    public function clear()
+    {
         return self::$engine->clear();
     }
-
 }
