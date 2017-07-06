@@ -31,6 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class User
 {
+
     use Model {
         get as private getTrait;
     }
@@ -147,9 +148,9 @@ class User
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-                . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
-    
+
     /**
      * Devuelve el usuario con el nick solicitado
      * @param string $nick
@@ -198,7 +199,8 @@ class User
      * @param string $ipAddress
      * @return string
      */
-    public function newLogkey($ipAddress) {
+    public function newLogkey($ipAddress)
+    {
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
         $this->logkey = $this->randomString(99);
@@ -210,7 +212,8 @@ class User
      * @param string $value
      * @return boolean
      */
-    public function verifyLogkey($value) {
+    public function verifyLogkey($value)
+    {
         return ($this->logkey === $value);
     }
 

@@ -28,6 +28,7 @@ use UnexpectedValueException;
  */
 class AppCron extends App
 {
+
     /**
      * Ejecuta el cron.
      * @throws UnexpectedValueException

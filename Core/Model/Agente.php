@@ -32,6 +32,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Agente
 {
+
     use Model;
 
     /**
@@ -183,7 +184,7 @@ class Agente
     protected function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
-                . " VALUES ('1','Paco','Pepe','00000014Z');";
+            . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 
     /**
@@ -204,7 +205,7 @@ class Agente
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return 1 + (int)$cod[0]['cod'];
+            return 1 + (int) $cod[0]['cod'];
         }
 
         return 1;

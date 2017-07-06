@@ -28,6 +28,7 @@ use RuntimeException;
  */
 class Cache
 {
+
     /**
      * El motor utilizado para la cache.
      * @var FileCache

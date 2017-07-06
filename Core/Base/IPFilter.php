@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  */
 class IPFilter
 {
+
     /**
      * TODO
      */
@@ -61,7 +62,7 @@ class IPFilter
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
-                    if (count($line) === 3 && (int)$line[2] > time()) { /// if not expired
+                    if (count($line) === 3 && (int) $line[2] > time()) { /// if not expired
                         $this->ipList[] = ['ip' => $line[0], 'count' => (int) $line[1], 'expire' => (int) $line[2]];
                     }
                 }
@@ -109,7 +110,7 @@ class IPFilter
         if (!$found) {
             $this->ipList[] = ['ip' => $ip, 'count' => 1, 'expire' => time() + self::BAN_SECONDS];
         }
-        
+
         $this->save();
     }
 
@@ -121,7 +122,7 @@ class IPFilter
         $file = fopen($this->filePath, 'wb');
         if ($file) {
             foreach ($this->ipList as $line) {
-                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire']."\n");
+                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire'] . "\n");
             }
 
             fclose($file);

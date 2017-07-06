@@ -33,6 +33,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 abstract class App
 {
+
     /**
      * Gestor de acceso a cache.
      * @var Base\Cache
@@ -56,7 +57,7 @@ abstract class App
      * @var Base\Translator
      */
     protected $i18n;
-    
+
     /**
      * Filtro de IPs.
      * @var Base\IPFilter
@@ -142,7 +143,8 @@ abstract class App
      * Devuelve TRUE si la IP del cliente ha sido baneada.
      * @return bool
      */
-    protected function isIPBanned() {
+    protected function isIPBanned()
+    {
         return $this->ipFilter->isBanned($this->request->getClientIp());
     }
 }

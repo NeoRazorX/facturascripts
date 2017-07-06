@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  */
 class MiniLog
 {
+
     /**
      * TODO
      * @var array

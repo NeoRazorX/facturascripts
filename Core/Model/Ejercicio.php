@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Ejercicio
 {
+
     use Model;
 
     /**
@@ -133,9 +134,9 @@ class Ejercicio
     protected function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
-                . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
-                . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
-                . ',' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
+            . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
+            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
+            . ',' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 
     /**
@@ -171,7 +172,7 @@ class Ejercicio
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return sprintf('%04s', 1 + (int)$cod[0]['cod']);
+            return sprintf('%04s', 1 + (int) $cod[0]['cod']);
         }
 
         return '0001';
@@ -240,7 +241,7 @@ class Ejercicio
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
-                . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
+            . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

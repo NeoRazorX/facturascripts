@@ -31,6 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Serie
 {
+
     use Model;
 
     /**
@@ -105,7 +106,7 @@ class Serie
     public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-                . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
+            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
     /**

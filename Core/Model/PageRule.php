@@ -31,6 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class PageRule
 {
+
     use Model;
 
     /**

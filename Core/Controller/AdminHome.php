@@ -31,36 +31,43 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class AdminHome extends Base\Controller
 {
+
     /**
      * TODO
      * @var Model\Agente
      */
     public $agente;
+
     /**
      * TODO
      * @var Model\Almacen
      */
     public $almacen;
+
     /**
      * TODO
      * @var Model\Divisa
      */
     public $divisa;
+
     /**
      * TODO
      * @var Model\Ejercicio
      */
     public $ejercicio;
+
     /**
      * TODO
      * @var Model\FormaPago
      */
     public $formaPago;
+
     /**
      * TODO
      * @var Model\Pais
      */
     public $pais;
+
     /**
      * TODO
      * @var Model\Serie

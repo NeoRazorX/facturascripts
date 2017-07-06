@@ -29,6 +29,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseUtils
 {
+
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
      * @var DatabaseEngine
@@ -81,10 +82,10 @@ class DataBaseUtils
             self::$engine->compareDataTypes($db, $xml) ||
             ($xml === 'serial') ||
             (
-                strpos($db, 'time') === 0 &&
-                strpos($xml, 'time') === 0
+            strpos($db, 'time') === 0 &&
+            strpos($xml, 'time') === 0
             )
-        );
+            );
 
         return $result;
     }

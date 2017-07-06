@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model as Models;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -34,6 +33,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
  */
 class Controller
 {
+
     /**
      * Gestor de acceso a cache.
      * @var Cache
@@ -150,7 +150,8 @@ class Controller
         $this->template = $template;
     }
 
-    public function getPageData() {
+    public function getPageData()
+    {
         return [
             'name' => $this->className,
             'title' => $this->className,

@@ -29,6 +29,7 @@ use Exception;
  */
 class Postgresql implements DatabaseEngine
 {
+
     /**
      * Devuelve el motor de base de datos y la versión.
      * @param resource $link
@@ -198,7 +199,7 @@ class Postgresql implements DatabaseEngine
      */
     public function exec($link, $sql)
     {
-        return (bool)$this->runSql($link, $sql, false);
+        return (bool) $this->runSql($link, $sql, false);
     }
 
     /**
@@ -252,9 +253,9 @@ class Postgresql implements DatabaseEngine
     {
         $tables = [];
         $sql = 'SELECT tablename'
-                . ' FROM pg_catalog.pg_tables'
-                . " WHERE schemaname NOT IN ('pg_catalog','information_schema')"
-                . ' ORDER BY tablename ASC;';
+            . ' FROM pg_catalog.pg_tables'
+            . " WHERE schemaname NOT IN ('pg_catalog','information_schema')"
+            . ' ORDER BY tablename ASC;';
 
         $aux = $this->select($link, $sql);
         if (!empty($aux)) {
@@ -344,12 +345,12 @@ class Postgresql implements DatabaseEngine
     public function sqlColumns($tableName)
     {
         $sql = 'SELECT column_name as name, data_type as type,'
-                . 'character_maximum_length, column_default as default,'
-                . 'is_nullable'
-                . ' FROM information_schema.columns'
-                . " WHERE table_catalog = '" . FS_DB_NAME . "'"
-                . " AND table_name = '" . $tableName . "'"
-                . ' ORDER BY 1 ASC;';
+            . 'character_maximum_length, column_default as default,'
+            . 'is_nullable'
+            . ' FROM information_schema.columns'
+            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
+            . " AND table_name = '" . $tableName . "'"
+            . ' ORDER BY 1 ASC;';
 
         return $sql;
     }
@@ -363,10 +364,10 @@ class Postgresql implements DatabaseEngine
     public function sqlConstraints($tableName)
     {
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
-                . ' FROM information_schema.table_constraints AS tc'
-                . " WHERE tc.table_name = '" . $tableName . "'"
-                . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
-                . ' ORDER BY 1 DESC, 2 ASC;';
+            . ' FROM information_schema.table_constraints AS tc'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
         return $sql;
     }
 
@@ -379,26 +380,26 @@ class Postgresql implements DatabaseEngine
     public function sqlConstraintsExtended($tableName)
     {
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
-                . 'kcu.column_name,'
-                . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
-                . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
-                . ' FROM information_schema.table_constraints AS tc'
-                . ' LEFT JOIN information_schema.key_column_usage AS kcu'
-                . ' ON kcu.constraint_schema = tc.constraint_schema'
-                . ' AND kcu.constraint_catalog = tc.constraint_catalog'
-                . ' AND kcu.constraint_name = tc.constraint_name'
-                . ' LEFT JOIN information_schema.constraint_column_usage AS ccu'
-                . ' ON ccu.constraint_schema = tc.constraint_schema'
-                . ' AND ccu.constraint_catalog = tc.constraint_catalog'
-                . ' AND ccu.constraint_name = tc.constraint_name'
-                . ' AND ccu.column_name = kcu.column_name'
-                . ' LEFT JOIN information_schema.referential_constraints rc'
-                . ' ON rc.constraint_schema = tc.constraint_schema'
-                . ' AND rc.constraint_catalog = tc.constraint_catalog'
-                . ' AND rc.constraint_name = tc.constraint_name'
-                . " WHERE tc.table_name = '" . $tableName . "'"
-                . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
-                . ' ORDER BY 1 DESC, 2 ASC;';
+            . 'kcu.column_name,'
+            . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
+            . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
+            . ' FROM information_schema.table_constraints AS tc'
+            . ' LEFT JOIN information_schema.key_column_usage AS kcu'
+            . ' ON kcu.constraint_schema = tc.constraint_schema'
+            . ' AND kcu.constraint_catalog = tc.constraint_catalog'
+            . ' AND kcu.constraint_name = tc.constraint_name'
+            . ' LEFT JOIN information_schema.constraint_column_usage AS ccu'
+            . ' ON ccu.constraint_schema = tc.constraint_schema'
+            . ' AND ccu.constraint_catalog = tc.constraint_catalog'
+            . ' AND ccu.constraint_name = tc.constraint_name'
+            . ' AND ccu.column_name = kcu.column_name'
+            . ' LEFT JOIN information_schema.referential_constraints rc'
+            . ' ON rc.constraint_schema = tc.constraint_schema'
+            . ' AND rc.constraint_catalog = tc.constraint_catalog'
+            . ' AND rc.constraint_name = tc.constraint_name'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
 
         return $sql;
     }
@@ -442,7 +443,7 @@ class Postgresql implements DatabaseEngine
         }
 
         $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
-                . $this->generateTableConstraints($constraints) . ');';
+            . $this->generateTableConstraints($constraints) . ');';
         return $sql;
     }
 
@@ -455,7 +456,7 @@ class Postgresql implements DatabaseEngine
     public function sqlAlterAddColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-                . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
+            . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
 
         if ($colData['defecto'] !== '') {
             $sql .= ' DEFAULT ' . $colData['defecto'];
@@ -477,7 +478,7 @@ class Postgresql implements DatabaseEngine
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-                . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+            . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
         return $sql . ';';
     }
 

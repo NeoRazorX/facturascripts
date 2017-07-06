@@ -30,6 +30,7 @@ use mysqli;
  */
 class Mysql implements DatabaseEngine
 {
+
     /**
      * Relacion de Transacciones abiertas.
      * @var array
@@ -100,7 +101,7 @@ class Mysql implements DatabaseEngine
             return null;
         }
 
-        $result = @new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
+        $result = @new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int) FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             return null;
@@ -309,7 +310,7 @@ class Mysql implements DatabaseEngine
             ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
             (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
             (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
-        );
+            );
 
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);
@@ -375,7 +376,7 @@ class Mysql implements DatabaseEngine
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
-                        . ' Imprescindible para FacturaScripts.';
+                    . ' Imprescindible para FacturaScripts.';
             }
         }
 
@@ -495,9 +496,9 @@ class Mysql implements DatabaseEngine
     public function sqlConstraints($tableName)
     {
         $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
-                . ' FROM information_schema.table_constraints '
-                . ' WHERE table_schema = schema()'
-                . " AND table_name = '" . $tableName . "';";
+            . ' FROM information_schema.table_constraints '
+            . ' WHERE table_schema = schema()'
+            . " AND table_name = '" . $tableName . "';";
         return $sql;
     }
 
@@ -510,23 +511,23 @@ class Mysql implements DatabaseEngine
     public function sqlConstraintsExtended($tableName)
     {
         $sql = 'SELECT t1.constraint_name as name,'
-                . ' t1.constraint_type as type,'
-                . ' t2.column_name,'
-                . ' t2.referenced_table_name AS foreign_table_name,'
-                . ' t2.referenced_column_name AS foreign_column_name,'
-                . ' t3.update_rule AS on_update,'
-                . ' t3.delete_rule AS on_delete'
-                . ' FROM information_schema.table_constraints t1'
-                . ' LEFT JOIN information_schema.key_column_usage t2'
-                . ' ON t1.table_schema = t2.table_schema'
-                . ' AND t1.table_name = t2.table_name'
-                . ' AND t1.constraint_name = t2.constraint_name'
-                . ' LEFT JOIN information_schema.referential_constraints t3'
-                . ' ON t3.constraint_schema = t1.table_schema'
-                . ' AND t3.constraint_name = t1.constraint_name'
-                . ' WHERE t1.table_schema = SCHEMA()'
-                . " AND t1.table_name = '" . $tableName . "'"
-                . ' ORDER BY type DESC, name ASC;';
+            . ' t1.constraint_type as type,'
+            . ' t2.column_name,'
+            . ' t2.referenced_table_name AS foreign_table_name,'
+            . ' t2.referenced_column_name AS foreign_column_name,'
+            . ' t3.update_rule AS on_update,'
+            . ' t3.delete_rule AS on_delete'
+            . ' FROM information_schema.table_constraints t1'
+            . ' LEFT JOIN information_schema.key_column_usage t2'
+            . ' ON t1.table_schema = t2.table_schema'
+            . ' AND t1.table_name = t2.table_name'
+            . ' AND t1.constraint_name = t2.constraint_name'
+            . ' LEFT JOIN information_schema.referential_constraints t3'
+            . ' ON t3.constraint_schema = t1.table_schema'
+            . ' AND t3.constraint_name = t1.constraint_name'
+            . ' WHERE t1.table_schema = SCHEMA()'
+            . " AND t1.table_name = '" . $tableName . "'"
+            . ' ORDER BY type DESC, name ASC;';
         return $sql;
     }
 
@@ -557,8 +558,8 @@ class Mysql implements DatabaseEngine
 
         $sql = $this->fixPostgresql(substr($fields, 2));
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
-                . $this->generateTableConstraints($constraints) . ') '
-                . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+            . $this->generateTableConstraints($constraints) . ') '
+            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
     }
 
     /**
@@ -570,7 +571,7 @@ class Mysql implements DatabaseEngine
     public function sqlAlterAddColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . '` '
-                . $this->getTypeAndConstraints($colData) . ';';
+            . $this->getTypeAndConstraints($colData) . ';';
 
         return $sql;
     }
@@ -584,8 +585,8 @@ class Mysql implements DatabaseEngine
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-                . ' MODIFY `' . $colData['nombre'] . '` '
-                . $this->getTypeAndConstraints($colData) . ';';
+            . ' MODIFY `' . $colData['nombre'] . '` '
+            . $this->getTypeAndConstraints($colData) . ';';
 
         return $this->fixPostgresql($sql);
     }
@@ -646,8 +647,8 @@ class Mysql implements DatabaseEngine
     public function sqlAddConstraint($tableName, $constraintName, $sql)
     {
         return 'ALTER TABLE ' . $tableName
-                . ' ADD CONSTRAINT ' . $constraintName . ' '
-                . $this->fixPostgresql($sql) . ';';
+            . ' ADD CONSTRAINT ' . $constraintName . ' '
+            . $this->fixPostgresql($sql) . ';';
     }
 
     /**

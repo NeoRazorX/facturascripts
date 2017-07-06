@@ -31,6 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Empresa
 {
+
     use Model;
     use Utils;
 
@@ -39,6 +40,7 @@ class Empresa
      * @var integer
      */
     public $id;
+
     /**
      * TODO
      * @var string
@@ -264,23 +266,23 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
         return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
-                . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
-                . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
-                . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
-                . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
-                . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
+            . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
+            . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
+            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
+            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
+            . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
     }
-    
+
     /**
      * Devuelve la empresa predeterminada (la primera, por ahora).
      * @return Empresa|false
      */
     public function getDefault()
     {
-        foreach($this->all() as $emp) {
+        foreach ($this->all() as $emp) {
             return $emp;
         }
-        
+
         return false;
     }
 

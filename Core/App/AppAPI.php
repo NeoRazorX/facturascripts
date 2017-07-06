@@ -30,6 +30,7 @@ use UnexpectedValueException;
  */
 class AppAPI extends App
 {
+
     /**
      * Ejecuta la API.
      * @throws InvalidArgumentException

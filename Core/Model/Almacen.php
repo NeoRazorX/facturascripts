@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Almacen
 {
+
     use Model;
 
     /**
@@ -121,7 +122,7 @@ class Almacen
     public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
-                . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
