@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -20,21 +19,21 @@
 
 namespace FacturaScripts\Core\App;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use DebugBar\StandardDebugBar;
+use UnexpectedValueException;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-class AppCron extends App {
-
+class AppCron extends App
+{
     /**
      * Ejecuta el cron.
+     * @throws UnexpectedValueException
      */
-    public function run() {
+    public function run()
+    {
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             /// implementar
@@ -42,5 +41,4 @@ class AppCron extends App {
             $this->response->setContent('DB-ERROR');
         }
     }
-
 }

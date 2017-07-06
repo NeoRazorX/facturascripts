@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,21 +12,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use mysqli;
+
 /**
  * Interface para cada uno de los motores de base de datos compatibles
- * 
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-interface DatabaseEngine {
-
+interface DatabaseEngine
+{
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
      * @param array $xmlCons
@@ -42,7 +43,8 @@ interface DatabaseEngine {
 
     /**
      * Información sobre el motor de base de datos
-     * @param mixed $link
+     * @param mysqli|resource $link
+     * @return string
      */
     public function version($link);
 
@@ -54,53 +56,54 @@ interface DatabaseEngine {
 
     /**
      * Cierra la conexión con la base de datos
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function close($link);
 
     /**
      * Último mensaje de error generado un operación con la BD
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function errorMessage($link);
 
     /**
      * Inicia una transacción sobre la conexión
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function beginTransaction($link);
 
     /**
      * Confirma las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function commit($link);
 
     /**
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function rollback($link);
 
     /**
      * Indica si la conexión tiene una transacción abierta
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function inTransaction($link);
 
     /**
      * Ejecuta una sentencia de datos sobre la conexión
-     * @param mixed $link
+     * @param mysqli|resource $link
      * @param string $sql
+     * @return array
      */
     public function select($link, $sql);
 
     /**
      * Ejecuta una sentencia DDL sobre la conexión.
      * Si no hay transacción abierta crea una y la finaliza
-     * @param mixed $link
+     * @param mysqli|resource $link
      * @param string $sql
      */
     public function exec($link, $sql);
@@ -114,13 +117,13 @@ interface DatabaseEngine {
 
     /**
      * Lista de tablas existentes en la conexión
-     * @param mixed $link
+     * @param mysqli|resource $link
      */
     public function listTables($link);
 
     /**
      * Escapa la cadena indicada
-     * @param mixed $link
+     * @param mysqli|resource $link
      * @param string $str
      */
     public function escapeString($link, $str);
@@ -138,7 +141,7 @@ interface DatabaseEngine {
 
     /**
      * Comprueba la existencia de una secuencia
-     * @param mixed $link
+     * @param mysqli|resource $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
@@ -147,7 +150,7 @@ interface DatabaseEngine {
 
     /**
      * Comprobación adicional a la existencia de una tabla
-     * @param mixed $link
+     * @param mysqli|resource $link
      * @param string $tableName
      * @param string $error
      */

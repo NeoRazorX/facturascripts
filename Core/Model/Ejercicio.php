@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,31 +12,35 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio {
-
-    use \FacturaScripts\Core\Base\Model;
+class Ejercicio
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar(4).
-     * @var string 
+     * @var string
      */
     public $codejercicio;
 
     /**
      * Nombre del ejercicio
-     * @var string 
+     * @var string
      */
     public $nombre;
 
@@ -55,32 +58,32 @@ class Ejercicio {
 
     /**
      * Estado del ejercicio: ABIERTO|CERRADO
-     * @var string 
+     * @var string
      */
     public $estado;
 
     /**
      * ID del asiento de cierre del ejercicio.
-     * @var integer 
+     * @var integer
      */
     public $idasientocierre;
 
     /**
      * ID del asiento de pérdidas y ganancias.
-     * @var integer 
+     * @var integer
      */
     public $idasientopyg;
 
     /**
      * ID del asiento de apertura.
-     * @var integer 
+     * @var integer
      */
     public $idasientoapertura;
 
     /**
      * Identifica el plan contable utilizado. Esto solamente es necesario
      * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
-     * @var string 
+     * @var string
      */
     public $plancontable;
 
@@ -90,9 +93,16 @@ class Ejercicio {
      */
     public $longsubcuenta;
 
-    public function __construct($data = FALSE) {
+    /**
+     * Ejercicio constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'ejercicios', 'codejercicio');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -102,15 +112,16 @@ class Ejercicio {
     /**
      * Resetea los valores de las propiedades del modelo.
      */
-    public function clear() {
-        $this->codejercicio = NULL;
+    public function clear()
+    {
+        $this->codejercicio = null;
         $this->nombre = '';
-        $this->fechainicio = Date('01-01-Y');
-        $this->fechafin = Date('31-12-Y');
+        $this->fechainicio = date('01-01-Y');
+        $this->fechafin = date('31-12-Y');
         $this->estado = 'ABIERTO';
-        $this->idasientocierre = NULL;
-        $this->idasientopyg = NULL;
-        $this->idasientoapertura = NULL;
+        $this->idasientocierre = null;
+        $this->idasientopyg = null;
+        $this->idasientoapertura = null;
         $this->plancontable = '08';
         $this->longsubcuenta = 10;
     }
@@ -119,18 +130,20 @@ class Ejercicio {
      * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
      * @return string
      */
-    protected function install() {
-        return "INSERT INTO " . $this->tableName() . " (codejercicio,nombre,fechainicio,fechafin,"
-                . "estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) "
-                . "VALUES ('" . Date('Y') . "','" . Date('Y') . "'," . $this->var2str(Date('01-01-Y'))
-                . "," . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
+    protected function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
+                . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
+                . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
+                . ',' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 
     /**
      * Devuelve el estado del ejercicio ABIERTO->true | CERRADO->false
-     * @return boolean
+     * @return bool
      */
-    public function abierto() {
+    public function abierto()
+    {
         return ($this->estado === 'ABIERTO');
     }
 
@@ -138,8 +151,9 @@ class Ejercicio {
      * Devuelve el valos del año del ejercicio
      * @return string en formato año
      */
-    public function year() {
-        return Date('Y', strtotime($this->fechainicio));
+    public function year()
+    {
+        return date('Y', strtotime($this->fechainicio));
     }
 
     /**
@@ -147,14 +161,17 @@ class Ejercicio {
      * @param string $cod
      * @return string
      */
-    public function newCodigo($cod = '0001') {
-        if (!$this->dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
+    public function newCodigo($cod = '0001')
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
+        if (!$this->dataBase->select($sql)) {
             return $cod;
         }
 
-        $cod = $this->dataBase->select("SELECT MAX(" . $this->dataBase->sql2int('codejercicio') . ") as cod FROM " . $this->tableName() . ";");
-        if ($cod) {
-            return sprintf('%04s', (1 + (int)$cod[0]['cod']));
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
+        if (!empty($cod)) {
+            return sprintf('%04s', 1 + (int)$cod[0]['cod']);
         }
 
         return '0001';
@@ -164,8 +181,9 @@ class Ejercicio {
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
-        if (is_null($this->codejercicio)) {
+    public function url()
+    {
+        if ($this->codejercicio === null) {
             return 'index.php?page=contabilidad_ejercicios';
         }
 
@@ -174,19 +192,22 @@ class Ejercicio {
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ($this->codejercicio === $this->defaultItems->codEjercicio());
     }
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      * @param string $fecha
-     * @param boolean $showError
+     * @param bool $showError
      * @return string
+     * @throws TranslationInvalidArgumentException
      */
-    public function getBestFecha($fecha, $showError = FALSE) {
+    public function getBestFecha($fecha, $showError = false)
+    {
         $fecha2 = strtotime($fecha);
 
         if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
@@ -210,60 +231,65 @@ class Ejercicio {
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
      * @param string $fecha
-     * @param boolean $soloAbierto
-     * @param boolean $crear
-     * @return boolean|ejercicio
+     * @param bool $soloAbierto
+     * @param bool $crear
+     * @return bool|ejercicio
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function getByFecha($fecha, $soloAbierto = TRUE, $crear = TRUE) {
-        $sql = "SELECT * FROM " . $this->tableName() . " WHERE fechainicio <= "
-                . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
+    public function getByFecha($fecha, $soloAbierto = true, $crear = true)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
+                . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
                 return $eje;
             }
-        } else if ($crear) {
+        } elseif ($crear) {
             $eje = new Ejercicio();
-            $eje->codejercicio = $eje->newCodigo(Date('Y', strtotime($fecha)));
-            $eje->nombre = Date('Y', strtotime($fecha));
-            $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
-            $eje->fechafin = Date('31-12-Y', strtotime($fecha));
+            $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
+            $eje->nombre = date('Y', strtotime($fecha));
+            $eje->fechainicio = date('1-1-Y', strtotime($fecha));
+            $eje->fechafin = date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
                 $this->miniLog->alert($this->i18n->trans('date-invalid-date', [$fecha]));
-            } else if ($eje->save()) {
+            } elseif ($eje->save()) {
                 return $eje;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
-     * @return boolean
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
-        $this->nombre = $this->noHtml($this->nombre);
+        $this->nombre = static::noHtml($this->nombre);
 
-        if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
+        if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
-        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
-        } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', [$this->fechainicio, $this->fechafin]));
-        } else if (strtotime($this->fechainicio) < 1) {
+        } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
+            $params = [$this->fechainicio, $this->fechafin];
+            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $params));
+        } elseif (strtotime($this->fechainicio) < 1) {
             $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
-
 }

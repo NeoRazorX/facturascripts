@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,40 +12,45 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use FacturaScripts\Core\Base\Utils;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Usuario de FacturaScripts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class User {
-
-    use \FacturaScripts\Core\Base\Model {
+class User
+{
+    use Model {
         get as private getTrait;
     }
-    use \FacturaScripts\Core\Base\Utils;
+    use Utils;
 
     /**
      * Clave primaria. Varchar (50).
-     * @var string 
+     * @var string
      */
     public $nick;
 
     /**
      * Contraseña, cifrada con password_hash()
-     * @var string 
+     * @var string
      */
     private $password;
 
     /**
      * Email del usuario.
-     * @var string 
+     * @var string
      */
     public $email;
 
@@ -55,19 +59,19 @@ class User {
      * sirve para no tener que guardar la contraseña.
      * Se regenera cada vez que el cliente inicia sesión. Así se
      * impide que dos personas accedan con el mismo usuario.
-     * @var string 
+     * @var string
      */
     private $logkey;
 
     /**
      * TRUE -> el usuario es un administrador.
-     * @var boolean 
+     * @var bool
      */
     public $admin;
 
     /**
      * TRUE -> el usuario esta activo.
-     * @var boolean
+     * @var bool
      */
     public $enabled;
 
@@ -95,9 +99,18 @@ class User {
      */
     public $lastip;
 
-    public function __construct($data = FALSE) {
+    /**
+     * User constructor.
+     *
+     * @param array $data
+     *
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_users', 'nick');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -107,38 +120,43 @@ class User {
     /**
      * Reseta los valores de este objeto.
      */
-    public function clear() {
-        $this->nick = NULL;
-        $this->password = NULL;
-        $this->email = NULL;
-        $this->logkey = NULL;
-        $this->admin = FALSE;
-        $this->enabled = TRUE;
+    public function clear()
+    {
+        $this->nick = null;
+        $this->password = null;
+        $this->email = null;
+        $this->logkey = null;
+        $this->admin = false;
+        $this->enabled = true;
         $this->langcode = FS_LANG;
-        $this->homepage = NULL;
-        $this->lastactivity = NULL;
-        $this->lastip = NULL;
+        $this->homepage = null;
+        $this->lastactivity = null;
+        $this->lastip = null;
     }
 
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
      * @return string
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    protected function install() {
+    protected function install()
+    {
         /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
         new Page();
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
-        return "INSERT INTO " . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
+        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
                 . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
     
     /**
      * Devuelve el usuario con el nick solicitado
      * @param string $nick
-     * @return User
+     * @return User|bool
      */
-    public function get($nick) {
+    public function get($nick)
+    {
         return $this->getTrait($nick);
     }
 
@@ -146,8 +164,9 @@ class User {
      * Devuelve la url desde donde editar este usuario.
      * @return string
      */
-    public function url() {
-        if (is_null($this->nick)) {
+    public function url()
+    {
+        if ($this->nick === null) {
             return 'index.php?page=AdminUsers';
         }
 
@@ -158,7 +177,8 @@ class User {
      * Asigna la contraseña dada al usuario.
      * @param string $value
      */
-    public function setPassword($value) {
+    public function setPassword($value)
+    {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
 
@@ -167,7 +187,8 @@ class User {
      * @param string $value
      * @return boolean
      */
-    public function verifyPassword($value) {
+    public function verifyPassword($value)
+    {
         return password_verify($value, $this->password);
     }
 
@@ -193,15 +214,21 @@ class User {
         return ($this->logkey === $value);
     }
 
-    public function test() {
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Se ejecuta dentro del método save.
+     * @return bool
+     * @throws TranslationInvalidArgumentException
+     */
+    public function test()
+    {
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
             $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
-
 }

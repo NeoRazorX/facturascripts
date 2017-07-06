@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -13,56 +12,60 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Forma de pago de una factura, albarán, pedido o presupuesto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FormaPago {
-
-    use \FacturaScripts\Core\Base\Model;
+class FormaPago
+{
+    use Model;
 
     /**
      * Clave primaria. Varchar (10).
-     * @var string 
+     * @var string
      */
     public $codpago;
 
     /**
      * Descripción de la forma de pago
-     * @var string 
+     * @var string
      */
     public $descripcion;
 
     /**
      * Pagados -> marca las facturas generadas como pagadas.
-     * @var string 
+     * @var string
      */
     public $genrecibos;
 
     /**
      * Código de la cuenta bancaria asociada.
-     * @var string 
+     * @var string
      */
     public $codcuenta;
 
     /**
      * Para indicar si hay que mostrar la cuenta bancaria del cliente.
-     * @var boolean
+     * @var bool
      */
     public $domiciliado;
 
     /**
      * TRUE (por defecto) -> mostrar los datos en documentos de venta,
      * incluida la cuenta bancaria asociada.
-     * @var boolean
+     * @var bool
      */
     public $imprimir;
 
@@ -72,22 +75,33 @@ class FormaPago {
      */
     public $vencimiento;
 
-    public function __construct($data = FALSE) {
+    /**
+     * FormaPago constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'formaspago', 'codpago');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
 
-    public function clear() {
-        $this->codpago = NULL;
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->codpago = null;
         $this->descripcion = '';
         $this->genrecibos = 'Emitidos';
         $this->codcuenta = '';
-        $this->domiciliado = FALSE;
-        $this->imprimir = TRUE;
+        $this->domiciliado = false;
+        $this->imprimir = true;
         $this->vencimiento = '+1day';
     }
 
@@ -95,46 +109,52 @@ class FormaPago {
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
      */
-    public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
-                . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
-                . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-                . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
-                . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
+    public function install()
+    {
+        return 'INSERT INTO ' . $this->tableName()
+            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
+            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
+            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
+            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
+            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
     }
 
     /**
      * Devuelve la URL donde ver/modificar los datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=contabilidad_formas_pago';
     }
 
     /**
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
+    public function isDefault()
+    {
         return ( $this->codpago === $this->defaultItems->codPago() );
     }
 
     /**
      * Comprueba la validez de los datos de la forma de pago.
-     * @return boolean
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $this->descripcion = $this->noHtml($this->descripcion);
+    public function test()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
 
         /// comprobamos la validez del vencimiento
-        $fecha1 = Date('d-m-Y');
-        $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
+        $fecha1 = date('d-m-Y');
+        $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
             $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -144,7 +164,8 @@ class FormaPago {
      * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
      * @return string
      */
-    public function calcularVencimiento($fecha_inicio, $dias_de_pago = '') {
+    public function calcularVencimiento($fecha_inicio, $dias_de_pago = '')
+    {
         $fecha = $this->calcularVencimiento2($fecha_inicio);
 
         /// validamos los días de pago
@@ -155,7 +176,7 @@ class FormaPago {
             }
         }
 
-        if ($array_dias !== NULL) {
+        if ($array_dias !== null) {
             foreach ($array_dias as $i => $dia_de_pago) {
                 if ($i === 0) {
                     $fecha = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
@@ -178,7 +199,8 @@ class FormaPago {
      * @param string|integer $dia_de_pago
      * @return string
      */
-    private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0) {
+    private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0)
+    {
         if ($dia_de_pago === 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
         }
@@ -201,5 +223,4 @@ class FormaPago {
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
     }
-
 }
