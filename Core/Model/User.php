@@ -154,21 +154,41 @@ class User {
         return 'index.php?page=AdminUser&id=' . $this->nick;
     }
 
+    /**
+     * Asigna la contraseña dada al usuario.
+     * @param string $value
+     */
     public function setPassword($value) {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
 
+    /**
+     * Verifica si la contraseña dada es correcta.
+     * @param string $value
+     * @return boolean
+     */
     public function verifyPassword($value) {
         return password_verify($value, $this->password);
     }
 
-    public function newLogkey($ip) {
+    /**
+     * Genera una nueva clave de login para el usuario.
+     * Además actualiza lastactivity y asigna la IP proporcionada.
+     * @param string $ipAddress
+     * @return string
+     */
+    public function newLogkey($ipAddress) {
         $this->lastactivity = date('d-m-Y H:i:s');
-        $this->lastip = $ip;
+        $this->lastip = $ipAddress;
         $this->logkey = $this->randomString(99);
         return $this->logkey;
     }
 
+    /**
+     * Verifica la clave de login proporcionada.
+     * @param string $value
+     * @return boolean
+     */
     public function verifyLogkey($value) {
         return ($this->logkey === $value);
     }

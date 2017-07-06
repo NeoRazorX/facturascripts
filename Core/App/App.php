@@ -54,6 +54,12 @@ abstract class App {
      * @var Base\Translator
      */
     protected $i18n;
+    
+    /**
+     * Filtro de IPs.
+     * @var Base\IPFilter
+     */
+    protected $ipFilter;
 
     /**
      * Gestor del log de la app.
@@ -88,6 +94,7 @@ abstract class App {
         $this->dataBase = new Base\DataBase();
         $this->folder = $folder;
         $this->i18n = new Base\Translator($folder, FS_LANG);
+        $this->ipFilter = new Base\IPFilter($folder);
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
@@ -123,8 +130,7 @@ abstract class App {
      * @return boolean
      */
     protected function isIPBanned() {
-        $ipFilter = new Base\IPFilter($this->folder);
-        return $ipFilter->isBanned($this->request->getClientIp());
+        return $this->ipFilter->isBanned($this->request->getClientIp());
     }
 
 }

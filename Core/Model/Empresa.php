@@ -255,14 +255,14 @@ class Empresa {
     
     /**
      * Devuelve la empresa predeterminada (la primera, por ahora).
-     * @return Empresa
+     * @return Empresa|false
      */
     public function getDefault() {
         foreach($this->all() as $emp) {
             return $emp;
         }
         
-        return NULL;
+        return FALSE;
     }
 
     /**

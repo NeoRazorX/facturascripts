@@ -20,8 +20,9 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model as Models;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -49,10 +50,10 @@ class Controller {
      * @var EventDispatcher 
      */
     protected $dispatcher;
-    
+
     /**
      * Empresa seleccionada.
-     * @var Model\Empresa
+     * @var Models\Empresa
      */
     public $empresa;
 
@@ -73,7 +74,7 @@ class Controller {
      * @var Request 
      */
     public $request;
-    
+
     /**
      * Objeto respuesta HTTP.
      * @var Response
@@ -91,10 +92,10 @@ class Controller {
      * @var string título de la página.
      */
     public $title;
-    
+
     /**
      * Usuario que ha iniciado sesión.
-     * @var Model\User
+     * @var Models\User
      */
     public $user;
 
@@ -103,16 +104,18 @@ class Controller {
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
+     * @param Response $response
+     * @param Models\User $user
      * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className) {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
-        
-        $empresa = new Model\Empresa();
+
+        $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();
-        
+
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
@@ -121,7 +124,7 @@ class Controller {
         $this->title = $this->className;
         $this->user = $user;
     }
-    
+
     /**
      * Devuelve el template HTML a utilizar para este controlador.
      * @return type
@@ -129,13 +132,24 @@ class Controller {
     public function getTemplate() {
         return $this->template;
     }
-    
+
     /**
      * Establece el template HTML a utilizar para este controlador.
      * @param string $template
      */
     public function setTemplate($template) {
         $this->template = $template;
+    }
+
+    public function getPageData() {
+        return [
+            'name' => $this->className,
+            'title' => $this->className,
+            'icon' => '<i class="fa fa-circle-o" aria-hidden="true"></i>',
+            'menu' => 'new',
+            'submenu' => NULL,
+            'showonmenu' => TRUE
+        ];
     }
 
     /**
@@ -145,12 +159,18 @@ class Controller {
     public function url() {
         return 'index.php?page=' . $this->className;
     }
-    
+
+    /**
+     * Se ejecuta cuando el usuario no está autenticado.
+     */
     public function publicCore() {
         $this->template = 'Login/Login.html';
         $this->dispatcher->dispatch('pre-publicCore');
     }
-    
+
+    /**
+     * Se ejecuta cuando el usuario está autenticado.
+     */
     public function privateCore() {
         $this->dispatcher->dispatch('pre-privateCore');
     }
