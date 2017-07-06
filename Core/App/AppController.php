@@ -225,10 +225,12 @@ class AppController extends App
                     return $user;
                 }
 
+                $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert('login-password-fail');
                 return null;
             }
 
+            $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert('login-user-not-found');
             return null;
         }

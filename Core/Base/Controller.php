@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model\Empresa;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Model as Models;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -52,10 +52,10 @@ class Controller
      * @var EventDispatcher
      */
     protected $dispatcher;
-    
+
     /**
      * Empresa seleccionada.
-     * @var Empresa
+     * @var Models\Empresa
      */
     public $empresa;
 
@@ -76,7 +76,7 @@ class Controller
      * @var Request
      */
     public $request;
-    
+
     /**
      * Objeto respuesta HTTP.
      * @var Response
@@ -94,10 +94,10 @@ class Controller
      * @var string título de la página.
      */
     public $title;
-    
+
     /**
      * Usuario que ha iniciado sesión.
-     * @var User
+     * @var Models\User
      */
     public $user;
 
@@ -107,8 +107,8 @@ class Controller
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
-     * @param $response
-     * @param $user
+     * @param Response $response
+     * @param Models\User $user
      * @param string $className
      *
      * @throws RuntimeException
@@ -119,10 +119,10 @@ class Controller
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
-        
-        $empresa = new Empresa();
+
+        $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();
-        
+
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
@@ -148,6 +148,17 @@ class Controller
     public function setTemplate($template)
     {
         $this->template = $template;
+    }
+
+    public function getPageData() {
+        return [
+            'name' => $this->className,
+            'title' => $this->className,
+            'icon' => '<i class="fa fa-circle-o" aria-hidden="true"></i>',
+            'menu' => 'new',
+            'submenu' => NULL,
+            'showonmenu' => TRUE
+        ];
     }
 
     /**

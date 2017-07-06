@@ -273,7 +273,7 @@ class Empresa
     
     /**
      * Devuelve la empresa predeterminada (la primera, por ahora).
-     * @return Empresa
+     * @return Empresa|false
      */
     public function getDefault()
     {
@@ -281,7 +281,7 @@ class Empresa
             return $emp;
         }
         
-        return null;
+        return false;
     }
 
     /**

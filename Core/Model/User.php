@@ -174,8 +174,8 @@ class User
     }
 
     /**
-     * TODO
-     * @param $value
+     * Asigna la contraseña dada al usuario.
+     * @param string $value
      */
     public function setPassword($value)
     {
@@ -183,10 +183,9 @@ class User
     }
 
     /**
-     * TODO
-     * @param $value
-     *
-     * @return bool
+     * Verifica si la contraseña dada es correcta.
+     * @param string $value
+     * @return boolean
      */
     public function verifyPassword($value)
     {
@@ -194,26 +193,24 @@ class User
     }
 
     /**
-     * TODO
-     * @param $ip
+     * Genera una nueva clave de login para el usuario.
+     * Además actualiza lastactivity y asigna la IP proporcionada.
+     * @param string $ipAddress
      * @return string
      */
-    public function newLogkey($ip)
-    {
+    public function newLogkey($ipAddress) {
         $this->lastactivity = date('d-m-Y H:i:s');
-        $this->lastip = $ip;
-        $this->logkey = static::randomString(99);
+        $this->lastip = $ipAddress;
+        $this->logkey = $this->randomString(99);
         return $this->logkey;
     }
 
     /**
-     * TODO
-     * @param $value
-     *
-     * @return bool
+     * Verifica la clave de login proporcionada.
+     * @param string $value
+     * @return boolean
      */
-    public function verifyLogkey($value)
-    {
+    public function verifyLogkey($value) {
         return ($this->logkey === $value);
     }
 
