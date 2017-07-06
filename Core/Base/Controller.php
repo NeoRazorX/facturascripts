@@ -53,7 +53,7 @@ class Controller {
 
     /**
      * Empresa seleccionada.
-     * @var Models\Empresa
+     * @var Models\Empresa|false
      */
     public $empresa;
 
