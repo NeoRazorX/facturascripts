@@ -86,10 +86,11 @@ class Translator
      */
     private function locateFiles()
     {
+        $miniLog = new MiniLog();
         $file = self::$folder . '/Core/Translation/' . self::$lang . '.json';
         self::$translator->addResource('json', $file, self::$lang);
 
-        $pluginManager = new PluginManager(self::$folder);
+        $pluginManager = new PluginManager(self::$folder, $miniLog);
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
             $file = self::$folder . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
             if (file_exists($file)) {

@@ -95,7 +95,7 @@ abstract class App
         $this->folder = $folder;
         $this->i18n = new Base\Translator($folder, FS_LANG);
         $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager($folder);
+        $this->pluginManager = new Base\PluginManager($folder, $this->miniLog);
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
     }

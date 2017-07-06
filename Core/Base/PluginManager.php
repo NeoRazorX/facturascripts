@@ -42,11 +42,19 @@ class PluginManager
     private static $folder;
 
     /**
+     * Gestor de log de la app.
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    /**
      * PluginManager constructor.
      * @param string $folder
+     * @param $minilog
      */
-    public function __construct($folder = '')
+    public function __construct($folder = '', &$minilog)
     {
+        $this->miniLog = $minilog;
         if (self::$folder === null) {
             self::$folder = $folder;
 
@@ -160,7 +168,31 @@ class PluginManager
             if (is_dir($folder . '/' . $item)) {
                 $this->cleanDinamic($folder . $item . '/');
             } else {
-                unlink($folder . $item);
+                $this->unlink($folder . $item);
+            }
+        }
+    }
+
+    /**
+     * Elimina el archivo, desactivando el reporte de errores
+     * así en caso de error, podemos mostrar un mensaje controlado.
+     *
+     * Se intenta solucionar si es por falta de permisos y sino
+     * se puede se devuelve un mensaje de error.
+     *
+     * @param $filename
+     */
+    private function unlink($filename) {
+        if (file_exists($filename) && !@unlink($filename)) {
+            $correctPerms = $perms = substr(sprintf('%o', fileperms($filename)), -4);
+            $correctPerms[1] = ($perms[1] < 6) ? '6' : $correctPerms[1];
+            $correctPerms[2] = ($perms[2] < 6) ? '6' : $correctPerms[2];
+            if (chmod($filename, $correctPerms)) {
+                @unlink($filename);
+            } else {
+                $this->miniLog->critical('Error al intentar eliminar ' . $filename
+                    . ', tiene los permisos ' . $perms . ' y deben ser ' . $correctPerms
+                    . ', no se ha podido corregir automáticamente.');
             }
         }
     }
