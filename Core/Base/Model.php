@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 trait Model
 {
+
     /**
      * Proporciona acceso directo a la base de datos.
      * @var DataBase
@@ -472,9 +473,7 @@ trait Model
     public static function noHtml($txt)
     {
         $newt = str_replace(
-            array('<', '>', '"', "'"),
-            array('&lt;', '&gt;', '&quot;', '&#39;'),
-            $txt
+            array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
         );
 
         return trim($newt);

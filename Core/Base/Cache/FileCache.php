@@ -33,6 +33,7 @@ use RuntimeException;
  */
 class FileCache
 {
+
     /**
      * Configuración de la cache.
      * @var array
@@ -47,7 +48,7 @@ class FileCache
     public function __construct($folder = '')
     {
         self::$config = array(
-            'cache_path' => $folder. '/Cache/FileCache',
+            'cache_path' => $folder . '/Cache/FileCache',
             'expires' => 180,
         );
 

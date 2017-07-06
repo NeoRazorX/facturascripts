@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
+
     /**
      * Carpeta de trabajo de FacturaScripts.
      * @var string

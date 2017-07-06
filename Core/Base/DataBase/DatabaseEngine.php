@@ -29,6 +29,7 @@ use mysqli;
  */
 interface DatabaseEngine
 {
+
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
      * @param array $xmlCons

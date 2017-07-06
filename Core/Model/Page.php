@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class Page
 {
+
     use Model;
 
     /**
@@ -44,11 +45,13 @@ class Page
      * @var string
      */
     public $title;
+
     /**
      * TODO
      * @var
      */
     public $menu;
+
     /**
      * TODO
      * @var
@@ -60,6 +63,7 @@ class Page
      * @var bool
      */
     public $showonmenu;
+
     /**
      * TODO
      * @var
@@ -104,7 +108,7 @@ class Page
     protected function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (name,title,menu,submenu,showonmenu)'
-                . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
+            . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
     }
 
     /**

@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  */
 trait Utils
 {
+
     /**
      * Convierte una variable con contenido binario a texto.
      * Lo hace en base64.

@@ -42,6 +42,7 @@ use UnexpectedValueException;
  */
 class AppController extends App
 {
+
     /**
      * Controlador cargado.
      * @var Controller
@@ -64,8 +65,6 @@ class AppController extends App
     public function __construct($folder = '')
     {
         parent::__construct($folder);
-        // Es prescindible, ya que es el mismo valor que por defecto
-        // $this->controller = null;
         $this->debugBar = new StandardDebugBar();
     }
 
@@ -225,10 +224,12 @@ class AppController extends App
                     return $user;
                 }
 
+                $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert('login-password-fail');
                 return null;
             }
 
+            $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert('login-user-not-found');
             return null;
         }

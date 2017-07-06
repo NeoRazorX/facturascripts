@@ -31,6 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class User
 {
+
     use Model {
         get as private getTrait;
     }
@@ -147,9 +148,9 @@ class User
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-                . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
-    
+
     /**
      * Devuelve el usuario con el nick solicitado
      * @param string $nick
@@ -174,8 +175,8 @@ class User
     }
 
     /**
-     * TODO
-     * @param $value
+     * Asigna la contraseña dada al usuario.
+     * @param string $value
      */
     public function setPassword($value)
     {
@@ -183,10 +184,9 @@ class User
     }
 
     /**
-     * TODO
-     * @param $value
-     *
-     * @return bool
+     * Verifica si la contraseña dada es correcta.
+     * @param string $value
+     * @return boolean
      */
     public function verifyPassword($value)
     {
@@ -194,23 +194,23 @@ class User
     }
 
     /**
-     * TODO
-     * @param $ip
+     * Genera una nueva clave de login para el usuario.
+     * Además actualiza lastactivity y asigna la IP proporcionada.
+     * @param string $ipAddress
      * @return string
      */
-    public function newLogkey($ip)
+    public function newLogkey($ipAddress)
     {
         $this->lastactivity = date('d-m-Y H:i:s');
-        $this->lastip = $ip;
-        $this->logkey = static::randomString(99);
+        $this->lastip = $ipAddress;
+        $this->logkey = $this->randomString(99);
         return $this->logkey;
     }
 
     /**
-     * TODO
-     * @param $value
-     *
-     * @return bool
+     * Verifica la clave de login proporcionada.
+     * @param string $value
+     * @return boolean
      */
     public function verifyLogkey($value)
     {

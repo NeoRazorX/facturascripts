@@ -32,6 +32,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class RolAccess
 {
+
     use Model;
 
     /**

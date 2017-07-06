@@ -30,6 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 class FormaPago
 {
+
     use Model;
 
     /**
@@ -171,8 +172,8 @@ class FormaPago
         /// validamos los días de pago
         $array_dias = array();
         foreach (str_getcsv($dias_de_pago) as $d) {
-            if ((int)$d >= 1 && (int)$d <= 31) {
-                $array_dias[] = (int)$d;
+            if ((int) $d >= 1 && (int) $d <= 31) {
+                $array_dias[] = (int) $d;
             }
         }
 
@@ -218,7 +219,7 @@ class FormaPago
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmp_dia = min(array($dia_de_pago, (int)date('t', strtotime($fecha))));
+        $tmp_dia = min(array($dia_de_pago, (int) date('t', strtotime($fecha))));
 
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));

@@ -37,6 +37,7 @@ use FacturaScripts\Core\Model\Serie;
  */
 class DefaultItems
 {
+
     /**
      * Página por defecto
      * @var Page

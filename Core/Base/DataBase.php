@@ -36,6 +36,7 @@ define('FS_CHECK_DB_TYPES', '1');
  */
 class DataBase
 {
+
     /**
      * El enlace con la base de datos.
      * @var resource

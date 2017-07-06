@@ -29,6 +29,7 @@ use RuntimeException;
  */
 class PluginManager
 {
+
     /**
      * Lista de plugins activos.
      * @var array
