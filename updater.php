@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,16 +25,4 @@ if (!file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-/// iniciamos la aplicación
-$app = new FacturaScripts\Core\Base\App(__DIR__);
-
-/// conectamos a la base de datos, cache, etc
-if( $app->connect() ) {
-    
-    /**
-     * TODO: todavía pendiente de diseño.
-     */
-}
-
-/// desconectamos de todo
-$app->close();
+/// a implementar

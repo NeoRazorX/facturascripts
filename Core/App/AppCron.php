@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -17,28 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobaciones previas
-if (!file_exists(__DIR__ . '/config.php')) {
+namespace FacturaScripts\Core\App;
+
+use UnexpectedValueException;
+
+/**
+ * Description of App
+ *
+ * @author Carlos García Gómez
+ */
+class AppCron extends App
+{
+
     /**
-     * Si no hay fichero de configuración significa que no se ha instalado,
-     * así que redirigimos al instalador.
+     * Ejecuta el cron.
+     * @throws UnexpectedValueException
      */
-    header('Location: install.php');
-    die('');
+    public function run()
+    {
+        $this->response->headers->set('Content-Type', 'text/plain');
+        if ($this->dataBase->connected()) {
+            /// implementar
+        } else {
+            $this->response->setContent('DB-ERROR');
+        }
+    }
 }
-
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config.php';
-
-/// iniciamos la aplicación
-$app = new FacturaScripts\Core\App\AppController(__DIR__);
-
-/// conectamos a la base de datos, cache, etc
-$app->connect();
-
-/// ejecutamos el controlador que toque
-$app->run();
-$app->render();
-
-/// desconectamos de todo
-$app->close();

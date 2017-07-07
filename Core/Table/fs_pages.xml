@@ -38,7 +38,7 @@
         <tipo>integer</tipo>
         <nulo>NO</nulo>
         <defecto>100</defecto>
-    </columna>   
+    </columna>
     <restriccion>
         <nombre>fs_pages_pkey</nombre>
         <consulta>PRIMARY KEY (name)</consulta>

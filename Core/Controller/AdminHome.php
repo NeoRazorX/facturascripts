@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,47 +19,102 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Description of admin_home
  *
  * @author Carlos García Gómez
  */
-class AdminHome extends \FacturaScripts\Core\Base\Controller {
+class AdminHome extends Base\Controller
+{
 
+    /**
+     * TODO
+     * @var Model\Agente
+     */
     public $agente;
-    public $almacen;
-    public $divisa;
-    public $ejercicio;
-    public $empresa;
-    public $formaPago;
-    public $pais;
-    public $serie;
-    
-    public function __construct($folder = '', $className = __CLASS__) {
-        parent::__construct($folder, $className);
-    }
 
-    public function run() {
-        parent::run();
-        
+    /**
+     * TODO
+     * @var Model\Almacen
+     */
+    public $almacen;
+
+    /**
+     * TODO
+     * @var Model\Divisa
+     */
+    public $divisa;
+
+    /**
+     * TODO
+     * @var Model\Ejercicio
+     */
+    public $ejercicio;
+
+    /**
+     * TODO
+     * @var Model\FormaPago
+     */
+    public $formaPago;
+
+    /**
+     * TODO
+     * @var Model\Pais
+     */
+    public $pais;
+
+    /**
+     * TODO
+     * @var Model\Serie
+     */
+    public $serie;
+
+    /**
+     * AdminHome constructor.
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param $response
+     * @param Model\User $user
+     * @param string $className
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
+
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
-        $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
+        $pluginManager = new Base\PluginManager();
         $pluginManager->deploy();
 
-        $this->cache->clear();
-        
-        $this->agente = new \FacturaScripts\Core\Model\Agente();
-        $this->almacen = new \FacturaScripts\Core\Model\Almacen();
-        $this->divisa = new \FacturaScripts\Core\Model\Divisa();
-        $this->ejercicio = new \FacturaScripts\Core\Model\Ejercicio();
-        $this->empresa = new \FacturaScripts\Core\Model\Empresa();
-        $this->formaPago = new \FacturaScripts\Core\Model\FormaPago();
-        $this->pais = new \FacturaScripts\Core\Model\Pais();
-        $this->serie = new \FacturaScripts\Core\Model\Serie();
-        
-        foreach($this->agente->all() as $age) {
-            $age->save();
-        }
+        $this->agente = new Model\Agente();
+        $this->almacen = new Model\Almacen();
+        $this->divisa = new Model\Divisa();
+        $this->ejercicio = new Model\Ejercicio();
+        $this->formaPago = new Model\FormaPago();
+        $this->pais = new Model\Pais();
+        $this->serie = new Model\Serie();
     }
 
+    /**
+     * TODO
+     */
+    public function publicCore()
+    {
+        parent::publicCore();
+    }
+
+    /**
+     * TODO
+     */
+    public function privateCore()
+    {
+        parent::privateCore();
+    }
 }

@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
  * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
@@ -21,29 +20,52 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
- * Define los permisos individuales para cada página dentro de un rol de usuarios.
+ * Define la relación entre un usuario y un rol.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class FsRolAccess {
+class RolUser
+{
 
-    use \FacturaScripts\Core\Base\Model;
+    use Model;
 
+    /**
+     * TODO
+     * @var
+     */
     public $id;
-    public $codrol;
-    public $pagename;
-    public $allowdelete;
-    public $allowupdate;
 
-    public function __construct($data = FALSE) {
-        $this->init(__CLASS__, 'fs_roles_access', 'id');
-        if ($data) {
+    /**
+     * TODO
+     * @var
+     */
+    public $codrol;
+
+    /**
+     * TODO
+     * @var
+     */
+    public $nick;
+
+    /**
+     * RolUser constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
+        $this->init(__CLASS__, 'fs_roles_users', 'id');
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
         }
     }
-
 }

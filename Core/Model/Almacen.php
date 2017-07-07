@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -13,21 +12,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * El almacén donde están físicamente los artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Almacen {
+class Almacen
+{
 
-    use \FacturaScripts\Core\Base\Model;
+    use Model;
 
     /**
      * Clave primaria. Varchar (4).
@@ -37,67 +41,74 @@ class Almacen {
 
     /**
      * Nombre del almacen.
-     * @var string 
+     * @var string
      */
     public $nombre;
 
     /**
      * Código que representa al páis donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $codpais;
 
     /**
      * Nombre de la provincia donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $provincia;
 
     /**
      * Nombre de la población donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $poblacion;
 
     /**
      * Código postal donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $codpostal;
 
     /**
      * Dirección donde está ubicado el almacen.
-     * @var string 
+     * @var string
      */
     public $direccion;
 
     /**
      * Persona de contacto del almacen.
-     * @var string 
+     * @var string
      */
     public $contacto;
 
     /**
      * Número de fax del almacen.
-     * @var string 
+     * @var string
      */
     public $fax;
 
     /**
      * Número de teléfono del almacen.
-     * @var string 
+     * @var string
      */
     public $telefono;
 
     /**
      * Todavía sin uso.
-     * @var string 
+     * @var string
      */
     public $observaciones;
 
-    public function __construct($data = FALSE) {
+    /**
+     * Almacen constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data);
         } else {
             $this->clear();
@@ -108,17 +119,19 @@ class Almacen {
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
      * @return string
      */
-    public function install() {
-        return "INSERT INTO " . $this->tableName() . " (codalmacen,nombre,poblacion,"
-                . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+    public function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
+            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
      * Devuelve la URL para ver/modificar los datos de este almacén
      * @return string
      */
-    public function url() {
-        if (is_null($this->codalmacen)) {
+    public function url()
+    {
+        if ($this->codalmacen === null) {
             return 'index.php?page=admin_almacenes';
         }
 
@@ -127,38 +140,40 @@ class Almacen {
 
     /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
-     * @return boolean
+     * @return bool
      */
-    public function isDefault() {
-        return ( $this->codalmacen == $this->defaultItems->codAlmacen() );
+    public function isDefault()
+    {
+        return ( $this->codalmacen === $this->defaultItems->codAlmacen() );
     }
 
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
-     * @return boolean
+     * @return bool
+     * @throws TranslationInvalidArgumentException
      */
-    public function test() {
-        $status = FALSE;
+    public function test()
+    {
+        $status = false;
 
         $this->codalmacen = trim($this->codalmacen);
-        $this->nombre = $this->noHtml($this->nombre);
-        $this->provincia = $this->noHtml($this->provincia);
-        $this->poblacion = $this->noHtml($this->poblacion);
-        $this->direccion = $this->noHtml($this->direccion);
-        $this->codpostal = $this->noHtml($this->codpostal);
-        $this->telefono = $this->noHtml($this->telefono);
-        $this->fax = $this->noHtml($this->fax);
-        $this->contacto = $this->noHtml($this->contacto);
+        $this->nombre = static::noHtml($this->nombre);
+        $this->provincia = static::noHtml($this->provincia);
+        $this->poblacion = static::noHtml($this->poblacion);
+        $this->direccion = static::noHtml($this->direccion);
+        $this->codpostal = static::noHtml($this->codpostal);
+        $this->telefono = static::noHtml($this->telefono);
+        $this->fax = static::noHtml($this->fax);
+        $this->contacto = static::noHtml($this->contacto);
 
-        if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen)) {
+        if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codalmacen)) {
             $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));
-        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
+        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
-
 }
