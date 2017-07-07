@@ -66,10 +66,10 @@
         <tipo>character varying(10)</tipo>
         <nulo>YES</nulo>
     </columna>
-    <columna>
+    <columna> 
         <nombre>codserie</nombre>
         <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
+        <nulo>YES</nulo> 
     </columna>
     <columna> 
         <nombre>contintegrada</nombre>
