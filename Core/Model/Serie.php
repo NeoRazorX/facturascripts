@@ -127,7 +127,7 @@ class Serie {
             $this->numfactura = 1;
         }
 
-        if (!preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie)) {
+        if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codserie)) {
             $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
         } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
