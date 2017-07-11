@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -13,22 +12,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Model as Models;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 /**
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
-class Controller {
+class Controller
+{
 
     /**
      * Gestor de acceso a cache.
@@ -45,13 +49,19 @@ class Controller {
 
     /**
      * Gestor de eventos.
-     * @var EventDispatcher 
+     * @var EventDispatcher
      */
     protected $dispatcher;
 
     /**
+     * Empresa seleccionada.
+     * @var Models\Empresa|false
+     */
+    public $empresa;
+
+    /**
      * Motor de traducción.
-     * @var Translator 
+     * @var Translator
      */
     protected $i18n;
 
@@ -63,9 +73,15 @@ class Controller {
 
     /**
      * Request sobre la que podemos hacer consultas.
-     * @var Request 
+     * @var Request
      */
     public $request;
+
+    /**
+     * Objeto respuesta HTTP.
+     * @var Response
+     */
+    protected $response;
 
     /**
      * Nombre del archivo html para el motor de plantillas.
@@ -80,52 +96,95 @@ class Controller {
     public $title;
 
     /**
+     * Usuario que ha iniciado sesión.
+     * @var Models\User
+     */
+    public $user;
+
+    /**
      * Inicia todos los objetos y propiedades.
+     *
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
+     * @param Response $response
+     * @param Models\User $user
      * @param string $className
+     *
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className) {
+    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    {
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
+
+        $empresa = new Models\Empresa();
+        $this->empresa = $empresa->getDefault();
+
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
+        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
+        $this->user = $user;
     }
-    
+
     /**
      * Devuelve el template HTML a utilizar para este controlador.
-     * @return type
+     * @return string
      */
-    public function getTemplate() {
+    public function getTemplate()
+    {
         return $this->template;
     }
-    
+
     /**
      * Establece el template HTML a utilizar para este controlador.
      * @param string $template
      */
-    public function setTemplate($template) {
+    public function setTemplate($template)
+    {
         $this->template = $template;
+    }
+
+    public function getPageData()
+    {
+        return [
+            'name' => $this->className,
+            'title' => $this->className,
+            'icon' => '<i class="fa fa-circle-o" aria-hidden="true"></i>',
+            'menu' => 'new',
+            'submenu' => NULL,
+            'showonmenu' => TRUE
+        ];
     }
 
     /**
      * Devuelve la url del controlador actual.
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=' . $this->className;
     }
 
     /**
-     * Ejecuta la lógica del controlador.
+     * Ejecuta la lógica pública del controlador.
      */
-    public function run() {
-        $this->dispatcher->dispatch('pre-run');
+    public function publicCore()
+    {
+        $this->template = 'Login/Login.html';
+        $this->dispatcher->dispatch('pre-publicCore');
     }
 
+    /**
+     * Ejecuta la lógica privada del controlador.
+     */
+    public function privateCore()
+    {
+        $this->dispatcher->dispatch('pre-privateCore');
+    }
 }

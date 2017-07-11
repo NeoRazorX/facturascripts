@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
  * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
@@ -21,22 +20,43 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Model;
+use RuntimeException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+
 /**
  * Define un paquete de permisos para asignar rápidamente a usuarios.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class Rol {
+class Rol
+{
 
-    use \FacturaScripts\Core\Base\Model;
+    use Model;
 
+    /**
+     * TODO
+     * @var mixed
+     */
     public $codrol;
+
+    /**
+     * TODO
+     * @var mixed
+     */
     public $descripcion;
 
-    public function __construct($data = FALSE) {
+    /**
+     * Rol constructor.
+     * @param array $data
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'fs_roles', 'codrol');
-        if ($data) {
+        if (!empty($data)) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
         } else {
@@ -44,22 +64,36 @@ class Rol {
         }
     }
 
-    public function clear() {
-        $this->codrol = NULL;
-        $this->descripcion = NULL;
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->codrol = null;
+        $this->descripcion = null;
     }
 
-    public function url() {
-        if (is_null($this->codrol)) {
+    /**
+     * TODO
+     * @return string
+     */
+    public function url()
+    {
+        if ($this->codrol === null) {
             return 'index.php?page=AdminRol';
         }
 
         return 'index.php?page=AdminRol&codrol=' . $this->codrol;
     }
-    
-    public function test() {
-        $this->descripcion = $this->noHtml($this->descripcion);
-        return TRUE;
-    }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Se ejecuta dentro del método save.
+     * @return bool
+     */
+    public function test()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
+        return true;
+    }
 }

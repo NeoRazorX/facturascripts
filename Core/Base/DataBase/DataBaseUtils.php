@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,14 +24,15 @@ namespace FacturaScripts\Core\Base\DataBase;
  * datos. Necesita el enlace con el tipo de base de datos (MySQL o PostgreSQL)
  * usado al crear la clase DataBase. (DataBase::$engine)
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DataBaseUtils {
+class DataBaseUtils
+{
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine 
+     * @var DatabaseEngine
      */
     private static $engine;
 
@@ -40,7 +40,8 @@ class DataBaseUtils {
      * Construye y prepara la clase para su uso
      * @param DatabaseEngine $engine
      */
-    public function __construct($engine) {
+    public function __construct($engine)
+    {
         self::$engine = $engine;
     }
 
@@ -51,10 +52,11 @@ class DataBaseUtils {
      * @param string $value
      * @return array
      */
-    private function searchInArray($items, $index, $value) {
+    private function searchInArray($items, $index, $value)
+    {
         $result = [];
         foreach ($items as $column) {
-            if ($column[$index] == $value) {
+            if ($column[$index] === $value) {
                 $result = $column;
                 break;
             }
@@ -68,13 +70,22 @@ class DataBaseUtils {
      * Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
-     * @return boolean
+     * @return bool
      */
-    public function compareDataTypes($dbType, $xmlType) {
+    public function compareDataTypes($dbType, $xmlType)
+    {
         $db = strtolower($dbType);
         $xml = strtolower($xmlType);
 
-        $result = ((FS_CHECK_DB_TYPES != 1) || self::$engine->compareDataTypes($db, $xml) || ($xml == 'serial') || (substr($db, 0, 4) == 'time' && substr($xml, 0, 4) == 'time'));
+        $result = (
+            (FS_CHECK_DB_TYPES !== '1') ||
+            self::$engine->compareDataTypes($db, $xml) ||
+            ($xml === 'serial') ||
+            (
+            strpos($db, 'time') === 0 &&
+            strpos($xml, 'time') === 0
+            )
+            );
 
         return $result;
     }
@@ -86,10 +97,11 @@ class DataBaseUtils {
      * @param array $dbCols
      * @return string
      */
-    public function compareColumns($tableName, $xmlCols, $dbCols) {
+    public function compareColumns($tableName, $xmlCols, $dbCols)
+    {
         $result = '';
         foreach ($xmlCols as $xml_col) {
-            if (strtolower($xml_col['tipo']) == 'integer') {
+            if (strtolower($xml_col['tipo']) === 'integer') {
                 /**
                  * Desde la pestaña avanzado el panel de control se puede cambiar
                  * el tipo de entero a usar en las columnas.
@@ -107,11 +119,11 @@ class DataBaseUtils {
                 $result .= self::$engine->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] != $xml_col['defecto']) {
+            if ($column['default'] === null && $xml_col['defecto'] !== '') {
                 $result .= self::$engine->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
-            if ($column['is_nullable'] != $xml_col['nulo']) {
+            if ($column['is_nullable'] !== $xml_col['nulo']) {
                 $result .= self::$engine->sqlAlterConstraintNull($tableName, $xml_col);
             }
         }
@@ -124,14 +136,15 @@ class DataBaseUtils {
      * @param string $tableName
      * @param array $xmlCons
      * @param array $dbCons
-     * @param boolean $deleteOnly
+     * @param bool $deleteOnly
      * @return string
      */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = FALSE) {
+    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    {
         $result = '';
 
         foreach ($dbCons as $db_con) {
-            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === FALSE) {
+            if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
                 $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
                 if (empty($column)) {
                     $result .= self::$engine->sqlDropConstraint($tableName, $db_con);
@@ -139,9 +152,9 @@ class DataBaseUtils {
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
-                if (substr($xml_con['consulta'], 0, 7) == 'PRIMARY') {
+                if (strpos($xml_con['consulta'], 'PRIMARY') === 0) {
                     continue;
                 }
 
@@ -162,8 +175,8 @@ class DataBaseUtils {
      * @param array $xmlCons
      * @return string
      */
-    public function generateTable($tableName, $xmlCols, $xmlCons) {
+    public function generateTable($tableName, $xmlCols, $xmlCons)
+    {
         return self::$engine->sqlCreateTable($tableName, $xmlCols, $xmlCons);
     }
-
 }

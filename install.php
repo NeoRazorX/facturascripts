@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,8 +29,8 @@ if (file_exists(__DIR__ . '/config.php')) {
 
 if (!file_exists(__DIR__ . '/vendor')) {
     die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>'
-            . '----------------------------------------'
-            . '<p>Debes ejecutar: composer install</p>');
+        . '----------------------------------------'
+        . '<p>Debes ejecutar: composer install</p>');
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -48,7 +47,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 function searchErrors(&$errors, &$i18n)
 {
-    if ((float)'3,1' >= (float)'3.1') {
+    if ((float) '3,1' >= (float) '3.1') {
         $errors[] = $i18n->trans('wrong-decimal-separator');
     } elseif (!function_exists('mb_substr')) {
         $errors[] = $i18n->trans('mb-string-not-fount');
@@ -75,10 +74,10 @@ function getLanguages(&$i18n)
 {
     $languages = [];
 
-    foreach (scandir(__DIR__ . '/Core/Translation') as $fileName) {
+    foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
         if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
             $key = substr($fileName, 0, -5);
-            $languages[$key] = $i18n->trans('languages-'.substr($fileName, 0, -5));
+            $languages[$key] = $i18n->trans('languages-' . substr($fileName, 0, -5));
         }
     }
 
@@ -150,7 +149,7 @@ function testMysql(&$errors, $dbData)
     }
 
     // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
-    $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
+    $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
     if ($connection->connect_error) {
         $errors[] = (string) $connection->connect_error;
     } else {
@@ -243,7 +242,7 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
-        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') != '') {
+        if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
             fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
@@ -287,13 +286,13 @@ function renderHTML(&$templateVars)
 function installerMain()
 {
     $errors = [];
-    
+
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } else {
         $i18n = new Translator(__DIR__);
     }
-    
+
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
@@ -313,5 +312,4 @@ function installerMain()
     );
     renderHTML($templateVars);
 }
-
 installerMain();

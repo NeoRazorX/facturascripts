@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,18 +20,32 @@
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
+use Exception;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Model\User;
+use InvalidArgumentException;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
+use Twig_Environment;
+use Twig_Error_Loader;
+use Twig_Error_Runtime;
+use Twig_Error_Syntax;
+use Twig_Loader_Filesystem;
+use UnexpectedValueException;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-class AppController extends App {
+class AppController extends App
+{
 
     /**
      * Controlador cargado.
-     * @var Controller 
+     * @var Controller
      */
     private $controller;
 
@@ -42,22 +55,40 @@ class AppController extends App {
      */
     private $debugBar;
 
-    public function __construct($folder = '') {
+    /**
+     * AppController constructor.
+     * @param string $folder
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
+     */
+    public function __construct($folder = '')
+    {
         parent::__construct($folder);
-        $this->controller = NULL;
         $this->debugBar = new StandardDebugBar();
     }
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
+     * @throws InvalidArgumentException
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
+     * @throws UnexpectedValueException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
-    public function run() {
+    public function run()
+    {
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->renderHtml('Error/DbError.html');
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
+        } elseif ($this->request->query->get('logout')) {
+            $this->userLogout();
+            $this->renderHtml('Login/Login.html');
         } else {
             /// Obtenemos el nombre del controlador a cargar
             $pageName = $this->request->query->get('page', 'AdminHome');
@@ -68,8 +99,16 @@ class AppController extends App {
     /**
      * Carga y procesa el controlador $pageName.
      * @param string $pageName nombre del controlador
+     * @throws InvalidArgumentException
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
+     * @throws UnexpectedValueException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
-    private function loadController($pageName) {
+    private function loadController($pageName)
+    {
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
@@ -81,13 +120,20 @@ class AppController extends App {
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
+            $user = $this->userAuth();
 
             try {
-                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
-                $this->controller->run();
+                $this->controller = new $controllerName(
+                    $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
+                );
+                if ($user) {
+                    $this->controller->privateCore();
+                } else {
+                    $this->controller->publicCore();
+                }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
-            } catch (\Exception $exc) {
+            } catch (Exception $exc) {
                 $this->debugBar['exceptions']->addException($exc);
                 $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
             }
@@ -103,10 +149,16 @@ class AppController extends App {
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
      * @param string $template archivo html a utilizar
+     * @throws InvalidArgumentException
+     * @throws UnexpectedValueException
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
      */
-    private function renderHtml($template) {
+    private function renderHtml($template)
+    {
         /// cargamos el motor de plantillas
-        $twigLoader = new \Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
@@ -118,7 +170,7 @@ class AppController extends App {
 
         /// variables para la plantilla HTML
         $templateVars = array(
-            'debugBarRender' => FALSE,
+            'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
             'log' => $this->miniLog->read(),
@@ -127,8 +179,9 @@ class AppController extends App {
 
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
-            $twigOptions['debug'] = TRUE;
-            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer('vendor/maximebf/debugbar/src/DebugBar/Resources/');
+            $twigOptions['debug'] = true;
+            $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
+            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// añadimos del log a debugBar
             foreach ($this->miniLog->read(['debug']) as $msg) {
@@ -136,15 +189,78 @@ class AppController extends App {
             }
             $this->debugBar['messages']->info('END');
         }
-        $twig = new \Twig_Environment($twigLoader, $twigOptions);
+        $twig = new Twig_Environment($twigLoader, $twigOptions);
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * TODO
+     * @return User|null
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    private function userAuth()
+    {
+        $user0 = new User();
+        $nick = $this->request->request->get('fsNick', '');
+
+        if ($nick !== '') {
+            $user = $user0->get($nick);
+            if ($user) {
+                if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
+                    $logKey = $user->newLogkey($this->request->getClientIp());
+                    $user->save();
+                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    $this->miniLog->debug('Login OK. User: ' . $nick);
+                    return $user;
+                }
+
+                $this->ipFilter->setAttempt($this->request->getClientIp());
+                $this->miniLog->alert('login-password-fail');
+                return null;
+            }
+
+            $this->ipFilter->setAttempt($this->request->getClientIp());
+            $this->miniLog->alert('login-user-not-found');
+            return null;
+        }
+
+        $cookieNick = $this->request->cookies->get('fsNick', '');
+        if ($cookieNick !== '') {
+            $cookieUser = $user0->get($cookieNick);
+            if ($cookieUser) {
+                if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
+                    $this->miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
+                    return $cookieUser;
+                }
+
+                $this->miniLog->alert('login-cookie-fail');
+                return null;
+            }
+
+            $this->miniLog->alert('login-user-not-found');
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * TODO
+     */
+    private function userLogout()
+    {
+        $this->response->headers->clearCookie('fsNick');
+        $this->response->headers->clearCookie('fsLogkey');
+        $this->miniLog->debug('Logout OK.');
+    }
 }

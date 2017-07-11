@@ -1,8 +1,7 @@
 <?php
-
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,19 +20,23 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-abstract class App {
+abstract class App
+{
 
     /**
      * Gestor de acceso a cache.
-     * @var Base\Cache 
+     * @var Base\Cache
      */
     protected $cache;
 
@@ -54,6 +57,12 @@ abstract class App {
      * @var Base\Translator
      */
     protected $i18n;
+
+    /**
+     * Filtro de IPs.
+     * @var Base\IPFilter
+     */
+    protected $ipFilter;
 
     /**
      * Gestor del log de la app.
@@ -82,12 +91,17 @@ abstract class App {
     /**
      * Inicializa la app.
      * @param string $folder Carpeta de trabajo de FacturaScripts
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws TranslationInvalidArgumentException
      */
-    public function __construct($folder = '') {
+    public function __construct($folder = '')
+    {
         $this->cache = new Base\Cache($folder);
         $this->dataBase = new Base\DataBase();
         $this->folder = $folder;
         $this->i18n = new Base\Translator($folder, FS_LANG);
+        $this->ipFilter = new Base\IPFilter($folder);
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
@@ -98,33 +112,39 @@ abstract class App {
      * Conecta a la base de datos.
      * @return bool
      */
-    public function connect() {
+    public function connect()
+    {
         return $this->dataBase->connect();
     }
 
     /**
      * Cierra la conexión a la base de datos.
      */
-    public function close() {
+    public function close()
+    {
         $this->dataBase->close();
     }
 
+    /**
+     * TODO
+     * @return mixed
+     */
     abstract public function run();
 
     /**
      * Vuelca los datos en la salida estándar.
      */
-    public function render() {
+    public function render()
+    {
         $this->response->send();
     }
 
     /**
      * Devuelve TRUE si la IP del cliente ha sido baneada.
-     * @return boolean
+     * @return bool
      */
-    protected function isIPBanned() {
-        $ipFilter = new Base\IPFilter($this->folder);
-        return $ipFilter->isBanned($this->request->getClientIp());
+    protected function isIPBanned()
+    {
+        return $this->ipFilter->isBanned($this->request->getClientIp());
     }
-
 }
