@@ -163,7 +163,7 @@ class Postgresql implements DatabaseEngine
      */
     private function runSql($link, $sql, $selectRows = true)
     {
-        $result = [];
+        $result = ['ok' => TRUE];
         try {
             $aux = pg_query($link, $sql);
             if ($aux) {
