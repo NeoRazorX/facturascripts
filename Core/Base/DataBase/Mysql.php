@@ -448,7 +448,7 @@ class Mysql implements DatabaseEngine
             case (stripos($colData['defecto'], 'nextval(') !== FALSE):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
-                
+
             default:
                 $contraints = $this->getConstraints($colData);
                 break;
@@ -607,8 +607,9 @@ class Mysql implements DatabaseEngine
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $result = '';
-        if ($colData['tipo'] != 'serial')
+        if ($colData['tipo'] != 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
+        }
         return $result;
     }
 
