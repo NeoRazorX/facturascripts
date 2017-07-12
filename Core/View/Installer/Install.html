@@ -6,10 +6,10 @@
         <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="FacturaScripts" />
-        <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="vendor/components/font-awesome/css/font-awesome.min.css" />
-        <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             $( document ).ready(function() {
                 $('#db_type').on('change', function () {
@@ -17,11 +17,10 @@
                         str = $(this).val();
                     });
                     if (str === 'mysql') {
-                        port = 3306;
+                        $('#db_port').val(3306);
                     } else if (str === 'postgresql') {
-                        port = 5432;
+                        $('#db_port').val(5432);
                     }
-                    $('#db_port').val( port );
                 });
             });
         </script>
@@ -154,7 +153,7 @@
                 <div class="row">
                     <div class="col-sm-12 text-right">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-check" aria-hidden="true"></i>&nbsp; {{ i18n.trans('accept') }}
+                            <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
                     </div>
                 </div>
