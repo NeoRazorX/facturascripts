@@ -35,6 +35,7 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
@@ -258,7 +259,8 @@ function saveInstall()
  */
 function deployPlugins()
 {
-    $pluginManager = new PluginManager(__DIR__);
+    $miniLog = new MiniLog();
+    $pluginManager = new PluginManager(__DIR__, $miniLog);
     $pluginManager->deploy();
 }
 

@@ -103,7 +103,7 @@ abstract class App
         $this->i18n = new Base\Translator($folder, FS_LANG);
         $this->ipFilter = new Base\IPFilter($folder);
         $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager($folder, $this->miniLog);
+        $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
     }

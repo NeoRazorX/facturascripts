@@ -53,9 +53,9 @@ class PluginManager
      * @param string $folder
      * @param $minilog
      */
-    public function __construct($folder = '', &$minilog)
+    public function __construct($folder = '')
     {
-        $this->miniLog = $minilog;
+        $this->miniLog = new MiniLog;
         if (self::$folder === null) {
             self::$folder = $folder;
 
