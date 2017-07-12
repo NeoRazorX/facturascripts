@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of IPFilter
+ * Previene los ataques de fuerza bruta
  *
  * @author Carlos García Gómez
  */
@@ -28,22 +28,24 @@ class IPFilter
 {
 
     /**
-     * TODO
+     * Número máximo de intentos de acceso
      */
     const MAX_ATTEMPTS = 5;
 
     /**
-     * TODO
+     * Número de segundos que el sistema bloquea el acceso
      */
     const BAN_SECONDS = 600;
 
     /**
-     * TODO
+     * Ruta del archivo de la cache
+     * @var string
      */
     private $filePath;
 
     /**
-     * TODO
+     * Contiene las direcciones IP
+     * @var array
      */
     private $ipList;
 
@@ -62,9 +64,8 @@ class IPFilter
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
-                    if (count($line) === 3 && (int) $line[2] > time()) { /// if not expired
-                        $this->ipList[] = ['ip' => $line[0], 'count' => (int) $line[1], 'expire' => (int) $line[2]];
-                    }
+
+                    $this->readIp($line);
                 }
 
                 fclose($file);
@@ -73,7 +74,22 @@ class IPFilter
     }
 
     /**
-     * TODO
+     * Carga las direcciones IP en el array $ipList
+     * @param  array $line
+     */
+    private function readIp($line)
+    {
+        if (count($line) === 3 && (int) $line[2] > time()) { /// if not expired
+            $this->ipList[] = [
+                'ip' => $line[0],
+                'count' => (int) $line[1],
+                'expire' => (int) $line[2]
+            ];
+        }
+    }
+
+    /**
+     * Devuelve true si los intentos de acceso desde una IP sobrepasa el límite MAX_ATTEMPTS
      * @param $ip
      * @return bool
      */
@@ -92,7 +108,7 @@ class IPFilter
     }
 
     /**
-     * TODO
+     * Cuenta las veces que un usuario intenta acceder desde una dirección IP
      * @param $ip
      */
     public function setAttempt($ip)
@@ -108,14 +124,18 @@ class IPFilter
         }
 
         if (!$found) {
-            $this->ipList[] = ['ip' => $ip, 'count' => 1, 'expire' => time() + self::BAN_SECONDS];
+            $this->ipList[] = [
+                'ip' => $ip,
+                'count' => 1,
+                'expire' => time() + self::BAN_SECONDS
+            ];
         }
 
         $this->save();
     }
 
     /**
-     * TODO
+     * Almacena las direcciones IP en la cache ip.list
      */
     private function save()
     {
