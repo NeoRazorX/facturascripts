@@ -4,9 +4,11 @@
 /Dinamic/
 /doc/
 /nbproject/
+/node_modules/
 /Plugins/
 /vendor/
 .DS_Store
 .htaccess
 config.php
+generateDoc.sh
 plugin.list

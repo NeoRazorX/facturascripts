@@ -442,10 +442,17 @@ class Mysql implements DatabaseEngine
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = strtolower($colData['tipo']) === 'integer' ? FS_DB_INTEGER : strtolower($colData['tipo']);
-
-        $contraints = ($type === 'serial') ? ' NOT NULL AUTO_INCREMENT' : $this->getConstraints($colData);
-
+        $type = stripos('integer,serial', $colData['tipo']) === FALSE ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (TRUE) {
+            case ($type == 'serial'):
+            case (stripos($colData['defecto'], 'nextval(') !== FALSE):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+                
+            default:
+                $contraints = $this->getConstraints($colData);
+                break;
+        }
         return ' ' . $type . $contraints;
     }
 
@@ -599,7 +606,10 @@ class Mysql implements DatabaseEngine
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        return $this->sqlAlterModifyColumn($tableName, $colData);
+        $result = '';
+        if ($colData['tipo'] != 'serial')
+            $result = $this->sqlAlterModifyColumn($tableName, $colData);
+        return $result;
     }
 
     /**
