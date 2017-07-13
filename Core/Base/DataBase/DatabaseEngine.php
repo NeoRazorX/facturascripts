@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use mysqli;
+use PDO;
 
 /**
  * Interface para cada uno de los motores de base de datos compatibles
@@ -44,7 +45,7 @@ interface DatabaseEngine
 
     /**
      * Información sobre el motor de base de datos
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @return string
      */
     public function version($link);
@@ -57,45 +58,45 @@ interface DatabaseEngine
 
     /**
      * Cierra la conexión con la base de datos
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function close($link);
 
     /**
      * Último mensaje de error generado un operación con la BD
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function errorMessage($link);
 
     /**
      * Inicia una transacción sobre la conexión
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function beginTransaction($link);
 
     /**
      * Confirma las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function commit($link);
 
     /**
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function rollback($link);
 
     /**
      * Indica si la conexión tiene una transacción abierta
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function inTransaction($link);
 
     /**
      * Ejecuta una sentencia de datos sobre la conexión
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @param string $sql
      * @return array
      */
@@ -104,7 +105,7 @@ interface DatabaseEngine
     /**
      * Ejecuta una sentencia DDL sobre la conexión.
      * Si no hay transacción abierta crea una y la finaliza
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @param string $sql
      */
     public function exec($link, $sql);
@@ -118,13 +119,13 @@ interface DatabaseEngine
 
     /**
      * Lista de tablas existentes en la conexión
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      */
     public function listTables($link);
 
     /**
      * Escapa la cadena indicada
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @param string $str
      */
     public function escapeString($link, $str);
@@ -142,7 +143,7 @@ interface DatabaseEngine
 
     /**
      * Comprueba la existencia de una secuencia
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
@@ -151,7 +152,7 @@ interface DatabaseEngine
 
     /**
      * Comprobación adicional a la existencia de una tabla
-     * @param mysqli|resource $link
+     * @param mysqli|resource|PDO $link
      * @param string $tableName
      * @param string $error
      */

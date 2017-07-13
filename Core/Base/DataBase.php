@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
 use FacturaScripts\Core\Base\DataBase\DataBaseUtils;
 use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
+use FacturaScripts\Core\Base\DataBase\PDOMysql;
+use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
 
 define('FS_FOREIGN_KEYS', '1');
 define('FS_DB_INTEGER', 'INTEGER');
@@ -94,11 +96,15 @@ class DataBase
                 case 'mysql':
                     self::$engine = new Mysql();
                     break;
-
                 case 'postgresql':
                     self::$engine = new Postgresql();
                     break;
-
+                case 'pdo_mysql':
+                    self::$engine = new PDOMysql();
+                    break;
+                case 'pdo_pgsql':
+                    self::$engine = new PDOPostgresql();
+                    break;
                 default:
                     self::$engine = null;
                     self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');

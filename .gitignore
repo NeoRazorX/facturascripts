@@ -12,3 +12,4 @@
 config.php
 generateDoc.sh
 plugin.list
+package-lock.json

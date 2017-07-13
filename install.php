@@ -122,6 +122,22 @@ function dbConnect(&$errors, &$i18n)
                 $errors[] = $i18n->trans('postgresql-not-found');
             }
             break;
+
+        case 'pdo_mysql':
+            if (class_exists('PDO',false) && extension_loaded('pdo_mysql')) {
+                $done = testMysql($errors, $dbData);
+            } else {
+                $errors[] = $i18n->trans('pdo-mysql-not-found');
+            }
+            break;
+
+        case 'pdo_pgsql':
+            if (class_exists('PDO',false) && extension_loaded('pdo_pgsql')) {
+                $done = testPostgreSql($errors, $dbData);
+            } else {
+                $errors[] = $i18n->trans('pdo-pgsql-not-found');
+            }
+            break;
     }
 
     if (!$done) {
