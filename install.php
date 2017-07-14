@@ -28,9 +28,9 @@ if (file_exists(__DIR__ . '/config.php')) {
 }
 
 if (!file_exists(__DIR__ . '/vendor')) {
-    die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>'
+    die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install<br/>npm install</p>'
         . '----------------------------------------'
-        . '<p>Debes ejecutar: composer install</p>');
+        . '<p>Debes ejecutar: composer install<br/>npm install</p>');
 }
 
 require_once __DIR__ . '/vendor/autoload.php';

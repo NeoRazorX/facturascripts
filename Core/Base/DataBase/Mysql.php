@@ -448,7 +448,7 @@ class Mysql implements DatabaseEngine
             case (stripos($colData['defecto'], 'nextval(') !== FALSE):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
-                
+
             default:
                 $contraints = $this->getConstraints($colData);
                 break;
