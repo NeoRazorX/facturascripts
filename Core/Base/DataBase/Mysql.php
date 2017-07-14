@@ -607,8 +607,9 @@ class Mysql implements DatabaseEngine
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $result = '';
-        if ($colData['tipo'] != 'serial')
+        if ($colData['tipo'] != 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
+        }
         return $result;
     }
 
