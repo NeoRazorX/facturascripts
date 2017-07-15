@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FormaPago
+class FormaPago extends Globals
 {
 
     use Model;
@@ -151,7 +152,7 @@ class FormaPago
         $fecha1 = date('d-m-Y');
         $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
-            $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('expiration-invalid'));
             return false;
         }
 

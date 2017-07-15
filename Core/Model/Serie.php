@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -29,7 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Serie
+class Serie extends Globals
 {
 
     use Model;
@@ -148,9 +149,9 @@ class Serie
         }
 
         if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codserie)) {
-            $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-cod-invalid'));
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-desc-invalid'));
         } else {
             $status = true;
         }

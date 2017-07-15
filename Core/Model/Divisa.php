@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Divisa
+class Divisa extends Globals
 {
 
     use Model;
@@ -149,15 +150,15 @@ class Divisa
         $this->simbolo = static::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('bage-cod-invalid'));
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
-            $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('iso-cod-invalid'));
         } elseif ($this->tasaconv === 0) {
-            $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
+            self::$miniLog->alert(self::$i18n->trans('conversion-rate-not-0'));
         } elseif ($this->tasaconvcompra === 0) {
-            $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
+            self::$miniLog->alert(self::$i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
-            $this->cache->delete('m_divisa_all');
+            self::$cache->delete('m_divisa_all');
             $status = true;
         }
 

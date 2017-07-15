@@ -20,6 +20,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -30,7 +31,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class Rol
+class Rol extends Globals
 {
 
     use Model;
