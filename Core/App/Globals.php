@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Define atributos y métodos globales a todas las clases

@@ -228,7 +228,7 @@ class AppController extends App
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $self::miniLog->alert('login-user-not-found');
+            self::$miniLog->alert('login-user-not-found');
             return null;
         }
 

@@ -61,6 +61,12 @@ abstract class App extends Globals
     protected $request;
 
     /**
+     * Objeto respuesta HTTP.
+     * @var Request
+     */
+    protected $response;
+
+    /**
      * Inicializa la app.
      * @param string $folder Carpeta de trabajo de FacturaScripts
      * @throws InvalidArgumentException

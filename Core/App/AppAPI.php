@@ -39,7 +39,7 @@ class AppAPI extends App
     public function run()
     {
         $this->response->headers->set('Content-Type', 'text/plain');
-        if (!$this->dataBase->connected()) {
+        if (!self::$dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent('DB-ERROR');
         } elseif ($this->isIPBanned()) {

@@ -61,6 +61,12 @@ class Controller extends Globals
     public $request;
 
     /**
+     * Objeto respuesta HTTP.
+     * @var Request
+     */
+    protected $response;
+
+    /**
      * Nombre del archivo html para el motor de plantillas.
      * @var string nombre_archivo.html
      */
