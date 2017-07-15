@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
 use FacturaScripts\Core\Base\DataBase\DataBaseUtils;
 use FacturaScripts\Core\Base\DataBase\Mysql;
+use FacturaScripts\Core\Base\DataBase\PDOSqlite;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 use FacturaScripts\Core\Base\DataBase\PDOMysql;
 use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
@@ -104,6 +105,9 @@ class DataBase
                     break;
                 case 'pdo_pgsql':
                     self::$engine = new PDOPostgresql();
+                    break;
+                case 'pdo_sqlite':
+                    self::$engine = new PDOSqlite();
                     break;
                 default:
                     self::$engine = null;
@@ -409,7 +413,6 @@ class DataBase
         if (empty($list)) {
             $list = $this->getTables();
         }
-
         return in_array($tableName, $list, false);
     }
 

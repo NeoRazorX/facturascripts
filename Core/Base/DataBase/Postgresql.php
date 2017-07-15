@@ -82,6 +82,39 @@ class Postgresql implements DatabaseEngine
     }
 
     /**
+     * Se intenta realizar la conexión a la base de datos PostgreSQL,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     *
+     * @param $errors
+     * @param $dbData
+     *
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData)
+    {
+        $done = false;
+
+        $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+        if ($connection) {
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+            if ($connection2) {
+                $done = true;
+            } else {
+                $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
+                if (pg_query($connection, $sqlCrearBD)) {
+                    $done = true;
+                } else {
+                    $errors[] = (string) pg_last_error($connection);
+                }
+            }
+        }
+
+        return $done;
+    }
+
+    /**
      * Desconecta de la base de datos.
      * @param resource $link
      * @return bool

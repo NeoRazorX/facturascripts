@@ -19,12 +19,13 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+//use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 /**
- * Clase para conectar a MySQL utilizando pdo_mysql.
+ * Clase para conectar a SQLite utilizando pdo_pgsql.
  *
  * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
  *
@@ -32,7 +33,7 @@ use PDOStatement;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PDOMysql implements DatabaseEngine
+class PDOSqlite implements DatabaseEngine
 {
     /**
      * Database Handler
@@ -111,16 +112,16 @@ class PDOMysql implements DatabaseEngine
             $error = $this->error;
             return null;
         }
-        if (!extension_loaded('pdo_mysql')) {
-            $this->error = 'No tienes instalada la extensión de PHP para PDO MySQL.';
+        if (!extension_loaded('pdo_sqlite')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO SQLite.';
             $error = $this->error;
             return null;
         }
 
-        $dsn = 'mysql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
+        //$dsn = 'sqlite:' . $fileName . ';dbname=' . FS_DB_NAME;
+        $dsn = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
@@ -134,16 +135,19 @@ class PDOMysql implements DatabaseEngine
             return null;
         }
 
+        // Force SQLite to use the UTF-8 character set by default.
+        //$this->dbh->exec('PRAGMA encoding "UTF-8";');
+
         /// Desactivamos las claves ajenas
         if (FS_FOREIGN_KEYS !== '1') {
-            $this->dbh->exec('SET foreign_key_checks = 0;');
+            $this->dbh->exec('PRAGMA foreign_keys = 0;');
         }
 
         return $this->dbh;
     }
 
     /**
-     * Se intenta realizar la conexión a la base de datos MySQL,
+     * Se intenta realizar la conexión a la base de datos SQLite,
      * si se ha realizado se devuelve true, sino false.
      * En el caso que sea false, $errors contiene el error
      *
@@ -352,7 +356,13 @@ class PDOMysql implements DatabaseEngine
             $result .= ' DEFAULT NULL';
         } else {
             if ($colData['defecto'] !== '') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
+                if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
+                    $result .= ' DEFAULT ' . $colData['defecto'];
+                } elseif ($colData['defecto'] !== 'true') {
+                    $result .= ' DEFAULT 1';
+                } elseif ($colData['defecto'] !== 'false') {
+                    $result .= ' DEFAULT 0';
+                }
             }
         }
 
@@ -361,6 +371,7 @@ class PDOMysql implements DatabaseEngine
 
     /**
      * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * https://sqlite.org/datatype3.html
      *
      * @param array $colData
      *
@@ -368,10 +379,13 @@ class PDOMysql implements DatabaseEngine
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        $type = stripos('boolean,integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
         switch (true) {
             case ($type === 'serial'):
             case (stripos($colData['defecto'], 'nextval(') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            case (stripos($colData['defecto'], 'boolean') !== false):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
             default:
@@ -390,13 +404,13 @@ class PDOMysql implements DatabaseEngine
      */
     public function columnFromData($colData)
     {
-        $result = array_change_key_case($colData);
-        $result['is_nullable'] = $result['null'];
-        $result['name'] = $result['field'];
+        $colData['extra'] = null;
 
-        unset($result['null'], $result['field']);
+        if ($colData['character_maximum_length'] !== null) {
+            $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
+        }
 
-        return $result;
+        return $colData;
     }
 
     /**
@@ -408,7 +422,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function version($link)
     {
-        return 'MYSQL ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
+        return 'SQLITE ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
@@ -524,31 +538,69 @@ class PDOMysql implements DatabaseEngine
 
     /**
      * Compara los tipos de datos de una columna numerica.
-     *
      * @param string $dbType
      * @param string $xmlType
-     *
      * @return bool
      */
     private function compareDataTypeNumeric($dbType, $xmlType)
     {
-        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
-            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
+        return (
+                $xmlType === 'INTEGER' &&
+                (
+                    0 === strpos($dbType, 'INT') ||
+                    0 === strpos($dbType, 'INTEGER') ||
+                    0 === strpos($dbType, 'TINYINT') ||
+                    0 === strpos($dbType, 'SMALLINT') ||
+                    0 === strpos($dbType, 'MEDIUMINT') ||
+                    0 === strpos($dbType, 'BIGINT') ||
+                    0 === strpos($dbType, 'UNSIGNED BIG INT') ||
+                    0 === strpos($dbType, 'INT2') ||
+                    0 === strpos($dbType, 'INT8')
+                )
+            ) ||
+            (
+                $xmlType === 'double precision' &&
+                (
+                    0 === strpos($dbType, 'REAL') ||
+                    0 === strpos($dbType, 'DOUBLE') ||
+                    0 === strpos($dbType, 'DOUBLE PRECISION') ||
+                    0 === strpos($dbType, 'FLOAT') ||
+                    0 === strpos($dbType, 'NUMERIC') ||
+                    0 === strpos($dbType, 'DECIMAL')
+                )
+            ) ||
+            (
+                (
+                    $xmlType === 'timestamp' || $xmlType === 'date' || $xmlType === 'datetime'
+                )
+                &&
+                (
+                    0 === strpos($dbType, 'DATE') ||
+                    0 === strpos($dbType, 'DATETIME')
+                )
+            );
     }
 
     /**
      * Compara los tipos de datos de una columna alfanumerica.
-     *
      * @param string $dbType
      * @param string $xmlType
-     *
      * @return bool
      */
     private function compareDataTypeChar($dbType, $xmlType)
     {
         $result = 0 === strpos($xmlType, 'character varying(');
         if ($result) {
-            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
+            $result = (
+                (0 === strpos($dbType, 'CHARACTER(')) ||
+                (0 === strpos($dbType, 'VARCHAR(')) ||
+                (0 === strpos($dbType, 'VARYING CHARACTER(')) ||
+                (0 === strpos($dbType, 'NCHAR(')) ||
+                (0 === strpos($dbType, 'NATIVE CHARACTER(')) ||
+                (0 === strpos($dbType, 'NVARCHAR(')) ||
+                (0 === strpos($dbType, 'TEXT')) ||
+                (0 === strpos($dbType, 'CLOB'))
+            );
         }
         return $result;
     }
@@ -565,7 +617,7 @@ class PDOMysql implements DatabaseEngine
     {
         $result = (
             ($dbType === $xmlType) ||
-            ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
+            ($dbType === 'INTEGER(1)' && $xmlType === 'boolean') ||
             (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
             (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
         );
@@ -591,14 +643,12 @@ class PDOMysql implements DatabaseEngine
     public function listTables($link)
     {
         $tables = [];
-        $this->query('SHOW TABLES;');
-        $aux = $this->resultSet();
-        if ($aux) {
+        $sql = 'SELECT name FROM sqlite_master;';
+
+        $aux = $this->select($link, $sql);
+        if (!empty($aux)) {
             foreach ($aux as $a) {
-                $key = 'Tables_in_' . FS_DB_NAME;
-                if (isset($a[$key])) {
-                    $tables[] = $a[$key];
-                }
+                $tables[] = $a['name'];
             }
         }
         return $tables;
@@ -625,7 +675,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function dateStyle()
     {
-        return 'd-m-Y';
+        return 'Y-m-d';
     }
 
     /**
@@ -637,7 +687,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function sql2int($colName)
     {
-        return 'CAST(' . $colName . ' as UNSIGNED)';
+        return 'CAST(' . $colName . ' as INTEGER)';
     }
 
     /**
@@ -656,6 +706,14 @@ class PDOMysql implements DatabaseEngine
      */
     public function checkSequence($link, $tableName, $default, $colname)
     {
+        $aux = explode("'", $default);
+        if (count($aux) === 3) {
+            $data = $this->dbh->query($this->sqlSequenceExists($aux[1]));
+            if ($data) {             /// ¿Existe esa secuencia?
+                $data = $this->dbh->query('SELECT MAX(' . $colname . ')+1 as num FROM ' . $tableName . ';');
+                $this->dbh->exec('CREATE SEQUENCE ' . $aux[1] . ' START ' . $data[0]['num'] . ';');
+            }
+        }
         return true;
     }
 
@@ -670,18 +728,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function checkTableAux($link, $tableName, &$error)
     {
-        $result = true;
-        /// ¿La tabla no usa InnoDB?
-        $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if ($data && $data[0]['Engine'] !== 'InnoDB') {
-            $result = $this->dbh->exec('ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
-            if ($result) {
-                $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
-                    . ' Imprescindible para FacturaScripts.';
-            }
-        }
-
-        return $result;
+        return true;
     }
 
     /**
@@ -703,7 +750,10 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlColumns($tableName)
     {
-        return 'SHOW COLUMNS FROM `' . $tableName . '`;';
+        // TODO: Comprobar que sea realmente así
+        $sql = 'DESCRIBE ' . $tableName;
+
+        return $sql;
     }
 
     /**
@@ -715,10 +765,12 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlConstraints($tableName)
     {
-        $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
-            . ' FROM information_schema.table_constraints '
-            . ' WHERE table_schema = schema()'
-            . " AND table_name = '" . $tableName . "';";
+        // TODO: Este no es su equivalente
+        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
+            . ' FROM information_schema.table_constraints AS tc'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
         return $sql;
     }
 
@@ -731,24 +783,29 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlConstraintsExtended($tableName)
     {
-        $sql = 'SELECT t1.constraint_name as name,'
-            . ' t1.constraint_type as type,'
-            . ' t2.column_name,'
-            . ' t2.referenced_table_name AS foreign_table_name,'
-            . ' t2.referenced_column_name AS foreign_column_name,'
-            . ' t3.update_rule AS on_update,'
-            . ' t3.delete_rule AS on_delete'
-            . ' FROM information_schema.table_constraints t1'
-            . ' LEFT JOIN information_schema.key_column_usage t2'
-            . ' ON t1.table_schema = t2.table_schema'
-            . ' AND t1.table_name = t2.table_name'
-            . ' AND t1.constraint_name = t2.constraint_name'
-            . ' LEFT JOIN information_schema.referential_constraints t3'
-            . ' ON t3.constraint_schema = t1.table_schema'
-            . ' AND t3.constraint_name = t1.constraint_name'
-            . ' WHERE t1.table_schema = SCHEMA()'
-            . " AND t1.table_name = '" . $tableName . "'"
-            . ' ORDER BY type DESC, name ASC;';
+        // TODO: Este no es su equivalente
+        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
+            . 'kcu.column_name,'
+            . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
+            . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
+            . ' FROM information_schema.table_constraints AS tc'
+            . ' LEFT JOIN information_schema.key_column_usage AS kcu'
+            . ' ON kcu.constraint_schema = tc.constraint_schema'
+            . ' AND kcu.constraint_catalog = tc.constraint_catalog'
+            . ' AND kcu.constraint_name = tc.constraint_name'
+            . ' LEFT JOIN information_schema.constraint_column_usage AS ccu'
+            . ' ON ccu.constraint_schema = tc.constraint_schema'
+            . ' AND ccu.constraint_catalog = tc.constraint_catalog'
+            . ' AND ccu.constraint_name = tc.constraint_name'
+            . ' AND ccu.column_name = kcu.column_name'
+            . ' LEFT JOIN information_schema.referential_constraints rc'
+            . ' ON rc.constraint_schema = tc.constraint_schema'
+            . ' AND rc.constraint_catalog = tc.constraint_catalog'
+            . ' AND rc.constraint_name = tc.constraint_name'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
+
         return $sql;
     }
 
@@ -761,6 +818,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlIndexes($tableName)
     {
+        // TODO: Comprobar que sea realmente así
         return 'SHOW INDEXES FROM ' . $tableName . ';';
     }
 
@@ -781,9 +839,9 @@ class PDOMysql implements DatabaseEngine
         }
 
         $sql = $this->fixPostgresql(substr($fields, 2));
-        return 'CREATE TABLE ' . $tableName . ' (' . $sql
-            . $this->generateTableConstraints($constraints) . ') '
-            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+        $result = 'CREATE TABLE ' . $tableName . ' (' . $sql
+            . $this->generateTableConstraints($constraints) . ');';
+        return $result;
     }
 
     /**
@@ -829,11 +887,9 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        $result = '';
-        if ($colData['tipo'] !== 'serial') {
-            $result = $this->sqlAlterModifyColumn($tableName, $colData);
-        }
-        return $result;
+        $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
+
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
     }
 
     /**
@@ -846,7 +902,8 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
-        return $this->sqlAlterModifyColumn($tableName, $colData);
+        $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
 
     /**
@@ -859,20 +916,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function sqlDropConstraint($tableName, $colData)
     {
-        $start = 'ALTER TABLE ' . $tableName . ' DROP';
-        switch ($colData['type']) {
-            case 'FOREIGN KEY':
-                $sql = $start . ' FOREIGN KEY ' . $colData['name'] . ';';
-                break;
-
-            case 'UNIQUE':
-                $sql = $start . ' INDEX ' . $colData['name'] . ';';
-                break;
-
-            default:
-                $sql = '';
-        }
-        return $sql;
+        return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
     }
 
     /**
