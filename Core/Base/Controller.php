@@ -62,7 +62,7 @@ class Controller extends Globals
 
     /**
      * Objeto respuesta HTTP.
-     * @var Request
+     * @var Response
      */
     protected $response;
 
@@ -87,9 +87,6 @@ class Controller extends Globals
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache $cache
-     * @param Translator $i18n
-     * @param MiniLog $miniLog
      * @param Response $response
      * @param Models\User $user
      * @param string $className

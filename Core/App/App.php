@@ -62,7 +62,7 @@ abstract class App extends Globals
 
     /**
      * Objeto respuesta HTTP.
-     * @var Request
+     * @var Response
      */
     protected $response;
 

@@ -76,9 +76,6 @@ class AdminHome extends Base\Controller
 
     /**
      * AdminHome constructor.
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
      * @param $response
      * @param Model\User $user
      * @param string $className
