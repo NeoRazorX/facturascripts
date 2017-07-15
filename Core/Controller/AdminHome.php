@@ -85,9 +85,9 @@ class AdminHome extends Base\Controller
      * @throws RuntimeException
      * @throws TranslationInvalidArgumentException
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct($user, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
+        parent::__construct($user, $className);
 
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();

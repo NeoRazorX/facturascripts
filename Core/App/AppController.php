@@ -80,7 +80,7 @@ class AppController extends App
      */
     public function run()
     {
-        if (!$this->dataBase->connected()) {
+        if (!self::$dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->renderHtml('Error/DbError.html');
         } elseif ($this->isIPBanned()) {
@@ -119,13 +119,11 @@ class AppController extends App
 
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
-            $this->miniLog->debug('Loading controller: ' . $controllerName);
+            self::$miniLog->debug('Loading controller: ' . $controllerName);
             $user = $this->userAuth();
 
             try {
-                $this->controller = new $controllerName(
-                    $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
-                );
+                $this->controller = new $controllerName($user, $pageName);
                 if ($user) {
                     $this->controller->privateCore();
                 } else {
@@ -139,7 +137,7 @@ class AppController extends App
             }
         }
 
-        $this->response->setStatusCode($httpStatus);
+        self::$response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
         }
@@ -172,9 +170,9 @@ class AppController extends App
         $templateVars = array(
             'debugBarRender' => false,
             'fsc' => $this->controller,
-            'i18n' => $this->i18n,
-            'log' => $this->miniLog->read(),
-            'sql' => $this->miniLog->read(['sql']),
+            'i18n' => self::$i18n,
+            'log' => self::$miniLog->read(),
+            'sql' => self::$miniLog->read(['sql']),
         );
 
         if (FS_DEBUG) {
@@ -184,7 +182,7 @@ class AppController extends App
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// añadimos del log a debugBar
-            foreach ($this->miniLog->read(['debug']) as $msg) {
+            foreach (self::$miniLog->read(['debug']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
             $this->debugBar['messages']->info('END');
@@ -192,7 +190,7 @@ class AppController extends App
         $twig = new Twig_Environment($twigLoader, $twigOptions);
 
         try {
-            $this->response->setContent($twig->render($template, $templateVars));
+            self::$response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
@@ -218,9 +216,9 @@ class AppController extends App
                 if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                     $logKey = $user->newLogkey($this->request->getClientIp());
                     $user->save();
-                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
-                    $this->miniLog->debug('Login OK. User: ' . $nick);
+                    self::$response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
+                    self::$response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    self::$miniLog->debug('Login OK. User: ' . $nick);
                     return $user;
                 }
 
@@ -243,11 +241,11 @@ class AppController extends App
                     return $cookieUser;
                 }
 
-                $this->miniLog->alert('login-cookie-fail');
+                self::$miniLog->alert('login-cookie-fail');
                 return null;
             }
 
-            $this->miniLog->alert('login-user-not-found');
+            self::$miniLog->alert('login-user-not-found');
             return null;
         }
 

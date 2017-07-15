@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model as Models;
+use FacturaScripts\Core\App\Globals;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,14 +32,8 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
  *
  * @author Carlos García Gómez
  */
-class Controller
+class Controller extends Globals
 {
-
-    /**
-     * Gestor de acceso a cache.
-     * @var Cache
-     */
-    protected $cache;
 
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
@@ -60,28 +55,10 @@ class Controller
     public $empresa;
 
     /**
-     * Motor de traducción.
-     * @var Translator
-     */
-    protected $i18n;
-
-    /**
-     * Gestor de log de la app.
-     * @var MiniLog
-     */
-    protected $miniLog;
-
-    /**
      * Request sobre la que podemos hacer consultas.
      * @var Request
      */
     public $request;
-
-    /**
-     * Objeto respuesta HTTP.
-     * @var Response
-     */
-    protected $response;
 
     /**
      * Nombre del archivo html para el motor de plantillas.
@@ -114,19 +91,17 @@ class Controller
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct($user, $className)
     {
-        $this->cache = $cache;
+        parent::__construct();
+        
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
 
         $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();
 
-        $this->i18n = $i18n;
-        $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
-        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
         $this->user = $user;
