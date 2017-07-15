@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio
+class Ejercicio extends Globals
 {
 
     use Model;
@@ -165,12 +166,12 @@ class Ejercicio
     public function newCodigo($cod = '0001')
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
-        if (!$this->dataBase->select($sql)) {
+        if (!self::$dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = self::$dataBase->select($sql);
         if (!empty($cod)) {
             return sprintf('%04s', 1 + (int) $cod[0]['cod']);
         }
@@ -217,13 +218,13 @@ class Ejercicio
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+                self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
             }
             return $this->fechafin;
         }
 
         if ($showError) {
-            $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+            self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
         }
         return $this->fechainicio;
     }
@@ -243,7 +244,7 @@ class Ejercicio
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
             . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
@@ -257,7 +258,7 @@ class Ejercicio
             $eje->fechafin = date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                $this->miniLog->alert($this->i18n->trans('date-invalid-date', [$fecha]));
+                self::$miniLog->alert(self::$i18n->trans('date-invalid-date', [$fecha]));
             } elseif ($eje->save()) {
                 return $eje;
             }
@@ -279,14 +280,14 @@ class Ejercicio
         $this->nombre = static::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
-            $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('fiscal-year-code-invalid'));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('fiscal-year-name-invalid'));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = [$this->fechainicio, $this->fechafin];
-            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $params));
+            self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
-            $this->miniLog->alert($this->i18n->trans('date-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('date-invalid'));
         } else {
             $status = true;
         }

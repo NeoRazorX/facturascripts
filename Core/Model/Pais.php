@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Pais
+class Pais extends Globals
 {
 
     use Model;
@@ -351,7 +352,7 @@ class Pais
     public function getByIso($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new Pais($data[0]);
         }
@@ -372,9 +373,9 @@ class Pais
         $this->nombre = static::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
+            self::$miniLog->alert(self::$i18n->trans('country-cod-invalid', [$this->codpais]));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('country-name-invalid'));
         } else {
             $status = true;
         }

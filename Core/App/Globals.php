@@ -19,34 +19,26 @@
 
 namespace FacturaScripts\Core\App;
 
-use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Response;
-use UnexpectedValueException;
+use FacturaScripts\Core\Base;
 
 /**
- * Description of App
+ * Define atributos y métodos globales a todas las clases
  *
  * @author Carlos García Gómez
+ * @author Rafael San José Tovar
  */
-class AppAPI extends App
+abstract class Globals
 {
+    protected static $cache=null;
+    protected static $dataBase=null;
+    protected static $i18n=null;
+    protected static $miniLog=null;
 
-    /**
-     * Ejecuta la API.
-     * @throws InvalidArgumentException
-     * @throws UnexpectedValueException
-     */
-    public function run()
+    public function __construct($folder = '')
     {
-        $this->response->headers->set('Content-Type', 'text/plain');
-        if (!self::$dataBase->connected()) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent('DB-ERROR');
-        } elseif ($this->isIPBanned()) {
-            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $this->response->setContent('IP-BANNED');
-        } else {
-            /// implementar
-        }
+        if (!isset(self::$cache)) self::$cache = new Base\Cache($folder);
+        if (!isset(self::$dataBase)) self::$dataBase = new Base\DataBase();
+        if (!isset(self::$i18n)) self::$i18n = new Base\Translator($folder, FS_LANG);
+        if (!isset(self::$miniLog)) self::$miniLog = new Base\MiniLog();
     }
 }

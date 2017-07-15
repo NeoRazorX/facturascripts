@@ -36,7 +36,7 @@ class AppCron extends App
     public function run()
     {
         $this->response->headers->set('Content-Type', 'text/plain');
-        if ($this->dataBase->connected()) {
+        if (self::$dataBase->connected()) {
             /// implementar
         } else {
             $this->response->setContent('DB-ERROR');

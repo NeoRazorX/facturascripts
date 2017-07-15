@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use RuntimeException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Almacen
+class Almacen extends Globals
 {
 
     use Model;
@@ -167,9 +168,9 @@ class Almacen
         $this->contacto = static::noHtml($this->contacto);
 
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codalmacen)) {
-            $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('store-cod-invalid'));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('store-name-invalid'));
         } else {
             $status = true;
         }

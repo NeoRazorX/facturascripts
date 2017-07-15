@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
 use RuntimeException;
@@ -29,7 +30,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Empresa
+class Empresa extends Globals
 {
 
     use Model;
@@ -322,9 +323,9 @@ class Empresa
         $this->web = static::noHtml($this->web);
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('company-name-invalid'));
         } elseif (strlen($this->nombre) < strlen($this->nombrecorto)) {
-            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
+            self::$miniLog->alert(self::$i18n->trans('company-short-name-smaller-name'));
         } else {
             $status = true;
         }

@@ -31,20 +31,8 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez
  */
-abstract class App
+abstract class App extends Globals
 {
-
-    /**
-     * Gestor de acceso a cache.
-     * @var Base\Cache
-     */
-    protected $cache;
-
-    /**
-     * Gestor de acceso a la base de datos.
-     * @var Base\DataBase
-     */
-    protected $dataBase;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
@@ -52,11 +40,6 @@ abstract class App
      */
     protected $folder;
 
-    /**
-     * Motor de traducción.
-     * @var Base\Translator
-     */
-    protected $i18n;
 
     /**
      * Filtro de IPs.
@@ -64,11 +47,6 @@ abstract class App
      */
     protected $ipFilter;
 
-    /**
-     * Gestor del log de la app.
-     * @var Base\MiniLog
-     */
-    protected $miniLog;
 
     /**
      * Gestor de plugins.
@@ -97,12 +75,10 @@ abstract class App
      */
     public function __construct($folder = '')
     {
-        $this->cache = new Base\Cache($folder);
-        $this->dataBase = new Base\DataBase();
+        parent::__construct($folder);
+        
         $this->folder = $folder;
-        $this->i18n = new Base\Translator($folder, FS_LANG);
         $this->ipFilter = new Base\IPFilter($folder);
-        $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
@@ -114,7 +90,7 @@ abstract class App
      */
     public function connect()
     {
-        return $this->dataBase->connect();
+        return self::$dataBase->connect();
     }
 
     /**
@@ -122,7 +98,7 @@ abstract class App
      */
     public function close()
     {
-        $this->dataBase->close();
+        self::$dataBase->close();
     }
 
     /**
