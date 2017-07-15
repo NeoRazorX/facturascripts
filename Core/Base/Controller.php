@@ -91,7 +91,7 @@ class Controller extends Globals
      * @throws RuntimeException
      * @throws InvalidArgumentException
      */
-    public function __construct($user, $className)
+    public function __construct(&$response, $user, $className)
     {
         parent::__construct();
         
@@ -102,6 +102,7 @@ class Controller extends Globals
         $this->empresa = $empresa->getDefault();
 
         $this->request = Request::createFromGlobals();
+        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
         $this->user = $user;

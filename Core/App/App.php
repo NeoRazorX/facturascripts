@@ -75,6 +75,7 @@ abstract class App extends Globals
         $this->ipFilter = new Base\IPFilter($folder);
         $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
+        $this->response = new Response();
     }
 
     /**
@@ -105,7 +106,7 @@ abstract class App extends Globals
      */
     public function render()
     {
-        self::$response->send();
+        $this->response->send();
     }
 
     /**

@@ -35,7 +35,6 @@ abstract class Globals
     protected static $dataBase=null;
     protected static $i18n=null;
     protected static $miniLog=null;
-    protected static $response=null;
 
     public function __construct($folder = '')
     {
@@ -43,6 +42,5 @@ abstract class Globals
         if (!isset(self::$dataBase)) self::$dataBase = new Base\DataBase();
         if (!isset(self::$i18n)) self::$i18n = new Base\Translator($folder, FS_LANG);
         if (!isset(self::$miniLog)) self::$miniLog = new Base\MiniLog();
-        if (!isset(self::$response)) self::$response = new Response();
-	}
+    }
 }

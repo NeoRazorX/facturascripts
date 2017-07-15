@@ -123,7 +123,7 @@ class AppController extends App
             $user = $this->userAuth();
 
             try {
-                $this->controller = new $controllerName($user, $pageName);
+                $this->controller = new $controllerName($this->response, $user, $pageName);
                 if ($user) {
                     $this->controller->privateCore();
                 } else {
@@ -137,7 +137,7 @@ class AppController extends App
             }
         }
 
-        self::$response->setStatusCode($httpStatus);
+        $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
         }
@@ -190,7 +190,7 @@ class AppController extends App
         $twig = new Twig_Environment($twigLoader, $twigOptions);
 
         try {
-            self::$response->setContent($twig->render($template, $templateVars));
+            $this->response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
@@ -216,19 +216,19 @@ class AppController extends App
                 if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                     $logKey = $user->newLogkey($this->request->getClientIp());
                     $user->save();
-                    self::$response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
-                    self::$response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
                     self::$miniLog->debug('Login OK. User: ' . $nick);
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
-                $this->miniLog->alert('login-password-fail');
+                self::$miniLog->alert('login-password-fail');
                 return null;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $this->miniLog->alert('login-user-not-found');
+            $self::miniLog->alert('login-user-not-found');
             return null;
         }
 
@@ -237,7 +237,7 @@ class AppController extends App
             $cookieUser = $user0->get($cookieNick);
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
-                    $this->miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
+                    self::$miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
                     return $cookieUser;
                 }
 
@@ -259,6 +259,6 @@ class AppController extends App
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
-        $this->miniLog->debug('Logout OK.');
+        self::$miniLog->debug('Logout OK.');
     }
 }
