@@ -78,15 +78,6 @@ class PDOPostgresql implements DatabaseEngine
     {
         $done = false;
 
-        if (!extension_loaded('pdo')) {
-            $errors[] = 'No tienes instalada la extensión de PHP para PDO.';
-            return null;
-        }
-        if (!extension_loaded('pdo_pgsql')) {
-            $errors[] = 'No tienes instalada la extensión de PHP para PDO PostgreSQL.';
-            return null;
-        }
-
         $dsnHost = 'pgsql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
         $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
         $options = [
@@ -100,7 +91,7 @@ class PDOPostgresql implements DatabaseEngine
         try {
             $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
         } catch (PDOException $e) {
-            if( $e->getMessage() !== '00000') {
+            if ($e->getMessage() !== '00000') {
                 $errors[] = $e->getMessage();
             }
         }
@@ -111,23 +102,25 @@ class PDOPostgresql implements DatabaseEngine
             try {
                 $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
             } catch (PDOException $e) {
-                if( $e->getMessage() !== '00000') {
+                if ($e->getMessage() !== '00000') {
                     $errors[] = $e->getMessage();
                 }
             }
 
             if ($connection2 !== null && $connection2->errorCode() === '00000') {
                 $done = true;
+                $errors = [];
             } else {
                 $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
-                if (!$connection->exec($sqlCrearBD)) {
+                if (is_int($connection->exec($sqlCrearBD))) {
                     $done = true;
+                    $errors = [];
                 } else {
                     $array = $connection->errorInfo();
                     $error = '';
                     $separator = '';
                     foreach ($array as $k => $err) {
-                        if( $err !== '00000') {
+                        if ($err !== '00000') {
                             $error .= $separator . $err;
                             if ($k = 0) {
                                 $separator = ' ';

@@ -162,7 +162,6 @@ class MysqlCollector extends DataCollector implements Renderable, AssetProvider
     {
 
         $result = call_user_func_array([$this->queries, $method], $args);
-//        print_r($result);
         return $result;
     }
 }

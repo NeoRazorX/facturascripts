@@ -94,32 +94,45 @@ class DataBase
             self::$totalTransactions = 0;
             self::$tables = [];
 
-            switch (strtolower(FS_DB_TYPE)) {
-                case 'mysql':
-                    self::$engine = new Mysql();
-                    break;
-                case 'postgresql':
-                    self::$engine = new Postgresql();
-                    break;
-                case 'pdo_mysql':
-                    self::$engine = new PDOMysql();
-                    break;
-                case 'pdo_pgsql':
-                    self::$engine = new PDOPostgresql();
-                    break;
-                case 'pdo_sqlite':
-                    self::$engine = new PDOSqlite();
-                    break;
-                default:
-                    self::$engine = null;
-                    self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
-                    break;
-            }
+            self::$engine = $this->engine(strtolower(FS_DB_TYPE));
 
             if (self::$engine !== null) {
                 self::$utils = new DataBaseUtils(self::$engine);
             }
         }
+    }
+
+    /**
+     * Devuelve el engine a utilizar
+     *
+     * @param $type
+     *
+     * @return Mysql|PDOMysql|PDOPostgresql|PDOSqlite|Postgresql|null
+     */
+    private function engine($type)
+    {
+        switch ($type) {
+            case 'mysql':
+                $engine = new Mysql();
+                break;
+            case 'postgresql':
+                $engine = new Postgresql();
+                break;
+            case 'pdo_mysql':
+                $engine = new PDOMysql();
+                break;
+            case 'pdo_pgsql':
+                $engine = new PDOPostgresql();
+                break;
+            case 'pdo_sqlite':
+                $engine = new PDOSqlite();
+                break;
+            default:
+                $engine = null;
+                self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
+                break;
+        }
+        return $engine;
     }
 
     /**

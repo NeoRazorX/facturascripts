@@ -66,37 +66,48 @@ class PDOSqlite implements DatabaseEngine
     }
 
     /**
+     * Se intenta realizar la conexión a la base de datos SQLite,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     *
+     * @param $errors
+     * @param $dbData
+     *
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData)
+    {
+        $done = false;
+
+        $dsnHost = 'sqlite:facturascripts.db';
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        try {
+            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+            if ($connection !== null && $connection->errorCode() === '00000') {
+                $done = true;
+                $errors = [];
+            }
+        } catch (PDOException $e) {
+            if ($e->getMessage() !== '00000') {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        return $done;
+    }
+
+    /**
      * Destructor de la clase
      */
     public function __destruct()
     {
         $this->rollbackTransactions();
-    }
-
-    /**
-     * Deshace todas las transacciones activas
-     */
-    private function rollbackTransactions()
-    {
-        foreach ($this->transactions as $link) {
-            $this->rollback($link);
-        }
-    }
-
-    /**
-     * Borra de la lista la transaccion indicada
-     * @param PDO $link
-     */
-    private function unsetTransaction($link)
-    {
-        $count = 0;
-        foreach ($this->transactions as $trans) {
-            if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
-                break;
-            }
-            $count++;
-        }
     }
 
     /**
@@ -122,7 +133,7 @@ class PDOSqlite implements DatabaseEngine
         $dsn = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
-//            PDO::ATTR_PERSISTENT => true,
+            //            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -144,50 +155,6 @@ class PDOSqlite implements DatabaseEngine
         }
 
         return $this->dbh;
-    }
-
-    /**
-     * Se intenta realizar la conexión a la base de datos SQLite,
-     * si se ha realizado se devuelve true, sino false.
-     * En el caso que sea false, $errors contiene el error
-     *
-     * @param $errors
-     * @param $dbData
-     *
-     * @return bool
-     */
-    public static function testConnect(&$errors, $dbData) {
-        $done = false;
-
-        if (!extension_loaded('pdo')) {
-            $errors[] = 'No tienes instalada la extensión de PHP para PDO.';
-            return null;
-        }
-        if (!extension_loaded('pdo_sqlite')) {
-            $errors[] = 'No tienes instalada la extensión de PHP para PDO SQLite.';
-            return null;
-        }
-
-        $dsnHost = 'sqlite:facturascripts.db';
-        $options = [
-            PDO::ATTR_EMULATE_PREPARES => 1,
-            //            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ];
-
-        // Creamos una nueva instancia PDO
-        try {
-            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
-            if ($connection) {
-                $done = true;
-            }
-        } catch (PDOException $e) {
-            if( $e->getMessage() !== '00000') {
-                $errors[] = $e->getMessage();
-            }
-        }
-
-        return $done;
     }
 
     /**
@@ -335,20 +302,6 @@ class PDOSqlite implements DatabaseEngine
     }
 
     /**
-     * Elimina código problemático de postgresql.
-     *
-     * @param string $sql
-     *
-     * @return string
-     */
-    private function fixPostgresql($sql)
-    {
-        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
-        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-        return str_replace($search, $replace, $sql);
-    }
-
-    /**
      * Genera el SQL para establecer las restricciones proporcionadas.
      *
      * @param array $xmlCons
@@ -363,65 +316,6 @@ class PDOSqlite implements DatabaseEngine
         }
 
         return $this->fixPostgresql($sql);
-    }
-
-    /**
-     * TODO
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getConstraints($colData)
-    {
-        $notNull = ($colData['nulo'] === 'NO');
-        $result = ' NULL';
-        if ($notNull) {
-            $result = ' NOT' . $result;
-        }
-
-        $defaultNull = ($colData['defecto'] === null);
-        if ($defaultNull && !$notNull) {
-            $result .= ' DEFAULT NULL';
-        } else {
-            if ($colData['defecto'] !== '') {
-                if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
-                    $result .= ' DEFAULT ' . $colData['defecto'];
-                } elseif ($colData['defecto'] !== 'true') {
-                    $result .= ' DEFAULT 1';
-                } elseif ($colData['defecto'] !== 'false') {
-                    $result .= ' DEFAULT 0';
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
-     * https://sqlite.org/datatype3.html
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getTypeAndConstraints($colData)
-    {
-        $type = stripos('boolean,integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (true) {
-            case ($type === 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            case (stripos($colData['defecto'], 'boolean') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            default:
-                $contraints = $this->getConstraints($colData);
-                break;
-        }
-        return ' ' . $type . $contraints;
     }
 
     /**
@@ -563,79 +457,6 @@ class PDOSqlite implements DatabaseEngine
     {
         $this->stmt = $this->dbh->prepare($sql);
         return $this->stmt->execute();
-    }
-
-    /**
-     * Compara los tipos de datos de una columna numerica.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeNumeric($dbType, $xmlType)
-    {
-        return (
-                $xmlType === 'INTEGER' &&
-                (
-                    0 === strpos($dbType, 'INT') ||
-                    0 === strpos($dbType, 'INTEGER') ||
-                    0 === strpos($dbType, 'TINYINT') ||
-                    0 === strpos($dbType, 'SMALLINT') ||
-                    0 === strpos($dbType, 'MEDIUMINT') ||
-                    0 === strpos($dbType, 'BIGINT') ||
-                    0 === strpos($dbType, 'UNSIGNED BIG INT') ||
-                    0 === strpos($dbType, 'INT2') ||
-                    0 === strpos($dbType, 'INT8')
-                )
-            ) ||
-            (
-                $xmlType === 'double precision' &&
-                (
-                    0 === strpos($dbType, 'REAL') ||
-                    0 === strpos($dbType, 'DOUBLE') ||
-                    0 === strpos($dbType, 'DOUBLE PRECISION') ||
-                    0 === strpos($dbType, 'FLOAT') ||
-                    0 === strpos($dbType, 'NUMERIC') ||
-                    0 === strpos($dbType, 'DECIMAL')
-                )
-            ) ||
-            (
-                (
-                    $xmlType === 'timestamp' || $xmlType === 'date' || $xmlType === 'datetime'
-                )
-                &&
-                (
-                    0 === strpos($dbType, 'DATE') ||
-                    0 === strpos($dbType, 'DATETIME')
-                )
-            );
-    }
-
-    /**
-     * Compara los tipos de datos de una columna alfanumerica.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeChar($dbType, $xmlType)
-    {
-        $result = 0 === strpos($xmlType, 'character varying(');
-        if ($result) {
-            $result = (
-                (0 === strpos($dbType, 'CHARACTER(')) ||
-                (0 === strpos($dbType, 'VARCHAR(')) ||
-                (0 === strpos($dbType, 'VARYING CHARACTER(')) ||
-                (0 === strpos($dbType, 'NCHAR(')) ||
-                (0 === strpos($dbType, 'NATIVE CHARACTER(')) ||
-                (0 === strpos($dbType, 'NVARCHAR(')) ||
-                (0 === strpos($dbType, 'TEXT')) ||
-                (0 === strpos($dbType, 'CLOB'))
-            );
-        }
-        return $result;
     }
 
     /**
@@ -985,5 +806,183 @@ class PDOSqlite implements DatabaseEngine
     public function getType()
     {
         return 'pdo_sqlite';
+    }
+
+    /**
+     * Deshace todas las transacciones activas
+     */
+    private function rollbackTransactions()
+    {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
+        }
+    }
+
+    /**
+     * Borra de la lista la transaccion indicada
+     *
+     * @param PDO $link
+     */
+    private function unsetTransaction($link)
+    {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
+            }
+            $count++;
+        }
+    }
+
+    /**
+     * Elimina código problemático de postgresql.
+     *
+     * @param string $sql
+     *
+     * @return string
+     */
+    private function fixPostgresql($sql)
+    {
+        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
+        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
+        return str_replace($search, $replace, $sql);
+    }
+
+    /**
+     * TODO
+     *
+     * @param array $colData
+     *
+     * @return string
+     */
+    private function getConstraints($colData)
+    {
+        $notNull = ($colData['nulo'] === 'NO');
+        $result = ' NULL';
+        if ($notNull) {
+            $result = ' NOT' . $result;
+        }
+
+        $defaultNull = ($colData['defecto'] === null);
+        if ($defaultNull && !$notNull) {
+            $result .= ' DEFAULT NULL';
+        } else {
+            if ($colData['defecto'] !== '') {
+                if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
+                    $result .= ' DEFAULT ' . $colData['defecto'];
+                } elseif ($colData['defecto'] !== 'true') {
+                    $result .= ' DEFAULT 1';
+                } elseif ($colData['defecto'] !== 'false') {
+                    $result .= ' DEFAULT 0';
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * https://sqlite.org/datatype3.html
+     *
+     * @param array $colData
+     *
+     * @return string
+     */
+    private function getTypeAndConstraints($colData)
+    {
+        $type = stripos('boolean,integer,serial',
+            $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (true) {
+            case ($type === 'serial'):
+            case (stripos($colData['defecto'], 'nextval(') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            case (stripos($colData['defecto'], 'boolean') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            default:
+                $contraints = $this->getConstraints($colData);
+                break;
+        }
+        return ' ' . $type . $contraints;
+    }
+
+    /**
+     * Compara los tipos de datos de una columna numerica.
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    private function compareDataTypeNumeric($dbType, $xmlType)
+    {
+        switch (strtolower($xmlType)) {
+            case 'integer':
+                $types = [
+                    'INT',
+                    'INTEGER',
+                    'TINYINT',
+                    'SMALLINT',
+                    'MEDIUMINT',
+                    'BIGINT',
+                    'UNSIGNED BIG INT',
+                    'INT2',
+                    'INT8'
+                ];
+                break;
+            case 'double precision':
+                $types = [
+                    'REAL',
+                    'DOUBLE',
+                    'DOUBLE PRECISION',
+                    'FLOAT',
+                    'NUMERIC',
+                    'DECIMAL'
+                ];
+                break;
+            case 'timestamp':
+            case 'date':
+            case 'datetime':
+                $types = [
+                    'DATE',
+                    'DATETIME'
+                ];
+                break;
+            default:
+                $types = [];
+        }
+        return in_array($dbType, $types);
+    }
+
+    /**
+     * Compara los tipos de datos de una columna alfanumerica.
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    private function compareDataTypeChar($dbType, $xmlType)
+    {
+        switch (strtolower($xmlType)) {
+            case 'character varying(':
+                $types = [
+                    'CHARACTER(',
+                    'VARCHAR(',
+                    'VARYING CHARACTER(',
+                    'NCHAR(',
+                    'NATIVE CHARACTER(',
+                    'NVARCHAR(',
+                    'TEXT',
+                    'CLOB'
+                ];
+                break;
+            default:
+                $types = [];
+        }
+        return in_array($dbType, $types);
     }
 }

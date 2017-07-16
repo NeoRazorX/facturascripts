@@ -308,25 +308,18 @@ class AppController extends App
      */
     private function loadDataBaseTrace(array $queries = [])
     {
-        if (0 === strpos($this->dataBase->getType(), 'mysql')) {
-            if ($this->dataBase->getEngine() instanceof Mysql) {
-                // TODO: Lo correcto sería implementarlo en Traceable+Collector para tener todos los detalles
-                // $mysql = new TraceableMysql($this->dataBase->getEngine());
-                // $this->debugBar->addCollector(new MysqlCollector($mysql));
+        // TODO: Debería implementarse en Traceable+Collector para tener todos los detalles
+        switch ($this->dataBase->getType()) {
+            case 'mysql':
                 $this->debugBar->addCollector(new MysqlCollector($queries));
-            }
-        } elseif (0 === strpos($this->dataBase->getType(), 'postgresql')) {
-            if ($this->dataBase->getEngine() instanceof Postgresql) {
-                // TODO: Lo correcto sería implementarlo en Traceable+Collector para tener todos los detalles
-                // $pgsql = new TraceablePostgresql($queries);
-                // $this->debugBar->addCollector(new PostgresqlCollector($pgsql));
+                break;
+            case 'postgresql':
                 $this->debugBar->addCollector(new PostgresqlCollector($queries));
-            }
-        } elseif (0 === strpos($this->dataBase->getType(), 'pdo')) {
-            if ($this->dataBase->getLink() instanceof PDO) {
+                break;
+            default:
                 $pdo = new TraceablePDO($this->dataBase->getLink());
                 $this->debugBar->addCollector(new PDOCollector($pdo));
-            }
+                break;
         }
     }
 }
